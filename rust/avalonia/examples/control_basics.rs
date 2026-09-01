@@ -1,6 +1,6 @@
 use avalonia::{
-    App, Button, ExpandDirection, Expander, Orientation, RadioButton, Slider, StackPanel,
-    TextBlock, TextBox, ToggleSwitch, Window,
+    App, Button, ComboBox, ComboBoxItem, ExpandDirection, Expander, ListBox, ListBoxItem,
+    Orientation, RadioButton, Slider, StackPanel, TextBlock, TextBox, ToggleSwitch, Window,
 };
 
 fn main() -> avalonia::Result<()> {
@@ -104,6 +104,42 @@ fn main() -> avalonia::Result<()> {
             .expand_direction(ExpandDirection::Down)?
             .expanded(true)?;
 
+        let combo_status = TextBlock::new()?.text("ComboBox: Blue")?;
+        let combo_status_for_handler = combo_status.clone();
+        let combo_box = ComboBox::new()?
+            .placeholder_text("Pick a color")?
+            .item(ComboBoxItem::new()?.content(TextBlock::new()?.text("Red")?)?)?
+            .item(ComboBoxItem::new()?.content(TextBlock::new()?.text("Green")?)?)?
+            .item(ComboBoxItem::new()?.content(TextBlock::new()?.text("Blue")?)?)?
+            .selected_index(2)?;
+        let combo_box_for_handler = combo_box.clone();
+        let combo_box = combo_box.on_selection_changed(move |_| {
+            let index = combo_box_for_handler
+                .get_selected_index()
+                .expect("failed to read ComboBox selection");
+            combo_status_for_handler
+                .set_text(format!("ComboBox index: {index}"))
+                .expect("failed to update ComboBox readout");
+        })?;
+
+        let list_status = TextBlock::new()?.text("ListBox: Item 2")?;
+        let list_status_for_handler = list_status.clone();
+        let list_box = ListBox::new()?
+            .item(ListBoxItem::new()?.content(TextBlock::new()?.text("Item 1")?)?)?
+            .item(ListBoxItem::new()?.content(TextBlock::new()?.text("Item 2")?)?)?
+            .item(ListBoxItem::new()?.content(TextBlock::new()?.text("Item 3")?)?)?
+            .item(ListBoxItem::new()?.content(TextBlock::new()?.text("Item 4")?)?)?
+            .selected_index(1)?;
+        let list_box_for_handler = list_box.clone();
+        let list_box = list_box.on_selection_changed(move |_| {
+            let index = list_box_for_handler
+                .get_selected_index()
+                .expect("failed to read ListBox selection");
+            list_status_for_handler
+                .set_text(format!("ListBox index: {index}"))
+                .expect("failed to update ListBox readout");
+        })?;
+
         Window::new()?
             .title("Control basics")?
             .content(
@@ -119,6 +155,10 @@ fn main() -> avalonia::Result<()> {
                     .child(toggle)?
                     .child(toggle_value)?
                     .child(TextBlock::new()?.text("Selection & expand patterns")?)?
+                    .child(combo_box)?
+                    .child(combo_status)?
+                    .child(list_box)?
+                    .child(list_status)?
                     .child(radio_buttons)?
                     .child(expander)?,
             )?

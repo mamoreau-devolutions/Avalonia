@@ -47,6 +47,8 @@ public class ComSourceEmitterTests
             typeof(Control),
             typeof(ContentControl),
             typeof(HeaderedContentControl),
+            typeof(ItemsControl),
+            typeof(SelectingItemsControl),
             typeof(Decorator),
             typeof(Border),
             typeof(Panel),
@@ -63,6 +65,10 @@ public class ComSourceEmitterTests
             typeof(RadioButton),
             typeof(ToggleSwitch),
             typeof(Expander),
+            typeof(ListBox),
+            typeof(ComboBox),
+            typeof(ListBoxItem),
+            typeof(ComboBoxItem),
             typeof(TextBox),
             typeof(ScrollViewer),
             typeof(RangeBase),
@@ -111,7 +117,11 @@ public class ComSourceEmitterTests
         var list = files["IAvnControlList.g.cs"];
         Assert.Contains("int GetAt(int index, out IAvnControl? value);", list, StringComparison.Ordinal);
         Assert.Contains("int Add(IAvnControl? value);", list, StringComparison.Ordinal);
-        Assert.Contains("ProjectionRuntime.Wrap(_value[index])", list, StringComparison.Ordinal);
+        Assert.Contains("ProjectionRuntime.Wrap((global::Avalonia.Controls.Control)_value[index]!)", list, StringComparison.Ordinal);
+
+        var items = files["IAvnItemList.g.cs"];
+        Assert.Contains("private readonly global::Avalonia.Controls.ItemCollection _value;", items, StringComparison.Ordinal);
+        Assert.Contains("ProjectionRuntime.Wrap((global::Avalonia.Controls.Control)_value[index]!)", items, StringComparison.Ordinal);
 
         var roots = files["ProjectionAotRoots.g.cs"];
         Assert.Contains("typeof(AvnButton)", roots, StringComparison.Ordinal);
@@ -135,6 +145,8 @@ public class ComSourceEmitterTests
             typeof(Control),
             typeof(ContentControl),
             typeof(HeaderedContentControl),
+            typeof(ItemsControl),
+            typeof(SelectingItemsControl),
             typeof(Decorator),
             typeof(Border),
             typeof(Panel),
@@ -151,6 +163,10 @@ public class ComSourceEmitterTests
             typeof(RadioButton),
             typeof(ToggleSwitch),
             typeof(Expander),
+            typeof(ListBox),
+            typeof(ComboBox),
+            typeof(ListBoxItem),
+            typeof(ComboBoxItem),
             typeof(TextBox),
             typeof(ScrollViewer),
             typeof(RangeBase),

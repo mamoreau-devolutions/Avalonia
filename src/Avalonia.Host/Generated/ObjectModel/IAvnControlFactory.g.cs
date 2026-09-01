@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("C11E3F2A-058B-5CEA-B21A-C9FA4D81EC25")]
+[Guid("805F9D56-0765-5E70-8461-3E2F09026694")]
 public partial interface IAvnControlFactory
 {
     [PreserveSig]
@@ -23,6 +23,12 @@ public partial interface IAvnControlFactory
 
     [PreserveSig]
     int CreateCheckBox(out IAvnCheckBox? value);
+
+    [PreserveSig]
+    int CreateComboBox(out IAvnComboBox? value);
+
+    [PreserveSig]
+    int CreateComboBoxItem(out IAvnComboBoxItem? value);
 
     [PreserveSig]
     int CreateContentControl(out IAvnContentControl? value);
@@ -46,6 +52,15 @@ public partial interface IAvnControlFactory
     int CreateHeaderedContentControl(out IAvnHeaderedContentControl? value);
 
     [PreserveSig]
+    int CreateItemsControl(out IAvnItemsControl? value);
+
+    [PreserveSig]
+    int CreateListBox(out IAvnListBox? value);
+
+    [PreserveSig]
+    int CreateListBoxItem(out IAvnListBoxItem? value);
+
+    [PreserveSig]
     int CreatePanel(out IAvnPanel? value);
 
     [PreserveSig]
@@ -56,6 +71,9 @@ public partial interface IAvnControlFactory
 
     [PreserveSig]
     int CreateScrollViewer(out IAvnScrollViewer? value);
+
+    [PreserveSig]
+    int CreateSelectingItemsControl(out IAvnSelectingItemsControl? value);
 
     [PreserveSig]
     int CreateSlider(out IAvnSlider? value);
@@ -173,6 +191,36 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         }
     }
 
+    public int CreateComboBox(out IAvnComboBox? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnComboBox)ProjectionRuntime.Wrap(new global::Avalonia.Controls.ComboBox())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateComboBoxItem(out IAvnComboBoxItem? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnComboBoxItem)ProjectionRuntime.Wrap(new global::Avalonia.Controls.ComboBoxItem())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int CreateContentControl(out IAvnContentControl? value)
     {
         value = null;
@@ -278,6 +326,51 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         }
     }
 
+    public int CreateItemsControl(out IAvnItemsControl? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnItemsControl)ProjectionRuntime.Wrap(new global::Avalonia.Controls.ItemsControl())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateListBox(out IAvnListBox? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnListBox)ProjectionRuntime.Wrap(new global::Avalonia.Controls.ListBox())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateListBoxItem(out IAvnListBoxItem? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnListBoxItem)ProjectionRuntime.Wrap(new global::Avalonia.Controls.ListBoxItem())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int CreatePanel(out IAvnPanel? value)
     {
         value = null;
@@ -330,6 +423,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         {
             global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
             value = (IAvnScrollViewer)ProjectionRuntime.Wrap(new global::Avalonia.Controls.ScrollViewer())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateSelectingItemsControl(out IAvnSelectingItemsControl? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnSelectingItemsControl)ProjectionRuntime.Wrap(new global::Avalonia.Controls.Primitives.SelectingItemsControl())!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

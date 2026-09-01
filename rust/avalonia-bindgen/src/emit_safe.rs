@@ -146,6 +146,14 @@ fn emit_type(ir: &ProjectionIr, ty: &ProjectedType) -> String {
                      \x20   }\n",
                 );
             }
+            if property.kind == "ComCollection" && property.name == "Items" {
+                out.push_str(
+                    "    pub fn item(self, value: impl AsControl) -> Result<Self> {\n\
+                      \x20       self.items()?.add(value)?;\n\
+                      \x20       Ok(self)\n\
+                      \x20   }\n",
+                );
+            }
         }
         for method in &owner.methods {
             out.push_str(&emit_method(method));

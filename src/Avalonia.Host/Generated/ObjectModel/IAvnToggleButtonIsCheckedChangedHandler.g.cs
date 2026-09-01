@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface]
-[Guid("44F406CC-4964-5811-8C0D-B222DC0595F4")]
+[Guid("D78D5A25-03AD-52B3-8DA2-7BE7C9B38639")]
 public partial interface IAvnToggleButtonIsCheckedChangedHandler
 {
     [PreserveSig]

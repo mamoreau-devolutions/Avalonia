@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("B037B59C-F0AF-51F9-81AB-A984F07AC779")]
+[Guid("4E932105-0BEB-583E-B63C-1EFDBAC450D2")]
 public partial interface IAvnRadioButton : IAvnToggleButton
 {
     [PreserveSig]

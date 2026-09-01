@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("A128AFD4-AF5C-53D2-9E4B-72CD49948E75")]
+[Guid("12E363EF-B500-5612-BD7F-8BD882DFFEF9")]
 public partial interface IAvnCheckBox : IAvnToggleButton
 {
 }

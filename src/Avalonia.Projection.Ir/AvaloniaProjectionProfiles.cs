@@ -11,6 +11,8 @@ public static class AvaloniaProjectionProfiles
             "Avalonia.Controls.Control",
             "Avalonia.Controls.ContentControl",
             "Avalonia.Controls.Primitives.HeaderedContentControl",
+            "Avalonia.Controls.ItemsControl",
+            "Avalonia.Controls.Primitives.SelectingItemsControl",
             "Avalonia.Controls.Decorator",
             "Avalonia.Controls.Border",
             "Avalonia.Controls.Panel",
@@ -27,6 +29,10 @@ public static class AvaloniaProjectionProfiles
             "Avalonia.Controls.RadioButton",
             "Avalonia.Controls.ToggleSwitch",
             "Avalonia.Controls.Expander",
+            "Avalonia.Controls.ListBox",
+            "Avalonia.Controls.ComboBox",
+            "Avalonia.Controls.ListBoxItem",
+            "Avalonia.Controls.ComboBoxItem",
             "Avalonia.Controls.TextBox",
             "Avalonia.Controls.ScrollViewer",
             "Avalonia.Controls.Primitives.RangeBase",
@@ -40,6 +46,9 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.Control"] = ["IsEnabled"],
             ["Avalonia.Controls.ContentControl"] = ["Content"],
             ["Avalonia.Controls.Primitives.HeaderedContentControl"] = ["Header"],
+            ["Avalonia.Controls.ItemsControl"] = ["Items"],
+            ["Avalonia.Controls.Primitives.SelectingItemsControl"] =
+                ["SelectedIndex", "SelectionChanged"],
             ["Avalonia.Controls.Decorator"] = ["Child"],
             ["Avalonia.Controls.Border"] = ["BackgroundSizing"],
             ["Avalonia.Controls.Panel"] = ["Children"],
@@ -56,6 +65,10 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.ToggleSwitch"] = ["OnContent", "OffContent"],
             ["Avalonia.Controls.Expander"] =
                 ["ExpandDirection", "IsExpanded", "Expanded", "Collapsed"],
+            ["Avalonia.Controls.ListBox"] = [],
+            ["Avalonia.Controls.ComboBox"] = ["PlaceholderText"],
+            ["Avalonia.Controls.ListBoxItem"] = ["IsSelected"],
+            ["Avalonia.Controls.ComboBoxItem"] = [],
             ["Avalonia.Controls.Primitives.TemplatedControl"] = [],
             ["Avalonia.Controls.TextBox"] =
             [
@@ -92,6 +105,14 @@ public static class AvaloniaProjectionProfiles
             {
                 Kind = MarshallingKind.ComCollection,
                 InterfaceName = "Avalonia.Host.Com.IAvnControlList",
+                ElementInterfaceName = "Avalonia.Host.Com.IAvnControl",
+                ElementKind = MarshallingKind.ComInterface,
+                IsNullable = false,
+            },
+            ["Avalonia.Controls.ItemsControl.Items"] = new()
+            {
+                Kind = MarshallingKind.ComCollection,
+                InterfaceName = "Avalonia.Host.Com.IAvnItemList",
                 ElementInterfaceName = "Avalonia.Host.Com.IAvnControl",
                 ElementKind = MarshallingKind.ComInterface,
                 IsNullable = false,
@@ -155,6 +176,10 @@ public static class AvaloniaProjectionProfiles
                 PayloadKind = EventPayloadKind.None,
             },
             ["Avalonia.Controls.Expander.Collapsed"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.Primitives.SelectingItemsControl.SelectionChanged"] = new()
             {
                 PayloadKind = EventPayloadKind.None,
             },

@@ -6,35 +6,25 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("55E7818C-0CF6-5921-A56B-D316D5DDEB0B")]
-public partial interface IAvnGrid : IAvnPanel
+[Guid("BAD3131F-442E-583E-8685-6C443004FE27")]
+public partial interface IAvnComboBox : IAvnSelectingItemsControl
 {
     [PreserveSig]
-    int GetShowGridLines(out int value);
+    int GetPlaceholderText(out string? value);
 
     [PreserveSig]
-    int SetShowGridLines(int value);
-
-    [PreserveSig]
-    int GetRowSpacing(out double value);
-
-    [PreserveSig]
-    int SetRowSpacing(double value);
-
-    [PreserveSig]
-    int GetColumnSpacing(out double value);
-
-    [PreserveSig]
-    int SetColumnSpacing(double value);
+    int SetPlaceholderText(string? value);
 
 }
 
 [GeneratedComClass]
-public sealed partial class AvnGrid : IAvnGrid
+public sealed partial class AvnComboBox : IAvnComboBox
 {
-    private readonly global::Avalonia.Controls.Grid _value;
+    private readonly global::Avalonia.Controls.ComboBox _value;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnSelectingItemsControlSelectionChangedHandler Handler, global::System.Action Unsubscribe)> _selectionChangedSubscriptions = new();
+    private long _nextSelectionChangedSubscriptionId;
 
-    internal AvnGrid(global::Avalonia.Controls.Grid value)
+    internal AvnComboBox(global::Avalonia.Controls.ComboBox value)
     {
         _value = value;
         ObjectId = ProjectionRuntime.Register(value);
@@ -92,13 +82,13 @@ public sealed partial class AvnGrid : IAvnGrid
         }
     }
 
-    public int GetChildren(out IAvnControlList value)
+    public int GetItems(out IAvnItemList value)
     {
         value = default!;
         try
         {
             _value.VerifyAccess();
-            value = new AvnControlList(_value.Children);
+            value = new AvnItemList(_value.Items);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -107,13 +97,13 @@ public sealed partial class AvnGrid : IAvnGrid
         }
     }
 
-    public int GetShowGridLines(out int value)
+    public int GetSelectedIndex(out int value)
     {
         value = default!;
         try
         {
             _value.VerifyAccess();
-            value = _value.ShowGridLines ? 1 : 0;
+            value = _value.SelectedIndex;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -122,12 +112,12 @@ public sealed partial class AvnGrid : IAvnGrid
         }
     }
 
-    public int SetShowGridLines(int value)
+    public int SetSelectedIndex(int value)
     {
         try
         {
             _value.VerifyAccess();
-            _value.ShowGridLines = value != 0;
+            _value.SelectedIndex = value;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -136,13 +126,54 @@ public sealed partial class AvnGrid : IAvnGrid
         }
     }
 
-    public int GetRowSpacing(out double value)
+    public int AdviseSelectionChanged(IAvnSelectingItemsControlSelectionChangedHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            _value.VerifyAccess();
+            var callback = new global::System.EventHandler<Avalonia.Controls.SelectionChangedEventArgs>((_, _) =>
+            {
+                var hr = handler.Invoke();
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            _value.SelectionChanged += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextSelectionChangedSubscriptionId);
+            _selectionChangedSubscriptions.Add(subscriptionId, (handler, () => _value.SelectionChanged -= callback));
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseSelectionChanged(long subscriptionId)
+    {
+        try
+        {
+            _value.VerifyAccess();
+            if (!_selectionChangedSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetPlaceholderText(out string? value)
     {
         value = default!;
         try
         {
             _value.VerifyAccess();
-            value = _value.RowSpacing;
+            value = _value.PlaceholderText;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -151,41 +182,12 @@ public sealed partial class AvnGrid : IAvnGrid
         }
     }
 
-    public int SetRowSpacing(double value)
+    public int SetPlaceholderText(string? value)
     {
         try
         {
             _value.VerifyAccess();
-            _value.RowSpacing = value;
-            return global::Avalonia.Host.HResults.S_OK;
-        }
-        catch (global::System.Exception e)
-        {
-            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
-        }
-    }
-
-    public int GetColumnSpacing(out double value)
-    {
-        value = default!;
-        try
-        {
-            _value.VerifyAccess();
-            value = _value.ColumnSpacing;
-            return global::Avalonia.Host.HResults.S_OK;
-        }
-        catch (global::System.Exception e)
-        {
-            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
-        }
-    }
-
-    public int SetColumnSpacing(double value)
-    {
-        try
-        {
-            _value.VerifyAccess();
-            _value.ColumnSpacing = value;
+            _value.PlaceholderText = value;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

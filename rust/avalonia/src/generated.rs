@@ -151,6 +151,25 @@ impl TryFrom<i32> for TextWrapping {
 }
 
 #[derive(Clone, Debug)]
+pub struct ItemList {
+    pub(crate) raw: sys::ComPtr<sys::IAvnItemList>,
+}
+
+impl ItemList {
+    pub fn len(&self) -> Result<usize> { Ok(self.raw.len()?) }
+    pub fn is_empty(&self) -> Result<bool> { Ok(self.len()? == 0) }
+    pub fn get(&self, index: usize) -> Result<Control> {
+        Ok(Control { raw: self.raw.get(index)? })
+    }
+    pub fn add(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.add(&value)?)
+    }
+    pub fn remove(&self, index: usize) -> Result<()> { Ok(self.raw.remove(index)?) }
+    pub fn clear(&self) -> Result<()> { Ok(self.raw.clear()?) }
+}
+
+#[derive(Clone, Debug)]
 pub struct ControlList {
     pub(crate) raw: sys::ComPtr<sys::IAvnControlList>,
 }
@@ -459,6 +478,122 @@ impl CheckBox {
 }
 
 impl AsControl for CheckBox {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct ComboBox {
+    pub(crate) raw: sys::ComPtr<sys::IAvnComboBox>,
+}
+
+impl ComboBox {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_combo_box())
+            .map(|raw| Self { raw })
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn items(&self) -> Result<ItemList> {
+        Ok(ItemList { raw: self.raw.get_items()? })
+    }
+    pub fn item(self, value: impl AsControl) -> Result<Self> {
+        self.items()?.add(value)?;
+        Ok(self)
+    }
+    pub fn get_selected_index(&self) -> Result<i32> { Ok(self.raw.get_selected_index()?) }
+    pub fn set_selected_index(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_selected_index(value)?)
+    }
+    pub fn selected_index(self, value: i32) -> Result<Self> {
+        self.set_selected_index(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_selection_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::selecting_items_control_selection_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_selection_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_selection_changed(subscription_id)))
+    }
+    pub fn on_selection_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_selection_changed(callback)?.detach();
+        Ok(self)
+    }
+    pub fn get_placeholder_text(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_placeholder_text()?)) }
+    }
+    pub fn set_placeholder_text(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_placeholder_text(Some(&value))?)
+    }
+    pub fn placeholder_text(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_placeholder_text(value)?;
+        Ok(self)
+    }
+}
+
+impl AsControl for ComboBox {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct ComboBoxItem {
+    pub(crate) raw: sys::ComPtr<sys::IAvnComboBoxItem>,
+}
+
+impl ComboBoxItem {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_combo_box_item())
+            .map(|raw| Self { raw })
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_content(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_content()?.map(|raw| Control { raw }))
+    }
+    pub fn set_content(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_content(Some(&value))?)
+    }
+    pub fn content(self, value: impl AsControl) -> Result<Self> {
+        self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_is_selected(&self) -> Result<bool> { Ok(self.raw.get_is_selected()?) }
+    pub fn set_selected(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_selected(value)?)
+    }
+    pub fn selected(self, value: bool) -> Result<Self> {
+        self.set_selected(value)?;
+        Ok(self)
+    }
+}
+
+impl AsControl for ComboBoxItem {
     fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
         Ok(self.raw.query_interface()?)
     }
@@ -844,6 +979,147 @@ impl AsControl for Grid {
 }
 
 #[derive(Clone, Debug)]
+pub struct ItemsControl {
+    pub(crate) raw: sys::ComPtr<sys::IAvnItemsControl>,
+}
+
+impl ItemsControl {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_items_control())
+            .map(|raw| Self { raw })
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn items(&self) -> Result<ItemList> {
+        Ok(ItemList { raw: self.raw.get_items()? })
+    }
+    pub fn item(self, value: impl AsControl) -> Result<Self> {
+        self.items()?.add(value)?;
+        Ok(self)
+    }
+}
+
+impl AsControl for ItemsControl {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct ListBox {
+    pub(crate) raw: sys::ComPtr<sys::IAvnListBox>,
+}
+
+impl ListBox {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_list_box())
+            .map(|raw| Self { raw })
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn items(&self) -> Result<ItemList> {
+        Ok(ItemList { raw: self.raw.get_items()? })
+    }
+    pub fn item(self, value: impl AsControl) -> Result<Self> {
+        self.items()?.add(value)?;
+        Ok(self)
+    }
+    pub fn get_selected_index(&self) -> Result<i32> { Ok(self.raw.get_selected_index()?) }
+    pub fn set_selected_index(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_selected_index(value)?)
+    }
+    pub fn selected_index(self, value: i32) -> Result<Self> {
+        self.set_selected_index(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_selection_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::selecting_items_control_selection_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_selection_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_selection_changed(subscription_id)))
+    }
+    pub fn on_selection_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_selection_changed(callback)?.detach();
+        Ok(self)
+    }
+}
+
+impl AsControl for ListBox {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct ListBoxItem {
+    pub(crate) raw: sys::ComPtr<sys::IAvnListBoxItem>,
+}
+
+impl ListBoxItem {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_list_box_item())
+            .map(|raw| Self { raw })
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_content(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_content()?.map(|raw| Control { raw }))
+    }
+    pub fn set_content(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_content(Some(&value))?)
+    }
+    pub fn content(self, value: impl AsControl) -> Result<Self> {
+        self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_is_selected(&self) -> Result<bool> { Ok(self.raw.get_is_selected()?) }
+    pub fn set_selected(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_selected(value)?)
+    }
+    pub fn selected(self, value: bool) -> Result<Self> {
+        self.set_selected(value)?;
+        Ok(self)
+    }
+}
+
+impl AsControl for ListBoxItem {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
 pub struct Panel {
     pub(crate) raw: sys::ComPtr<sys::IAvnPanel>,
 }
@@ -1003,6 +1279,63 @@ impl RangeBase {
 }
 
 impl AsControl for RangeBase {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct SelectingItemsControl {
+    pub(crate) raw: sys::ComPtr<sys::IAvnSelectingItemsControl>,
+}
+
+impl SelectingItemsControl {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_selecting_items_control())
+            .map(|raw| Self { raw })
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn items(&self) -> Result<ItemList> {
+        Ok(ItemList { raw: self.raw.get_items()? })
+    }
+    pub fn item(self, value: impl AsControl) -> Result<Self> {
+        self.items()?.add(value)?;
+        Ok(self)
+    }
+    pub fn get_selected_index(&self) -> Result<i32> { Ok(self.raw.get_selected_index()?) }
+    pub fn set_selected_index(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_selected_index(value)?)
+    }
+    pub fn selected_index(self, value: i32) -> Result<Self> {
+        self.set_selected_index(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_selection_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::selecting_items_control_selection_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_selection_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_selection_changed(subscription_id)))
+    }
+    pub fn on_selection_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_selection_changed(callback)?.detach();
+        Ok(self)
+    }
+}
+
+impl AsControl for SelectingItemsControl {
     fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
         Ok(self.raw.query_interface()?)
     }

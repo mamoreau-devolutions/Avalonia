@@ -7,7 +7,7 @@ use crate::hresult::{self, Error, Result};
 use std::ffi::c_void;
 use std::ptr;
 
-pub const I_AVN_BUTTON_CLICK_HANDLER_IID: Guid = Guid { data1: 0x2ECA170D, data2: 0x4A81, data3: 0x5849, data4: [0xB4, 0x34, 0x43, 0x30, 0x37, 0x2B, 0xC3, 0x59] };
+pub const I_AVN_BUTTON_CLICK_HANDLER_IID: Guid = Guid { data1: 0x73659246, data2: 0x1343, data3: 0x5C1F, data4: [0xBE, 0x03, 0xE0, 0x4B, 0xEB, 0x82, 0x3F, 0x17] };
 
 #[repr(C)]
 struct IAvnButtonClickHandlerVtbl {
@@ -62,7 +62,7 @@ unsafe extern "system" fn i_avn_button_click_handler_invoke(this: *mut IAvnButto
     crate::event_callback::invoke::<IAvnButtonClickHandler>(this)
 }
 
-pub const I_AVN_EXPANDER_COLLAPSED_HANDLER_IID: Guid = Guid { data1: 0x34365AA5, data2: 0x8168, data3: 0x517B, data4: [0xB0, 0x34, 0x30, 0x9C, 0x27, 0xD0, 0x05, 0xB6] };
+pub const I_AVN_EXPANDER_COLLAPSED_HANDLER_IID: Guid = Guid { data1: 0x9FA3C559, data2: 0x1EBE, data3: 0x5D52, data4: [0x84, 0xD1, 0x0F, 0x7E, 0xCC, 0xB0, 0x54, 0x6D] };
 
 #[repr(C)]
 struct IAvnExpanderCollapsedHandlerVtbl {
@@ -117,7 +117,7 @@ unsafe extern "system" fn i_avn_expander_collapsed_handler_invoke(this: *mut IAv
     crate::event_callback::invoke::<IAvnExpanderCollapsedHandler>(this)
 }
 
-pub const I_AVN_EXPANDER_EXPANDED_HANDLER_IID: Guid = Guid { data1: 0x3FD25275, data2: 0x99A9, data3: 0x5C85, data4: [0x96, 0x59, 0xB5, 0xE1, 0xEF, 0x51, 0x8F, 0xD1] };
+pub const I_AVN_EXPANDER_EXPANDED_HANDLER_IID: Guid = Guid { data1: 0xA7D9C1DF, data2: 0x5DCA, data3: 0x52BE, data4: [0x86, 0x88, 0x78, 0xCB, 0x3B, 0x42, 0x5F, 0xF7] };
 
 #[repr(C)]
 struct IAvnExpanderExpandedHandlerVtbl {
@@ -172,7 +172,7 @@ unsafe extern "system" fn i_avn_expander_expanded_handler_invoke(this: *mut IAvn
     crate::event_callback::invoke::<IAvnExpanderExpandedHandler>(this)
 }
 
-pub const I_AVN_RANGE_BASE_VALUE_CHANGED_HANDLER_IID: Guid = Guid { data1: 0xD2F41705, data2: 0x7ABA, data3: 0x588E, data4: [0x81, 0x7E, 0xA3, 0x09, 0x7F, 0xC3, 0xEB, 0x1A] };
+pub const I_AVN_RANGE_BASE_VALUE_CHANGED_HANDLER_IID: Guid = Guid { data1: 0xD73A680A, data2: 0x530E, data3: 0x5D42, data4: [0xAA, 0x00, 0x1D, 0x27, 0x1C, 0xE9, 0xF2, 0x22] };
 
 #[repr(C)]
 struct IAvnRangeBaseValueChangedHandlerVtbl {
@@ -227,7 +227,62 @@ unsafe extern "system" fn i_avn_range_base_value_changed_handler_invoke(this: *m
     crate::event_callback::invoke::<IAvnRangeBaseValueChangedHandler>(this)
 }
 
-pub const I_AVN_TOGGLE_BUTTON_IS_CHECKED_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x44F406CC, data2: 0x4964, data3: 0x5811, data4: [0x8C, 0x0D, 0xB2, 0x22, 0xDC, 0x05, 0x95, 0xF4] };
+pub const I_AVN_SELECTING_ITEMS_CONTROL_SELECTION_CHANGED_HANDLER_IID: Guid = Guid { data1: 0xC0C01034, data2: 0xD9D7, data3: 0x599C, data4: [0xB3, 0xF0, 0x56, 0x47, 0x88, 0x45, 0x53, 0x73] };
+
+#[repr(C)]
+struct IAvnSelectingItemsControlSelectionChangedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnSelectingItemsControlSelectionChangedHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnSelectingItemsControlSelectionChangedHandler {
+    vtbl: *const IAvnSelectingItemsControlSelectionChangedHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnSelectingItemsControlSelectionChangedHandler {
+    const IID: Guid = I_AVN_SELECTING_ITEMS_CONTROL_SELECTION_CHANGED_HANDLER_IID;
+}
+
+impl ComPtr<IAvnSelectingItemsControlSelectionChangedHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_SELECTING_ITEMS_CONTROL_SELECTION_CHANGED_HANDLER_VTBL: IAvnSelectingItemsControlSelectionChangedHandlerVtbl = IAvnSelectingItemsControlSelectionChangedHandlerVtbl {
+    query_interface: i_avn_selecting_items_control_selection_changed_handler_query_interface,
+    add_ref: i_avn_selecting_items_control_selection_changed_handler_add_ref,
+    release: i_avn_selecting_items_control_selection_changed_handler_release,
+    invoke: i_avn_selecting_items_control_selection_changed_handler_invoke,
+};
+
+pub fn selecting_items_control_selection_changed_handler(callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnSelectingItemsControlSelectionChangedHandler> {
+    crate::event_callback::create(IAvnSelectingItemsControlSelectionChangedHandler { vtbl: &I_AVN_SELECTING_ITEMS_CONTROL_SELECTION_CHANGED_HANDLER_VTBL }, callback)
+}
+
+unsafe extern "system" fn i_avn_selecting_items_control_selection_changed_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnSelectingItemsControlSelectionChangedHandler>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_selecting_items_control_selection_changed_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnSelectingItemsControlSelectionChangedHandler>(this)
+}
+
+unsafe extern "system" fn i_avn_selecting_items_control_selection_changed_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnSelectingItemsControlSelectionChangedHandler>(this)
+}
+
+unsafe extern "system" fn i_avn_selecting_items_control_selection_changed_handler_invoke(this: *mut IAvnSelectingItemsControlSelectionChangedHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnSelectingItemsControlSelectionChangedHandler>(this)
+}
+
+pub const I_AVN_TOGGLE_BUTTON_IS_CHECKED_CHANGED_HANDLER_IID: Guid = Guid { data1: 0xD78D5A25, data2: 0x03AD, data3: 0x52B3, data4: [0x8D, 0xA2, 0x7B, 0xE7, 0xC9, 0xB3, 0x86, 0x39] };
 
 #[repr(C)]
 struct IAvnToggleButtonIsCheckedChangedHandlerVtbl {
@@ -282,7 +337,7 @@ unsafe extern "system" fn i_avn_toggle_button_is_checked_changed_handler_invoke(
     crate::event_callback::invoke::<IAvnToggleButtonIsCheckedChangedHandler>(this)
 }
 
-pub const I_AVN_SCROLL_VIEWER_SCROLL_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x7F95665E, data2: 0x308C, data3: 0x599A, data4: [0xAE, 0x67, 0x08, 0xAC, 0x9B, 0x30, 0x16, 0x97] };
+pub const I_AVN_SCROLL_VIEWER_SCROLL_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x462522E1, data2: 0xDE87, data3: 0x581B, data4: [0xAD, 0x11, 0x24, 0x5B, 0x2D, 0x5E, 0x7E, 0x62] };
 
 #[repr(C)]
 struct IAvnScrollViewerScrollChangedHandlerVtbl {
@@ -337,7 +392,7 @@ unsafe extern "system" fn i_avn_scroll_viewer_scroll_changed_handler_invoke(this
     crate::event_callback::invoke::<IAvnScrollViewerScrollChangedHandler>(this)
 }
 
-pub const I_AVN_TEXT_BOX_TEXT_CHANGED_HANDLER_IID: Guid = Guid { data1: 0xAE457BB3, data2: 0x7890, data3: 0x540E, data4: [0x99, 0x03, 0xB2, 0xC6, 0xFE, 0xC5, 0x76, 0x90] };
+pub const I_AVN_TEXT_BOX_TEXT_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x9E143759, data2: 0x5355, data3: 0x507C, data4: [0xA6, 0x24, 0xDD, 0x1E, 0x2A, 0xC4, 0xBC, 0xDE] };
 
 #[repr(C)]
 struct IAvnTextBoxTextChangedHandlerVtbl {
@@ -392,7 +447,68 @@ unsafe extern "system" fn i_avn_text_box_text_changed_handler_invoke(this: *mut 
     crate::event_callback::invoke::<IAvnTextBoxTextChangedHandler>(this)
 }
 
-pub const I_AVN_CONTROL_LIST_IID: Guid = Guid { data1: 0x689B298F, data2: 0x56F3, data3: 0x5000, data4: [0x91, 0x5F, 0x20, 0x21, 0x9C, 0xAE, 0x4D, 0xA9] };
+pub const I_AVN_ITEM_LIST_IID: Guid = Guid { data1: 0x0BCABAA8, data2: 0xD5B1, data3: 0x5D5E, data4: [0xA7, 0x10, 0x24, 0xA7, 0x9F, 0x47, 0x05, 0xD4] };
+
+#[repr(C)]
+struct IAvnItemListVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_count: unsafe extern "system" fn(*mut IAvnItemList, *mut i32) -> i32,
+    get_at: unsafe extern "system" fn(*mut IAvnItemList, i32, *mut *mut IAvnControl) -> i32,
+    add: unsafe extern "system" fn(*mut IAvnItemList, *mut IAvnControl) -> i32,
+    index_of: unsafe extern "system" fn(*mut IAvnItemList, *mut IAvnControl, *mut i32) -> i32,
+    remove_at: unsafe extern "system" fn(*mut IAvnItemList, i32) -> i32,
+    clear: unsafe extern "system" fn(*mut IAvnItemList) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnItemList {
+    vtbl: *const IAvnItemListVtbl,
+}
+
+unsafe impl ComInterface for IAvnItemList {
+    const IID: Guid = I_AVN_ITEM_LIST_IID;
+}
+
+impl ComPtr<IAvnItemList> {
+    pub fn len(&self) -> Result<usize> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_count)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize)
+        }
+    }
+    pub fn is_empty(&self) -> Result<bool> {
+        Ok(self.len()? == 0)
+    }
+    pub fn get(&self, index: usize) -> Result<ComPtr<IAvnControl>> {
+        unsafe {
+            let mut value = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_at)(self.as_raw(), index as i32, &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn add(&self, value: &ComPtr<IAvnControl>) -> Result<()> {
+        unsafe { hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().add)(self.as_raw(), value.as_raw())) }
+    }
+    pub fn index_of(&self, value: &ComPtr<IAvnControl>) -> Result<Option<usize>> {
+        unsafe {
+            let mut index = -1;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().index_of)(self.as_raw(), value.as_raw(), &mut index);
+            hresult::check(hr).map(|_| (index >= 0).then_some(index as usize))
+        }
+    }
+    pub fn remove(&self, index: usize) -> Result<()> {
+        unsafe { hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().remove_at)(self.as_raw(), index as i32)) }
+    }
+    pub fn clear(&self) -> Result<()> {
+        unsafe { hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().clear)(self.as_raw())) }
+    }
+}
+
+pub const I_AVN_CONTROL_LIST_IID: Guid = Guid { data1: 0x4DE82845, data2: 0x9AD5, data3: 0x5B2A, data4: [0x9A, 0x64, 0x54, 0x6A, 0xFB, 0xC3, 0x4E, 0x7E] };
 
 #[repr(C)]
 struct IAvnControlListVtbl {
@@ -453,7 +569,7 @@ impl ComPtr<IAvnControlList> {
     }
 }
 
-pub const I_AVN_STRING_LIST_IID: Guid = Guid { data1: 0x1A47FA0A, data2: 0x8852, data3: 0x51F1, data4: [0x83, 0x98, 0x88, 0xAF, 0xC5, 0xBF, 0x30, 0x91] };
+pub const I_AVN_STRING_LIST_IID: Guid = Guid { data1: 0xF3BB5B4E, data2: 0xA4DA, data3: 0x5296, data4: [0x8D, 0x17, 0x14, 0xA3, 0x84, 0x1D, 0xBA, 0x77] };
 
 #[repr(C)]
 struct IAvnStringListVtbl {
@@ -513,7 +629,7 @@ impl ComPtr<IAvnStringList> {
     }
 }
 
-pub const I_AVN_AVALONIA_OBJECT_IID: Guid = Guid { data1: 0xC2FD03A0, data2: 0x72DC, data3: 0x5F00, data4: [0x9F, 0x20, 0x59, 0x33, 0x31, 0xF8, 0x53, 0x54] };
+pub const I_AVN_AVALONIA_OBJECT_IID: Guid = Guid { data1: 0x3CEA4487, data2: 0xCB18, data3: 0x5434, data4: [0xB3, 0xF7, 0x78, 0x8A, 0x5F, 0x38, 0xC2, 0xF9] };
 
 #[repr(C)]
 struct IAvnAvaloniaObjectVtbl {
@@ -542,7 +658,7 @@ impl ComPtr<IAvnAvaloniaObject> {
     }
 }
 
-pub const I_AVN_BORDER_IID: Guid = Guid { data1: 0x0F630BB8, data2: 0x5E71, data3: 0x583E, data4: [0xBF, 0x7A, 0x5F, 0x48, 0x49, 0xC5, 0xB5, 0xAB] };
+pub const I_AVN_BORDER_IID: Guid = Guid { data1: 0x96DC871F, data2: 0x7A72, data3: 0x5193, data4: [0xB8, 0x5E, 0xAE, 0x0D, 0xA1, 0xEF, 0xA2, 0x25] };
 
 #[repr(C)]
 struct IAvnBorderVtbl {
@@ -628,7 +744,7 @@ impl ComPtr<IAvnBorder> {
     }
 }
 
-pub const I_AVN_BUTTON_IID: Guid = Guid { data1: 0x62B8F06C, data2: 0x6A00, data3: 0x5D4C, data4: [0x93, 0xC3, 0xE1, 0x2A, 0x2E, 0x5C, 0x0B, 0xB8] };
+pub const I_AVN_BUTTON_IID: Guid = Guid { data1: 0xD937CF8D, data2: 0xF045, data3: 0x5834, data4: [0x8D, 0x61, 0xE1, 0x44, 0xA7, 0x2A, 0xDB, 0xFE] };
 
 #[repr(C)]
 struct IAvnButtonVtbl {
@@ -713,7 +829,7 @@ impl ComPtr<IAvnButton> {
     }
 }
 
-pub const I_AVN_CANVAS_IID: Guid = Guid { data1: 0xCAFA9D5B, data2: 0x4210, data3: 0x527F, data4: [0xAB, 0x4E, 0xD1, 0x9E, 0xB1, 0x39, 0x00, 0x87] };
+pub const I_AVN_CANVAS_IID: Guid = Guid { data1: 0x0E114DCF, data2: 0x1F0C, data3: 0x51E6, data4: [0x91, 0xC0, 0x93, 0x14, 0x18, 0xE2, 0xE2, 0x8F] };
 
 #[repr(C)]
 struct IAvnCanvasVtbl {
@@ -776,7 +892,7 @@ impl ComPtr<IAvnCanvas> {
     }
 }
 
-pub const I_AVN_CHECK_BOX_IID: Guid = Guid { data1: 0xA128AFD4, data2: 0xAF5C, data3: 0x53D2, data4: [0x9E, 0x4B, 0x72, 0xCD, 0x49, 0x94, 0x8E, 0x75] };
+pub const I_AVN_CHECK_BOX_IID: Guid = Guid { data1: 0x12E363EF, data2: 0xB500, data3: 0x5612, data4: [0xBD, 0x7F, 0x8B, 0xD8, 0x82, 0xDF, 0xFE, 0xF9] };
 
 #[repr(C)]
 struct IAvnCheckBoxVtbl {
@@ -892,7 +1008,203 @@ impl ComPtr<IAvnCheckBox> {
     }
 }
 
-pub const I_AVN_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x4FD1DF7F, data2: 0x4C6D, data3: 0x56AF, data4: [0xBE, 0x0D, 0x2C, 0x2F, 0x00, 0x3D, 0x5F, 0x42] };
+pub const I_AVN_COMBO_BOX_IID: Guid = Guid { data1: 0xBAD3131F, data2: 0x442E, data3: 0x583E, data4: [0x86, 0x85, 0x6C, 0x44, 0x30, 0x04, 0xFE, 0x27] };
+
+#[repr(C)]
+struct IAvnComboBoxVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_object_id: unsafe extern "system" fn(*mut IAvnComboBox, *mut i64) -> i32,
+    get_classes: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut IAvnStringList) -> i32,
+    get_is_enabled: unsafe extern "system" fn(*mut IAvnComboBox, *mut i32) -> i32,
+    set_is_enabled: unsafe extern "system" fn(*mut IAvnComboBox, i32) -> i32,
+    get_items: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut IAvnItemList) -> i32,
+    get_selected_index: unsafe extern "system" fn(*mut IAvnComboBox, *mut i32) -> i32,
+    set_selected_index: unsafe extern "system" fn(*mut IAvnComboBox, i32) -> i32,
+    advise_selection_changed: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnSelectingItemsControlSelectionChangedHandler, *mut i64) -> i32,
+    unadvise_selection_changed: unsafe extern "system" fn(*mut IAvnComboBox, i64) -> i32,
+    get_placeholder_text: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut u16) -> i32,
+    set_placeholder_text: unsafe extern "system" fn(*mut IAvnComboBox, *mut u16) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnComboBox {
+    vtbl: *const IAvnComboBoxVtbl,
+}
+
+unsafe impl ComInterface for IAvnComboBox {
+    const IID: Guid = I_AVN_COMBO_BOX_IID;
+}
+
+impl ComPtr<IAvnComboBox> {
+    pub fn object_id(&self) -> Result<i64> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
+        unsafe {
+            let mut value: *mut IAvnStringList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_items(&self) -> Result<ComPtr<IAvnItemList>> {
+        unsafe {
+            let mut value: *mut IAvnItemList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn get_selected_index(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_index)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_index(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_index)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_selection_changed(&self, handler: &ComPtr<IAvnSelectingItemsControlSelectionChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_selection_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_selection_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_selection_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_placeholder_text(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_placeholder_text)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_placeholder_text(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placeholder_text)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
+}
+
+pub const I_AVN_COMBO_BOX_ITEM_IID: Guid = Guid { data1: 0xF8F3A3F8, data2: 0xF4C8, data3: 0x509D, data4: [0x8A, 0x96, 0x6C, 0xCD, 0xFA, 0x98, 0xA7, 0xB1] };
+
+#[repr(C)]
+struct IAvnComboBoxItemVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_object_id: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut i64) -> i32,
+    get_classes: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut *mut IAvnStringList) -> i32,
+    get_is_enabled: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut i32) -> i32,
+    set_is_enabled: unsafe extern "system" fn(*mut IAvnComboBoxItem, i32) -> i32,
+    get_content: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut *mut IAvnControl) -> i32,
+    set_content: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut IAvnControl) -> i32,
+    get_is_selected: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut i32) -> i32,
+    set_is_selected: unsafe extern "system" fn(*mut IAvnComboBoxItem, i32) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnComboBoxItem {
+    vtbl: *const IAvnComboBoxItemVtbl,
+}
+
+unsafe impl ComInterface for IAvnComboBoxItem {
+    const IID: Guid = I_AVN_COMBO_BOX_ITEM_IID;
+}
+
+impl ComPtr<IAvnComboBoxItem> {
+    pub fn object_id(&self) -> Result<i64> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
+        unsafe {
+            let mut value: *mut IAvnStringList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_content(&self) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_content)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_content)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_selected(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_selected)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_selected(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_selected)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+}
+
+pub const I_AVN_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x1BEA5A94, data2: 0x3E2F, data3: 0x580B, data4: [0xB2, 0x84, 0x59, 0x50, 0x72, 0x25, 0x2B, 0x4D] };
 
 #[repr(C)]
 struct IAvnContentControlVtbl {
@@ -962,7 +1274,7 @@ impl ComPtr<IAvnContentControl> {
     }
 }
 
-pub const I_AVN_CONTROL_IID: Guid = Guid { data1: 0x3C1A2683, data2: 0x83BC, data3: 0x5FD1, data4: [0x8F, 0xB6, 0x68, 0x9F, 0x50, 0xDD, 0x88, 0x25] };
+pub const I_AVN_CONTROL_IID: Guid = Guid { data1: 0xD53ACF46, data2: 0x6FCB, data3: 0x5A1A, data4: [0x98, 0xCB, 0xB8, 0xE6, 0x73, 0x61, 0x78, 0x24] };
 
 #[repr(C)]
 struct IAvnControlVtbl {
@@ -1016,7 +1328,7 @@ impl ComPtr<IAvnControl> {
     }
 }
 
-pub const I_AVN_DECORATOR_IID: Guid = Guid { data1: 0x841625E8, data2: 0x6ECC, data3: 0x5396, data4: [0x8A, 0xEC, 0xD0, 0xE4, 0x36, 0x5E, 0x4C, 0xCE] };
+pub const I_AVN_DECORATOR_IID: Guid = Guid { data1: 0x140BE9D8, data2: 0xC30F, data3: 0x591E, data4: [0x97, 0xFC, 0x4B, 0xAB, 0xDA, 0x73, 0x70, 0x26] };
 
 #[repr(C)]
 struct IAvnDecoratorVtbl {
@@ -1086,7 +1398,7 @@ impl ComPtr<IAvnDecorator> {
     }
 }
 
-pub const I_AVN_DOCK_PANEL_IID: Guid = Guid { data1: 0x1DEABF03, data2: 0xC42C, data3: 0x5242, data4: [0x87, 0xAD, 0x6A, 0xDA, 0x46, 0x74, 0x8C, 0x9C] };
+pub const I_AVN_DOCK_PANEL_IID: Guid = Guid { data1: 0x01170C54, data2: 0x99AA, data3: 0x517C, data4: [0xAB, 0x00, 0xB3, 0xB3, 0x7A, 0x31, 0xD9, 0x8C] };
 
 #[repr(C)]
 struct IAvnDockPanelVtbl {
@@ -1197,7 +1509,7 @@ impl ComPtr<IAvnDockPanel> {
     }
 }
 
-pub const I_AVN_EXPANDER_IID: Guid = Guid { data1: 0x3B96BF8C, data2: 0x8162, data3: 0x517E, data4: [0x88, 0xCD, 0x1C, 0xB5, 0x16, 0xD2, 0x7A, 0x94] };
+pub const I_AVN_EXPANDER_IID: Guid = Guid { data1: 0xD66FE7D8, data2: 0x5040, data3: 0x51E5, data4: [0x9A, 0xD9, 0x59, 0x3B, 0x49, 0x9E, 0x74, 0xB1] };
 
 #[repr(C)]
 struct IAvnExpanderVtbl {
@@ -1345,7 +1657,7 @@ impl ComPtr<IAvnExpander> {
     }
 }
 
-pub const I_AVN_GRID_IID: Guid = Guid { data1: 0xC5D41504, data2: 0xFA86, data3: 0x5D3A, data4: [0xBA, 0x31, 0x40, 0x0C, 0xFA, 0x3F, 0xFF, 0xF7] };
+pub const I_AVN_GRID_IID: Guid = Guid { data1: 0x55E7818C, data2: 0x0CF6, data3: 0x5921, data4: [0xA5, 0x6B, 0xD3, 0x16, 0xD5, 0xDD, 0xEB, 0x0B] };
 
 #[repr(C)]
 struct IAvnGridVtbl {
@@ -1456,7 +1768,250 @@ impl ComPtr<IAvnGrid> {
     }
 }
 
-pub const I_AVN_PANEL_IID: Guid = Guid { data1: 0x24BEBDB5, data2: 0x0003, data3: 0x5E32, data4: [0x81, 0xA3, 0x79, 0x32, 0x05, 0xC1, 0x1D, 0x44] };
+pub const I_AVN_ITEMS_CONTROL_IID: Guid = Guid { data1: 0xCA4E2DA3, data2: 0xA2C0, data3: 0x5594, data4: [0xA7, 0x93, 0x32, 0x6C, 0xDA, 0x70, 0x30, 0x71] };
+
+#[repr(C)]
+struct IAvnItemsControlVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_object_id: unsafe extern "system" fn(*mut IAvnItemsControl, *mut i64) -> i32,
+    get_classes: unsafe extern "system" fn(*mut IAvnItemsControl, *mut *mut IAvnStringList) -> i32,
+    get_is_enabled: unsafe extern "system" fn(*mut IAvnItemsControl, *mut i32) -> i32,
+    set_is_enabled: unsafe extern "system" fn(*mut IAvnItemsControl, i32) -> i32,
+    get_items: unsafe extern "system" fn(*mut IAvnItemsControl, *mut *mut IAvnItemList) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnItemsControl {
+    vtbl: *const IAvnItemsControlVtbl,
+}
+
+unsafe impl ComInterface for IAvnItemsControl {
+    const IID: Guid = I_AVN_ITEMS_CONTROL_IID;
+}
+
+impl ComPtr<IAvnItemsControl> {
+    pub fn object_id(&self) -> Result<i64> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
+        unsafe {
+            let mut value: *mut IAvnStringList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_items(&self) -> Result<ComPtr<IAvnItemList>> {
+        unsafe {
+            let mut value: *mut IAvnItemList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+}
+
+pub const I_AVN_LIST_BOX_IID: Guid = Guid { data1: 0x48E21481, data2: 0x06DE, data3: 0x5378, data4: [0xB6, 0xD7, 0xA8, 0xA7, 0xC2, 0x46, 0xFA, 0x64] };
+
+#[repr(C)]
+struct IAvnListBoxVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_object_id: unsafe extern "system" fn(*mut IAvnListBox, *mut i64) -> i32,
+    get_classes: unsafe extern "system" fn(*mut IAvnListBox, *mut *mut IAvnStringList) -> i32,
+    get_is_enabled: unsafe extern "system" fn(*mut IAvnListBox, *mut i32) -> i32,
+    set_is_enabled: unsafe extern "system" fn(*mut IAvnListBox, i32) -> i32,
+    get_items: unsafe extern "system" fn(*mut IAvnListBox, *mut *mut IAvnItemList) -> i32,
+    get_selected_index: unsafe extern "system" fn(*mut IAvnListBox, *mut i32) -> i32,
+    set_selected_index: unsafe extern "system" fn(*mut IAvnListBox, i32) -> i32,
+    advise_selection_changed: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnSelectingItemsControlSelectionChangedHandler, *mut i64) -> i32,
+    unadvise_selection_changed: unsafe extern "system" fn(*mut IAvnListBox, i64) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnListBox {
+    vtbl: *const IAvnListBoxVtbl,
+}
+
+unsafe impl ComInterface for IAvnListBox {
+    const IID: Guid = I_AVN_LIST_BOX_IID;
+}
+
+impl ComPtr<IAvnListBox> {
+    pub fn object_id(&self) -> Result<i64> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
+        unsafe {
+            let mut value: *mut IAvnStringList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_items(&self) -> Result<ComPtr<IAvnItemList>> {
+        unsafe {
+            let mut value: *mut IAvnItemList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn get_selected_index(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_index)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_index(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_index)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_selection_changed(&self, handler: &ComPtr<IAvnSelectingItemsControlSelectionChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_selection_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_selection_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_selection_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+}
+
+pub const I_AVN_LIST_BOX_ITEM_IID: Guid = Guid { data1: 0x239CF877, data2: 0x242F, data3: 0x53C7, data4: [0x9E, 0x45, 0xBF, 0xEA, 0x87, 0xD0, 0x5D, 0x60] };
+
+#[repr(C)]
+struct IAvnListBoxItemVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_object_id: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut i64) -> i32,
+    get_classes: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut *mut IAvnStringList) -> i32,
+    get_is_enabled: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut i32) -> i32,
+    set_is_enabled: unsafe extern "system" fn(*mut IAvnListBoxItem, i32) -> i32,
+    get_content: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut *mut IAvnControl) -> i32,
+    set_content: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut IAvnControl) -> i32,
+    get_is_selected: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut i32) -> i32,
+    set_is_selected: unsafe extern "system" fn(*mut IAvnListBoxItem, i32) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnListBoxItem {
+    vtbl: *const IAvnListBoxItemVtbl,
+}
+
+unsafe impl ComInterface for IAvnListBoxItem {
+    const IID: Guid = I_AVN_LIST_BOX_ITEM_IID;
+}
+
+impl ComPtr<IAvnListBoxItem> {
+    pub fn object_id(&self) -> Result<i64> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
+        unsafe {
+            let mut value: *mut IAvnStringList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_content(&self) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_content)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_content)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_selected(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_selected)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_selected(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_selected)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+}
+
+pub const I_AVN_PANEL_IID: Guid = Guid { data1: 0x99F1A7F0, data2: 0x153C, data3: 0x5B4C, data4: [0xAD, 0xDB, 0x17, 0xCA, 0x9C, 0x8F, 0xC8, 0xD7] };
 
 #[repr(C)]
 struct IAvnPanelVtbl {
@@ -1519,7 +2074,7 @@ impl ComPtr<IAvnPanel> {
     }
 }
 
-pub const I_AVN_HEADERED_CONTENT_CONTROL_IID: Guid = Guid { data1: 0xBA9E3CF3, data2: 0x2184, data3: 0x572F, data4: [0x9B, 0xB9, 0x00, 0x4A, 0x64, 0xA3, 0x7E, 0xCD] };
+pub const I_AVN_HEADERED_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x673330E8, data2: 0xA3CC, data3: 0x5A98, data4: [0xB7, 0xE9, 0x83, 0x6C, 0xCE, 0x08, 0xDC, 0xBE] };
 
 #[repr(C)]
 struct IAvnHeaderedContentControlVtbl {
@@ -1605,7 +2160,7 @@ impl ComPtr<IAvnHeaderedContentControl> {
     }
 }
 
-pub const I_AVN_RANGE_BASE_IID: Guid = Guid { data1: 0x4F093A01, data2: 0xB155, data3: 0x5370, data4: [0x9F, 0x00, 0x54, 0x07, 0x66, 0x92, 0x65, 0xEA] };
+pub const I_AVN_RANGE_BASE_IID: Guid = Guid { data1: 0xDABD7A9F, data2: 0x662E, data3: 0x5BD7, data4: [0x91, 0x36, 0x20, 0xBA, 0x44, 0x6F, 0x48, 0x5C] };
 
 #[repr(C)]
 struct IAvnRangeBaseVtbl {
@@ -1754,7 +2309,101 @@ impl ComPtr<IAvnRangeBase> {
     }
 }
 
-pub const I_AVN_TEMPLATED_CONTROL_IID: Guid = Guid { data1: 0xEAF65505, data2: 0x7C09, data3: 0x542A, data4: [0xA6, 0x48, 0x23, 0x49, 0x7A, 0x30, 0x95, 0x80] };
+pub const I_AVN_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0xF569635D, data2: 0xBFBB, data3: 0x5BDC, data4: [0x97, 0x75, 0xD2, 0xF7, 0x89, 0xEE, 0x2C, 0x1E] };
+
+#[repr(C)]
+struct IAvnSelectingItemsControlVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_object_id: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut i64) -> i32,
+    get_classes: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut *mut IAvnStringList) -> i32,
+    get_is_enabled: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut i32) -> i32,
+    set_is_enabled: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i32) -> i32,
+    get_items: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut *mut IAvnItemList) -> i32,
+    get_selected_index: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut i32) -> i32,
+    set_selected_index: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i32) -> i32,
+    advise_selection_changed: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnSelectingItemsControlSelectionChangedHandler, *mut i64) -> i32,
+    unadvise_selection_changed: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i64) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnSelectingItemsControl {
+    vtbl: *const IAvnSelectingItemsControlVtbl,
+}
+
+unsafe impl ComInterface for IAvnSelectingItemsControl {
+    const IID: Guid = I_AVN_SELECTING_ITEMS_CONTROL_IID;
+}
+
+impl ComPtr<IAvnSelectingItemsControl> {
+    pub fn object_id(&self) -> Result<i64> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
+        unsafe {
+            let mut value: *mut IAvnStringList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_items(&self) -> Result<ComPtr<IAvnItemList>> {
+        unsafe {
+            let mut value: *mut IAvnItemList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn get_selected_index(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_index)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_index(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_index)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_selection_changed(&self, handler: &ComPtr<IAvnSelectingItemsControlSelectionChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_selection_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_selection_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_selection_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+}
+
+pub const I_AVN_TEMPLATED_CONTROL_IID: Guid = Guid { data1: 0x6F4B4BCF, data2: 0x3A54, data3: 0x55B4, data4: [0xB3, 0xD2, 0x71, 0x20, 0x4E, 0x7E, 0xCA, 0xE0] };
 
 #[repr(C)]
 struct IAvnTemplatedControlVtbl {
@@ -1808,7 +2457,7 @@ impl ComPtr<IAvnTemplatedControl> {
     }
 }
 
-pub const I_AVN_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0xBE4BCF48, data2: 0x8918, data3: 0x5BB6, data4: [0xB6, 0x50, 0xF2, 0x2B, 0xF4, 0xDB, 0x95, 0x92] };
+pub const I_AVN_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0x34EEEFE7, data2: 0xB133, data3: 0x5032, data4: [0xA6, 0xFC, 0x3E, 0x44, 0x33, 0x7E, 0x29, 0xBB] };
 
 #[repr(C)]
 struct IAvnToggleButtonVtbl {
@@ -1924,7 +2573,7 @@ impl ComPtr<IAvnToggleButton> {
     }
 }
 
-pub const I_AVN_PROGRESS_BAR_IID: Guid = Guid { data1: 0xB14ED2B8, data2: 0xD240, data3: 0x50D6, data4: [0x8A, 0x49, 0x89, 0xF1, 0xDA, 0x32, 0xFA, 0xFB] };
+pub const I_AVN_PROGRESS_BAR_IID: Guid = Guid { data1: 0x26FE7CF1, data2: 0x6AC4, data3: 0x591C, data4: [0xAA, 0xC0, 0xAB, 0x10, 0x4A, 0xAF, 0x36, 0xBE] };
 
 #[repr(C)]
 struct IAvnProgressBarVtbl {
@@ -2137,7 +2786,7 @@ impl ComPtr<IAvnProgressBar> {
     }
 }
 
-pub const I_AVN_RADIO_BUTTON_IID: Guid = Guid { data1: 0xB037B59C, data2: 0xF0AF, data3: 0x51F9, data4: [0x81, 0xAB, 0xA9, 0x84, 0xF0, 0x7A, 0xC7, 0x79] };
+pub const I_AVN_RADIO_BUTTON_IID: Guid = Guid { data1: 0x4E932105, data2: 0x0BEB, data3: 0x583E, data4: [0xB6, 0x3C, 0x1E, 0xFD, 0xBA, 0xC4, 0x50, 0xD2] };
 
 #[repr(C)]
 struct IAvnRadioButtonVtbl {
@@ -2269,7 +2918,7 @@ impl ComPtr<IAvnRadioButton> {
     }
 }
 
-pub const I_AVN_SCROLL_VIEWER_IID: Guid = Guid { data1: 0xECD1BB35, data2: 0xCA72, data3: 0x5AFF, data4: [0xB6, 0x41, 0x5B, 0x99, 0xD6, 0x32, 0xE2, 0xA9] };
+pub const I_AVN_SCROLL_VIEWER_IID: Guid = Guid { data1: 0x25C7A881, data2: 0x4D62, data3: 0x5CC5, data4: [0x83, 0x04, 0xAE, 0xF5, 0xD1, 0xDE, 0x2A, 0x4A] };
 
 #[repr(C)]
 struct IAvnScrollViewerVtbl {
@@ -2545,7 +3194,7 @@ impl ComPtr<IAvnScrollViewer> {
     }
 }
 
-pub const I_AVN_SLIDER_IID: Guid = Guid { data1: 0xA02E148C, data2: 0xC5CC, data3: 0x5909, data4: [0x88, 0xD7, 0xEB, 0x5B, 0x3D, 0xC1, 0x56, 0xE7] };
+pub const I_AVN_SLIDER_IID: Guid = Guid { data1: 0x7BE67696, data2: 0x5FA1, data3: 0x5D14, data4: [0xA3, 0x3A, 0x4D, 0x66, 0x9D, 0xE1, 0x69, 0x7E] };
 
 #[repr(C)]
 struct IAvnSliderVtbl {
@@ -2774,7 +3423,7 @@ impl ComPtr<IAvnSlider> {
     }
 }
 
-pub const I_AVN_STACK_PANEL_IID: Guid = Guid { data1: 0x5902E68B, data2: 0xBB83, data3: 0x594C, data4: [0xA8, 0x4E, 0xEE, 0x86, 0x46, 0x4C, 0x51, 0x56] };
+pub const I_AVN_STACK_PANEL_IID: Guid = Guid { data1: 0xD9F3B5D2, data2: 0x4F51, data3: 0x596F, data4: [0xAC, 0xFA, 0xBA, 0x33, 0x8A, 0x7B, 0x07, 0x84] };
 
 #[repr(C)]
 struct IAvnStackPanelVtbl {
@@ -2869,7 +3518,7 @@ impl ComPtr<IAvnStackPanel> {
     }
 }
 
-pub const I_AVN_TEXT_BLOCK_IID: Guid = Guid { data1: 0x1E377432, data2: 0x6CD6, data3: 0x5932, data4: [0x83, 0xCB, 0x8E, 0xE8, 0x50, 0x9A, 0xED, 0xF9] };
+pub const I_AVN_TEXT_BLOCK_IID: Guid = Guid { data1: 0xEAE1A4DB, data2: 0x7BD0, data3: 0x516E, data4: [0x8B, 0x54, 0xA6, 0x9A, 0x84, 0x0C, 0x4A, 0xE0] };
 
 #[repr(C)]
 struct IAvnTextBlockVtbl {
@@ -2939,7 +3588,7 @@ impl ComPtr<IAvnTextBlock> {
     }
 }
 
-pub const I_AVN_TEXT_BOX_IID: Guid = Guid { data1: 0xD0E22027, data2: 0x49E2, data3: 0x5DEA, data4: [0xAA, 0x0F, 0x4F, 0x4C, 0x1C, 0xCB, 0xC4, 0xA2] };
+pub const I_AVN_TEXT_BOX_IID: Guid = Guid { data1: 0x86D1F68F, data2: 0x000B, data3: 0x5958, data4: [0x92, 0xA1, 0xCA, 0xDD, 0x65, 0xBF, 0xA9, 0xD2] };
 
 #[repr(C)]
 struct IAvnTextBoxVtbl {
@@ -3367,7 +4016,7 @@ impl ComPtr<IAvnTextBox> {
     }
 }
 
-pub const I_AVN_TOGGLE_SWITCH_IID: Guid = Guid { data1: 0x3E0229B9, data2: 0xF560, data3: 0x54D9, data4: [0x91, 0x2F, 0xA0, 0x1B, 0x0F, 0x42, 0x78, 0xFC] };
+pub const I_AVN_TOGGLE_SWITCH_IID: Guid = Guid { data1: 0x9EAF1297, data2: 0x0406, data3: 0x517E, data4: [0xB0, 0xB1, 0xFA, 0x01, 0x91, 0xBF, 0xB3, 0x17] };
 
 #[repr(C)]
 struct IAvnToggleSwitchVtbl {
@@ -3515,7 +4164,7 @@ impl ComPtr<IAvnToggleSwitch> {
     }
 }
 
-pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0xD55F2952, data2: 0x4072, data3: 0x5D50, data4: [0xBF, 0x6E, 0x7F, 0xF8, 0x5C, 0xD1, 0x28, 0x27] };
+pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0x4CCC14B1, data2: 0x6DE1, data3: 0x573C, data4: [0x8C, 0xF7, 0x37, 0x5F, 0x72, 0x87, 0xA8, 0x68] };
 
 #[repr(C)]
 struct IAvnWindowVtbl {
@@ -3622,7 +4271,7 @@ impl ComPtr<IAvnWindow> {
     }
 }
 
-pub const I_AVN_STYLED_ELEMENT_IID: Guid = Guid { data1: 0xA5925922, data2: 0x41CB, data3: 0x564B, data4: [0xB3, 0x4B, 0xE1, 0x5E, 0x01, 0x1A, 0xE1, 0x8F] };
+pub const I_AVN_STYLED_ELEMENT_IID: Guid = Guid { data1: 0x295B6083, data2: 0xBF95, data3: 0x532A, data4: [0xA3, 0x77, 0x0D, 0x11, 0x7C, 0x50, 0x02, 0x23] };
 
 #[repr(C)]
 struct IAvnStyledElementVtbl {
@@ -3660,7 +4309,7 @@ impl ComPtr<IAvnStyledElement> {
     }
 }
 
-pub const I_AVN_CANVAS_STATICS_IID: Guid = Guid { data1: 0x81CFA309, data2: 0xCB80, data3: 0x59E0, data4: [0xA2, 0xDE, 0x0D, 0xDB, 0x3E, 0x11, 0xD2, 0x22] };
+pub const I_AVN_CANVAS_STATICS_IID: Guid = Guid { data1: 0x6B033829, data2: 0x4809, data3: 0x52E4, data4: [0x88, 0x7D, 0xA3, 0x25, 0x5C, 0x24, 0xC7, 0xEC] };
 
 #[repr(C)]
 struct IAvnCanvasStaticsVtbl {
@@ -3741,7 +4390,7 @@ impl ComPtr<IAvnCanvasStatics> {
     }
 }
 
-pub const I_AVN_DOCK_PANEL_STATICS_IID: Guid = Guid { data1: 0x92E7609B, data2: 0x3143, data3: 0x5F34, data4: [0x89, 0xEA, 0xAC, 0x65, 0x39, 0x7F, 0x2C, 0xF9] };
+pub const I_AVN_DOCK_PANEL_STATICS_IID: Guid = Guid { data1: 0x7A1B47A2, data2: 0x58A3, data3: 0x5EB9, data4: [0x82, 0xD6, 0x00, 0xA1, 0x32, 0x96, 0x70, 0xCD] };
 
 #[repr(C)]
 struct IAvnDockPanelStaticsVtbl {
@@ -3777,7 +4426,7 @@ impl ComPtr<IAvnDockPanelStatics> {
     }
 }
 
-pub const I_AVN_GRID_STATICS_IID: Guid = Guid { data1: 0xFF309765, data2: 0xB0AC, data3: 0x558D, data4: [0xBB, 0x2A, 0xE1, 0xD8, 0x72, 0xF8, 0xD7, 0x0E] };
+pub const I_AVN_GRID_STATICS_IID: Guid = Guid { data1: 0xB667CFB9, data2: 0xFF8D, data3: 0x53C2, data4: [0xA9, 0x3B, 0x07, 0xB2, 0x01, 0xBB, 0xE5, 0x48] };
 
 #[repr(C)]
 struct IAvnGridStaticsVtbl {
@@ -3873,7 +4522,7 @@ impl ComPtr<IAvnGridStatics> {
     }
 }
 
-pub const IAVN_CONTROL_FACTORY_IID: Guid = Guid { data1: 0xC11E3F2A, data2: 0x058B, data3: 0x5CEA, data4: [0xB2, 0x1A, 0xC9, 0xFA, 0x4D, 0x81, 0xEC, 0x25] };
+pub const IAVN_CONTROL_FACTORY_IID: Guid = Guid { data1: 0x805F9D56, data2: 0x0765, data3: 0x5E70, data4: [0x84, 0x61, 0x3E, 0x2F, 0x09, 0x02, 0x66, 0x94] };
 
 #[repr(C)]
 struct IAvnControlFactoryVtbl {
@@ -3885,6 +4534,8 @@ struct IAvnControlFactoryVtbl {
     create_button: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnButton) -> i32,
     create_canvas: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnCanvas) -> i32,
     create_check_box: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnCheckBox) -> i32,
+    create_combo_box: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnComboBox) -> i32,
+    create_combo_box_item: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnComboBoxItem) -> i32,
     create_content_control: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnContentControl) -> i32,
     create_control: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnControl) -> i32,
     create_decorator: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnDecorator) -> i32,
@@ -3892,10 +4543,14 @@ struct IAvnControlFactoryVtbl {
     create_expander: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnExpander) -> i32,
     create_grid: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnGrid) -> i32,
     create_headered_content_control: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnHeaderedContentControl) -> i32,
+    create_items_control: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnItemsControl) -> i32,
+    create_list_box: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnListBox) -> i32,
+    create_list_box_item: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnListBoxItem) -> i32,
     create_panel: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnPanel) -> i32,
     create_progress_bar: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnProgressBar) -> i32,
     create_radio_button: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnRadioButton) -> i32,
     create_scroll_viewer: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnScrollViewer) -> i32,
+    create_selecting_items_control: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnSelectingItemsControl) -> i32,
     create_slider: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnSlider) -> i32,
     create_stack_panel: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnStackPanel) -> i32,
     create_styled_element: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnStyledElement) -> i32,
@@ -3960,6 +4615,22 @@ impl ComPtr<IAvnControlFactory> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn create_combo_box(&self) -> Result<ComPtr<IAvnComboBox>> {
+        unsafe {
+            let mut value = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_combo_box)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn create_combo_box_item(&self) -> Result<ComPtr<IAvnComboBoxItem>> {
+        unsafe {
+            let mut value = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_combo_box_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
     pub fn create_content_control(&self) -> Result<ComPtr<IAvnContentControl>> {
         unsafe {
             let mut value = ptr::null_mut();
@@ -4016,6 +4687,30 @@ impl ComPtr<IAvnControlFactory> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn create_items_control(&self) -> Result<ComPtr<IAvnItemsControl>> {
+        unsafe {
+            let mut value = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_items_control)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn create_list_box(&self) -> Result<ComPtr<IAvnListBox>> {
+        unsafe {
+            let mut value = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_list_box)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn create_list_box_item(&self) -> Result<ComPtr<IAvnListBoxItem>> {
+        unsafe {
+            let mut value = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_list_box_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
     pub fn create_panel(&self) -> Result<ComPtr<IAvnPanel>> {
         unsafe {
             let mut value = ptr::null_mut();
@@ -4044,6 +4739,14 @@ impl ComPtr<IAvnControlFactory> {
         unsafe {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_scroll_viewer)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn create_selecting_items_control(&self) -> Result<ComPtr<IAvnSelectingItemsControl>> {
+        unsafe {
+            let mut value = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_selecting_items_control)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }

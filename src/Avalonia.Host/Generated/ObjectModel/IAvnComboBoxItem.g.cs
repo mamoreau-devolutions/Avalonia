@@ -6,23 +6,17 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("96DC871F-7A72-5193-B85E-AE0DA1EFA225")]
-public partial interface IAvnBorder : IAvnDecorator
+[Guid("F8F3A3F8-F4C8-509D-8A96-6CCDFA98A7B1")]
+public partial interface IAvnComboBoxItem : IAvnListBoxItem
 {
-    [PreserveSig]
-    int GetBackgroundSizing(out int value);
-
-    [PreserveSig]
-    int SetBackgroundSizing(int value);
-
 }
 
 [GeneratedComClass]
-public sealed partial class AvnBorder : IAvnBorder
+public sealed partial class AvnComboBoxItem : IAvnComboBoxItem
 {
-    private readonly global::Avalonia.Controls.Border _value;
+    private readonly global::Avalonia.Controls.ComboBoxItem _value;
 
-    internal AvnBorder(global::Avalonia.Controls.Border value)
+    internal AvnComboBoxItem(global::Avalonia.Controls.ComboBoxItem value)
     {
         _value = value;
         ObjectId = ProjectionRuntime.Register(value);
@@ -80,13 +74,13 @@ public sealed partial class AvnBorder : IAvnBorder
         }
     }
 
-    public int GetChild(out IAvnControl? value)
+    public int GetContent(out IAvnControl? value)
     {
         value = default!;
         try
         {
             _value.VerifyAccess();
-            value = (IAvnControl?)ProjectionRuntime.Wrap(_value.Child as global::Avalonia.AvaloniaObject);
+            value = (IAvnControl?)ProjectionRuntime.Wrap(_value.Content as global::Avalonia.AvaloniaObject);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -95,12 +89,12 @@ public sealed partial class AvnBorder : IAvnBorder
         }
     }
 
-    public int SetChild(IAvnControl? value)
+    public int SetContent(IAvnControl? value)
     {
         try
         {
             _value.VerifyAccess();
-            _value.Child = (global::Avalonia.Controls.Control)ProjectionRuntime.Unwrap(value)!;
+            _value.Content = (global::System.Object)ProjectionRuntime.Unwrap(value)!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -109,13 +103,13 @@ public sealed partial class AvnBorder : IAvnBorder
         }
     }
 
-    public int GetBackgroundSizing(out int value)
+    public int GetIsSelected(out int value)
     {
         value = default!;
         try
         {
             _value.VerifyAccess();
-            value = (int)_value.BackgroundSizing;
+            value = _value.IsSelected ? 1 : 0;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -124,12 +118,12 @@ public sealed partial class AvnBorder : IAvnBorder
         }
     }
 
-    public int SetBackgroundSizing(int value)
+    public int SetIsSelected(int value)
     {
         try
         {
             _value.VerifyAccess();
-            _value.BackgroundSizing = (global::Avalonia.Media.BackgroundSizing)value;
+            _value.IsSelected = value != 0;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

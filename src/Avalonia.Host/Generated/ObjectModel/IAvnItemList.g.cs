@@ -6,8 +6,8 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("4DE82845-9AD5-5B2A-9A64-546AFBC34E7E")]
-public partial interface IAvnControlList
+[Guid("0BCABAA8-D5B1-5D5E-A710-24A79F4705D4")]
+public partial interface IAvnItemList
 {
     [PreserveSig]
     int GetCount(out int value);
@@ -29,11 +29,11 @@ public partial interface IAvnControlList
 }
 
 [GeneratedComClass]
-public sealed partial class AvnControlList : IAvnControlList
+public sealed partial class AvnItemList : IAvnItemList
 {
-    private readonly global::Avalonia.Controls.Controls _value;
+    private readonly global::Avalonia.Controls.ItemCollection _value;
 
-    internal AvnControlList(global::Avalonia.Controls.Controls value) => _value = value;
+    internal AvnItemList(global::Avalonia.Controls.ItemCollection value) => _value = value;
 
     public int GetCount(out int value)
     {

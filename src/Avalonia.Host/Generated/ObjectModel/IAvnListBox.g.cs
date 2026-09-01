@@ -6,23 +6,19 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("96DC871F-7A72-5193-B85E-AE0DA1EFA225")]
-public partial interface IAvnBorder : IAvnDecorator
+[Guid("48E21481-06DE-5378-B6D7-A8A7C246FA64")]
+public partial interface IAvnListBox : IAvnSelectingItemsControl
 {
-    [PreserveSig]
-    int GetBackgroundSizing(out int value);
-
-    [PreserveSig]
-    int SetBackgroundSizing(int value);
-
 }
 
 [GeneratedComClass]
-public sealed partial class AvnBorder : IAvnBorder
+public sealed partial class AvnListBox : IAvnListBox
 {
-    private readonly global::Avalonia.Controls.Border _value;
+    private readonly global::Avalonia.Controls.ListBox _value;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnSelectingItemsControlSelectionChangedHandler Handler, global::System.Action Unsubscribe)> _selectionChangedSubscriptions = new();
+    private long _nextSelectionChangedSubscriptionId;
 
-    internal AvnBorder(global::Avalonia.Controls.Border value)
+    internal AvnListBox(global::Avalonia.Controls.ListBox value)
     {
         _value = value;
         ObjectId = ProjectionRuntime.Register(value);
@@ -80,13 +76,13 @@ public sealed partial class AvnBorder : IAvnBorder
         }
     }
 
-    public int GetChild(out IAvnControl? value)
+    public int GetItems(out IAvnItemList value)
     {
         value = default!;
         try
         {
             _value.VerifyAccess();
-            value = (IAvnControl?)ProjectionRuntime.Wrap(_value.Child as global::Avalonia.AvaloniaObject);
+            value = new AvnItemList(_value.Items);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -95,27 +91,13 @@ public sealed partial class AvnBorder : IAvnBorder
         }
     }
 
-    public int SetChild(IAvnControl? value)
-    {
-        try
-        {
-            _value.VerifyAccess();
-            _value.Child = (global::Avalonia.Controls.Control)ProjectionRuntime.Unwrap(value)!;
-            return global::Avalonia.Host.HResults.S_OK;
-        }
-        catch (global::System.Exception e)
-        {
-            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
-        }
-    }
-
-    public int GetBackgroundSizing(out int value)
+    public int GetSelectedIndex(out int value)
     {
         value = default!;
         try
         {
             _value.VerifyAccess();
-            value = (int)_value.BackgroundSizing;
+            value = _value.SelectedIndex;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -124,12 +106,53 @@ public sealed partial class AvnBorder : IAvnBorder
         }
     }
 
-    public int SetBackgroundSizing(int value)
+    public int SetSelectedIndex(int value)
     {
         try
         {
             _value.VerifyAccess();
-            _value.BackgroundSizing = (global::Avalonia.Media.BackgroundSizing)value;
+            _value.SelectedIndex = value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseSelectionChanged(IAvnSelectingItemsControlSelectionChangedHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            _value.VerifyAccess();
+            var callback = new global::System.EventHandler<Avalonia.Controls.SelectionChangedEventArgs>((_, _) =>
+            {
+                var hr = handler.Invoke();
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            _value.SelectionChanged += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextSelectionChangedSubscriptionId);
+            _selectionChangedSubscriptions.Add(subscriptionId, (handler, () => _value.SelectionChanged -= callback));
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseSelectionChanged(long subscriptionId)
+    {
+        try
+        {
+            _value.VerifyAccess();
+            if (!_selectionChangedSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

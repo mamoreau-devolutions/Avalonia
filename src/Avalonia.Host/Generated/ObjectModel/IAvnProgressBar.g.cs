@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("B14ED2B8-D240-50D6-8A49-89F1DA32FAFB")]
+[Guid("26FE7CF1-6AC4-591C-AAC0-AB104AAF36BE")]
 public partial interface IAvnProgressBar : IAvnRangeBase
 {
     [PreserveSig]

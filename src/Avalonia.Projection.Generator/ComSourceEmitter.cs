@@ -340,17 +340,20 @@ public static class ComSourceEmitter
         var elementKind = collection.ElementKind
             ?? throw new InvalidOperationException($"Collection '{interfaceName}' has no element kind.");
         var elementName = CSharpType(elementKind, collection.ElementInterfaceName, false);
+        var managedElementName = elementKind == MarshallingKind.ComInterface
+            ? ir.Types.Single(t => t.FullName == collection.ElementInterfaceName).ManagedFullName
+            : null;
         var readElement = elementKind switch
         {
             MarshallingKind.ComInterface =>
-                $"({elementName})ProjectionRuntime.Wrap(_value[index])!",
+                $"({elementName})ProjectionRuntime.Wrap((global::{managedElementName})_value[index]!)!",
             _ => "_value[index]",
         };
         var elementNullableSuffix = elementKind == MarshallingKind.ComInterface ? "?" : "";
         var writeElement = elementKind switch
         {
             MarshallingKind.ComInterface =>
-                $"(global::Avalonia.Controls.Control)ProjectionRuntime.Unwrap(value)!",
+                $"(global::{managedElementName})ProjectionRuntime.Unwrap(value)!",
             _ => "value",
         };
         var sb = Header(root);

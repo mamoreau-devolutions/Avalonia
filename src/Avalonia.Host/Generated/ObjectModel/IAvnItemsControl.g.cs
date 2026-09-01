@@ -6,23 +6,20 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("96DC871F-7A72-5193-B85E-AE0DA1EFA225")]
-public partial interface IAvnBorder : IAvnDecorator
+[Guid("CA4E2DA3-A2C0-5594-A793-326CDA703071")]
+public partial interface IAvnItemsControl : IAvnTemplatedControl
 {
     [PreserveSig]
-    int GetBackgroundSizing(out int value);
-
-    [PreserveSig]
-    int SetBackgroundSizing(int value);
+    int GetItems(out IAvnItemList value);
 
 }
 
 [GeneratedComClass]
-public sealed partial class AvnBorder : IAvnBorder
+public sealed partial class AvnItemsControl : IAvnItemsControl
 {
-    private readonly global::Avalonia.Controls.Border _value;
+    private readonly global::Avalonia.Controls.ItemsControl _value;
 
-    internal AvnBorder(global::Avalonia.Controls.Border value)
+    internal AvnItemsControl(global::Avalonia.Controls.ItemsControl value)
     {
         _value = value;
         ObjectId = ProjectionRuntime.Register(value);
@@ -80,56 +77,13 @@ public sealed partial class AvnBorder : IAvnBorder
         }
     }
 
-    public int GetChild(out IAvnControl? value)
+    public int GetItems(out IAvnItemList value)
     {
         value = default!;
         try
         {
             _value.VerifyAccess();
-            value = (IAvnControl?)ProjectionRuntime.Wrap(_value.Child as global::Avalonia.AvaloniaObject);
-            return global::Avalonia.Host.HResults.S_OK;
-        }
-        catch (global::System.Exception e)
-        {
-            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
-        }
-    }
-
-    public int SetChild(IAvnControl? value)
-    {
-        try
-        {
-            _value.VerifyAccess();
-            _value.Child = (global::Avalonia.Controls.Control)ProjectionRuntime.Unwrap(value)!;
-            return global::Avalonia.Host.HResults.S_OK;
-        }
-        catch (global::System.Exception e)
-        {
-            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
-        }
-    }
-
-    public int GetBackgroundSizing(out int value)
-    {
-        value = default!;
-        try
-        {
-            _value.VerifyAccess();
-            value = (int)_value.BackgroundSizing;
-            return global::Avalonia.Host.HResults.S_OK;
-        }
-        catch (global::System.Exception e)
-        {
-            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
-        }
-    }
-
-    public int SetBackgroundSizing(int value)
-    {
-        try
-        {
-            _value.VerifyAccess();
-            _value.BackgroundSizing = (global::Avalonia.Media.BackgroundSizing)value;
+            value = new AvnItemList(_value.Items);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

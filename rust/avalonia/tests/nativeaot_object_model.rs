@@ -1,6 +1,7 @@
 use avalonia::{
-    App, Button, Dock, DockPanel, ExpandDirection, Expander, Grid, Orientation, RadioButton,
-    ScrollViewer, StackPanel, TextBlock, TextBox, ThemeVariant, ToggleSwitch, Window,
+    App, Button, ComboBox, ComboBoxItem, Dock, DockPanel, ExpandDirection, Expander, Grid, ListBox,
+    ListBoxItem, Orientation, RadioButton, ScrollViewer, StackPanel, TextBlock, TextBox,
+    ThemeVariant, ToggleSwitch, Window,
 };
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -41,6 +42,10 @@ fn builders_create_a_real_window_through_nativeaot() {
     let text_changed_from_handler = text_changed.clone();
     let toggle_changed = Arc::new(AtomicBool::new(false));
     let toggle_changed_from_handler = toggle_changed.clone();
+    let combo_changed = Arc::new(AtomicBool::new(false));
+    let combo_changed_from_handler = combo_changed.clone();
+    let list_changed = Arc::new(AtomicBool::new(false));
+    let list_changed_from_handler = list_changed.clone();
     let app = App::load(host_path()).unwrap();
 
     app.run(move |context| {
@@ -99,16 +104,37 @@ fn builders_create_a_real_window_through_nativeaot() {
         assert!(expander.get_is_expanded()?);
         expander.subscribe_expanded(|_| {})?.unsubscribe()?;
 
+        let combo_box = ComboBox::new()?
+            .placeholder_text("Pick")?
+            .item(ComboBoxItem::new()?.content(TextBlock::new()?.text("First")?)?)?
+            .item(ComboBoxItem::new()?.content(TextBlock::new()?.text("Second")?)?)?
+            .on_selection_changed(move |_| {
+                combo_changed_from_handler.store(true, Ordering::SeqCst);
+            })?;
+        assert_eq!(combo_box.items()?.len()?, 2);
+        let combo_box_for_post = combo_box.clone();
+
+        let list_box = ListBox::new()?
+            .item(ListBoxItem::new()?.content(TextBlock::new()?.text("First")?)?)?
+            .item(ListBoxItem::new()?.content(TextBlock::new()?.text("Second")?)?)?
+            .on_selection_changed(move |_| {
+                list_changed_from_handler.store(true, Ordering::SeqCst);
+            })?;
+        assert_eq!(list_box.items()?.len()?, 2);
+        let list_box_for_post = list_box.clone();
+
         let panel = StackPanel::new()?
             .orientation(Orientation::Vertical)?
             .spacing(8.0)?
             .child(TextBlock::new()?.text("Hello from Rust")?)?
             .child(text_box)?
             .child(toggle)?
+            .child(combo_box)?
+            .child(list_box)?
             .child(radio_buttons)?
             .child(expander)?
             .child(button)?;
-        assert_eq!(panel.children()?.len()?, 6);
+        assert_eq!(panel.children()?.len()?, 8);
         assert_eq!(panel.get_orientation()?, Orientation::Vertical);
         assert_eq!(panel.get_spacing()?, 8.0);
 
@@ -131,6 +157,10 @@ fn builders_create_a_real_window_through_nativeaot() {
                     radio_two_for_post.set_checked(Some(true)).unwrap();
                     assert_eq!(radio_one_for_post.get_is_checked().unwrap(), Some(false));
                     assert_eq!(radio_two_for_post.get_is_checked().unwrap(), Some(true));
+                    combo_box_for_post.set_selected_index(1).unwrap();
+                    assert_eq!(combo_box_for_post.get_selected_index().unwrap(), 1);
+                    list_box_for_post.set_selected_index(1).unwrap();
+                    assert_eq!(list_box_for_post.get_selected_index().unwrap(), 1);
                     posted_from_handler.store(true, Ordering::SeqCst);
                     window.close().unwrap();
                 })
@@ -145,4 +175,6 @@ fn builders_create_a_real_window_through_nativeaot() {
     assert!(posted.load(Ordering::SeqCst));
     assert!(text_changed.load(Ordering::SeqCst));
     assert!(toggle_changed.load(Ordering::SeqCst));
+    assert!(combo_changed.load(Ordering::SeqCst));
+    assert!(list_changed.load(Ordering::SeqCst));
 }

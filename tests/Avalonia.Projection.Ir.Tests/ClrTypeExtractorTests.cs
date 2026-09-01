@@ -16,6 +16,8 @@ public class ClrTypeExtractorTests
         typeof(Control),
         typeof(ContentControl),
         typeof(HeaderedContentControl),
+        typeof(ItemsControl),
+        typeof(SelectingItemsControl),
         typeof(Decorator),
         typeof(Border),
         typeof(Panel),
@@ -32,6 +34,10 @@ public class ClrTypeExtractorTests
         typeof(RadioButton),
         typeof(ToggleSwitch),
         typeof(Expander),
+        typeof(ListBox),
+        typeof(ComboBox),
+        typeof(ListBoxItem),
+        typeof(ComboBoxItem),
         typeof(TextBox),
         typeof(ScrollViewer),
         typeof(RangeBase),
@@ -91,6 +97,10 @@ public class ClrTypeExtractorTests
         var expander = Type(ir, "IAvnExpander");
         Assert.Equal("Avalonia.Host.Com.IAvnHeaderedContentControl", expander.BaseFullName);
         Assert.Equal(2, expander.Events.Count);
+
+        var items = Type(ir, "IAvnItemsControl").Properties.Single();
+        Assert.Equal("Avalonia.Host.Com.IAvnItemList", items.InterfaceName);
+        Assert.Equal(MarshallingKind.ComInterface, items.ElementKind);
 
         var classes = Type(ir, "IAvnStyledElement").Properties.Single();
         Assert.Equal(MarshallingKind.StringUtf16, classes.ElementKind);
