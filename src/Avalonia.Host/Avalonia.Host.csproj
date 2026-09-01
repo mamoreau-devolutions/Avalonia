@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>$(AvsCurrentTargetFramework)</TargetFramework>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <IsPackable>false</IsPackable>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <PublishAot>true</PublishAot>
+    <NativeLib>Shared</NativeLib>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)GeneratedFiles</CompilerGeneratedFilesOutputPath>
+    <RootNamespace>Avalonia.Host</RootNamespace>
+    <IsAotCompatible>true</IsAotCompatible>
+    <EnableRuntimeMarshalling>true</EnableRuntimeMarshalling>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Windows\Avalonia.Win32\Avalonia.Win32.csproj" />
+    <ProjectReference Include="..\Skia\Avalonia.Skia\Avalonia.Skia.csproj" />
+    <ProjectReference Include="..\HarfBuzz\Avalonia.HarfBuzz\Avalonia.HarfBuzz.csproj" />
+    <ProjectReference Include="..\Avalonia.Themes.Fluent\Avalonia.Themes.Fluent.csproj" />
+  </ItemGroup>
+  <Import Project="..\..\build\NullableEnable.props" />
+  <Import Project="..\..\build\TrimmingEnable.props" />
+</Project>

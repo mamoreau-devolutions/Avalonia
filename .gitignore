@@ -110,6 +110,9 @@ nCrunchTemp_*
 # CodeRush
 .cr/
 
+# Rust workspace
+rust/target/
+
 # Others
 sql/
 *.Cache

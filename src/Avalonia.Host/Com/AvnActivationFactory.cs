@@ -1,0 +1,19 @@
+using System.Runtime.InteropServices.Marshalling;
+
+namespace Avalonia.Host.Com;
+
+[GeneratedComClass]
+public partial class AvnActivationFactory : IAvnActivationFactory
+{
+    public int CreateEcho(out IAvnEcho? echo)
+    {
+        echo = new AvnEcho();
+        return HResults.S_OK;
+    }
+
+    public int CreateApplication(out IAvnApplication? application)
+    {
+        application = new AvnApplication();
+        return HResults.S_OK;
+    }
+}

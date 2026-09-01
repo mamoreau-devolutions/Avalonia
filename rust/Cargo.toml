@@ -1,0 +1,3 @@
+[workspace]
+resolver = "2"
+members = ["avalonia-sys", "avalonia-bindgen"]
