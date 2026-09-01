@@ -1,4 +1,7 @@
 using System;
+using System.IO;
+using System.Linq;
+using Avalonia.Controls;
 using Avalonia.Host.Com;
 using Avalonia.Projection.Generator;
 using Avalonia.Projection.Ir;
@@ -32,4 +35,94 @@ public class ComSourceEmitterTests
         Assert.Contains("[Guid(\"6B2E8F10-4C91-4E3A-9A77-1F0C2B3A4D10\")]", factory, StringComparison.Ordinal);
         Assert.Contains("int CreateEcho(out IAvnEcho? echo);", factory, StringComparison.Ordinal);
     }
+
+    [Fact]
+    public void Emits_generalized_kernel_interfaces_wrappers_runtime_and_factory()
+    {
+        Type[] types =
+        [
+            typeof(AvaloniaObject),
+            typeof(Control),
+            typeof(ContentControl),
+            typeof(Panel),
+            typeof(Window),
+            typeof(StackPanel),
+            typeof(TextBlock),
+            typeof(Button),
+        ];
+        var ir = ClrTypeExtractor.Extract(types, AvaloniaProjectionProfiles.ObjectModelKernel);
+
+        var files = ComSourceEmitter.Emit(ir);
+
+        var button = files["IAvnButton.g.cs"];
+        Assert.Contains("public partial interface IAvnButton : IAvnContentControl", button, StringComparison.Ordinal);
+        Assert.Contains("public sealed partial class AvnButton : IAvnButton", button, StringComparison.Ordinal);
+        Assert.Contains("public int SetContent(IAvnControl? value)", button, StringComparison.Ordinal);
+        Assert.Contains("_value.Content = (global::System.Object)ProjectionRuntime.Unwrap(value)!;", button, StringComparison.Ordinal);
+
+        var window = files["IAvnWindow.g.cs"];
+        Assert.Contains("int GetTitle(out string? value);", window, StringComparison.Ordinal);
+        Assert.Contains("public int Show()", window, StringComparison.Ordinal);
+        Assert.Contains("_value.Show();", window, StringComparison.Ordinal);
+
+        var runtime = files["ProjectionRuntime.g.cs"];
+        Assert.Contains("global::Avalonia.Controls.Button typed => new AvnButton(typed)", runtime, StringComparison.Ordinal);
+        Assert.Contains("ConditionalWeakTable<global::Avalonia.AvaloniaObject, IAvnAvaloniaObject>", runtime, StringComparison.Ordinal);
+
+        var factory = files["IAvnControlFactory.g.cs"];
+        Assert.Contains("int CreateButton(out IAvnButton? value);", factory, StringComparison.Ordinal);
+        Assert.Contains("int CreateWindow(out IAvnWindow? value);", factory, StringComparison.Ordinal);
+
+        var list = files["IAvnControlList.g.cs"];
+        Assert.Contains("int GetAt(int index, out IAvnControl? value);", list, StringComparison.Ordinal);
+        Assert.Contains("int Add(IAvnControl? value);", list, StringComparison.Ordinal);
+        Assert.Contains("ProjectionRuntime.Wrap(_value[index])", list, StringComparison.Ordinal);
+
+        var roots = files["ProjectionAotRoots.g.cs"];
+        Assert.Contains("typeof(AvnButton)", roots, StringComparison.Ordinal);
+        Assert.Contains("typeof(AvnControlList)", roots, StringComparison.Ordinal);
+        Assert.Contains("typeof(AvnWindow)", roots, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Checked_in_ir_and_host_sources_match_generator()
+    {
+        Type[] types =
+        [
+            typeof(AvaloniaObject),
+            typeof(Control),
+            typeof(ContentControl),
+            typeof(Panel),
+            typeof(Window),
+            typeof(StackPanel),
+            typeof(TextBlock),
+            typeof(Button),
+        ];
+        var ir = ClrTypeExtractor.Extract(types, AvaloniaProjectionProfiles.ObjectModelKernel);
+        var root = FindRepositoryRoot();
+
+        Assert.Equal(
+            Normalize(ir.ToJson()),
+            Normalize(File.ReadAllText(Path.Combine(root, "rust", "projection.ir.json"))));
+
+        var generatedDirectory = Path.Combine(root, "src", "Avalonia.Host", "Generated", "ObjectModel");
+        foreach (var (name, source) in ComSourceEmitter.Emit(ir))
+            Assert.Equal(Normalize(source), Normalize(File.ReadAllText(Path.Combine(generatedDirectory, name))));
+    }
+
+    private static string FindRepositoryRoot()
+    {
+        for (var current = new DirectoryInfo(AppContext.BaseDirectory);
+             current is not null;
+             current = current.Parent)
+        {
+            var gitPath = Path.Combine(current.FullName, ".git");
+            if (Directory.Exists(gitPath) || File.Exists(gitPath))
+                return current.FullName;
+        }
+        throw new DirectoryNotFoundException("Could not locate repository root.");
+    }
+
+    private static string Normalize(string value) =>
+        value.Replace("\r\n", "\n", StringComparison.Ordinal).TrimEnd();
 }

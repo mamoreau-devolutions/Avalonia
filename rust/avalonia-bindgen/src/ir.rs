@@ -5,10 +5,29 @@ use serde::Deserialize;
 pub struct ProjectionIr {
     pub version: i32,
     pub source_assembly: Option<String>,
+    pub factory_iid: Option<String>,
     #[serde(default)]
     pub types: Vec<ProjectedType>,
     #[serde(default)]
+    pub enums: Vec<ProjectedEnum>,
+    #[serde(default)]
     pub skipped: Vec<SkippedMember>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ProjectedEnum {
+    pub name: String,
+    pub full_name: String,
+    #[serde(default)]
+    pub values: Vec<ProjectedEnumValue>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ProjectedEnumValue {
+    pub name: String,
+    pub value: i32,
 }
 
 #[derive(Debug, Deserialize)]
@@ -19,14 +38,20 @@ pub struct ProjectedType {
     pub kind: String,
     pub iid: Option<String>,
     pub base_full_name: Option<String>,
+    pub managed_full_name: Option<String>,
+    #[serde(default)]
+    pub is_constructible: bool,
     #[serde(default)]
     pub methods: Vec<ProjectedMethod>,
+    #[serde(default)]
+    pub properties: Vec<ProjectedProperty>,
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ProjectedMethod {
     pub name: String,
+    pub managed_name: Option<String>,
     pub return_kind: String,
     #[serde(default)]
     pub preserve_sig: bool,
@@ -36,11 +61,29 @@ pub struct ProjectedMethod {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
+pub struct ProjectedProperty {
+    pub name: String,
+    pub kind: String,
+    #[serde(default)]
+    pub can_read: bool,
+    #[serde(default)]
+    pub can_write: bool,
+    pub interface_name: Option<String>,
+    pub interface_iid: Option<String>,
+    pub element_interface_name: Option<String>,
+    pub managed_type_name: Option<String>,
+    #[serde(default)]
+    pub is_nullable: bool,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ProjectedParameter {
     pub name: String,
     pub kind: String,
     pub direction: String,
     pub interface_name: Option<String>,
+    pub managed_type_name: Option<String>,
     #[serde(default)]
     pub is_nullable: bool,
 }

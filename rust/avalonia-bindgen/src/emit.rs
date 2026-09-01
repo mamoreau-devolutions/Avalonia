@@ -1,4 +1,6 @@
-use crate::ir::{ProjectedMethod, ProjectedParameter, ProjectedType, ProjectionIr};
+use crate::ir::{
+    ProjectedMethod, ProjectedParameter, ProjectedProperty, ProjectedType, ProjectionIr,
+};
 
 pub fn emit_sys_module(ir: &ProjectionIr) -> String {
     let mut out = String::from(
@@ -6,52 +8,272 @@ pub fn emit_sys_module(ir: &ProjectionIr) -> String {
          #![allow(dead_code, non_snake_case)]\n\n\
          use crate::com::{ComInterface, ComPtr, IUnknown};\n\
          use crate::guid::Guid;\n\
-         use crate::hresult::{self, Result};\n\
+         use crate::hresult::{self, Error, Result};\n\
          use std::ffi::c_void;\n\
          use std::ptr;\n\n",
     );
-    for ty in ir.types.iter().filter(|t| t.kind == "Interface") {
-        out.push_str(&emit_interface(ty));
+    let mut emitted_collections = Vec::new();
+    for collection in ir
+        .types
+        .iter()
+        .flat_map(|t| t.properties.iter())
+        .filter(|p| p.kind == "ComCollection")
+    {
+        let name = collection
+            .interface_name
+            .as_deref()
+            .expect("collection interfaceName");
+        if !emitted_collections.iter().any(|item| *item == name) {
+            out.push_str(&emit_collection(collection));
+            out.push('\n');
+            emitted_collections.push(name);
+        }
+    }
+    for ty in ir
+        .types
+        .iter()
+        .filter(|t| t.kind == "Interface" || t.kind == "Class")
+    {
+        out.push_str(&emit_interface(ir, ty));
         out.push('\n');
+    }
+    if ir.types.iter().any(|t| t.is_constructible) {
+        out.push_str(&emit_factory(ir));
     }
     out
 }
 
-fn emit_interface(ty: &ProjectedType) -> String {
-    let mut s = String::new();
+fn emit_collection(collection: &ProjectedProperty) -> String {
+    let interface_name = simple_name(
+        collection
+            .interface_name
+            .as_deref()
+            .expect("collection interfaceName"),
+    );
+    let element_name = simple_name(
+        collection
+            .element_interface_name
+            .as_deref()
+            .expect("collection elementInterfaceName"),
+    );
+    let iid = collection
+        .interface_iid
+        .as_deref()
+        .expect("collection interfaceIid");
+    let iid_const = format!("{}_IID", to_shouty(interface_name));
+    format!(
+        "pub const {iid_const}: Guid = {iid};\n\n\
+         #[repr(C)]\n\
+         struct {interface_name}Vtbl {{\n\
+         \x20   query_interface: unsafe extern \"system\" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,\n\
+         \x20   add_ref: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+         \x20   release: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+         \x20   get_count: unsafe extern \"system\" fn(*mut {interface_name}, *mut i32) -> i32,\n\
+         \x20   get_at: unsafe extern \"system\" fn(*mut {interface_name}, i32, *mut *mut {element_name}) -> i32,\n\
+         \x20   add: unsafe extern \"system\" fn(*mut {interface_name}, *mut {element_name}) -> i32,\n\
+         \x20   remove_at: unsafe extern \"system\" fn(*mut {interface_name}, i32) -> i32,\n\
+         \x20   clear: unsafe extern \"system\" fn(*mut {interface_name}) -> i32,\n\
+         }}\n\n\
+         #[repr(C)]\n\
+         pub struct {interface_name} {{\n\
+         \x20   vtbl: *const {interface_name}Vtbl,\n\
+         }}\n\n\
+         unsafe impl ComInterface for {interface_name} {{\n\
+         \x20   const IID: Guid = {iid_const};\n\
+         }}\n\n\
+         impl ComPtr<{interface_name}> {{\n\
+         \x20   pub fn len(&self) -> Result<usize> {{\n\
+         \x20       unsafe {{\n\
+         \x20           let mut value = 0;\n\
+         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_count)(self.as_raw(), &mut value);\n\
+         \x20           hresult::check(hr).map(|_| value as usize)\n\
+         \x20       }}\n\
+         \x20   }}\n\
+         \x20   pub fn get(&self, index: usize) -> Result<ComPtr<{element_name}>> {{\n\
+         \x20       unsafe {{\n\
+         \x20           let mut value = ptr::null_mut();\n\
+         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_at)(self.as_raw(), index as i32, &mut value);\n\
+         \x20           hresult::check(hr)?;\n\
+         \x20           ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))\n\
+         \x20       }}\n\
+         \x20   }}\n\
+         \x20   pub fn add(&self, value: &ComPtr<{element_name}>) -> Result<()> {{\n\
+         \x20       unsafe {{\n\
+         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().add)(self.as_raw(), value.as_raw());\n\
+         \x20           hresult::check(hr)\n\
+         \x20       }}\n\
+         \x20   }}\n\
+         \x20   pub fn remove(&self, index: usize) -> Result<()> {{\n\
+         \x20       unsafe {{\n\
+         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().remove_at)(self.as_raw(), index as i32);\n\
+         \x20           hresult::check(hr)\n\
+         \x20       }}\n\
+         \x20   }}\n\
+         \x20   pub fn clear(&self) -> Result<()> {{\n\
+         \x20       unsafe {{\n\
+         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().clear)(self.as_raw());\n\
+         \x20           hresult::check(hr)\n\
+         \x20       }}\n\
+         \x20   }}\n\
+         }}\n",
+        iid = guid_literal(iid)
+    )
+}
+
+fn emit_interface(ir: &ProjectionIr, ty: &ProjectedType) -> String {
+    let mut out = String::new();
     let iid_const = format!("{}_IID", to_shouty(&ty.name));
     if let Some(iid) = &ty.iid {
-        s.push_str(&format!("pub const {iid_const}: Guid = {};\n\n", guid_literal(iid)));
+        out.push_str(&format!("pub const {iid_const}: Guid = {};\n\n", guid_literal(iid)));
     }
 
-    s.push_str("#[repr(C)]\n");
-    s.push_str(&format!("struct {}Vtbl {{\n", ty.name));
-    s.push_str("    query_interface: unsafe extern \"system\" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,\n");
-    s.push_str("    add_ref: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n");
-    s.push_str("    release: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n");
-    for method in &ty.methods {
-        s.push_str(&format!(
-            "    {}: unsafe extern \"system\" fn({}\n",
-            to_snake(&method.name),
-            vtbl_fn_sig(ty, method)
+    out.push_str("#[repr(C)]\n");
+    out.push_str(&format!("struct {}Vtbl {{\n", ty.name));
+    emit_iunknown_slots(&mut out);
+    if ty.kind == "Class" {
+        out.push_str(&format!(
+            "    get_object_id: unsafe extern \"system\" fn(*mut {}, *mut i64) -> i32,\n",
+            ty.name
         ));
     }
-    s.push_str("}\n\n");
+    for owner in lineage(ir, ty) {
+        for property in &owner.properties {
+            emit_property_slots(&mut out, ty, property);
+        }
+        for method in &owner.methods {
+            out.push_str(&format!(
+                "    {}: unsafe extern \"system\" fn({}) -> i32,\n",
+                to_snake(&method.name),
+                vtbl_method_args(ty, method)
+            ));
+        }
+    }
+    out.push_str("}\n\n");
 
-    s.push_str("#[repr(C)]\n");
-    s.push_str(&format!("pub struct {} {{\n    vtbl: *const {}Vtbl,\n}}\n\n", ty.name, ty.name));
-    s.push_str(&format!("unsafe impl ComInterface for {} {{\n", ty.name));
+    out.push_str("#[repr(C)]\n");
+    out.push_str(&format!(
+        "pub struct {} {{\n    vtbl: *const {}Vtbl,\n}}\n\n",
+        ty.name, ty.name
+    ));
+    out.push_str(&format!("unsafe impl ComInterface for {} {{\n", ty.name));
     if ty.iid.is_some() {
-        s.push_str(&format!("    const IID: Guid = {iid_const};\n"));
+        out.push_str(&format!("    const IID: Guid = {iid_const};\n"));
     }
-    s.push_str("}\n\n");
+    out.push_str("}\n\n");
 
-    s.push_str(&format!("impl ComPtr<{}> {{\n", ty.name));
-    for method in &ty.methods {
-        s.push_str(&emit_method(ty, method));
+    out.push_str(&format!("impl ComPtr<{}> {{\n", ty.name));
+    if ty.kind == "Class" {
+        out.push_str(
+            "    pub fn object_id(&self) -> Result<i64> {\n\
+             \x20       unsafe {\n\
+             \x20           let mut value = 0;\n\
+             \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);\n\
+             \x20           hresult::check(hr).map(|_| value)\n\
+             \x20       }\n\
+             \x20   }\n",
+        );
     }
-    s.push_str("}\n");
-    s
+    for owner in lineage(ir, ty) {
+        for property in &owner.properties {
+            out.push_str(&emit_property(ty, property));
+        }
+        for method in &owner.methods {
+            out.push_str(&emit_method(ty, method));
+        }
+    }
+    out.push_str("}\n");
+    out
+}
+
+fn emit_factory(ir: &ProjectionIr) -> String {
+    let types: Vec<_> = ir.types.iter().filter(|t| t.is_constructible).collect();
+    let iid = ir
+        .factory_iid
+        .as_deref()
+        .expect("constructible projection requires factoryIid");
+    let mut out = format!(
+        "pub const IAVN_CONTROL_FACTORY_IID: Guid = {};\n\n",
+        guid_literal(iid)
+    );
+    out.push_str("#[repr(C)]\nstruct IAvnControlFactoryVtbl {\n");
+    emit_iunknown_slots(&mut out);
+    for ty in &types {
+        out.push_str(&format!(
+            "    create_{}: unsafe extern \"system\" fn(*mut IAvnControlFactory, *mut *mut {}) -> i32,\n",
+            to_snake(interface_suffix(&ty.name)),
+            ty.name
+        ));
+    }
+    out.push_str("}\n\n#[repr(C)]\npub struct IAvnControlFactory {\n    vtbl: *const IAvnControlFactoryVtbl,\n}\n\n");
+    out.push_str("unsafe impl ComInterface for IAvnControlFactory {\n    const IID: Guid = IAVN_CONTROL_FACTORY_IID;\n}\n\n");
+    out.push_str("impl ComPtr<IAvnControlFactory> {\n");
+    for ty in types {
+        let suffix = interface_suffix(&ty.name);
+        out.push_str(&format!(
+            "    pub fn create_{}(&self) -> Result<ComPtr<{}>> {{\n\
+             \x20       unsafe {{\n\
+             \x20           let mut value = ptr::null_mut();\n\
+             \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_{})(self.as_raw(), &mut value);\n\
+             \x20           hresult::check(hr)?;\n\
+             \x20           ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))\n\
+             \x20       }}\n\
+             \x20   }}\n",
+            to_snake(suffix),
+            ty.name,
+            to_snake(suffix)
+        ));
+    }
+    out.push_str("}\n");
+    out
+}
+
+fn emit_iunknown_slots(out: &mut String) {
+    out.push_str(
+        "    query_interface: unsafe extern \"system\" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,\n\
+         \x20   add_ref: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+         \x20   release: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n",
+    );
+}
+
+fn emit_property_slots(out: &mut String, ty: &ProjectedType, property: &ProjectedProperty) {
+    if property.can_read {
+        out.push_str(&format!(
+            "    get_{}: unsafe extern \"system\" fn(*mut {}, *mut {}) -> i32,\n",
+            to_snake(&property.name),
+            ty.name,
+            rust_abi_type(&property.kind, property.interface_name.as_deref())
+        ));
+    }
+    if property.can_write {
+        out.push_str(&format!(
+            "    set_{}: unsafe extern \"system\" fn(*mut {}, {}) -> i32,\n",
+            to_snake(&property.name),
+            ty.name,
+            rust_abi_type(&property.kind, property.interface_name.as_deref())
+        ));
+    }
+}
+
+fn emit_property(ty: &ProjectedType, property: &ProjectedProperty) -> String {
+    let mut out = String::new();
+    let snake = to_snake(&property.name);
+    if property.can_read {
+        let abi_type = rust_abi_type(&property.kind, property.interface_name.as_deref());
+        out.push_str(&format!(
+            "    pub fn get_{snake}(&self) -> Result<{}> {{\n        unsafe {{\n            let mut value: {abi_type} = {};\n            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_{snake})(self.as_raw(), &mut value);\n            hresult::check(hr)?;\n            {}\n        }}\n    }}\n",
+            rust_property_type(property),
+            rust_abi_default(&property.kind),
+            rust_property_result(property)
+        ));
+    }
+    if property.can_write {
+        let (argument_type, argument_value) = rust_property_input(property);
+        out.push_str(&format!(
+            "    pub fn set_{snake}(&self, value: {argument_type}) -> Result<()> {{\n        unsafe {{\n            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_{snake})(self.as_raw(), {argument_value});\n            hresult::check(hr)\n        }}\n    }}\n"
+        ));
+    }
+    let _ = ty;
+    out
 }
 
 fn emit_method(_ty: &ProjectedType, method: &ProjectedMethod) -> String {
@@ -60,30 +282,26 @@ fn emit_method(_ty: &ProjectedType, method: &ProjectedMethod) -> String {
         .parameters
         .iter()
         .filter(|p| p.direction != "Out")
-        .map(|p| format!(", {}: {}", to_snake(&p.name), rust_in_type(p)))
+        .map(|p| format!(", {}: {}", to_snake(&p.name), rust_parameter_input_type(p)))
         .collect::<String>();
-    let out_params: Vec<_> = method.parameters.iter().filter(|p| p.direction == "Out").collect();
-
+    let out_params: Vec<_> = method
+        .parameters
+        .iter()
+        .filter(|p| p.direction == "Out")
+        .collect();
     let mut body = String::new();
-    for p in &out_params {
+    for parameter in &out_params {
         body.push_str(&format!(
-            "            let mut {} = {};\n",
-            to_snake(&p.name),
-            rust_out_default(p)
+            "            let mut {}: {} = {};\n",
+            to_snake(&parameter.name),
+            rust_abi_type(&parameter.kind, parameter.interface_name.as_deref()),
+            rust_abi_default(&parameter.kind)
         ));
     }
     let call_args = method
         .parameters
         .iter()
-        .map(|p| {
-            if p.direction == "Out" {
-                format!("&mut {}", to_snake(&p.name))
-            } else if p.kind == "StringUtf16" {
-                format!("{}.as_ptr()", to_snake(&p.name))
-            } else {
-                to_snake(&p.name)
-            }
-        })
+        .map(rust_parameter_call_value)
         .collect::<Vec<_>>()
         .join(", ");
     let extra = if call_args.is_empty() {
@@ -91,99 +309,186 @@ fn emit_method(_ty: &ProjectedType, method: &ProjectedMethod) -> String {
     } else {
         format!(", {call_args}")
     };
-
     body.push_str(&format!(
         "            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().{snake})(self.as_raw(){extra});\n"
     ));
-
-    let ret = if out_params.len() == 1 {
-        format!("hresult::check(hr).map(|_| {})", to_snake(&out_params[0].name))
-    } else if out_params.is_empty() {
+    let result = if out_params.is_empty() {
         "hresult::check(hr)".to_string()
     } else {
-        let names = out_params
+        let values = out_params
             .iter()
             .map(|p| to_snake(&p.name))
-            .collect::<Vec<_>>()
-            .join(", ");
-        format!("hresult::check(hr).map(|_| ({names}))")
+            .collect::<Vec<_>>();
+        let value = if values.len() == 1 {
+            values[0].clone()
+        } else {
+            format!("({})", values.join(", "))
+        };
+        format!("hresult::check(hr).map(|_| {value})")
     };
-
     format!(
-        "    pub fn {snake}(&self{rust_args}) -> Result<{}> {{\n        unsafe {{\n{body}            {ret}\n        }}\n    }}\n",
-        rust_result_type(&out_params),
+        "    pub fn {snake}(&self{rust_args}) -> Result<{}> {{\n        unsafe {{\n{body}            {result}\n        }}\n    }}\n",
+        rust_method_result_type(&out_params)
     )
 }
 
-fn vtbl_fn_sig(ty: &ProjectedType, method: &ProjectedMethod) -> String {
+fn vtbl_method_args(ty: &ProjectedType, method: &ProjectedMethod) -> String {
     let mut args = vec![format!("*mut {}", ty.name)];
-    for p in &method.parameters {
-        args.push(vtbl_param_ty(p));
-    }
-    format!("{}) -> i32,\n", args.join(", "))
+    args.extend(method.parameters.iter().map(|p| {
+        let abi = rust_abi_type(&p.kind, p.interface_name.as_deref());
+        if p.direction == "Out" {
+            format!("*mut {abi}")
+        } else {
+            abi
+        }
+    }));
+    args.join(", ")
 }
 
-fn vtbl_param_ty(p: &ProjectedParameter) -> String {
-    let inner = match p.kind.as_str() {
-        "I32" => "i32",
-        "I64" => "i64",
-        "F32" => "f32",
-        "F64" => "f64",
-        "Bool" => "i32",
-        "StringUtf16" => "*mut u16",
-        "ComInterface" => "*mut c_void",
-        _ => "c_void",
-    };
-    if p.direction == "Out" {
-        format!("*mut {inner}")
-    } else if p.kind == "StringUtf16" {
-        "*const u16".into()
-    } else {
-        inner.into()
+fn lineage<'a>(ir: &'a ProjectionIr, ty: &'a ProjectedType) -> Vec<&'a ProjectedType> {
+    let mut result = vec![ty];
+    let mut current = ty;
+    while let Some(base) = &current.base_full_name {
+        current = ir
+            .types
+            .iter()
+            .find(|candidate| &candidate.full_name == base)
+            .expect("base type must be present in projection IR");
+        result.push(current);
+    }
+    result.reverse();
+    result
+}
+
+fn rust_abi_type(kind: &str, interface_name: Option<&str>) -> String {
+    match kind {
+        "I32" | "Bool" => "i32".into(),
+        "I64" => "i64".into(),
+        "F32" => "f32".into(),
+        "F64" => "f64".into(),
+        "StringUtf16" => "*mut u16".into(),
+        "ComInterface" | "ComCollection" => {
+            format!("*mut {}", simple_name(interface_name.expect("interfaceName")))
+        }
+        _ => "c_void".into(),
     }
 }
 
-fn rust_in_type(p: &ProjectedParameter) -> &'static str {
-    match p.kind.as_str() {
-        "I32" => "i32",
-        "I64" => "i64",
-        "F32" => "f32",
-        "F64" => "f64",
-        "Bool" => "bool",
-        "StringUtf16" => "&[u16]",
-        "ComInterface" => "*mut c_void",
-        _ => "()",
-    }
-}
-
-fn rust_out_default(p: &ProjectedParameter) -> &'static str {
-    match p.kind.as_str() {
-        "I32" | "I64" | "F32" | "F64" => "0",
+fn rust_abi_default(kind: &str) -> &'static str {
+    match kind {
+        "F32" | "F64" => "0.0",
+        "I32" | "I64" | "Bool" => "0",
         _ => "ptr::null_mut()",
     }
 }
 
-fn rust_result_type(out_params: &[&ProjectedParameter]) -> String {
-    match out_params.len() {
-        0 => "()".into(),
-        1 => rust_out_ty(out_params[0]).into(),
-        _ => format!(
-            "({})",
-            out_params.iter().map(|p| rust_out_ty(p)).collect::<Vec<_>>().join(", ")
-        ),
+fn rust_property_type(property: &ProjectedProperty) -> String {
+    match property.kind.as_str() {
+        "I32" => "i32".into(),
+        "I64" => "i64".into(),
+        "F32" => "f32".into(),
+        "F64" => "f64".into(),
+        "Bool" => "bool".into(),
+        "StringUtf16" => "*mut u16".into(),
+        "ComInterface" | "ComCollection" => {
+            let ty = simple_name(property.interface_name.as_deref().expect("interfaceName"));
+            if property.is_nullable {
+                format!("Option<ComPtr<{ty}>>")
+            } else {
+                format!("ComPtr<{ty}>")
+            }
+        }
+        _ => "()".into(),
     }
 }
 
-fn rust_out_ty(p: &ProjectedParameter) -> &'static str {
-    match p.kind.as_str() {
-        "I32" => "i32",
-        "I64" => "i64",
-        "F32" => "f32",
-        "F64" => "f64",
-        "Bool" => "bool",
-        "StringUtf16" => "*mut u16",
-        "ComInterface" => "*mut c_void",
-        _ => "()",
+fn rust_property_result(property: &ProjectedProperty) -> String {
+    match property.kind.as_str() {
+        "Bool" => "Ok(value != 0)".into(),
+        "ComInterface" | "ComCollection" if property.is_nullable => {
+            "Ok(ComPtr::from_raw(value))".into()
+        }
+        "ComInterface" | "ComCollection" => {
+            "ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))".into()
+        }
+        _ => "Ok(value)".into(),
+    }
+}
+
+fn rust_property_input(property: &ProjectedProperty) -> (String, String) {
+    match property.kind.as_str() {
+        "Bool" => ("bool".into(), "i32::from(value)".into()),
+        "StringUtf16" if property.is_nullable => (
+            "Option<&[u16]>".into(),
+            "value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut())".into(),
+        ),
+        "StringUtf16" => ("&[u16]".into(), "value.as_ptr().cast_mut()".into()),
+        "ComInterface" | "ComCollection" if property.is_nullable => {
+            let ty = simple_name(property.interface_name.as_deref().expect("interfaceName"));
+            (
+                format!("Option<&ComPtr<{ty}>>"),
+                "value.map_or(ptr::null_mut(), ComPtr::as_raw)".into(),
+            )
+        }
+        "ComInterface" | "ComCollection" => {
+            let ty = simple_name(property.interface_name.as_deref().expect("interfaceName"));
+            (format!("&ComPtr<{ty}>"), "value.as_raw()".into())
+        }
+        _ => (rust_property_type(property), "value".into()),
+    }
+}
+
+fn rust_parameter_input_type(parameter: &ProjectedParameter) -> String {
+    match parameter.kind.as_str() {
+        "Bool" => "bool".into(),
+        "StringUtf16" if parameter.is_nullable => "Option<&[u16]>".into(),
+        "StringUtf16" => "&[u16]".into(),
+        "ComInterface" if parameter.is_nullable => format!(
+            "Option<&ComPtr<{}>>",
+            simple_name(parameter.interface_name.as_deref().expect("interfaceName"))
+        ),
+        "ComInterface" => format!(
+            "&ComPtr<{}>",
+            simple_name(parameter.interface_name.as_deref().expect("interfaceName"))
+        ),
+        _ => rust_abi_type(&parameter.kind, parameter.interface_name.as_deref()),
+    }
+}
+
+fn rust_parameter_call_value(parameter: &ProjectedParameter) -> String {
+    let name = to_snake(&parameter.name);
+    if parameter.direction == "Out" {
+        return format!("&mut {name}");
+    }
+    match parameter.kind.as_str() {
+        "Bool" => format!("i32::from({name})"),
+        "StringUtf16" if parameter.is_nullable => {
+            format!("{name}.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut())")
+        }
+        "StringUtf16" => format!("{name}.as_ptr().cast_mut()"),
+        "ComInterface" if parameter.is_nullable => {
+            format!("{name}.map_or(ptr::null_mut(), ComPtr::as_raw)")
+        }
+        "ComInterface" => format!("{name}.as_raw()"),
+        _ => name,
+    }
+}
+
+fn rust_method_result_type(parameters: &[&ProjectedParameter]) -> String {
+    match parameters.len() {
+        0 => "()".into(),
+        1 => rust_abi_type(
+            &parameters[0].kind,
+            parameters[0].interface_name.as_deref(),
+        ),
+        _ => format!(
+            "({})",
+            parameters
+                .iter()
+                .map(|p| rust_abi_type(&p.kind, p.interface_name.as_deref()))
+                .collect::<Vec<_>>()
+                .join(", ")
+        ),
     }
 }
 
@@ -205,16 +510,24 @@ fn guid_literal(iid: &str) -> String {
     )
 }
 
+fn interface_suffix(name: &str) -> &str {
+    name.strip_prefix("IAvn").unwrap_or(name)
+}
+
+fn simple_name(full_name: &str) -> &str {
+    full_name.rsplit('.').next().unwrap_or(full_name)
+}
+
 fn to_snake(name: &str) -> String {
     let mut out = String::new();
-    for (i, c) in name.chars().enumerate() {
-        if c.is_uppercase() {
-            if i > 0 {
+    for (index, character) in name.chars().enumerate() {
+        if character.is_uppercase() {
+            if index > 0 {
                 out.push('_');
             }
-            out.extend(c.to_lowercase());
+            out.extend(character.to_lowercase());
         } else {
-            out.push(c);
+            out.push(character);
         }
     }
     out

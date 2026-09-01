@@ -7,6 +7,8 @@ public sealed class ProjectedType
     public required ProjectedTypeKind Kind { get; init; }
     public string? Iid { get; init; }
     public string? BaseFullName { get; init; }
+    public string? ManagedFullName { get; init; }
+    public bool IsConstructible { get; init; }
     public IReadOnlyList<ProjectedMethod> Methods { get; init; } = [];
     public IReadOnlyList<ProjectedProperty> Properties { get; init; } = [];
 }
@@ -18,4 +20,8 @@ public sealed class ProjectedProperty
     public bool CanRead { get; init; }
     public bool CanWrite { get; init; }
     public string? InterfaceName { get; init; }
+    public string? InterfaceIid { get; init; }
+    public string? ElementInterfaceName { get; init; }
+    public string? ManagedTypeName { get; init; }
+    public bool IsNullable { get; init; }
 }

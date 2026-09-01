@@ -14,6 +14,7 @@ public enum MarshallingKind
     Bool,
     StringUtf16,
     ComInterface,
+    ComCollection,
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]

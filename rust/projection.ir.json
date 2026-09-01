@@ -1,0 +1,734 @@
+{
+  "version": 2,
+  "sourceAssembly": "Avalonia.Base,Avalonia.Controls",
+  "factoryIid": "2B245C89-D703-54E1-914F-58683EFFD2C8",
+  "types": [
+    {
+      "name": "IAvnAvaloniaObject",
+      "fullName": "Avalonia.Host.Com.IAvnAvaloniaObject",
+      "kind": "Class",
+      "iid": "57D5FB2B-ED86-525C-B65D-498A84C75AFA",
+      "managedFullName": "Avalonia.AvaloniaObject",
+      "isConstructible": true,
+      "methods": [],
+      "properties": []
+    },
+    {
+      "name": "IAvnButton",
+      "fullName": "Avalonia.Host.Com.IAvnButton",
+      "kind": "Class",
+      "iid": "0E740E4A-A102-5ADB-A63F-8022BA7EBF9D",
+      "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
+      "managedFullName": "Avalonia.Controls.Button",
+      "isConstructible": true,
+      "methods": [],
+      "properties": []
+    },
+    {
+      "name": "IAvnContentControl",
+      "fullName": "Avalonia.Host.Com.IAvnContentControl",
+      "kind": "Class",
+      "iid": "503C621A-9937-5F82-B580-0D72D6781EE8",
+      "baseFullName": "Avalonia.Host.Com.IAvnControl",
+      "managedFullName": "Avalonia.Controls.ContentControl",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "Content",
+          "kind": "ComInterface",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnControl",
+          "managedTypeName": "System.Object",
+          "isNullable": true
+        }
+      ]
+    },
+    {
+      "name": "IAvnControl",
+      "fullName": "Avalonia.Host.Com.IAvnControl",
+      "kind": "Class",
+      "iid": "2030D5A1-E324-559C-98BD-99804D622615",
+      "baseFullName": "Avalonia.Host.Com.IAvnAvaloniaObject",
+      "managedFullName": "Avalonia.Controls.Control",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "IsEnabled",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        }
+      ]
+    },
+    {
+      "name": "IAvnPanel",
+      "fullName": "Avalonia.Host.Com.IAvnPanel",
+      "kind": "Class",
+      "iid": "1BDD67C1-5AB4-5AC5-A865-A68476A4227B",
+      "baseFullName": "Avalonia.Host.Com.IAvnControl",
+      "managedFullName": "Avalonia.Controls.Panel",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "Children",
+          "kind": "ComCollection",
+          "canRead": true,
+          "canWrite": false,
+          "interfaceName": "Avalonia.Host.Com.IAvnControlList",
+          "interfaceIid": "4CBDF266-1DCD-58C5-B1E5-AE74CF5B422A",
+          "elementInterfaceName": "Avalonia.Host.Com.IAvnControl",
+          "managedTypeName": "Avalonia.Controls.Controls",
+          "isNullable": false
+        }
+      ]
+    },
+    {
+      "name": "IAvnStackPanel",
+      "fullName": "Avalonia.Host.Com.IAvnStackPanel",
+      "kind": "Class",
+      "iid": "8B8C126D-9D75-5542-83A3-A7224D3C0C6D",
+      "baseFullName": "Avalonia.Host.Com.IAvnPanel",
+      "managedFullName": "Avalonia.Controls.StackPanel",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "Spacing",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "Orientation",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "managedTypeName": "Avalonia.Layout.Orientation",
+          "isNullable": false
+        }
+      ]
+    },
+    {
+      "name": "IAvnTextBlock",
+      "fullName": "Avalonia.Host.Com.IAvnTextBlock",
+      "kind": "Class",
+      "iid": "EB7ECAEC-C3EB-5A23-850C-28B7A5CA679B",
+      "baseFullName": "Avalonia.Host.Com.IAvnControl",
+      "managedFullName": "Avalonia.Controls.TextBlock",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "Text",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "managedTypeName": "System.String",
+          "isNullable": true
+        }
+      ]
+    },
+    {
+      "name": "IAvnWindow",
+      "fullName": "Avalonia.Host.Com.IAvnWindow",
+      "kind": "Class",
+      "iid": "178A1A08-F7D2-5383-A85F-53159CE728B1",
+      "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
+      "managedFullName": "Avalonia.Controls.Window",
+      "isConstructible": true,
+      "methods": [
+        {
+          "name": "Close",
+          "managedName": "Close",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": []
+        },
+        {
+          "name": "Show",
+          "managedName": "Show",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": []
+        },
+        {
+          "name": "ShowWithWindow",
+          "managedName": "Show",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": [
+            {
+              "name": "owner",
+              "kind": "ComInterface",
+              "direction": "In",
+              "interfaceName": "Avalonia.Host.Com.IAvnWindow",
+              "managedTypeName": "Avalonia.Controls.Window",
+              "isNullable": false
+            }
+          ]
+        }
+      ],
+      "properties": [
+        {
+          "name": "Title",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "managedTypeName": "System.String",
+          "isNullable": true
+        }
+      ]
+    }
+  ],
+  "enums": [
+    {
+      "name": "Orientation",
+      "fullName": "Avalonia.Layout.Orientation",
+      "values": [
+        {
+          "name": "Horizontal",
+          "value": 0
+        },
+        {
+          "name": "Vertical",
+          "value": 1
+        }
+      ]
+    }
+  ],
+  "skipped": [
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "Item",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "Item",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "Dispatcher",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "CheckAccess()",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "VerifyAccess()",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "ClearValue(AvaloniaProperty)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "ClearValue(AvaloniaProperty\u00601)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "ClearValue(StyledProperty\u00601)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "ClearValue(DirectPropertyBase\u00601)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "Equals(Object)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "GetHashCode()",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "GetValue(AvaloniaProperty)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "GetValue(StyledProperty\u00601)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "GetValue(DirectPropertyBase\u00601)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "GetBaseValue(StyledProperty\u00601)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "IsAnimating(AvaloniaProperty)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "IsSet(AvaloniaProperty)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "SetValue(AvaloniaProperty, Object, BindingPriority)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "SetValue(StyledProperty\u00601, T, BindingPriority)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "SetValue(DirectPropertyBase\u00601, T)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "SetCurrentValue(AvaloniaProperty, Object)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "SetCurrentValue(StyledProperty\u00601, T)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "Bind(AvaloniaProperty, BindingBase)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "Bind(AvaloniaProperty, IObservable\u00601, BindingPriority)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "Bind(StyledProperty\u00601, IObservable\u00601, BindingPriority)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "Bind(StyledProperty\u00601, IObservable\u00601, BindingPriority)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "Bind(StyledProperty\u00601, IObservable\u00601, BindingPriority)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "Bind(DirectPropertyBase\u00601, IObservable\u00601)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "Bind(DirectPropertyBase\u00601, IObservable\u00601)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "Bind(DirectPropertyBase\u00601, IObservable\u00601)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "CoerceValue(AvaloniaProperty)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Button",
+      "member": "ClickMode",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Button",
+      "member": "Command",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Button",
+      "member": "HotKey",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Button",
+      "member": "CommandParameter",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Button",
+      "member": "IsDefault",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Button",
+      "member": "IsCancel",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Button",
+      "member": "IsPressed",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Button",
+      "member": "Flyout",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.ContentControl",
+      "member": "ContentTemplate",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.ContentControl",
+      "member": "Presenter",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.ContentControl",
+      "member": "HorizontalContentAlignment",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.ContentControl",
+      "member": "VerticalContentAlignment",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Control",
+      "member": "FocusAdorner",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Control",
+      "member": "DataTemplates",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Control",
+      "member": "ContextMenu",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Control",
+      "member": "ContextFlyout",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Control",
+      "member": "IsLoaded",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Control",
+      "member": "Tag",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Panel",
+      "member": "Background",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Panel",
+      "member": "IsItemsHost",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Panel",
+      "member": "Render(DrawingContext)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.StackPanel",
+      "member": "AreHorizontalSnapPointsRegular",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.StackPanel",
+      "member": "AreVerticalSnapPointsRegular",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.StackPanel",
+      "member": "GetIrregularSnapPoints(Orientation, SnapPointsAlignment)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.StackPanel",
+      "member": "GetRegularSnapPoints(Orientation, SnapPointsAlignment, Double\u0026)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TextBlock",
+      "member": "TextLayout",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TextBlock",
+      "member": "Padding",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TextBlock",
+      "member": "Background",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TextBlock",
+      "member": "FontFamily",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TextBlock",
+      "member": "FontSize",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TextBlock",
+      "member": "FontStyle",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TextBlock",
+      "member": "FontWeight",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TextBlock",
+      "member": "FontStretch",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TextBlock",
+      "member": "Foreground",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TextBlock",
+      "member": "LineHeight",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TextBlock",
+      "member": "LineSpacing",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TextBlock",
+      "member": "LetterSpacing",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TextBlock",
+      "member": "MaxLines",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TextBlock",
+      "member": "TextWrapping",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TextBlock",
+      "member": "TextTrimming",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TextBlock",
+      "member": "TextAlignment",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TextBlock",
+      "member": "TextDecorations",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TextBlock",
+      "member": "FontFeatures",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TextBlock",
+      "member": "Inlines",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TextBlock",
+      "member": "BaselineOffset",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TextBlock",
+      "member": "Render(DrawingContext)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "PlatformImpl",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "OwnedWindows",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "SizeToContent",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "ExtendClientAreaToDecorationsHint",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "ExtendClientAreaTitleBarHeightHint",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "IsExtendedIntoWindowDecorations",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "WindowDecorationMargin",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "OffScreenMargin",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "WindowDecorations",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "WindowDecorationsTheme",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "SystemDecorations",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "ShowActivated",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "ShowInTaskbar",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "ClosingBehavior",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "WindowState",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "CanResize",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "CanMinimize",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "CanMaximize",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "Icon",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "WindowStartupLocation",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "Position",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "IsDialog",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "BeginMoveDrag(PointerPressedEventArgs)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "BeginResizeDrag(WindowEdge, PointerPressedEventArgs)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "Close(Object)",
+      "reason": "Parameter \u0027dialogResult\u0027: Type \u0027System.Object\u0027 is not marshallable"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "Hide()",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "ShowDialog(Window)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "ShowDialog(Window)",
+      "reason": "Not included by projection policy"
+    }
+  ]
+}

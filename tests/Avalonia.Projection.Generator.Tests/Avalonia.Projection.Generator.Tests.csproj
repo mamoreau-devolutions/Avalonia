@@ -9,6 +9,7 @@
     <ProjectReference Include="..\..\src\Avalonia.Projection.Generator\Avalonia.Projection.Generator.csproj" />
     <ProjectReference Include="..\..\src\Avalonia.Projection.Ir\Avalonia.Projection.Ir.csproj" />
     <ProjectReference Include="..\..\src\Avalonia.Host\Avalonia.Host.csproj" />
+    <ProjectReference Include="..\..\src\Avalonia.Controls\Avalonia.Controls.csproj" />
   </ItemGroup>
   <Import Project="..\..\build\UnitTests.NetCore.targets" />
   <Import Project="..\..\build\XUnit.props" />

@@ -9,6 +9,22 @@ public static class ComSourceEmitter
         var files = new Dictionary<string, string>(StringComparer.Ordinal);
         foreach (var type in ir.Types.Where(t => t.Kind == ProjectedTypeKind.Interface))
             files[type.Name + ".g.cs"] = EmitInterface(type);
+        foreach (var type in ir.Types.Where(t => t.Kind == ProjectedTypeKind.Class))
+            files[type.Name + ".g.cs"] = EmitClass(ir, type);
+        if (ir.Types.Any(t => t.Kind == ProjectedTypeKind.Class))
+        {
+            foreach (var collection in ir.Types
+                         .SelectMany(t => t.Properties)
+                         .Where(p => p.Kind == MarshallingKind.ComCollection)
+                         .GroupBy(p => p.InterfaceName, StringComparer.Ordinal)
+                         .Select(g => g.First()))
+            {
+                files[SimpleName(collection.InterfaceName!) + ".g.cs"] = EmitCollection(ir, collection);
+            }
+            files["ProjectionRuntime.g.cs"] = EmitRuntime(ir);
+            files["IAvnControlFactory.g.cs"] = EmitFactory(ir);
+            files["ProjectionAotRoots.g.cs"] = EmitAotRoots(ir);
+        }
         return files;
     }
 
@@ -68,6 +84,416 @@ public static class ComSourceEmitter
         return sb.ToString();
     }
 
+    public static string EmitClass(ProjectionIr ir, ProjectedType type)
+    {
+        var sb = Header(type);
+        var bases = type.BaseFullName is { } b ? $" : {SimpleName(b)}" : "";
+        sb.AppendLine("[GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]");
+        sb.AppendLine($"[Guid(\"{type.Iid}\")]");
+        sb.AppendLine($"public partial interface {type.Name}{bases}");
+        sb.AppendLine("{");
+        if (type.BaseFullName is null)
+        {
+            sb.AppendLine("    [PreserveSig]");
+            sb.AppendLine("    int GetObjectId(out long value);");
+            sb.AppendLine();
+        }
+        foreach (var property in type.Properties)
+            EmitInterfaceProperty(sb, property);
+        foreach (var method in type.Methods)
+            EmitInterfaceMethod(sb, method);
+        sb.AppendLine("}");
+        sb.AppendLine();
+
+        var wrapperName = type.Name[1..];
+        sb.AppendLine("[GeneratedComClass]");
+        sb.AppendLine($"public sealed partial class {wrapperName} : {type.Name}");
+        sb.AppendLine("{");
+        sb.AppendLine($"    private readonly global::{type.ManagedFullName} _value;");
+        sb.AppendLine();
+        sb.AppendLine($"    internal {wrapperName}(global::{type.ManagedFullName} value)");
+        sb.AppendLine("    {");
+        sb.AppendLine("        _value = value;");
+        sb.AppendLine("        ObjectId = ProjectionRuntime.Register(value);");
+        sb.AppendLine("    }");
+        sb.AppendLine();
+        sb.AppendLine("    private long ObjectId { get; }");
+        sb.AppendLine();
+        sb.AppendLine("    public int GetObjectId(out long value)");
+        sb.AppendLine("    {");
+        sb.AppendLine("        value = ObjectId;");
+        sb.AppendLine("        return global::Avalonia.Host.HResults.S_OK;");
+        sb.AppendLine("    }");
+
+        foreach (var projected in Lineage(ir, type))
+        {
+            foreach (var property in projected.Properties)
+                EmitImplementationProperty(sb, property);
+            foreach (var method in projected.Methods)
+                EmitImplementationMethod(sb, method);
+        }
+
+        sb.AppendLine("}");
+        return sb.ToString();
+    }
+
+    public static string EmitRuntime(ProjectionIr ir)
+    {
+        var classes = ir.Types
+            .Where(t => t.Kind == ProjectedTypeKind.Class)
+            .OrderByDescending(t => InheritanceDepth(ir, t))
+            .ThenBy(t => t.ManagedFullName, StringComparer.Ordinal)
+            .ToArray();
+        var root = classes.Single(t => t.BaseFullName is null);
+        var sb = Header(root);
+        sb.AppendLine("internal static class ProjectionRuntime");
+        sb.AppendLine("{");
+        sb.AppendLine("    private static long s_nextId;");
+        sb.AppendLine($"    private static readonly global::System.Runtime.CompilerServices.ConditionalWeakTable<global::Avalonia.AvaloniaObject, {root.Name}> s_wrappers = new();");
+        sb.AppendLine("    private static readonly global::System.Collections.Concurrent.ConcurrentDictionary<long, global::System.WeakReference<global::Avalonia.AvaloniaObject>> s_objects = new();");
+        sb.AppendLine();
+        sb.AppendLine("    internal static long Register(global::Avalonia.AvaloniaObject value)");
+        sb.AppendLine("    {");
+        sb.AppendLine("        var id = global::System.Threading.Interlocked.Increment(ref s_nextId);");
+        sb.AppendLine("        s_objects[id] = new(value);");
+        sb.AppendLine("        return id;");
+        sb.AppendLine("    }");
+        sb.AppendLine();
+        sb.AppendLine($"    internal static {root.Name}? Wrap(global::Avalonia.AvaloniaObject? value) =>");
+        sb.AppendLine("        value is null ? null : s_wrappers.GetValue(value, CreateWrapper);");
+        sb.AppendLine();
+        sb.AppendLine($"    internal static global::Avalonia.AvaloniaObject? Unwrap({root.Name}? value)");
+        sb.AppendLine("    {");
+        sb.AppendLine("        if (value is null)");
+        sb.AppendLine("            return null;");
+        sb.AppendLine("        var hr = value.GetObjectId(out var id);");
+        sb.AppendLine("        if (hr < 0)");
+        sb.AppendLine("            global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);");
+        sb.AppendLine("        return s_objects.TryGetValue(id, out var weak) && weak.TryGetTarget(out var result)");
+        sb.AppendLine("            ? result");
+        sb.AppendLine("            : throw new global::System.ObjectDisposedException($\"Projected Avalonia object {id}\");");
+        sb.AppendLine("    }");
+        sb.AppendLine();
+        sb.AppendLine($"    private static {root.Name} CreateWrapper(global::Avalonia.AvaloniaObject value) => value switch");
+        sb.AppendLine("    {");
+        foreach (var type in classes)
+            sb.AppendLine($"        global::{type.ManagedFullName} typed => new {type.Name[1..]}(typed),");
+        sb.AppendLine("        _ => throw new global::System.NotSupportedException($\"Type '{value.GetType().FullName}' is not in the projection IR\"),");
+        sb.AppendLine("    };");
+        sb.AppendLine("}");
+        return sb.ToString();
+    }
+
+    public static string EmitFactory(ProjectionIr ir)
+    {
+        var classes = ir.Types
+            .Where(t => t.Kind == ProjectedTypeKind.Class && t.IsConstructible)
+            .OrderBy(t => t.FullName, StringComparer.Ordinal)
+            .ToArray();
+        var ns = NamespaceOf(classes[0].FullName)!;
+        var factoryFullName = $"{ns}.IAvnControlFactory";
+        var sb = Header(classes[0]);
+        sb.AppendLine("[GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]");
+        sb.AppendLine($"[Guid(\"{ir.FactoryIid ?? ClrTypeExtractor.CreateDeterministicIid(factoryFullName)}\")]");
+        sb.AppendLine("public partial interface IAvnControlFactory");
+        sb.AppendLine("{");
+        foreach (var type in classes)
+        {
+            sb.AppendLine("    [PreserveSig]");
+            sb.AppendLine($"    int Create{type.Name[4..]}(out {type.Name}? value);");
+            sb.AppendLine();
+        }
+        sb.AppendLine("}");
+        sb.AppendLine();
+        sb.AppendLine("[GeneratedComClass]");
+        sb.AppendLine("public sealed partial class AvnControlFactory : IAvnControlFactory");
+        sb.AppendLine("{");
+        foreach (var type in classes)
+        {
+            var shortName = type.Name[4..];
+            sb.AppendLine($"    public int Create{shortName}(out {type.Name}? value)");
+            sb.AppendLine("    {");
+            sb.AppendLine("        value = null;");
+            sb.AppendLine("        try");
+            sb.AppendLine("        {");
+            sb.AppendLine("            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();");
+            sb.AppendLine($"            value = ({type.Name})ProjectionRuntime.Wrap(new global::{type.ManagedFullName}())!;");
+            sb.AppendLine("            return global::Avalonia.Host.HResults.S_OK;");
+            sb.AppendLine("        }");
+            sb.AppendLine("        catch (global::System.Exception e)");
+            sb.AppendLine("        {");
+            sb.AppendLine("            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);");
+            sb.AppendLine("        }");
+            sb.AppendLine("    }");
+            sb.AppendLine();
+        }
+        sb.AppendLine("}");
+        return sb.ToString();
+    }
+
+    public static string EmitAotRoots(ProjectionIr ir)
+    {
+        var classes = ir.Types
+            .Where(t => t.Kind == ProjectedTypeKind.Class)
+            .OrderBy(t => t.FullName, StringComparer.Ordinal)
+            .ToArray();
+        var first = classes.First();
+        var sb = Header(first);
+        sb.AppendLine("internal static class ProjectionAotRoots");
+        sb.AppendLine("{");
+        sb.AppendLine("    [global::System.Diagnostics.CodeAnalysis.DynamicDependency(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All, typeof(AvnControlFactory))]");
+        foreach (var collection in ir.Types
+                     .SelectMany(t => t.Properties)
+                     .Where(p => p.Kind == MarshallingKind.ComCollection)
+                     .Select(p => SimpleName(p.InterfaceName!)[1..])
+                     .Distinct(StringComparer.Ordinal)
+                     .OrderBy(n => n, StringComparer.Ordinal))
+        {
+            sb.AppendLine($"    [global::System.Diagnostics.CodeAnalysis.DynamicDependency(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All, typeof({collection}))]");
+        }
+        foreach (var type in classes)
+            sb.AppendLine($"    [global::System.Diagnostics.CodeAnalysis.DynamicDependency(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All, typeof({type.Name[1..]}))]");
+        sb.AppendLine("    internal static void Preserve() { }");
+        sb.AppendLine("}");
+        return sb.ToString();
+    }
+
+    public static string EmitCollection(ProjectionIr ir, ProjectedProperty collection)
+    {
+        var root = ir.Types.Single(t => t.Kind == ProjectedTypeKind.Class && t.BaseFullName is null);
+        var interfaceName = SimpleName(collection.InterfaceName!);
+        var className = interfaceName[1..];
+        var elementName = SimpleName(collection.ElementInterfaceName!);
+        var sb = Header(root);
+        sb.AppendLine("[GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]");
+        sb.AppendLine($"[Guid(\"{collection.InterfaceIid}\")]");
+        sb.AppendLine($"public partial interface {interfaceName}");
+        sb.AppendLine("{");
+        sb.AppendLine("    [PreserveSig]");
+        sb.AppendLine("    int GetCount(out int value);");
+        sb.AppendLine();
+        sb.AppendLine("    [PreserveSig]");
+        sb.AppendLine($"    int GetAt(int index, out {elementName}? value);");
+        sb.AppendLine();
+        sb.AppendLine("    [PreserveSig]");
+        sb.AppendLine($"    int Add({elementName}? value);");
+        sb.AppendLine();
+        sb.AppendLine("    [PreserveSig]");
+        sb.AppendLine("    int RemoveAt(int index);");
+        sb.AppendLine();
+        sb.AppendLine("    [PreserveSig]");
+        sb.AppendLine("    int Clear();");
+        sb.AppendLine("}");
+        sb.AppendLine();
+        sb.AppendLine("[GeneratedComClass]");
+        sb.AppendLine($"public sealed partial class {className} : {interfaceName}");
+        sb.AppendLine("{");
+        sb.AppendLine($"    private readonly global::{collection.ManagedTypeName} _value;");
+        sb.AppendLine();
+        sb.AppendLine($"    internal {className}(global::{collection.ManagedTypeName} value) => _value = value;");
+        EmitCollectionMethod(
+            sb,
+            "GetCount",
+            "out int value",
+            "value = _value.Count;",
+            initializeOut: "value = 0;");
+        EmitCollectionMethod(
+            sb,
+            "GetAt",
+            $"int index, out {elementName}? value",
+            $"value = ({elementName})ProjectionRuntime.Wrap(_value[index])!;",
+            initializeOut: "value = null;");
+        EmitCollectionMethod(
+            sb,
+            "Add",
+            $"{elementName}? value",
+            $"_value.Add((global::Avalonia.Controls.Control)ProjectionRuntime.Unwrap(value)!);");
+        EmitCollectionMethod(sb, "RemoveAt", "int index", "_value.RemoveAt(index);");
+        EmitCollectionMethod(sb, "Clear", "", "_value.Clear();");
+        sb.AppendLine("}");
+        return sb.ToString();
+    }
+
+    private static void EmitCollectionMethod(
+        StringBuilder sb,
+        string name,
+        string parameters,
+        string operation,
+        string? initializeOut = null)
+    {
+        sb.AppendLine();
+        sb.AppendLine($"    public int {name}({parameters})");
+        sb.AppendLine("    {");
+        if (initializeOut is not null)
+            sb.AppendLine($"        {initializeOut}");
+        sb.AppendLine("        try");
+        sb.AppendLine("        {");
+        sb.AppendLine("            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();");
+        sb.AppendLine($"            {operation}");
+        sb.AppendLine("            return global::Avalonia.Host.HResults.S_OK;");
+        sb.AppendLine("        }");
+        sb.AppendLine("        catch (global::System.Exception e)");
+        sb.AppendLine("        {");
+        sb.AppendLine("            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);");
+        sb.AppendLine("        }");
+        sb.AppendLine("    }");
+    }
+
+    private static StringBuilder Header(ProjectedType type)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine("// <auto-generated />");
+        sb.AppendLine("#nullable enable");
+        sb.AppendLine("using System.Runtime.InteropServices;");
+        sb.AppendLine("using System.Runtime.InteropServices.Marshalling;");
+        sb.AppendLine();
+        sb.AppendLine($"namespace {NamespaceOf(type.FullName)};");
+        sb.AppendLine();
+        return sb;
+    }
+
+    private static void EmitInterfaceProperty(StringBuilder sb, ProjectedProperty property)
+    {
+        var type = CSharpType(property.Kind, property.InterfaceName, property.IsNullable);
+        if (property.CanRead)
+        {
+            sb.AppendLine("    [PreserveSig]");
+            sb.AppendLine($"    int Get{property.Name}(out {type} value);");
+            sb.AppendLine();
+        }
+        if (property.CanWrite)
+        {
+            sb.AppendLine("    [PreserveSig]");
+            sb.AppendLine($"    int Set{property.Name}({type} value);");
+            sb.AppendLine();
+        }
+    }
+
+    private static void EmitInterfaceMethod(StringBuilder sb, ProjectedMethod method)
+    {
+        sb.AppendLine("    [PreserveSig]");
+        sb.AppendLine($"    int {method.Name}({string.Join(", ", method.Parameters.Select(FormatParameter))});");
+        sb.AppendLine();
+    }
+
+    private static void EmitImplementationProperty(StringBuilder sb, ProjectedProperty property)
+    {
+        var type = CSharpType(property.Kind, property.InterfaceName, property.IsNullable);
+        if (property.CanRead)
+        {
+            sb.AppendLine();
+            sb.AppendLine($"    public int Get{property.Name}(out {type} value)");
+            sb.AppendLine("    {");
+            sb.AppendLine("        value = default!;");
+            sb.AppendLine("        try");
+            sb.AppendLine("        {");
+            sb.AppendLine("            _value.VerifyAccess();");
+            sb.AppendLine($"            value = {ReadExpression(property)};");
+            sb.AppendLine("            return global::Avalonia.Host.HResults.S_OK;");
+            sb.AppendLine("        }");
+            sb.AppendLine("        catch (global::System.Exception e)");
+            sb.AppendLine("        {");
+            sb.AppendLine("            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);");
+            sb.AppendLine("        }");
+            sb.AppendLine("    }");
+        }
+        if (property.CanWrite)
+        {
+            sb.AppendLine();
+            sb.AppendLine($"    public int Set{property.Name}({type} value)");
+            sb.AppendLine("    {");
+            sb.AppendLine("        try");
+            sb.AppendLine("        {");
+            sb.AppendLine("            _value.VerifyAccess();");
+            sb.AppendLine($"            _value.{property.Name} = {WriteExpression(property)};");
+            sb.AppendLine("            return global::Avalonia.Host.HResults.S_OK;");
+            sb.AppendLine("        }");
+            sb.AppendLine("        catch (global::System.Exception e)");
+            sb.AppendLine("        {");
+            sb.AppendLine("            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);");
+            sb.AppendLine("        }");
+            sb.AppendLine("    }");
+        }
+    }
+
+    private static void EmitImplementationMethod(StringBuilder sb, ProjectedMethod method)
+    {
+        sb.AppendLine();
+        sb.AppendLine($"    public int {method.Name}({string.Join(", ", method.Parameters.Select(FormatParameter))})");
+        sb.AppendLine("    {");
+        sb.AppendLine("        try");
+        sb.AppendLine("        {");
+        sb.AppendLine("            _value.VerifyAccess();");
+        sb.AppendLine($"            _value.{method.ManagedName ?? method.Name}({string.Join(", ", method.Parameters.Select(MethodArgument))});");
+        sb.AppendLine("            return global::Avalonia.Host.HResults.S_OK;");
+        sb.AppendLine("        }");
+        sb.AppendLine("        catch (global::System.Exception e)");
+        sb.AppendLine("        {");
+        sb.AppendLine("            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);");
+        sb.AppendLine("        }");
+        sb.AppendLine("    }");
+    }
+
+    private static string ReadExpression(ProjectedProperty property) =>
+        property.Kind switch
+        {
+            MarshallingKind.I32 when property.ManagedTypeName is not "System.Int32" =>
+                $"(int)_value.{property.Name}",
+            MarshallingKind.Bool => $"_value.{property.Name} ? 1 : 0",
+            MarshallingKind.ComInterface =>
+                $"({SimpleName(property.InterfaceName!) }?)ProjectionRuntime.Wrap(_value.{property.Name} as global::Avalonia.AvaloniaObject)",
+            MarshallingKind.ComCollection =>
+                $"new {SimpleName(property.InterfaceName!)[1..]}(_value.{property.Name})",
+            _ => $"_value.{property.Name}",
+        };
+
+    private static string WriteExpression(ProjectedProperty property) =>
+        property.Kind switch
+        {
+            MarshallingKind.I32 when property.ManagedTypeName is not "System.Int32" =>
+                $"(global::{property.ManagedTypeName})value",
+            MarshallingKind.Bool => "value != 0",
+            MarshallingKind.ComInterface =>
+                $"(global::{property.ManagedTypeName})ProjectionRuntime.Unwrap(value)!",
+            _ => "value",
+        };
+
+    private static string MethodArgument(ProjectedParameter parameter) =>
+        parameter.Kind switch
+        {
+            MarshallingKind.I32 when parameter.ManagedTypeName is not "System.Int32" =>
+                $"(global::{parameter.ManagedTypeName}){parameter.Name}",
+            MarshallingKind.Bool => $"{parameter.Name} != 0",
+            MarshallingKind.ComInterface =>
+                $"(global::{parameter.ManagedTypeName})ProjectionRuntime.Unwrap({parameter.Name})!",
+            _ => parameter.Name,
+        };
+
+    private static IEnumerable<ProjectedType> Lineage(ProjectionIr ir, ProjectedType type)
+    {
+        var byName = ir.Types.ToDictionary(t => t.FullName, StringComparer.Ordinal);
+        var stack = new Stack<ProjectedType>();
+        for (var current = type; ; current = byName[current.BaseFullName])
+        {
+            stack.Push(current);
+            if (current.BaseFullName is null)
+                break;
+        }
+        return stack;
+    }
+
+    private static int InheritanceDepth(ProjectionIr ir, ProjectedType type)
+    {
+        var byName = ir.Types.ToDictionary(t => t.FullName, StringComparer.Ordinal);
+        var result = 0;
+        while (type.BaseFullName is { } baseName)
+        {
+            result++;
+            type = byName[baseName];
+        }
+        return result;
+    }
+
     private static string FormatParameter(ProjectedParameter p)
     {
         var prefix = p.Direction switch
@@ -90,9 +516,10 @@ public static class ComSourceEmitter
             MarshallingKind.I64 => "long",
             MarshallingKind.F32 => "float",
             MarshallingKind.F64 => "double",
-            MarshallingKind.Bool => "bool",
+            MarshallingKind.Bool => "int",
             MarshallingKind.StringUtf16 => nullable ? "string?" : "string",
             MarshallingKind.ComInterface => (interfaceName is null ? "object" : SimpleName(interfaceName)) + (nullable ? "?" : ""),
+            MarshallingKind.ComCollection => SimpleName(interfaceName!),
             _ => throw new InvalidOperationException($"Cannot emit C# for {kind}"),
         };
 

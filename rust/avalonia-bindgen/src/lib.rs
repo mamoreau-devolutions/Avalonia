@@ -1,12 +1,19 @@
 mod emit;
+mod emit_safe;
 mod ir;
 
 pub use emit::emit_sys_module;
+pub use emit_safe::emit_safe_module;
 pub use ir::ProjectionIr;
 
 pub fn generate_from_json(json: &str) -> Result<String, serde_json::Error> {
     let ir: ProjectionIr = serde_json::from_str(json)?;
     Ok(emit_sys_module(&ir))
+}
+
+pub fn generate_safe_from_json(json: &str) -> Result<String, serde_json::Error> {
+    let ir: ProjectionIr = serde_json::from_str(json)?;
+    Ok(emit_safe_module(&ir))
 }
 
 #[cfg(test)]
@@ -64,5 +71,19 @@ mod tests {
         assert!(src.contains("pub fn fail"));
         assert!(src.contains("unsafe impl ComInterface for IAvnEcho"));
         assert!(!src.contains("unsupported"));
+    }
+
+    #[test]
+    fn checked_in_sys_bindings_match_shared_ir() {
+        let ir = include_str!("../../projection.ir.json");
+        let expected = include_str!("../../avalonia-sys/src/generated.rs");
+        assert_eq!(generate_from_json(ir).unwrap(), expected);
+    }
+
+    #[test]
+    fn checked_in_safe_bindings_match_shared_ir() {
+        let ir = include_str!("../../projection.ir.json");
+        let expected = include_str!("../../avalonia/src/generated.rs");
+        assert_eq!(generate_safe_from_json(ir).unwrap(), expected);
     }
 }

@@ -16,4 +16,10 @@ public partial class AvnActivationFactory : IAvnActivationFactory
         application = new AvnApplication();
         return HResults.S_OK;
     }
+
+    public int CreateControlFactory(out IAvnControlFactory? factory)
+    {
+        factory = new AvnControlFactory();
+        return HResults.S_OK;
+    }
 }

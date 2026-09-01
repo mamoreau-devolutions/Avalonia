@@ -2,6 +2,7 @@ use crate::application::IAvnApplication;
 use crate::com::{ComInterface, ComPtr, IUnknown};
 use crate::echo::IAvnEcho;
 use crate::guid::Guid;
+use crate::generated::IAvnControlFactory;
 use crate::hresult::{self, Error, Result};
 use std::ffi::c_void;
 use std::ptr;
@@ -13,6 +14,8 @@ struct IAvnActivationFactoryVtbl {
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     create_echo: unsafe extern "system" fn(*mut IAvnActivationFactory, *mut *mut IAvnEcho) -> i32,
     create_application: unsafe extern "system" fn(*mut IAvnActivationFactory, *mut *mut IAvnApplication) -> i32,
+    create_control_factory:
+        unsafe extern "system" fn(*mut IAvnActivationFactory, *mut *mut IAvnControlFactory) -> i32,
 }
 
 #[repr(C)]
@@ -40,6 +43,18 @@ impl ComPtr<IAvnActivationFactory> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_application)(self.as_raw(), &mut app);
             hresult::check(hr)?;
             ComPtr::from_raw(app).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+
+    pub fn create_control_factory(&self) -> Result<ComPtr<IAvnControlFactory>> {
+        unsafe {
+            let mut factory = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_control_factory)(
+                self.as_raw(),
+                &mut factory,
+            );
+            hresult::check(hr)?;
+            ComPtr::from_raw(factory).ok_or(Error(hresult::E_POINTER))
         }
     }
 }

@@ -1,0 +1,76 @@
+using System;
+using System.Linq;
+using Avalonia.Controls;
+using Avalonia.Projection.Ir;
+using Xunit;
+
+namespace Avalonia.Projection.Ir.Tests;
+
+public class ClrTypeExtractorTests
+{
+    private static readonly Type[] KernelTypes =
+    [
+        typeof(AvaloniaObject),
+        typeof(Control),
+        typeof(ContentControl),
+        typeof(Panel),
+        typeof(Window),
+        typeof(StackPanel),
+        typeof(TextBlock),
+        typeof(Button),
+    ];
+
+    [Fact]
+    public void Projects_kernel_types_properties_commands_and_nearest_bases()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+
+        Assert.Equal(ProjectionIr.CurrentVersion, ir.Version);
+        Assert.Equal(KernelTypes.Length, ir.Types.Count);
+
+        var contentControl = Type(ir, "IAvnContentControl");
+        Assert.Equal("Avalonia.Host.Com.IAvnControl", contentControl.BaseFullName);
+        var content = Assert.Single(contentControl.Properties);
+        Assert.Equal(MarshallingKind.ComInterface, content.Kind);
+        Assert.Equal("Avalonia.Host.Com.IAvnControl", content.InterfaceName);
+        Assert.True(content.IsNullable);
+
+        var window = Type(ir, "IAvnWindow");
+        Assert.Equal("Avalonia.Host.Com.IAvnContentControl", window.BaseFullName);
+        Assert.Contains(window.Properties, p => p.Name == nameof(Window.Title));
+        Assert.Contains(window.Methods, m => m.Name == nameof(Window.Show) && m.Parameters.Count == 0);
+        Assert.Contains(window.Methods, m => m.Name == nameof(Window.Close) && m.Parameters.Count == 0);
+
+        var stackPanel = Type(ir, "IAvnStackPanel");
+        Assert.Equal("Avalonia.Host.Com.IAvnPanel", stackPanel.BaseFullName);
+        Assert.Equal(MarshallingKind.I32, stackPanel.Properties.Single(p => p.Name == nameof(StackPanel.Orientation)).Kind);
+        Assert.Equal(MarshallingKind.F64, stackPanel.Properties.Single(p => p.Name == nameof(StackPanel.Spacing)).Kind);
+        var children = Type(ir, "IAvnPanel").Properties.Single(p => p.Name == nameof(Panel.Children));
+        Assert.Equal(MarshallingKind.ComCollection, children.Kind);
+        Assert.Equal("Avalonia.Host.Com.IAvnControlList", children.InterfaceName);
+        Assert.Equal("Avalonia.Host.Com.IAvnControl", children.ElementInterfaceName);
+
+        var text = Type(ir, "IAvnTextBlock").Properties.Single(p => p.Name == nameof(TextBlock.Text));
+        Assert.Equal(MarshallingKind.StringUtf16, text.Kind);
+        Assert.True(text.IsNullable);
+    }
+
+    [Fact]
+    public void Produces_stable_unique_iids_and_explicit_gap_report()
+    {
+        var first = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+        var second = ClrTypeExtractor.Extract(KernelTypes.Reverse(), AvaloniaProjectionProfiles.ObjectModelKernel);
+
+        Assert.Equal(
+            first.Types.Select(t => (t.FullName, t.Iid)),
+            second.Types.Select(t => (t.FullName, t.Iid)));
+        Assert.Equal(first.Types.Count, first.Types.Select(t => t.Iid).Distinct().Count());
+        Assert.Contains(first.Skipped, s =>
+            s.Owner == typeof(Button).FullName &&
+            s.Member == nameof(Button.IsDefault) &&
+            s.Reason == "Not included by projection policy");
+    }
+
+    private static ProjectedType Type(ProjectionIr ir, string name) =>
+        ir.Types.Single(t => t.Name == name);
+}

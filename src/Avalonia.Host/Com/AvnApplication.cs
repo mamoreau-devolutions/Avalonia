@@ -37,9 +37,9 @@ public partial class AvnApplication : IAvnApplication
             lifetime.Start(Array.Empty<string>());
             return HResults.S_OK;
         }
-        catch
+        catch (Exception e)
         {
-            return HResults.E_FAIL;
+            return AbiError.Capture(e);
         }
     }
 
@@ -50,9 +50,9 @@ public partial class AvnApplication : IAvnApplication
             _lifetime?.Shutdown();
             return HResults.S_OK;
         }
-        catch
+        catch (Exception e)
         {
-            return HResults.E_FAIL;
+            return AbiError.Capture(e);
         }
     }
 }

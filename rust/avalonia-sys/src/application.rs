@@ -1,3 +1,4 @@
+use crate::app_handler::IAvnAppHandler;
 use crate::com::{ComInterface, ComPtr, IUnknown};
 use crate::guid::Guid;
 use crate::hresult::{self, Result};
@@ -22,6 +23,14 @@ unsafe impl ComInterface for IAvnApplication {
 }
 
 impl ComPtr<IAvnApplication> {
+    pub fn run(&self, handler: &ComPtr<IAvnAppHandler>) -> Result<()> {
+        unsafe {
+            let hr =
+                ((*self.as_raw()).vtbl.as_ref().unwrap().run)(self.as_raw(), handler.as_raw().cast());
+            hresult::check(hr)
+        }
+    }
+
     pub fn shutdown(&self) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().shutdown)(self.as_raw());

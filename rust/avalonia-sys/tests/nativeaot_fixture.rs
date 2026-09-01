@@ -1,5 +1,7 @@
-use avalonia_sys::{ComPtr, Host, IUnknown, AVN_E_FIXTURE, E_NOINTERFACE};
+use avalonia_sys::{app_handler, ComPtr, Error, Host, IUnknown, AVN_E_FIXTURE, E_NOINTERFACE};
 use std::path::PathBuf;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Arc;
 
 fn host_path() -> PathBuf {
     if let Ok(p) = std::env::var("AVN_HOST_NATIVE_LIB") {
@@ -119,4 +121,51 @@ fn factory_unknown_qi_succeeds() {
     let _again = unk
         .query_interface::<avalonia_sys::IAvnActivationFactory>()
         .unwrap();
+}
+
+#[test]
+fn application_runs_generated_object_model_through_rust_handler() {
+    let host = load();
+    let activation = host.activation_factory().unwrap();
+    let application = activation.create_application().unwrap();
+    let controls = activation.create_control_factory().unwrap();
+    let called = Arc::new(AtomicBool::new(false));
+    let called_from_handler = called.clone();
+    let handler = app_handler(move || {
+        let button = controls.create_button()?;
+        let text = controls.create_text_block()?;
+
+        assert!(button.get_is_enabled()?);
+        button.set_is_enabled(false)?;
+        assert!(!button.get_is_enabled()?);
+
+        let text_as_control = text.query_interface::<avalonia_sys::IAvnControl>()?;
+        button.set_content(Some(&text_as_control))?;
+        let content = button.get_content()?.unwrap();
+        assert_eq!(text.object_id()?, content.object_id()?);
+
+        let panel = controls.create_stack_panel()?;
+        let children = panel.get_children()?;
+        children.add(&text_as_control)?;
+        let button_as_control = button.query_interface::<avalonia_sys::IAvnControl>()?;
+        children.add(&button_as_control)?;
+        assert_eq!(children.len()?, 2);
+        assert_eq!(children.get(0)?.object_id()?, text.object_id()?);
+        children.remove(1)?;
+        assert_eq!(children.len()?, 1);
+        children.clear()?;
+        assert_eq!(children.len()?, 0);
+
+        called_from_handler.store(true, Ordering::SeqCst);
+        Err(Error(AVN_E_FIXTURE))
+    });
+
+    let error = application.run(&handler).unwrap_err();
+    assert_eq!(
+        error.0,
+        AVN_E_FIXTURE,
+        "host startup failed: {}",
+        host.last_error().unwrap_or_default()
+    );
+    assert!(called.load(Ordering::SeqCst));
 }

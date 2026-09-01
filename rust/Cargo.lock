@@ -3,6 +3,13 @@
 version = 4
 
 [[package]]
+name = "avalonia"
+version = "0.1.0"
+dependencies = [
+ "avalonia-sys",
+]
+
+[[package]]
 name = "avalonia-bindgen"
 version = "0.1.0"
 dependencies = [

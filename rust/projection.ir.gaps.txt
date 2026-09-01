@@ -1,0 +1,105 @@
+Avalonia.AvaloniaObject.Item: Not included by projection policy
+Avalonia.AvaloniaObject.Item: Not included by projection policy
+Avalonia.AvaloniaObject.Dispatcher: Not included by projection policy
+Avalonia.AvaloniaObject.CheckAccess(): Not included by projection policy
+Avalonia.AvaloniaObject.VerifyAccess(): Not included by projection policy
+Avalonia.AvaloniaObject.ClearValue(AvaloniaProperty): Not included by projection policy
+Avalonia.AvaloniaObject.ClearValue(AvaloniaProperty`1): Not included by projection policy
+Avalonia.AvaloniaObject.ClearValue(StyledProperty`1): Not included by projection policy
+Avalonia.AvaloniaObject.ClearValue(DirectPropertyBase`1): Not included by projection policy
+Avalonia.AvaloniaObject.Equals(Object): Not included by projection policy
+Avalonia.AvaloniaObject.GetHashCode(): Not included by projection policy
+Avalonia.AvaloniaObject.GetValue(AvaloniaProperty): Not included by projection policy
+Avalonia.AvaloniaObject.GetValue(StyledProperty`1): Not included by projection policy
+Avalonia.AvaloniaObject.GetValue(DirectPropertyBase`1): Not included by projection policy
+Avalonia.AvaloniaObject.GetBaseValue(StyledProperty`1): Not included by projection policy
+Avalonia.AvaloniaObject.IsAnimating(AvaloniaProperty): Not included by projection policy
+Avalonia.AvaloniaObject.IsSet(AvaloniaProperty): Not included by projection policy
+Avalonia.AvaloniaObject.SetValue(AvaloniaProperty, Object, BindingPriority): Not included by projection policy
+Avalonia.AvaloniaObject.SetValue(StyledProperty`1, T, BindingPriority): Not included by projection policy
+Avalonia.AvaloniaObject.SetValue(DirectPropertyBase`1, T): Not included by projection policy
+Avalonia.AvaloniaObject.SetCurrentValue(AvaloniaProperty, Object): Not included by projection policy
+Avalonia.AvaloniaObject.SetCurrentValue(StyledProperty`1, T): Not included by projection policy
+Avalonia.AvaloniaObject.Bind(AvaloniaProperty, BindingBase): Not included by projection policy
+Avalonia.AvaloniaObject.Bind(AvaloniaProperty, IObservable`1, BindingPriority): Not included by projection policy
+Avalonia.AvaloniaObject.Bind(StyledProperty`1, IObservable`1, BindingPriority): Not included by projection policy
+Avalonia.AvaloniaObject.Bind(StyledProperty`1, IObservable`1, BindingPriority): Not included by projection policy
+Avalonia.AvaloniaObject.Bind(StyledProperty`1, IObservable`1, BindingPriority): Not included by projection policy
+Avalonia.AvaloniaObject.Bind(DirectPropertyBase`1, IObservable`1): Not included by projection policy
+Avalonia.AvaloniaObject.Bind(DirectPropertyBase`1, IObservable`1): Not included by projection policy
+Avalonia.AvaloniaObject.Bind(DirectPropertyBase`1, IObservable`1): Not included by projection policy
+Avalonia.AvaloniaObject.CoerceValue(AvaloniaProperty): Not included by projection policy
+Avalonia.Controls.Button.ClickMode: Not included by projection policy
+Avalonia.Controls.Button.Command: Not included by projection policy
+Avalonia.Controls.Button.HotKey: Not included by projection policy
+Avalonia.Controls.Button.CommandParameter: Not included by projection policy
+Avalonia.Controls.Button.IsDefault: Not included by projection policy
+Avalonia.Controls.Button.IsCancel: Not included by projection policy
+Avalonia.Controls.Button.IsPressed: Not included by projection policy
+Avalonia.Controls.Button.Flyout: Not included by projection policy
+Avalonia.Controls.ContentControl.ContentTemplate: Not included by projection policy
+Avalonia.Controls.ContentControl.Presenter: Not included by projection policy
+Avalonia.Controls.ContentControl.HorizontalContentAlignment: Not included by projection policy
+Avalonia.Controls.ContentControl.VerticalContentAlignment: Not included by projection policy
+Avalonia.Controls.Control.FocusAdorner: Not included by projection policy
+Avalonia.Controls.Control.DataTemplates: Not included by projection policy
+Avalonia.Controls.Control.ContextMenu: Not included by projection policy
+Avalonia.Controls.Control.ContextFlyout: Not included by projection policy
+Avalonia.Controls.Control.IsLoaded: Not included by projection policy
+Avalonia.Controls.Control.Tag: Not included by projection policy
+Avalonia.Controls.Panel.Background: Not included by projection policy
+Avalonia.Controls.Panel.IsItemsHost: Not included by projection policy
+Avalonia.Controls.Panel.Render(DrawingContext): Not included by projection policy
+Avalonia.Controls.StackPanel.AreHorizontalSnapPointsRegular: Not included by projection policy
+Avalonia.Controls.StackPanel.AreVerticalSnapPointsRegular: Not included by projection policy
+Avalonia.Controls.StackPanel.GetIrregularSnapPoints(Orientation, SnapPointsAlignment): Not included by projection policy
+Avalonia.Controls.StackPanel.GetRegularSnapPoints(Orientation, SnapPointsAlignment, Double&): Not included by projection policy
+Avalonia.Controls.TextBlock.TextLayout: Not included by projection policy
+Avalonia.Controls.TextBlock.Padding: Not included by projection policy
+Avalonia.Controls.TextBlock.Background: Not included by projection policy
+Avalonia.Controls.TextBlock.FontFamily: Not included by projection policy
+Avalonia.Controls.TextBlock.FontSize: Not included by projection policy
+Avalonia.Controls.TextBlock.FontStyle: Not included by projection policy
+Avalonia.Controls.TextBlock.FontWeight: Not included by projection policy
+Avalonia.Controls.TextBlock.FontStretch: Not included by projection policy
+Avalonia.Controls.TextBlock.Foreground: Not included by projection policy
+Avalonia.Controls.TextBlock.LineHeight: Not included by projection policy
+Avalonia.Controls.TextBlock.LineSpacing: Not included by projection policy
+Avalonia.Controls.TextBlock.LetterSpacing: Not included by projection policy
+Avalonia.Controls.TextBlock.MaxLines: Not included by projection policy
+Avalonia.Controls.TextBlock.TextWrapping: Not included by projection policy
+Avalonia.Controls.TextBlock.TextTrimming: Not included by projection policy
+Avalonia.Controls.TextBlock.TextAlignment: Not included by projection policy
+Avalonia.Controls.TextBlock.TextDecorations: Not included by projection policy
+Avalonia.Controls.TextBlock.FontFeatures: Not included by projection policy
+Avalonia.Controls.TextBlock.Inlines: Not included by projection policy
+Avalonia.Controls.TextBlock.BaselineOffset: Not included by projection policy
+Avalonia.Controls.TextBlock.Render(DrawingContext): Not included by projection policy
+Avalonia.Controls.Window.PlatformImpl: Not included by projection policy
+Avalonia.Controls.Window.OwnedWindows: Not included by projection policy
+Avalonia.Controls.Window.SizeToContent: Not included by projection policy
+Avalonia.Controls.Window.ExtendClientAreaToDecorationsHint: Not included by projection policy
+Avalonia.Controls.Window.ExtendClientAreaTitleBarHeightHint: Not included by projection policy
+Avalonia.Controls.Window.IsExtendedIntoWindowDecorations: Not included by projection policy
+Avalonia.Controls.Window.WindowDecorationMargin: Not included by projection policy
+Avalonia.Controls.Window.OffScreenMargin: Not included by projection policy
+Avalonia.Controls.Window.WindowDecorations: Not included by projection policy
+Avalonia.Controls.Window.WindowDecorationsTheme: Not included by projection policy
+Avalonia.Controls.Window.SystemDecorations: Not included by projection policy
+Avalonia.Controls.Window.ShowActivated: Not included by projection policy
+Avalonia.Controls.Window.ShowInTaskbar: Not included by projection policy
+Avalonia.Controls.Window.ClosingBehavior: Not included by projection policy
+Avalonia.Controls.Window.WindowState: Not included by projection policy
+Avalonia.Controls.Window.CanResize: Not included by projection policy
+Avalonia.Controls.Window.CanMinimize: Not included by projection policy
+Avalonia.Controls.Window.CanMaximize: Not included by projection policy
+Avalonia.Controls.Window.Icon: Not included by projection policy
+Avalonia.Controls.Window.WindowStartupLocation: Not included by projection policy
+Avalonia.Controls.Window.Position: Not included by projection policy
+Avalonia.Controls.Window.IsDialog: Not included by projection policy
+Avalonia.Controls.Window.BeginMoveDrag(PointerPressedEventArgs): Not included by projection policy
+Avalonia.Controls.Window.BeginResizeDrag(WindowEdge, PointerPressedEventArgs): Not included by projection policy
+Avalonia.Controls.Window.Close(Object): Parameter 'dialogResult': Type 'System.Object' is not marshallable
+Avalonia.Controls.Window.Hide(): Not included by projection policy
+Avalonia.Controls.Window.ShowDialog(Window): Not included by projection policy
+Avalonia.Controls.Window.ShowDialog(Window): Not included by projection policy

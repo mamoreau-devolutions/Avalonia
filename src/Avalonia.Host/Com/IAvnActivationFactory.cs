@@ -12,4 +12,7 @@ public partial interface IAvnActivationFactory
 
     [PreserveSig]
     int CreateApplication(out IAvnApplication? application);
+
+    [PreserveSig]
+    int CreateControlFactory(out IAvnControlFactory? factory);
 }

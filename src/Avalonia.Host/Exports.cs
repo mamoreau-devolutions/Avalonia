@@ -21,6 +21,7 @@ public static class Exports
 
         try
         {
+            ProjectionAotRoots.Preserve();
             var obj = new AvnActivationFactory();
             *factory = Wrappers.GetOrCreateComInterfaceForObject(obj, CreateComInterfaceFlags.None);
             return HResults.S_OK;
@@ -41,5 +42,15 @@ public static class Exports
     {
         if (ptr is not null)
             Marshal.FreeCoTaskMem((nint)ptr);
+    }
+
+    [UnmanagedCallersOnly(EntryPoint = "avn_get_last_error")]
+    public static unsafe int GetLastError(nint* message)
+    {
+        if (message is null)
+            return HResults.E_POINTER;
+        var value = AbiError.Take();
+        *message = value is null ? 0 : Marshal.StringToCoTaskMemUni(value);
+        return HResults.S_OK;
     }
 }
