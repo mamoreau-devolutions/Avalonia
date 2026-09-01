@@ -1,6 +1,6 @@
 use avalonia::{
-    App, Button, Dock, DockPanel, Grid, Orientation, ScrollViewer, StackPanel, TextBlock, TextBox,
-    ThemeVariant, ToggleSwitch, Window,
+    App, Button, Dock, DockPanel, ExpandDirection, Expander, Grid, Orientation, RadioButton,
+    ScrollViewer, StackPanel, TextBlock, TextBox, ThemeVariant, ToggleSwitch, Window,
 };
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -79,14 +79,36 @@ fn builders_create_a_real_window_through_nativeaot() {
             })?;
         let toggle_for_post = toggle.clone();
 
+        let radio_one = RadioButton::new()?
+            .group_name("TestGroup")?
+            .content(TextBlock::new()?.text("One")?)?
+            .checked(Some(true))?;
+        let radio_two = RadioButton::new()?
+            .group_name("TestGroup")?
+            .content(TextBlock::new()?.text("Two")?)?;
+        let radio_one_for_post = radio_one.clone();
+        let radio_two_for_post = radio_two.clone();
+        let radio_buttons = StackPanel::new()?.child(radio_one)?.child(radio_two)?;
+
+        let expander = Expander::new()?
+            .header(TextBlock::new()?.text("Header")?)?
+            .content(TextBlock::new()?.text("Content")?)?
+            .expand_direction(ExpandDirection::Down)?
+            .expanded(true)?;
+        assert_eq!(expander.get_expand_direction()?, ExpandDirection::Down);
+        assert!(expander.get_is_expanded()?);
+        expander.subscribe_expanded(|_| {})?.unsubscribe()?;
+
         let panel = StackPanel::new()?
             .orientation(Orientation::Vertical)?
             .spacing(8.0)?
             .child(TextBlock::new()?.text("Hello from Rust")?)?
             .child(text_box)?
             .child(toggle)?
+            .child(radio_buttons)?
+            .child(expander)?
             .child(button)?;
-        assert_eq!(panel.children()?.len()?, 4);
+        assert_eq!(panel.children()?.len()?, 6);
         assert_eq!(panel.get_orientation()?, Orientation::Vertical);
         assert_eq!(panel.get_spacing()?, 8.0);
 
@@ -106,6 +128,9 @@ fn builders_create_a_real_window_through_nativeaot() {
                     );
                     toggle_for_post.set_checked(Some(false)).unwrap();
                     assert_eq!(toggle_for_post.get_is_checked().unwrap(), Some(false));
+                    radio_two_for_post.set_checked(Some(true)).unwrap();
+                    assert_eq!(radio_one_for_post.get_is_checked().unwrap(), Some(false));
+                    assert_eq!(radio_two_for_post.get_is_checked().unwrap(), Some(true));
                     posted_from_handler.store(true, Ordering::SeqCst);
                     window.close().unwrap();
                 })

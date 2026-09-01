@@ -6,33 +6,45 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("BE4BCF48-8918-5BB6-B650-F22BF4DB9592")]
-public partial interface IAvnToggleButton : IAvnButton
+[Guid("3B96BF8C-8162-517E-88CD-1CB516D27A94")]
+public partial interface IAvnExpander : IAvnHeaderedContentControl
 {
     [PreserveSig]
-    int GetIsChecked(out int value);
+    int GetExpandDirection(out int value);
 
     [PreserveSig]
-    int SetIsChecked(int value);
+    int SetExpandDirection(int value);
 
     [PreserveSig]
-    int AdviseIsCheckedChanged(IAvnToggleButtonIsCheckedChangedHandler? handler, out long subscriptionId);
+    int GetIsExpanded(out int value);
 
     [PreserveSig]
-    int UnadviseIsCheckedChanged(long subscriptionId);
+    int SetIsExpanded(int value);
+
+    [PreserveSig]
+    int AdviseCollapsed(IAvnExpanderCollapsedHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadviseCollapsed(long subscriptionId);
+
+    [PreserveSig]
+    int AdviseExpanded(IAvnExpanderExpandedHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadviseExpanded(long subscriptionId);
 
 }
 
 [GeneratedComClass]
-public sealed partial class AvnToggleButton : IAvnToggleButton
+public sealed partial class AvnExpander : IAvnExpander
 {
-    private readonly global::Avalonia.Controls.Primitives.ToggleButton _value;
-    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnButtonClickHandler Handler, global::System.Action Unsubscribe)> _clickSubscriptions = new();
-    private long _nextClickSubscriptionId;
-    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnToggleButtonIsCheckedChangedHandler Handler, global::System.Action Unsubscribe)> _isCheckedChangedSubscriptions = new();
-    private long _nextIsCheckedChangedSubscriptionId;
+    private readonly global::Avalonia.Controls.Expander _value;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnExpanderCollapsedHandler Handler, global::System.Action Unsubscribe)> _collapsedSubscriptions = new();
+    private long _nextCollapsedSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnExpanderExpandedHandler Handler, global::System.Action Unsubscribe)> _expandedSubscriptions = new();
+    private long _nextExpandedSubscriptionId;
 
-    internal AvnToggleButton(global::Avalonia.Controls.Primitives.ToggleButton value)
+    internal AvnExpander(global::Avalonia.Controls.Expander value)
     {
         _value = value;
         ObjectId = ProjectionRuntime.Register(value);
@@ -119,7 +131,94 @@ public sealed partial class AvnToggleButton : IAvnToggleButton
         }
     }
 
-    public int AdviseClick(IAvnButtonClickHandler? handler, out long subscriptionId)
+    public int GetHeader(out IAvnControl? value)
+    {
+        value = default!;
+        try
+        {
+            _value.VerifyAccess();
+            value = (IAvnControl?)ProjectionRuntime.Wrap(_value.Header as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetHeader(IAvnControl? value)
+    {
+        try
+        {
+            _value.VerifyAccess();
+            _value.Header = (global::System.Object)ProjectionRuntime.Unwrap(value)!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetExpandDirection(out int value)
+    {
+        value = default!;
+        try
+        {
+            _value.VerifyAccess();
+            value = (int)_value.ExpandDirection;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetExpandDirection(int value)
+    {
+        try
+        {
+            _value.VerifyAccess();
+            _value.ExpandDirection = (global::Avalonia.Controls.ExpandDirection)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetIsExpanded(out int value)
+    {
+        value = default!;
+        try
+        {
+            _value.VerifyAccess();
+            value = _value.IsExpanded ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetIsExpanded(int value)
+    {
+        try
+        {
+            _value.VerifyAccess();
+            _value.IsExpanded = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseCollapsed(IAvnExpanderCollapsedHandler? handler, out long subscriptionId)
     {
         subscriptionId = 0;
         if (handler is null)
@@ -133,9 +232,9 @@ public sealed partial class AvnToggleButton : IAvnToggleButton
                 if (hr < 0)
                     global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
             });
-            _value.Click += callback;
-            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextClickSubscriptionId);
-            _clickSubscriptions.Add(subscriptionId, (handler, () => _value.Click -= callback));
+            _value.Collapsed += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextCollapsedSubscriptionId);
+            _collapsedSubscriptions.Add(subscriptionId, (handler, () => _value.Collapsed -= callback));
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -144,12 +243,12 @@ public sealed partial class AvnToggleButton : IAvnToggleButton
         }
     }
 
-    public int UnadviseClick(long subscriptionId)
+    public int UnadviseCollapsed(long subscriptionId)
     {
         try
         {
             _value.VerifyAccess();
-            if (!_clickSubscriptions.Remove(subscriptionId, out var subscription))
+            if (!_collapsedSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
             subscription.Unsubscribe();
             return global::Avalonia.Host.HResults.S_OK;
@@ -160,36 +259,7 @@ public sealed partial class AvnToggleButton : IAvnToggleButton
         }
     }
 
-    public int GetIsChecked(out int value)
-    {
-        value = default!;
-        try
-        {
-            _value.VerifyAccess();
-            value = !_value.IsChecked.HasValue ? -1 : _value.IsChecked.Value ? 1 : 0;
-            return global::Avalonia.Host.HResults.S_OK;
-        }
-        catch (global::System.Exception e)
-        {
-            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
-        }
-    }
-
-    public int SetIsChecked(int value)
-    {
-        try
-        {
-            _value.VerifyAccess();
-            _value.IsChecked = value switch { -1 => null, 0 => false, 1 => true, _ => throw new global::System.ArgumentOutOfRangeException(nameof(value)) };
-            return global::Avalonia.Host.HResults.S_OK;
-        }
-        catch (global::System.Exception e)
-        {
-            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
-        }
-    }
-
-    public int AdviseIsCheckedChanged(IAvnToggleButtonIsCheckedChangedHandler? handler, out long subscriptionId)
+    public int AdviseExpanded(IAvnExpanderExpandedHandler? handler, out long subscriptionId)
     {
         subscriptionId = 0;
         if (handler is null)
@@ -203,9 +273,9 @@ public sealed partial class AvnToggleButton : IAvnToggleButton
                 if (hr < 0)
                     global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
             });
-            _value.IsCheckedChanged += callback;
-            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextIsCheckedChangedSubscriptionId);
-            _isCheckedChangedSubscriptions.Add(subscriptionId, (handler, () => _value.IsCheckedChanged -= callback));
+            _value.Expanded += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextExpandedSubscriptionId);
+            _expandedSubscriptions.Add(subscriptionId, (handler, () => _value.Expanded -= callback));
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -214,12 +284,12 @@ public sealed partial class AvnToggleButton : IAvnToggleButton
         }
     }
 
-    public int UnadviseIsCheckedChanged(long subscriptionId)
+    public int UnadviseExpanded(long subscriptionId)
     {
         try
         {
             _value.VerifyAccess();
-            if (!_isCheckedChangedSubscriptions.Remove(subscriptionId, out var subscription))
+            if (!_expandedSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
             subscription.Unsubscribe();
             return global::Avalonia.Host.HResults.S_OK;

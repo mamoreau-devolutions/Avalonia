@@ -46,6 +46,7 @@ public class ComSourceEmitterTests
             typeof(StyledElement),
             typeof(Control),
             typeof(ContentControl),
+            typeof(HeaderedContentControl),
             typeof(Decorator),
             typeof(Border),
             typeof(Panel),
@@ -59,7 +60,9 @@ public class ComSourceEmitterTests
             typeof(Button),
             typeof(ToggleButton),
             typeof(CheckBox),
+            typeof(RadioButton),
             typeof(ToggleSwitch),
+            typeof(Expander),
             typeof(TextBox),
             typeof(ScrollViewer),
             typeof(RangeBase),
@@ -92,6 +95,10 @@ public class ComSourceEmitterTests
         Assert.Contains("public partial interface IAvnToggleSwitch : IAvnToggleButton", toggleSwitch, StringComparison.Ordinal);
         Assert.Contains("int SetOnContent(IAvnControl? value);", toggleSwitch, StringComparison.Ordinal);
         Assert.Contains("int SetOffContent(IAvnControl? value);", toggleSwitch, StringComparison.Ordinal);
+
+        var expander = files["IAvnExpander.g.cs"];
+        Assert.Contains("public partial interface IAvnExpander : IAvnHeaderedContentControl", expander, StringComparison.Ordinal);
+        Assert.Contains("int AdviseExpanded(IAvnExpanderExpandedHandler? handler", expander, StringComparison.Ordinal);
 
         var runtime = files["ProjectionRuntime.g.cs"];
         Assert.Contains("global::Avalonia.Controls.Button typed => new AvnButton(typed)", runtime, StringComparison.Ordinal);
@@ -127,6 +134,7 @@ public class ComSourceEmitterTests
             typeof(StyledElement),
             typeof(Control),
             typeof(ContentControl),
+            typeof(HeaderedContentControl),
             typeof(Decorator),
             typeof(Border),
             typeof(Panel),
@@ -140,7 +148,9 @@ public class ComSourceEmitterTests
             typeof(Button),
             typeof(ToggleButton),
             typeof(CheckBox),
+            typeof(RadioButton),
             typeof(ToggleSwitch),
+            typeof(Expander),
             typeof(TextBox),
             typeof(ScrollViewer),
             typeof(RangeBase),

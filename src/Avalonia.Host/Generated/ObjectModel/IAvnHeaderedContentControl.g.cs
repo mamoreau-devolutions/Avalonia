@@ -6,17 +6,23 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("CAFA9D5B-4210-527F-AB4E-D19EB1390087")]
-public partial interface IAvnCanvas : IAvnPanel
+[Guid("BA9E3CF3-2184-572F-9BB9-004A64A37ECD")]
+public partial interface IAvnHeaderedContentControl : IAvnContentControl
 {
+    [PreserveSig]
+    int GetHeader(out IAvnControl? value);
+
+    [PreserveSig]
+    int SetHeader(IAvnControl? value);
+
 }
 
 [GeneratedComClass]
-public sealed partial class AvnCanvas : IAvnCanvas
+public sealed partial class AvnHeaderedContentControl : IAvnHeaderedContentControl
 {
-    private readonly global::Avalonia.Controls.Canvas _value;
+    private readonly global::Avalonia.Controls.Primitives.HeaderedContentControl _value;
 
-    internal AvnCanvas(global::Avalonia.Controls.Canvas value)
+    internal AvnHeaderedContentControl(global::Avalonia.Controls.Primitives.HeaderedContentControl value)
     {
         _value = value;
         ObjectId = ProjectionRuntime.Register(value);
@@ -74,13 +80,56 @@ public sealed partial class AvnCanvas : IAvnCanvas
         }
     }
 
-    public int GetChildren(out IAvnControlList value)
+    public int GetContent(out IAvnControl? value)
     {
         value = default!;
         try
         {
             _value.VerifyAccess();
-            value = new AvnControlList(_value.Children);
+            value = (IAvnControl?)ProjectionRuntime.Wrap(_value.Content as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetContent(IAvnControl? value)
+    {
+        try
+        {
+            _value.VerifyAccess();
+            _value.Content = (global::System.Object)ProjectionRuntime.Unwrap(value)!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetHeader(out IAvnControl? value)
+    {
+        value = default!;
+        try
+        {
+            _value.VerifyAccess();
+            value = (IAvnControl?)ProjectionRuntime.Wrap(_value.Header as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetHeader(IAvnControl? value)
+    {
+        try
+        {
+            _value.VerifyAccess();
+            _value.Header = (global::System.Object)ProjectionRuntime.Unwrap(value)!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

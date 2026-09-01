@@ -1,5 +1,6 @@
 use avalonia::{
-    App, Button, Orientation, Slider, StackPanel, TextBlock, TextBox, ToggleSwitch, Window,
+    App, Button, ExpandDirection, Expander, Orientation, RadioButton, Slider, StackPanel,
+    TextBlock, TextBox, ToggleSwitch, Window,
 };
 
 fn main() -> avalonia::Result<()> {
@@ -72,6 +73,37 @@ fn main() -> avalonia::Result<()> {
                 .expect("failed to update toggle readout");
         })?;
 
+        let radio_buttons = StackPanel::new()?
+            .orientation(Orientation::Horizontal)?
+            .spacing(8.0)?
+            .child(
+                RadioButton::new()?
+                    .group_name("DemoGroup")?
+                    .content(TextBlock::new()?.text("Option A")?)?
+                    .checked(Some(true))?,
+            )?
+            .child(
+                RadioButton::new()?
+                    .group_name("DemoGroup")?
+                    .content(TextBlock::new()?.text("Option B")?)?,
+            )?
+            .child(
+                RadioButton::new()?
+                    .group_name("DemoGroup")?
+                    .content(TextBlock::new()?.text("Option C")?)?,
+            )?;
+
+        let expander = Expander::new()?
+            .header(TextBlock::new()?.text("Expandable section")?)?
+            .content(
+                StackPanel::new()?
+                    .spacing(4.0)?
+                    .child(TextBlock::new()?.text("Content inside the expander.")?)?
+                    .child(TextBlock::new()?.text("Generated from the shared projection IR.")?)?,
+            )?
+            .expand_direction(ExpandDirection::Down)?
+            .expanded(true)?;
+
         Window::new()?
             .title("Control basics")?
             .content(
@@ -85,7 +117,10 @@ fn main() -> avalonia::Result<()> {
                     .child(text_box)?
                     .child(typed_text)?
                     .child(toggle)?
-                    .child(toggle_value)?,
+                    .child(toggle_value)?
+                    .child(TextBlock::new()?.text("Selection & expand patterns")?)?
+                    .child(radio_buttons)?
+                    .child(expander)?,
             )?
             .show()
     })

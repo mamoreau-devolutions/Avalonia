@@ -15,6 +15,7 @@ public class ClrTypeExtractorTests
         typeof(StyledElement),
         typeof(Control),
         typeof(ContentControl),
+        typeof(HeaderedContentControl),
         typeof(Decorator),
         typeof(Border),
         typeof(Panel),
@@ -28,7 +29,9 @@ public class ClrTypeExtractorTests
         typeof(Button),
         typeof(ToggleButton),
         typeof(CheckBox),
+        typeof(RadioButton),
         typeof(ToggleSwitch),
+        typeof(Expander),
         typeof(TextBox),
         typeof(ScrollViewer),
         typeof(RangeBase),
@@ -84,6 +87,10 @@ public class ClrTypeExtractorTests
         Assert.Equal("Avalonia.Host.Com.IAvnToggleButton", toggleSwitch.BaseFullName);
         Assert.All(toggleSwitch.Properties, property =>
             Assert.Equal("Avalonia.Host.Com.IAvnControl", property.InterfaceName));
+
+        var expander = Type(ir, "IAvnExpander");
+        Assert.Equal("Avalonia.Host.Com.IAvnHeaderedContentControl", expander.BaseFullName);
+        Assert.Equal(2, expander.Events.Count);
 
         var classes = Type(ir, "IAvnStyledElement").Properties.Single();
         Assert.Equal(MarshallingKind.StringUtf16, classes.ElementKind);

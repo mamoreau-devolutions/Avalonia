@@ -28,6 +28,28 @@ impl TryFrom<i32> for Dock {
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ExpandDirection {
+    Down = 0,
+    Up = 1,
+    Left = 2,
+    Right = 3,
+}
+
+impl TryFrom<i32> for ExpandDirection {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::Down),
+            1 => Ok(Self::Up),
+            2 => Ok(Self::Left),
+            3 => Ok(Self::Right),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ScrollBarVisibility {
     Disabled = 0,
     Auto = 1,
@@ -621,6 +643,102 @@ impl AsControl for DockPanel {
 }
 
 #[derive(Clone, Debug)]
+pub struct Expander {
+    pub(crate) raw: sys::ComPtr<sys::IAvnExpander>,
+}
+
+impl Expander {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_expander())
+            .map(|raw| Self { raw })
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_content(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_content()?.map(|raw| Control { raw }))
+    }
+    pub fn set_content(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_content(Some(&value))?)
+    }
+    pub fn content(self, value: impl AsControl) -> Result<Self> {
+        self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_header(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_header()?.map(|raw| Control { raw }))
+    }
+    pub fn set_header(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_header(Some(&value))?)
+    }
+    pub fn header(self, value: impl AsControl) -> Result<Self> {
+        self.set_header(value)?;
+        Ok(self)
+    }
+    pub fn get_expand_direction(&self) -> Result<ExpandDirection> {
+        let value = self.raw.get_expand_direction()?;
+        ExpandDirection::try_from(value)
+    }
+    pub fn set_expand_direction(&self, value: ExpandDirection) -> Result<()> {
+        Ok(self.raw.set_expand_direction(value as i32)?)
+    }
+    pub fn expand_direction(self, value: ExpandDirection) -> Result<Self> {
+        self.set_expand_direction(value)?;
+        Ok(self)
+    }
+    pub fn get_is_expanded(&self) -> Result<bool> { Ok(self.raw.get_is_expanded()?) }
+    pub fn set_expanded(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_expanded(value)?)
+    }
+    pub fn expanded(self, value: bool) -> Result<Self> {
+        self.set_expanded(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_collapsed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::expander_collapsed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_collapsed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_collapsed(subscription_id)))
+    }
+    pub fn on_collapsed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_collapsed(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_expanded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::expander_expanded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_expanded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_expanded(subscription_id)))
+    }
+    pub fn on_expanded(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_expanded(callback)?.detach();
+        Ok(self)
+    }
+}
+
+impl AsControl for Expander {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
 pub struct Grid {
     pub(crate) raw: sys::ComPtr<sys::IAvnGrid>,
 }
@@ -756,6 +874,57 @@ impl Panel {
 }
 
 impl AsControl for Panel {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct HeaderedContentControl {
+    pub(crate) raw: sys::ComPtr<sys::IAvnHeaderedContentControl>,
+}
+
+impl HeaderedContentControl {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_headered_content_control())
+            .map(|raw| Self { raw })
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_content(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_content()?.map(|raw| Control { raw }))
+    }
+    pub fn set_content(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_content(Some(&value))?)
+    }
+    pub fn content(self, value: impl AsControl) -> Result<Self> {
+        self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_header(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_header()?.map(|raw| Control { raw }))
+    }
+    pub fn set_header(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_header(Some(&value))?)
+    }
+    pub fn header(self, value: impl AsControl) -> Result<Self> {
+        self.set_header(value)?;
+        Ok(self)
+    }
+}
+
+impl AsControl for HeaderedContentControl {
     fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
         Ok(self.raw.query_interface()?)
     }
@@ -1057,6 +1226,91 @@ impl ProgressBar {
 }
 
 impl AsControl for ProgressBar {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct RadioButton {
+    pub(crate) raw: sys::ComPtr<sys::IAvnRadioButton>,
+}
+
+impl RadioButton {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_radio_button())
+            .map(|raw| Self { raw })
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_content(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_content()?.map(|raw| Control { raw }))
+    }
+    pub fn set_content(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_content(Some(&value))?)
+    }
+    pub fn content(self, value: impl AsControl) -> Result<Self> {
+        self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_click(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::button_click_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_click(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_click(subscription_id)))
+    }
+    pub fn on_click(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_click(callback)?.detach();
+        Ok(self)
+    }
+    pub fn get_is_checked(&self) -> Result<Option<bool>> { Ok(self.raw.get_is_checked()?) }
+    pub fn set_checked(&self, value: Option<bool>) -> Result<()> {
+        Ok(self.raw.set_is_checked(value)?)
+    }
+    pub fn checked(self, value: Option<bool>) -> Result<Self> {
+        self.set_checked(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_is_checked_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::toggle_button_is_checked_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_is_checked_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_is_checked_changed(subscription_id)))
+    }
+    pub fn on_is_checked_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_is_checked_changed(callback)?.detach();
+        Ok(self)
+    }
+    pub fn get_group_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_group_name()?)) }
+    }
+    pub fn set_group_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_group_name(Some(&value))?)
+    }
+    pub fn group_name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_group_name(value)?;
+        Ok(self)
+    }
+}
+
+impl AsControl for RadioButton {
     fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
         Ok(self.raw.query_interface()?)
     }

@@ -6,33 +6,27 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("BE4BCF48-8918-5BB6-B650-F22BF4DB9592")]
-public partial interface IAvnToggleButton : IAvnButton
+[Guid("B037B59C-F0AF-51F9-81AB-A984F07AC779")]
+public partial interface IAvnRadioButton : IAvnToggleButton
 {
     [PreserveSig]
-    int GetIsChecked(out int value);
+    int GetGroupName(out string? value);
 
     [PreserveSig]
-    int SetIsChecked(int value);
-
-    [PreserveSig]
-    int AdviseIsCheckedChanged(IAvnToggleButtonIsCheckedChangedHandler? handler, out long subscriptionId);
-
-    [PreserveSig]
-    int UnadviseIsCheckedChanged(long subscriptionId);
+    int SetGroupName(string? value);
 
 }
 
 [GeneratedComClass]
-public sealed partial class AvnToggleButton : IAvnToggleButton
+public sealed partial class AvnRadioButton : IAvnRadioButton
 {
-    private readonly global::Avalonia.Controls.Primitives.ToggleButton _value;
+    private readonly global::Avalonia.Controls.RadioButton _value;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnButtonClickHandler Handler, global::System.Action Unsubscribe)> _clickSubscriptions = new();
     private long _nextClickSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnToggleButtonIsCheckedChangedHandler Handler, global::System.Action Unsubscribe)> _isCheckedChangedSubscriptions = new();
     private long _nextIsCheckedChangedSubscriptionId;
 
-    internal AvnToggleButton(global::Avalonia.Controls.Primitives.ToggleButton value)
+    internal AvnRadioButton(global::Avalonia.Controls.RadioButton value)
     {
         _value = value;
         ObjectId = ProjectionRuntime.Register(value);
@@ -222,6 +216,35 @@ public sealed partial class AvnToggleButton : IAvnToggleButton
             if (!_isCheckedChangedSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
             subscription.Unsubscribe();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetGroupName(out string? value)
+    {
+        value = default!;
+        try
+        {
+            _value.VerifyAccess();
+            value = _value.GroupName;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetGroupName(string? value)
+    {
+        try
+        {
+            _value.VerifyAccess();
+            _value.GroupName = value;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

@@ -36,9 +36,12 @@ internal static class ProjectionRuntime
     private static IAvnAvaloniaObject CreateWrapper(global::Avalonia.AvaloniaObject value) => value switch
     {
         global::Avalonia.Controls.CheckBox typed => new AvnCheckBox(typed),
+        global::Avalonia.Controls.RadioButton typed => new AvnRadioButton(typed),
         global::Avalonia.Controls.ToggleSwitch typed => new AvnToggleSwitch(typed),
+        global::Avalonia.Controls.Expander typed => new AvnExpander(typed),
         global::Avalonia.Controls.Primitives.ToggleButton typed => new AvnToggleButton(typed),
         global::Avalonia.Controls.Button typed => new AvnButton(typed),
+        global::Avalonia.Controls.Primitives.HeaderedContentControl typed => new AvnHeaderedContentControl(typed),
         global::Avalonia.Controls.ProgressBar typed => new AvnProgressBar(typed),
         global::Avalonia.Controls.ScrollViewer typed => new AvnScrollViewer(typed),
         global::Avalonia.Controls.Slider typed => new AvnSlider(typed),

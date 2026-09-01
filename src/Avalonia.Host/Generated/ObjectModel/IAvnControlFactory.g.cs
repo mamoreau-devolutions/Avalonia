@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("4C1505B2-239D-59E1-8084-302D1ECB98DE")]
+[Guid("C11E3F2A-058B-5CEA-B21A-C9FA4D81EC25")]
 public partial interface IAvnControlFactory
 {
     [PreserveSig]
@@ -37,13 +37,22 @@ public partial interface IAvnControlFactory
     int CreateDockPanel(out IAvnDockPanel? value);
 
     [PreserveSig]
+    int CreateExpander(out IAvnExpander? value);
+
+    [PreserveSig]
     int CreateGrid(out IAvnGrid? value);
+
+    [PreserveSig]
+    int CreateHeaderedContentControl(out IAvnHeaderedContentControl? value);
 
     [PreserveSig]
     int CreatePanel(out IAvnPanel? value);
 
     [PreserveSig]
     int CreateProgressBar(out IAvnProgressBar? value);
+
+    [PreserveSig]
+    int CreateRadioButton(out IAvnRadioButton? value);
 
     [PreserveSig]
     int CreateScrollViewer(out IAvnScrollViewer? value);
@@ -224,6 +233,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         }
     }
 
+    public int CreateExpander(out IAvnExpander? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnExpander)ProjectionRuntime.Wrap(new global::Avalonia.Controls.Expander())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int CreateGrid(out IAvnGrid? value)
     {
         value = null;
@@ -231,6 +255,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         {
             global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
             value = (IAvnGrid)ProjectionRuntime.Wrap(new global::Avalonia.Controls.Grid())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateHeaderedContentControl(out IAvnHeaderedContentControl? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnHeaderedContentControl)ProjectionRuntime.Wrap(new global::Avalonia.Controls.Primitives.HeaderedContentControl())!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -261,6 +300,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         {
             global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
             value = (IAvnProgressBar)ProjectionRuntime.Wrap(new global::Avalonia.Controls.ProgressBar())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateRadioButton(out IAvnRadioButton? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnRadioButton)ProjectionRuntime.Wrap(new global::Avalonia.Controls.RadioButton())!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

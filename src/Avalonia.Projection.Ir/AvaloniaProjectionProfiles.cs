@@ -10,6 +10,7 @@ public static class AvaloniaProjectionProfiles
             "Avalonia.StyledElement",
             "Avalonia.Controls.Control",
             "Avalonia.Controls.ContentControl",
+            "Avalonia.Controls.Primitives.HeaderedContentControl",
             "Avalonia.Controls.Decorator",
             "Avalonia.Controls.Border",
             "Avalonia.Controls.Panel",
@@ -23,7 +24,9 @@ public static class AvaloniaProjectionProfiles
             "Avalonia.Controls.Button",
             "Avalonia.Controls.Primitives.ToggleButton",
             "Avalonia.Controls.CheckBox",
+            "Avalonia.Controls.RadioButton",
             "Avalonia.Controls.ToggleSwitch",
+            "Avalonia.Controls.Expander",
             "Avalonia.Controls.TextBox",
             "Avalonia.Controls.ScrollViewer",
             "Avalonia.Controls.Primitives.RangeBase",
@@ -36,6 +39,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.StyledElement"] = ["Classes"],
             ["Avalonia.Controls.Control"] = ["IsEnabled"],
             ["Avalonia.Controls.ContentControl"] = ["Content"],
+            ["Avalonia.Controls.Primitives.HeaderedContentControl"] = ["Header"],
             ["Avalonia.Controls.Decorator"] = ["Child"],
             ["Avalonia.Controls.Border"] = ["BackgroundSizing"],
             ["Avalonia.Controls.Panel"] = ["Children"],
@@ -48,7 +52,10 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.Button"] = ["Click"],
             ["Avalonia.Controls.Primitives.ToggleButton"] = ["IsChecked", "IsCheckedChanged"],
             ["Avalonia.Controls.CheckBox"] = [],
+            ["Avalonia.Controls.RadioButton"] = ["GroupName"],
             ["Avalonia.Controls.ToggleSwitch"] = ["OnContent", "OffContent"],
+            ["Avalonia.Controls.Expander"] =
+                ["ExpandDirection", "IsExpanded", "Expanded", "Collapsed"],
             ["Avalonia.Controls.Primitives.TemplatedControl"] = [],
             ["Avalonia.Controls.TextBox"] =
             [
@@ -102,6 +109,12 @@ public static class AvaloniaProjectionProfiles
                 InterfaceName = "Avalonia.Host.Com.IAvnControl",
                 IsNullable = true,
             },
+            ["Avalonia.Controls.Primitives.HeaderedContentControl.Header"] = new()
+            {
+                Kind = MarshallingKind.ComInterface,
+                InterfaceName = "Avalonia.Host.Com.IAvnControl",
+                IsNullable = true,
+            },
             ["Avalonia.Controls.ToggleSwitch.OnContent"] = new()
             {
                 Kind = MarshallingKind.ComInterface,
@@ -134,6 +147,14 @@ public static class AvaloniaProjectionProfiles
                 PayloadKind = EventPayloadKind.None,
             },
             ["Avalonia.Controls.Primitives.RangeBase.ValueChanged"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.Expander.Expanded"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.Expander.Collapsed"] = new()
             {
                 PayloadKind = EventPayloadKind.None,
             },
