@@ -1,9 +1,18 @@
 using System.Threading;
+using System.Runtime.InteropServices;
 using Avalonia.Host.Com;
 
 namespace Avalonia.Host;
 
 public readonly record struct ProjectionDiagnosticSnapshot(
+    long WrappersCreated,
+    int TrackedObjectIds,
+    int LiveManagedObjects,
+    long ActiveSubscriptions,
+    long NativeOwnershipReleases);
+
+[StructLayout(LayoutKind.Sequential)]
+public readonly record struct ProjectionDiagnosticNativeSnapshot(
     long WrappersCreated,
     int TrackedObjectIds,
     int LiveManagedObjects,
@@ -34,4 +43,15 @@ public static class ProjectionDiagnostics
         ProjectionRuntime.LiveManagedObjectCount,
         Interlocked.Read(ref s_activeSubscriptions),
         Interlocked.Read(ref s_nativeOwnershipReleases));
+
+    internal static ProjectionDiagnosticNativeSnapshot CaptureNative()
+    {
+        var snapshot = Capture();
+        return new ProjectionDiagnosticNativeSnapshot(
+            snapshot.WrappersCreated,
+            snapshot.TrackedObjectIds,
+            snapshot.LiveManagedObjects,
+            snapshot.ActiveSubscriptions,
+            snapshot.NativeOwnershipReleases);
+    }
 }

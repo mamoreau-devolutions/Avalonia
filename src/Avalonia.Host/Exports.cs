@@ -49,11 +49,22 @@ public static class Exports
             *probe = new MicroComOwnershipProbe().GetNativePointer();
             return HResults.S_OK;
         }
+
         catch (Exception e)
         {
             *probe = 0;
             return AbiError.Capture(e);
         }
+    }
+
+    [UnmanagedCallersOnly(EntryPoint = "avn_get_projection_diagnostics")]
+    internal static unsafe int GetProjectionDiagnostics(
+        ProjectionDiagnosticNativeSnapshot* snapshot)
+    {
+        if (snapshot is null)
+            return HResults.E_POINTER;
+        *snapshot = ProjectionDiagnostics.CaptureNative();
+        return HResults.S_OK;
     }
 
     /// <summary>

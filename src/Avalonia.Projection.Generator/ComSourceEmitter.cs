@@ -109,6 +109,9 @@ public static class ComSourceEmitter
             sb.AppendLine("    [PreserveSig]");
             sb.AppendLine("    int GetObjectId(out long value);");
             sb.AppendLine();
+            sb.AppendLine("    [PreserveSig]");
+            sb.AppendLine("    int GetLifetimeToken(out long value);");
+            sb.AppendLine();
         }
         foreach (var property in type.Properties)
             EmitInterfaceProperty(sb, property);
@@ -120,11 +123,13 @@ public static class ComSourceEmitter
         sb.AppendLine();
 
         var wrapperName = type.Name[1..];
+        var events = Lineage(ir, type).SelectMany(t => t.Events).ToArray();
         sb.AppendLine("[GeneratedComClass]");
         sb.AppendLine($"public sealed partial class {wrapperName} : {type.Name}");
         sb.AppendLine("{");
-        sb.AppendLine($"    private readonly global::{type.ManagedFullName} _value;");
-        foreach (var @event in Lineage(ir, type).SelectMany(t => t.Events))
+        sb.AppendLine("    private readonly global::Avalonia.Host.Ownership.ProjectionObjectState _state;");
+        sb.AppendLine($"    private global::{type.ManagedFullName} _value => _state.GetTarget<global::{type.ManagedFullName}>();");
+        foreach (var @event in events)
         {
             var handler = SimpleName(@event.HandlerInterfaceName);
             sb.AppendLine($"    private readonly global::System.Collections.Generic.Dictionary<long, ({handler} Handler, global::System.Action Unsubscribe)> _{LowerFirst(@event.Name)}Subscriptions = new();");
@@ -133,17 +138,40 @@ public static class ComSourceEmitter
         sb.AppendLine();
         sb.AppendLine($"    internal {wrapperName}(global::{type.ManagedFullName} value)");
         sb.AppendLine("    {");
-        sb.AppendLine("        _value = value;");
-        sb.AppendLine("        ObjectId = ProjectionRuntime.Register(value);");
+        sb.AppendLine("        _state = ProjectionRuntime.GetOrCreateState(value);");
+        if (events.Length > 0)
+            sb.AppendLine("        _state.RegisterCleanup(ReleaseSubscriptions);");
         sb.AppendLine("        global::Avalonia.Host.ProjectionDiagnostics.WrapperCreated();");
         sb.AppendLine("    }");
         sb.AppendLine();
-        sb.AppendLine("    private long ObjectId { get; }");
-        sb.AppendLine();
         sb.AppendLine("    public int GetObjectId(out long value)");
         sb.AppendLine("    {");
-        sb.AppendLine("        value = ObjectId;");
-        sb.AppendLine("        return global::Avalonia.Host.HResults.S_OK;");
+        sb.AppendLine("        try");
+        sb.AppendLine("        {");
+        sb.AppendLine("            using var call = _state.EnterCall();");
+        sb.AppendLine("            value = _state.ObjectId;");
+        sb.AppendLine("            return global::Avalonia.Host.HResults.S_OK;");
+        sb.AppendLine("        }");
+        sb.AppendLine("        catch (global::System.Exception e)");
+        sb.AppendLine("        {");
+        sb.AppendLine("            value = 0;");
+        sb.AppendLine("            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);");
+        sb.AppendLine("        }");
+        sb.AppendLine("    }");
+        sb.AppendLine();
+        sb.AppendLine("    public int GetLifetimeToken(out long value)");
+        sb.AppendLine("    {");
+        sb.AppendLine("        try");
+        sb.AppendLine("        {");
+        sb.AppendLine("            using var call = _state.EnterCall();");
+        sb.AppendLine("            value = _state.GetLifetimeToken();");
+        sb.AppendLine("            return global::Avalonia.Host.HResults.S_OK;");
+        sb.AppendLine("        }");
+        sb.AppendLine("        catch (global::System.Exception e)");
+        sb.AppendLine("        {");
+        sb.AppendLine("            value = 0;");
+        sb.AppendLine("            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);");
+        sb.AppendLine("        }");
         sb.AppendLine("    }");
 
         foreach (var projected in Lineage(ir, type))
@@ -154,6 +182,24 @@ public static class ComSourceEmitter
                 EmitImplementationMethod(sb, method);
             foreach (var @event in projected.Events)
                 EmitImplementationEvent(sb, @event);
+        }
+
+        if (events.Length > 0)
+        {
+            sb.AppendLine();
+            sb.AppendLine("    private void ReleaseSubscriptions()");
+            sb.AppendLine("    {");
+            foreach (var @event in events)
+            {
+                var field = LowerFirst(@event.Name);
+                sb.AppendLine($"        foreach (var subscription in _{field}Subscriptions.Values)");
+                sb.AppendLine("        {");
+                sb.AppendLine("            subscription.Unsubscribe();");
+                sb.AppendLine("            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();");
+                sb.AppendLine("        }");
+                sb.AppendLine($"        _{field}Subscriptions.Clear();");
+            }
+            sb.AppendLine("    }");
         }
 
         sb.AppendLine("}");
@@ -195,6 +241,7 @@ public static class ComSourceEmitter
         sb.AppendLine("{");
         sb.AppendLine("    private static long s_nextId;");
         sb.AppendLine($"    private static readonly global::System.Runtime.CompilerServices.ConditionalWeakTable<global::Avalonia.AvaloniaObject, {root.Name}> s_wrappers = new();");
+        sb.AppendLine("    private static readonly global::System.Runtime.CompilerServices.ConditionalWeakTable<global::Avalonia.AvaloniaObject, global::Avalonia.Host.Ownership.ProjectionObjectState> s_states = new();");
         sb.AppendLine("    private static readonly global::System.Collections.Concurrent.ConcurrentDictionary<long, global::System.WeakReference<global::Avalonia.AvaloniaObject>> s_objects = new();");
         sb.AppendLine();
         sb.AppendLine("    internal static int TrackedObjectIdCount => s_objects.Count;");
@@ -213,11 +260,21 @@ public static class ComSourceEmitter
         sb.AppendLine("        }");
         sb.AppendLine("    }");
         sb.AppendLine();
-        sb.AppendLine("    internal static long Register(global::Avalonia.AvaloniaObject value)");
+        sb.AppendLine("    internal static global::Avalonia.Host.Ownership.ProjectionObjectState GetOrCreateState(global::Avalonia.AvaloniaObject value) =>");
+        sb.AppendLine("        s_states.GetValue(value, CreateState);");
+        sb.AppendLine();
+        sb.AppendLine("    private static global::Avalonia.Host.Ownership.ProjectionObjectState CreateState(global::Avalonia.AvaloniaObject value)");
         sb.AppendLine("    {");
         sb.AppendLine("        var id = global::System.Threading.Interlocked.Increment(ref s_nextId);");
         sb.AppendLine("        s_objects[id] = new(value);");
-        sb.AppendLine("        return id;");
+        sb.AppendLine("        return new global::Avalonia.Host.Ownership.ProjectionObjectState(value, id);");
+        sb.AppendLine("    }");
+        sb.AppendLine();
+        sb.AppendLine("    internal static void Forget(global::Avalonia.AvaloniaObject value, long objectId)");
+        sb.AppendLine("    {");
+        sb.AppendLine("        s_wrappers.Remove(value);");
+        sb.AppendLine("        s_states.Remove(value);");
+        sb.AppendLine("        s_objects.TryRemove(objectId, out _);");
         sb.AppendLine("    }");
         sb.AppendLine();
         sb.AppendLine($"    internal static {root.Name}? Wrap(global::Avalonia.AvaloniaObject? value) =>");
@@ -603,6 +660,7 @@ public static class ComSourceEmitter
             sb.AppendLine("        value = default!;");
             sb.AppendLine("        try");
             sb.AppendLine("        {");
+            sb.AppendLine("            using var call = _state.EnterCall();");
             sb.AppendLine("            _value.VerifyAccess();");
             sb.AppendLine($"            value = {ReadExpression(property)};");
             sb.AppendLine("            return global::Avalonia.Host.HResults.S_OK;");
@@ -620,6 +678,7 @@ public static class ComSourceEmitter
             sb.AppendLine("    {");
             sb.AppendLine("        try");
             sb.AppendLine("        {");
+            sb.AppendLine("            using var call = _state.EnterCall();");
             sb.AppendLine("            _value.VerifyAccess();");
             sb.AppendLine($"            _value.{property.Name} = {WriteExpression(property)};");
             sb.AppendLine("            return global::Avalonia.Host.HResults.S_OK;");
@@ -639,6 +698,7 @@ public static class ComSourceEmitter
         sb.AppendLine("    {");
         sb.AppendLine("        try");
         sb.AppendLine("        {");
+        sb.AppendLine("            using var call = _state.EnterCall();");
         sb.AppendLine("            _value.VerifyAccess();");
         sb.AppendLine($"            _value.{method.ManagedName ?? method.Name}({string.Join(", ", method.Parameters.Select(MethodArgument))});");
         sb.AppendLine("            return global::Avalonia.Host.HResults.S_OK;");
@@ -663,7 +723,9 @@ public static class ComSourceEmitter
         sb.AppendLine("            return global::Avalonia.Host.HResults.E_POINTER;");
         sb.AppendLine("        try");
         sb.AppendLine("        {");
+        sb.AppendLine("            using var call = _state.EnterCall();");
         sb.AppendLine("            _value.VerifyAccess();");
+        sb.AppendLine("            var eventSource = _value;");
         sb.AppendLine($"            var callback = new global::{@event.ManagedHandlerTypeName}((_, eventArgs) =>");
         sb.AppendLine("            {");
         foreach (var parameter in @event.Parameters.Where(p => p.Direction == ParameterDirection.InOut))
@@ -678,9 +740,9 @@ public static class ComSourceEmitter
         foreach (var parameter in @event.Parameters.Where(p => p.Direction == ParameterDirection.InOut))
             sb.AppendLine($"                eventArgs.{parameter.Name} = {EventWriteExpression(parameter, LowerFirst(parameter.Name))};");
         sb.AppendLine("            });");
-        sb.AppendLine($"            _value.{name} += callback;");
+        sb.AppendLine($"            eventSource.{name} += callback;");
         sb.AppendLine($"            subscriptionId = global::System.Threading.Interlocked.Increment(ref _next{name}SubscriptionId);");
-        sb.AppendLine($"            _{field}Subscriptions.Add(subscriptionId, (handler, () => _value.{name} -= callback));");
+        sb.AppendLine($"            _{field}Subscriptions.Add(subscriptionId, (handler, () => eventSource.{name} -= callback));");
         sb.AppendLine("            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();");
         sb.AppendLine("            return global::Avalonia.Host.HResults.S_OK;");
         sb.AppendLine("        }");
@@ -694,6 +756,7 @@ public static class ComSourceEmitter
         sb.AppendLine("    {");
         sb.AppendLine("        try");
         sb.AppendLine("        {");
+        sb.AppendLine("            using var call = _state.EnterCall();");
         sb.AppendLine("            _value.VerifyAccess();");
         sb.AppendLine($"            if (!_{field}Subscriptions.Remove(subscriptionId, out var subscription))");
         sb.AppendLine("                return global::Avalonia.Host.HResults.E_INVALIDARG;");

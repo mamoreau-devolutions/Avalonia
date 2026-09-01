@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("B925209A-16D2-5648-BC34-29D3A2BCAD12")]
+[Guid("26F419ED-02FB-5AEC-81DC-7C15C51D6ADB")]
 public partial interface IAvnScrollViewer : IAvnContentControl
 {
     [PreserveSig]
@@ -95,7 +95,8 @@ public partial interface IAvnScrollViewer : IAvnContentControl
 [GeneratedComClass]
 public sealed partial class AvnScrollViewer : IAvnScrollViewer
 {
-    private readonly global::Avalonia.Controls.ScrollViewer _value;
+    private readonly global::Avalonia.Host.Ownership.ProjectionObjectState _state;
+    private global::Avalonia.Controls.ScrollViewer _value => _state.GetTarget<global::Avalonia.Controls.ScrollViewer>();
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnControlKeyDownHandler Handler, global::System.Action Unsubscribe)> _keyDownSubscriptions = new();
     private long _nextKeyDownSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnControlPointerEnteredHandler Handler, global::System.Action Unsubscribe)> _pointerEnteredSubscriptions = new();
@@ -107,17 +108,39 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
 
     internal AvnScrollViewer(global::Avalonia.Controls.ScrollViewer value)
     {
-        _value = value;
-        ObjectId = ProjectionRuntime.Register(value);
+        _state = ProjectionRuntime.GetOrCreateState(value);
+        _state.RegisterCleanup(ReleaseSubscriptions);
         global::Avalonia.Host.ProjectionDiagnostics.WrapperCreated();
     }
 
-    private long ObjectId { get; }
-
     public int GetObjectId(out long value)
     {
-        value = ObjectId;
-        return global::Avalonia.Host.HResults.S_OK;
+        try
+        {
+            using var call = _state.EnterCall();
+            value = _state.ObjectId;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            value = 0;
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetLifetimeToken(out long value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            value = _state.GetLifetimeToken();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            value = 0;
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
     }
 
     public int GetClasses(out IAvnStringList value)
@@ -125,6 +148,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = new AvnStringList(_value.Classes);
             return global::Avalonia.Host.HResults.S_OK;
@@ -140,6 +164,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.Width;
             return global::Avalonia.Host.HResults.S_OK;
@@ -154,6 +179,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Width = value;
             return global::Avalonia.Host.HResults.S_OK;
@@ -169,6 +195,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.Height;
             return global::Avalonia.Host.HResults.S_OK;
@@ -183,6 +210,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Height = value;
             return global::Avalonia.Host.HResults.S_OK;
@@ -198,6 +226,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.IsEnabled ? 1 : 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -212,6 +241,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.IsEnabled = value != 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -229,7 +259,9 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
             return global::Avalonia.Host.HResults.E_POINTER;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
+            var eventSource = _value;
             var callback = new global::System.EventHandler<Avalonia.Input.KeyEventArgs>((_, eventArgs) =>
             {
                 var handled = eventArgs.Handled ? 1 : 0;
@@ -238,9 +270,9 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
                     global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
                 eventArgs.Handled = handled != 0;
             });
-            _value.KeyDown += callback;
+            eventSource.KeyDown += callback;
             subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextKeyDownSubscriptionId);
-            _keyDownSubscriptions.Add(subscriptionId, (handler, () => _value.KeyDown -= callback));
+            _keyDownSubscriptions.Add(subscriptionId, (handler, () => eventSource.KeyDown -= callback));
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
             return global::Avalonia.Host.HResults.S_OK;
         }
@@ -254,6 +286,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             if (!_keyDownSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
@@ -274,16 +307,18 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
             return global::Avalonia.Host.HResults.E_POINTER;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
+            var eventSource = _value;
             var callback = new global::System.EventHandler<Avalonia.Input.PointerEventArgs>((_, eventArgs) =>
             {
                 var hr = handler.Invoke();
                 if (hr < 0)
                     global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
             });
-            _value.PointerEntered += callback;
+            eventSource.PointerEntered += callback;
             subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextPointerEnteredSubscriptionId);
-            _pointerEnteredSubscriptions.Add(subscriptionId, (handler, () => _value.PointerEntered -= callback));
+            _pointerEnteredSubscriptions.Add(subscriptionId, (handler, () => eventSource.PointerEntered -= callback));
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
             return global::Avalonia.Host.HResults.S_OK;
         }
@@ -297,6 +332,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             if (!_pointerEnteredSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
@@ -317,16 +353,18 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
             return global::Avalonia.Host.HResults.E_POINTER;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
+            var eventSource = _value;
             var callback = new global::System.EventHandler<Avalonia.Input.PointerEventArgs>((_, eventArgs) =>
             {
                 var hr = handler.Invoke();
                 if (hr < 0)
                     global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
             });
-            _value.PointerExited += callback;
+            eventSource.PointerExited += callback;
             subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextPointerExitedSubscriptionId);
-            _pointerExitedSubscriptions.Add(subscriptionId, (handler, () => _value.PointerExited -= callback));
+            _pointerExitedSubscriptions.Add(subscriptionId, (handler, () => eventSource.PointerExited -= callback));
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
             return global::Avalonia.Host.HResults.S_OK;
         }
@@ -340,6 +378,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             if (!_pointerExitedSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
@@ -358,6 +397,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = (IAvnControl?)ProjectionRuntime.Wrap(_value.Content as global::Avalonia.AvaloniaObject);
             return global::Avalonia.Host.HResults.S_OK;
@@ -372,6 +412,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Content = (global::System.Object)ProjectionRuntime.Unwrap(value)!;
             return global::Avalonia.Host.HResults.S_OK;
@@ -387,6 +428,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.BringIntoViewOnFocusChange ? 1 : 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -401,6 +443,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.BringIntoViewOnFocusChange = value != 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -416,6 +459,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = (int)_value.HorizontalScrollBarVisibility;
             return global::Avalonia.Host.HResults.S_OK;
@@ -430,6 +474,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.HorizontalScrollBarVisibility = (global::Avalonia.Controls.Primitives.ScrollBarVisibility)value;
             return global::Avalonia.Host.HResults.S_OK;
@@ -445,6 +490,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = (int)_value.VerticalScrollBarVisibility;
             return global::Avalonia.Host.HResults.S_OK;
@@ -459,6 +505,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.VerticalScrollBarVisibility = (global::Avalonia.Controls.Primitives.ScrollBarVisibility)value;
             return global::Avalonia.Host.HResults.S_OK;
@@ -474,6 +521,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.IsExpanded ? 1 : 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -489,6 +537,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.AllowAutoHide ? 1 : 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -503,6 +552,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.AllowAutoHide = value != 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -518,6 +568,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.IsScrollChainingEnabled ? 1 : 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -532,6 +583,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.IsScrollChainingEnabled = value != 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -547,6 +599,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.IsScrollInertiaEnabled ? 1 : 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -561,6 +614,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.IsScrollInertiaEnabled = value != 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -576,6 +630,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.IsDeferredScrollingEnabled ? 1 : 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -590,6 +645,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.IsDeferredScrollingEnabled = value != 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -604,6 +660,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.LineUp();
             return global::Avalonia.Host.HResults.S_OK;
@@ -618,6 +675,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.LineDown();
             return global::Avalonia.Host.HResults.S_OK;
@@ -632,6 +690,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.LineLeft();
             return global::Avalonia.Host.HResults.S_OK;
@@ -646,6 +705,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.LineRight();
             return global::Avalonia.Host.HResults.S_OK;
@@ -660,6 +720,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.PageUp();
             return global::Avalonia.Host.HResults.S_OK;
@@ -674,6 +735,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.PageDown();
             return global::Avalonia.Host.HResults.S_OK;
@@ -688,6 +750,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.PageLeft();
             return global::Avalonia.Host.HResults.S_OK;
@@ -702,6 +765,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.PageRight();
             return global::Avalonia.Host.HResults.S_OK;
@@ -716,6 +780,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.ScrollToHome();
             return global::Avalonia.Host.HResults.S_OK;
@@ -730,6 +795,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.ScrollToEnd();
             return global::Avalonia.Host.HResults.S_OK;
@@ -747,16 +813,18 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
             return global::Avalonia.Host.HResults.E_POINTER;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
+            var eventSource = _value;
             var callback = new global::System.EventHandler<Avalonia.Controls.ScrollChangedEventArgs>((_, eventArgs) =>
             {
                 var hr = handler.Invoke();
                 if (hr < 0)
                     global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
             });
-            _value.ScrollChanged += callback;
+            eventSource.ScrollChanged += callback;
             subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextScrollChangedSubscriptionId);
-            _scrollChangedSubscriptions.Add(subscriptionId, (handler, () => _value.ScrollChanged -= callback));
+            _scrollChangedSubscriptions.Add(subscriptionId, (handler, () => eventSource.ScrollChanged -= callback));
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
             return global::Avalonia.Host.HResults.S_OK;
         }
@@ -770,6 +838,7 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             if (!_scrollChangedSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
@@ -781,5 +850,33 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
         {
             return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
         }
+    }
+
+    private void ReleaseSubscriptions()
+    {
+        foreach (var subscription in _keyDownSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _keyDownSubscriptions.Clear();
+        foreach (var subscription in _pointerEnteredSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _pointerEnteredSubscriptions.Clear();
+        foreach (var subscription in _pointerExitedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _pointerExitedSubscriptions.Clear();
+        foreach (var subscription in _scrollChangedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _scrollChangedSubscriptions.Clear();
     }
 }

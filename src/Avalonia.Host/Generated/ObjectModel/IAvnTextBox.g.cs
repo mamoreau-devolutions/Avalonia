@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("7914E5DA-2872-57BF-BF7C-FE39ED8D38F0")]
+[Guid("6D239DFB-3EDD-59D5-B180-E7F2DAFEF136")]
 public partial interface IAvnTextBox : IAvnTemplatedControl
 {
     [PreserveSig]
@@ -155,7 +155,8 @@ public partial interface IAvnTextBox : IAvnTemplatedControl
 [GeneratedComClass]
 public sealed partial class AvnTextBox : IAvnTextBox
 {
-    private readonly global::Avalonia.Controls.TextBox _value;
+    private readonly global::Avalonia.Host.Ownership.ProjectionObjectState _state;
+    private global::Avalonia.Controls.TextBox _value => _state.GetTarget<global::Avalonia.Controls.TextBox>();
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnControlKeyDownHandler Handler, global::System.Action Unsubscribe)> _keyDownSubscriptions = new();
     private long _nextKeyDownSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnControlPointerEnteredHandler Handler, global::System.Action Unsubscribe)> _pointerEnteredSubscriptions = new();
@@ -167,17 +168,39 @@ public sealed partial class AvnTextBox : IAvnTextBox
 
     internal AvnTextBox(global::Avalonia.Controls.TextBox value)
     {
-        _value = value;
-        ObjectId = ProjectionRuntime.Register(value);
+        _state = ProjectionRuntime.GetOrCreateState(value);
+        _state.RegisterCleanup(ReleaseSubscriptions);
         global::Avalonia.Host.ProjectionDiagnostics.WrapperCreated();
     }
 
-    private long ObjectId { get; }
-
     public int GetObjectId(out long value)
     {
-        value = ObjectId;
-        return global::Avalonia.Host.HResults.S_OK;
+        try
+        {
+            using var call = _state.EnterCall();
+            value = _state.ObjectId;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            value = 0;
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetLifetimeToken(out long value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            value = _state.GetLifetimeToken();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            value = 0;
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
     }
 
     public int GetClasses(out IAvnStringList value)
@@ -185,6 +208,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = new AvnStringList(_value.Classes);
             return global::Avalonia.Host.HResults.S_OK;
@@ -200,6 +224,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.Width;
             return global::Avalonia.Host.HResults.S_OK;
@@ -214,6 +239,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Width = value;
             return global::Avalonia.Host.HResults.S_OK;
@@ -229,6 +255,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.Height;
             return global::Avalonia.Host.HResults.S_OK;
@@ -243,6 +270,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Height = value;
             return global::Avalonia.Host.HResults.S_OK;
@@ -258,6 +286,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.IsEnabled ? 1 : 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -272,6 +301,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.IsEnabled = value != 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -289,7 +319,9 @@ public sealed partial class AvnTextBox : IAvnTextBox
             return global::Avalonia.Host.HResults.E_POINTER;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
+            var eventSource = _value;
             var callback = new global::System.EventHandler<Avalonia.Input.KeyEventArgs>((_, eventArgs) =>
             {
                 var handled = eventArgs.Handled ? 1 : 0;
@@ -298,9 +330,9 @@ public sealed partial class AvnTextBox : IAvnTextBox
                     global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
                 eventArgs.Handled = handled != 0;
             });
-            _value.KeyDown += callback;
+            eventSource.KeyDown += callback;
             subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextKeyDownSubscriptionId);
-            _keyDownSubscriptions.Add(subscriptionId, (handler, () => _value.KeyDown -= callback));
+            _keyDownSubscriptions.Add(subscriptionId, (handler, () => eventSource.KeyDown -= callback));
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
             return global::Avalonia.Host.HResults.S_OK;
         }
@@ -314,6 +346,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             if (!_keyDownSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
@@ -334,16 +367,18 @@ public sealed partial class AvnTextBox : IAvnTextBox
             return global::Avalonia.Host.HResults.E_POINTER;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
+            var eventSource = _value;
             var callback = new global::System.EventHandler<Avalonia.Input.PointerEventArgs>((_, eventArgs) =>
             {
                 var hr = handler.Invoke();
                 if (hr < 0)
                     global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
             });
-            _value.PointerEntered += callback;
+            eventSource.PointerEntered += callback;
             subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextPointerEnteredSubscriptionId);
-            _pointerEnteredSubscriptions.Add(subscriptionId, (handler, () => _value.PointerEntered -= callback));
+            _pointerEnteredSubscriptions.Add(subscriptionId, (handler, () => eventSource.PointerEntered -= callback));
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
             return global::Avalonia.Host.HResults.S_OK;
         }
@@ -357,6 +392,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             if (!_pointerEnteredSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
@@ -377,16 +413,18 @@ public sealed partial class AvnTextBox : IAvnTextBox
             return global::Avalonia.Host.HResults.E_POINTER;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
+            var eventSource = _value;
             var callback = new global::System.EventHandler<Avalonia.Input.PointerEventArgs>((_, eventArgs) =>
             {
                 var hr = handler.Invoke();
                 if (hr < 0)
                     global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
             });
-            _value.PointerExited += callback;
+            eventSource.PointerExited += callback;
             subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextPointerExitedSubscriptionId);
-            _pointerExitedSubscriptions.Add(subscriptionId, (handler, () => _value.PointerExited -= callback));
+            _pointerExitedSubscriptions.Add(subscriptionId, (handler, () => eventSource.PointerExited -= callback));
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
             return global::Avalonia.Host.HResults.S_OK;
         }
@@ -400,6 +438,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             if (!_pointerExitedSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
@@ -418,6 +457,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.AcceptsReturn ? 1 : 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -432,6 +472,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.AcceptsReturn = value != 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -447,6 +488,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.AcceptsTab ? 1 : 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -461,6 +503,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.AcceptsTab = value != 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -476,6 +519,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.CaretIndex;
             return global::Avalonia.Host.HResults.S_OK;
@@ -490,6 +534,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.CaretIndex = value;
             return global::Avalonia.Host.HResults.S_OK;
@@ -505,6 +550,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.IsReadOnly ? 1 : 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -519,6 +565,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.IsReadOnly = value != 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -534,6 +581,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.SelectionStart;
             return global::Avalonia.Host.HResults.S_OK;
@@ -548,6 +596,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.SelectionStart = value;
             return global::Avalonia.Host.HResults.S_OK;
@@ -563,6 +612,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.SelectionEnd;
             return global::Avalonia.Host.HResults.S_OK;
@@ -577,6 +627,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.SelectionEnd = value;
             return global::Avalonia.Host.HResults.S_OK;
@@ -592,6 +643,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.MaxLength;
             return global::Avalonia.Host.HResults.S_OK;
@@ -606,6 +658,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.MaxLength = value;
             return global::Avalonia.Host.HResults.S_OK;
@@ -621,6 +674,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.MaxLines;
             return global::Avalonia.Host.HResults.S_OK;
@@ -635,6 +689,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.MaxLines = value;
             return global::Avalonia.Host.HResults.S_OK;
@@ -650,6 +705,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.MinLines;
             return global::Avalonia.Host.HResults.S_OK;
@@ -664,6 +720,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.MinLines = value;
             return global::Avalonia.Host.HResults.S_OK;
@@ -679,6 +736,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.LineHeight;
             return global::Avalonia.Host.HResults.S_OK;
@@ -693,6 +751,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.LineHeight = value;
             return global::Avalonia.Host.HResults.S_OK;
@@ -708,6 +767,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.Text;
             return global::Avalonia.Host.HResults.S_OK;
@@ -722,6 +782,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Text = value;
             return global::Avalonia.Host.HResults.S_OK;
@@ -737,6 +798,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.PlaceholderText;
             return global::Avalonia.Host.HResults.S_OK;
@@ -751,6 +813,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.PlaceholderText = value;
             return global::Avalonia.Host.HResults.S_OK;
@@ -766,6 +829,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.RevealPassword ? 1 : 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -780,6 +844,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.RevealPassword = value != 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -795,6 +860,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = (int)_value.TextWrapping;
             return global::Avalonia.Host.HResults.S_OK;
@@ -809,6 +875,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.TextWrapping = (global::Avalonia.Media.TextWrapping)value;
             return global::Avalonia.Host.HResults.S_OK;
@@ -824,6 +891,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.NewLine;
             return global::Avalonia.Host.HResults.S_OK;
@@ -838,6 +906,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.NewLine = value;
             return global::Avalonia.Host.HResults.S_OK;
@@ -853,6 +922,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.CanCut ? 1 : 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -868,6 +938,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.CanCopy ? 1 : 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -883,6 +954,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.CanPaste ? 1 : 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -898,6 +970,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.IsUndoEnabled ? 1 : 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -912,6 +985,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.IsUndoEnabled = value != 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -927,6 +1001,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.UndoLimit;
             return global::Avalonia.Host.HResults.S_OK;
@@ -941,6 +1016,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.UndoLimit = value;
             return global::Avalonia.Host.HResults.S_OK;
@@ -956,6 +1032,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.CanUndo ? 1 : 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -971,6 +1048,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.CanRedo ? 1 : 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -985,6 +1063,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Cut();
             return global::Avalonia.Host.HResults.S_OK;
@@ -999,6 +1078,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Copy();
             return global::Avalonia.Host.HResults.S_OK;
@@ -1013,6 +1093,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Paste();
             return global::Avalonia.Host.HResults.S_OK;
@@ -1027,6 +1108,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Clear();
             return global::Avalonia.Host.HResults.S_OK;
@@ -1041,6 +1123,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Undo();
             return global::Avalonia.Host.HResults.S_OK;
@@ -1055,6 +1138,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Redo();
             return global::Avalonia.Host.HResults.S_OK;
@@ -1072,16 +1156,18 @@ public sealed partial class AvnTextBox : IAvnTextBox
             return global::Avalonia.Host.HResults.E_POINTER;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
+            var eventSource = _value;
             var callback = new global::System.EventHandler<Avalonia.Controls.TextChangedEventArgs>((_, eventArgs) =>
             {
                 var hr = handler.Invoke();
                 if (hr < 0)
                     global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
             });
-            _value.TextChanged += callback;
+            eventSource.TextChanged += callback;
             subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextTextChangedSubscriptionId);
-            _textChangedSubscriptions.Add(subscriptionId, (handler, () => _value.TextChanged -= callback));
+            _textChangedSubscriptions.Add(subscriptionId, (handler, () => eventSource.TextChanged -= callback));
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
             return global::Avalonia.Host.HResults.S_OK;
         }
@@ -1095,6 +1181,7 @@ public sealed partial class AvnTextBox : IAvnTextBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             if (!_textChangedSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
@@ -1106,5 +1193,33 @@ public sealed partial class AvnTextBox : IAvnTextBox
         {
             return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
         }
+    }
+
+    private void ReleaseSubscriptions()
+    {
+        foreach (var subscription in _keyDownSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _keyDownSubscriptions.Clear();
+        foreach (var subscription in _pointerEnteredSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _pointerEnteredSubscriptions.Clear();
+        foreach (var subscription in _pointerExitedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _pointerExitedSubscriptions.Clear();
+        foreach (var subscription in _textChangedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _textChangedSubscriptions.Clear();
     }
 }

@@ -11,3 +11,8 @@ interface IAvnMicroComOwnershipProbe : IUnknown
 {
     HRESULT GetValue(int* value);
 }
+
+[uuid(a5f550dd-27a0-492f-914d-bd4363f1716d)]
+interface IAvnMicroComLifetimeToken : IUnknown
+{
+}

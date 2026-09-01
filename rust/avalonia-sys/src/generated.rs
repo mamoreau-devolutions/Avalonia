@@ -660,7 +660,7 @@ impl ComPtr<IAvnItemList> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_at)(self.as_raw(), index as i32, &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn add(&self, value: &ComPtr<IAvnControl>) -> Result<()> {
@@ -721,7 +721,7 @@ impl ComPtr<IAvnControlList> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_at)(self.as_raw(), index as i32, &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn add(&self, value: &ComPtr<IAvnControl>) -> Result<()> {
@@ -802,7 +802,7 @@ impl ComPtr<IAvnStringList> {
     }
 }
 
-pub const I_AVN_AVALONIA_OBJECT_IID: Guid = Guid { data1: 0x41BE85D0, data2: 0xBB9E, data3: 0x57A8, data4: [0xAE, 0xBC, 0xFD, 0xB0, 0x8A, 0x94, 0x4B, 0x54] };
+pub const I_AVN_AVALONIA_OBJECT_IID: Guid = Guid { data1: 0xFA7F2E03, data2: 0x0BFA, data3: 0x5422, data4: [0x84, 0x0B, 0x18, 0xAE, 0x1D, 0x96, 0x95, 0xC0] };
 
 #[repr(C)]
 struct IAvnAvaloniaObjectVtbl {
@@ -810,6 +810,7 @@ struct IAvnAvaloniaObjectVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnAvaloniaObject, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnAvaloniaObject, *mut i64) -> i32,
 }
 
 #[repr(C)]
@@ -829,9 +830,16 @@ impl ComPtr<IAvnAvaloniaObject> {
             hresult::check(hr).map(|_| value)
         }
     }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
+        }
+    }
 }
 
-pub const I_AVN_BORDER_IID: Guid = Guid { data1: 0x3C222396, data2: 0x41E4, data3: 0x5AB6, data4: [0xB2, 0xD6, 0xD3, 0xF0, 0xE7, 0x54, 0xD7, 0xA1] };
+pub const I_AVN_BORDER_IID: Guid = Guid { data1: 0xF739DD7D, data2: 0x4E30, data3: 0x54FF, data4: [0xBE, 0x32, 0xDD, 0xC3, 0x91, 0x51, 0x0B, 0x29] };
 
 #[repr(C)]
 struct IAvnBorderVtbl {
@@ -839,6 +847,7 @@ struct IAvnBorderVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnBorder, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnBorder, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnBorder, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnBorder, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnBorder, f64) -> i32,
@@ -873,6 +882,13 @@ impl ComPtr<IAvnBorder> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -969,7 +985,7 @@ impl ComPtr<IAvnBorder> {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_child)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            Ok(ComPtr::from_raw(value))
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
         }
     }
     pub fn set_child(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
@@ -994,7 +1010,7 @@ impl ComPtr<IAvnBorder> {
     }
 }
 
-pub const I_AVN_BUTTON_IID: Guid = Guid { data1: 0x8F85E906, data2: 0x9A9E, data3: 0x5A8E, data4: [0xB5, 0x81, 0x63, 0xA6, 0x49, 0xC7, 0x52, 0xB4] };
+pub const I_AVN_BUTTON_IID: Guid = Guid { data1: 0x476007AA, data2: 0xFC01, data3: 0x5943, data4: [0xA7, 0x63, 0x41, 0x58, 0x9B, 0x33, 0xB7, 0xA7] };
 
 #[repr(C)]
 struct IAvnButtonVtbl {
@@ -1002,6 +1018,7 @@ struct IAvnButtonVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnButton, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnButton, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnButton, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnButton, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnButton, f64) -> i32,
@@ -1036,6 +1053,13 @@ impl ComPtr<IAvnButton> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -1132,7 +1156,7 @@ impl ComPtr<IAvnButton> {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_content)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            Ok(ComPtr::from_raw(value))
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
         }
     }
     pub fn set_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
@@ -1156,7 +1180,7 @@ impl ComPtr<IAvnButton> {
     }
 }
 
-pub const I_AVN_CANVAS_IID: Guid = Guid { data1: 0xE3EF0F53, data2: 0x3DBE, data3: 0x5364, data4: [0x86, 0xE2, 0x93, 0xDD, 0x42, 0x39, 0xB4, 0x94] };
+pub const I_AVN_CANVAS_IID: Guid = Guid { data1: 0x93C6FF9D, data2: 0x813F, data3: 0x53A1, data4: [0x8A, 0x4D, 0xC7, 0xC3, 0xCE, 0x48, 0xF6, 0x65] };
 
 #[repr(C)]
 struct IAvnCanvasVtbl {
@@ -1164,6 +1188,7 @@ struct IAvnCanvasVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnCanvas, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnCanvas, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnCanvas, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnCanvas, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnCanvas, f64) -> i32,
@@ -1195,6 +1220,13 @@ impl ComPtr<IAvnCanvas> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -1296,7 +1328,7 @@ impl ComPtr<IAvnCanvas> {
     }
 }
 
-pub const I_AVN_CHECK_BOX_IID: Guid = Guid { data1: 0x45FF6E5C, data2: 0x9DCD, data3: 0x504F, data4: [0x8C, 0x64, 0x16, 0x30, 0x2F, 0xBD, 0xA2, 0xED] };
+pub const I_AVN_CHECK_BOX_IID: Guid = Guid { data1: 0xB49EB85F, data2: 0x9FA3, data3: 0x5B1F, data4: [0x9A, 0xA7, 0x75, 0x05, 0xFD, 0xF2, 0xD4, 0xCC] };
 
 #[repr(C)]
 struct IAvnCheckBoxVtbl {
@@ -1304,6 +1336,7 @@ struct IAvnCheckBoxVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnCheckBox, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnCheckBox, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnCheckBox, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnCheckBox, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnCheckBox, f64) -> i32,
@@ -1342,6 +1375,13 @@ impl ComPtr<IAvnCheckBox> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -1438,7 +1478,7 @@ impl ComPtr<IAvnCheckBox> {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_content)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            Ok(ComPtr::from_raw(value))
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
         }
     }
     pub fn set_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
@@ -1489,7 +1529,7 @@ impl ComPtr<IAvnCheckBox> {
     }
 }
 
-pub const I_AVN_COMBO_BOX_IID: Guid = Guid { data1: 0x3A33EF55, data2: 0xC31D, data3: 0x537B, data4: [0xA1, 0x40, 0xA3, 0x10, 0xA9, 0x44, 0x97, 0xAF] };
+pub const I_AVN_COMBO_BOX_IID: Guid = Guid { data1: 0x55688009, data2: 0x14E3, data3: 0x5334, data4: [0x8E, 0x9B, 0xFE, 0x2A, 0x73, 0x69, 0x17, 0x20] };
 
 #[repr(C)]
 struct IAvnComboBoxVtbl {
@@ -1497,6 +1537,7 @@ struct IAvnComboBoxVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnComboBox, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnComboBox, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnComboBox, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnComboBox, f64) -> i32,
@@ -1534,6 +1575,13 @@ impl ComPtr<IAvnComboBox> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -1676,7 +1724,7 @@ impl ComPtr<IAvnComboBox> {
     }
 }
 
-pub const I_AVN_COMBO_BOX_ITEM_IID: Guid = Guid { data1: 0x0C9B54F2, data2: 0x2EEA, data3: 0x57A5, data4: [0xB6, 0x3C, 0x59, 0x14, 0x8C, 0xC6, 0xF4, 0x8D] };
+pub const I_AVN_COMBO_BOX_ITEM_IID: Guid = Guid { data1: 0xDF316DBA, data2: 0xE86C, data3: 0x56A5, data4: [0xA0, 0xA3, 0x33, 0xDB, 0xFC, 0x4B, 0xE6, 0x54] };
 
 #[repr(C)]
 struct IAvnComboBoxItemVtbl {
@@ -1684,6 +1732,7 @@ struct IAvnComboBoxItemVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnComboBoxItem, f64) -> i32,
@@ -1720,6 +1769,13 @@ impl ComPtr<IAvnComboBoxItem> {
             hresult::check(hr).map(|_| value)
         }
     }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
+        }
+    }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
         unsafe {
             let mut value: *mut IAvnStringList = ptr::null_mut();
@@ -1814,7 +1870,7 @@ impl ComPtr<IAvnComboBoxItem> {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_content)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            Ok(ComPtr::from_raw(value))
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
         }
     }
     pub fn set_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
@@ -1839,7 +1895,7 @@ impl ComPtr<IAvnComboBoxItem> {
     }
 }
 
-pub const I_AVN_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x7D1DEC3D, data2: 0x0F1B, data3: 0x5A5E, data4: [0xA7, 0x3F, 0x2C, 0xDC, 0xAD, 0x2A, 0x4A, 0x1D] };
+pub const I_AVN_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x44B1FE4E, data2: 0x5095, data3: 0x5587, data4: [0xAD, 0x59, 0x57, 0xCB, 0x60, 0xAD, 0xEF, 0xE3] };
 
 #[repr(C)]
 struct IAvnContentControlVtbl {
@@ -1847,6 +1903,7 @@ struct IAvnContentControlVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnContentControl, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnContentControl, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnContentControl, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnContentControl, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnContentControl, f64) -> i32,
@@ -1881,6 +1938,13 @@ impl ComPtr<IAvnContentControl> {
             hresult::check(hr).map(|_| value)
         }
     }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
+        }
+    }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
         unsafe {
             let mut value: *mut IAvnStringList = ptr::null_mut();
@@ -1975,7 +2039,7 @@ impl ComPtr<IAvnContentControl> {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_content)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            Ok(ComPtr::from_raw(value))
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
         }
     }
     pub fn set_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
@@ -1986,7 +2050,7 @@ impl ComPtr<IAvnContentControl> {
     }
 }
 
-pub const I_AVN_CONTROL_IID: Guid = Guid { data1: 0x7957F94D, data2: 0x95D8, data3: 0x597A, data4: [0xAF, 0x91, 0xCB, 0xDF, 0x96, 0x2A, 0x88, 0xEB] };
+pub const I_AVN_CONTROL_IID: Guid = Guid { data1: 0x152B5D1F, data2: 0x7E08, data3: 0x56E0, data4: [0xB1, 0x00, 0xF7, 0x79, 0x91, 0x75, 0x10, 0xD3] };
 
 #[repr(C)]
 struct IAvnControlVtbl {
@@ -1994,6 +2058,7 @@ struct IAvnControlVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnControl, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnControl, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnControl, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnControl, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnControl, f64) -> i32,
@@ -2024,6 +2089,13 @@ impl ComPtr<IAvnControl> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -2117,7 +2189,7 @@ impl ComPtr<IAvnControl> {
     }
 }
 
-pub const I_AVN_DECORATOR_IID: Guid = Guid { data1: 0xD76FE4D5, data2: 0xCBB2, data3: 0x58CE, data4: [0x9E, 0x1C, 0xC8, 0xB2, 0x46, 0x47, 0x63, 0x3C] };
+pub const I_AVN_DECORATOR_IID: Guid = Guid { data1: 0xB893E635, data2: 0x46EE, data3: 0x58CC, data4: [0xA3, 0xA3, 0x75, 0x22, 0xC6, 0x33, 0x6C, 0x3F] };
 
 #[repr(C)]
 struct IAvnDecoratorVtbl {
@@ -2125,6 +2197,7 @@ struct IAvnDecoratorVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnDecorator, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnDecorator, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnDecorator, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnDecorator, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnDecorator, f64) -> i32,
@@ -2157,6 +2230,13 @@ impl ComPtr<IAvnDecorator> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -2253,7 +2333,7 @@ impl ComPtr<IAvnDecorator> {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_child)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            Ok(ComPtr::from_raw(value))
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
         }
     }
     pub fn set_child(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
@@ -2264,7 +2344,7 @@ impl ComPtr<IAvnDecorator> {
     }
 }
 
-pub const I_AVN_DOCK_PANEL_IID: Guid = Guid { data1: 0x6766F2C4, data2: 0x9569, data3: 0x5780, data4: [0xB2, 0x9F, 0x68, 0x54, 0x9E, 0x88, 0x98, 0x1F] };
+pub const I_AVN_DOCK_PANEL_IID: Guid = Guid { data1: 0xD84CC29A, data2: 0x9E7D, data3: 0x5A9B, data4: [0xBC, 0x4F, 0x99, 0xE8, 0x54, 0x30, 0xE1, 0x72] };
 
 #[repr(C)]
 struct IAvnDockPanelVtbl {
@@ -2272,6 +2352,7 @@ struct IAvnDockPanelVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnDockPanel, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnDockPanel, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnDockPanel, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnDockPanel, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnDockPanel, f64) -> i32,
@@ -2309,6 +2390,13 @@ impl ComPtr<IAvnDockPanel> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -2452,7 +2540,7 @@ impl ComPtr<IAvnDockPanel> {
     }
 }
 
-pub const I_AVN_EXPANDER_IID: Guid = Guid { data1: 0x18073BEA, data2: 0x351A, data3: 0x5328, data4: [0x90, 0x5C, 0xA8, 0x06, 0xD6, 0x6F, 0x10, 0x98] };
+pub const I_AVN_EXPANDER_IID: Guid = Guid { data1: 0x20EDCA72, data2: 0x42B6, data3: 0x57FB, data4: [0x83, 0x8D, 0x50, 0x28, 0x36, 0xEE, 0xD0, 0x3B] };
 
 #[repr(C)]
 struct IAvnExpanderVtbl {
@@ -2460,6 +2548,7 @@ struct IAvnExpanderVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnExpander, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnExpander, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnExpander, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnExpander, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnExpander, f64) -> i32,
@@ -2502,6 +2591,13 @@ impl ComPtr<IAvnExpander> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -2598,7 +2694,7 @@ impl ComPtr<IAvnExpander> {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_content)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            Ok(ComPtr::from_raw(value))
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
         }
     }
     pub fn set_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
@@ -2612,7 +2708,7 @@ impl ComPtr<IAvnExpander> {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_header)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            Ok(ComPtr::from_raw(value))
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
         }
     }
     pub fn set_header(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
@@ -2677,7 +2773,7 @@ impl ComPtr<IAvnExpander> {
     }
 }
 
-pub const I_AVN_GRID_IID: Guid = Guid { data1: 0xC6A7C566, data2: 0xBD63, data3: 0x537E, data4: [0x88, 0xBD, 0x88, 0xA4, 0x75, 0x15, 0xF1, 0xA7] };
+pub const I_AVN_GRID_IID: Guid = Guid { data1: 0x63B055A6, data2: 0x7C40, data3: 0x5F6D, data4: [0x9A, 0x36, 0x44, 0x30, 0xCB, 0x8F, 0xED, 0x95] };
 
 #[repr(C)]
 struct IAvnGridVtbl {
@@ -2685,6 +2781,7 @@ struct IAvnGridVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnGrid, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnGrid, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnGrid, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnGrid, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnGrid, f64) -> i32,
@@ -2722,6 +2819,13 @@ impl ComPtr<IAvnGrid> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -2865,7 +2969,7 @@ impl ComPtr<IAvnGrid> {
     }
 }
 
-pub const I_AVN_ITEMS_CONTROL_IID: Guid = Guid { data1: 0xB45D730F, data2: 0xFBAA, data3: 0x594E, data4: [0xBF, 0x74, 0x3C, 0x98, 0xCE, 0x8F, 0xCB, 0xF2] };
+pub const I_AVN_ITEMS_CONTROL_IID: Guid = Guid { data1: 0xE3E795EB, data2: 0x2BDC, data3: 0x512A, data4: [0x9A, 0x81, 0x24, 0x60, 0x7C, 0x44, 0xA1, 0x66] };
 
 #[repr(C)]
 struct IAvnItemsControlVtbl {
@@ -2873,6 +2977,7 @@ struct IAvnItemsControlVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnItemsControl, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnItemsControl, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnItemsControl, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnItemsControl, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnItemsControl, f64) -> i32,
@@ -2904,6 +3009,13 @@ impl ComPtr<IAvnItemsControl> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -3005,7 +3117,7 @@ impl ComPtr<IAvnItemsControl> {
     }
 }
 
-pub const I_AVN_LIST_BOX_IID: Guid = Guid { data1: 0x082171C1, data2: 0x8E1D, data3: 0x54D4, data4: [0xB4, 0x67, 0xF4, 0x1A, 0x9D, 0xD6, 0x78, 0x1D] };
+pub const I_AVN_LIST_BOX_IID: Guid = Guid { data1: 0xC0C05FD7, data2: 0xA38F, data3: 0x5310, data4: [0xB8, 0x2F, 0xF4, 0xFC, 0xA3, 0x27, 0xD0, 0x4A] };
 
 #[repr(C)]
 struct IAvnListBoxVtbl {
@@ -3013,6 +3125,7 @@ struct IAvnListBoxVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnListBox, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnListBox, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnListBox, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnListBox, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnListBox, f64) -> i32,
@@ -3048,6 +3161,13 @@ impl ComPtr<IAvnListBox> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -3176,7 +3296,7 @@ impl ComPtr<IAvnListBox> {
     }
 }
 
-pub const I_AVN_LIST_BOX_ITEM_IID: Guid = Guid { data1: 0x2E7D1580, data2: 0x4F66, data3: 0x59F9, data4: [0x9E, 0x11, 0x9D, 0x7F, 0x11, 0x14, 0xF6, 0xF1] };
+pub const I_AVN_LIST_BOX_ITEM_IID: Guid = Guid { data1: 0x309C4165, data2: 0xA289, data3: 0x57E3, data4: [0xBD, 0x50, 0x25, 0xB2, 0x72, 0x38, 0x1C, 0xB6] };
 
 #[repr(C)]
 struct IAvnListBoxItemVtbl {
@@ -3184,6 +3304,7 @@ struct IAvnListBoxItemVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnListBoxItem, f64) -> i32,
@@ -3218,6 +3339,13 @@ impl ComPtr<IAvnListBoxItem> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -3314,7 +3442,7 @@ impl ComPtr<IAvnListBoxItem> {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_content)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            Ok(ComPtr::from_raw(value))
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
         }
     }
     pub fn set_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
@@ -3339,7 +3467,7 @@ impl ComPtr<IAvnListBoxItem> {
     }
 }
 
-pub const I_AVN_PANEL_IID: Guid = Guid { data1: 0x26CE095C, data2: 0xE2C8, data3: 0x50B7, data4: [0xAB, 0xFB, 0x0B, 0x62, 0x51, 0x99, 0x90, 0x80] };
+pub const I_AVN_PANEL_IID: Guid = Guid { data1: 0xF72F3D40, data2: 0xA1B2, data3: 0x50F3, data4: [0xA7, 0xF6, 0xE6, 0x3C, 0x8A, 0x19, 0x19, 0x27] };
 
 #[repr(C)]
 struct IAvnPanelVtbl {
@@ -3347,6 +3475,7 @@ struct IAvnPanelVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnPanel, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnPanel, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnPanel, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnPanel, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnPanel, f64) -> i32,
@@ -3378,6 +3507,13 @@ impl ComPtr<IAvnPanel> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -3479,7 +3615,7 @@ impl ComPtr<IAvnPanel> {
     }
 }
 
-pub const I_AVN_HEADERED_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x37306C50, data2: 0xC581, data3: 0x5C6F, data4: [0x91, 0xDB, 0x54, 0x73, 0x50, 0xB9, 0x68, 0xF7] };
+pub const I_AVN_HEADERED_CONTENT_CONTROL_IID: Guid = Guid { data1: 0xD754F819, data2: 0x0B66, data3: 0x540A, data4: [0xAC, 0x7D, 0xB8, 0x50, 0xEF, 0x28, 0xA6, 0xC9] };
 
 #[repr(C)]
 struct IAvnHeaderedContentControlVtbl {
@@ -3487,6 +3623,7 @@ struct IAvnHeaderedContentControlVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, f64) -> i32,
@@ -3521,6 +3658,13 @@ impl ComPtr<IAvnHeaderedContentControl> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -3617,7 +3761,7 @@ impl ComPtr<IAvnHeaderedContentControl> {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_content)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            Ok(ComPtr::from_raw(value))
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
         }
     }
     pub fn set_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
@@ -3631,7 +3775,7 @@ impl ComPtr<IAvnHeaderedContentControl> {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_header)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            Ok(ComPtr::from_raw(value))
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
         }
     }
     pub fn set_header(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
@@ -3642,7 +3786,7 @@ impl ComPtr<IAvnHeaderedContentControl> {
     }
 }
 
-pub const I_AVN_RANGE_BASE_IID: Guid = Guid { data1: 0x9C938271, data2: 0x776E, data3: 0x52C9, data4: [0xB8, 0x50, 0x5A, 0xE6, 0x44, 0xED, 0x86, 0xDC] };
+pub const I_AVN_RANGE_BASE_IID: Guid = Guid { data1: 0x19568233, data2: 0x252A, data3: 0x5517, data4: [0x87, 0x59, 0x82, 0xA3, 0xC3, 0xA1, 0x56, 0x92] };
 
 #[repr(C)]
 struct IAvnRangeBaseVtbl {
@@ -3650,6 +3794,7 @@ struct IAvnRangeBaseVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnRangeBase, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnRangeBase, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnRangeBase, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnRangeBase, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnRangeBase, f64) -> i32,
@@ -3692,6 +3837,13 @@ impl ComPtr<IAvnRangeBase> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -3868,7 +4020,7 @@ impl ComPtr<IAvnRangeBase> {
     }
 }
 
-pub const I_AVN_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0xADD333AC, data2: 0x64FC, data3: 0x5673, data4: [0xB3, 0xD8, 0x32, 0x71, 0x1A, 0x1B, 0xC8, 0xF2] };
+pub const I_AVN_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x248458E4, data2: 0x051A, data3: 0x5FAF, data4: [0x8B, 0xC5, 0xD5, 0xDF, 0x74, 0x68, 0xDA, 0xCA] };
 
 #[repr(C)]
 struct IAvnSelectingItemsControlVtbl {
@@ -3876,6 +4028,7 @@ struct IAvnSelectingItemsControlVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, f64) -> i32,
@@ -3911,6 +4064,13 @@ impl ComPtr<IAvnSelectingItemsControl> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -4039,7 +4199,7 @@ impl ComPtr<IAvnSelectingItemsControl> {
     }
 }
 
-pub const I_AVN_TEMPLATED_CONTROL_IID: Guid = Guid { data1: 0x10997B61, data2: 0x6CD6, data3: 0x59D5, data4: [0x85, 0xA6, 0x56, 0x3D, 0x45, 0x43, 0xB6, 0xB9] };
+pub const I_AVN_TEMPLATED_CONTROL_IID: Guid = Guid { data1: 0xC2E11540, data2: 0x6DFA, data3: 0x5130, data4: [0xB1, 0xF5, 0x47, 0xD9, 0xB2, 0xBF, 0x67, 0xC0] };
 
 #[repr(C)]
 struct IAvnTemplatedControlVtbl {
@@ -4047,6 +4207,7 @@ struct IAvnTemplatedControlVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnTemplatedControl, f64) -> i32,
@@ -4077,6 +4238,13 @@ impl ComPtr<IAvnTemplatedControl> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -4170,7 +4338,7 @@ impl ComPtr<IAvnTemplatedControl> {
     }
 }
 
-pub const I_AVN_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0xE6EE5DD2, data2: 0x299D, data3: 0x5F82, data4: [0xB8, 0x85, 0xF7, 0x35, 0xC3, 0x76, 0xE6, 0xAB] };
+pub const I_AVN_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0xAB096AE3, data2: 0xC4DF, data3: 0x5512, data4: [0xB1, 0xDE, 0x7A, 0x1D, 0x1A, 0x3F, 0x8C, 0xA9] };
 
 #[repr(C)]
 struct IAvnToggleButtonVtbl {
@@ -4178,6 +4346,7 @@ struct IAvnToggleButtonVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnToggleButton, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnToggleButton, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnToggleButton, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnToggleButton, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnToggleButton, f64) -> i32,
@@ -4216,6 +4385,13 @@ impl ComPtr<IAvnToggleButton> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -4312,7 +4488,7 @@ impl ComPtr<IAvnToggleButton> {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_content)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            Ok(ComPtr::from_raw(value))
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
         }
     }
     pub fn set_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
@@ -4363,7 +4539,7 @@ impl ComPtr<IAvnToggleButton> {
     }
 }
 
-pub const I_AVN_PROGRESS_BAR_IID: Guid = Guid { data1: 0x60DB64F4, data2: 0x8EF2, data3: 0x5FF8, data4: [0xB0, 0x88, 0xC6, 0x19, 0x28, 0xF9, 0x9C, 0x4B] };
+pub const I_AVN_PROGRESS_BAR_IID: Guid = Guid { data1: 0xF35F36F3, data2: 0x15C0, data3: 0x5295, data4: [0xA3, 0xDD, 0xE3, 0x12, 0xD8, 0x52, 0x2A, 0x66] };
 
 #[repr(C)]
 struct IAvnProgressBarVtbl {
@@ -4371,6 +4547,7 @@ struct IAvnProgressBarVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnProgressBar, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnProgressBar, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnProgressBar, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnProgressBar, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnProgressBar, f64) -> i32,
@@ -4421,6 +4598,13 @@ impl ComPtr<IAvnProgressBar> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -4653,7 +4837,7 @@ impl ComPtr<IAvnProgressBar> {
     }
 }
 
-pub const I_AVN_RADIO_BUTTON_IID: Guid = Guid { data1: 0x0B134C64, data2: 0x01C2, data3: 0x55FA, data4: [0x93, 0x21, 0x7C, 0x31, 0xFE, 0x4A, 0xE2, 0x32] };
+pub const I_AVN_RADIO_BUTTON_IID: Guid = Guid { data1: 0xAF4C6114, data2: 0x15C4, data3: 0x5073, data4: [0x80, 0x98, 0xD1, 0x3E, 0x46, 0x67, 0x4D, 0x54] };
 
 #[repr(C)]
 struct IAvnRadioButtonVtbl {
@@ -4661,6 +4845,7 @@ struct IAvnRadioButtonVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnRadioButton, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnRadioButton, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnRadioButton, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnRadioButton, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnRadioButton, f64) -> i32,
@@ -4701,6 +4886,13 @@ impl ComPtr<IAvnRadioButton> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -4797,7 +4989,7 @@ impl ComPtr<IAvnRadioButton> {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_content)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            Ok(ComPtr::from_raw(value))
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
         }
     }
     pub fn set_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
@@ -4862,7 +5054,7 @@ impl ComPtr<IAvnRadioButton> {
     }
 }
 
-pub const I_AVN_SCROLL_VIEWER_IID: Guid = Guid { data1: 0xB925209A, data2: 0x16D2, data3: 0x5648, data4: [0xBC, 0x34, 0x29, 0xD3, 0xA2, 0xBC, 0xAD, 0x12] };
+pub const I_AVN_SCROLL_VIEWER_IID: Guid = Guid { data1: 0x26F419ED, data2: 0x02FB, data3: 0x5AEC, data4: [0x81, 0xDC, 0x7C, 0x15, 0xC5, 0x1D, 0x6A, 0xDB] };
 
 #[repr(C)]
 struct IAvnScrollViewerVtbl {
@@ -4870,6 +5062,7 @@ struct IAvnScrollViewerVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnScrollViewer, f64) -> i32,
@@ -4929,6 +5122,13 @@ impl ComPtr<IAvnScrollViewer> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -5025,7 +5225,7 @@ impl ComPtr<IAvnScrollViewer> {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_content)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            Ok(ComPtr::from_raw(value))
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
         }
     }
     pub fn set_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
@@ -5215,7 +5415,7 @@ impl ComPtr<IAvnScrollViewer> {
     }
 }
 
-pub const I_AVN_SLIDER_IID: Guid = Guid { data1: 0xFDFBF518, data2: 0x4D53, data3: 0x5856, data4: [0x87, 0xA2, 0x37, 0x9B, 0xD5, 0xEA, 0x8B, 0x9E] };
+pub const I_AVN_SLIDER_IID: Guid = Guid { data1: 0x6D529CA4, data2: 0xC009, data3: 0x5EDE, data4: [0xA1, 0x48, 0xDC, 0x1B, 0x87, 0x08, 0x28, 0x7A] };
 
 #[repr(C)]
 struct IAvnSliderVtbl {
@@ -5223,6 +5423,7 @@ struct IAvnSliderVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnSlider, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnSlider, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnSlider, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnSlider, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnSlider, f64) -> i32,
@@ -5275,6 +5476,13 @@ impl ComPtr<IAvnSlider> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -5521,7 +5729,7 @@ impl ComPtr<IAvnSlider> {
     }
 }
 
-pub const I_AVN_STACK_PANEL_IID: Guid = Guid { data1: 0x80F88347, data2: 0xC0C4, data3: 0x52EE, data4: [0xA6, 0x59, 0xF6, 0xBD, 0x5F, 0x56, 0x33, 0xF4] };
+pub const I_AVN_STACK_PANEL_IID: Guid = Guid { data1: 0xEF25BE3E, data2: 0x33CD, data3: 0x5FA1, data4: [0xB1, 0x15, 0x37, 0x5C, 0xC2, 0xFC, 0x01, 0xCB] };
 
 #[repr(C)]
 struct IAvnStackPanelVtbl {
@@ -5529,6 +5737,7 @@ struct IAvnStackPanelVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnStackPanel, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnStackPanel, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnStackPanel, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnStackPanel, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnStackPanel, f64) -> i32,
@@ -5564,6 +5773,13 @@ impl ComPtr<IAvnStackPanel> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -5693,7 +5909,7 @@ impl ComPtr<IAvnStackPanel> {
     }
 }
 
-pub const I_AVN_TEXT_BLOCK_IID: Guid = Guid { data1: 0x5A53AF95, data2: 0x84A1, data3: 0x5356, data4: [0xA5, 0x7C, 0xED, 0xA5, 0xAF, 0x0E, 0x75, 0xB7] };
+pub const I_AVN_TEXT_BLOCK_IID: Guid = Guid { data1: 0x491DC967, data2: 0x7C00, data3: 0x5692, data4: [0x94, 0x7D, 0xC8, 0x04, 0x61, 0xF4, 0x98, 0x63] };
 
 #[repr(C)]
 struct IAvnTextBlockVtbl {
@@ -5701,6 +5917,7 @@ struct IAvnTextBlockVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnTextBlock, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnTextBlock, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTextBlock, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnTextBlock, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnTextBlock, f64) -> i32,
@@ -5733,6 +5950,13 @@ impl ComPtr<IAvnTextBlock> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -5840,7 +6064,7 @@ impl ComPtr<IAvnTextBlock> {
     }
 }
 
-pub const I_AVN_TEXT_BOX_IID: Guid = Guid { data1: 0x7914E5DA, data2: 0x2872, data3: 0x57BF, data4: [0xBF, 0x7C, 0xFE, 0x39, 0xED, 0x8D, 0x38, 0xF0] };
+pub const I_AVN_TEXT_BOX_IID: Guid = Guid { data1: 0x6D239DFB, data2: 0x3EDD, data3: 0x59D5, data4: [0xB1, 0x80, 0xE7, 0xF2, 0xDA, 0xFE, 0xF1, 0x36] };
 
 #[repr(C)]
 struct IAvnTextBoxVtbl {
@@ -5848,6 +6072,7 @@ struct IAvnTextBoxVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnTextBox, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnTextBox, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTextBox, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnTextBox, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnTextBox, f64) -> i32,
@@ -5925,6 +6150,13 @@ impl ComPtr<IAvnTextBox> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -6345,7 +6577,7 @@ impl ComPtr<IAvnTextBox> {
     }
 }
 
-pub const I_AVN_TOGGLE_SWITCH_IID: Guid = Guid { data1: 0x2A0A5B57, data2: 0xD244, data3: 0x5556, data4: [0x90, 0xEF, 0x92, 0x41, 0x3D, 0x6B, 0x27, 0x2E] };
+pub const I_AVN_TOGGLE_SWITCH_IID: Guid = Guid { data1: 0xF7FEE989, data2: 0x88FE, data3: 0x5957, data4: [0x93, 0x41, 0x21, 0xF7, 0x50, 0xE1, 0xA9, 0x40] };
 
 #[repr(C)]
 struct IAvnToggleSwitchVtbl {
@@ -6353,6 +6585,7 @@ struct IAvnToggleSwitchVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnToggleSwitch, f64) -> i32,
@@ -6395,6 +6628,13 @@ impl ComPtr<IAvnToggleSwitch> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -6491,7 +6731,7 @@ impl ComPtr<IAvnToggleSwitch> {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_content)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            Ok(ComPtr::from_raw(value))
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
         }
     }
     pub fn set_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
@@ -6545,7 +6785,7 @@ impl ComPtr<IAvnToggleSwitch> {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_on_content)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            Ok(ComPtr::from_raw(value))
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
         }
     }
     pub fn set_on_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
@@ -6559,7 +6799,7 @@ impl ComPtr<IAvnToggleSwitch> {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_off_content)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            Ok(ComPtr::from_raw(value))
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
         }
     }
     pub fn set_off_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
@@ -6570,7 +6810,7 @@ impl ComPtr<IAvnToggleSwitch> {
     }
 }
 
-pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0x96DE9544, data2: 0x7BDD, data3: 0x5FC4, data4: [0x8B, 0x69, 0x30, 0x50, 0x53, 0x63, 0x64, 0x9C] };
+pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0x0EF99637, data2: 0x5CA4, data3: 0x5C5D, data4: [0xAC, 0xB7, 0x54, 0x6C, 0xBA, 0x81, 0x4D, 0xD9] };
 
 #[repr(C)]
 struct IAvnWindowVtbl {
@@ -6578,6 +6818,7 @@ struct IAvnWindowVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnWindow, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnWindow, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnWindow, *mut *mut IAvnStringList) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnWindow, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnWindow, f64) -> i32,
@@ -6615,6 +6856,13 @@ impl ComPtr<IAvnWindow> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -6711,7 +6959,7 @@ impl ComPtr<IAvnWindow> {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_content)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            Ok(ComPtr::from_raw(value))
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
         }
     }
     pub fn set_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
@@ -6754,7 +7002,7 @@ impl ComPtr<IAvnWindow> {
     }
 }
 
-pub const I_AVN_STYLED_ELEMENT_IID: Guid = Guid { data1: 0x0BBCD53A, data2: 0x7440, data3: 0x580D, data4: [0x98, 0x66, 0x18, 0xFC, 0xCE, 0x45, 0x98, 0xEB] };
+pub const I_AVN_STYLED_ELEMENT_IID: Guid = Guid { data1: 0xFFC4634F, data2: 0xD15C, data3: 0x5549, data4: [0xB8, 0x1E, 0x4A, 0x63, 0x85, 0xE1, 0x83, 0x83] };
 
 #[repr(C)]
 struct IAvnStyledElementVtbl {
@@ -6762,6 +7010,7 @@ struct IAvnStyledElementVtbl {
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnStyledElement, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnStyledElement, *mut i64) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnStyledElement, *mut *mut IAvnStringList) -> i32,
 }
 
@@ -6780,6 +7029,13 @@ impl ComPtr<IAvnStyledElement> {
             let mut value = 0;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
         }
     }
     pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
@@ -7063,7 +7319,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_avalonia_object)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_border(&self) -> Result<ComPtr<IAvnBorder>> {
@@ -7071,7 +7327,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_border)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_button(&self) -> Result<ComPtr<IAvnButton>> {
@@ -7079,7 +7335,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_button)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_canvas(&self) -> Result<ComPtr<IAvnCanvas>> {
@@ -7087,7 +7343,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_canvas)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_check_box(&self) -> Result<ComPtr<IAvnCheckBox>> {
@@ -7095,7 +7351,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_check_box)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_combo_box(&self) -> Result<ComPtr<IAvnComboBox>> {
@@ -7103,7 +7359,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_combo_box)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_combo_box_item(&self) -> Result<ComPtr<IAvnComboBoxItem>> {
@@ -7111,7 +7367,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_combo_box_item)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_content_control(&self) -> Result<ComPtr<IAvnContentControl>> {
@@ -7119,7 +7375,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_content_control)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_control(&self) -> Result<ComPtr<IAvnControl>> {
@@ -7127,7 +7383,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_control)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_decorator(&self) -> Result<ComPtr<IAvnDecorator>> {
@@ -7135,7 +7391,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_decorator)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_dock_panel(&self) -> Result<ComPtr<IAvnDockPanel>> {
@@ -7143,7 +7399,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_dock_panel)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_expander(&self) -> Result<ComPtr<IAvnExpander>> {
@@ -7151,7 +7407,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_expander)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_grid(&self) -> Result<ComPtr<IAvnGrid>> {
@@ -7159,7 +7415,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_grid)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_headered_content_control(&self) -> Result<ComPtr<IAvnHeaderedContentControl>> {
@@ -7167,7 +7423,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_headered_content_control)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_items_control(&self) -> Result<ComPtr<IAvnItemsControl>> {
@@ -7175,7 +7431,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_items_control)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_list_box(&self) -> Result<ComPtr<IAvnListBox>> {
@@ -7183,7 +7439,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_list_box)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_list_box_item(&self) -> Result<ComPtr<IAvnListBoxItem>> {
@@ -7191,7 +7447,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_list_box_item)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_panel(&self) -> Result<ComPtr<IAvnPanel>> {
@@ -7199,7 +7455,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_panel)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_progress_bar(&self) -> Result<ComPtr<IAvnProgressBar>> {
@@ -7207,7 +7463,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_progress_bar)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_radio_button(&self) -> Result<ComPtr<IAvnRadioButton>> {
@@ -7215,7 +7471,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_radio_button)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_scroll_viewer(&self) -> Result<ComPtr<IAvnScrollViewer>> {
@@ -7223,7 +7479,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_scroll_viewer)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_selecting_items_control(&self) -> Result<ComPtr<IAvnSelectingItemsControl>> {
@@ -7231,7 +7487,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_selecting_items_control)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_slider(&self) -> Result<ComPtr<IAvnSlider>> {
@@ -7239,7 +7495,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_slider)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_stack_panel(&self) -> Result<ComPtr<IAvnStackPanel>> {
@@ -7247,7 +7503,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_stack_panel)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_styled_element(&self) -> Result<ComPtr<IAvnStyledElement>> {
@@ -7255,7 +7511,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_styled_element)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_templated_control(&self) -> Result<ComPtr<IAvnTemplatedControl>> {
@@ -7263,7 +7519,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_templated_control)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_text_block(&self) -> Result<ComPtr<IAvnTextBlock>> {
@@ -7271,7 +7527,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_text_block)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_text_box(&self) -> Result<ComPtr<IAvnTextBox>> {
@@ -7279,7 +7535,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_text_box)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_toggle_button(&self) -> Result<ComPtr<IAvnToggleButton>> {
@@ -7287,7 +7543,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_toggle_button)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_toggle_switch(&self) -> Result<ComPtr<IAvnToggleSwitch>> {
@@ -7295,7 +7551,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_toggle_switch)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn create_window(&self) -> Result<ComPtr<IAvnWindow>> {
@@ -7303,7 +7559,7 @@ impl ComPtr<IAvnControlFactory> {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_window)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn get_canvas_statics(&self) -> Result<ComPtr<IAvnCanvasStatics>> {

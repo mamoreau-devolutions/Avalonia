@@ -343,7 +343,7 @@ fn emit_event(event: &ProjectedEvent) -> String {
              \x20       Ok(EventSubscription::new(move || source.unadvise_{event_name}(subscription_id)))\n\
              \x20   }}\n\
              \x20   pub fn on_{event_name}(self, callback: impl FnMut(&mut {args_name}) + Send + 'static) -> Result<Self> {{\n\
-             \x20       self.subscribe_{event_name}(callback)?.detach();\n\
+             \x20       self.subscribe_{event_name}(callback)?.persist_for_app();\n\
              \x20       Ok(self)\n\
              \x20   }}\n"
         );
@@ -371,7 +371,7 @@ fn emit_event(event: &ProjectedEvent) -> String {
          \x20       Ok(EventSubscription::new(move || source.unadvise_{event_name}(subscription_id)))\n\
          \x20   }}\n\
          \x20   pub fn on_{event_name}(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {{\n\
-         \x20       self.subscribe_{event_name}(callback)?.detach();\n\
+         \x20       self.subscribe_{event_name}(callback)?.persist_for_app();\n\
          \x20       Ok(self)\n\
          \x20   }}\n"
     )

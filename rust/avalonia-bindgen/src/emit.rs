@@ -117,7 +117,7 @@ fn emit_collection(collection: &ProjectedProperty) -> String {
                  \x20           let mut value = ptr::null_mut();\n\
                  \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_at)(self.as_raw(), index as i32, &mut value);\n\
                  \x20           hresult::check(hr)?;\n\
-                 \x20           ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))\n\
+                 \x20           ComPtr::from_projected_raw(value)\n\
                  \x20       }}\n\
                  \x20   }}\n\
                  \x20   pub fn add(&self, value: &ComPtr<{element_name}>) -> Result<()> {{\n\
@@ -180,8 +180,9 @@ fn emit_interface(ir: &ProjectionIr, ty: &ProjectedType) -> String {
     emit_iunknown_slots(&mut out);
     if ty.kind == "Class" {
         out.push_str(&format!(
-            "    get_object_id: unsafe extern \"system\" fn(*mut {}, *mut i64) -> i32,\n",
-            ty.name
+            "    get_object_id: unsafe extern \"system\" fn(*mut {}, *mut i64) -> i32,\n\
+             \x20   get_lifetime_token: unsafe extern \"system\" fn(*mut {}, *mut i64) -> i32,\n",
+            ty.name, ty.name
         ));
     }
     for owner in lineage(ir, ty) {
@@ -226,6 +227,15 @@ fn emit_interface(ir: &ProjectionIr, ty: &ProjectedType) -> String {
              \x20           let mut value = 0;\n\
              \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);\n\
              \x20           hresult::check(hr).map(|_| value)\n\
+             \x20       }\n\
+             \x20   }\n",
+        );
+        out.push_str(
+            "    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {\n\
+             \x20       unsafe {\n\
+             \x20           let mut value = 0i64;\n\
+             \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);\n\
+             \x20           hresult::check(hr).map(|_| value as usize as *mut IUnknown)\n\
              \x20       }\n\
              \x20   }\n",
         );
@@ -509,7 +519,7 @@ fn emit_factory(ir: &ProjectionIr) -> String {
              \x20           let mut value = ptr::null_mut();\n\
              \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_{})(self.as_raw(), &mut value);\n\
              \x20           hresult::check(hr)?;\n\
-             \x20           ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))\n\
+             \x20           ComPtr::from_projected_raw(value)\n\
              \x20       }}\n\
              \x20   }}\n",
             to_snake(suffix),
@@ -828,10 +838,16 @@ fn rust_property_result(property: &ProjectedProperty) -> String {
         "NullableBool" => {
             "match value { -1 => Ok(None), 0 => Ok(Some(false)), 1 => Ok(Some(true)), _ => Err(Error(hresult::E_INVALIDARG)) }".into()
         }
-        "ComInterface" | "ComCollection" if property.is_nullable => {
+        "ComInterface" if property.is_nullable => {
+            "if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }".into()
+        }
+        "ComCollection" if property.is_nullable => {
             "Ok(ComPtr::from_raw(value))".into()
         }
-        "ComInterface" | "ComCollection" => {
+        "ComInterface" => {
+            "ComPtr::from_projected_raw(value)".into()
+        }
+        "ComCollection" => {
             "ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))".into()
         }
         _ => "Ok(value)".into(),

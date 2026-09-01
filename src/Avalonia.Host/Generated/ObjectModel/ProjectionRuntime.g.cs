@@ -9,6 +9,7 @@ internal static class ProjectionRuntime
 {
     private static long s_nextId;
     private static readonly global::System.Runtime.CompilerServices.ConditionalWeakTable<global::Avalonia.AvaloniaObject, IAvnAvaloniaObject> s_wrappers = new();
+    private static readonly global::System.Runtime.CompilerServices.ConditionalWeakTable<global::Avalonia.AvaloniaObject, global::Avalonia.Host.Ownership.ProjectionObjectState> s_states = new();
     private static readonly global::System.Collections.Concurrent.ConcurrentDictionary<long, global::System.WeakReference<global::Avalonia.AvaloniaObject>> s_objects = new();
 
     internal static int TrackedObjectIdCount => s_objects.Count;
@@ -27,11 +28,21 @@ internal static class ProjectionRuntime
         }
     }
 
-    internal static long Register(global::Avalonia.AvaloniaObject value)
+    internal static global::Avalonia.Host.Ownership.ProjectionObjectState GetOrCreateState(global::Avalonia.AvaloniaObject value) =>
+        s_states.GetValue(value, CreateState);
+
+    private static global::Avalonia.Host.Ownership.ProjectionObjectState CreateState(global::Avalonia.AvaloniaObject value)
     {
         var id = global::System.Threading.Interlocked.Increment(ref s_nextId);
         s_objects[id] = new(value);
-        return id;
+        return new global::Avalonia.Host.Ownership.ProjectionObjectState(value, id);
+    }
+
+    internal static void Forget(global::Avalonia.AvaloniaObject value, long objectId)
+    {
+        s_wrappers.Remove(value);
+        s_states.Remove(value);
+        s_objects.TryRemove(objectId, out _);
     }
 
     internal static IAvnAvaloniaObject? Wrap(global::Avalonia.AvaloniaObject? value) =>

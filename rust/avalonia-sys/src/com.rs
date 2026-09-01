@@ -12,6 +12,16 @@ struct IUnknownVtbl {
 }
 
 #[repr(C)]
+struct ProjectedObjectVtbl {
+    query_interface:
+        unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut std::ffi::c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_object_id: unsafe extern "system" fn(*mut std::ffi::c_void, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut std::ffi::c_void, *mut i64) -> i32,
+}
+
+#[repr(C)]
 pub struct IUnknown {
     vtbl: *const IUnknownVtbl,
 }
@@ -30,6 +40,7 @@ unsafe impl ComInterface for IUnknown {
 
 pub struct ComPtr<T: ComInterface> {
     ptr: NonNull<T>,
+    lifetime: Option<NonNull<IUnknown>>,
     _marker: PhantomData<T>,
 }
 
@@ -43,8 +54,20 @@ impl<T: ComInterface> ComPtr<T> {
     pub unsafe fn from_raw(ptr: *mut T) -> Option<Self> {
         NonNull::new(ptr).map(|ptr| Self {
             ptr,
+            lifetime: None,
             _marker: PhantomData,
         })
+    }
+
+    pub(crate) unsafe fn from_projected_raw(ptr: *mut T) -> Result<Self> {
+        let mut result = Self::from_raw(ptr).ok_or(Error(hresult::E_POINTER))?;
+        let vtable = *(ptr.cast::<*const ProjectedObjectVtbl>());
+        let mut lifetime = 0i64;
+        let hr = ((*vtable).get_lifetime_token)(ptr.cast(), &mut lifetime);
+        hresult::check(hr)?;
+        let lifetime = lifetime as usize as *mut IUnknown;
+        result.lifetime = Some(NonNull::new(lifetime).ok_or(Error(hresult::E_POINTER))?);
+        Ok(result)
     }
 
     pub fn as_raw(&self) -> *mut T {
@@ -63,7 +86,9 @@ impl<T: ComInterface> ComPtr<T> {
                 .unwrap()
                 .query_interface)(self.as_unknown(), &U::IID, &mut out);
             hresult::check(hr)?;
-            ComPtr::from_raw(out.cast()).ok_or(Error(hresult::E_POINTER))
+            let mut result = ComPtr::from_raw(out.cast()).ok_or(Error(hresult::E_POINTER))?;
+            result.lifetime = self.clone_lifetime();
+            Ok(result)
         }
     }
 
@@ -73,6 +98,13 @@ impl<T: ComInterface> ComPtr<T> {
 
     pub fn as_iunknown(&self) -> Result<ComPtr<IUnknown>> {
         self.query_interface::<IUnknown>()
+    }
+
+    fn clone_lifetime(&self) -> Option<NonNull<IUnknown>> {
+        self.lifetime.inspect(|lifetime| unsafe {
+            let unknown = lifetime.as_ptr();
+            (((*unknown).vtbl).as_ref().unwrap().add_ref)(unknown);
+        })
     }
 }
 
@@ -90,6 +122,7 @@ impl<T: ComInterface> Clone for ComPtr<T> {
         self.add_ref();
         Self {
             ptr: self.ptr,
+            lifetime: self.clone_lifetime(),
             _marker: PhantomData,
         }
     }
@@ -99,6 +132,10 @@ impl<T: ComInterface> Drop for ComPtr<T> {
     fn drop(&mut self) {
         unsafe {
             let _ = (((*(self.as_unknown())).vtbl).as_ref().unwrap().release)(self.as_unknown());
+            if let Some(lifetime) = self.lifetime {
+                let unknown = lifetime.as_ptr();
+                let _ = (((*unknown).vtbl).as_ref().unwrap().release)(unknown);
+            }
         }
     }
 }

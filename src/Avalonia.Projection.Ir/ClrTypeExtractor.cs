@@ -249,8 +249,8 @@ public static class ClrTypeExtractor
             Kind = ProjectedTypeKind.Class,
             Iid = CreateDeterministicIid(
                 projectedFullName,
-                policy.GetAbiVersion(projectedFullName)),
-            AbiVersion = policy.GetAbiVersion(projectedFullName),
+                policy.GetProjectedTypeAbiVersion(projectedFullName)),
+            AbiVersion = policy.GetProjectedTypeAbiVersion(projectedFullName),
             BaseFullName = FindProjectedBase(type.BaseType, selected, projectedNames),
             IsConstructible = !type.IsAbstract && type.GetConstructor(Type.EmptyTypes) is not null,
             Properties = properties,

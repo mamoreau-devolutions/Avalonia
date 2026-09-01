@@ -5,7 +5,7 @@ namespace Avalonia.Projection.Ir;
 
 public sealed class ProjectionIr
 {
-    public const int CurrentVersion = 10;
+    public const int CurrentVersion = 11;
 
     public int Version { get; init; } = CurrentVersion;
     public string? SourceAssembly { get; init; }

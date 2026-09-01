@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("0BBCD53A-7440-580D-9866-18FCCE4598EB")]
+[Guid("FFC4634F-D15C-5549-B81E-4A6385E18383")]
 public partial interface IAvnStyledElement : IAvnAvaloniaObject
 {
     [PreserveSig]
@@ -17,21 +17,43 @@ public partial interface IAvnStyledElement : IAvnAvaloniaObject
 [GeneratedComClass]
 public sealed partial class AvnStyledElement : IAvnStyledElement
 {
-    private readonly global::Avalonia.StyledElement _value;
+    private readonly global::Avalonia.Host.Ownership.ProjectionObjectState _state;
+    private global::Avalonia.StyledElement _value => _state.GetTarget<global::Avalonia.StyledElement>();
 
     internal AvnStyledElement(global::Avalonia.StyledElement value)
     {
-        _value = value;
-        ObjectId = ProjectionRuntime.Register(value);
+        _state = ProjectionRuntime.GetOrCreateState(value);
         global::Avalonia.Host.ProjectionDiagnostics.WrapperCreated();
     }
 
-    private long ObjectId { get; }
-
     public int GetObjectId(out long value)
     {
-        value = ObjectId;
-        return global::Avalonia.Host.HResults.S_OK;
+        try
+        {
+            using var call = _state.EnterCall();
+            value = _state.ObjectId;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            value = 0;
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetLifetimeToken(out long value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            value = _state.GetLifetimeToken();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            value = 0;
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
     }
 
     public int GetClasses(out IAvnStringList value)
@@ -39,6 +61,7 @@ public sealed partial class AvnStyledElement : IAvnStyledElement
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = new AvnStringList(_value.Classes);
             return global::Avalonia.Host.HResults.S_OK;

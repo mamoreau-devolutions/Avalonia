@@ -48,7 +48,7 @@ public class GeneratedObjectModelTests
         var wrapper = Assert.IsType<AvnButton>(projected);
         var value = Assert.IsType<Button>(
             typeof(AvnButton)
-                .GetField("_value", BindingFlags.Instance | BindingFlags.NonPublic)!
+                .GetProperty("_value", BindingFlags.Instance | BindingFlags.NonPublic)!
                 .GetValue(wrapper));
         var handler = new ClickHandler();
 

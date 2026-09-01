@@ -103,6 +103,7 @@ public static class NativeHeaderEmitter
             BeginInterface(sb, type.Name);
             var slot = 3;
             EmitSlot(sb, slot++, "get_object_id", type.Name, ["int64_t* value"]);
+            EmitSlot(sb, slot++, "get_lifetime_token", type.Name, ["int64_t* value"]);
             foreach (var owner in Lineage(ir, type))
             {
                 foreach (var property in owner.Properties)

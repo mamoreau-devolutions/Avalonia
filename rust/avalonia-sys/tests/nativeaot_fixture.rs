@@ -53,6 +53,16 @@ struct MicroComOwnershipProbe {
     vtbl: *const MicroComOwnershipProbeVtbl,
 }
 
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Default)]
+struct ProjectionDiagnosticSnapshot {
+    wrappers_created: i64,
+    tracked_object_ids: i32,
+    live_managed_objects: i32,
+    active_subscriptions: i64,
+    native_ownership_releases: i64,
+}
+
 #[test]
 fn ping_increments() {
     let host = load();
@@ -87,6 +97,24 @@ fn microcom_probe_releases_through_nativeaot_vtable() {
         unsafe { ((*probe).vtbl.as_ref().unwrap().release)(probe) },
         0
     );
+}
+
+type GetProjectionDiagnosticsFn = unsafe extern "C" fn(*mut ProjectionDiagnosticSnapshot) -> i32;
+
+fn load_projection_diagnostics(library: &Library) -> GetProjectionDiagnosticsFn {
+    unsafe {
+        *library
+            .get::<GetProjectionDiagnosticsFn>(b"avn_get_projection_diagnostics")
+            .unwrap()
+    }
+}
+
+fn projection_diagnostics(
+    get_diagnostics: GetProjectionDiagnosticsFn,
+) -> ProjectionDiagnosticSnapshot {
+    let mut snapshot = ProjectionDiagnosticSnapshot::default();
+    assert_eq!(unsafe { get_diagnostics(&mut snapshot) }, 0);
+    snapshot
 }
 
 #[test]
@@ -178,6 +206,9 @@ fn factory_unknown_qi_succeeds() {
 #[test]
 fn application_runs_generated_object_model_through_rust_handler() {
     let host = load();
+    let library = unsafe { Library::new(host_path()).unwrap() };
+    let get_diagnostics = load_projection_diagnostics(&library);
+    let ownership_before = projection_diagnostics(get_diagnostics);
     let activation = host.activation_factory().unwrap();
     let application = activation.create_application().unwrap();
     let controls = activation.create_control_factory().unwrap();
@@ -186,6 +217,27 @@ fn application_runs_generated_object_model_through_rust_handler() {
     let clicked = Arc::new(AtomicBool::new(false));
     let clicked_from_handler = clicked.clone();
     let handler = app_handler(move || {
+        let ownership_probe = controls.create_button()?;
+        let ownership_created = projection_diagnostics(get_diagnostics);
+        assert_eq!(
+            ownership_created.wrappers_created,
+            ownership_before.wrappers_created + 1
+        );
+        assert_eq!(
+            ownership_created.tracked_object_ids,
+            ownership_before.tracked_object_ids + 1
+        );
+        drop(ownership_probe);
+        let ownership_released = projection_diagnostics(get_diagnostics);
+        assert_eq!(
+            ownership_released.native_ownership_releases,
+            ownership_before.native_ownership_releases + 1
+        );
+        assert_eq!(
+            ownership_released.tracked_object_ids,
+            ownership_before.tracked_object_ids
+        );
+
         let button = controls.create_button()?;
         let text = controls.create_text_block()?;
 

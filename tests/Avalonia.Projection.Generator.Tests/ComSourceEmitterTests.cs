@@ -85,8 +85,8 @@ public class ComSourceEmitterTests
         Assert.Contains("public int SetContent(IAvnControl? value)", button, StringComparison.Ordinal);
         Assert.Contains("_value.Content = (global::System.Object)ProjectionRuntime.Unwrap(value)!;", button, StringComparison.Ordinal);
         Assert.Contains("int AdviseClick(IAvnButtonClickHandler? handler, out long subscriptionId);", button, StringComparison.Ordinal);
-        Assert.Contains("_value.Click += callback;", button, StringComparison.Ordinal);
-        Assert.Contains("_value.Click -= callback", button, StringComparison.Ordinal);
+        Assert.Contains("eventSource.Click += callback;", button, StringComparison.Ordinal);
+        Assert.Contains("eventSource.Click -= callback", button, StringComparison.Ordinal);
 
         var control = files["IAvnControl.g.cs"];
         Assert.Contains("int SetWidth(double value);", control, StringComparison.Ordinal);
@@ -223,7 +223,7 @@ public class ComSourceEmitterTests
         var buttonEnd = header.IndexOf("struct IAvnButton {", buttonStart, StringComparison.Ordinal);
         var buttonHeader = header[buttonStart..buttonEnd];
         Assert.Contains("get_object_id", buttonHeader, StringComparison.Ordinal);
-        Assert.Contains("#define I_AVN_BUTTON_ABI_VERSION 1", header, StringComparison.Ordinal);
+        Assert.Contains("#define I_AVN_BUTTON_ABI_VERSION 2", header, StringComparison.Ordinal);
         Assert.True(
             buttonHeader.IndexOf("get_object_id", StringComparison.Ordinal) <
             buttonHeader.IndexOf("get_classes", StringComparison.Ordinal));

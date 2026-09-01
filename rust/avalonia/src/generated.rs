@@ -1050,7 +1050,7 @@ impl Border {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1063,7 +1063,7 @@ impl Border {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1076,7 +1076,7 @@ impl Border {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_child(&self) -> Result<Option<Control>> {
@@ -1154,7 +1154,7 @@ impl Button {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1167,7 +1167,7 @@ impl Button {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1180,7 +1180,7 @@ impl Button {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -1204,7 +1204,7 @@ impl Button {
         Ok(EventSubscription::new(move || source.unadvise_click(subscription_id)))
     }
     pub fn on_click(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_click(callback)?.detach();
+        self.subscribe_click(callback)?.persist_for_app();
         Ok(self)
     }
 }
@@ -1260,7 +1260,7 @@ impl Canvas {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1273,7 +1273,7 @@ impl Canvas {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1286,7 +1286,7 @@ impl Canvas {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn children(&self) -> Result<ControlList> {
@@ -1385,7 +1385,7 @@ impl CheckBox {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1398,7 +1398,7 @@ impl CheckBox {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1411,7 +1411,7 @@ impl CheckBox {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -1435,7 +1435,7 @@ impl CheckBox {
         Ok(EventSubscription::new(move || source.unadvise_click(subscription_id)))
     }
     pub fn on_click(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_click(callback)?.detach();
+        self.subscribe_click(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_is_checked(&self) -> Result<Option<bool>> { Ok(self.raw.get_is_checked()?) }
@@ -1456,7 +1456,7 @@ impl CheckBox {
         Ok(EventSubscription::new(move || source.unadvise_is_checked_changed(subscription_id)))
     }
     pub fn on_is_checked_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_is_checked_changed(callback)?.detach();
+        self.subscribe_is_checked_changed(callback)?.persist_for_app();
         Ok(self)
     }
 }
@@ -1512,7 +1512,7 @@ impl ComboBox {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1525,7 +1525,7 @@ impl ComboBox {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1538,7 +1538,7 @@ impl ComboBox {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn items(&self) -> Result<ItemList> {
@@ -1566,7 +1566,7 @@ impl ComboBox {
         Ok(EventSubscription::new(move || source.unadvise_selection_changed(subscription_id)))
     }
     pub fn on_selection_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_selection_changed(callback)?.detach();
+        self.subscribe_selection_changed(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_placeholder_text(&self) -> Result<Option<String>> {
@@ -1633,7 +1633,7 @@ impl ComboBoxItem {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1646,7 +1646,7 @@ impl ComboBoxItem {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1659,7 +1659,7 @@ impl ComboBoxItem {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -1734,7 +1734,7 @@ impl ContentControl {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1747,7 +1747,7 @@ impl ContentControl {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1760,7 +1760,7 @@ impl ContentControl {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -1827,7 +1827,7 @@ impl Control {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1840,7 +1840,7 @@ impl Control {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1853,7 +1853,7 @@ impl Control {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
 }
@@ -1909,7 +1909,7 @@ impl Decorator {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1922,7 +1922,7 @@ impl Decorator {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1935,7 +1935,7 @@ impl Decorator {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_child(&self) -> Result<Option<Control>> {
@@ -2002,7 +2002,7 @@ impl DockPanel {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2015,7 +2015,7 @@ impl DockPanel {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2028,7 +2028,7 @@ impl DockPanel {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn children(&self) -> Result<ControlList> {
@@ -2124,7 +2124,7 @@ impl Expander {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2137,7 +2137,7 @@ impl Expander {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2150,7 +2150,7 @@ impl Expander {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -2204,7 +2204,7 @@ impl Expander {
         Ok(EventSubscription::new(move || source.unadvise_collapsed(subscription_id)))
     }
     pub fn on_collapsed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_collapsed(callback)?.detach();
+        self.subscribe_collapsed(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_expanded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2217,7 +2217,7 @@ impl Expander {
         Ok(EventSubscription::new(move || source.unadvise_expanded(subscription_id)))
     }
     pub fn on_expanded(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_expanded(callback)?.detach();
+        self.subscribe_expanded(callback)?.persist_for_app();
         Ok(self)
     }
 }
@@ -2273,7 +2273,7 @@ impl Grid {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2286,7 +2286,7 @@ impl Grid {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2299,7 +2299,7 @@ impl Grid {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn children(&self) -> Result<ControlList> {
@@ -2431,7 +2431,7 @@ impl ItemsControl {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2444,7 +2444,7 @@ impl ItemsControl {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2457,7 +2457,7 @@ impl ItemsControl {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn items(&self) -> Result<ItemList> {
@@ -2520,7 +2520,7 @@ impl ListBox {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2533,7 +2533,7 @@ impl ListBox {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2546,7 +2546,7 @@ impl ListBox {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn items(&self) -> Result<ItemList> {
@@ -2574,7 +2574,7 @@ impl ListBox {
         Ok(EventSubscription::new(move || source.unadvise_selection_changed(subscription_id)))
     }
     pub fn on_selection_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_selection_changed(callback)?.detach();
+        self.subscribe_selection_changed(callback)?.persist_for_app();
         Ok(self)
     }
 }
@@ -2630,7 +2630,7 @@ impl ListBoxItem {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2643,7 +2643,7 @@ impl ListBoxItem {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2656,7 +2656,7 @@ impl ListBoxItem {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -2731,7 +2731,7 @@ impl Panel {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2744,7 +2744,7 @@ impl Panel {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2757,7 +2757,7 @@ impl Panel {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn children(&self) -> Result<ControlList> {
@@ -2820,7 +2820,7 @@ impl HeaderedContentControl {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2833,7 +2833,7 @@ impl HeaderedContentControl {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2846,7 +2846,7 @@ impl HeaderedContentControl {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -2920,7 +2920,7 @@ impl RangeBase {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2933,7 +2933,7 @@ impl RangeBase {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2946,7 +2946,7 @@ impl RangeBase {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_minimum(&self) -> Result<f64> { Ok(self.raw.get_minimum()?) }
@@ -2999,7 +2999,7 @@ impl RangeBase {
         Ok(EventSubscription::new(move || source.unadvise_value_changed(subscription_id)))
     }
     pub fn on_value_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_value_changed(callback)?.detach();
+        self.subscribe_value_changed(callback)?.persist_for_app();
         Ok(self)
     }
 }
@@ -3055,7 +3055,7 @@ impl SelectingItemsControl {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3068,7 +3068,7 @@ impl SelectingItemsControl {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3081,7 +3081,7 @@ impl SelectingItemsControl {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn items(&self) -> Result<ItemList> {
@@ -3109,7 +3109,7 @@ impl SelectingItemsControl {
         Ok(EventSubscription::new(move || source.unadvise_selection_changed(subscription_id)))
     }
     pub fn on_selection_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_selection_changed(callback)?.detach();
+        self.subscribe_selection_changed(callback)?.persist_for_app();
         Ok(self)
     }
 }
@@ -3165,7 +3165,7 @@ impl TemplatedControl {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3178,7 +3178,7 @@ impl TemplatedControl {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3191,7 +3191,7 @@ impl TemplatedControl {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
 }
@@ -3247,7 +3247,7 @@ impl ToggleButton {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3260,7 +3260,7 @@ impl ToggleButton {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3273,7 +3273,7 @@ impl ToggleButton {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -3297,7 +3297,7 @@ impl ToggleButton {
         Ok(EventSubscription::new(move || source.unadvise_click(subscription_id)))
     }
     pub fn on_click(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_click(callback)?.detach();
+        self.subscribe_click(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_is_checked(&self) -> Result<Option<bool>> { Ok(self.raw.get_is_checked()?) }
@@ -3318,7 +3318,7 @@ impl ToggleButton {
         Ok(EventSubscription::new(move || source.unadvise_is_checked_changed(subscription_id)))
     }
     pub fn on_is_checked_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_is_checked_changed(callback)?.detach();
+        self.subscribe_is_checked_changed(callback)?.persist_for_app();
         Ok(self)
     }
 }
@@ -3374,7 +3374,7 @@ impl ProgressBar {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3387,7 +3387,7 @@ impl ProgressBar {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3400,7 +3400,7 @@ impl ProgressBar {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_minimum(&self) -> Result<f64> { Ok(self.raw.get_minimum()?) }
@@ -3453,7 +3453,7 @@ impl ProgressBar {
         Ok(EventSubscription::new(move || source.unadvise_value_changed(subscription_id)))
     }
     pub fn on_value_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_value_changed(callback)?.detach();
+        self.subscribe_value_changed(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_is_indeterminate(&self) -> Result<bool> { Ok(self.raw.get_is_indeterminate()?) }
@@ -3547,7 +3547,7 @@ impl RadioButton {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3560,7 +3560,7 @@ impl RadioButton {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3573,7 +3573,7 @@ impl RadioButton {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -3597,7 +3597,7 @@ impl RadioButton {
         Ok(EventSubscription::new(move || source.unadvise_click(subscription_id)))
     }
     pub fn on_click(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_click(callback)?.detach();
+        self.subscribe_click(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_is_checked(&self) -> Result<Option<bool>> { Ok(self.raw.get_is_checked()?) }
@@ -3618,7 +3618,7 @@ impl RadioButton {
         Ok(EventSubscription::new(move || source.unadvise_is_checked_changed(subscription_id)))
     }
     pub fn on_is_checked_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_is_checked_changed(callback)?.detach();
+        self.subscribe_is_checked_changed(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_group_name(&self) -> Result<Option<String>> {
@@ -3685,7 +3685,7 @@ impl ScrollViewer {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3698,7 +3698,7 @@ impl ScrollViewer {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3711,7 +3711,7 @@ impl ScrollViewer {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -3808,7 +3808,7 @@ impl ScrollViewer {
         Ok(EventSubscription::new(move || source.unadvise_scroll_changed(subscription_id)))
     }
     pub fn on_scroll_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_scroll_changed(callback)?.detach();
+        self.subscribe_scroll_changed(callback)?.persist_for_app();
         Ok(self)
     }
 }
@@ -3864,7 +3864,7 @@ impl Slider {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3877,7 +3877,7 @@ impl Slider {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3890,7 +3890,7 @@ impl Slider {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_minimum(&self) -> Result<f64> { Ok(self.raw.get_minimum()?) }
@@ -3943,7 +3943,7 @@ impl Slider {
         Ok(EventSubscription::new(move || source.unadvise_value_changed(subscription_id)))
     }
     pub fn on_value_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_value_changed(callback)?.detach();
+        self.subscribe_value_changed(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_orientation(&self) -> Result<Orientation> {
@@ -4045,7 +4045,7 @@ impl StackPanel {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -4058,7 +4058,7 @@ impl StackPanel {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -4071,7 +4071,7 @@ impl StackPanel {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn children(&self) -> Result<ControlList> {
@@ -4153,7 +4153,7 @@ impl TextBlock {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -4166,7 +4166,7 @@ impl TextBlock {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -4179,7 +4179,7 @@ impl TextBlock {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_text(&self) -> Result<Option<String>> {
@@ -4246,7 +4246,7 @@ impl TextBox {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -4259,7 +4259,7 @@ impl TextBox {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -4272,7 +4272,7 @@ impl TextBox {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_accepts_return(&self) -> Result<bool> { Ok(self.raw.get_accepts_return()?) }
@@ -4444,7 +4444,7 @@ impl TextBox {
         Ok(EventSubscription::new(move || source.unadvise_text_changed(subscription_id)))
     }
     pub fn on_text_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_text_changed(callback)?.detach();
+        self.subscribe_text_changed(callback)?.persist_for_app();
         Ok(self)
     }
 }
@@ -4500,7 +4500,7 @@ impl ToggleSwitch {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -4513,7 +4513,7 @@ impl ToggleSwitch {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -4526,7 +4526,7 @@ impl ToggleSwitch {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -4550,7 +4550,7 @@ impl ToggleSwitch {
         Ok(EventSubscription::new(move || source.unadvise_click(subscription_id)))
     }
     pub fn on_click(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_click(callback)?.detach();
+        self.subscribe_click(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_is_checked(&self) -> Result<Option<bool>> { Ok(self.raw.get_is_checked()?) }
@@ -4571,7 +4571,7 @@ impl ToggleSwitch {
         Ok(EventSubscription::new(move || source.unadvise_is_checked_changed(subscription_id)))
     }
     pub fn on_is_checked_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_is_checked_changed(callback)?.detach();
+        self.subscribe_is_checked_changed(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_on_content(&self) -> Result<Option<Control>> {
@@ -4649,7 +4649,7 @@ impl Window {
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.detach();
+        self.subscribe_key_down(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -4662,7 +4662,7 @@ impl Window {
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
     pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.detach();
+        self.subscribe_pointer_entered(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -4675,7 +4675,7 @@ impl Window {
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
     pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.detach();
+        self.subscribe_pointer_exited(callback)?.persist_for_app();
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {

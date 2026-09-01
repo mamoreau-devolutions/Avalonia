@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("082171C1-8E1D-54D4-B467-F41A9DD6781D")]
+[Guid("C0C05FD7-A38F-5310-B82F-F4FCA327D04A")]
 public partial interface IAvnListBox : IAvnSelectingItemsControl
 {
 }
@@ -14,7 +14,8 @@ public partial interface IAvnListBox : IAvnSelectingItemsControl
 [GeneratedComClass]
 public sealed partial class AvnListBox : IAvnListBox
 {
-    private readonly global::Avalonia.Controls.ListBox _value;
+    private readonly global::Avalonia.Host.Ownership.ProjectionObjectState _state;
+    private global::Avalonia.Controls.ListBox _value => _state.GetTarget<global::Avalonia.Controls.ListBox>();
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnControlKeyDownHandler Handler, global::System.Action Unsubscribe)> _keyDownSubscriptions = new();
     private long _nextKeyDownSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnControlPointerEnteredHandler Handler, global::System.Action Unsubscribe)> _pointerEnteredSubscriptions = new();
@@ -26,17 +27,39 @@ public sealed partial class AvnListBox : IAvnListBox
 
     internal AvnListBox(global::Avalonia.Controls.ListBox value)
     {
-        _value = value;
-        ObjectId = ProjectionRuntime.Register(value);
+        _state = ProjectionRuntime.GetOrCreateState(value);
+        _state.RegisterCleanup(ReleaseSubscriptions);
         global::Avalonia.Host.ProjectionDiagnostics.WrapperCreated();
     }
 
-    private long ObjectId { get; }
-
     public int GetObjectId(out long value)
     {
-        value = ObjectId;
-        return global::Avalonia.Host.HResults.S_OK;
+        try
+        {
+            using var call = _state.EnterCall();
+            value = _state.ObjectId;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            value = 0;
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetLifetimeToken(out long value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            value = _state.GetLifetimeToken();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            value = 0;
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
     }
 
     public int GetClasses(out IAvnStringList value)
@@ -44,6 +67,7 @@ public sealed partial class AvnListBox : IAvnListBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = new AvnStringList(_value.Classes);
             return global::Avalonia.Host.HResults.S_OK;
@@ -59,6 +83,7 @@ public sealed partial class AvnListBox : IAvnListBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.Width;
             return global::Avalonia.Host.HResults.S_OK;
@@ -73,6 +98,7 @@ public sealed partial class AvnListBox : IAvnListBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Width = value;
             return global::Avalonia.Host.HResults.S_OK;
@@ -88,6 +114,7 @@ public sealed partial class AvnListBox : IAvnListBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.Height;
             return global::Avalonia.Host.HResults.S_OK;
@@ -102,6 +129,7 @@ public sealed partial class AvnListBox : IAvnListBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Height = value;
             return global::Avalonia.Host.HResults.S_OK;
@@ -117,6 +145,7 @@ public sealed partial class AvnListBox : IAvnListBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.IsEnabled ? 1 : 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -131,6 +160,7 @@ public sealed partial class AvnListBox : IAvnListBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.IsEnabled = value != 0;
             return global::Avalonia.Host.HResults.S_OK;
@@ -148,7 +178,9 @@ public sealed partial class AvnListBox : IAvnListBox
             return global::Avalonia.Host.HResults.E_POINTER;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
+            var eventSource = _value;
             var callback = new global::System.EventHandler<Avalonia.Input.KeyEventArgs>((_, eventArgs) =>
             {
                 var handled = eventArgs.Handled ? 1 : 0;
@@ -157,9 +189,9 @@ public sealed partial class AvnListBox : IAvnListBox
                     global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
                 eventArgs.Handled = handled != 0;
             });
-            _value.KeyDown += callback;
+            eventSource.KeyDown += callback;
             subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextKeyDownSubscriptionId);
-            _keyDownSubscriptions.Add(subscriptionId, (handler, () => _value.KeyDown -= callback));
+            _keyDownSubscriptions.Add(subscriptionId, (handler, () => eventSource.KeyDown -= callback));
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
             return global::Avalonia.Host.HResults.S_OK;
         }
@@ -173,6 +205,7 @@ public sealed partial class AvnListBox : IAvnListBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             if (!_keyDownSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
@@ -193,16 +226,18 @@ public sealed partial class AvnListBox : IAvnListBox
             return global::Avalonia.Host.HResults.E_POINTER;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
+            var eventSource = _value;
             var callback = new global::System.EventHandler<Avalonia.Input.PointerEventArgs>((_, eventArgs) =>
             {
                 var hr = handler.Invoke();
                 if (hr < 0)
                     global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
             });
-            _value.PointerEntered += callback;
+            eventSource.PointerEntered += callback;
             subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextPointerEnteredSubscriptionId);
-            _pointerEnteredSubscriptions.Add(subscriptionId, (handler, () => _value.PointerEntered -= callback));
+            _pointerEnteredSubscriptions.Add(subscriptionId, (handler, () => eventSource.PointerEntered -= callback));
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
             return global::Avalonia.Host.HResults.S_OK;
         }
@@ -216,6 +251,7 @@ public sealed partial class AvnListBox : IAvnListBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             if (!_pointerEnteredSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
@@ -236,16 +272,18 @@ public sealed partial class AvnListBox : IAvnListBox
             return global::Avalonia.Host.HResults.E_POINTER;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
+            var eventSource = _value;
             var callback = new global::System.EventHandler<Avalonia.Input.PointerEventArgs>((_, eventArgs) =>
             {
                 var hr = handler.Invoke();
                 if (hr < 0)
                     global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
             });
-            _value.PointerExited += callback;
+            eventSource.PointerExited += callback;
             subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextPointerExitedSubscriptionId);
-            _pointerExitedSubscriptions.Add(subscriptionId, (handler, () => _value.PointerExited -= callback));
+            _pointerExitedSubscriptions.Add(subscriptionId, (handler, () => eventSource.PointerExited -= callback));
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
             return global::Avalonia.Host.HResults.S_OK;
         }
@@ -259,6 +297,7 @@ public sealed partial class AvnListBox : IAvnListBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             if (!_pointerExitedSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
@@ -277,6 +316,7 @@ public sealed partial class AvnListBox : IAvnListBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = new AvnItemList(_value.Items);
             return global::Avalonia.Host.HResults.S_OK;
@@ -292,6 +332,7 @@ public sealed partial class AvnListBox : IAvnListBox
         value = default!;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.SelectedIndex;
             return global::Avalonia.Host.HResults.S_OK;
@@ -306,6 +347,7 @@ public sealed partial class AvnListBox : IAvnListBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.SelectedIndex = value;
             return global::Avalonia.Host.HResults.S_OK;
@@ -323,16 +365,18 @@ public sealed partial class AvnListBox : IAvnListBox
             return global::Avalonia.Host.HResults.E_POINTER;
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
+            var eventSource = _value;
             var callback = new global::System.EventHandler<Avalonia.Controls.SelectionChangedEventArgs>((_, eventArgs) =>
             {
                 var hr = handler.Invoke();
                 if (hr < 0)
                     global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
             });
-            _value.SelectionChanged += callback;
+            eventSource.SelectionChanged += callback;
             subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextSelectionChangedSubscriptionId);
-            _selectionChangedSubscriptions.Add(subscriptionId, (handler, () => _value.SelectionChanged -= callback));
+            _selectionChangedSubscriptions.Add(subscriptionId, (handler, () => eventSource.SelectionChanged -= callback));
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
             return global::Avalonia.Host.HResults.S_OK;
         }
@@ -346,6 +390,7 @@ public sealed partial class AvnListBox : IAvnListBox
     {
         try
         {
+            using var call = _state.EnterCall();
             _value.VerifyAccess();
             if (!_selectionChangedSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
@@ -357,5 +402,33 @@ public sealed partial class AvnListBox : IAvnListBox
         {
             return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
         }
+    }
+
+    private void ReleaseSubscriptions()
+    {
+        foreach (var subscription in _keyDownSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _keyDownSubscriptions.Clear();
+        foreach (var subscription in _pointerEnteredSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _pointerEnteredSubscriptions.Clear();
+        foreach (var subscription in _pointerExitedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _pointerExitedSubscriptions.Clear();
+        foreach (var subscription in _selectionChangedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _selectionChangedSubscriptions.Clear();
     }
 }

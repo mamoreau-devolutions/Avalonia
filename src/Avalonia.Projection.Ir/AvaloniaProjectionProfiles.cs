@@ -4,6 +4,7 @@ public static class AvaloniaProjectionProfiles
 {
     public static ProjectionPolicy ObjectModelKernel { get; } = new()
     {
+        DefaultProjectedTypeAbiVersion = 2,
         IncludeTypeNames =
         [
             "Avalonia.AvaloniaObject",

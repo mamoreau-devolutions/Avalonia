@@ -26,6 +26,7 @@ pub enum ResourceValue {
 
 thread_local! {
     static FACTORY: RefCell<Option<sys::ComPtr<sys::IAvnControlFactory>>> = const { RefCell::new(None) };
+    static APP_SUBSCRIPTIONS: RefCell<Vec<EventSubscription>> = const { RefCell::new(Vec::new()) };
 }
 
 pub trait AsControl {
@@ -53,8 +54,8 @@ impl EventSubscription {
         Ok(())
     }
 
-    pub fn detach(mut self) {
-        self.unsubscribe = None;
+    pub(crate) fn persist_for_app(self) {
+        APP_SUBSCRIPTIONS.with(|subscriptions| subscriptions.borrow_mut().push(self));
     }
 }
 
@@ -163,7 +164,13 @@ impl App {
         let handler = sys::app_handler(move || callback(&context).map_err(to_abi_error));
         FACTORY.with(|current| {
             let previous = current.replace(Some(controls));
+            let previous_subscriptions =
+                APP_SUBSCRIPTIONS.with(|subscriptions| subscriptions.take());
             let result = self.application.run(&handler);
+            APP_SUBSCRIPTIONS.with(|subscriptions| {
+                subscriptions.borrow_mut().clear();
+                subscriptions.replace(previous_subscriptions);
+            });
             current.replace(previous);
             Ok(result?)
         })

@@ -24,6 +24,12 @@ MicroCom was selected for migration because it:
 The handle-table fixture remains as comparison evidence and as a fallback if a
 later projected feature cannot be represented safely by MicroCom.
 
+Generated `ComWrappers` CCWs now act only as dispatch shells. Every projected
+object state owns a canonical MicroCom lifetime token, and every Rust
+`ComPtr<T>` returned for a projected object retains that token. Releasing the
+last Rust pointer retires the object ID, weak identity entry, managed root, and
+host-owned subscriptions immediately without waiting for GC.
+
 ## Contract
 
 Final native `Release` immediately retires Rust ownership. Managed cleanup is
@@ -35,9 +41,10 @@ Every generated method must hold an active-call lease. If the final native
 release occurs from a reentrant callback, shadow disposal and subscription
 cleanup wait until that lease exits.
 
-Event subscriptions are ownership objects, not detached side effects. The
-migration will replace hidden `EventSubscription::detach` behavior with
-explicit RAII subscription retention.
+`subscribe_*` returns an RAII ownership object and unsubscribes when dropped.
+Builder-style `on_*` transfers that guard to an application-scoped subscription
+bag so handlers remain active after temporary builder values move into the
+managed tree. The bag is cleared deterministically when `App::run` ends.
 
 The authoritative ABI is generated at
 `avalonia-sys/include/avalonia-rust-abi.h`. Interface ABI versions and IIDs are

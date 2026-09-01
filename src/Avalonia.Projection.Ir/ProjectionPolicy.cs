@@ -17,6 +17,7 @@ public sealed class ProjectionPolicy
         new Dictionary<string, IReadOnlyList<string>>(StringComparer.Ordinal);
     public IReadOnlyDictionary<string, int> AbiVersions { get; init; } =
         new Dictionary<string, int>(StringComparer.Ordinal);
+    public int DefaultProjectedTypeAbiVersion { get; init; } = 1;
     public string ProjectionNamespace { get; init; } = "Avalonia.Host.Com";
 
     public bool Includes(Type type)
@@ -53,6 +54,11 @@ public sealed class ProjectionPolicy
 
     public int GetAbiVersion(string projectedInterfaceName) =>
         AbiVersions.TryGetValue(projectedInterfaceName, out var version) ? version : 1;
+
+    public int GetProjectedTypeAbiVersion(string projectedInterfaceName) =>
+        AbiVersions.TryGetValue(projectedInterfaceName, out var version)
+            ? version
+            : DefaultProjectedTypeAbiVersion;
 }
 
 public sealed class EventProjection
