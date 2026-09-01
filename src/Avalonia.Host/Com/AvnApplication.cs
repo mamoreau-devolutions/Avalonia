@@ -4,6 +4,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
+using Avalonia.Host.Views;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using System.Runtime.InteropServices;
@@ -168,6 +169,25 @@ public partial class AvnApplication : IAvnApplication
 
     public int CancelAsyncOperation(long operationId) =>
         _asyncOperations.Cancel(operationId);
+
+    public int CreateRustVmWindow(
+        IAvnRustViewModel? model,
+        out IAvnWindow? window)
+    {
+        window = null;
+        if (model is null)
+            return HResults.E_POINTER;
+        try
+        {
+            Dispatcher.UIThread.VerifyAccess();
+            window = (IAvnWindow)ProjectionRuntime.Wrap(new RustVmWindow(model))!;
+            return HResults.S_OK;
+        }
+        catch (Exception e)
+        {
+            return AbiError.Capture(e);
+        }
+    }
 
     public int GetRequestedThemeVariant(out int value)
         {

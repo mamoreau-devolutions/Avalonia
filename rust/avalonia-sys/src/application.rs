@@ -4,6 +4,7 @@ use crate::com::{ComInterface, ComPtr, IUnknown};
 use crate::generated::IAvnWindow;
 use crate::guid::Guid;
 use crate::hresult::{self, Result};
+use crate::rust_vm::IAvnRustViewModel;
 use std::ffi::c_void;
 use std::ptr;
 
@@ -130,6 +131,11 @@ struct IAvnApplicationVtbl {
         *mut i64,
     ) -> i32,
     cancel_async_operation: unsafe extern "system" fn(*mut IAvnApplication, i64) -> i32,
+    create_rust_vm_window: unsafe extern "system" fn(
+        *mut IAvnApplication,
+        *mut IAvnRustViewModel,
+        *mut *mut IAvnWindow,
+    ) -> i32,
 }
 
 #[repr(C)]
@@ -290,6 +296,24 @@ impl ComPtr<IAvnApplication> {
                 .cancel_async_operation)(
                 self.as_raw(), operation_id
             ))
+        }
+    }
+
+    pub fn create_rust_vm_window(
+        &self,
+        model: &ComPtr<IAvnRustViewModel>,
+    ) -> Result<ComPtr<IAvnWindow>> {
+        unsafe {
+            let mut window = ptr::null_mut();
+            let hr = ((*self.as_raw())
+                .vtbl
+                .as_ref()
+                .unwrap()
+                .create_rust_vm_window)(
+                self.as_raw(), model.as_raw(), &mut window
+            );
+            hresult::check(hr)?;
+            ComPtr::from_projected_raw(window)
         }
     }
 }

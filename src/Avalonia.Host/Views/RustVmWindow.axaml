@@ -1,0 +1,27 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="using:Avalonia.Host.Views"
+        x:Class="Avalonia.Host.Views.RustVmWindow"
+        x:DataType="local:RustVmAdapter"
+        Title="Rust VM + AXAML"
+        Width="520"
+        Height="480">
+  <StackPanel Margin="20" Spacing="10">
+    <TextBlock Text="Managed AXAML presentation, Rust-owned state" FontSize="20" />
+    <TextBlock Text="Name" />
+    <TextBox Text="{Binding Name, Mode=TwoWay}" />
+    <StackPanel Orientation="Horizontal" Spacing="8">
+      <Button Content="Increment" Command="{Binding IncrementCommand}" />
+      <TextBlock Text="{Binding Count, StringFormat='Count: {0}'}"
+                 VerticalAlignment="Center" />
+    </StackPanel>
+    <TextBlock Text="New item" />
+    <StackPanel Orientation="Horizontal" Spacing="8">
+      <TextBox Text="{Binding NewItem, Mode=TwoWay}" Width="300" />
+      <Button Content="Add" Command="{Binding AddCommand}" />
+    </StackPanel>
+    <ListBox ItemsSource="{Binding Items}" Height="180" />
+    <Button Content="Run Rust async save" Command="{Binding SaveCommand}" />
+    <TextBlock Text="{Binding Status}" />
+  </StackPanel>
+</Window>

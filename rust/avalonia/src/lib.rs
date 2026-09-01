@@ -2,12 +2,14 @@
 mod generated;
 mod async_runtime;
 mod runtime;
+mod view_model;
 
 pub use async_runtime::{AsyncOperation, AsyncValue};
 pub use generated::*;
 pub use runtime::{
     App, AppContext, AppScope, AsControl, EventSubscription, ResourceValue, ThemeVariant,
 };
+pub use view_model::{RustViewModel, RustVmSink};
 
 #[derive(Debug)]
 pub enum Error {

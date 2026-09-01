@@ -15,6 +15,7 @@ mod factory;
 mod generated;
 mod guid;
 mod hresult;
+mod rust_vm;
 
 pub use app_handler::{app_handler, IAvnAppHandler};
 pub use application::{IAvnApplication, IAvnResourceValue};
@@ -28,6 +29,7 @@ pub use guid::Guid;
 pub use hresult::{
     Error, Result, AVN_E_FIXTURE, E_FAIL, E_INVALIDARG, E_NOINTERFACE, E_POINTER, S_OK,
 };
+pub use rust_vm::{rust_view_model, IAvnRustViewModel, IAvnRustVmSink, RustViewModelCallbacks};
 
 use libloading::Library;
 use std::ffi::c_void;

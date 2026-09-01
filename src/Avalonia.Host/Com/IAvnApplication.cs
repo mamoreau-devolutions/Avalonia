@@ -43,4 +43,7 @@ public partial interface IAvnApplication
 
     [PreserveSig]
     int CancelAsyncOperation(long operationId);
+
+    [PreserveSig]
+    int CreateRustVmWindow(IAvnRustViewModel? model, out IAvnWindow? window);
 }

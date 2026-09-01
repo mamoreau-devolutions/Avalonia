@@ -9,6 +9,8 @@ The native ownership contract and the MicroCom-versus-handle-table decision
 are documented in [OWNERSHIP.md](OWNERSHIP.md).
 The executor-neutral completion ABI and clipboard integration are documented
 in [ASYNC.md](ASYNC.md).
+The Rust-state/managed-presentation application model is documented in
+[VIEW_MODELS.md](VIEW_MODELS.md).
 
 ## Prerequisites
 
@@ -45,6 +47,10 @@ clipboard interactions.
 interaction from the top of `TextTestApp`. `progress_bar` ports the interactive
 core of ControlCatalog's `ProgressBarPage`, and `scroll_viewer` ports its basic
 `ScrollViewerPage` controls and command surface.
+
+`rust_vm_axaml` demonstrates the alternate application model: presentation is
+precompiled managed AXAML while state, edits, collection mutations, commands,
+and asynchronous work are owned by Rust.
 
 ## Regenerate bindings
 

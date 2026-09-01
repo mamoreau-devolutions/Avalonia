@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 using Avalonia.Host.Com;
 using Avalonia.Host.Ownership;
+using Avalonia.Host.Views;
 
 namespace Avalonia.Host;
 
@@ -18,6 +19,8 @@ public static class Exports
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(AvnDispatcher))]
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(AvnResourceValue))]
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(HostApplication))]
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(RustVmAdapter))]
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(RustVmWindow))]
     public static unsafe int GetActivationFactory(nint* factory)
     {
         if (factory is null)

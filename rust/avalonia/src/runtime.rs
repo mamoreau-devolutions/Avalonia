@@ -190,6 +190,18 @@ impl AppScope {
             .push(subscription.into_persistent());
     }
 
+    pub(crate) fn retain_object(&self, value: impl Any + Send) {
+        self.state
+            .objects
+            .lock()
+            .expect("application object scope lock poisoned")
+            .push(Box::new(value));
+    }
+
+    pub(crate) fn application(&self) -> &sys::ComPtr<sys::IAvnApplication> {
+        &self.context.application
+    }
+
     fn clear(&self) {
         for task in self
             .state

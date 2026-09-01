@@ -59,6 +59,12 @@ impl<T: ComInterface> ComPtr<T> {
         })
     }
 
+    pub(crate) unsafe fn from_borrowed(ptr: *mut T) -> Option<Self> {
+        let result = Self::from_raw(ptr)?;
+        result.add_ref();
+        Some(result)
+    }
+
     pub(crate) unsafe fn from_projected_raw(ptr: *mut T) -> Result<Self> {
         let mut result = Self::from_raw(ptr).ok_or(Error(hresult::E_POINTER))?;
         let vtable = *(ptr.cast::<*const ProjectedObjectVtbl>());
