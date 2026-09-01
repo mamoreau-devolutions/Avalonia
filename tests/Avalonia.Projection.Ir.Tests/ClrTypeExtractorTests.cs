@@ -89,6 +89,13 @@ public class ClrTypeExtractorTests
         var isChecked = Type(ir, "IAvnToggleButton").Properties.Single();
         Assert.Equal(MarshallingKind.NullableBool, isChecked.Kind);
 
+        var keyDown = Assert.Single(Type(ir, "IAvnControl").Events);
+        Assert.Equal(EventPayloadKind.Fields, keyDown.PayloadKind);
+        Assert.Equal(5, keyDown.Parameters.Count);
+        Assert.Equal(
+            ParameterDirection.InOut,
+            keyDown.Parameters.Single(parameter => parameter.Name == "Handled").Direction);
+
         var toggleSwitch = Type(ir, "IAvnToggleSwitch");
         Assert.Equal("Avalonia.Host.Com.IAvnToggleButton", toggleSwitch.BaseFullName);
         Assert.All(toggleSwitch.Properties, property =>

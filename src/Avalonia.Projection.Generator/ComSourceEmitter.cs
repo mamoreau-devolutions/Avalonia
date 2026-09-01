@@ -171,12 +171,12 @@ public static class ComSourceEmitter
         sb.AppendLine();
         sb.AppendLine($"namespace {ns};");
         sb.AppendLine();
-        sb.AppendLine("[GeneratedComInterface]");
+        sb.AppendLine("[GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]");
         sb.AppendLine($"[Guid(\"{@event.HandlerInterfaceIid}\")]");
         sb.AppendLine($"public partial interface {name}");
         sb.AppendLine("{");
         sb.AppendLine("    [PreserveSig]");
-        sb.AppendLine("    int Invoke();");
+        sb.AppendLine($"    int Invoke({string.Join(", ", @event.Parameters.Select(FormatParameter))});");
         sb.AppendLine("}");
         return sb.ToString();
     }
@@ -647,11 +647,19 @@ public static class ComSourceEmitter
         sb.AppendLine("        try");
         sb.AppendLine("        {");
         sb.AppendLine("            _value.VerifyAccess();");
-        sb.AppendLine($"            var callback = new global::{@event.ManagedHandlerTypeName}((_, _) =>");
+        sb.AppendLine($"            var callback = new global::{@event.ManagedHandlerTypeName}((_, eventArgs) =>");
         sb.AppendLine("            {");
-        sb.AppendLine("                var hr = handler.Invoke();");
+        foreach (var parameter in @event.Parameters.Where(p => p.Direction == ParameterDirection.InOut))
+            sb.AppendLine($"                var {LowerFirst(parameter.Name)} = {EventReadExpression(parameter)};");
+        var arguments = string.Join(", ", @event.Parameters.Select(parameter =>
+            parameter.Direction == ParameterDirection.InOut
+                ? $"ref {LowerFirst(parameter.Name)}"
+                : EventReadExpression(parameter)));
+        sb.AppendLine($"                var hr = handler.Invoke({arguments});");
         sb.AppendLine("                if (hr < 0)");
         sb.AppendLine("                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);");
+        foreach (var parameter in @event.Parameters.Where(p => p.Direction == ParameterDirection.InOut))
+            sb.AppendLine($"                eventArgs.{parameter.Name} = {EventWriteExpression(parameter, LowerFirst(parameter.Name))};");
         sb.AppendLine("            });");
         sb.AppendLine($"            _value.{name} += callback;");
         sb.AppendLine($"            subscriptionId = global::System.Threading.Interlocked.Increment(ref _next{name}SubscriptionId);");
@@ -694,6 +702,28 @@ public static class ComSourceEmitter
             MarshallingKind.ComCollection =>
                 $"new {SimpleName(property.InterfaceName!)[1..]}(_value.{property.Name})",
             _ => $"_value.{property.Name}",
+        };
+
+    private static string EventReadExpression(ProjectedParameter parameter) =>
+        parameter.Kind switch
+        {
+            MarshallingKind.I32 when parameter.ManagedTypeName is not "System.Int32" =>
+                $"(int)eventArgs.{parameter.Name}",
+            MarshallingKind.Bool => $"eventArgs.{parameter.Name} ? 1 : 0",
+            MarshallingKind.NullableBool =>
+                $"!eventArgs.{parameter.Name}.HasValue ? -1 : eventArgs.{parameter.Name}.Value ? 1 : 0",
+            _ => $"eventArgs.{parameter.Name}",
+        };
+
+    private static string EventWriteExpression(ProjectedParameter parameter, string value) =>
+        parameter.Kind switch
+        {
+            MarshallingKind.I32 when parameter.ManagedTypeName is not "System.Int32" =>
+                $"(global::{parameter.ManagedTypeName}){value}",
+            MarshallingKind.Bool => $"{value} != 0",
+            MarshallingKind.NullableBool =>
+                $"{value} switch {{ -1 => null, 0 => false, 1 => true, _ => throw new global::System.ArgumentOutOfRangeException(nameof({value})) }}",
+            _ => value,
         };
 
     private static string WriteExpression(ProjectedProperty property) =>

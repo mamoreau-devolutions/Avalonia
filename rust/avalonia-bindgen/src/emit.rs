@@ -247,6 +247,9 @@ fn emit_interface(ir: &ProjectionIr, ty: &ProjectedType) -> String {
 }
 
 fn emit_event_handler(event: &ProjectedEvent) -> String {
+    if !event.parameters.is_empty() {
+        return emit_field_event_handler(event);
+    }
     assert_eq!(event.payload_kind, "None", "unsupported event payload kind");
     let name = simple_name(&event.handler_interface_name);
     let iid_const = format!("{}_IID", to_shouty(name));
@@ -281,20 +284,20 @@ fn emit_event_handler(event: &ProjectedEvent) -> String {
          \x20   release: {stem}_release,\n\
          \x20   invoke: {stem}_invoke,\n\
          }};\n\n\
-         pub fn {handler_fn}(callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<{name}> {{\n\
-         \x20   crate::event_callback::create({name} {{ vtbl: &{shouty}_VTBL }}, callback)\n\
+         pub fn {handler_fn}(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<{name}> {{\n\
+         \x20   crate::event_callback::create::<{name}, ()>({name} {{ vtbl: &{shouty}_VTBL }}, move |_| callback())\n\
          }}\n\n\
          unsafe extern \"system\" fn {stem}_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {{\n\
-         \x20   crate::event_callback::query_interface::<{name}>(this, iid, result)\n\
+         \x20   crate::event_callback::query_interface::<{name}, ()>(this, iid, result)\n\
          }}\n\n\
          unsafe extern \"system\" fn {stem}_add_ref(this: *mut IUnknown) -> u32 {{\n\
-         \x20   crate::event_callback::add_ref::<{name}>(this)\n\
+         \x20   crate::event_callback::add_ref::<{name}, ()>(this)\n\
          }}\n\n\
          unsafe extern \"system\" fn {stem}_release(this: *mut IUnknown) -> u32 {{\n\
-         \x20   crate::event_callback::release::<{name}>(this)\n\
+         \x20   crate::event_callback::release::<{name}, ()>(this)\n\
          }}\n\n\
          unsafe extern \"system\" fn {stem}_invoke(this: *mut {name}) -> i32 {{\n\
-         \x20   crate::event_callback::invoke::<{name}>(this)\n\
+         \x20   crate::event_callback::invoke::<{name}, ()>(this, &mut ())\n\
          }}\n",
         iid = guid_literal(&event.handler_interface_iid),
         shouty = to_shouty(name),
@@ -302,8 +305,151 @@ fn emit_event_handler(event: &ProjectedEvent) -> String {
     )
 }
 
+fn emit_field_event_handler(event: &ProjectedEvent) -> String {
+    assert_eq!(
+        event.payload_kind, "Fields",
+        "parameterized events require Fields payload kind"
+    );
+    let name = simple_name(&event.handler_interface_name);
+    let iid_const = format!("{}_IID", to_shouty(name));
+    let shouty = to_shouty(name);
+    let stem = to_snake(name);
+    let args_name = format!(
+        "{}EventArgs",
+        name.strip_prefix("IAvn")
+            .unwrap_or(name)
+            .strip_suffix("Handler")
+            .unwrap_or(name)
+    );
+    let parameters = event
+        .parameters
+        .iter()
+        .map(|parameter| {
+            let abi = rust_abi_type(&parameter.kind, parameter.interface_name.as_deref());
+            if parameter.direction == "InOut" {
+                format!(", {}: *mut {abi}", to_snake(&parameter.name))
+            } else {
+                format!(", {}: {abi}", to_snake(&parameter.name))
+            }
+        })
+        .collect::<String>();
+    let fields = event
+        .parameters
+        .iter()
+        .map(|parameter| {
+            format!(
+                "    pub {}: {},\n",
+                to_snake(&parameter.name),
+                event_argument_type(parameter)
+            )
+        })
+        .collect::<String>();
+    let null_checks = event
+        .parameters
+        .iter()
+        .filter(|parameter| parameter.direction == "InOut")
+        .map(|parameter| {
+            format!(
+                "    if {}.is_null() {{ return hresult::E_POINTER; }}\n",
+                to_snake(&parameter.name)
+            )
+        })
+        .collect::<String>();
+    let initializers = event
+        .parameters
+        .iter()
+        .map(|parameter| {
+            let name = to_snake(&parameter.name);
+            let source = match (parameter.kind.as_str(), parameter.direction.as_str()) {
+                ("Bool", "InOut") => format!("*{name} != 0"),
+                ("Bool", _) => format!("{name} != 0"),
+                ("StringUtf16", _) => format!("crate::clone_utf16({name})"),
+                (_, "InOut") => format!("*{name}"),
+                _ => name.clone(),
+            };
+            if source == name {
+                format!("        {name},\n")
+            } else {
+                format!("        {name}: {source},\n")
+            }
+        })
+        .collect::<String>();
+    let write_backs = event
+        .parameters
+        .iter()
+        .filter(|parameter| parameter.direction == "InOut")
+        .map(|parameter| {
+            let name = to_snake(&parameter.name);
+            let value = if parameter.kind == "Bool" {
+                format!("i32::from(arguments.{name})")
+            } else {
+                format!("arguments.{name}")
+            };
+            format!("        *{name} = {value};\n")
+        })
+        .collect::<String>();
+
+    format!(
+        "pub const {iid_const}: Guid = {iid};\n\n\
+         #[derive(Debug)]\n\
+         pub struct {args_name} {{\n\
+         {fields}}}\n\n\
+         #[repr(C)]\n\
+         struct {name}Vtbl {{\n\
+         \x20   query_interface: unsafe extern \"system\" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,\n\
+         \x20   add_ref: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+         \x20   release: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+         \x20   invoke: unsafe extern \"system\" fn(*mut {name}{parameters}) -> i32,\n\
+         }}\n\n\
+         #[repr(C)]\n\
+         pub struct {name} {{ vtbl: *const {name}Vtbl }}\n\n\
+         unsafe impl ComInterface for {name} {{ const IID: Guid = {iid_const}; }}\n\n\
+         static {shouty}_VTBL: {name}Vtbl = {name}Vtbl {{\n\
+         \x20   query_interface: {stem}_query_interface,\n\
+         \x20   add_ref: {stem}_add_ref,\n\
+         \x20   release: {stem}_release,\n\
+         \x20   invoke: {stem}_invoke,\n\
+         }};\n\n\
+         pub fn {handler_fn}(callback: impl FnMut(&mut {args_name}) -> Result<()> + Send + 'static) -> ComPtr<{name}> {{\n\
+         \x20   crate::event_callback::create({name} {{ vtbl: &{shouty}_VTBL }}, callback)\n\
+         }}\n\n\
+         unsafe extern \"system\" fn {stem}_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {{\n\
+         \x20   crate::event_callback::query_interface::<{name}, {args_name}>(this, iid, result)\n\
+         }}\n\n\
+         unsafe extern \"system\" fn {stem}_add_ref(this: *mut IUnknown) -> u32 {{\n\
+         \x20   crate::event_callback::add_ref::<{name}, {args_name}>(this)\n\
+         }}\n\n\
+         unsafe extern \"system\" fn {stem}_release(this: *mut IUnknown) -> u32 {{\n\
+         \x20   crate::event_callback::release::<{name}, {args_name}>(this)\n\
+         }}\n\n\
+         unsafe extern \"system\" fn {stem}_invoke(this: *mut {name}{parameters}) -> i32 {{\n\
+         {null_checks}    let mut arguments = {args_name} {{\n\
+         {initializers}    }};\n\
+         \x20   let hr = crate::event_callback::invoke::<{name}, {args_name}>(this, &mut arguments);\n\
+         \x20   if hr >= 0 {{\n\
+         {write_backs}    }}\n\
+         \x20   hr\n\
+         }}\n",
+        iid = guid_literal(&event.handler_interface_iid),
+        handler_fn = event_handler_function(event),
+    )
+}
+
+fn event_argument_type(parameter: &ProjectedParameter) -> &'static str {
+    match parameter.kind.as_str() {
+        "I32" => "i32",
+        "I64" => "i64",
+        "F32" => "f32",
+        "F64" => "f64",
+        "Bool" => "bool",
+        "NullableBool" => "Option<bool>",
+        "StringUtf16" if parameter.is_nullable => "Option<String>",
+        "StringUtf16" => "String",
+        _ => panic!("unsupported event argument kind {}", parameter.kind),
+    }
+}
+
 fn emit_event(event: &ProjectedEvent) -> String {
-    assert_eq!(event.payload_kind, "None", "unsupported event payload kind");
     let snake = to_snake(&event.name);
     let handler = simple_name(&event.handler_interface_name);
     format!(

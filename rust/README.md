@@ -34,8 +34,9 @@ cargo run --manifest-path .\rust\Cargo.toml -p avalonia --example hello_world
 The examples progress from a basic window (`hello_world`) through a port of
 `AppWithoutLifetime` and the Button, Slider, TextBox, ToggleSwitch, ComboBox,
 ListBox, RadioButton, and Expander portion of `WinUIEmbedSample`
-(`control_basics`). `text_test_input` ports the editable text, live preview,
-and new-window interaction from the top of `TextTestApp`.
+(`control_basics`), including its typed keyboard readout. `text_test_input`
+ports the editable text, live preview, and new-window interaction from the top
+of `TextTestApp`.
 
 ## Regenerate bindings
 

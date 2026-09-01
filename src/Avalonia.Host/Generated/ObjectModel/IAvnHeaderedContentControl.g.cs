@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("673330E8-A3CC-5A98-B7E9-836CCE08DCBE")]
+[Guid("CE46B522-0516-5004-B4CA-92B56539BE19")]
 public partial interface IAvnHeaderedContentControl : IAvnContentControl
 {
     [PreserveSig]
@@ -21,6 +21,8 @@ public partial interface IAvnHeaderedContentControl : IAvnContentControl
 public sealed partial class AvnHeaderedContentControl : IAvnHeaderedContentControl
 {
     private readonly global::Avalonia.Controls.Primitives.HeaderedContentControl _value;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnControlKeyDownHandler Handler, global::System.Action Unsubscribe)> _keyDownSubscriptions = new();
+    private long _nextKeyDownSubscriptionId;
 
     internal AvnHeaderedContentControl(global::Avalonia.Controls.Primitives.HeaderedContentControl value)
     {
@@ -72,6 +74,49 @@ public sealed partial class AvnHeaderedContentControl : IAvnHeaderedContentContr
         {
             _value.VerifyAccess();
             _value.IsEnabled = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseKeyDown(IAvnControlKeyDownHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            _value.VerifyAccess();
+            var callback = new global::System.EventHandler<Avalonia.Input.KeyEventArgs>((_, eventArgs) =>
+            {
+                var handled = eventArgs.Handled ? 1 : 0;
+                var hr = handler.Invoke((int)eventArgs.Key, (int)eventArgs.PhysicalKey, (int)eventArgs.KeyModifiers, eventArgs.KeySymbol, ref handled);
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+                eventArgs.Handled = handled != 0;
+            });
+            _value.KeyDown += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextKeyDownSubscriptionId);
+            _keyDownSubscriptions.Add(subscriptionId, (handler, () => _value.KeyDown -= callback));
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseKeyDown(long subscriptionId)
+    {
+        try
+        {
+            _value.VerifyAccess();
+            if (!_keyDownSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

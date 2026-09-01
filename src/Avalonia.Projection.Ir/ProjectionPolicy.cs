@@ -53,6 +53,13 @@ public sealed class ProjectionPolicy
 public sealed class EventProjection
 {
     public required EventPayloadKind PayloadKind { get; init; }
+    public IReadOnlyList<EventParameterProjection> Parameters { get; init; } = [];
+}
+
+public sealed class EventParameterProjection
+{
+    public required string Name { get; init; }
+    public ParameterDirection Direction { get; init; } = ParameterDirection.In;
 }
 
 public sealed class MarshallingOverride

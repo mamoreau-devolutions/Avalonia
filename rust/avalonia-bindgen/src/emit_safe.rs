@@ -9,9 +9,18 @@ pub fn emit_safe_module(ir: &ProjectionIr) -> String {
     );
 
     for projected_enum in &ir.enums {
+        let mut values = Vec::new();
+        for value in &projected_enum.values {
+            if !values
+                .iter()
+                .any(|existing: &&crate::ir::ProjectedEnumValue| existing.value == value.value)
+            {
+                values.push(value);
+            }
+        }
         out.push_str("#[repr(i32)]\n#[derive(Clone, Copy, Debug, PartialEq, Eq)]\n");
         out.push_str(&format!("pub enum {} {{\n", projected_enum.name));
-        for value in &projected_enum.values {
+        for value in &values {
             out.push_str(&format!("    {} = {},\n", value.name, value.value));
         }
         out.push_str("}\n\n");
@@ -22,7 +31,7 @@ pub fn emit_safe_module(ir: &ProjectionIr) -> String {
              \x20       match value {{\n",
             projected_enum.name
         ));
-        for value in &projected_enum.values {
+        for value in &values {
             out.push_str(&format!(
                 "            {} => Ok(Self::{}),\n",
                 value.value, value.name
@@ -31,6 +40,20 @@ pub fn emit_safe_module(ir: &ProjectionIr) -> String {
         out.push_str(
             "            _ => Err(crate::Error::InvalidEnumValue(value)),\n        }\n    }\n}\n\n",
         );
+    }
+
+    let mut event_argument_types = Vec::new();
+    for event in ir.types.iter().flat_map(|ty| ty.events.iter()) {
+        if !event.parameters.is_empty() {
+            let name = event_arguments_name(event);
+            if !event_argument_types.contains(&name) {
+                out.push_str(&format!("pub use sys::{name};\n"));
+                event_argument_types.push(name);
+            }
+        }
+    }
+    if !event_argument_types.is_empty() {
+        out.push('\n');
     }
 
     for collection in unique_collections(ir) {
@@ -302,6 +325,29 @@ fn emit_property(property: &ProjectedProperty) -> String {
 }
 
 fn emit_event(event: &ProjectedEvent) -> String {
+    if !event.parameters.is_empty() {
+        let event_name = to_snake(&event.name);
+        let args_name = event_arguments_name(event);
+        let handler_name = simple_name(&event.handler_interface_name)
+            .strip_prefix("IAvn")
+            .unwrap_or_else(|| simple_name(&event.handler_interface_name))
+            .strip_suffix("Handler")
+            .unwrap_or_else(|| simple_name(&event.handler_interface_name));
+        let handler_function = format!("{}_handler", to_snake(handler_name));
+        return format!(
+            "    pub fn subscribe_{event_name}(&self, callback: impl FnMut(&mut {args_name}) + Send + 'static) -> Result<EventSubscription> {{\n\
+             \x20       let mut callback = callback;\n\
+             \x20       let handler = sys::{handler_function}(move |event| {{ callback(event); Ok(()) }});\n\
+             \x20       let subscription_id = self.raw.advise_{event_name}(&handler)?;\n\
+             \x20       let source = self.raw.clone();\n\
+             \x20       Ok(EventSubscription::new(move || source.unadvise_{event_name}(subscription_id)))\n\
+             \x20   }}\n\
+             \x20   pub fn on_{event_name}(self, callback: impl FnMut(&mut {args_name}) + Send + 'static) -> Result<Self> {{\n\
+             \x20       self.subscribe_{event_name}(callback)?.detach();\n\
+             \x20       Ok(self)\n\
+             \x20   }}\n"
+        );
+    }
     assert_eq!(event.payload_kind, "None", "unsupported event payload kind");
     let event_name = to_snake(&event.name);
     let handler_name = simple_name(&event.handler_interface_name)
@@ -328,6 +374,18 @@ fn emit_event(event: &ProjectedEvent) -> String {
          \x20       self.subscribe_{event_name}(callback)?.detach();\n\
          \x20       Ok(self)\n\
          \x20   }}\n"
+    )
+}
+
+fn event_arguments_name(event: &ProjectedEvent) -> String {
+    let handler = simple_name(&event.handler_interface_name);
+    format!(
+        "{}EventArgs",
+        handler
+            .strip_prefix("IAvn")
+            .unwrap_or(handler)
+            .strip_suffix("Handler")
+            .unwrap_or(handler)
     )
 }
 

@@ -43,7 +43,7 @@ static ACTION_VTBL: IAvnActionVtbl = IAvnActionVtbl {
 
 pub fn action(callback: impl FnOnce() -> Result<()> + Send + 'static) -> ComPtr<IAvnAction> {
     let mut callback = Some(callback);
-    crate::event_callback::create(IAvnAction { vtbl: &ACTION_VTBL }, move || {
+    crate::event_callback::create::<IAvnAction, ()>(IAvnAction { vtbl: &ACTION_VTBL }, move |_| {
         callback.take().ok_or(Error(hresult::E_FAIL))?()
     })
 }
@@ -53,19 +53,19 @@ unsafe extern "system" fn action_query_interface(
     iid: *const Guid,
     result: *mut *mut c_void,
 ) -> i32 {
-    crate::event_callback::query_interface::<IAvnAction>(this, iid, result)
+    crate::event_callback::query_interface::<IAvnAction, ()>(this, iid, result)
 }
 
 unsafe extern "system" fn action_add_ref(this: *mut IUnknown) -> u32 {
-    crate::event_callback::add_ref::<IAvnAction>(this)
+    crate::event_callback::add_ref::<IAvnAction, ()>(this)
 }
 
 unsafe extern "system" fn action_release(this: *mut IUnknown) -> u32 {
-    crate::event_callback::release::<IAvnAction>(this)
+    crate::event_callback::release::<IAvnAction, ()>(this)
 }
 
 unsafe extern "system" fn action_invoke(this: *mut IAvnAction) -> i32 {
-    crate::event_callback::invoke::<IAvnAction>(this)
+    crate::event_callback::invoke::<IAvnAction, ()>(this, &mut ())
 }
 
 #[repr(C)]

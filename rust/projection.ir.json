@@ -1,13 +1,13 @@
 {
-  "version": 7,
+  "version": 8,
   "sourceAssembly": "Avalonia.Base,Avalonia.Controls",
-  "factoryIid": "805F9D56-0765-5E70-8461-3E2F09026694",
+  "factoryIid": "B2B11056-C4E3-528A-828A-CBE66EDBE8F1",
   "types": [
     {
       "name": "IAvnAvaloniaObject",
       "fullName": "Avalonia.Host.Com.IAvnAvaloniaObject",
       "kind": "Class",
-      "iid": "3CEA4487-CB18-5434-B3F7-788A5F38C2F9",
+      "iid": "4CB49F84-8598-5E8A-90AE-9C344E317610",
       "managedFullName": "Avalonia.AvaloniaObject",
       "isConstructible": true,
       "methods": [],
@@ -18,7 +18,7 @@
       "name": "IAvnBorder",
       "fullName": "Avalonia.Host.Com.IAvnBorder",
       "kind": "Class",
-      "iid": "96DC871F-7A72-5193-B85E-AE0DA1EFA225",
+      "iid": "51A0C1AD-4DCA-5FA8-A26E-138599AE2E51",
       "baseFullName": "Avalonia.Host.Com.IAvnDecorator",
       "managedFullName": "Avalonia.Controls.Border",
       "isConstructible": true,
@@ -39,7 +39,7 @@
       "name": "IAvnButton",
       "fullName": "Avalonia.Host.Com.IAvnButton",
       "kind": "Class",
-      "iid": "D937CF8D-F045-5834-8D61-E144A72ADBFE",
+      "iid": "FF90B748-58E4-5D31-8A77-420B01F1F79A",
       "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
       "managedFullName": "Avalonia.Controls.Button",
       "isConstructible": true,
@@ -49,9 +49,10 @@
         {
           "name": "Click",
           "handlerInterfaceName": "Avalonia.Host.Com.IAvnButtonClickHandler",
-          "handlerInterfaceIid": "73659246-1343-5C1F-BE03-E04BEB823F17",
+          "handlerInterfaceIid": "BFE1C71F-0861-566C-8921-A95F2E8B2C68",
           "payloadKind": "None",
-          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E"
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E",
+          "parameters": []
         }
       ]
     },
@@ -59,7 +60,7 @@
       "name": "IAvnCanvas",
       "fullName": "Avalonia.Host.Com.IAvnCanvas",
       "kind": "Class",
-      "iid": "0E114DCF-1F0C-51E6-91C0-931418E2E28F",
+      "iid": "24D98F9E-8A73-57F4-BDA0-02101B25DB45",
       "baseFullName": "Avalonia.Host.Com.IAvnPanel",
       "managedFullName": "Avalonia.Controls.Canvas",
       "isConstructible": true,
@@ -71,7 +72,7 @@
       "name": "IAvnCheckBox",
       "fullName": "Avalonia.Host.Com.IAvnCheckBox",
       "kind": "Class",
-      "iid": "12E363EF-B500-5612-BD7F-8BD882DFFEF9",
+      "iid": "2BB0520A-6032-5EF3-9F10-FCE0BCA107E3",
       "baseFullName": "Avalonia.Host.Com.IAvnToggleButton",
       "managedFullName": "Avalonia.Controls.CheckBox",
       "isConstructible": true,
@@ -83,7 +84,7 @@
       "name": "IAvnComboBox",
       "fullName": "Avalonia.Host.Com.IAvnComboBox",
       "kind": "Class",
-      "iid": "BAD3131F-442E-583E-8685-6C443004FE27",
+      "iid": "9C6FE3E3-6F40-5E92-8AA1-EBDE1B1974EC",
       "baseFullName": "Avalonia.Host.Com.IAvnSelectingItemsControl",
       "managedFullName": "Avalonia.Controls.ComboBox",
       "isConstructible": true,
@@ -104,7 +105,7 @@
       "name": "IAvnComboBoxItem",
       "fullName": "Avalonia.Host.Com.IAvnComboBoxItem",
       "kind": "Class",
-      "iid": "F8F3A3F8-F4C8-509D-8A96-6CCDFA98A7B1",
+      "iid": "2CF2F19D-CDCB-5EC0-9419-898F229375A0",
       "baseFullName": "Avalonia.Host.Com.IAvnListBoxItem",
       "managedFullName": "Avalonia.Controls.ComboBoxItem",
       "isConstructible": true,
@@ -116,7 +117,7 @@
       "name": "IAvnContentControl",
       "fullName": "Avalonia.Host.Com.IAvnContentControl",
       "kind": "Class",
-      "iid": "1BEA5A94-3E2F-580B-B284-595072252B4D",
+      "iid": "F7891AE9-A906-5C0A-AC58-87CCD61712FD",
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.ContentControl",
       "isConstructible": true,
@@ -138,7 +139,7 @@
       "name": "IAvnControl",
       "fullName": "Avalonia.Host.Com.IAvnControl",
       "kind": "Class",
-      "iid": "D53ACF46-6FCB-5A1A-98CB-B8E673617824",
+      "iid": "DCFDE1F3-7296-5EE4-8E29-8714DC41DB72",
       "baseFullName": "Avalonia.Host.Com.IAvnStyledElement",
       "managedFullName": "Avalonia.Controls.Control",
       "isConstructible": true,
@@ -153,13 +154,58 @@
           "isNullable": false
         }
       ],
-      "events": []
+      "events": [
+        {
+          "name": "KeyDown",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnControlKeyDownHandler",
+          "handlerInterfaceIid": "0D90FB24-5DE6-5DFA-AB8E-F3DAE5DE253F",
+          "payloadKind": "Fields",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Input.KeyEventArgs\u003E",
+          "parameters": [
+            {
+              "name": "Key",
+              "kind": "I32",
+              "direction": "In",
+              "managedTypeName": "Avalonia.Input.Key",
+              "isNullable": false
+            },
+            {
+              "name": "PhysicalKey",
+              "kind": "I32",
+              "direction": "In",
+              "managedTypeName": "Avalonia.Input.PhysicalKey",
+              "isNullable": false
+            },
+            {
+              "name": "KeyModifiers",
+              "kind": "I32",
+              "direction": "In",
+              "managedTypeName": "Avalonia.Input.KeyModifiers",
+              "isNullable": false
+            },
+            {
+              "name": "KeySymbol",
+              "kind": "StringUtf16",
+              "direction": "In",
+              "managedTypeName": "System.String",
+              "isNullable": true
+            },
+            {
+              "name": "Handled",
+              "kind": "Bool",
+              "direction": "InOut",
+              "managedTypeName": "System.Boolean",
+              "isNullable": false
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "IAvnDecorator",
       "fullName": "Avalonia.Host.Com.IAvnDecorator",
       "kind": "Class",
-      "iid": "140BE9D8-C30F-591E-97FC-4BABDA737026",
+      "iid": "90C3108A-DE3D-52AE-BA8C-345E56D0C749",
       "baseFullName": "Avalonia.Host.Com.IAvnControl",
       "managedFullName": "Avalonia.Controls.Decorator",
       "isConstructible": true,
@@ -181,7 +227,7 @@
       "name": "IAvnDockPanel",
       "fullName": "Avalonia.Host.Com.IAvnDockPanel",
       "kind": "Class",
-      "iid": "01170C54-99AA-517C-AB00-B3B37A31D98C",
+      "iid": "A9D57922-C593-5AF1-B723-5AC9F0489BB3",
       "baseFullName": "Avalonia.Host.Com.IAvnPanel",
       "managedFullName": "Avalonia.Controls.DockPanel",
       "isConstructible": true,
@@ -218,7 +264,7 @@
       "name": "IAvnExpander",
       "fullName": "Avalonia.Host.Com.IAvnExpander",
       "kind": "Class",
-      "iid": "D66FE7D8-5040-51E5-9AD9-593B499E74B1",
+      "iid": "F6F6DF2F-134E-5E9C-ABB6-4D241A93414D",
       "baseFullName": "Avalonia.Host.Com.IAvnHeaderedContentControl",
       "managedFullName": "Avalonia.Controls.Expander",
       "isConstructible": true,
@@ -245,16 +291,18 @@
         {
           "name": "Collapsed",
           "handlerInterfaceName": "Avalonia.Host.Com.IAvnExpanderCollapsedHandler",
-          "handlerInterfaceIid": "9FA3C559-1EBE-5D52-84D1-0F7ECCB0546D",
+          "handlerInterfaceIid": "59458AB2-E62F-5DAE-95CF-DFD1986BFAB8",
           "payloadKind": "None",
-          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E"
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E",
+          "parameters": []
         },
         {
           "name": "Expanded",
           "handlerInterfaceName": "Avalonia.Host.Com.IAvnExpanderExpandedHandler",
-          "handlerInterfaceIid": "A7D9C1DF-5DCA-52BE-8688-78CB3B425FF7",
+          "handlerInterfaceIid": "14A5F026-86EA-519D-8A9D-CEA741A0DB0F",
           "payloadKind": "None",
-          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E"
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E",
+          "parameters": []
         }
       ]
     },
@@ -262,7 +310,7 @@
       "name": "IAvnGrid",
       "fullName": "Avalonia.Host.Com.IAvnGrid",
       "kind": "Class",
-      "iid": "55E7818C-0CF6-5921-A56B-D316D5DDEB0B",
+      "iid": "2743F0B0-104C-5020-B151-AF63239ED5B8",
       "baseFullName": "Avalonia.Host.Com.IAvnPanel",
       "managedFullName": "Avalonia.Controls.Grid",
       "isConstructible": true,
@@ -299,7 +347,7 @@
       "name": "IAvnItemsControl",
       "fullName": "Avalonia.Host.Com.IAvnItemsControl",
       "kind": "Class",
-      "iid": "CA4E2DA3-A2C0-5594-A793-326CDA703071",
+      "iid": "7A8ABB1E-77CC-5345-B655-E80A2AB9E3A6",
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.ItemsControl",
       "isConstructible": true,
@@ -311,7 +359,7 @@
           "canRead": true,
           "canWrite": false,
           "interfaceName": "Avalonia.Host.Com.IAvnItemList",
-          "interfaceIid": "0BCABAA8-D5B1-5D5E-A710-24A79F4705D4",
+          "interfaceIid": "03E9E259-9582-5831-935D-42D89B339A4F",
           "elementInterfaceName": "Avalonia.Host.Com.IAvnControl",
           "elementKind": "ComInterface",
           "managedTypeName": "Avalonia.Controls.ItemCollection",
@@ -324,7 +372,7 @@
       "name": "IAvnListBox",
       "fullName": "Avalonia.Host.Com.IAvnListBox",
       "kind": "Class",
-      "iid": "48E21481-06DE-5378-B6D7-A8A7C246FA64",
+      "iid": "347B483D-99B4-5479-9754-D3D64DAF75D1",
       "baseFullName": "Avalonia.Host.Com.IAvnSelectingItemsControl",
       "managedFullName": "Avalonia.Controls.ListBox",
       "isConstructible": true,
@@ -336,7 +384,7 @@
       "name": "IAvnListBoxItem",
       "fullName": "Avalonia.Host.Com.IAvnListBoxItem",
       "kind": "Class",
-      "iid": "239CF877-242F-53C7-9E45-BFEA87D05D60",
+      "iid": "B49D933F-D765-5051-9761-ADCA01D11456",
       "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
       "managedFullName": "Avalonia.Controls.ListBoxItem",
       "isConstructible": true,
@@ -357,7 +405,7 @@
       "name": "IAvnPanel",
       "fullName": "Avalonia.Host.Com.IAvnPanel",
       "kind": "Class",
-      "iid": "99F1A7F0-153C-5B4C-ADDB-17CA9C8FC8D7",
+      "iid": "2FF39908-2FA3-567B-A2A5-31D973AA90A9",
       "baseFullName": "Avalonia.Host.Com.IAvnControl",
       "managedFullName": "Avalonia.Controls.Panel",
       "isConstructible": true,
@@ -369,7 +417,7 @@
           "canRead": true,
           "canWrite": false,
           "interfaceName": "Avalonia.Host.Com.IAvnControlList",
-          "interfaceIid": "4DE82845-9AD5-5B2A-9A64-546AFBC34E7E",
+          "interfaceIid": "D211F72F-08E3-5A43-B36F-149E126C352A",
           "elementInterfaceName": "Avalonia.Host.Com.IAvnControl",
           "elementKind": "ComInterface",
           "managedTypeName": "Avalonia.Controls.Controls",
@@ -382,7 +430,7 @@
       "name": "IAvnHeaderedContentControl",
       "fullName": "Avalonia.Host.Com.IAvnHeaderedContentControl",
       "kind": "Class",
-      "iid": "673330E8-A3CC-5A98-B7E9-836CCE08DCBE",
+      "iid": "CE46B522-0516-5004-B4CA-92B56539BE19",
       "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
       "managedFullName": "Avalonia.Controls.Primitives.HeaderedContentControl",
       "isConstructible": true,
@@ -404,7 +452,7 @@
       "name": "IAvnRangeBase",
       "fullName": "Avalonia.Host.Com.IAvnRangeBase",
       "kind": "Class",
-      "iid": "DABD7A9F-662E-5BD7-9136-20BA446F485C",
+      "iid": "E8E8EDA8-E433-54F4-B2CB-AF24CE425C74",
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.Primitives.RangeBase",
       "isConstructible": false,
@@ -455,9 +503,10 @@
         {
           "name": "ValueChanged",
           "handlerInterfaceName": "Avalonia.Host.Com.IAvnRangeBaseValueChangedHandler",
-          "handlerInterfaceIid": "D73A680A-530E-5D42-AA00-1D271CE9F222",
+          "handlerInterfaceIid": "5CC89DE0-7E1A-562D-9F2B-E88C14A0733A",
           "payloadKind": "None",
-          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Controls.Primitives.RangeBaseValueChangedEventArgs\u003E"
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Controls.Primitives.RangeBaseValueChangedEventArgs\u003E",
+          "parameters": []
         }
       ]
     },
@@ -465,7 +514,7 @@
       "name": "IAvnSelectingItemsControl",
       "fullName": "Avalonia.Host.Com.IAvnSelectingItemsControl",
       "kind": "Class",
-      "iid": "F569635D-BFBB-5BDC-9775-D2F789EE2C1E",
+      "iid": "0198E9D2-B4C0-547C-A2D2-3876DF73BC9A",
       "baseFullName": "Avalonia.Host.Com.IAvnItemsControl",
       "managedFullName": "Avalonia.Controls.Primitives.SelectingItemsControl",
       "isConstructible": true,
@@ -484,9 +533,10 @@
         {
           "name": "SelectionChanged",
           "handlerInterfaceName": "Avalonia.Host.Com.IAvnSelectingItemsControlSelectionChangedHandler",
-          "handlerInterfaceIid": "C0C01034-D9D7-599C-B3F0-564788455373",
+          "handlerInterfaceIid": "98C21BE5-7D6C-520D-9B7E-F7E1622AE481",
           "payloadKind": "None",
-          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Controls.SelectionChangedEventArgs\u003E"
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Controls.SelectionChangedEventArgs\u003E",
+          "parameters": []
         }
       ]
     },
@@ -494,7 +544,7 @@
       "name": "IAvnTemplatedControl",
       "fullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "kind": "Class",
-      "iid": "6F4B4BCF-3A54-55B4-B3D2-71204E7ECAE0",
+      "iid": "129460A1-F3BC-573F-B05A-B280F4C48C8A",
       "baseFullName": "Avalonia.Host.Com.IAvnControl",
       "managedFullName": "Avalonia.Controls.Primitives.TemplatedControl",
       "isConstructible": true,
@@ -506,7 +556,7 @@
       "name": "IAvnToggleButton",
       "fullName": "Avalonia.Host.Com.IAvnToggleButton",
       "kind": "Class",
-      "iid": "34EEEFE7-B133-5032-A6FC-3E44337E29BB",
+      "iid": "D4F81ACA-0DF2-5FEE-8822-E77C9439D0AE",
       "baseFullName": "Avalonia.Host.Com.IAvnButton",
       "managedFullName": "Avalonia.Controls.Primitives.ToggleButton",
       "isConstructible": true,
@@ -525,9 +575,10 @@
         {
           "name": "IsCheckedChanged",
           "handlerInterfaceName": "Avalonia.Host.Com.IAvnToggleButtonIsCheckedChangedHandler",
-          "handlerInterfaceIid": "D78D5A25-03AD-52B3-8DA2-7BE7C9B38639",
+          "handlerInterfaceIid": "3FE8011B-8760-512E-AB58-5A5C7673A9CA",
           "payloadKind": "None",
-          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E"
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E",
+          "parameters": []
         }
       ]
     },
@@ -535,7 +586,7 @@
       "name": "IAvnProgressBar",
       "fullName": "Avalonia.Host.Com.IAvnProgressBar",
       "kind": "Class",
-      "iid": "26FE7CF1-6AC4-591C-AAC0-AB104AAF36BE",
+      "iid": "43BC2BBD-F2E1-5135-BD7D-4F5601B2B08E",
       "baseFullName": "Avalonia.Host.Com.IAvnRangeBase",
       "managedFullName": "Avalonia.Controls.ProgressBar",
       "isConstructible": true,
@@ -580,7 +631,7 @@
       "name": "IAvnRadioButton",
       "fullName": "Avalonia.Host.Com.IAvnRadioButton",
       "kind": "Class",
-      "iid": "4E932105-0BEB-583E-B63C-1EFDBAC450D2",
+      "iid": "8F4D0452-5FCE-54BD-995C-F1AAD0D840BB",
       "baseFullName": "Avalonia.Host.Com.IAvnToggleButton",
       "managedFullName": "Avalonia.Controls.RadioButton",
       "isConstructible": true,
@@ -601,7 +652,7 @@
       "name": "IAvnScrollViewer",
       "fullName": "Avalonia.Host.Com.IAvnScrollViewer",
       "kind": "Class",
-      "iid": "25C7A881-4D62-5CC5-8304-AEF5D1DE2A4A",
+      "iid": "EF9F789E-D769-55BB-9771-08C3CB558B08",
       "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
       "managedFullName": "Avalonia.Controls.ScrollViewer",
       "isConstructible": true,
@@ -747,9 +798,10 @@
         {
           "name": "ScrollChanged",
           "handlerInterfaceName": "Avalonia.Host.Com.IAvnScrollViewerScrollChangedHandler",
-          "handlerInterfaceIid": "462522E1-DE87-581B-AD11-245B2D5E7E62",
+          "handlerInterfaceIid": "5400B0C5-284A-5D91-90B0-B70D163A2CD9",
           "payloadKind": "None",
-          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Controls.ScrollChangedEventArgs\u003E"
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Controls.ScrollChangedEventArgs\u003E",
+          "parameters": []
         }
       ]
     },
@@ -757,7 +809,7 @@
       "name": "IAvnSlider",
       "fullName": "Avalonia.Host.Com.IAvnSlider",
       "kind": "Class",
-      "iid": "7BE67696-5FA1-5D14-A33A-4D669DE1697E",
+      "iid": "F9EE0B1F-2FEF-5D85-AA2B-787262A60B28",
       "baseFullName": "Avalonia.Host.Com.IAvnRangeBase",
       "managedFullName": "Avalonia.Controls.Slider",
       "isConstructible": true,
@@ -810,7 +862,7 @@
       "name": "IAvnStackPanel",
       "fullName": "Avalonia.Host.Com.IAvnStackPanel",
       "kind": "Class",
-      "iid": "D9F3B5D2-4F51-596F-ACFA-BA338A7B0784",
+      "iid": "7BC5ACAD-90CE-5F67-90DE-CF3474590CA2",
       "baseFullName": "Avalonia.Host.Com.IAvnPanel",
       "managedFullName": "Avalonia.Controls.StackPanel",
       "isConstructible": true,
@@ -839,7 +891,7 @@
       "name": "IAvnTextBlock",
       "fullName": "Avalonia.Host.Com.IAvnTextBlock",
       "kind": "Class",
-      "iid": "EAE1A4DB-7BD0-516E-8B54-A69A840C4AE0",
+      "iid": "5959F966-5938-56E1-937D-A460BF06CDAB",
       "baseFullName": "Avalonia.Host.Com.IAvnControl",
       "managedFullName": "Avalonia.Controls.TextBlock",
       "isConstructible": true,
@@ -860,7 +912,7 @@
       "name": "IAvnTextBox",
       "fullName": "Avalonia.Host.Com.IAvnTextBox",
       "kind": "Class",
-      "iid": "86D1F68F-000B-5958-92A1-CADD65BFA9D2",
+      "iid": "7DAA8E11-C860-533A-8C24-B1B4661F15DC",
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.TextBox",
       "isConstructible": true,
@@ -1090,9 +1142,10 @@
         {
           "name": "TextChanged",
           "handlerInterfaceName": "Avalonia.Host.Com.IAvnTextBoxTextChangedHandler",
-          "handlerInterfaceIid": "9E143759-5355-507C-A624-DD1E2AC4BCDE",
+          "handlerInterfaceIid": "8A2ED4F4-F329-56BD-A084-E68C03E632B9",
           "payloadKind": "None",
-          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Controls.TextChangedEventArgs\u003E"
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Controls.TextChangedEventArgs\u003E",
+          "parameters": []
         }
       ]
     },
@@ -1100,7 +1153,7 @@
       "name": "IAvnToggleSwitch",
       "fullName": "Avalonia.Host.Com.IAvnToggleSwitch",
       "kind": "Class",
-      "iid": "9EAF1297-0406-517E-B0B1-FA0191BFB317",
+      "iid": "01593F70-59B3-5F76-BF1A-91749FE7281C",
       "baseFullName": "Avalonia.Host.Com.IAvnToggleButton",
       "managedFullName": "Avalonia.Controls.ToggleSwitch",
       "isConstructible": true,
@@ -1131,7 +1184,7 @@
       "name": "IAvnWindow",
       "fullName": "Avalonia.Host.Com.IAvnWindow",
       "kind": "Class",
-      "iid": "4CCC14B1-6DE1-573C-8CF7-375F7287A868",
+      "iid": "D280F925-400F-598D-88CA-764BF606AC4A",
       "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
       "managedFullName": "Avalonia.Controls.Window",
       "isConstructible": true,
@@ -1183,7 +1236,7 @@
       "name": "IAvnStyledElement",
       "fullName": "Avalonia.Host.Com.IAvnStyledElement",
       "kind": "Class",
-      "iid": "295B6083-BF95-532A-A377-0D117C500223",
+      "iid": "1304F0EE-7B6D-5530-90BD-3A0E4E6F0DA1",
       "baseFullName": "Avalonia.Host.Com.IAvnAvaloniaObject",
       "managedFullName": "Avalonia.StyledElement",
       "isConstructible": true,
@@ -1195,7 +1248,7 @@
           "canRead": true,
           "canWrite": false,
           "interfaceName": "Avalonia.Host.Com.IAvnStringList",
-          "interfaceIid": "F3BB5B4E-A4DA-5296-8D17-14A3841DBA77",
+          "interfaceIid": "F568596F-958A-5653-A39B-40FA1D11F3A7",
           "elementKind": "StringUtf16",
           "managedTypeName": "Avalonia.Controls.Classes",
           "isNullable": false
@@ -1294,6 +1347,1596 @@
       ]
     },
     {
+      "name": "Key",
+      "fullName": "Avalonia.Input.Key",
+      "values": [
+        {
+          "name": "None",
+          "value": 0
+        },
+        {
+          "name": "Cancel",
+          "value": 1
+        },
+        {
+          "name": "Back",
+          "value": 2
+        },
+        {
+          "name": "Tab",
+          "value": 3
+        },
+        {
+          "name": "LineFeed",
+          "value": 4
+        },
+        {
+          "name": "Clear",
+          "value": 5
+        },
+        {
+          "name": "Return",
+          "value": 6
+        },
+        {
+          "name": "Enter",
+          "value": 6
+        },
+        {
+          "name": "Pause",
+          "value": 7
+        },
+        {
+          "name": "CapsLock",
+          "value": 8
+        },
+        {
+          "name": "Capital",
+          "value": 8
+        },
+        {
+          "name": "HangulMode",
+          "value": 9
+        },
+        {
+          "name": "KanaMode",
+          "value": 9
+        },
+        {
+          "name": "JunjaMode",
+          "value": 10
+        },
+        {
+          "name": "FinalMode",
+          "value": 11
+        },
+        {
+          "name": "KanjiMode",
+          "value": 12
+        },
+        {
+          "name": "HanjaMode",
+          "value": 12
+        },
+        {
+          "name": "Escape",
+          "value": 13
+        },
+        {
+          "name": "ImeConvert",
+          "value": 14
+        },
+        {
+          "name": "ImeNonConvert",
+          "value": 15
+        },
+        {
+          "name": "ImeAccept",
+          "value": 16
+        },
+        {
+          "name": "ImeModeChange",
+          "value": 17
+        },
+        {
+          "name": "Space",
+          "value": 18
+        },
+        {
+          "name": "PageUp",
+          "value": 19
+        },
+        {
+          "name": "Prior",
+          "value": 19
+        },
+        {
+          "name": "PageDown",
+          "value": 20
+        },
+        {
+          "name": "Next",
+          "value": 20
+        },
+        {
+          "name": "End",
+          "value": 21
+        },
+        {
+          "name": "Home",
+          "value": 22
+        },
+        {
+          "name": "Left",
+          "value": 23
+        },
+        {
+          "name": "Up",
+          "value": 24
+        },
+        {
+          "name": "Right",
+          "value": 25
+        },
+        {
+          "name": "Down",
+          "value": 26
+        },
+        {
+          "name": "Select",
+          "value": 27
+        },
+        {
+          "name": "Print",
+          "value": 28
+        },
+        {
+          "name": "Execute",
+          "value": 29
+        },
+        {
+          "name": "Snapshot",
+          "value": 30
+        },
+        {
+          "name": "PrintScreen",
+          "value": 30
+        },
+        {
+          "name": "Insert",
+          "value": 31
+        },
+        {
+          "name": "Delete",
+          "value": 32
+        },
+        {
+          "name": "Help",
+          "value": 33
+        },
+        {
+          "name": "D0",
+          "value": 34
+        },
+        {
+          "name": "D1",
+          "value": 35
+        },
+        {
+          "name": "D2",
+          "value": 36
+        },
+        {
+          "name": "D3",
+          "value": 37
+        },
+        {
+          "name": "D4",
+          "value": 38
+        },
+        {
+          "name": "D5",
+          "value": 39
+        },
+        {
+          "name": "D6",
+          "value": 40
+        },
+        {
+          "name": "D7",
+          "value": 41
+        },
+        {
+          "name": "D8",
+          "value": 42
+        },
+        {
+          "name": "D9",
+          "value": 43
+        },
+        {
+          "name": "A",
+          "value": 44
+        },
+        {
+          "name": "B",
+          "value": 45
+        },
+        {
+          "name": "C",
+          "value": 46
+        },
+        {
+          "name": "D",
+          "value": 47
+        },
+        {
+          "name": "E",
+          "value": 48
+        },
+        {
+          "name": "F",
+          "value": 49
+        },
+        {
+          "name": "G",
+          "value": 50
+        },
+        {
+          "name": "H",
+          "value": 51
+        },
+        {
+          "name": "I",
+          "value": 52
+        },
+        {
+          "name": "J",
+          "value": 53
+        },
+        {
+          "name": "K",
+          "value": 54
+        },
+        {
+          "name": "L",
+          "value": 55
+        },
+        {
+          "name": "M",
+          "value": 56
+        },
+        {
+          "name": "N",
+          "value": 57
+        },
+        {
+          "name": "O",
+          "value": 58
+        },
+        {
+          "name": "P",
+          "value": 59
+        },
+        {
+          "name": "Q",
+          "value": 60
+        },
+        {
+          "name": "R",
+          "value": 61
+        },
+        {
+          "name": "S",
+          "value": 62
+        },
+        {
+          "name": "T",
+          "value": 63
+        },
+        {
+          "name": "U",
+          "value": 64
+        },
+        {
+          "name": "V",
+          "value": 65
+        },
+        {
+          "name": "W",
+          "value": 66
+        },
+        {
+          "name": "X",
+          "value": 67
+        },
+        {
+          "name": "Y",
+          "value": 68
+        },
+        {
+          "name": "Z",
+          "value": 69
+        },
+        {
+          "name": "LWin",
+          "value": 70
+        },
+        {
+          "name": "RWin",
+          "value": 71
+        },
+        {
+          "name": "Apps",
+          "value": 72
+        },
+        {
+          "name": "Sleep",
+          "value": 73
+        },
+        {
+          "name": "NumPad0",
+          "value": 74
+        },
+        {
+          "name": "NumPad1",
+          "value": 75
+        },
+        {
+          "name": "NumPad2",
+          "value": 76
+        },
+        {
+          "name": "NumPad3",
+          "value": 77
+        },
+        {
+          "name": "NumPad4",
+          "value": 78
+        },
+        {
+          "name": "NumPad5",
+          "value": 79
+        },
+        {
+          "name": "NumPad6",
+          "value": 80
+        },
+        {
+          "name": "NumPad7",
+          "value": 81
+        },
+        {
+          "name": "NumPad8",
+          "value": 82
+        },
+        {
+          "name": "NumPad9",
+          "value": 83
+        },
+        {
+          "name": "Multiply",
+          "value": 84
+        },
+        {
+          "name": "Add",
+          "value": 85
+        },
+        {
+          "name": "Separator",
+          "value": 86
+        },
+        {
+          "name": "Subtract",
+          "value": 87
+        },
+        {
+          "name": "Decimal",
+          "value": 88
+        },
+        {
+          "name": "Divide",
+          "value": 89
+        },
+        {
+          "name": "F1",
+          "value": 90
+        },
+        {
+          "name": "F2",
+          "value": 91
+        },
+        {
+          "name": "F3",
+          "value": 92
+        },
+        {
+          "name": "F4",
+          "value": 93
+        },
+        {
+          "name": "F5",
+          "value": 94
+        },
+        {
+          "name": "F6",
+          "value": 95
+        },
+        {
+          "name": "F7",
+          "value": 96
+        },
+        {
+          "name": "F8",
+          "value": 97
+        },
+        {
+          "name": "F9",
+          "value": 98
+        },
+        {
+          "name": "F10",
+          "value": 99
+        },
+        {
+          "name": "F11",
+          "value": 100
+        },
+        {
+          "name": "F12",
+          "value": 101
+        },
+        {
+          "name": "F13",
+          "value": 102
+        },
+        {
+          "name": "F14",
+          "value": 103
+        },
+        {
+          "name": "F15",
+          "value": 104
+        },
+        {
+          "name": "F16",
+          "value": 105
+        },
+        {
+          "name": "F17",
+          "value": 106
+        },
+        {
+          "name": "F18",
+          "value": 107
+        },
+        {
+          "name": "F19",
+          "value": 108
+        },
+        {
+          "name": "F20",
+          "value": 109
+        },
+        {
+          "name": "F21",
+          "value": 110
+        },
+        {
+          "name": "F22",
+          "value": 111
+        },
+        {
+          "name": "F23",
+          "value": 112
+        },
+        {
+          "name": "F24",
+          "value": 113
+        },
+        {
+          "name": "NumLock",
+          "value": 114
+        },
+        {
+          "name": "Scroll",
+          "value": 115
+        },
+        {
+          "name": "LeftShift",
+          "value": 116
+        },
+        {
+          "name": "RightShift",
+          "value": 117
+        },
+        {
+          "name": "LeftCtrl",
+          "value": 118
+        },
+        {
+          "name": "RightCtrl",
+          "value": 119
+        },
+        {
+          "name": "LeftAlt",
+          "value": 120
+        },
+        {
+          "name": "RightAlt",
+          "value": 121
+        },
+        {
+          "name": "BrowserBack",
+          "value": 122
+        },
+        {
+          "name": "BrowserForward",
+          "value": 123
+        },
+        {
+          "name": "BrowserRefresh",
+          "value": 124
+        },
+        {
+          "name": "BrowserStop",
+          "value": 125
+        },
+        {
+          "name": "BrowserSearch",
+          "value": 126
+        },
+        {
+          "name": "BrowserFavorites",
+          "value": 127
+        },
+        {
+          "name": "BrowserHome",
+          "value": 128
+        },
+        {
+          "name": "VolumeMute",
+          "value": 129
+        },
+        {
+          "name": "VolumeDown",
+          "value": 130
+        },
+        {
+          "name": "VolumeUp",
+          "value": 131
+        },
+        {
+          "name": "MediaNextTrack",
+          "value": 132
+        },
+        {
+          "name": "MediaPreviousTrack",
+          "value": 133
+        },
+        {
+          "name": "MediaStop",
+          "value": 134
+        },
+        {
+          "name": "MediaPlayPause",
+          "value": 135
+        },
+        {
+          "name": "LaunchMail",
+          "value": 136
+        },
+        {
+          "name": "SelectMedia",
+          "value": 137
+        },
+        {
+          "name": "LaunchApplication1",
+          "value": 138
+        },
+        {
+          "name": "LaunchApplication2",
+          "value": 139
+        },
+        {
+          "name": "OemSemicolon",
+          "value": 140
+        },
+        {
+          "name": "Oem1",
+          "value": 140
+        },
+        {
+          "name": "OemPlus",
+          "value": 141
+        },
+        {
+          "name": "OemComma",
+          "value": 142
+        },
+        {
+          "name": "OemMinus",
+          "value": 143
+        },
+        {
+          "name": "OemPeriod",
+          "value": 144
+        },
+        {
+          "name": "OemQuestion",
+          "value": 145
+        },
+        {
+          "name": "Oem2",
+          "value": 145
+        },
+        {
+          "name": "OemTilde",
+          "value": 146
+        },
+        {
+          "name": "Oem3",
+          "value": 146
+        },
+        {
+          "name": "AbntC1",
+          "value": 147
+        },
+        {
+          "name": "AbntC2",
+          "value": 148
+        },
+        {
+          "name": "OemOpenBrackets",
+          "value": 149
+        },
+        {
+          "name": "Oem4",
+          "value": 149
+        },
+        {
+          "name": "OemPipe",
+          "value": 150
+        },
+        {
+          "name": "Oem5",
+          "value": 150
+        },
+        {
+          "name": "OemCloseBrackets",
+          "value": 151
+        },
+        {
+          "name": "Oem6",
+          "value": 151
+        },
+        {
+          "name": "OemQuotes",
+          "value": 152
+        },
+        {
+          "name": "Oem7",
+          "value": 152
+        },
+        {
+          "name": "Oem8",
+          "value": 153
+        },
+        {
+          "name": "OemBackslash",
+          "value": 154
+        },
+        {
+          "name": "Oem102",
+          "value": 154
+        },
+        {
+          "name": "ImeProcessed",
+          "value": 155
+        },
+        {
+          "name": "System",
+          "value": 156
+        },
+        {
+          "name": "OemAttn",
+          "value": 157
+        },
+        {
+          "name": "DbeAlphanumeric",
+          "value": 157
+        },
+        {
+          "name": "OemFinish",
+          "value": 158
+        },
+        {
+          "name": "DbeKatakana",
+          "value": 158
+        },
+        {
+          "name": "DbeHiragana",
+          "value": 159
+        },
+        {
+          "name": "OemCopy",
+          "value": 159
+        },
+        {
+          "name": "DbeSbcsChar",
+          "value": 160
+        },
+        {
+          "name": "OemAuto",
+          "value": 160
+        },
+        {
+          "name": "DbeDbcsChar",
+          "value": 161
+        },
+        {
+          "name": "OemEnlw",
+          "value": 161
+        },
+        {
+          "name": "OemBackTab",
+          "value": 162
+        },
+        {
+          "name": "DbeRoman",
+          "value": 162
+        },
+        {
+          "name": "DbeNoRoman",
+          "value": 163
+        },
+        {
+          "name": "Attn",
+          "value": 163
+        },
+        {
+          "name": "CrSel",
+          "value": 164
+        },
+        {
+          "name": "DbeEnterWordRegisterMode",
+          "value": 164
+        },
+        {
+          "name": "ExSel",
+          "value": 165
+        },
+        {
+          "name": "DbeEnterImeConfigureMode",
+          "value": 165
+        },
+        {
+          "name": "EraseEof",
+          "value": 166
+        },
+        {
+          "name": "DbeFlushString",
+          "value": 166
+        },
+        {
+          "name": "Play",
+          "value": 167
+        },
+        {
+          "name": "DbeCodeInput",
+          "value": 167
+        },
+        {
+          "name": "DbeNoCodeInput",
+          "value": 168
+        },
+        {
+          "name": "Zoom",
+          "value": 168
+        },
+        {
+          "name": "NoName",
+          "value": 169
+        },
+        {
+          "name": "DbeDetermineString",
+          "value": 169
+        },
+        {
+          "name": "DbeEnterDialogConversionMode",
+          "value": 170
+        },
+        {
+          "name": "Pa1",
+          "value": 170
+        },
+        {
+          "name": "OemClear",
+          "value": 171
+        },
+        {
+          "name": "DeadCharProcessed",
+          "value": 172
+        },
+        {
+          "name": "FnLeftArrow",
+          "value": 10001
+        },
+        {
+          "name": "FnRightArrow",
+          "value": 10002
+        },
+        {
+          "name": "FnUpArrow",
+          "value": 10003
+        },
+        {
+          "name": "FnDownArrow",
+          "value": 10004
+        },
+        {
+          "name": "MediaHome",
+          "value": 100000
+        },
+        {
+          "name": "MediaChannelList",
+          "value": 100001
+        },
+        {
+          "name": "MediaChannelRaise",
+          "value": 100002
+        },
+        {
+          "name": "MediaChannelLower",
+          "value": 100003
+        },
+        {
+          "name": "MediaRecord",
+          "value": 100005
+        },
+        {
+          "name": "MediaRed",
+          "value": 100010
+        },
+        {
+          "name": "MediaGreen",
+          "value": 100011
+        },
+        {
+          "name": "MediaYellow",
+          "value": 100012
+        },
+        {
+          "name": "MediaBlue",
+          "value": 100013
+        },
+        {
+          "name": "MediaMenu",
+          "value": 100020
+        },
+        {
+          "name": "MediaMore",
+          "value": 100021
+        },
+        {
+          "name": "MediaOption",
+          "value": 100022
+        },
+        {
+          "name": "MediaInfo",
+          "value": 100023
+        },
+        {
+          "name": "MediaSearch",
+          "value": 100024
+        },
+        {
+          "name": "MediaSubtitle",
+          "value": 100025
+        },
+        {
+          "name": "MediaTvGuide",
+          "value": 100026
+        },
+        {
+          "name": "MediaPreviousChannel",
+          "value": 100027
+        }
+      ]
+    },
+    {
+      "name": "KeyModifiers",
+      "fullName": "Avalonia.Input.KeyModifiers",
+      "values": [
+        {
+          "name": "None",
+          "value": 0
+        },
+        {
+          "name": "Alt",
+          "value": 1
+        },
+        {
+          "name": "Control",
+          "value": 2
+        },
+        {
+          "name": "Shift",
+          "value": 4
+        },
+        {
+          "name": "Meta",
+          "value": 8
+        }
+      ]
+    },
+    {
+      "name": "PhysicalKey",
+      "fullName": "Avalonia.Input.PhysicalKey",
+      "values": [
+        {
+          "name": "None",
+          "value": 0
+        },
+        {
+          "name": "Backquote",
+          "value": 1
+        },
+        {
+          "name": "Backslash",
+          "value": 2
+        },
+        {
+          "name": "BracketLeft",
+          "value": 3
+        },
+        {
+          "name": "BracketRight",
+          "value": 4
+        },
+        {
+          "name": "Comma",
+          "value": 5
+        },
+        {
+          "name": "Digit0",
+          "value": 6
+        },
+        {
+          "name": "Digit1",
+          "value": 7
+        },
+        {
+          "name": "Digit2",
+          "value": 8
+        },
+        {
+          "name": "Digit3",
+          "value": 9
+        },
+        {
+          "name": "Digit4",
+          "value": 10
+        },
+        {
+          "name": "Digit5",
+          "value": 11
+        },
+        {
+          "name": "Digit6",
+          "value": 12
+        },
+        {
+          "name": "Digit7",
+          "value": 13
+        },
+        {
+          "name": "Digit8",
+          "value": 14
+        },
+        {
+          "name": "Digit9",
+          "value": 15
+        },
+        {
+          "name": "Equal",
+          "value": 16
+        },
+        {
+          "name": "IntlBackslash",
+          "value": 17
+        },
+        {
+          "name": "IntlRo",
+          "value": 18
+        },
+        {
+          "name": "IntlYen",
+          "value": 19
+        },
+        {
+          "name": "A",
+          "value": 20
+        },
+        {
+          "name": "B",
+          "value": 21
+        },
+        {
+          "name": "C",
+          "value": 22
+        },
+        {
+          "name": "D",
+          "value": 23
+        },
+        {
+          "name": "E",
+          "value": 24
+        },
+        {
+          "name": "F",
+          "value": 25
+        },
+        {
+          "name": "G",
+          "value": 26
+        },
+        {
+          "name": "H",
+          "value": 27
+        },
+        {
+          "name": "I",
+          "value": 28
+        },
+        {
+          "name": "J",
+          "value": 29
+        },
+        {
+          "name": "K",
+          "value": 30
+        },
+        {
+          "name": "L",
+          "value": 31
+        },
+        {
+          "name": "M",
+          "value": 32
+        },
+        {
+          "name": "N",
+          "value": 33
+        },
+        {
+          "name": "O",
+          "value": 34
+        },
+        {
+          "name": "P",
+          "value": 35
+        },
+        {
+          "name": "Q",
+          "value": 36
+        },
+        {
+          "name": "R",
+          "value": 37
+        },
+        {
+          "name": "S",
+          "value": 38
+        },
+        {
+          "name": "T",
+          "value": 39
+        },
+        {
+          "name": "U",
+          "value": 40
+        },
+        {
+          "name": "V",
+          "value": 41
+        },
+        {
+          "name": "W",
+          "value": 42
+        },
+        {
+          "name": "X",
+          "value": 43
+        },
+        {
+          "name": "Y",
+          "value": 44
+        },
+        {
+          "name": "Z",
+          "value": 45
+        },
+        {
+          "name": "Minus",
+          "value": 46
+        },
+        {
+          "name": "Period",
+          "value": 47
+        },
+        {
+          "name": "Quote",
+          "value": 48
+        },
+        {
+          "name": "Semicolon",
+          "value": 49
+        },
+        {
+          "name": "Slash",
+          "value": 50
+        },
+        {
+          "name": "AltLeft",
+          "value": 51
+        },
+        {
+          "name": "AltRight",
+          "value": 52
+        },
+        {
+          "name": "Backspace",
+          "value": 53
+        },
+        {
+          "name": "CapsLock",
+          "value": 54
+        },
+        {
+          "name": "ContextMenu",
+          "value": 55
+        },
+        {
+          "name": "ControlLeft",
+          "value": 56
+        },
+        {
+          "name": "ControlRight",
+          "value": 57
+        },
+        {
+          "name": "Enter",
+          "value": 58
+        },
+        {
+          "name": "MetaLeft",
+          "value": 59
+        },
+        {
+          "name": "MetaRight",
+          "value": 60
+        },
+        {
+          "name": "ShiftLeft",
+          "value": 61
+        },
+        {
+          "name": "ShiftRight",
+          "value": 62
+        },
+        {
+          "name": "Space",
+          "value": 63
+        },
+        {
+          "name": "Tab",
+          "value": 64
+        },
+        {
+          "name": "Convert",
+          "value": 65
+        },
+        {
+          "name": "KanaMode",
+          "value": 66
+        },
+        {
+          "name": "Lang1",
+          "value": 67
+        },
+        {
+          "name": "Lang2",
+          "value": 68
+        },
+        {
+          "name": "Lang3",
+          "value": 69
+        },
+        {
+          "name": "Lang4",
+          "value": 70
+        },
+        {
+          "name": "Lang5",
+          "value": 71
+        },
+        {
+          "name": "NonConvert",
+          "value": 72
+        },
+        {
+          "name": "Delete",
+          "value": 73
+        },
+        {
+          "name": "End",
+          "value": 74
+        },
+        {
+          "name": "Help",
+          "value": 75
+        },
+        {
+          "name": "Home",
+          "value": 76
+        },
+        {
+          "name": "Insert",
+          "value": 77
+        },
+        {
+          "name": "PageDown",
+          "value": 78
+        },
+        {
+          "name": "PageUp",
+          "value": 79
+        },
+        {
+          "name": "ArrowDown",
+          "value": 80
+        },
+        {
+          "name": "ArrowLeft",
+          "value": 81
+        },
+        {
+          "name": "ArrowRight",
+          "value": 82
+        },
+        {
+          "name": "ArrowUp",
+          "value": 83
+        },
+        {
+          "name": "NumLock",
+          "value": 84
+        },
+        {
+          "name": "NumPad0",
+          "value": 85
+        },
+        {
+          "name": "NumPad1",
+          "value": 86
+        },
+        {
+          "name": "NumPad2",
+          "value": 87
+        },
+        {
+          "name": "NumPad3",
+          "value": 88
+        },
+        {
+          "name": "NumPad4",
+          "value": 89
+        },
+        {
+          "name": "NumPad5",
+          "value": 90
+        },
+        {
+          "name": "NumPad6",
+          "value": 91
+        },
+        {
+          "name": "NumPad7",
+          "value": 92
+        },
+        {
+          "name": "NumPad8",
+          "value": 93
+        },
+        {
+          "name": "NumPad9",
+          "value": 94
+        },
+        {
+          "name": "NumPadAdd",
+          "value": 95
+        },
+        {
+          "name": "NumPadClear",
+          "value": 96
+        },
+        {
+          "name": "NumPadComma",
+          "value": 97
+        },
+        {
+          "name": "NumPadDecimal",
+          "value": 98
+        },
+        {
+          "name": "NumPadDivide",
+          "value": 99
+        },
+        {
+          "name": "NumPadEnter",
+          "value": 100
+        },
+        {
+          "name": "NumPadEqual",
+          "value": 101
+        },
+        {
+          "name": "NumPadMultiply",
+          "value": 102
+        },
+        {
+          "name": "NumPadParenLeft",
+          "value": 103
+        },
+        {
+          "name": "NumPadParenRight",
+          "value": 104
+        },
+        {
+          "name": "NumPadSubtract",
+          "value": 105
+        },
+        {
+          "name": "Escape",
+          "value": 106
+        },
+        {
+          "name": "F1",
+          "value": 107
+        },
+        {
+          "name": "F2",
+          "value": 108
+        },
+        {
+          "name": "F3",
+          "value": 109
+        },
+        {
+          "name": "F4",
+          "value": 110
+        },
+        {
+          "name": "F5",
+          "value": 111
+        },
+        {
+          "name": "F6",
+          "value": 112
+        },
+        {
+          "name": "F7",
+          "value": 113
+        },
+        {
+          "name": "F8",
+          "value": 114
+        },
+        {
+          "name": "F9",
+          "value": 115
+        },
+        {
+          "name": "F10",
+          "value": 116
+        },
+        {
+          "name": "F11",
+          "value": 117
+        },
+        {
+          "name": "F12",
+          "value": 118
+        },
+        {
+          "name": "F13",
+          "value": 119
+        },
+        {
+          "name": "F14",
+          "value": 120
+        },
+        {
+          "name": "F15",
+          "value": 121
+        },
+        {
+          "name": "F16",
+          "value": 122
+        },
+        {
+          "name": "F17",
+          "value": 123
+        },
+        {
+          "name": "F18",
+          "value": 124
+        },
+        {
+          "name": "F19",
+          "value": 125
+        },
+        {
+          "name": "F20",
+          "value": 126
+        },
+        {
+          "name": "F21",
+          "value": 127
+        },
+        {
+          "name": "F22",
+          "value": 128
+        },
+        {
+          "name": "F23",
+          "value": 129
+        },
+        {
+          "name": "F24",
+          "value": 130
+        },
+        {
+          "name": "PrintScreen",
+          "value": 131
+        },
+        {
+          "name": "ScrollLock",
+          "value": 132
+        },
+        {
+          "name": "Pause",
+          "value": 133
+        },
+        {
+          "name": "BrowserBack",
+          "value": 134
+        },
+        {
+          "name": "BrowserFavorites",
+          "value": 135
+        },
+        {
+          "name": "BrowserForward",
+          "value": 136
+        },
+        {
+          "name": "BrowserHome",
+          "value": 137
+        },
+        {
+          "name": "BrowserRefresh",
+          "value": 138
+        },
+        {
+          "name": "BrowserSearch",
+          "value": 139
+        },
+        {
+          "name": "BrowserStop",
+          "value": 140
+        },
+        {
+          "name": "Eject",
+          "value": 141
+        },
+        {
+          "name": "LaunchApp1",
+          "value": 142
+        },
+        {
+          "name": "LaunchApp2",
+          "value": 143
+        },
+        {
+          "name": "LaunchMail",
+          "value": 144
+        },
+        {
+          "name": "MediaPlayPause",
+          "value": 145
+        },
+        {
+          "name": "MediaSelect",
+          "value": 146
+        },
+        {
+          "name": "MediaStop",
+          "value": 147
+        },
+        {
+          "name": "MediaTrackNext",
+          "value": 148
+        },
+        {
+          "name": "MediaTrackPrevious",
+          "value": 149
+        },
+        {
+          "name": "Power",
+          "value": 150
+        },
+        {
+          "name": "Sleep",
+          "value": 151
+        },
+        {
+          "name": "AudioVolumeDown",
+          "value": 152
+        },
+        {
+          "name": "AudioVolumeMute",
+          "value": 153
+        },
+        {
+          "name": "AudioVolumeUp",
+          "value": 154
+        },
+        {
+          "name": "WakeUp",
+          "value": 155
+        },
+        {
+          "name": "Again",
+          "value": 156
+        },
+        {
+          "name": "Copy",
+          "value": 157
+        },
+        {
+          "name": "Cut",
+          "value": 158
+        },
+        {
+          "name": "Find",
+          "value": 159
+        },
+        {
+          "name": "Open",
+          "value": 160
+        },
+        {
+          "name": "Paste",
+          "value": 161
+        },
+        {
+          "name": "Props",
+          "value": 162
+        },
+        {
+          "name": "Select",
+          "value": 163
+        },
+        {
+          "name": "Undo",
+          "value": 164
+        }
+      ]
+    },
+    {
       "name": "Orientation",
       "fullName": "Avalonia.Layout.Orientation",
       "values": [
@@ -1349,7 +2992,7 @@
       "ownerName": "Canvas",
       "ownerManagedFullName": "Avalonia.Controls.Canvas",
       "staticsInterfaceName": "Avalonia.Host.Com.IAvnCanvasStatics",
-      "staticsInterfaceIid": "6B033829-4809-52E4-887D-A3255C24C7EC",
+      "staticsInterfaceIid": "DBE644A9-FE68-5371-9F25-85E61D972BA3",
       "name": "Left",
       "kind": "F64",
       "managedTypeName": "System.Double"
@@ -1358,7 +3001,7 @@
       "ownerName": "Canvas",
       "ownerManagedFullName": "Avalonia.Controls.Canvas",
       "staticsInterfaceName": "Avalonia.Host.Com.IAvnCanvasStatics",
-      "staticsInterfaceIid": "6B033829-4809-52E4-887D-A3255C24C7EC",
+      "staticsInterfaceIid": "DBE644A9-FE68-5371-9F25-85E61D972BA3",
       "name": "Top",
       "kind": "F64",
       "managedTypeName": "System.Double"
@@ -1367,7 +3010,7 @@
       "ownerName": "Canvas",
       "ownerManagedFullName": "Avalonia.Controls.Canvas",
       "staticsInterfaceName": "Avalonia.Host.Com.IAvnCanvasStatics",
-      "staticsInterfaceIid": "6B033829-4809-52E4-887D-A3255C24C7EC",
+      "staticsInterfaceIid": "DBE644A9-FE68-5371-9F25-85E61D972BA3",
       "name": "Right",
       "kind": "F64",
       "managedTypeName": "System.Double"
@@ -1376,7 +3019,7 @@
       "ownerName": "Canvas",
       "ownerManagedFullName": "Avalonia.Controls.Canvas",
       "staticsInterfaceName": "Avalonia.Host.Com.IAvnCanvasStatics",
-      "staticsInterfaceIid": "6B033829-4809-52E4-887D-A3255C24C7EC",
+      "staticsInterfaceIid": "DBE644A9-FE68-5371-9F25-85E61D972BA3",
       "name": "Bottom",
       "kind": "F64",
       "managedTypeName": "System.Double"
@@ -1385,7 +3028,7 @@
       "ownerName": "DockPanel",
       "ownerManagedFullName": "Avalonia.Controls.DockPanel",
       "staticsInterfaceName": "Avalonia.Host.Com.IAvnDockPanelStatics",
-      "staticsInterfaceIid": "7A1B47A2-58A3-5EB9-82D6-00A1329670CD",
+      "staticsInterfaceIid": "7D30ABDC-7AE6-5DA0-9337-B6A73BBD63C8",
       "name": "Dock",
       "kind": "I32",
       "managedTypeName": "Avalonia.Controls.Dock"
@@ -1394,7 +3037,7 @@
       "ownerName": "Grid",
       "ownerManagedFullName": "Avalonia.Controls.Grid",
       "staticsInterfaceName": "Avalonia.Host.Com.IAvnGridStatics",
-      "staticsInterfaceIid": "B667CFB9-FF8D-53C2-A93B-07B201BBE548",
+      "staticsInterfaceIid": "4AF27432-6926-557E-9CD0-147D1F811900",
       "name": "Column",
       "kind": "I32",
       "managedTypeName": "System.Int32"
@@ -1403,7 +3046,7 @@
       "ownerName": "Grid",
       "ownerManagedFullName": "Avalonia.Controls.Grid",
       "staticsInterfaceName": "Avalonia.Host.Com.IAvnGridStatics",
-      "staticsInterfaceIid": "B667CFB9-FF8D-53C2-A93B-07B201BBE548",
+      "staticsInterfaceIid": "4AF27432-6926-557E-9CD0-147D1F811900",
       "name": "Row",
       "kind": "I32",
       "managedTypeName": "System.Int32"
@@ -1412,7 +3055,7 @@
       "ownerName": "Grid",
       "ownerManagedFullName": "Avalonia.Controls.Grid",
       "staticsInterfaceName": "Avalonia.Host.Com.IAvnGridStatics",
-      "staticsInterfaceIid": "B667CFB9-FF8D-53C2-A93B-07B201BBE548",
+      "staticsInterfaceIid": "4AF27432-6926-557E-9CD0-147D1F811900",
       "name": "ColumnSpan",
       "kind": "I32",
       "managedTypeName": "System.Int32"
@@ -1421,7 +3064,7 @@
       "ownerName": "Grid",
       "ownerManagedFullName": "Avalonia.Controls.Grid",
       "staticsInterfaceName": "Avalonia.Host.Com.IAvnGridStatics",
-      "staticsInterfaceIid": "B667CFB9-FF8D-53C2-A93B-07B201BBE548",
+      "staticsInterfaceIid": "4AF27432-6926-557E-9CD0-147D1F811900",
       "name": "RowSpan",
       "kind": "I32",
       "managedTypeName": "System.Int32"
@@ -1430,7 +3073,7 @@
       "ownerName": "Grid",
       "ownerManagedFullName": "Avalonia.Controls.Grid",
       "staticsInterfaceName": "Avalonia.Host.Com.IAvnGridStatics",
-      "staticsInterfaceIid": "B667CFB9-FF8D-53C2-A93B-07B201BBE548",
+      "staticsInterfaceIid": "4AF27432-6926-557E-9CD0-147D1F811900",
       "name": "IsSharedSizeScope",
       "kind": "Bool",
       "managedTypeName": "System.Boolean"

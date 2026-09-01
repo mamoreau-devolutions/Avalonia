@@ -7,18 +7,18 @@ use std::ptr;
 use std::sync::atomic::{fence, AtomicU32, Ordering};
 use std::sync::Mutex;
 
-type EventCallback = Box<dyn FnMut() -> Result<()> + Send>;
+type EventCallback<A> = Box<dyn FnMut(&mut A) -> Result<()> + Send>;
 
 #[repr(C)]
-pub(crate) struct EventHandlerObject<I> {
+pub(crate) struct EventHandlerObject<I, A> {
     interface: I,
     ref_count: AtomicU32,
-    callback: Mutex<Option<EventCallback>>,
+    callback: Mutex<Option<EventCallback<A>>>,
 }
 
-pub(crate) fn create<I: ComInterface>(
+pub(crate) fn create<I: ComInterface, A>(
     interface: I,
-    callback: impl FnMut() -> Result<()> + Send + 'static,
+    callback: impl FnMut(&mut A) -> Result<()> + Send + 'static,
 ) -> ComPtr<I> {
     let object = Box::new(EventHandlerObject {
         interface,
@@ -31,7 +31,7 @@ pub(crate) fn create<I: ComInterface>(
     }
 }
 
-pub(crate) unsafe fn query_interface<I: ComInterface>(
+pub(crate) unsafe fn query_interface<I: ComInterface, A>(
     this: *mut IUnknown,
     iid: *const Guid,
     result: *mut *mut c_void,
@@ -43,18 +43,18 @@ pub(crate) unsafe fn query_interface<I: ComInterface>(
     if *iid != Guid::IUNKNOWN && *iid != I::IID {
         return hresult::E_NOINTERFACE;
     }
-    add_ref::<I>(this);
+    add_ref::<I, A>(this);
     *result = this.cast();
     hresult::S_OK
 }
 
-pub(crate) unsafe fn add_ref<I>(this: *mut IUnknown) -> u32 {
-    let object = this.cast::<EventHandlerObject<I>>();
+pub(crate) unsafe fn add_ref<I, A>(this: *mut IUnknown) -> u32 {
+    let object = this.cast::<EventHandlerObject<I, A>>();
     (*object).ref_count.fetch_add(1, Ordering::Relaxed) + 1
 }
 
-pub(crate) unsafe fn release<I>(this: *mut IUnknown) -> u32 {
-    let object = this.cast::<EventHandlerObject<I>>();
+pub(crate) unsafe fn release<I, A>(this: *mut IUnknown) -> u32 {
+    let object = this.cast::<EventHandlerObject<I, A>>();
     let remaining = (*object).ref_count.fetch_sub(1, Ordering::Release) - 1;
     if remaining == 0 {
         fence(Ordering::Acquire);
@@ -63,8 +63,8 @@ pub(crate) unsafe fn release<I>(this: *mut IUnknown) -> u32 {
     remaining
 }
 
-pub(crate) unsafe fn invoke<I>(this: *mut I) -> i32 {
-    let object = this.cast::<EventHandlerObject<I>>();
+pub(crate) unsafe fn invoke<I, A>(this: *mut I, arguments: &mut A) -> i32 {
+    let object = this.cast::<EventHandlerObject<I, A>>();
     let callback = {
         let mut callback = match (*object).callback.lock() {
             Ok(callback) => callback,
@@ -76,7 +76,7 @@ pub(crate) unsafe fn invoke<I>(this: *mut I) -> i32 {
         }
     };
     let mut callback = callback;
-    let result = catch_unwind(AssertUnwindSafe(&mut callback));
+    let result = catch_unwind(AssertUnwindSafe(|| callback(arguments)));
     if let Ok(mut slot) = (*object).callback.lock() {
         *slot = Some(callback);
     } else {

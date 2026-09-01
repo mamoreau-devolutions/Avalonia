@@ -56,6 +56,19 @@ pub unsafe fn take_utf16(ptr: *mut u16) -> Option<String> {
     Some(value)
 }
 
+pub(crate) unsafe fn clone_utf16(ptr: *const u16) -> Option<String> {
+    if ptr.is_null() {
+        return None;
+    }
+    let mut len = 0;
+    while *ptr.add(len) != 0 {
+        len += 1;
+    }
+    Some(String::from_utf16_lossy(std::slice::from_raw_parts(
+        ptr, len,
+    )))
+}
+
 pub struct Host {
     _lib: ManuallyDrop<Library>,
     _dependencies: ManuallyDrop<Vec<Library>>,

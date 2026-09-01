@@ -43,7 +43,7 @@ public static class AvaloniaProjectionProfiles
         {
             ["Avalonia.AvaloniaObject"] = [],
             ["Avalonia.StyledElement"] = ["Classes"],
-            ["Avalonia.Controls.Control"] = ["IsEnabled"],
+            ["Avalonia.Controls.Control"] = ["IsEnabled", "KeyDown"],
             ["Avalonia.Controls.ContentControl"] = ["Content"],
             ["Avalonia.Controls.Primitives.HeaderedContentControl"] = ["Header"],
             ["Avalonia.Controls.ItemsControl"] = ["Items"],
@@ -182,6 +182,18 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.Primitives.SelectingItemsControl.SelectionChanged"] = new()
             {
                 PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.Control.KeyDown"] = new()
+            {
+                PayloadKind = EventPayloadKind.Fields,
+                Parameters =
+                [
+                    new() { Name = "Key" },
+                    new() { Name = "PhysicalKey" },
+                    new() { Name = "KeyModifiers" },
+                    new() { Name = "KeySymbol" },
+                    new() { Name = "Handled", Direction = ParameterDirection.InOut },
+                ],
             },
         },
         AttachedProperties = new Dictionary<string, IReadOnlyList<string>>(StringComparer.Ordinal)

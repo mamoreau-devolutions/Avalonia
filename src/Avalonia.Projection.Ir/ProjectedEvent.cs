@@ -9,10 +9,12 @@ public sealed class ProjectedEvent
     public required string HandlerInterfaceIid { get; init; }
     public required EventPayloadKind PayloadKind { get; init; }
     public string? ManagedHandlerTypeName { get; init; }
+    public IReadOnlyList<ProjectedParameter> Parameters { get; init; } = [];
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum EventPayloadKind
 {
     None,
+    Fields,
 }

@@ -71,6 +71,8 @@ pub struct ProjectedEvent {
     pub handler_interface_iid: String,
     pub payload_kind: String,
     pub managed_handler_type_name: Option<String>,
+    #[serde(default)]
+    pub parameters: Vec<ProjectedParameter>,
 }
 
 #[derive(Debug, Deserialize)]

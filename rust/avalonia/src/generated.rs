@@ -94,6 +94,776 @@ impl TryFrom<i32> for TickPlacement {
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Key {
+    None = 0,
+    Cancel = 1,
+    Back = 2,
+    Tab = 3,
+    LineFeed = 4,
+    Clear = 5,
+    Return = 6,
+    Pause = 7,
+    CapsLock = 8,
+    HangulMode = 9,
+    JunjaMode = 10,
+    FinalMode = 11,
+    KanjiMode = 12,
+    Escape = 13,
+    ImeConvert = 14,
+    ImeNonConvert = 15,
+    ImeAccept = 16,
+    ImeModeChange = 17,
+    Space = 18,
+    PageUp = 19,
+    PageDown = 20,
+    End = 21,
+    Home = 22,
+    Left = 23,
+    Up = 24,
+    Right = 25,
+    Down = 26,
+    Select = 27,
+    Print = 28,
+    Execute = 29,
+    Snapshot = 30,
+    Insert = 31,
+    Delete = 32,
+    Help = 33,
+    D0 = 34,
+    D1 = 35,
+    D2 = 36,
+    D3 = 37,
+    D4 = 38,
+    D5 = 39,
+    D6 = 40,
+    D7 = 41,
+    D8 = 42,
+    D9 = 43,
+    A = 44,
+    B = 45,
+    C = 46,
+    D = 47,
+    E = 48,
+    F = 49,
+    G = 50,
+    H = 51,
+    I = 52,
+    J = 53,
+    K = 54,
+    L = 55,
+    M = 56,
+    N = 57,
+    O = 58,
+    P = 59,
+    Q = 60,
+    R = 61,
+    S = 62,
+    T = 63,
+    U = 64,
+    V = 65,
+    W = 66,
+    X = 67,
+    Y = 68,
+    Z = 69,
+    LWin = 70,
+    RWin = 71,
+    Apps = 72,
+    Sleep = 73,
+    NumPad0 = 74,
+    NumPad1 = 75,
+    NumPad2 = 76,
+    NumPad3 = 77,
+    NumPad4 = 78,
+    NumPad5 = 79,
+    NumPad6 = 80,
+    NumPad7 = 81,
+    NumPad8 = 82,
+    NumPad9 = 83,
+    Multiply = 84,
+    Add = 85,
+    Separator = 86,
+    Subtract = 87,
+    Decimal = 88,
+    Divide = 89,
+    F1 = 90,
+    F2 = 91,
+    F3 = 92,
+    F4 = 93,
+    F5 = 94,
+    F6 = 95,
+    F7 = 96,
+    F8 = 97,
+    F9 = 98,
+    F10 = 99,
+    F11 = 100,
+    F12 = 101,
+    F13 = 102,
+    F14 = 103,
+    F15 = 104,
+    F16 = 105,
+    F17 = 106,
+    F18 = 107,
+    F19 = 108,
+    F20 = 109,
+    F21 = 110,
+    F22 = 111,
+    F23 = 112,
+    F24 = 113,
+    NumLock = 114,
+    Scroll = 115,
+    LeftShift = 116,
+    RightShift = 117,
+    LeftCtrl = 118,
+    RightCtrl = 119,
+    LeftAlt = 120,
+    RightAlt = 121,
+    BrowserBack = 122,
+    BrowserForward = 123,
+    BrowserRefresh = 124,
+    BrowserStop = 125,
+    BrowserSearch = 126,
+    BrowserFavorites = 127,
+    BrowserHome = 128,
+    VolumeMute = 129,
+    VolumeDown = 130,
+    VolumeUp = 131,
+    MediaNextTrack = 132,
+    MediaPreviousTrack = 133,
+    MediaStop = 134,
+    MediaPlayPause = 135,
+    LaunchMail = 136,
+    SelectMedia = 137,
+    LaunchApplication1 = 138,
+    LaunchApplication2 = 139,
+    OemSemicolon = 140,
+    OemPlus = 141,
+    OemComma = 142,
+    OemMinus = 143,
+    OemPeriod = 144,
+    OemQuestion = 145,
+    OemTilde = 146,
+    AbntC1 = 147,
+    AbntC2 = 148,
+    OemOpenBrackets = 149,
+    OemPipe = 150,
+    OemCloseBrackets = 151,
+    OemQuotes = 152,
+    Oem8 = 153,
+    OemBackslash = 154,
+    ImeProcessed = 155,
+    System = 156,
+    OemAttn = 157,
+    OemFinish = 158,
+    DbeHiragana = 159,
+    DbeSbcsChar = 160,
+    DbeDbcsChar = 161,
+    OemBackTab = 162,
+    DbeNoRoman = 163,
+    CrSel = 164,
+    ExSel = 165,
+    EraseEof = 166,
+    Play = 167,
+    DbeNoCodeInput = 168,
+    NoName = 169,
+    DbeEnterDialogConversionMode = 170,
+    OemClear = 171,
+    DeadCharProcessed = 172,
+    FnLeftArrow = 10001,
+    FnRightArrow = 10002,
+    FnUpArrow = 10003,
+    FnDownArrow = 10004,
+    MediaHome = 100000,
+    MediaChannelList = 100001,
+    MediaChannelRaise = 100002,
+    MediaChannelLower = 100003,
+    MediaRecord = 100005,
+    MediaRed = 100010,
+    MediaGreen = 100011,
+    MediaYellow = 100012,
+    MediaBlue = 100013,
+    MediaMenu = 100020,
+    MediaMore = 100021,
+    MediaOption = 100022,
+    MediaInfo = 100023,
+    MediaSearch = 100024,
+    MediaSubtitle = 100025,
+    MediaTvGuide = 100026,
+    MediaPreviousChannel = 100027,
+}
+
+impl TryFrom<i32> for Key {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::None),
+            1 => Ok(Self::Cancel),
+            2 => Ok(Self::Back),
+            3 => Ok(Self::Tab),
+            4 => Ok(Self::LineFeed),
+            5 => Ok(Self::Clear),
+            6 => Ok(Self::Return),
+            7 => Ok(Self::Pause),
+            8 => Ok(Self::CapsLock),
+            9 => Ok(Self::HangulMode),
+            10 => Ok(Self::JunjaMode),
+            11 => Ok(Self::FinalMode),
+            12 => Ok(Self::KanjiMode),
+            13 => Ok(Self::Escape),
+            14 => Ok(Self::ImeConvert),
+            15 => Ok(Self::ImeNonConvert),
+            16 => Ok(Self::ImeAccept),
+            17 => Ok(Self::ImeModeChange),
+            18 => Ok(Self::Space),
+            19 => Ok(Self::PageUp),
+            20 => Ok(Self::PageDown),
+            21 => Ok(Self::End),
+            22 => Ok(Self::Home),
+            23 => Ok(Self::Left),
+            24 => Ok(Self::Up),
+            25 => Ok(Self::Right),
+            26 => Ok(Self::Down),
+            27 => Ok(Self::Select),
+            28 => Ok(Self::Print),
+            29 => Ok(Self::Execute),
+            30 => Ok(Self::Snapshot),
+            31 => Ok(Self::Insert),
+            32 => Ok(Self::Delete),
+            33 => Ok(Self::Help),
+            34 => Ok(Self::D0),
+            35 => Ok(Self::D1),
+            36 => Ok(Self::D2),
+            37 => Ok(Self::D3),
+            38 => Ok(Self::D4),
+            39 => Ok(Self::D5),
+            40 => Ok(Self::D6),
+            41 => Ok(Self::D7),
+            42 => Ok(Self::D8),
+            43 => Ok(Self::D9),
+            44 => Ok(Self::A),
+            45 => Ok(Self::B),
+            46 => Ok(Self::C),
+            47 => Ok(Self::D),
+            48 => Ok(Self::E),
+            49 => Ok(Self::F),
+            50 => Ok(Self::G),
+            51 => Ok(Self::H),
+            52 => Ok(Self::I),
+            53 => Ok(Self::J),
+            54 => Ok(Self::K),
+            55 => Ok(Self::L),
+            56 => Ok(Self::M),
+            57 => Ok(Self::N),
+            58 => Ok(Self::O),
+            59 => Ok(Self::P),
+            60 => Ok(Self::Q),
+            61 => Ok(Self::R),
+            62 => Ok(Self::S),
+            63 => Ok(Self::T),
+            64 => Ok(Self::U),
+            65 => Ok(Self::V),
+            66 => Ok(Self::W),
+            67 => Ok(Self::X),
+            68 => Ok(Self::Y),
+            69 => Ok(Self::Z),
+            70 => Ok(Self::LWin),
+            71 => Ok(Self::RWin),
+            72 => Ok(Self::Apps),
+            73 => Ok(Self::Sleep),
+            74 => Ok(Self::NumPad0),
+            75 => Ok(Self::NumPad1),
+            76 => Ok(Self::NumPad2),
+            77 => Ok(Self::NumPad3),
+            78 => Ok(Self::NumPad4),
+            79 => Ok(Self::NumPad5),
+            80 => Ok(Self::NumPad6),
+            81 => Ok(Self::NumPad7),
+            82 => Ok(Self::NumPad8),
+            83 => Ok(Self::NumPad9),
+            84 => Ok(Self::Multiply),
+            85 => Ok(Self::Add),
+            86 => Ok(Self::Separator),
+            87 => Ok(Self::Subtract),
+            88 => Ok(Self::Decimal),
+            89 => Ok(Self::Divide),
+            90 => Ok(Self::F1),
+            91 => Ok(Self::F2),
+            92 => Ok(Self::F3),
+            93 => Ok(Self::F4),
+            94 => Ok(Self::F5),
+            95 => Ok(Self::F6),
+            96 => Ok(Self::F7),
+            97 => Ok(Self::F8),
+            98 => Ok(Self::F9),
+            99 => Ok(Self::F10),
+            100 => Ok(Self::F11),
+            101 => Ok(Self::F12),
+            102 => Ok(Self::F13),
+            103 => Ok(Self::F14),
+            104 => Ok(Self::F15),
+            105 => Ok(Self::F16),
+            106 => Ok(Self::F17),
+            107 => Ok(Self::F18),
+            108 => Ok(Self::F19),
+            109 => Ok(Self::F20),
+            110 => Ok(Self::F21),
+            111 => Ok(Self::F22),
+            112 => Ok(Self::F23),
+            113 => Ok(Self::F24),
+            114 => Ok(Self::NumLock),
+            115 => Ok(Self::Scroll),
+            116 => Ok(Self::LeftShift),
+            117 => Ok(Self::RightShift),
+            118 => Ok(Self::LeftCtrl),
+            119 => Ok(Self::RightCtrl),
+            120 => Ok(Self::LeftAlt),
+            121 => Ok(Self::RightAlt),
+            122 => Ok(Self::BrowserBack),
+            123 => Ok(Self::BrowserForward),
+            124 => Ok(Self::BrowserRefresh),
+            125 => Ok(Self::BrowserStop),
+            126 => Ok(Self::BrowserSearch),
+            127 => Ok(Self::BrowserFavorites),
+            128 => Ok(Self::BrowserHome),
+            129 => Ok(Self::VolumeMute),
+            130 => Ok(Self::VolumeDown),
+            131 => Ok(Self::VolumeUp),
+            132 => Ok(Self::MediaNextTrack),
+            133 => Ok(Self::MediaPreviousTrack),
+            134 => Ok(Self::MediaStop),
+            135 => Ok(Self::MediaPlayPause),
+            136 => Ok(Self::LaunchMail),
+            137 => Ok(Self::SelectMedia),
+            138 => Ok(Self::LaunchApplication1),
+            139 => Ok(Self::LaunchApplication2),
+            140 => Ok(Self::OemSemicolon),
+            141 => Ok(Self::OemPlus),
+            142 => Ok(Self::OemComma),
+            143 => Ok(Self::OemMinus),
+            144 => Ok(Self::OemPeriod),
+            145 => Ok(Self::OemQuestion),
+            146 => Ok(Self::OemTilde),
+            147 => Ok(Self::AbntC1),
+            148 => Ok(Self::AbntC2),
+            149 => Ok(Self::OemOpenBrackets),
+            150 => Ok(Self::OemPipe),
+            151 => Ok(Self::OemCloseBrackets),
+            152 => Ok(Self::OemQuotes),
+            153 => Ok(Self::Oem8),
+            154 => Ok(Self::OemBackslash),
+            155 => Ok(Self::ImeProcessed),
+            156 => Ok(Self::System),
+            157 => Ok(Self::OemAttn),
+            158 => Ok(Self::OemFinish),
+            159 => Ok(Self::DbeHiragana),
+            160 => Ok(Self::DbeSbcsChar),
+            161 => Ok(Self::DbeDbcsChar),
+            162 => Ok(Self::OemBackTab),
+            163 => Ok(Self::DbeNoRoman),
+            164 => Ok(Self::CrSel),
+            165 => Ok(Self::ExSel),
+            166 => Ok(Self::EraseEof),
+            167 => Ok(Self::Play),
+            168 => Ok(Self::DbeNoCodeInput),
+            169 => Ok(Self::NoName),
+            170 => Ok(Self::DbeEnterDialogConversionMode),
+            171 => Ok(Self::OemClear),
+            172 => Ok(Self::DeadCharProcessed),
+            10001 => Ok(Self::FnLeftArrow),
+            10002 => Ok(Self::FnRightArrow),
+            10003 => Ok(Self::FnUpArrow),
+            10004 => Ok(Self::FnDownArrow),
+            100000 => Ok(Self::MediaHome),
+            100001 => Ok(Self::MediaChannelList),
+            100002 => Ok(Self::MediaChannelRaise),
+            100003 => Ok(Self::MediaChannelLower),
+            100005 => Ok(Self::MediaRecord),
+            100010 => Ok(Self::MediaRed),
+            100011 => Ok(Self::MediaGreen),
+            100012 => Ok(Self::MediaYellow),
+            100013 => Ok(Self::MediaBlue),
+            100020 => Ok(Self::MediaMenu),
+            100021 => Ok(Self::MediaMore),
+            100022 => Ok(Self::MediaOption),
+            100023 => Ok(Self::MediaInfo),
+            100024 => Ok(Self::MediaSearch),
+            100025 => Ok(Self::MediaSubtitle),
+            100026 => Ok(Self::MediaTvGuide),
+            100027 => Ok(Self::MediaPreviousChannel),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum KeyModifiers {
+    None = 0,
+    Alt = 1,
+    Control = 2,
+    Shift = 4,
+    Meta = 8,
+}
+
+impl TryFrom<i32> for KeyModifiers {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::None),
+            1 => Ok(Self::Alt),
+            2 => Ok(Self::Control),
+            4 => Ok(Self::Shift),
+            8 => Ok(Self::Meta),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum PhysicalKey {
+    None = 0,
+    Backquote = 1,
+    Backslash = 2,
+    BracketLeft = 3,
+    BracketRight = 4,
+    Comma = 5,
+    Digit0 = 6,
+    Digit1 = 7,
+    Digit2 = 8,
+    Digit3 = 9,
+    Digit4 = 10,
+    Digit5 = 11,
+    Digit6 = 12,
+    Digit7 = 13,
+    Digit8 = 14,
+    Digit9 = 15,
+    Equal = 16,
+    IntlBackslash = 17,
+    IntlRo = 18,
+    IntlYen = 19,
+    A = 20,
+    B = 21,
+    C = 22,
+    D = 23,
+    E = 24,
+    F = 25,
+    G = 26,
+    H = 27,
+    I = 28,
+    J = 29,
+    K = 30,
+    L = 31,
+    M = 32,
+    N = 33,
+    O = 34,
+    P = 35,
+    Q = 36,
+    R = 37,
+    S = 38,
+    T = 39,
+    U = 40,
+    V = 41,
+    W = 42,
+    X = 43,
+    Y = 44,
+    Z = 45,
+    Minus = 46,
+    Period = 47,
+    Quote = 48,
+    Semicolon = 49,
+    Slash = 50,
+    AltLeft = 51,
+    AltRight = 52,
+    Backspace = 53,
+    CapsLock = 54,
+    ContextMenu = 55,
+    ControlLeft = 56,
+    ControlRight = 57,
+    Enter = 58,
+    MetaLeft = 59,
+    MetaRight = 60,
+    ShiftLeft = 61,
+    ShiftRight = 62,
+    Space = 63,
+    Tab = 64,
+    Convert = 65,
+    KanaMode = 66,
+    Lang1 = 67,
+    Lang2 = 68,
+    Lang3 = 69,
+    Lang4 = 70,
+    Lang5 = 71,
+    NonConvert = 72,
+    Delete = 73,
+    End = 74,
+    Help = 75,
+    Home = 76,
+    Insert = 77,
+    PageDown = 78,
+    PageUp = 79,
+    ArrowDown = 80,
+    ArrowLeft = 81,
+    ArrowRight = 82,
+    ArrowUp = 83,
+    NumLock = 84,
+    NumPad0 = 85,
+    NumPad1 = 86,
+    NumPad2 = 87,
+    NumPad3 = 88,
+    NumPad4 = 89,
+    NumPad5 = 90,
+    NumPad6 = 91,
+    NumPad7 = 92,
+    NumPad8 = 93,
+    NumPad9 = 94,
+    NumPadAdd = 95,
+    NumPadClear = 96,
+    NumPadComma = 97,
+    NumPadDecimal = 98,
+    NumPadDivide = 99,
+    NumPadEnter = 100,
+    NumPadEqual = 101,
+    NumPadMultiply = 102,
+    NumPadParenLeft = 103,
+    NumPadParenRight = 104,
+    NumPadSubtract = 105,
+    Escape = 106,
+    F1 = 107,
+    F2 = 108,
+    F3 = 109,
+    F4 = 110,
+    F5 = 111,
+    F6 = 112,
+    F7 = 113,
+    F8 = 114,
+    F9 = 115,
+    F10 = 116,
+    F11 = 117,
+    F12 = 118,
+    F13 = 119,
+    F14 = 120,
+    F15 = 121,
+    F16 = 122,
+    F17 = 123,
+    F18 = 124,
+    F19 = 125,
+    F20 = 126,
+    F21 = 127,
+    F22 = 128,
+    F23 = 129,
+    F24 = 130,
+    PrintScreen = 131,
+    ScrollLock = 132,
+    Pause = 133,
+    BrowserBack = 134,
+    BrowserFavorites = 135,
+    BrowserForward = 136,
+    BrowserHome = 137,
+    BrowserRefresh = 138,
+    BrowserSearch = 139,
+    BrowserStop = 140,
+    Eject = 141,
+    LaunchApp1 = 142,
+    LaunchApp2 = 143,
+    LaunchMail = 144,
+    MediaPlayPause = 145,
+    MediaSelect = 146,
+    MediaStop = 147,
+    MediaTrackNext = 148,
+    MediaTrackPrevious = 149,
+    Power = 150,
+    Sleep = 151,
+    AudioVolumeDown = 152,
+    AudioVolumeMute = 153,
+    AudioVolumeUp = 154,
+    WakeUp = 155,
+    Again = 156,
+    Copy = 157,
+    Cut = 158,
+    Find = 159,
+    Open = 160,
+    Paste = 161,
+    Props = 162,
+    Select = 163,
+    Undo = 164,
+}
+
+impl TryFrom<i32> for PhysicalKey {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::None),
+            1 => Ok(Self::Backquote),
+            2 => Ok(Self::Backslash),
+            3 => Ok(Self::BracketLeft),
+            4 => Ok(Self::BracketRight),
+            5 => Ok(Self::Comma),
+            6 => Ok(Self::Digit0),
+            7 => Ok(Self::Digit1),
+            8 => Ok(Self::Digit2),
+            9 => Ok(Self::Digit3),
+            10 => Ok(Self::Digit4),
+            11 => Ok(Self::Digit5),
+            12 => Ok(Self::Digit6),
+            13 => Ok(Self::Digit7),
+            14 => Ok(Self::Digit8),
+            15 => Ok(Self::Digit9),
+            16 => Ok(Self::Equal),
+            17 => Ok(Self::IntlBackslash),
+            18 => Ok(Self::IntlRo),
+            19 => Ok(Self::IntlYen),
+            20 => Ok(Self::A),
+            21 => Ok(Self::B),
+            22 => Ok(Self::C),
+            23 => Ok(Self::D),
+            24 => Ok(Self::E),
+            25 => Ok(Self::F),
+            26 => Ok(Self::G),
+            27 => Ok(Self::H),
+            28 => Ok(Self::I),
+            29 => Ok(Self::J),
+            30 => Ok(Self::K),
+            31 => Ok(Self::L),
+            32 => Ok(Self::M),
+            33 => Ok(Self::N),
+            34 => Ok(Self::O),
+            35 => Ok(Self::P),
+            36 => Ok(Self::Q),
+            37 => Ok(Self::R),
+            38 => Ok(Self::S),
+            39 => Ok(Self::T),
+            40 => Ok(Self::U),
+            41 => Ok(Self::V),
+            42 => Ok(Self::W),
+            43 => Ok(Self::X),
+            44 => Ok(Self::Y),
+            45 => Ok(Self::Z),
+            46 => Ok(Self::Minus),
+            47 => Ok(Self::Period),
+            48 => Ok(Self::Quote),
+            49 => Ok(Self::Semicolon),
+            50 => Ok(Self::Slash),
+            51 => Ok(Self::AltLeft),
+            52 => Ok(Self::AltRight),
+            53 => Ok(Self::Backspace),
+            54 => Ok(Self::CapsLock),
+            55 => Ok(Self::ContextMenu),
+            56 => Ok(Self::ControlLeft),
+            57 => Ok(Self::ControlRight),
+            58 => Ok(Self::Enter),
+            59 => Ok(Self::MetaLeft),
+            60 => Ok(Self::MetaRight),
+            61 => Ok(Self::ShiftLeft),
+            62 => Ok(Self::ShiftRight),
+            63 => Ok(Self::Space),
+            64 => Ok(Self::Tab),
+            65 => Ok(Self::Convert),
+            66 => Ok(Self::KanaMode),
+            67 => Ok(Self::Lang1),
+            68 => Ok(Self::Lang2),
+            69 => Ok(Self::Lang3),
+            70 => Ok(Self::Lang4),
+            71 => Ok(Self::Lang5),
+            72 => Ok(Self::NonConvert),
+            73 => Ok(Self::Delete),
+            74 => Ok(Self::End),
+            75 => Ok(Self::Help),
+            76 => Ok(Self::Home),
+            77 => Ok(Self::Insert),
+            78 => Ok(Self::PageDown),
+            79 => Ok(Self::PageUp),
+            80 => Ok(Self::ArrowDown),
+            81 => Ok(Self::ArrowLeft),
+            82 => Ok(Self::ArrowRight),
+            83 => Ok(Self::ArrowUp),
+            84 => Ok(Self::NumLock),
+            85 => Ok(Self::NumPad0),
+            86 => Ok(Self::NumPad1),
+            87 => Ok(Self::NumPad2),
+            88 => Ok(Self::NumPad3),
+            89 => Ok(Self::NumPad4),
+            90 => Ok(Self::NumPad5),
+            91 => Ok(Self::NumPad6),
+            92 => Ok(Self::NumPad7),
+            93 => Ok(Self::NumPad8),
+            94 => Ok(Self::NumPad9),
+            95 => Ok(Self::NumPadAdd),
+            96 => Ok(Self::NumPadClear),
+            97 => Ok(Self::NumPadComma),
+            98 => Ok(Self::NumPadDecimal),
+            99 => Ok(Self::NumPadDivide),
+            100 => Ok(Self::NumPadEnter),
+            101 => Ok(Self::NumPadEqual),
+            102 => Ok(Self::NumPadMultiply),
+            103 => Ok(Self::NumPadParenLeft),
+            104 => Ok(Self::NumPadParenRight),
+            105 => Ok(Self::NumPadSubtract),
+            106 => Ok(Self::Escape),
+            107 => Ok(Self::F1),
+            108 => Ok(Self::F2),
+            109 => Ok(Self::F3),
+            110 => Ok(Self::F4),
+            111 => Ok(Self::F5),
+            112 => Ok(Self::F6),
+            113 => Ok(Self::F7),
+            114 => Ok(Self::F8),
+            115 => Ok(Self::F9),
+            116 => Ok(Self::F10),
+            117 => Ok(Self::F11),
+            118 => Ok(Self::F12),
+            119 => Ok(Self::F13),
+            120 => Ok(Self::F14),
+            121 => Ok(Self::F15),
+            122 => Ok(Self::F16),
+            123 => Ok(Self::F17),
+            124 => Ok(Self::F18),
+            125 => Ok(Self::F19),
+            126 => Ok(Self::F20),
+            127 => Ok(Self::F21),
+            128 => Ok(Self::F22),
+            129 => Ok(Self::F23),
+            130 => Ok(Self::F24),
+            131 => Ok(Self::PrintScreen),
+            132 => Ok(Self::ScrollLock),
+            133 => Ok(Self::Pause),
+            134 => Ok(Self::BrowserBack),
+            135 => Ok(Self::BrowserFavorites),
+            136 => Ok(Self::BrowserForward),
+            137 => Ok(Self::BrowserHome),
+            138 => Ok(Self::BrowserRefresh),
+            139 => Ok(Self::BrowserSearch),
+            140 => Ok(Self::BrowserStop),
+            141 => Ok(Self::Eject),
+            142 => Ok(Self::LaunchApp1),
+            143 => Ok(Self::LaunchApp2),
+            144 => Ok(Self::LaunchMail),
+            145 => Ok(Self::MediaPlayPause),
+            146 => Ok(Self::MediaSelect),
+            147 => Ok(Self::MediaStop),
+            148 => Ok(Self::MediaTrackNext),
+            149 => Ok(Self::MediaTrackPrevious),
+            150 => Ok(Self::Power),
+            151 => Ok(Self::Sleep),
+            152 => Ok(Self::AudioVolumeDown),
+            153 => Ok(Self::AudioVolumeMute),
+            154 => Ok(Self::AudioVolumeUp),
+            155 => Ok(Self::WakeUp),
+            156 => Ok(Self::Again),
+            157 => Ok(Self::Copy),
+            158 => Ok(Self::Cut),
+            159 => Ok(Self::Find),
+            160 => Ok(Self::Open),
+            161 => Ok(Self::Paste),
+            162 => Ok(Self::Props),
+            163 => Ok(Self::Select),
+            164 => Ok(Self::Undo),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Orientation {
     Horizontal = 0,
     Vertical = 1,
@@ -149,6 +919,8 @@ impl TryFrom<i32> for TextWrapping {
         }
     }
 }
+
+pub use sys::ControlKeyDownEventArgs;
 
 #[derive(Clone, Debug)]
 pub struct ItemList {
@@ -254,6 +1026,17 @@ impl Border {
         self.set_enabled(value)?;
         Ok(self)
     }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
     pub fn get_child(&self) -> Result<Option<Control>> {
         Ok(self.raw.get_child()?.map(|raw| Control { raw }))
     }
@@ -303,6 +1086,17 @@ impl Button {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -356,6 +1150,17 @@ impl Canvas {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
     pub fn children(&self) -> Result<ControlList> {
@@ -428,6 +1233,17 @@ impl CheckBox {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -504,6 +1320,17 @@ impl ComboBox {
         self.set_enabled(value)?;
         Ok(self)
     }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
     pub fn items(&self) -> Result<ItemList> {
         Ok(ItemList { raw: self.raw.get_items()? })
     }
@@ -572,6 +1399,17 @@ impl ComboBoxItem {
         self.set_enabled(value)?;
         Ok(self)
     }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
     pub fn get_content(&self) -> Result<Option<Control>> {
         Ok(self.raw.get_content()?.map(|raw| Control { raw }))
     }
@@ -620,6 +1458,17 @@ impl ContentControl {
         self.set_enabled(value)?;
         Ok(self)
     }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
     pub fn get_content(&self) -> Result<Option<Control>> {
         Ok(self.raw.get_content()?.map(|raw| Control { raw }))
     }
@@ -660,6 +1509,17 @@ impl Control {
         self.set_enabled(value)?;
         Ok(self)
     }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
 }
 
 impl AsControl for Control {
@@ -687,6 +1547,17 @@ impl Decorator {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
     pub fn get_child(&self) -> Result<Option<Control>> {
@@ -727,6 +1598,17 @@ impl DockPanel {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
     pub fn children(&self) -> Result<ControlList> {
@@ -796,6 +1678,17 @@ impl Expander {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -892,6 +1785,17 @@ impl Grid {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
     pub fn children(&self) -> Result<ControlList> {
@@ -999,6 +1903,17 @@ impl ItemsControl {
         self.set_enabled(value)?;
         Ok(self)
     }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
     pub fn items(&self) -> Result<ItemList> {
         Ok(ItemList { raw: self.raw.get_items()? })
     }
@@ -1033,6 +1948,17 @@ impl ListBox {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
     pub fn items(&self) -> Result<ItemList> {
@@ -1092,6 +2018,17 @@ impl ListBoxItem {
         self.set_enabled(value)?;
         Ok(self)
     }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
     pub fn get_content(&self) -> Result<Option<Control>> {
         Ok(self.raw.get_content()?.map(|raw| Control { raw }))
     }
@@ -1140,6 +2077,17 @@ impl Panel {
         self.set_enabled(value)?;
         Ok(self)
     }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
     pub fn children(&self) -> Result<ControlList> {
         Ok(ControlList { raw: self.raw.get_children()? })
     }
@@ -1174,6 +2122,17 @@ impl HeaderedContentControl {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -1221,6 +2180,17 @@ impl RangeBase {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
     pub fn get_minimum(&self) -> Result<f64> { Ok(self.raw.get_minimum()?) }
@@ -1305,6 +2275,17 @@ impl SelectingItemsControl {
         self.set_enabled(value)?;
         Ok(self)
     }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
     pub fn items(&self) -> Result<ItemList> {
         Ok(ItemList { raw: self.raw.get_items()? })
     }
@@ -1362,6 +2343,17 @@ impl TemplatedControl {
         self.set_enabled(value)?;
         Ok(self)
     }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
 }
 
 impl AsControl for TemplatedControl {
@@ -1389,6 +2381,17 @@ impl ToggleButton {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -1463,6 +2466,17 @@ impl ProgressBar {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
     pub fn get_minimum(&self) -> Result<f64> { Ok(self.raw.get_minimum()?) }
@@ -1585,6 +2599,17 @@ impl RadioButton {
         self.set_enabled(value)?;
         Ok(self)
     }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
     pub fn get_content(&self) -> Result<Option<Control>> {
         Ok(self.raw.get_content()?.map(|raw| Control { raw }))
     }
@@ -1668,6 +2693,17 @@ impl ScrollViewer {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -1794,6 +2830,17 @@ impl Slider {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
     pub fn get_minimum(&self) -> Result<f64> { Ok(self.raw.get_minimum()?) }
@@ -1924,6 +2971,17 @@ impl StackPanel {
         self.set_enabled(value)?;
         Ok(self)
     }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
     pub fn children(&self) -> Result<ControlList> {
         Ok(ControlList { raw: self.raw.get_children()? })
     }
@@ -1979,6 +3037,17 @@ impl TextBlock {
         self.set_enabled(value)?;
         Ok(self)
     }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
     pub fn get_text(&self) -> Result<Option<String>> {
         unsafe { Ok(sys::take_utf16(self.raw.get_text()?)) }
     }
@@ -2017,6 +3086,17 @@ impl TextBox {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
     pub fn get_accepts_return(&self) -> Result<bool> { Ok(self.raw.get_accepts_return()?) }
@@ -2220,6 +3300,17 @@ impl ToggleSwitch {
         self.set_enabled(value)?;
         Ok(self)
     }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
     pub fn get_content(&self) -> Result<Option<Control>> {
         Ok(self.raw.get_content()?.map(|raw| Control { raw }))
     }
@@ -2314,6 +3405,17 @@ impl Window {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {

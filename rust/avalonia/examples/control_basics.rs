@@ -49,6 +49,17 @@ fn main() -> avalonia::Result<()> {
                 .set_text(format!("Text: {value}"))
                 .expect("failed to update text readout");
         })?;
+        let key_readout = TextBlock::new()?.text("Key: focus the text box and press a key")?;
+        let key_readout_for_handler = key_readout.clone();
+        let text_box = text_box.on_key_down(move |event| {
+            let symbol = event.key_symbol.as_deref().unwrap_or("");
+            key_readout_for_handler
+                .set_text(format!(
+                    "Key={} Physical={} Modifiers={} Symbol={symbol}",
+                    event.key, event.physical_key, event.key_modifiers
+                ))
+                .expect("failed to update key readout");
+        })?;
 
         let toggle_value = TextBlock::new()?.text("Toggle: on")?;
         let toggle_value_for_handler = toggle_value.clone();
@@ -152,6 +163,7 @@ fn main() -> avalonia::Result<()> {
                     .child(slider_value)?
                     .child(text_box)?
                     .child(typed_text)?
+                    .child(key_readout)?
                     .child(toggle)?
                     .child(toggle_value)?
                     .child(TextBlock::new()?.text("Selection & expand patterns")?)?

@@ -88,6 +88,17 @@ public class ComSourceEmitterTests
         Assert.Contains("_value.Click += callback;", button, StringComparison.Ordinal);
         Assert.Contains("_value.Click -= callback", button, StringComparison.Ordinal);
 
+        var control = files["IAvnControl.g.cs"];
+        Assert.Contains(
+            "handler.Invoke((int)eventArgs.Key, (int)eventArgs.PhysicalKey, (int)eventArgs.KeyModifiers, eventArgs.KeySymbol, ref handled)",
+            control,
+            StringComparison.Ordinal);
+        Assert.Contains("eventArgs.Handled = handled != 0;", control, StringComparison.Ordinal);
+        Assert.Contains(
+            "int Invoke(int Key, int PhysicalKey, int KeyModifiers, string? KeySymbol, ref int Handled);",
+            files["IAvnControlKeyDownHandler.g.cs"],
+            StringComparison.Ordinal);
+
         var clickHandler = files["IAvnButtonClickHandler.g.cs"];
         Assert.Contains("public partial interface IAvnButtonClickHandler", clickHandler, StringComparison.Ordinal);
         Assert.Contains("int Invoke();", clickHandler, StringComparison.Ordinal);

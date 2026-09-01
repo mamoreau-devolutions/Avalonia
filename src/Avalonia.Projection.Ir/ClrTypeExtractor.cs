@@ -129,6 +129,75 @@ public static class ClrTypeExtractor
 
             var handlerInterfaceName =
                 $"{policy.ProjectionNamespace}.IAvn{type.Name}{@event.Name}Handler";
+            var eventParameters = new List<ProjectedParameter>();
+            if (eventProjection.PayloadKind == EventPayloadKind.Fields)
+            {
+                var invokeParameters = @event.EventHandlerType!.GetMethod("Invoke")!.GetParameters();
+                if (invokeParameters.Length < 2)
+                {
+                    Skip(skipped, type, @event.Name, "Field event projection requires event arguments");
+                    continue;
+                }
+
+                var eventArgsType = invokeParameters[1].ParameterType;
+                foreach (var parameterProjection in eventProjection.Parameters)
+                {
+                    var property = eventArgsType.GetProperty(
+                        parameterProjection.Name,
+                        BindingFlags.Public | BindingFlags.Instance);
+                    if (property is null)
+                    {
+                        Skip(
+                            skipped,
+                            type,
+                            @event.Name,
+                            $"Event argument property '{parameterProjection.Name}' was not found");
+                        eventParameters.Clear();
+                        break;
+                    }
+                    if (!TryMapType(
+                            property.PropertyType,
+                            projectedNames,
+                            out var parameterKind,
+                            out var parameterInterface,
+                            out var parameterReason))
+                    {
+                        Skip(
+                            skipped,
+                            type,
+                            @event.Name,
+                            $"Event argument property '{parameterProjection.Name}': {parameterReason}");
+                        eventParameters.Clear();
+                        break;
+                    }
+
+                    if (parameterProjection.Direction == ParameterDirection.InOut &&
+                        property.SetMethod?.IsPublic != true)
+                    {
+                        Skip(
+                            skipped,
+                            type,
+                            @event.Name,
+                            $"Event argument property '{parameterProjection.Name}' is not publicly writable");
+                        eventParameters.Clear();
+                        break;
+                    }
+
+                    eventParameters.Add(new ProjectedParameter
+                    {
+                        Name = property.Name,
+                        Kind = parameterKind,
+                        InterfaceName = parameterInterface,
+                        ManagedTypeName = property.PropertyType.FullName,
+                        IsNullable = IsNullable(property),
+                        Direction = parameterProjection.Direction,
+                    });
+                }
+
+                if (eventParameters.Count != eventProjection.Parameters.Count)
+                    continue;
+            }
+
             events.Add(new ProjectedEvent
             {
                 Name = @event.Name,
@@ -138,6 +207,7 @@ public static class ClrTypeExtractor
                 ManagedHandlerTypeName = @event.EventHandlerType is { } handlerType
                     ? ManagedTypeName(handlerType)
                     : null,
+                Parameters = eventParameters,
             });
         }
 
@@ -368,6 +438,22 @@ public static class ClrTypeExtractor
                         .Where(attachedType => attachedType is not null)
                         .Cast<Type>()
                     : []))
+            .Concat(selectedTypes.SelectMany(type => type.GetEvents(BindingFlags.Public | BindingFlags.Instance)
+                .Where(@event => policy.Includes(type, @event) &&
+                    policy.TryGetEventOverride(type, @event, out var projection) &&
+                    projection.PayloadKind == EventPayloadKind.Fields)
+                .SelectMany(@event =>
+                {
+                    var eventArgsType = @event.EventHandlerType!.GetMethod("Invoke")!
+                        .GetParameters()[1].ParameterType;
+                    policy.TryGetEventOverride(type, @event, out var projection);
+                    return projection.Parameters
+                        .Select(parameter => eventArgsType.GetProperty(
+                            parameter.Name,
+                            BindingFlags.Public | BindingFlags.Instance)?.PropertyType)
+                        .Where(parameterType => parameterType is not null)
+                        .Select(parameterType => Nullable.GetUnderlyingType(parameterType!) ?? parameterType!);
+                })))
             .Where(type => type.IsEnum)
             .Distinct()
             .OrderBy(type => type.FullName, StringComparer.Ordinal)
