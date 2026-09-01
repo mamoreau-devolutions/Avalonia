@@ -40,6 +40,7 @@ public sealed partial class AvnSelectingItemsControl : IAvnSelectingItemsControl
     {
         _value = value;
         ObjectId = ProjectionRuntime.Register(value);
+        global::Avalonia.Host.ProjectionDiagnostics.WrapperCreated();
     }
 
     private long ObjectId { get; }
@@ -171,6 +172,7 @@ public sealed partial class AvnSelectingItemsControl : IAvnSelectingItemsControl
             _value.KeyDown += callback;
             subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextKeyDownSubscriptionId);
             _keyDownSubscriptions.Add(subscriptionId, (handler, () => _value.KeyDown -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -187,6 +189,7 @@ public sealed partial class AvnSelectingItemsControl : IAvnSelectingItemsControl
             if (!_keyDownSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
             subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -212,6 +215,7 @@ public sealed partial class AvnSelectingItemsControl : IAvnSelectingItemsControl
             _value.PointerEntered += callback;
             subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextPointerEnteredSubscriptionId);
             _pointerEnteredSubscriptions.Add(subscriptionId, (handler, () => _value.PointerEntered -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -228,6 +232,7 @@ public sealed partial class AvnSelectingItemsControl : IAvnSelectingItemsControl
             if (!_pointerEnteredSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
             subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -253,6 +258,7 @@ public sealed partial class AvnSelectingItemsControl : IAvnSelectingItemsControl
             _value.PointerExited += callback;
             subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextPointerExitedSubscriptionId);
             _pointerExitedSubscriptions.Add(subscriptionId, (handler, () => _value.PointerExited -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -269,6 +275,7 @@ public sealed partial class AvnSelectingItemsControl : IAvnSelectingItemsControl
             if (!_pointerExitedSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
             subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -338,6 +345,7 @@ public sealed partial class AvnSelectingItemsControl : IAvnSelectingItemsControl
             _value.SelectionChanged += callback;
             subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextSelectionChangedSubscriptionId);
             _selectionChangedSubscriptions.Add(subscriptionId, (handler, () => _value.SelectionChanged -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -354,6 +362,7 @@ public sealed partial class AvnSelectingItemsControl : IAvnSelectingItemsControl
             if (!_selectionChangedSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
             subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

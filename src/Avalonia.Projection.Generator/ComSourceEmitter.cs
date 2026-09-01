@@ -135,6 +135,7 @@ public static class ComSourceEmitter
         sb.AppendLine("    {");
         sb.AppendLine("        _value = value;");
         sb.AppendLine("        ObjectId = ProjectionRuntime.Register(value);");
+        sb.AppendLine("        global::Avalonia.Host.ProjectionDiagnostics.WrapperCreated();");
         sb.AppendLine("    }");
         sb.AppendLine();
         sb.AppendLine("    private long ObjectId { get; }");
@@ -195,6 +196,22 @@ public static class ComSourceEmitter
         sb.AppendLine("    private static long s_nextId;");
         sb.AppendLine($"    private static readonly global::System.Runtime.CompilerServices.ConditionalWeakTable<global::Avalonia.AvaloniaObject, {root.Name}> s_wrappers = new();");
         sb.AppendLine("    private static readonly global::System.Collections.Concurrent.ConcurrentDictionary<long, global::System.WeakReference<global::Avalonia.AvaloniaObject>> s_objects = new();");
+        sb.AppendLine();
+        sb.AppendLine("    internal static int TrackedObjectIdCount => s_objects.Count;");
+        sb.AppendLine();
+        sb.AppendLine("    internal static int LiveManagedObjectCount");
+        sb.AppendLine("    {");
+        sb.AppendLine("        get");
+        sb.AppendLine("        {");
+        sb.AppendLine("            var count = 0;");
+        sb.AppendLine("            foreach (var weak in s_objects.Values)");
+        sb.AppendLine("            {");
+        sb.AppendLine("                if (weak.TryGetTarget(out _))");
+        sb.AppendLine("                    count++;");
+        sb.AppendLine("            }");
+        sb.AppendLine("            return count;");
+        sb.AppendLine("        }");
+        sb.AppendLine("    }");
         sb.AppendLine();
         sb.AppendLine("    internal static long Register(global::Avalonia.AvaloniaObject value)");
         sb.AppendLine("    {");
@@ -664,6 +681,7 @@ public static class ComSourceEmitter
         sb.AppendLine($"            _value.{name} += callback;");
         sb.AppendLine($"            subscriptionId = global::System.Threading.Interlocked.Increment(ref _next{name}SubscriptionId);");
         sb.AppendLine($"            _{field}Subscriptions.Add(subscriptionId, (handler, () => _value.{name} -= callback));");
+        sb.AppendLine("            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();");
         sb.AppendLine("            return global::Avalonia.Host.HResults.S_OK;");
         sb.AppendLine("        }");
         sb.AppendLine("        catch (global::System.Exception e)");
@@ -680,6 +698,7 @@ public static class ComSourceEmitter
         sb.AppendLine($"            if (!_{field}Subscriptions.Remove(subscriptionId, out var subscription))");
         sb.AppendLine("                return global::Avalonia.Host.HResults.E_INVALIDARG;");
         sb.AppendLine("            subscription.Unsubscribe();");
+        sb.AppendLine("            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();");
         sb.AppendLine("            return global::Avalonia.Host.HResults.S_OK;");
         sb.AppendLine("        }");
         sb.AppendLine("        catch (global::System.Exception e)");

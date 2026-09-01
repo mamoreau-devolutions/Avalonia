@@ -23,6 +23,7 @@ public sealed partial class AvnStyledElement : IAvnStyledElement
     {
         _value = value;
         ObjectId = ProjectionRuntime.Register(value);
+        global::Avalonia.Host.ProjectionDiagnostics.WrapperCreated();
     }
 
     private long ObjectId { get; }

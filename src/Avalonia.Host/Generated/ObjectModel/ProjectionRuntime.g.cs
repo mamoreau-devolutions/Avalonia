@@ -11,6 +11,22 @@ internal static class ProjectionRuntime
     private static readonly global::System.Runtime.CompilerServices.ConditionalWeakTable<global::Avalonia.AvaloniaObject, IAvnAvaloniaObject> s_wrappers = new();
     private static readonly global::System.Collections.Concurrent.ConcurrentDictionary<long, global::System.WeakReference<global::Avalonia.AvaloniaObject>> s_objects = new();
 
+    internal static int TrackedObjectIdCount => s_objects.Count;
+
+    internal static int LiveManagedObjectCount
+    {
+        get
+        {
+            var count = 0;
+            foreach (var weak in s_objects.Values)
+            {
+                if (weak.TryGetTarget(out _))
+                    count++;
+            }
+            return count;
+        }
+    }
+
     internal static long Register(global::Avalonia.AvaloniaObject value)
     {
         var id = global::System.Threading.Interlocked.Increment(ref s_nextId);

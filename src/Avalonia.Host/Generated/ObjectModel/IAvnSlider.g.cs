@@ -58,6 +58,7 @@ public sealed partial class AvnSlider : IAvnSlider
     {
         _value = value;
         ObjectId = ProjectionRuntime.Register(value);
+        global::Avalonia.Host.ProjectionDiagnostics.WrapperCreated();
     }
 
     private long ObjectId { get; }
@@ -189,6 +190,7 @@ public sealed partial class AvnSlider : IAvnSlider
             _value.KeyDown += callback;
             subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextKeyDownSubscriptionId);
             _keyDownSubscriptions.Add(subscriptionId, (handler, () => _value.KeyDown -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -205,6 +207,7 @@ public sealed partial class AvnSlider : IAvnSlider
             if (!_keyDownSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
             subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -230,6 +233,7 @@ public sealed partial class AvnSlider : IAvnSlider
             _value.PointerEntered += callback;
             subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextPointerEnteredSubscriptionId);
             _pointerEnteredSubscriptions.Add(subscriptionId, (handler, () => _value.PointerEntered -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -246,6 +250,7 @@ public sealed partial class AvnSlider : IAvnSlider
             if (!_pointerEnteredSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
             subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -271,6 +276,7 @@ public sealed partial class AvnSlider : IAvnSlider
             _value.PointerExited += callback;
             subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextPointerExitedSubscriptionId);
             _pointerExitedSubscriptions.Add(subscriptionId, (handler, () => _value.PointerExited -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -287,6 +293,7 @@ public sealed partial class AvnSlider : IAvnSlider
             if (!_pointerExitedSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
             subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -457,6 +464,7 @@ public sealed partial class AvnSlider : IAvnSlider
             _value.ValueChanged += callback;
             subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextValueChangedSubscriptionId);
             _valueChangedSubscriptions.Add(subscriptionId, (handler, () => _value.ValueChanged -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -473,6 +481,7 @@ public sealed partial class AvnSlider : IAvnSlider
             if (!_valueChangedSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
             subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

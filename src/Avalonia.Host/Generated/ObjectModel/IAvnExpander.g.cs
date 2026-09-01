@@ -54,6 +54,7 @@ public sealed partial class AvnExpander : IAvnExpander
     {
         _value = value;
         ObjectId = ProjectionRuntime.Register(value);
+        global::Avalonia.Host.ProjectionDiagnostics.WrapperCreated();
     }
 
     private long ObjectId { get; }
@@ -185,6 +186,7 @@ public sealed partial class AvnExpander : IAvnExpander
             _value.KeyDown += callback;
             subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextKeyDownSubscriptionId);
             _keyDownSubscriptions.Add(subscriptionId, (handler, () => _value.KeyDown -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -201,6 +203,7 @@ public sealed partial class AvnExpander : IAvnExpander
             if (!_keyDownSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
             subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -226,6 +229,7 @@ public sealed partial class AvnExpander : IAvnExpander
             _value.PointerEntered += callback;
             subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextPointerEnteredSubscriptionId);
             _pointerEnteredSubscriptions.Add(subscriptionId, (handler, () => _value.PointerEntered -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -242,6 +246,7 @@ public sealed partial class AvnExpander : IAvnExpander
             if (!_pointerEnteredSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
             subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -267,6 +272,7 @@ public sealed partial class AvnExpander : IAvnExpander
             _value.PointerExited += callback;
             subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextPointerExitedSubscriptionId);
             _pointerExitedSubscriptions.Add(subscriptionId, (handler, () => _value.PointerExited -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -283,6 +289,7 @@ public sealed partial class AvnExpander : IAvnExpander
             if (!_pointerExitedSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
             subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -424,6 +431,7 @@ public sealed partial class AvnExpander : IAvnExpander
             _value.Collapsed += callback;
             subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextCollapsedSubscriptionId);
             _collapsedSubscriptions.Add(subscriptionId, (handler, () => _value.Collapsed -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -440,6 +448,7 @@ public sealed partial class AvnExpander : IAvnExpander
             if (!_collapsedSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
             subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -465,6 +474,7 @@ public sealed partial class AvnExpander : IAvnExpander
             _value.Expanded += callback;
             subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextExpandedSubscriptionId);
             _expandedSubscriptions.Add(subscriptionId, (handler, () => _value.Expanded -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -481,6 +491,7 @@ public sealed partial class AvnExpander : IAvnExpander
             if (!_expandedSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
             subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

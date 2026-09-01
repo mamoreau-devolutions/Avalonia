@@ -124,6 +124,8 @@ public class ComSourceEmitterTests
         var runtime = files["ProjectionRuntime.g.cs"];
         Assert.Contains("global::Avalonia.Controls.Button typed => new AvnButton(typed)", runtime, StringComparison.Ordinal);
         Assert.Contains("ConditionalWeakTable<global::Avalonia.AvaloniaObject, IAvnAvaloniaObject>", runtime, StringComparison.Ordinal);
+        Assert.Contains("internal static int TrackedObjectIdCount => s_objects.Count;", runtime, StringComparison.Ordinal);
+        Assert.Contains("internal static int LiveManagedObjectCount", runtime, StringComparison.Ordinal);
 
         var factory = files["IAvnControlFactory.g.cs"];
         Assert.Contains("int CreateButton(out IAvnButton? value);", factory, StringComparison.Ordinal);
@@ -142,6 +144,14 @@ public class ComSourceEmitterTests
         Assert.Contains("typeof(AvnButton)", roots, StringComparison.Ordinal);
         Assert.Contains("typeof(AvnControlList)", roots, StringComparison.Ordinal);
         Assert.Contains("typeof(AvnWindow)", roots, StringComparison.Ordinal);
+        Assert.Contains(
+            "global::Avalonia.Host.ProjectionDiagnostics.WrapperCreated();",
+            button,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();",
+            button,
+            StringComparison.Ordinal);
 
         var gridStatics = files["IAvnGridStatics.g.cs"];
         Assert.Contains("int SetRow(IAvnControl? target, int value);", gridStatics, StringComparison.Ordinal);

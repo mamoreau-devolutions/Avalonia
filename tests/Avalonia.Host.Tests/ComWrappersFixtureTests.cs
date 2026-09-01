@@ -81,6 +81,36 @@ public unsafe class ComWrappersFixtureTests
     }
 
     [Fact]
+    public void Final_native_release_has_no_deterministic_managed_notification()
+    {
+        var factory = new AvnControlFactory();
+        Assert.Equal(0, factory.CreateButton(out var projected));
+        var button = Assert.IsType<AvnButton>(projected);
+        var handler = new BaselineClickHandler();
+        Assert.Equal(0, button.AdviseClick(handler, out var subscriptionId));
+
+        var pointer = s_wrappers.GetOrCreateComInterfaceForObject(
+            button,
+            CreateComInterfaceFlags.None);
+        var beforeRelease = ProjectionDiagnostics.Capture();
+
+        Assert.Equal(0, Marshal.Release(pointer));
+
+        var afterRelease = ProjectionDiagnostics.Capture();
+        Assert.Equal(
+            beforeRelease.NativeOwnershipReleases,
+            afterRelease.NativeOwnershipReleases);
+        Assert.Equal(
+            beforeRelease.ActiveSubscriptions,
+            afterRelease.ActiveSubscriptions);
+
+        Assert.Equal(0, button.UnadviseClick(subscriptionId));
+        Assert.Equal(
+            beforeRelease.ActiveSubscriptions - 1,
+            ProjectionDiagnostics.Capture().ActiveSubscriptions);
+    }
+
+    [Fact]
     public void Factory_creates_echo()
     {
         var factory = new AvnActivationFactory();
@@ -106,5 +136,10 @@ public unsafe class ComWrappersFixtureTests
         var app = new HostApplication();
         app.Initialize();
         Assert.NotEmpty(app.Styles);
+    }
+
+    private sealed class BaselineClickHandler : IAvnButtonClickHandler
+    {
+        public int Invoke() => 0;
     }
 }

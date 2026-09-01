@@ -23,6 +23,7 @@ public sealed partial class AvnAvaloniaObject : IAvnAvaloniaObject
     {
         _value = value;
         ObjectId = ProjectionRuntime.Register(value);
+        global::Avalonia.Host.ProjectionDiagnostics.WrapperCreated();
     }
 
     private long ObjectId { get; }
