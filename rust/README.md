@@ -5,6 +5,9 @@ This experimental workspace provides an idiomatic Rust API over an Avalonia
 bindings are generated from `projection.ir.json`; examples are consumers, not
 binding specifications.
 
+The native ownership contract and the MicroCom-versus-handle-table decision
+are documented in [OWNERSHIP.md](OWNERSHIP.md).
+
 ## Prerequisites
 
 - Windows 10 or later

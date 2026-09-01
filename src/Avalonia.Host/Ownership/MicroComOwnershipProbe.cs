@@ -20,10 +20,14 @@ internal sealed class MicroComOwnershipProbe :
 
     public unsafe void GetValue(int* value)
     {
+        using var call = EnterCall();
         if (value is null)
             throw new ArgumentNullException(nameof(value));
+        OnGetValue?.Invoke();
         *value = _button is null ? 0 : 42;
     }
+
+    internal Action? OnGetValue { get; set; }
 
     public nint GetNativePointer() =>
         MicroComRuntime.GetNativeIntPtr<IAvnMicroComOwnershipProbe>(

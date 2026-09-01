@@ -21,7 +21,7 @@ public class GenerationHandleTableTests
             ProjectionDiagnostics.Capture().NativeOwnershipReleases);
         Assert.False(table.TryLease<AvaloniaObject>(first, out _));
 
-        var second = table.Project(new AvaloniaObject());
+        var second = table.Project(firstTarget);
         Assert.Equal(first.Slot, second.Slot);
         Assert.NotEqual(first.Generation, second.Generation);
         Assert.False(table.TryRetain(first));
