@@ -1049,8 +1049,8 @@ impl Border {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1062,8 +1062,8 @@ impl Border {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1075,8 +1075,8 @@ impl Border {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn get_child(&self) -> Result<Option<Control>> {
@@ -1153,8 +1153,8 @@ impl Button {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1166,8 +1166,8 @@ impl Button {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1179,8 +1179,8 @@ impl Button {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -1203,8 +1203,8 @@ impl Button {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_click(subscription_id)))
     }
-    pub fn on_click(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_click(callback)?.persist_for_app();
+    pub fn on_click(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_click(callback)?);
         Ok(self)
     }
 }
@@ -1259,8 +1259,8 @@ impl Canvas {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1272,8 +1272,8 @@ impl Canvas {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1285,8 +1285,8 @@ impl Canvas {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn children(&self) -> Result<ControlList> {
@@ -1384,8 +1384,8 @@ impl CheckBox {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1397,8 +1397,8 @@ impl CheckBox {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1410,8 +1410,8 @@ impl CheckBox {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -1434,8 +1434,8 @@ impl CheckBox {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_click(subscription_id)))
     }
-    pub fn on_click(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_click(callback)?.persist_for_app();
+    pub fn on_click(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_click(callback)?);
         Ok(self)
     }
     pub fn get_is_checked(&self) -> Result<Option<bool>> { Ok(self.raw.get_is_checked()?) }
@@ -1455,8 +1455,8 @@ impl CheckBox {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_is_checked_changed(subscription_id)))
     }
-    pub fn on_is_checked_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_is_checked_changed(callback)?.persist_for_app();
+    pub fn on_is_checked_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_is_checked_changed(callback)?);
         Ok(self)
     }
 }
@@ -1511,8 +1511,8 @@ impl ComboBox {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1524,8 +1524,8 @@ impl ComboBox {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1537,8 +1537,8 @@ impl ComboBox {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn items(&self) -> Result<ItemList> {
@@ -1565,8 +1565,8 @@ impl ComboBox {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_selection_changed(subscription_id)))
     }
-    pub fn on_selection_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_selection_changed(callback)?.persist_for_app();
+    pub fn on_selection_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_selection_changed(callback)?);
         Ok(self)
     }
     pub fn get_placeholder_text(&self) -> Result<Option<String>> {
@@ -1632,8 +1632,8 @@ impl ComboBoxItem {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1645,8 +1645,8 @@ impl ComboBoxItem {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1658,8 +1658,8 @@ impl ComboBoxItem {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -1733,8 +1733,8 @@ impl ContentControl {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1746,8 +1746,8 @@ impl ContentControl {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1759,8 +1759,8 @@ impl ContentControl {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -1826,8 +1826,8 @@ impl Control {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1839,8 +1839,8 @@ impl Control {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1852,8 +1852,8 @@ impl Control {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
 }
@@ -1908,8 +1908,8 @@ impl Decorator {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1921,8 +1921,8 @@ impl Decorator {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -1934,8 +1934,8 @@ impl Decorator {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn get_child(&self) -> Result<Option<Control>> {
@@ -2001,8 +2001,8 @@ impl DockPanel {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2014,8 +2014,8 @@ impl DockPanel {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2027,8 +2027,8 @@ impl DockPanel {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn children(&self) -> Result<ControlList> {
@@ -2123,8 +2123,8 @@ impl Expander {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2136,8 +2136,8 @@ impl Expander {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2149,8 +2149,8 @@ impl Expander {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -2203,8 +2203,8 @@ impl Expander {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_collapsed(subscription_id)))
     }
-    pub fn on_collapsed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_collapsed(callback)?.persist_for_app();
+    pub fn on_collapsed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_collapsed(callback)?);
         Ok(self)
     }
     pub fn subscribe_expanded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2216,8 +2216,8 @@ impl Expander {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_expanded(subscription_id)))
     }
-    pub fn on_expanded(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_expanded(callback)?.persist_for_app();
+    pub fn on_expanded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_expanded(callback)?);
         Ok(self)
     }
 }
@@ -2272,8 +2272,8 @@ impl Grid {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2285,8 +2285,8 @@ impl Grid {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2298,8 +2298,8 @@ impl Grid {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn children(&self) -> Result<ControlList> {
@@ -2430,8 +2430,8 @@ impl ItemsControl {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2443,8 +2443,8 @@ impl ItemsControl {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2456,8 +2456,8 @@ impl ItemsControl {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn items(&self) -> Result<ItemList> {
@@ -2519,8 +2519,8 @@ impl ListBox {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2532,8 +2532,8 @@ impl ListBox {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2545,8 +2545,8 @@ impl ListBox {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn items(&self) -> Result<ItemList> {
@@ -2573,8 +2573,8 @@ impl ListBox {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_selection_changed(subscription_id)))
     }
-    pub fn on_selection_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_selection_changed(callback)?.persist_for_app();
+    pub fn on_selection_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_selection_changed(callback)?);
         Ok(self)
     }
 }
@@ -2629,8 +2629,8 @@ impl ListBoxItem {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2642,8 +2642,8 @@ impl ListBoxItem {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2655,8 +2655,8 @@ impl ListBoxItem {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -2730,8 +2730,8 @@ impl Panel {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2743,8 +2743,8 @@ impl Panel {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2756,8 +2756,8 @@ impl Panel {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn children(&self) -> Result<ControlList> {
@@ -2819,8 +2819,8 @@ impl HeaderedContentControl {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2832,8 +2832,8 @@ impl HeaderedContentControl {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2845,8 +2845,8 @@ impl HeaderedContentControl {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -2919,8 +2919,8 @@ impl RangeBase {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2932,8 +2932,8 @@ impl RangeBase {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2945,8 +2945,8 @@ impl RangeBase {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn get_minimum(&self) -> Result<f64> { Ok(self.raw.get_minimum()?) }
@@ -2998,8 +2998,8 @@ impl RangeBase {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_value_changed(subscription_id)))
     }
-    pub fn on_value_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_value_changed(callback)?.persist_for_app();
+    pub fn on_value_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_value_changed(callback)?);
         Ok(self)
     }
 }
@@ -3054,8 +3054,8 @@ impl SelectingItemsControl {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3067,8 +3067,8 @@ impl SelectingItemsControl {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3080,8 +3080,8 @@ impl SelectingItemsControl {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn items(&self) -> Result<ItemList> {
@@ -3108,8 +3108,8 @@ impl SelectingItemsControl {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_selection_changed(subscription_id)))
     }
-    pub fn on_selection_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_selection_changed(callback)?.persist_for_app();
+    pub fn on_selection_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_selection_changed(callback)?);
         Ok(self)
     }
 }
@@ -3164,8 +3164,8 @@ impl TemplatedControl {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3177,8 +3177,8 @@ impl TemplatedControl {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3190,8 +3190,8 @@ impl TemplatedControl {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
 }
@@ -3246,8 +3246,8 @@ impl ToggleButton {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3259,8 +3259,8 @@ impl ToggleButton {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3272,8 +3272,8 @@ impl ToggleButton {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -3296,8 +3296,8 @@ impl ToggleButton {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_click(subscription_id)))
     }
-    pub fn on_click(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_click(callback)?.persist_for_app();
+    pub fn on_click(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_click(callback)?);
         Ok(self)
     }
     pub fn get_is_checked(&self) -> Result<Option<bool>> { Ok(self.raw.get_is_checked()?) }
@@ -3317,8 +3317,8 @@ impl ToggleButton {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_is_checked_changed(subscription_id)))
     }
-    pub fn on_is_checked_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_is_checked_changed(callback)?.persist_for_app();
+    pub fn on_is_checked_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_is_checked_changed(callback)?);
         Ok(self)
     }
 }
@@ -3373,8 +3373,8 @@ impl ProgressBar {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3386,8 +3386,8 @@ impl ProgressBar {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3399,8 +3399,8 @@ impl ProgressBar {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn get_minimum(&self) -> Result<f64> { Ok(self.raw.get_minimum()?) }
@@ -3452,8 +3452,8 @@ impl ProgressBar {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_value_changed(subscription_id)))
     }
-    pub fn on_value_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_value_changed(callback)?.persist_for_app();
+    pub fn on_value_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_value_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_indeterminate(&self) -> Result<bool> { Ok(self.raw.get_is_indeterminate()?) }
@@ -3546,8 +3546,8 @@ impl RadioButton {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3559,8 +3559,8 @@ impl RadioButton {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3572,8 +3572,8 @@ impl RadioButton {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -3596,8 +3596,8 @@ impl RadioButton {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_click(subscription_id)))
     }
-    pub fn on_click(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_click(callback)?.persist_for_app();
+    pub fn on_click(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_click(callback)?);
         Ok(self)
     }
     pub fn get_is_checked(&self) -> Result<Option<bool>> { Ok(self.raw.get_is_checked()?) }
@@ -3617,8 +3617,8 @@ impl RadioButton {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_is_checked_changed(subscription_id)))
     }
-    pub fn on_is_checked_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_is_checked_changed(callback)?.persist_for_app();
+    pub fn on_is_checked_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_is_checked_changed(callback)?);
         Ok(self)
     }
     pub fn get_group_name(&self) -> Result<Option<String>> {
@@ -3684,8 +3684,8 @@ impl ScrollViewer {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3697,8 +3697,8 @@ impl ScrollViewer {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3710,8 +3710,8 @@ impl ScrollViewer {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -3807,8 +3807,8 @@ impl ScrollViewer {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_scroll_changed(subscription_id)))
     }
-    pub fn on_scroll_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_scroll_changed(callback)?.persist_for_app();
+    pub fn on_scroll_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_scroll_changed(callback)?);
         Ok(self)
     }
 }
@@ -3863,8 +3863,8 @@ impl Slider {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3876,8 +3876,8 @@ impl Slider {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -3889,8 +3889,8 @@ impl Slider {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn get_minimum(&self) -> Result<f64> { Ok(self.raw.get_minimum()?) }
@@ -3942,8 +3942,8 @@ impl Slider {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_value_changed(subscription_id)))
     }
-    pub fn on_value_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_value_changed(callback)?.persist_for_app();
+    pub fn on_value_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_value_changed(callback)?);
         Ok(self)
     }
     pub fn get_orientation(&self) -> Result<Orientation> {
@@ -4044,8 +4044,8 @@ impl StackPanel {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -4057,8 +4057,8 @@ impl StackPanel {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -4070,8 +4070,8 @@ impl StackPanel {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn children(&self) -> Result<ControlList> {
@@ -4152,8 +4152,8 @@ impl TextBlock {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -4165,8 +4165,8 @@ impl TextBlock {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -4178,8 +4178,8 @@ impl TextBlock {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn get_text(&self) -> Result<Option<String>> {
@@ -4245,8 +4245,8 @@ impl TextBox {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -4258,8 +4258,8 @@ impl TextBox {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -4271,8 +4271,8 @@ impl TextBox {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn get_accepts_return(&self) -> Result<bool> { Ok(self.raw.get_accepts_return()?) }
@@ -4443,8 +4443,8 @@ impl TextBox {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_text_changed(subscription_id)))
     }
-    pub fn on_text_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_text_changed(callback)?.persist_for_app();
+    pub fn on_text_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_text_changed(callback)?);
         Ok(self)
     }
 }
@@ -4499,8 +4499,8 @@ impl ToggleSwitch {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -4512,8 +4512,8 @@ impl ToggleSwitch {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -4525,8 +4525,8 @@ impl ToggleSwitch {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -4549,8 +4549,8 @@ impl ToggleSwitch {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_click(subscription_id)))
     }
-    pub fn on_click(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_click(callback)?.persist_for_app();
+    pub fn on_click(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_click(callback)?);
         Ok(self)
     }
     pub fn get_is_checked(&self) -> Result<Option<bool>> { Ok(self.raw.get_is_checked()?) }
@@ -4570,8 +4570,8 @@ impl ToggleSwitch {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_is_checked_changed(subscription_id)))
     }
-    pub fn on_is_checked_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_is_checked_changed(callback)?.persist_for_app();
+    pub fn on_is_checked_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_is_checked_changed(callback)?);
         Ok(self)
     }
     pub fn get_on_content(&self) -> Result<Option<Control>> {
@@ -4648,8 +4648,8 @@ impl Window {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
     }
-    pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
-        self.subscribe_key_down(callback)?.persist_for_app();
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -4661,8 +4661,8 @@ impl Window {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
     }
-    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_entered(callback)?.persist_for_app();
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
         Ok(self)
     }
     pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -4674,8 +4674,8 @@ impl Window {
         let source = self.raw.clone();
         Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
     }
-    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
-        self.subscribe_pointer_exited(callback)?.persist_for_app();
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -4701,11 +4701,6 @@ impl Window {
         Ok(self)
     }
     pub fn close(&self) -> Result<()> { Ok(self.raw.close()?) }
-    pub fn show(&self) -> Result<()> {
-        self.raw.show()?;
-        crate::runtime::persist_object_for_app(self.clone());
-        Ok(())
-    }
     pub fn show_with_window(&self, owner: &Window) -> Result<()> { Ok(self.raw.show_with_window(&owner.raw)?) }
 }
 

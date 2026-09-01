@@ -3,7 +3,9 @@ mod generated;
 mod runtime;
 
 pub use generated::*;
-pub use runtime::{App, AppContext, AsControl, EventSubscription, ResourceValue, ThemeVariant};
+pub use runtime::{
+    App, AppContext, AppScope, AsControl, EventSubscription, ResourceValue, ThemeVariant,
+};
 
 #[derive(Debug)]
 pub enum Error {

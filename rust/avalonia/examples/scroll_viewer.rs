@@ -1,19 +1,20 @@
 use avalonia::{
-    App, Button, Orientation, ScrollBarVisibility, ScrollViewer, StackPanel, TextBlock,
+    App, AppScope, Button, Orientation, ScrollBarVisibility, ScrollViewer, StackPanel, TextBlock,
     ToggleSwitch, Window,
 };
 
 fn command_button(
+    scope: &AppScope,
     label: &str,
     action: impl FnMut(()) + Send + 'static,
 ) -> avalonia::Result<Button> {
     Button::new()?
         .content(TextBlock::new()?.text(label)?)?
-        .on_click(action)
+        .on_click(scope, action)
 }
 
 fn main() -> avalonia::Result<()> {
-    App::load_from_env()?.run(|_| {
+    App::load_from_env()?.run(|scope| {
         let mut content = StackPanel::new()?.spacing(12.0)?;
         for index in 1..=30 {
             content = content.child(TextBlock::new()?.text(format!("Scrollable item {index}"))?)?;
@@ -29,7 +30,7 @@ fn main() -> avalonia::Result<()> {
             .allow_auto_hide(true)?
             .scroll_inertia_enabled(true)?
             .content(content)?
-            .on_scroll_changed(move |_| {
+            .on_scroll_changed(scope, move |_| {
                 scroll_events += 1;
                 status_for_handler
                     .set_text(format!("Scroll events: {scroll_events}"))
@@ -41,7 +42,7 @@ fn main() -> avalonia::Result<()> {
             .content(TextBlock::new()?.text("Allow auto hide")?)?
             .checked(Some(true))?;
         let auto_hide_for_handler = auto_hide.clone();
-        let auto_hide = auto_hide.on_is_checked_changed(move |_| {
+        let auto_hide = auto_hide.on_is_checked_changed(scope, move |_| {
             viewer_for_auto_hide
                 .set_allow_auto_hide(
                     auto_hide_for_handler
@@ -57,7 +58,7 @@ fn main() -> avalonia::Result<()> {
             .content(TextBlock::new()?.text("Enable inertia")?)?
             .checked(Some(true))?;
         let inertia_for_handler = inertia.clone();
-        let inertia = inertia.on_is_checked_changed(move |_| {
+        let inertia = inertia.on_is_checked_changed(scope, move |_| {
             viewer_for_inertia
                 .set_scroll_inertia_enabled(
                     inertia_for_handler
@@ -72,7 +73,7 @@ fn main() -> avalonia::Result<()> {
         let deferred =
             ToggleSwitch::new()?.content(TextBlock::new()?.text("Enable deferred scrolling")?)?;
         let deferred_for_handler = deferred.clone();
-        let deferred = deferred.on_is_checked_changed(move |_| {
+        let deferred = deferred.on_is_checked_changed(scope, move |_| {
             viewer_for_deferred
                 .set_deferred_scrolling_enabled(
                     deferred_for_handler
@@ -90,22 +91,21 @@ fn main() -> avalonia::Result<()> {
         let commands = StackPanel::new()?
             .orientation(Orientation::Horizontal)?
             .spacing(8.0)?
-            .child(command_button("Page up", move |_| {
+            .child(command_button(scope, "Page up", move |_| {
                 up.page_up().expect("failed to page up");
             })?)?
-            .child(command_button("Page down", move |_| {
+            .child(command_button(scope, "Page down", move |_| {
                 down.page_down().expect("failed to page down");
             })?)?
-            .child(command_button("Home", move |_| {
+            .child(command_button(scope, "Home", move |_| {
                 home.scroll_to_home().expect("failed to scroll home");
             })?)?
-            .child(command_button("End", move |_| {
+            .child(command_button(scope, "End", move |_| {
                 end.scroll_to_end().expect("failed to scroll end");
             })?)?;
 
-        Window::new()?
-            .title("ScrollViewer")?
-            .content(
+        scope.mount(
+            Window::new()?.title("ScrollViewer")?.content(
                 StackPanel::new()?
                     .spacing(8.0)?
                     .child(TextBlock::new()?.text("ScrollViewer controls")?)?
@@ -115,7 +115,7 @@ fn main() -> avalonia::Result<()> {
                     .child(commands)?
                     .child(status)?
                     .child(viewer)?,
-            )?
-            .show()
+            )?,
+        )
     })
 }

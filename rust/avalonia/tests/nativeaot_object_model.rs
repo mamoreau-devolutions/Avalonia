@@ -48,12 +48,12 @@ fn builders_create_a_real_window_through_nativeaot() {
     let list_changed_from_handler = list_changed.clone();
     let app = App::load(host_path()).unwrap();
 
-    app.run(move |context| {
-        assert!(context.check_access()?);
-        context.set_requested_theme_variant(ThemeVariant::Dark)?;
-        assert_eq!(context.requested_theme_variant()?, ThemeVariant::Dark);
+    app.run(move |scope| {
+        assert!(scope.check_access()?);
+        scope.set_requested_theme_variant(ThemeVariant::Dark)?;
+        assert_eq!(scope.requested_theme_variant()?, ThemeVariant::Dark);
         assert_eq!(
-            context.find_resource("__missing_rust_resource__", ThemeVariant::Dark)?,
+            scope.find_resource("__missing_rust_resource__", ThemeVariant::Dark)?,
             None
         );
         let button = Button::new()?.content(TextBlock::new()?.text("Close")?)?;
@@ -64,11 +64,13 @@ fn builders_create_a_real_window_through_nativeaot() {
         Grid::set_row(&button, 1)?;
         assert_eq!(Grid::get_row(&button)?, 1);
         button.subscribe_click(|_| {})?.unsubscribe()?;
-        let button = button.on_click(|_| {})?;
+        let button = button.on_click(scope, |_| {})?;
 
-        let text_box = TextBox::new()?.text("before")?.on_text_changed(move |_| {
-            text_changed_from_handler.store(true, Ordering::SeqCst);
-        })?;
+        let text_box = TextBox::new()?
+            .text("before")?
+            .on_text_changed(scope, move |_| {
+                text_changed_from_handler.store(true, Ordering::SeqCst);
+            })?;
         DockPanel::set_dock(&text_box, Dock::Top)?;
         assert_eq!(DockPanel::get_dock(&text_box)?, Dock::Top);
         let text_box_for_post = text_box.clone();
@@ -79,7 +81,7 @@ fn builders_create_a_real_window_through_nativeaot() {
             .on_content(TextBlock::new()?.text("On")?)?
             .off_content(TextBlock::new()?.text("Off")?)?
             .checked(Some(true))?
-            .on_is_checked_changed(move |_| {
+            .on_is_checked_changed(scope, move |_| {
                 toggle_changed_from_handler.store(true, Ordering::SeqCst);
             })?;
         let toggle_for_post = toggle.clone();
@@ -108,7 +110,7 @@ fn builders_create_a_real_window_through_nativeaot() {
             .placeholder_text("Pick")?
             .item(ComboBoxItem::new()?.content(TextBlock::new()?.text("First")?)?)?
             .item(ComboBoxItem::new()?.content(TextBlock::new()?.text("Second")?)?)?
-            .on_selection_changed(move |_| {
+            .on_selection_changed(scope, move |_| {
                 combo_changed_from_handler.store(true, Ordering::SeqCst);
             })?;
         assert_eq!(combo_box.items()?.len()?, 2);
@@ -117,7 +119,7 @@ fn builders_create_a_real_window_through_nativeaot() {
         let list_box = ListBox::new()?
             .item(ListBoxItem::new()?.content(TextBlock::new()?.text("First")?)?)?
             .item(ListBoxItem::new()?.content(TextBlock::new()?.text("Second")?)?)?
-            .on_selection_changed(move |_| {
+            .on_selection_changed(scope, move |_| {
                 list_changed_from_handler.store(true, Ordering::SeqCst);
             })?;
         assert_eq!(list_box.items()?.len()?, 2);
@@ -158,10 +160,10 @@ fn builders_create_a_real_window_through_nativeaot() {
         assert_eq!(panel.get_spacing()?, 8.0);
 
         let window = Window::new()?.title("Avalonia Rust")?.content(panel)?;
-        window.show()?;
+        scope.mount(window.clone())?;
         called_from_handler.store(true, Ordering::SeqCst);
 
-        let context = context.clone();
+        let context = scope.clone();
         std::thread::spawn(move || {
             assert!(!context.check_access().unwrap());
             context

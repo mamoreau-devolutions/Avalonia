@@ -4,13 +4,13 @@ use avalonia::{
 };
 
 fn main() -> avalonia::Result<()> {
-    App::load_from_env()?.run(|_| {
+    App::load_from_env()?.run(|scope| {
         let click_count = TextBlock::new()?.text("Clicked 0 times")?;
         let click_count_for_handler = click_count.clone();
         let mut clicks = 0;
         let button = Button::new()?
             .content(TextBlock::new()?.text("Click me")?)?
-            .on_click(move |_| {
+            .on_click(scope, move |_| {
                 clicks += 1;
                 click_count_for_handler
                     .set_text(format!("Clicked {clicks} times"))
@@ -25,7 +25,7 @@ fn main() -> avalonia::Result<()> {
             .value(25.0)?
             .orientation(Orientation::Horizontal)?;
         let slider_for_handler = slider.clone();
-        let slider = slider.on_value_changed(move |_| {
+        let slider = slider.on_value_changed(scope, move |_| {
             let value = slider_for_handler
                 .get_value()
                 .expect("failed to read slider value");
@@ -40,7 +40,7 @@ fn main() -> avalonia::Result<()> {
             .placeholder_text("Type something")?
             .text("Hello from Avalonia")?;
         let text_box_for_handler = text_box.clone();
-        let text_box = text_box.on_text_changed(move |_| {
+        let text_box = text_box.on_text_changed(scope, move |_| {
             let value = text_box_for_handler
                 .get_text()
                 .expect("failed to read text")
@@ -51,7 +51,7 @@ fn main() -> avalonia::Result<()> {
         })?;
         let key_readout = TextBlock::new()?.text("Key: focus the text box and press a key")?;
         let key_readout_for_handler = key_readout.clone();
-        let text_box = text_box.on_key_down(move |event| {
+        let text_box = text_box.on_key_down(scope, move |event| {
             let symbol = event.key_symbol.as_deref().unwrap_or("");
             key_readout_for_handler
                 .set_text(format!(
@@ -69,7 +69,7 @@ fn main() -> avalonia::Result<()> {
             .off_content(TextBlock::new()?.text("Off")?)?
             .checked(Some(true))?;
         let toggle_for_handler = toggle.clone();
-        let toggle = toggle.on_is_checked_changed(move |_| {
+        let toggle = toggle.on_is_checked_changed(scope, move |_| {
             let state = if toggle_for_handler
                 .get_is_checked()
                 .expect("failed to read toggle state")
@@ -124,7 +124,7 @@ fn main() -> avalonia::Result<()> {
             .item(ComboBoxItem::new()?.content(TextBlock::new()?.text("Blue")?)?)?
             .selected_index(2)?;
         let combo_box_for_handler = combo_box.clone();
-        let combo_box = combo_box.on_selection_changed(move |_| {
+        let combo_box = combo_box.on_selection_changed(scope, move |_| {
             let index = combo_box_for_handler
                 .get_selected_index()
                 .expect("failed to read ComboBox selection");
@@ -142,7 +142,7 @@ fn main() -> avalonia::Result<()> {
             .item(ListBoxItem::new()?.content(TextBlock::new()?.text("Item 4")?)?)?
             .selected_index(1)?;
         let list_box_for_handler = list_box.clone();
-        let list_box = list_box.on_selection_changed(move |_| {
+        let list_box = list_box.on_selection_changed(scope, move |_| {
             let index = list_box_for_handler
                 .get_selected_index()
                 .expect("failed to read ListBox selection");
@@ -156,20 +156,19 @@ fn main() -> avalonia::Result<()> {
         let exited_state = hover_state.clone();
         let hover_panel = Border::new()?
             .child(hover_state)?
-            .on_pointer_entered(move |_| {
+            .on_pointer_entered(scope, move |_| {
                 entered_state
                     .set_text("over")
                     .expect("failed to update hover state");
             })?
-            .on_pointer_exited(move |_| {
+            .on_pointer_exited(scope, move |_| {
                 exited_state
                     .set_text("out")
                     .expect("failed to update hover state");
             })?;
 
-        Window::new()?
-            .title("Control basics")?
-            .content(
+        scope.mount(
+            Window::new()?.title("Control basics")?.content(
                 StackPanel::new()?
                     .orientation(Orientation::Vertical)?
                     .spacing(8.0)?
@@ -191,7 +190,7 @@ fn main() -> avalonia::Result<()> {
                     .child(expander)?
                     .child(TextBlock::new()?.text("Hover")?)?
                     .child(hover_panel)?,
-            )?
-            .show()
+            )?,
+        )
     })
 }

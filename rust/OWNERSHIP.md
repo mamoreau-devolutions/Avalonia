@@ -42,14 +42,14 @@ release occurs from a reentrant callback, shadow disposal and subscription
 cleanup wait until that lease exits.
 
 `subscribe_*` returns an RAII ownership object and unsubscribes when dropped.
-Builder-style `on_*` transfers that guard to an application-scoped subscription
-bag so handlers remain active after temporary builder values move into the
-managed tree. The bag is cleared deterministically when `App::run` ends.
+Builder-style `on_*` requires an explicit `&AppScope` and transfers that guard
+to scope-owned state so handlers remain active after temporary builder values
+move into the managed tree.
 
-`Window::show` similarly retains a cloned projected handle in an
-application-scoped top-level bag. Unlike child controls, a shown Window cannot
-rely on a parent control to provide its managed root. The bag is released when
-the application lifetime exits.
+Top-level windows are mounted with `scope.mount(window)`. Unlike child
+controls, a shown Window cannot rely on a parent control to provide its managed
+root. `AppScope` clears subscriptions first and mounted objects second when the
+application lifetime exits.
 
 Rust application startup runs from
 `ClassicDesktopStyleApplicationLifetime.Startup`, after Avalonia installs its

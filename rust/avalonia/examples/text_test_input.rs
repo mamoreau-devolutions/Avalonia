@@ -3,7 +3,7 @@ use avalonia::{
 };
 
 fn main() -> avalonia::Result<()> {
-    App::load_from_env()?.run(|_| {
+    App::load_from_env()?.run(|scope| {
         let preview = TextBlock::new()?.text("Hello!")?;
         let preview_for_handler = preview.clone();
 
@@ -12,7 +12,7 @@ fn main() -> avalonia::Result<()> {
             .placeholder_text("Text to preview")?;
         let editor_for_handler = editor.clone();
         let editor_for_window = editor.clone();
-        let editor = editor.on_text_changed(move |_| {
+        let editor = editor.on_text_changed(scope, move |_| {
             let text = editor_for_handler
                 .get_text()
                 .expect("failed to read edited text")
@@ -22,9 +22,10 @@ fn main() -> avalonia::Result<()> {
                 .expect("failed to update text preview");
         })?;
 
+        let child_scope = scope.clone();
         let new_window = Button::new()?
             .content(TextBlock::new()?.text("+")?)?
-            .on_click(move |_| {
+            .on_click(scope, move |_| {
                 let text = editor_for_window
                     .get_text()
                     .expect("failed to read edited text")
@@ -32,7 +33,7 @@ fn main() -> avalonia::Result<()> {
                 Window::new()
                     .and_then(|window| window.title("Text Test App"))
                     .and_then(|window| window.content(TextBlock::new()?.text(text)?))
-                    .and_then(|window| window.show())
+                    .and_then(|window| child_scope.mount(window))
                     .expect("failed to open text preview window");
             })?;
 
@@ -44,13 +45,12 @@ fn main() -> avalonia::Result<()> {
             .child(new_window)?;
         DockPanel::set_dock(&toolbar, Dock::Top)?;
 
-        Window::new()?
-            .title("Text Test App")?
-            .content(
+        scope.mount(
+            Window::new()?.title("Text Test App")?.content(
                 DockPanel::new()?
                     .child(toolbar)?
                     .child(ScrollViewer::new()?.content(preview)?)?,
-            )?
-            .show()
+            )?,
+        )
     })
 }

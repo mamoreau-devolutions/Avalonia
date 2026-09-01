@@ -342,8 +342,8 @@ fn emit_event(event: &ProjectedEvent) -> String {
              \x20       let source = self.raw.clone();\n\
              \x20       Ok(EventSubscription::new(move || source.unadvise_{event_name}(subscription_id)))\n\
              \x20   }}\n\
-             \x20   pub fn on_{event_name}(self, callback: impl FnMut(&mut {args_name}) + Send + 'static) -> Result<Self> {{\n\
-             \x20       self.subscribe_{event_name}(callback)?.persist_for_app();\n\
+             \x20   pub fn on_{event_name}(self, scope: &crate::AppScope, callback: impl FnMut(&mut {args_name}) + Send + 'static) -> Result<Self> {{\n\
+              \x20       scope.retain_subscription(self.subscribe_{event_name}(callback)?);\n\
              \x20       Ok(self)\n\
              \x20   }}\n"
         );
@@ -370,8 +370,8 @@ fn emit_event(event: &ProjectedEvent) -> String {
          \x20       let source = self.raw.clone();\n\
          \x20       Ok(EventSubscription::new(move || source.unadvise_{event_name}(subscription_id)))\n\
          \x20   }}\n\
-         \x20   pub fn on_{event_name}(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {{\n\
-         \x20       self.subscribe_{event_name}(callback)?.persist_for_app();\n\
+         \x20   pub fn on_{event_name}(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {{\n\
+         \x20       scope.retain_subscription(self.subscribe_{event_name}(callback)?);\n\
          \x20       Ok(self)\n\
          \x20   }}\n"
     )
@@ -392,12 +392,7 @@ fn event_arguments_name(event: &ProjectedEvent) -> String {
 fn emit_method(ty: &ProjectedType, method: &crate::ir::ProjectedMethod) -> String {
     let name = to_snake(&method.name);
     if ty.name == "IAvnWindow" && method.name == "Show" {
-        return "    pub fn show(&self) -> Result<()> {\n\
-                \x20       self.raw.show()?;\n\
-                \x20       crate::runtime::persist_object_for_app(self.clone());\n\
-                \x20       Ok(())\n\
-                \x20   }\n"
-            .to_string();
+        return String::new();
     }
     let arguments = method
         .parameters

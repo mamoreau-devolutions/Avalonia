@@ -1,11 +1,13 @@
-use crate::{Error, Result};
+use crate::{Error, Result, Window};
 use avalonia_sys as sys;
 use std::any::Any;
 use std::cell::RefCell;
 use std::fmt;
 use std::marker::PhantomData;
+use std::ops::Deref;
 use std::path::Path;
 use std::rc::Rc;
+use std::sync::{Arc, Mutex};
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -27,8 +29,6 @@ pub enum ResourceValue {
 
 thread_local! {
     static FACTORY: RefCell<Option<sys::ComPtr<sys::IAvnControlFactory>>> = const { RefCell::new(None) };
-    static APP_SUBSCRIPTIONS: RefCell<Vec<EventSubscription>> = const { RefCell::new(Vec::new()) };
-    static APP_OBJECTS: RefCell<Vec<Box<dyn Any>>> = const { RefCell::new(Vec::new()) };
 }
 
 pub trait AsControl {
@@ -36,12 +36,12 @@ pub trait AsControl {
 }
 
 pub struct EventSubscription {
-    unsubscribe: Option<Box<dyn Fn() -> sys::Result<()>>>,
+    unsubscribe: Option<Box<dyn Fn() -> sys::Result<()> + Send>>,
     _thread_affinity: PhantomData<Rc<()>>,
 }
 
 impl EventSubscription {
-    pub(crate) fn new(unsubscribe: impl Fn() -> sys::Result<()> + 'static) -> Self {
+    pub(crate) fn new(unsubscribe: impl Fn() -> sys::Result<()> + Send + 'static) -> Self {
         Self {
             unsubscribe: Some(Box::new(unsubscribe)),
             _thread_affinity: PhantomData,
@@ -56,8 +56,22 @@ impl EventSubscription {
         Ok(())
     }
 
-    pub(crate) fn persist_for_app(self) {
-        APP_SUBSCRIPTIONS.with(|subscriptions| subscriptions.borrow_mut().push(self));
+    fn into_persistent(mut self) -> PersistentSubscription {
+        PersistentSubscription {
+            unsubscribe: self.unsubscribe.take(),
+        }
+    }
+}
+
+struct PersistentSubscription {
+    unsubscribe: Option<Box<dyn Fn() -> sys::Result<()> + Send>>,
+}
+
+impl Drop for PersistentSubscription {
+    fn drop(&mut self) {
+        if let Some(unsubscribe) = self.unsubscribe.as_ref() {
+            let _ = unsubscribe();
+        }
     }
 }
 
@@ -83,6 +97,74 @@ pub struct App {
     controls: sys::ComPtr<sys::IAvnControlFactory>,
     dispatcher: sys::ComPtr<sys::IAvnDispatcher>,
     _host: sys::Host,
+}
+
+#[derive(Clone)]
+pub struct AppScope {
+    context: AppContext,
+    state: Arc<AppScopeState>,
+}
+
+struct AppScopeState {
+    subscriptions: Mutex<Vec<PersistentSubscription>>,
+    objects: Mutex<Vec<Box<dyn Any + Send>>>,
+}
+
+impl AppScope {
+    fn new(context: AppContext) -> Self {
+        Self {
+            context,
+            state: Arc::new(AppScopeState {
+                subscriptions: Mutex::new(Vec::new()),
+                objects: Mutex::new(Vec::new()),
+            }),
+        }
+    }
+
+    pub fn mount(&self, window: Window) -> Result<()> {
+        window.raw.show()?;
+        self.state
+            .objects
+            .lock()
+            .expect("application object scope lock poisoned")
+            .push(Box::new(window));
+        Ok(())
+    }
+
+    pub(crate) fn retain_subscription(&self, subscription: EventSubscription) {
+        self.state
+            .subscriptions
+            .lock()
+            .expect("application subscription scope lock poisoned")
+            .push(subscription.into_persistent());
+    }
+
+    fn clear(&self) {
+        self.state
+            .subscriptions
+            .lock()
+            .expect("application subscription scope lock poisoned")
+            .clear();
+        self.state
+            .objects
+            .lock()
+            .expect("application object scope lock poisoned")
+            .clear();
+    }
+}
+
+impl Deref for AppScope {
+    type Target = AppContext;
+
+    fn deref(&self) -> &Self::Target {
+        &self.context
+    }
+}
+
+impl fmt::Debug for AppScope {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter.debug_struct("AppScope").finish_non_exhaustive()
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -156,36 +238,24 @@ impl App {
 
     pub fn run(
         self,
-        callback: impl FnOnce(&AppContext) -> Result<()> + Send + 'static,
+        callback: impl FnOnce(&AppScope) -> Result<()> + Send + 'static,
     ) -> Result<()> {
         let controls = self.controls.clone();
         let context = AppContext {
             application: self.application.clone(),
             dispatcher: self.dispatcher.clone(),
         };
-        let handler = sys::app_handler(move || callback(&context).map_err(to_abi_error));
+        let scope = AppScope::new(context);
+        let cleanup_scope = scope.clone();
+        let handler = sys::app_handler(move || callback(&scope).map_err(to_abi_error));
         FACTORY.with(|current| {
             let previous = current.replace(Some(controls));
-            let previous_subscriptions =
-                APP_SUBSCRIPTIONS.with(|subscriptions| subscriptions.take());
-            let previous_objects = APP_OBJECTS.with(|objects| objects.take());
             let result = self.application.run(&handler);
-            APP_SUBSCRIPTIONS.with(|subscriptions| {
-                subscriptions.borrow_mut().clear();
-                subscriptions.replace(previous_subscriptions);
-            });
-            APP_OBJECTS.with(|objects| {
-                objects.borrow_mut().clear();
-                objects.replace(previous_objects);
-            });
+            cleanup_scope.clear();
             current.replace(previous);
             Ok(result?)
         })
     }
-}
-
-pub(crate) fn persist_object_for_app(value: impl Any) {
-    APP_OBJECTS.with(|objects| objects.borrow_mut().push(Box::new(value)));
 }
 
 pub(crate) fn with_factory<T>(
