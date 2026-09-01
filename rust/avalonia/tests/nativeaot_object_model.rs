@@ -1,6 +1,6 @@
 use avalonia::{
-    App, Button, ComboBox, ComboBoxItem, Dock, DockPanel, ExpandDirection, Expander, Grid, ListBox,
-    ListBoxItem, Orientation, RadioButton, ScrollViewer, StackPanel, TextBlock, TextBox,
+    App, Border, Button, ComboBox, ComboBoxItem, Dock, DockPanel, ExpandDirection, Expander, Grid,
+    ListBox, ListBoxItem, Orientation, RadioButton, ScrollViewer, StackPanel, TextBlock, TextBox,
     ThemeVariant, ToggleSwitch, Window,
 };
 use std::path::PathBuf;
@@ -123,6 +123,14 @@ fn builders_create_a_real_window_through_nativeaot() {
         assert_eq!(list_box.items()?.len()?, 2);
         let list_box_for_post = list_box.clone();
 
+        let hover_panel = Border::new()?.child(TextBlock::new()?.text("Hover")?)?;
+        hover_panel
+            .subscribe_pointer_entered(|_| {})?
+            .unsubscribe()?;
+        hover_panel
+            .subscribe_pointer_exited(|_| {})?
+            .unsubscribe()?;
+
         let panel = StackPanel::new()?
             .orientation(Orientation::Vertical)?
             .spacing(8.0)?
@@ -133,8 +141,9 @@ fn builders_create_a_real_window_through_nativeaot() {
             .child(list_box)?
             .child(radio_buttons)?
             .child(expander)?
+            .child(hover_panel)?
             .child(button)?;
-        assert_eq!(panel.children()?.len()?, 8);
+        assert_eq!(panel.children()?.len()?, 9);
         assert_eq!(panel.get_orientation()?, Orientation::Vertical);
         assert_eq!(panel.get_spacing()?, 8.0);
 

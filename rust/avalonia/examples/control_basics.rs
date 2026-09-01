@@ -1,5 +1,5 @@
 use avalonia::{
-    App, Button, ComboBox, ComboBoxItem, ExpandDirection, Expander, ListBox, ListBoxItem,
+    App, Border, Button, ComboBox, ComboBoxItem, ExpandDirection, Expander, ListBox, ListBoxItem,
     Orientation, RadioButton, Slider, StackPanel, TextBlock, TextBox, ToggleSwitch, Window,
 };
 
@@ -151,6 +151,22 @@ fn main() -> avalonia::Result<()> {
                 .expect("failed to update ListBox readout");
         })?;
 
+        let hover_state = TextBlock::new()?.text("out")?;
+        let entered_state = hover_state.clone();
+        let exited_state = hover_state.clone();
+        let hover_panel = Border::new()?
+            .child(hover_state)?
+            .on_pointer_entered(move |_| {
+                entered_state
+                    .set_text("over")
+                    .expect("failed to update hover state");
+            })?
+            .on_pointer_exited(move |_| {
+                exited_state
+                    .set_text("out")
+                    .expect("failed to update hover state");
+            })?;
+
         Window::new()?
             .title("Control basics")?
             .content(
@@ -172,7 +188,9 @@ fn main() -> avalonia::Result<()> {
                     .child(list_box)?
                     .child(list_status)?
                     .child(radio_buttons)?
-                    .child(expander)?,
+                    .child(expander)?
+                    .child(TextBlock::new()?.text("Hover")?)?
+                    .child(hover_panel)?,
             )?
             .show()
     })

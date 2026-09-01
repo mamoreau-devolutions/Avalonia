@@ -7,7 +7,7 @@ use crate::hresult::{self, Error, Result};
 use std::ffi::c_void;
 use std::ptr;
 
-pub const I_AVN_BUTTON_CLICK_HANDLER_IID: Guid = Guid { data1: 0xBFE1C71F, data2: 0x0861, data3: 0x566C, data4: [0x89, 0x21, 0xA9, 0x5F, 0x2E, 0x8B, 0x2C, 0x68] };
+pub const I_AVN_BUTTON_CLICK_HANDLER_IID: Guid = Guid { data1: 0x7CB9224F, data2: 0xE54E, data3: 0x5B10, data4: [0xA5, 0x50, 0xE4, 0x93, 0x9D, 0x30, 0xFA, 0xC5] };
 
 #[repr(C)]
 struct IAvnButtonClickHandlerVtbl {
@@ -62,7 +62,7 @@ unsafe extern "system" fn i_avn_button_click_handler_invoke(this: *mut IAvnButto
     crate::event_callback::invoke::<IAvnButtonClickHandler, ()>(this, &mut ())
 }
 
-pub const I_AVN_CONTROL_KEY_DOWN_HANDLER_IID: Guid = Guid { data1: 0x0D90FB24, data2: 0x5DE6, data3: 0x5DFA, data4: [0xAB, 0x8E, 0xF3, 0xDA, 0xE5, 0xDE, 0x25, 0x3F] };
+pub const I_AVN_CONTROL_KEY_DOWN_HANDLER_IID: Guid = Guid { data1: 0x320B0263, data2: 0x7422, data3: 0x51F7, data4: [0xA6, 0xC6, 0x0B, 0xA2, 0xAA, 0x10, 0x8A, 0xF0] };
 
 #[derive(Debug)]
 pub struct ControlKeyDownEventArgs {
@@ -125,7 +125,117 @@ unsafe extern "system" fn i_avn_control_key_down_handler_invoke(this: *mut IAvnC
     hr
 }
 
-pub const I_AVN_EXPANDER_COLLAPSED_HANDLER_IID: Guid = Guid { data1: 0x59458AB2, data2: 0xE62F, data3: 0x5DAE, data4: [0x95, 0xCF, 0xDF, 0xD1, 0x98, 0x6B, 0xFA, 0xB8] };
+pub const I_AVN_CONTROL_POINTER_ENTERED_HANDLER_IID: Guid = Guid { data1: 0x2FA4AC84, data2: 0x32CC, data3: 0x53BD, data4: [0xBF, 0xEE, 0x4A, 0x72, 0xBE, 0xC5, 0xE0, 0x35] };
+
+#[repr(C)]
+struct IAvnControlPointerEnteredHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnControlPointerEnteredHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnControlPointerEnteredHandler {
+    vtbl: *const IAvnControlPointerEnteredHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnControlPointerEnteredHandler {
+    const IID: Guid = I_AVN_CONTROL_POINTER_ENTERED_HANDLER_IID;
+}
+
+impl ComPtr<IAvnControlPointerEnteredHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_CONTROL_POINTER_ENTERED_HANDLER_VTBL: IAvnControlPointerEnteredHandlerVtbl = IAvnControlPointerEnteredHandlerVtbl {
+    query_interface: i_avn_control_pointer_entered_handler_query_interface,
+    add_ref: i_avn_control_pointer_entered_handler_add_ref,
+    release: i_avn_control_pointer_entered_handler_release,
+    invoke: i_avn_control_pointer_entered_handler_invoke,
+};
+
+pub fn control_pointer_entered_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnControlPointerEnteredHandler> {
+    crate::event_callback::create::<IAvnControlPointerEnteredHandler, ()>(IAvnControlPointerEnteredHandler { vtbl: &I_AVN_CONTROL_POINTER_ENTERED_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_control_pointer_entered_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnControlPointerEnteredHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_control_pointer_entered_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnControlPointerEnteredHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_control_pointer_entered_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnControlPointerEnteredHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_control_pointer_entered_handler_invoke(this: *mut IAvnControlPointerEnteredHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnControlPointerEnteredHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_CONTROL_POINTER_EXITED_HANDLER_IID: Guid = Guid { data1: 0xBA8B61F1, data2: 0xF717, data3: 0x54D7, data4: [0x9B, 0x8E, 0xA3, 0x7A, 0x6C, 0x0D, 0x3A, 0xB3] };
+
+#[repr(C)]
+struct IAvnControlPointerExitedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnControlPointerExitedHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnControlPointerExitedHandler {
+    vtbl: *const IAvnControlPointerExitedHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnControlPointerExitedHandler {
+    const IID: Guid = I_AVN_CONTROL_POINTER_EXITED_HANDLER_IID;
+}
+
+impl ComPtr<IAvnControlPointerExitedHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_CONTROL_POINTER_EXITED_HANDLER_VTBL: IAvnControlPointerExitedHandlerVtbl = IAvnControlPointerExitedHandlerVtbl {
+    query_interface: i_avn_control_pointer_exited_handler_query_interface,
+    add_ref: i_avn_control_pointer_exited_handler_add_ref,
+    release: i_avn_control_pointer_exited_handler_release,
+    invoke: i_avn_control_pointer_exited_handler_invoke,
+};
+
+pub fn control_pointer_exited_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnControlPointerExitedHandler> {
+    crate::event_callback::create::<IAvnControlPointerExitedHandler, ()>(IAvnControlPointerExitedHandler { vtbl: &I_AVN_CONTROL_POINTER_EXITED_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_control_pointer_exited_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnControlPointerExitedHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_control_pointer_exited_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnControlPointerExitedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_control_pointer_exited_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnControlPointerExitedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_control_pointer_exited_handler_invoke(this: *mut IAvnControlPointerExitedHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnControlPointerExitedHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_EXPANDER_COLLAPSED_HANDLER_IID: Guid = Guid { data1: 0xE9BB40AE, data2: 0xD440, data3: 0x584F, data4: [0x95, 0xCA, 0x8D, 0xBA, 0xAD, 0x35, 0xE7, 0x7D] };
 
 #[repr(C)]
 struct IAvnExpanderCollapsedHandlerVtbl {
@@ -180,7 +290,7 @@ unsafe extern "system" fn i_avn_expander_collapsed_handler_invoke(this: *mut IAv
     crate::event_callback::invoke::<IAvnExpanderCollapsedHandler, ()>(this, &mut ())
 }
 
-pub const I_AVN_EXPANDER_EXPANDED_HANDLER_IID: Guid = Guid { data1: 0x14A5F026, data2: 0x86EA, data3: 0x519D, data4: [0x8A, 0x9D, 0xCE, 0xA7, 0x41, 0xA0, 0xDB, 0x0F] };
+pub const I_AVN_EXPANDER_EXPANDED_HANDLER_IID: Guid = Guid { data1: 0x4D28BC9A, data2: 0xBF2B, data3: 0x52F3, data4: [0x82, 0x97, 0x97, 0x30, 0xFD, 0x58, 0x56, 0x78] };
 
 #[repr(C)]
 struct IAvnExpanderExpandedHandlerVtbl {
@@ -235,7 +345,7 @@ unsafe extern "system" fn i_avn_expander_expanded_handler_invoke(this: *mut IAvn
     crate::event_callback::invoke::<IAvnExpanderExpandedHandler, ()>(this, &mut ())
 }
 
-pub const I_AVN_RANGE_BASE_VALUE_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x5CC89DE0, data2: 0x7E1A, data3: 0x562D, data4: [0x9F, 0x2B, 0xE8, 0x8C, 0x14, 0xA0, 0x73, 0x3A] };
+pub const I_AVN_RANGE_BASE_VALUE_CHANGED_HANDLER_IID: Guid = Guid { data1: 0xCC4C96D3, data2: 0xBD95, data3: 0x5E66, data4: [0xBD, 0x53, 0x4A, 0xCF, 0x4A, 0x07, 0x0C, 0xFE] };
 
 #[repr(C)]
 struct IAvnRangeBaseValueChangedHandlerVtbl {
@@ -290,7 +400,7 @@ unsafe extern "system" fn i_avn_range_base_value_changed_handler_invoke(this: *m
     crate::event_callback::invoke::<IAvnRangeBaseValueChangedHandler, ()>(this, &mut ())
 }
 
-pub const I_AVN_SELECTING_ITEMS_CONTROL_SELECTION_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x98C21BE5, data2: 0x7D6C, data3: 0x520D, data4: [0x9B, 0x7E, 0xF7, 0xE1, 0x62, 0x2A, 0xE4, 0x81] };
+pub const I_AVN_SELECTING_ITEMS_CONTROL_SELECTION_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x70026657, data2: 0x7B97, data3: 0x56D7, data4: [0x94, 0x90, 0x12, 0x6B, 0x30, 0x6C, 0x89, 0x32] };
 
 #[repr(C)]
 struct IAvnSelectingItemsControlSelectionChangedHandlerVtbl {
@@ -345,7 +455,7 @@ unsafe extern "system" fn i_avn_selecting_items_control_selection_changed_handle
     crate::event_callback::invoke::<IAvnSelectingItemsControlSelectionChangedHandler, ()>(this, &mut ())
 }
 
-pub const I_AVN_TOGGLE_BUTTON_IS_CHECKED_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x3FE8011B, data2: 0x8760, data3: 0x512E, data4: [0xAB, 0x58, 0x5A, 0x5C, 0x76, 0x73, 0xA9, 0xCA] };
+pub const I_AVN_TOGGLE_BUTTON_IS_CHECKED_CHANGED_HANDLER_IID: Guid = Guid { data1: 0xE1811309, data2: 0x7793, data3: 0x516E, data4: [0xA6, 0x9F, 0x0C, 0x09, 0x95, 0x77, 0x64, 0x83] };
 
 #[repr(C)]
 struct IAvnToggleButtonIsCheckedChangedHandlerVtbl {
@@ -400,7 +510,7 @@ unsafe extern "system" fn i_avn_toggle_button_is_checked_changed_handler_invoke(
     crate::event_callback::invoke::<IAvnToggleButtonIsCheckedChangedHandler, ()>(this, &mut ())
 }
 
-pub const I_AVN_SCROLL_VIEWER_SCROLL_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x5400B0C5, data2: 0x284A, data3: 0x5D91, data4: [0x90, 0xB0, 0xB7, 0x0D, 0x16, 0x3A, 0x2C, 0xD9] };
+pub const I_AVN_SCROLL_VIEWER_SCROLL_CHANGED_HANDLER_IID: Guid = Guid { data1: 0xDE103847, data2: 0xB236, data3: 0x5B98, data4: [0x93, 0xAB, 0xD0, 0x14, 0x4A, 0xE5, 0x61, 0xA6] };
 
 #[repr(C)]
 struct IAvnScrollViewerScrollChangedHandlerVtbl {
@@ -455,7 +565,7 @@ unsafe extern "system" fn i_avn_scroll_viewer_scroll_changed_handler_invoke(this
     crate::event_callback::invoke::<IAvnScrollViewerScrollChangedHandler, ()>(this, &mut ())
 }
 
-pub const I_AVN_TEXT_BOX_TEXT_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x8A2ED4F4, data2: 0xF329, data3: 0x56BD, data4: [0xA0, 0x84, 0xE6, 0x8C, 0x03, 0xE6, 0x32, 0xB9] };
+pub const I_AVN_TEXT_BOX_TEXT_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x34805D97, data2: 0xD125, data3: 0x5907, data4: [0xB6, 0xD2, 0xBE, 0xD7, 0x82, 0x56, 0xA3, 0xF6] };
 
 #[repr(C)]
 struct IAvnTextBoxTextChangedHandlerVtbl {
@@ -510,7 +620,7 @@ unsafe extern "system" fn i_avn_text_box_text_changed_handler_invoke(this: *mut 
     crate::event_callback::invoke::<IAvnTextBoxTextChangedHandler, ()>(this, &mut ())
 }
 
-pub const I_AVN_ITEM_LIST_IID: Guid = Guid { data1: 0x03E9E259, data2: 0x9582, data3: 0x5831, data4: [0x93, 0x5D, 0x42, 0xD8, 0x9B, 0x33, 0x9A, 0x4F] };
+pub const I_AVN_ITEM_LIST_IID: Guid = Guid { data1: 0x63BFDD41, data2: 0x951D, data3: 0x5E72, data4: [0x94, 0xDC, 0xAF, 0x52, 0x88, 0x9C, 0x93, 0x41] };
 
 #[repr(C)]
 struct IAvnItemListVtbl {
@@ -571,7 +681,7 @@ impl ComPtr<IAvnItemList> {
     }
 }
 
-pub const I_AVN_CONTROL_LIST_IID: Guid = Guid { data1: 0xD211F72F, data2: 0x08E3, data3: 0x5A43, data4: [0xB3, 0x6F, 0x14, 0x9E, 0x12, 0x6C, 0x35, 0x2A] };
+pub const I_AVN_CONTROL_LIST_IID: Guid = Guid { data1: 0xFE260D6B, data2: 0xC794, data3: 0x59E4, data4: [0x80, 0x5E, 0xBB, 0x8A, 0x3B, 0x1D, 0xB7, 0xED] };
 
 #[repr(C)]
 struct IAvnControlListVtbl {
@@ -632,7 +742,7 @@ impl ComPtr<IAvnControlList> {
     }
 }
 
-pub const I_AVN_STRING_LIST_IID: Guid = Guid { data1: 0xF568596F, data2: 0x958A, data3: 0x5653, data4: [0xA3, 0x9B, 0x40, 0xFA, 0x1D, 0x11, 0xF3, 0xA7] };
+pub const I_AVN_STRING_LIST_IID: Guid = Guid { data1: 0xEEF32B54, data2: 0xEF66, data3: 0x556F, data4: [0xA7, 0x83, 0x68, 0x9C, 0x11, 0x5A, 0x9D, 0xE4] };
 
 #[repr(C)]
 struct IAvnStringListVtbl {
@@ -692,7 +802,7 @@ impl ComPtr<IAvnStringList> {
     }
 }
 
-pub const I_AVN_AVALONIA_OBJECT_IID: Guid = Guid { data1: 0x4CB49F84, data2: 0x8598, data3: 0x5E8A, data4: [0x90, 0xAE, 0x9C, 0x34, 0x4E, 0x31, 0x76, 0x10] };
+pub const I_AVN_AVALONIA_OBJECT_IID: Guid = Guid { data1: 0x921D92F5, data2: 0x0A29, data3: 0x590D, data4: [0x8B, 0xD2, 0x55, 0x2F, 0x01, 0x11, 0xF3, 0x38] };
 
 #[repr(C)]
 struct IAvnAvaloniaObjectVtbl {
@@ -721,7 +831,7 @@ impl ComPtr<IAvnAvaloniaObject> {
     }
 }
 
-pub const I_AVN_BORDER_IID: Guid = Guid { data1: 0x51A0C1AD, data2: 0x4DCA, data3: 0x5FA8, data4: [0xA2, 0x6E, 0x13, 0x85, 0x99, 0xAE, 0x2E, 0x51] };
+pub const I_AVN_BORDER_IID: Guid = Guid { data1: 0x75D6B883, data2: 0x5BA4, data3: 0x58EB, data4: [0xAC, 0x65, 0x2A, 0x93, 0x97, 0x38, 0xFD, 0x39] };
 
 #[repr(C)]
 struct IAvnBorderVtbl {
@@ -734,6 +844,10 @@ struct IAvnBorderVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnBorder, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnBorder, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnBorder, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnBorder, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnBorder, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnBorder, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnBorder, i64) -> i32,
     get_child: unsafe extern "system" fn(*mut IAvnBorder, *mut *mut IAvnControl) -> i32,
     set_child: unsafe extern "system" fn(*mut IAvnBorder, *mut IAvnControl) -> i32,
     get_background_sizing: unsafe extern "system" fn(*mut IAvnBorder, *mut i32) -> i32,
@@ -792,6 +906,32 @@ impl ComPtr<IAvnBorder> {
             hresult::check(hr)
         }
     }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_child(&self) -> Result<Option<ComPtr<IAvnControl>>> {
         unsafe {
             let mut value: *mut IAvnControl = ptr::null_mut();
@@ -822,7 +962,7 @@ impl ComPtr<IAvnBorder> {
     }
 }
 
-pub const I_AVN_BUTTON_IID: Guid = Guid { data1: 0xFF90B748, data2: 0x58E4, data3: 0x5D31, data4: [0x8A, 0x77, 0x42, 0x0B, 0x01, 0xF1, 0xF7, 0x9A] };
+pub const I_AVN_BUTTON_IID: Guid = Guid { data1: 0x65E49407, data2: 0x79A5, data3: 0x5EFA, data4: [0xBC, 0x35, 0x68, 0x33, 0xEE, 0x88, 0x54, 0xF3] };
 
 #[repr(C)]
 struct IAvnButtonVtbl {
@@ -835,6 +975,10 @@ struct IAvnButtonVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnButton, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnButton, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnButton, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnButton, i64) -> i32,
     get_content: unsafe extern "system" fn(*mut IAvnButton, *mut *mut IAvnControl) -> i32,
     set_content: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnControl) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnButtonClickHandler, *mut i64) -> i32,
@@ -893,6 +1037,32 @@ impl ComPtr<IAvnButton> {
             hresult::check(hr)
         }
     }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_content(&self) -> Result<Option<ComPtr<IAvnControl>>> {
         unsafe {
             let mut value: *mut IAvnControl = ptr::null_mut();
@@ -922,7 +1092,7 @@ impl ComPtr<IAvnButton> {
     }
 }
 
-pub const I_AVN_CANVAS_IID: Guid = Guid { data1: 0x24D98F9E, data2: 0x8A73, data3: 0x57F4, data4: [0xBD, 0xA0, 0x02, 0x10, 0x1B, 0x25, 0xDB, 0x45] };
+pub const I_AVN_CANVAS_IID: Guid = Guid { data1: 0x2F97155E, data2: 0x69AB, data3: 0x58B5, data4: [0x89, 0x07, 0x76, 0x0D, 0xC6, 0x0E, 0x54, 0xA5] };
 
 #[repr(C)]
 struct IAvnCanvasVtbl {
@@ -935,6 +1105,10 @@ struct IAvnCanvasVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnCanvas, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnCanvas, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnCanvas, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnCanvas, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnCanvas, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnCanvas, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnCanvas, i64) -> i32,
     get_children: unsafe extern "system" fn(*mut IAvnCanvas, *mut *mut IAvnControlList) -> i32,
 }
 
@@ -990,6 +1164,32 @@ impl ComPtr<IAvnCanvas> {
             hresult::check(hr)
         }
     }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_children(&self) -> Result<ComPtr<IAvnControlList>> {
         unsafe {
             let mut value: *mut IAvnControlList = ptr::null_mut();
@@ -1000,7 +1200,7 @@ impl ComPtr<IAvnCanvas> {
     }
 }
 
-pub const I_AVN_CHECK_BOX_IID: Guid = Guid { data1: 0x2BB0520A, data2: 0x6032, data3: 0x5EF3, data4: [0x9F, 0x10, 0xFC, 0xE0, 0xBC, 0xA1, 0x07, 0xE3] };
+pub const I_AVN_CHECK_BOX_IID: Guid = Guid { data1: 0x5EAF5050, data2: 0x7DF1, data3: 0x5F4C, data4: [0x88, 0xA4, 0x3E, 0x26, 0xB1, 0xC7, 0xB7, 0x85] };
 
 #[repr(C)]
 struct IAvnCheckBoxVtbl {
@@ -1013,6 +1213,10 @@ struct IAvnCheckBoxVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnCheckBox, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnCheckBox, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnCheckBox, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnCheckBox, i64) -> i32,
     get_content: unsafe extern "system" fn(*mut IAvnCheckBox, *mut *mut IAvnControl) -> i32,
     set_content: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnControl) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnButtonClickHandler, *mut i64) -> i32,
@@ -1075,6 +1279,32 @@ impl ComPtr<IAvnCheckBox> {
             hresult::check(hr)
         }
     }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_content(&self) -> Result<Option<ComPtr<IAvnControl>>> {
         unsafe {
             let mut value: *mut IAvnControl = ptr::null_mut();
@@ -1131,7 +1361,7 @@ impl ComPtr<IAvnCheckBox> {
     }
 }
 
-pub const I_AVN_COMBO_BOX_IID: Guid = Guid { data1: 0x9C6FE3E3, data2: 0x6F40, data3: 0x5E92, data4: [0x8A, 0xA1, 0xEB, 0xDE, 0x1B, 0x19, 0x74, 0xEC] };
+pub const I_AVN_COMBO_BOX_IID: Guid = Guid { data1: 0xFB6CCEB3, data2: 0xD615, data3: 0x5AA0, data4: [0x82, 0xDE, 0xB6, 0x0D, 0x64, 0x4E, 0xFF, 0xC5] };
 
 #[repr(C)]
 struct IAvnComboBoxVtbl {
@@ -1144,6 +1374,10 @@ struct IAvnComboBoxVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnComboBox, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnComboBox, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnComboBox, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnComboBox, i64) -> i32,
     get_items: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut IAvnItemList) -> i32,
     get_selected_index: unsafe extern "system" fn(*mut IAvnComboBox, *mut i32) -> i32,
     set_selected_index: unsafe extern "system" fn(*mut IAvnComboBox, i32) -> i32,
@@ -1205,6 +1439,32 @@ impl ComPtr<IAvnComboBox> {
             hresult::check(hr)
         }
     }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_items(&self) -> Result<ComPtr<IAvnItemList>> {
         unsafe {
             let mut value: *mut IAvnItemList = ptr::null_mut();
@@ -1256,7 +1516,7 @@ impl ComPtr<IAvnComboBox> {
     }
 }
 
-pub const I_AVN_COMBO_BOX_ITEM_IID: Guid = Guid { data1: 0x2CF2F19D, data2: 0xCDCB, data3: 0x5EC0, data4: [0x94, 0x19, 0x89, 0x8F, 0x22, 0x93, 0x75, 0xA0] };
+pub const I_AVN_COMBO_BOX_ITEM_IID: Guid = Guid { data1: 0x8E725DEC, data2: 0x5104, data3: 0x5D22, data4: [0xBE, 0xC1, 0x08, 0xAF, 0xC3, 0x5C, 0x1E, 0x5D] };
 
 #[repr(C)]
 struct IAvnComboBoxItemVtbl {
@@ -1269,6 +1529,10 @@ struct IAvnComboBoxItemVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnComboBoxItem, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnComboBoxItem, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnComboBoxItem, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnComboBoxItem, i64) -> i32,
     get_content: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut *mut IAvnControl) -> i32,
     set_content: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut IAvnControl) -> i32,
     get_is_selected: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut i32) -> i32,
@@ -1327,6 +1591,32 @@ impl ComPtr<IAvnComboBoxItem> {
             hresult::check(hr)
         }
     }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_content(&self) -> Result<Option<ComPtr<IAvnControl>>> {
         unsafe {
             let mut value: *mut IAvnControl = ptr::null_mut();
@@ -1357,7 +1647,7 @@ impl ComPtr<IAvnComboBoxItem> {
     }
 }
 
-pub const I_AVN_CONTENT_CONTROL_IID: Guid = Guid { data1: 0xF7891AE9, data2: 0xA906, data3: 0x5C0A, data4: [0xAC, 0x58, 0x87, 0xCC, 0xD6, 0x17, 0x12, 0xFD] };
+pub const I_AVN_CONTENT_CONTROL_IID: Guid = Guid { data1: 0xAA1E867A, data2: 0xD3FB, data3: 0x5A43, data4: [0xAC, 0x44, 0x1A, 0x4C, 0xA7, 0xE9, 0x0E, 0x1E] };
 
 #[repr(C)]
 struct IAvnContentControlVtbl {
@@ -1370,6 +1660,10 @@ struct IAvnContentControlVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnContentControl, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnContentControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnContentControl, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnContentControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnContentControl, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnContentControl, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnContentControl, i64) -> i32,
     get_content: unsafe extern "system" fn(*mut IAvnContentControl, *mut *mut IAvnControl) -> i32,
     set_content: unsafe extern "system" fn(*mut IAvnContentControl, *mut IAvnControl) -> i32,
 }
@@ -1426,6 +1720,32 @@ impl ComPtr<IAvnContentControl> {
             hresult::check(hr)
         }
     }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_content(&self) -> Result<Option<ComPtr<IAvnControl>>> {
         unsafe {
             let mut value: *mut IAvnControl = ptr::null_mut();
@@ -1442,7 +1762,7 @@ impl ComPtr<IAvnContentControl> {
     }
 }
 
-pub const I_AVN_CONTROL_IID: Guid = Guid { data1: 0xDCFDE1F3, data2: 0x7296, data3: 0x5EE4, data4: [0x8E, 0x29, 0x87, 0x14, 0xDC, 0x41, 0xDB, 0x72] };
+pub const I_AVN_CONTROL_IID: Guid = Guid { data1: 0x7F3026E7, data2: 0xB132, data3: 0x535B, data4: [0xB2, 0x3F, 0x2E, 0xC1, 0xA7, 0xD5, 0xD9, 0x4B] };
 
 #[repr(C)]
 struct IAvnControlVtbl {
@@ -1455,6 +1775,10 @@ struct IAvnControlVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnControl, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnControl, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnControl, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnControl, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnControl, i64) -> i32,
 }
 
 #[repr(C)]
@@ -1509,9 +1833,35 @@ impl ComPtr<IAvnControl> {
             hresult::check(hr)
         }
     }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
 }
 
-pub const I_AVN_DECORATOR_IID: Guid = Guid { data1: 0x90C3108A, data2: 0xDE3D, data3: 0x52AE, data4: [0xBA, 0x8C, 0x34, 0x5E, 0x56, 0xD0, 0xC7, 0x49] };
+pub const I_AVN_DECORATOR_IID: Guid = Guid { data1: 0x016967E0, data2: 0x4C22, data3: 0x568E, data4: [0x96, 0x08, 0xE1, 0xA7, 0x35, 0xDE, 0x49, 0x82] };
 
 #[repr(C)]
 struct IAvnDecoratorVtbl {
@@ -1524,6 +1874,10 @@ struct IAvnDecoratorVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnDecorator, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnDecorator, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnDecorator, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnDecorator, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnDecorator, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnDecorator, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnDecorator, i64) -> i32,
     get_child: unsafe extern "system" fn(*mut IAvnDecorator, *mut *mut IAvnControl) -> i32,
     set_child: unsafe extern "system" fn(*mut IAvnDecorator, *mut IAvnControl) -> i32,
 }
@@ -1580,6 +1934,32 @@ impl ComPtr<IAvnDecorator> {
             hresult::check(hr)
         }
     }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_child(&self) -> Result<Option<ComPtr<IAvnControl>>> {
         unsafe {
             let mut value: *mut IAvnControl = ptr::null_mut();
@@ -1596,7 +1976,7 @@ impl ComPtr<IAvnDecorator> {
     }
 }
 
-pub const I_AVN_DOCK_PANEL_IID: Guid = Guid { data1: 0xA9D57922, data2: 0xC593, data3: 0x5AF1, data4: [0xB7, 0x23, 0x5A, 0xC9, 0xF0, 0x48, 0x9B, 0xB3] };
+pub const I_AVN_DOCK_PANEL_IID: Guid = Guid { data1: 0x20A3331E, data2: 0xB3CA, data3: 0x5571, data4: [0xA7, 0x3A, 0x47, 0xA8, 0x38, 0xC7, 0xF6, 0x8D] };
 
 #[repr(C)]
 struct IAvnDockPanelVtbl {
@@ -1609,6 +1989,10 @@ struct IAvnDockPanelVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnDockPanel, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnDockPanel, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnDockPanel, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnDockPanel, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnDockPanel, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnDockPanel, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnDockPanel, i64) -> i32,
     get_children: unsafe extern "system" fn(*mut IAvnDockPanel, *mut *mut IAvnControlList) -> i32,
     get_last_child_fill: unsafe extern "system" fn(*mut IAvnDockPanel, *mut i32) -> i32,
     set_last_child_fill: unsafe extern "system" fn(*mut IAvnDockPanel, i32) -> i32,
@@ -1670,6 +2054,32 @@ impl ComPtr<IAvnDockPanel> {
             hresult::check(hr)
         }
     }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_children(&self) -> Result<ComPtr<IAvnControlList>> {
         unsafe {
             let mut value: *mut IAvnControlList = ptr::null_mut();
@@ -1722,7 +2132,7 @@ impl ComPtr<IAvnDockPanel> {
     }
 }
 
-pub const I_AVN_EXPANDER_IID: Guid = Guid { data1: 0xF6F6DF2F, data2: 0x134E, data3: 0x5E9C, data4: [0xAB, 0xB6, 0x4D, 0x24, 0x1A, 0x93, 0x41, 0x4D] };
+pub const I_AVN_EXPANDER_IID: Guid = Guid { data1: 0x94795B5B, data2: 0xD644, data3: 0x5D8F, data4: [0x8C, 0x2D, 0x44, 0x7C, 0x6C, 0x65, 0x19, 0x38] };
 
 #[repr(C)]
 struct IAvnExpanderVtbl {
@@ -1735,6 +2145,10 @@ struct IAvnExpanderVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnExpander, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnExpander, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnExpander, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnExpander, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnExpander, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnExpander, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnExpander, i64) -> i32,
     get_content: unsafe extern "system" fn(*mut IAvnExpander, *mut *mut IAvnControl) -> i32,
     set_content: unsafe extern "system" fn(*mut IAvnExpander, *mut IAvnControl) -> i32,
     get_header: unsafe extern "system" fn(*mut IAvnExpander, *mut *mut IAvnControl) -> i32,
@@ -1798,6 +2212,32 @@ impl ComPtr<IAvnExpander> {
     pub fn unadvise_key_down(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_key_down)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -1885,7 +2325,7 @@ impl ComPtr<IAvnExpander> {
     }
 }
 
-pub const I_AVN_GRID_IID: Guid = Guid { data1: 0x2743F0B0, data2: 0x104C, data3: 0x5020, data4: [0xB1, 0x51, 0xAF, 0x63, 0x23, 0x9E, 0xD5, 0xB8] };
+pub const I_AVN_GRID_IID: Guid = Guid { data1: 0x8CA20E35, data2: 0xA227, data3: 0x5345, data4: [0xAC, 0x56, 0x11, 0x33, 0x45, 0x0C, 0x72, 0x4F] };
 
 #[repr(C)]
 struct IAvnGridVtbl {
@@ -1898,6 +2338,10 @@ struct IAvnGridVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnGrid, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnGrid, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnGrid, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnGrid, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnGrid, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnGrid, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnGrid, i64) -> i32,
     get_children: unsafe extern "system" fn(*mut IAvnGrid, *mut *mut IAvnControlList) -> i32,
     get_show_grid_lines: unsafe extern "system" fn(*mut IAvnGrid, *mut i32) -> i32,
     set_show_grid_lines: unsafe extern "system" fn(*mut IAvnGrid, i32) -> i32,
@@ -1959,6 +2403,32 @@ impl ComPtr<IAvnGrid> {
             hresult::check(hr)
         }
     }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_children(&self) -> Result<ComPtr<IAvnControlList>> {
         unsafe {
             let mut value: *mut IAvnControlList = ptr::null_mut();
@@ -2011,7 +2481,7 @@ impl ComPtr<IAvnGrid> {
     }
 }
 
-pub const I_AVN_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x7A8ABB1E, data2: 0x77CC, data3: 0x5345, data4: [0xB6, 0x55, 0xE8, 0x0A, 0x2A, 0xB9, 0xE3, 0xA6] };
+pub const I_AVN_ITEMS_CONTROL_IID: Guid = Guid { data1: 0xDD115B75, data2: 0xD91E, data3: 0x5A4E, data4: [0x96, 0x4B, 0x1E, 0x2D, 0xCD, 0x4F, 0x61, 0xB0] };
 
 #[repr(C)]
 struct IAvnItemsControlVtbl {
@@ -2024,6 +2494,10 @@ struct IAvnItemsControlVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnItemsControl, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnItemsControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnItemsControl, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnItemsControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnItemsControl, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnItemsControl, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnItemsControl, i64) -> i32,
     get_items: unsafe extern "system" fn(*mut IAvnItemsControl, *mut *mut IAvnItemList) -> i32,
 }
 
@@ -2079,6 +2553,32 @@ impl ComPtr<IAvnItemsControl> {
             hresult::check(hr)
         }
     }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_items(&self) -> Result<ComPtr<IAvnItemList>> {
         unsafe {
             let mut value: *mut IAvnItemList = ptr::null_mut();
@@ -2089,7 +2589,7 @@ impl ComPtr<IAvnItemsControl> {
     }
 }
 
-pub const I_AVN_LIST_BOX_IID: Guid = Guid { data1: 0x347B483D, data2: 0x99B4, data3: 0x5479, data4: [0x97, 0x54, 0xD3, 0xD6, 0x4D, 0xAF, 0x75, 0xD1] };
+pub const I_AVN_LIST_BOX_IID: Guid = Guid { data1: 0x74FA89C0, data2: 0xADFF, data3: 0x5380, data4: [0xA6, 0x0E, 0xF4, 0xEE, 0x84, 0x18, 0xA6, 0xC9] };
 
 #[repr(C)]
 struct IAvnListBoxVtbl {
@@ -2102,6 +2602,10 @@ struct IAvnListBoxVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnListBox, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnListBox, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnListBox, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnListBox, i64) -> i32,
     get_items: unsafe extern "system" fn(*mut IAvnListBox, *mut *mut IAvnItemList) -> i32,
     get_selected_index: unsafe extern "system" fn(*mut IAvnListBox, *mut i32) -> i32,
     set_selected_index: unsafe extern "system" fn(*mut IAvnListBox, i32) -> i32,
@@ -2161,6 +2665,32 @@ impl ComPtr<IAvnListBox> {
             hresult::check(hr)
         }
     }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_items(&self) -> Result<ComPtr<IAvnItemList>> {
         unsafe {
             let mut value: *mut IAvnItemList = ptr::null_mut();
@@ -2198,7 +2728,7 @@ impl ComPtr<IAvnListBox> {
     }
 }
 
-pub const I_AVN_LIST_BOX_ITEM_IID: Guid = Guid { data1: 0xB49D933F, data2: 0xD765, data3: 0x5051, data4: [0x97, 0x61, 0xAD, 0xCA, 0x01, 0xD1, 0x14, 0x56] };
+pub const I_AVN_LIST_BOX_ITEM_IID: Guid = Guid { data1: 0xA0FA6B7B, data2: 0xE5F6, data3: 0x5EE1, data4: [0x83, 0xAB, 0xD9, 0x8C, 0xF2, 0xC8, 0x79, 0x89] };
 
 #[repr(C)]
 struct IAvnListBoxItemVtbl {
@@ -2211,6 +2741,10 @@ struct IAvnListBoxItemVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnListBoxItem, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnListBoxItem, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnListBoxItem, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnListBoxItem, i64) -> i32,
     get_content: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut *mut IAvnControl) -> i32,
     set_content: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut IAvnControl) -> i32,
     get_is_selected: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut i32) -> i32,
@@ -2269,6 +2803,32 @@ impl ComPtr<IAvnListBoxItem> {
             hresult::check(hr)
         }
     }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_content(&self) -> Result<Option<ComPtr<IAvnControl>>> {
         unsafe {
             let mut value: *mut IAvnControl = ptr::null_mut();
@@ -2299,7 +2859,7 @@ impl ComPtr<IAvnListBoxItem> {
     }
 }
 
-pub const I_AVN_PANEL_IID: Guid = Guid { data1: 0x2FF39908, data2: 0x2FA3, data3: 0x567B, data4: [0xA2, 0xA5, 0x31, 0xD9, 0x73, 0xAA, 0x90, 0xA9] };
+pub const I_AVN_PANEL_IID: Guid = Guid { data1: 0x93B86A4B, data2: 0xAADA, data3: 0x56F6, data4: [0x89, 0x8A, 0xE9, 0x2E, 0xF7, 0xB0, 0x1E, 0x37] };
 
 #[repr(C)]
 struct IAvnPanelVtbl {
@@ -2312,6 +2872,10 @@ struct IAvnPanelVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnPanel, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnPanel, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnPanel, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnPanel, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnPanel, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnPanel, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnPanel, i64) -> i32,
     get_children: unsafe extern "system" fn(*mut IAvnPanel, *mut *mut IAvnControlList) -> i32,
 }
 
@@ -2367,6 +2931,32 @@ impl ComPtr<IAvnPanel> {
             hresult::check(hr)
         }
     }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_children(&self) -> Result<ComPtr<IAvnControlList>> {
         unsafe {
             let mut value: *mut IAvnControlList = ptr::null_mut();
@@ -2377,7 +2967,7 @@ impl ComPtr<IAvnPanel> {
     }
 }
 
-pub const I_AVN_HEADERED_CONTENT_CONTROL_IID: Guid = Guid { data1: 0xCE46B522, data2: 0x0516, data3: 0x5004, data4: [0xB4, 0xCA, 0x92, 0xB5, 0x65, 0x39, 0xBE, 0x19] };
+pub const I_AVN_HEADERED_CONTENT_CONTROL_IID: Guid = Guid { data1: 0xFF765019, data2: 0x0530, data3: 0x52BD, data4: [0x9B, 0x1D, 0xEF, 0x1E, 0xE2, 0x06, 0x1C, 0x69] };
 
 #[repr(C)]
 struct IAvnHeaderedContentControlVtbl {
@@ -2390,6 +2980,10 @@ struct IAvnHeaderedContentControlVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, i64) -> i32,
     get_content: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut *mut IAvnControl) -> i32,
     set_content: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut IAvnControl) -> i32,
     get_header: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut *mut IAvnControl) -> i32,
@@ -2448,6 +3042,32 @@ impl ComPtr<IAvnHeaderedContentControl> {
             hresult::check(hr)
         }
     }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_content(&self) -> Result<Option<ComPtr<IAvnControl>>> {
         unsafe {
             let mut value: *mut IAvnControl = ptr::null_mut();
@@ -2478,7 +3098,7 @@ impl ComPtr<IAvnHeaderedContentControl> {
     }
 }
 
-pub const I_AVN_RANGE_BASE_IID: Guid = Guid { data1: 0xE8E8EDA8, data2: 0xE433, data3: 0x54F4, data4: [0xB2, 0xCB, 0xAF, 0x24, 0xCE, 0x42, 0x5C, 0x74] };
+pub const I_AVN_RANGE_BASE_IID: Guid = Guid { data1: 0xB7040842, data2: 0x9D43, data3: 0x599D, data4: [0x9B, 0xE6, 0x3E, 0x92, 0xA8, 0xCE, 0xD9, 0x6E] };
 
 #[repr(C)]
 struct IAvnRangeBaseVtbl {
@@ -2491,6 +3111,10 @@ struct IAvnRangeBaseVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnRangeBase, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnRangeBase, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnRangeBase, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnRangeBase, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnRangeBase, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnRangeBase, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnRangeBase, i64) -> i32,
     get_minimum: unsafe extern "system" fn(*mut IAvnRangeBase, *mut f64) -> i32,
     set_minimum: unsafe extern "system" fn(*mut IAvnRangeBase, f64) -> i32,
     get_maximum: unsafe extern "system" fn(*mut IAvnRangeBase, *mut f64) -> i32,
@@ -2554,6 +3178,32 @@ impl ComPtr<IAvnRangeBase> {
     pub fn unadvise_key_down(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_key_down)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -2642,7 +3292,7 @@ impl ComPtr<IAvnRangeBase> {
     }
 }
 
-pub const I_AVN_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x0198E9D2, data2: 0xB4C0, data3: 0x547C, data4: [0xA2, 0xD2, 0x38, 0x76, 0xDF, 0x73, 0xBC, 0x9A] };
+pub const I_AVN_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x67298F80, data2: 0xA98F, data3: 0x5C99, data4: [0xA3, 0xA3, 0x65, 0x22, 0x52, 0x5B, 0x83, 0x05] };
 
 #[repr(C)]
 struct IAvnSelectingItemsControlVtbl {
@@ -2655,6 +3305,10 @@ struct IAvnSelectingItemsControlVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i64) -> i32,
     get_items: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut *mut IAvnItemList) -> i32,
     get_selected_index: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut i32) -> i32,
     set_selected_index: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i32) -> i32,
@@ -2714,6 +3368,32 @@ impl ComPtr<IAvnSelectingItemsControl> {
             hresult::check(hr)
         }
     }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_items(&self) -> Result<ComPtr<IAvnItemList>> {
         unsafe {
             let mut value: *mut IAvnItemList = ptr::null_mut();
@@ -2751,7 +3431,7 @@ impl ComPtr<IAvnSelectingItemsControl> {
     }
 }
 
-pub const I_AVN_TEMPLATED_CONTROL_IID: Guid = Guid { data1: 0x129460A1, data2: 0xF3BC, data3: 0x573F, data4: [0xB0, 0x5A, 0xB2, 0x80, 0xF4, 0xC4, 0x8C, 0x8A] };
+pub const I_AVN_TEMPLATED_CONTROL_IID: Guid = Guid { data1: 0x5E30FF6B, data2: 0x5FE8, data3: 0x5C0B, data4: [0xA2, 0xB8, 0x1E, 0x44, 0xFB, 0xE1, 0xC5, 0xEA] };
 
 #[repr(C)]
 struct IAvnTemplatedControlVtbl {
@@ -2764,6 +3444,10 @@ struct IAvnTemplatedControlVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnTemplatedControl, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTemplatedControl, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnTemplatedControl, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnTemplatedControl, i64) -> i32,
 }
 
 #[repr(C)]
@@ -2818,9 +3502,35 @@ impl ComPtr<IAvnTemplatedControl> {
             hresult::check(hr)
         }
     }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
 }
 
-pub const I_AVN_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0xD4F81ACA, data2: 0x0DF2, data3: 0x5FEE, data4: [0x88, 0x22, 0xE7, 0x7C, 0x94, 0x39, 0xD0, 0xAE] };
+pub const I_AVN_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0x5F0E7EFB, data2: 0x395E, data3: 0x567E, data4: [0xB4, 0x25, 0x07, 0x74, 0xF1, 0x20, 0xE3, 0x26] };
 
 #[repr(C)]
 struct IAvnToggleButtonVtbl {
@@ -2833,6 +3543,10 @@ struct IAvnToggleButtonVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnToggleButton, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnToggleButton, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnToggleButton, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnToggleButton, i64) -> i32,
     get_content: unsafe extern "system" fn(*mut IAvnToggleButton, *mut *mut IAvnControl) -> i32,
     set_content: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnControl) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnButtonClickHandler, *mut i64) -> i32,
@@ -2895,6 +3609,32 @@ impl ComPtr<IAvnToggleButton> {
             hresult::check(hr)
         }
     }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_content(&self) -> Result<Option<ComPtr<IAvnControl>>> {
         unsafe {
             let mut value: *mut IAvnControl = ptr::null_mut();
@@ -2951,7 +3691,7 @@ impl ComPtr<IAvnToggleButton> {
     }
 }
 
-pub const I_AVN_PROGRESS_BAR_IID: Guid = Guid { data1: 0x43BC2BBD, data2: 0xF2E1, data3: 0x5135, data4: [0xBD, 0x7D, 0x4F, 0x56, 0x01, 0xB2, 0xB0, 0x8E] };
+pub const I_AVN_PROGRESS_BAR_IID: Guid = Guid { data1: 0xA09C89A0, data2: 0xFFEF, data3: 0x53C7, data4: [0xA0, 0x72, 0x18, 0xE8, 0xD5, 0x50, 0x42, 0x0D] };
 
 #[repr(C)]
 struct IAvnProgressBarVtbl {
@@ -2964,6 +3704,10 @@ struct IAvnProgressBarVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnProgressBar, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnProgressBar, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnProgressBar, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnProgressBar, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnProgressBar, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnProgressBar, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnProgressBar, i64) -> i32,
     get_minimum: unsafe extern "system" fn(*mut IAvnProgressBar, *mut f64) -> i32,
     set_minimum: unsafe extern "system" fn(*mut IAvnProgressBar, f64) -> i32,
     get_maximum: unsafe extern "system" fn(*mut IAvnProgressBar, *mut f64) -> i32,
@@ -3035,6 +3779,32 @@ impl ComPtr<IAvnProgressBar> {
     pub fn unadvise_key_down(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_key_down)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -3179,7 +3949,7 @@ impl ComPtr<IAvnProgressBar> {
     }
 }
 
-pub const I_AVN_RADIO_BUTTON_IID: Guid = Guid { data1: 0x8F4D0452, data2: 0x5FCE, data3: 0x54BD, data4: [0x99, 0x5C, 0xF1, 0xAA, 0xD0, 0xD8, 0x40, 0xBB] };
+pub const I_AVN_RADIO_BUTTON_IID: Guid = Guid { data1: 0x66B662B0, data2: 0xA231, data3: 0x5712, data4: [0xAF, 0xA0, 0xBA, 0x79, 0x34, 0x07, 0x10, 0x82] };
 
 #[repr(C)]
 struct IAvnRadioButtonVtbl {
@@ -3192,6 +3962,10 @@ struct IAvnRadioButtonVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnRadioButton, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnRadioButton, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnRadioButton, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnRadioButton, i64) -> i32,
     get_content: unsafe extern "system" fn(*mut IAvnRadioButton, *mut *mut IAvnControl) -> i32,
     set_content: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnControl) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnButtonClickHandler, *mut i64) -> i32,
@@ -3253,6 +4027,32 @@ impl ComPtr<IAvnRadioButton> {
     pub fn unadvise_key_down(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_key_down)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -3326,7 +4126,7 @@ impl ComPtr<IAvnRadioButton> {
     }
 }
 
-pub const I_AVN_SCROLL_VIEWER_IID: Guid = Guid { data1: 0xEF9F789E, data2: 0xD769, data3: 0x55BB, data4: [0x97, 0x71, 0x08, 0xC3, 0xCB, 0x55, 0x8B, 0x08] };
+pub const I_AVN_SCROLL_VIEWER_IID: Guid = Guid { data1: 0x9D0EE74B, data2: 0x5D81, data3: 0x5DD2, data4: [0x95, 0x7C, 0x47, 0xC0, 0xCE, 0x7F, 0x6E, 0xDC] };
 
 #[repr(C)]
 struct IAvnScrollViewerVtbl {
@@ -3339,6 +4139,10 @@ struct IAvnScrollViewerVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnScrollViewer, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnScrollViewer, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnScrollViewer, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnScrollViewer, i64) -> i32,
     get_content: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut *mut IAvnControl) -> i32,
     set_content: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnControl) -> i32,
     get_bring_into_view_on_focus_change: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i32) -> i32,
@@ -3419,6 +4223,32 @@ impl ComPtr<IAvnScrollViewer> {
     pub fn unadvise_key_down(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_key_down)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -3617,7 +4447,7 @@ impl ComPtr<IAvnScrollViewer> {
     }
 }
 
-pub const I_AVN_SLIDER_IID: Guid = Guid { data1: 0xF9EE0B1F, data2: 0x2FEF, data3: 0x5D85, data4: [0xAA, 0x2B, 0x78, 0x72, 0x62, 0xA6, 0x0B, 0x28] };
+pub const I_AVN_SLIDER_IID: Guid = Guid { data1: 0x2E18DA4E, data2: 0xA44C, data3: 0x519B, data4: [0x93, 0xF5, 0x54, 0x03, 0xF5, 0x8D, 0x88, 0x7E] };
 
 #[repr(C)]
 struct IAvnSliderVtbl {
@@ -3630,6 +4460,10 @@ struct IAvnSliderVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnSlider, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnSlider, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnSlider, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnSlider, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnSlider, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnSlider, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnSlider, i64) -> i32,
     get_minimum: unsafe extern "system" fn(*mut IAvnSlider, *mut f64) -> i32,
     set_minimum: unsafe extern "system" fn(*mut IAvnSlider, f64) -> i32,
     get_maximum: unsafe extern "system" fn(*mut IAvnSlider, *mut f64) -> i32,
@@ -3703,6 +4537,32 @@ impl ComPtr<IAvnSlider> {
     pub fn unadvise_key_down(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_key_down)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -3861,7 +4721,7 @@ impl ComPtr<IAvnSlider> {
     }
 }
 
-pub const I_AVN_STACK_PANEL_IID: Guid = Guid { data1: 0x7BC5ACAD, data2: 0x90CE, data3: 0x5F67, data4: [0x90, 0xDE, 0xCF, 0x34, 0x74, 0x59, 0x0C, 0xA2] };
+pub const I_AVN_STACK_PANEL_IID: Guid = Guid { data1: 0x97294E00, data2: 0x90AD, data3: 0x54C1, data4: [0x9F, 0x86, 0xB4, 0xA2, 0x6F, 0x55, 0xC1, 0x2D] };
 
 #[repr(C)]
 struct IAvnStackPanelVtbl {
@@ -3874,6 +4734,10 @@ struct IAvnStackPanelVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnStackPanel, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnStackPanel, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnStackPanel, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnStackPanel, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnStackPanel, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnStackPanel, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnStackPanel, i64) -> i32,
     get_children: unsafe extern "system" fn(*mut IAvnStackPanel, *mut *mut IAvnControlList) -> i32,
     get_spacing: unsafe extern "system" fn(*mut IAvnStackPanel, *mut f64) -> i32,
     set_spacing: unsafe extern "system" fn(*mut IAvnStackPanel, f64) -> i32,
@@ -3933,6 +4797,32 @@ impl ComPtr<IAvnStackPanel> {
             hresult::check(hr)
         }
     }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_children(&self) -> Result<ComPtr<IAvnControlList>> {
         unsafe {
             let mut value: *mut IAvnControlList = ptr::null_mut();
@@ -3971,7 +4861,7 @@ impl ComPtr<IAvnStackPanel> {
     }
 }
 
-pub const I_AVN_TEXT_BLOCK_IID: Guid = Guid { data1: 0x5959F966, data2: 0x5938, data3: 0x56E1, data4: [0x93, 0x7D, 0xA4, 0x60, 0xBF, 0x06, 0xCD, 0xAB] };
+pub const I_AVN_TEXT_BLOCK_IID: Guid = Guid { data1: 0xD6B638A1, data2: 0x5CF1, data3: 0x50C3, data4: [0x95, 0xDB, 0xBC, 0xC5, 0x39, 0x4B, 0x24, 0xD3] };
 
 #[repr(C)]
 struct IAvnTextBlockVtbl {
@@ -3984,6 +4874,10 @@ struct IAvnTextBlockVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnTextBlock, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTextBlock, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTextBlock, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTextBlock, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnTextBlock, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnTextBlock, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnTextBlock, i64) -> i32,
     get_text: unsafe extern "system" fn(*mut IAvnTextBlock, *mut *mut u16) -> i32,
     set_text: unsafe extern "system" fn(*mut IAvnTextBlock, *mut u16) -> i32,
 }
@@ -4040,6 +4934,32 @@ impl ComPtr<IAvnTextBlock> {
             hresult::check(hr)
         }
     }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_text(&self) -> Result<*mut u16> {
         unsafe {
             let mut value: *mut u16 = ptr::null_mut();
@@ -4056,7 +4976,7 @@ impl ComPtr<IAvnTextBlock> {
     }
 }
 
-pub const I_AVN_TEXT_BOX_IID: Guid = Guid { data1: 0x7DAA8E11, data2: 0xC860, data3: 0x533A, data4: [0x8C, 0x24, 0xB1, 0xB4, 0x66, 0x1F, 0x15, 0xDC] };
+pub const I_AVN_TEXT_BOX_IID: Guid = Guid { data1: 0x268AC18F, data2: 0xC33B, data3: 0x5657, data4: [0x8E, 0x88, 0xB2, 0xB5, 0x87, 0xDE, 0xCB, 0x50] };
 
 #[repr(C)]
 struct IAvnTextBoxVtbl {
@@ -4069,6 +4989,10 @@ struct IAvnTextBoxVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnTextBox, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTextBox, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnTextBox, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnTextBox, i64) -> i32,
     get_accepts_return: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
     set_accepts_return: unsafe extern "system" fn(*mut IAvnTextBox, i32) -> i32,
     get_accepts_tab: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
@@ -4167,6 +5091,32 @@ impl ComPtr<IAvnTextBox> {
     pub fn unadvise_key_down(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_key_down)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -4499,7 +5449,7 @@ impl ComPtr<IAvnTextBox> {
     }
 }
 
-pub const I_AVN_TOGGLE_SWITCH_IID: Guid = Guid { data1: 0x01593F70, data2: 0x59B3, data3: 0x5F76, data4: [0xBF, 0x1A, 0x91, 0x74, 0x9F, 0xE7, 0x28, 0x1C] };
+pub const I_AVN_TOGGLE_SWITCH_IID: Guid = Guid { data1: 0x93284A82, data2: 0x365E, data3: 0x51A7, data4: [0x94, 0xE4, 0x9B, 0x72, 0x43, 0xC4, 0x88, 0x98] };
 
 #[repr(C)]
 struct IAvnToggleSwitchVtbl {
@@ -4512,6 +5462,10 @@ struct IAvnToggleSwitchVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnToggleSwitch, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnToggleSwitch, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnToggleSwitch, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnToggleSwitch, i64) -> i32,
     get_content: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut *mut IAvnControl) -> i32,
     set_content: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnControl) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnButtonClickHandler, *mut i64) -> i32,
@@ -4575,6 +5529,32 @@ impl ComPtr<IAvnToggleSwitch> {
     pub fn unadvise_key_down(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_key_down)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -4662,7 +5642,7 @@ impl ComPtr<IAvnToggleSwitch> {
     }
 }
 
-pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0xD280F925, data2: 0x400F, data3: 0x598D, data4: [0x88, 0xCA, 0x76, 0x4B, 0xF6, 0x06, 0xAC, 0x4A] };
+pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0xFE452A84, data2: 0x1007, data3: 0x5A5B, data4: [0x8E, 0x2D, 0xF9, 0xC3, 0x55, 0x66, 0x6F, 0xA8] };
 
 #[repr(C)]
 struct IAvnWindowVtbl {
@@ -4675,6 +5655,10 @@ struct IAvnWindowVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnWindow, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnWindow, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnWindow, i64) -> i32,
     get_content: unsafe extern "system" fn(*mut IAvnWindow, *mut *mut IAvnControl) -> i32,
     set_content: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnControl) -> i32,
     get_title: unsafe extern "system" fn(*mut IAvnWindow, *mut *mut u16) -> i32,
@@ -4736,6 +5720,32 @@ impl ComPtr<IAvnWindow> {
             hresult::check(hr)
         }
     }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_content(&self) -> Result<Option<ComPtr<IAvnControl>>> {
         unsafe {
             let mut value: *mut IAvnControl = ptr::null_mut();
@@ -4784,7 +5794,7 @@ impl ComPtr<IAvnWindow> {
     }
 }
 
-pub const I_AVN_STYLED_ELEMENT_IID: Guid = Guid { data1: 0x1304F0EE, data2: 0x7B6D, data3: 0x5530, data4: [0x90, 0xBD, 0x3A, 0x0E, 0x4E, 0x6F, 0x0D, 0xA1] };
+pub const I_AVN_STYLED_ELEMENT_IID: Guid = Guid { data1: 0x3F3B5D55, data2: 0xA5C6, data3: 0x52F4, data4: [0xB6, 0x81, 0xF4, 0xCE, 0x94, 0x4F, 0xCD, 0x89] };
 
 #[repr(C)]
 struct IAvnStyledElementVtbl {
@@ -4822,7 +5832,7 @@ impl ComPtr<IAvnStyledElement> {
     }
 }
 
-pub const I_AVN_CANVAS_STATICS_IID: Guid = Guid { data1: 0xDBE644A9, data2: 0xFE68, data3: 0x5371, data4: [0x9F, 0x25, 0x85, 0xE6, 0x1D, 0x97, 0x2B, 0xA3] };
+pub const I_AVN_CANVAS_STATICS_IID: Guid = Guid { data1: 0xB27FA99C, data2: 0x1D4B, data3: 0x5A56, data4: [0xB3, 0xED, 0xE2, 0x6E, 0xF6, 0xBE, 0xAF, 0xE8] };
 
 #[repr(C)]
 struct IAvnCanvasStaticsVtbl {
@@ -4903,7 +5913,7 @@ impl ComPtr<IAvnCanvasStatics> {
     }
 }
 
-pub const I_AVN_DOCK_PANEL_STATICS_IID: Guid = Guid { data1: 0x7D30ABDC, data2: 0x7AE6, data3: 0x5DA0, data4: [0x93, 0x37, 0xB6, 0xA7, 0x3B, 0xBD, 0x63, 0xC8] };
+pub const I_AVN_DOCK_PANEL_STATICS_IID: Guid = Guid { data1: 0xC58034E0, data2: 0xF243, data3: 0x5EED, data4: [0x82, 0xDE, 0xD5, 0xC2, 0x9C, 0xAF, 0x50, 0xD0] };
 
 #[repr(C)]
 struct IAvnDockPanelStaticsVtbl {
@@ -4939,7 +5949,7 @@ impl ComPtr<IAvnDockPanelStatics> {
     }
 }
 
-pub const I_AVN_GRID_STATICS_IID: Guid = Guid { data1: 0x4AF27432, data2: 0x6926, data3: 0x557E, data4: [0x9C, 0xD0, 0x14, 0x7D, 0x1F, 0x81, 0x19, 0x00] };
+pub const I_AVN_GRID_STATICS_IID: Guid = Guid { data1: 0x06B7C7B2, data2: 0xCB3C, data3: 0x53A8, data4: [0x92, 0x15, 0x26, 0x04, 0x91, 0xAE, 0xF6, 0xB0] };
 
 #[repr(C)]
 struct IAvnGridStaticsVtbl {
@@ -5035,7 +6045,7 @@ impl ComPtr<IAvnGridStatics> {
     }
 }
 
-pub const IAVN_CONTROL_FACTORY_IID: Guid = Guid { data1: 0xB2B11056, data2: 0xC4E3, data3: 0x528A, data4: [0x82, 0x8A, 0xCB, 0xE6, 0x6E, 0xDB, 0xE8, 0xF1] };
+pub const IAVN_CONTROL_FACTORY_IID: Guid = Guid { data1: 0x8E26E35F, data2: 0x6732, data3: 0x5E54, data4: [0x90, 0xE1, 0x49, 0x19, 0x64, 0x96, 0xEF, 0x98] };
 
 #[repr(C)]
 struct IAvnControlFactoryVtbl {

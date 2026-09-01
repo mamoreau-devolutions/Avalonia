@@ -94,6 +94,8 @@ public class ComSourceEmitterTests
             control,
             StringComparison.Ordinal);
         Assert.Contains("eventArgs.Handled = handled != 0;", control, StringComparison.Ordinal);
+        Assert.Contains("int AdvisePointerEntered(IAvnControlPointerEnteredHandler? handler", control, StringComparison.Ordinal);
+        Assert.Contains("int AdvisePointerExited(IAvnControlPointerExitedHandler? handler", control, StringComparison.Ordinal);
         Assert.Contains(
             "int Invoke(int Key, int PhysicalKey, int KeyModifiers, string? KeySymbol, ref int Handled);",
             files["IAvnControlKeyDownHandler.g.cs"],

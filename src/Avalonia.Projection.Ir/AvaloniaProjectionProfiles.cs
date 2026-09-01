@@ -43,7 +43,8 @@ public static class AvaloniaProjectionProfiles
         {
             ["Avalonia.AvaloniaObject"] = [],
             ["Avalonia.StyledElement"] = ["Classes"],
-            ["Avalonia.Controls.Control"] = ["IsEnabled", "KeyDown"],
+            ["Avalonia.Controls.Control"] =
+                ["IsEnabled", "KeyDown", "PointerEntered", "PointerExited"],
             ["Avalonia.Controls.ContentControl"] = ["Content"],
             ["Avalonia.Controls.Primitives.HeaderedContentControl"] = ["Header"],
             ["Avalonia.Controls.ItemsControl"] = ["Items"],
@@ -194,6 +195,14 @@ public static class AvaloniaProjectionProfiles
                     new() { Name = "KeySymbol" },
                     new() { Name = "Handled", Direction = ParameterDirection.InOut },
                 ],
+            },
+            ["Avalonia.Controls.Control.PointerEntered"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.Control.PointerExited"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
             },
         },
         AttachedProperties = new Dictionary<string, IReadOnlyList<string>>(StringComparer.Ordinal)

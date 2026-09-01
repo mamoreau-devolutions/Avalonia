@@ -1037,6 +1037,32 @@ impl Border {
         self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
+        Ok(self)
+    }
     pub fn get_child(&self) -> Result<Option<Control>> {
         Ok(self.raw.get_child()?.map(|raw| Control { raw }))
     }
@@ -1097,6 +1123,32 @@ impl Button {
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
         self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -1161,6 +1213,32 @@ impl Canvas {
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
         self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
         Ok(self)
     }
     pub fn children(&self) -> Result<ControlList> {
@@ -1244,6 +1322,32 @@ impl CheckBox {
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
         self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -1331,6 +1435,32 @@ impl ComboBox {
         self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
+        Ok(self)
+    }
     pub fn items(&self) -> Result<ItemList> {
         Ok(ItemList { raw: self.raw.get_items()? })
     }
@@ -1410,6 +1540,32 @@ impl ComboBoxItem {
         self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
+        Ok(self)
+    }
     pub fn get_content(&self) -> Result<Option<Control>> {
         Ok(self.raw.get_content()?.map(|raw| Control { raw }))
     }
@@ -1469,6 +1625,32 @@ impl ContentControl {
         self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
+        Ok(self)
+    }
     pub fn get_content(&self) -> Result<Option<Control>> {
         Ok(self.raw.get_content()?.map(|raw| Control { raw }))
     }
@@ -1520,6 +1702,32 @@ impl Control {
         self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
+        Ok(self)
+    }
 }
 
 impl AsControl for Control {
@@ -1558,6 +1766,32 @@ impl Decorator {
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
         self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
         Ok(self)
     }
     pub fn get_child(&self) -> Result<Option<Control>> {
@@ -1609,6 +1843,32 @@ impl DockPanel {
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
         self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
         Ok(self)
     }
     pub fn children(&self) -> Result<ControlList> {
@@ -1689,6 +1949,32 @@ impl Expander {
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
         self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -1796,6 +2082,32 @@ impl Grid {
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
         self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
         Ok(self)
     }
     pub fn children(&self) -> Result<ControlList> {
@@ -1914,6 +2226,32 @@ impl ItemsControl {
         self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
+        Ok(self)
+    }
     pub fn items(&self) -> Result<ItemList> {
         Ok(ItemList { raw: self.raw.get_items()? })
     }
@@ -1959,6 +2297,32 @@ impl ListBox {
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
         self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
         Ok(self)
     }
     pub fn items(&self) -> Result<ItemList> {
@@ -2029,6 +2393,32 @@ impl ListBoxItem {
         self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
+        Ok(self)
+    }
     pub fn get_content(&self) -> Result<Option<Control>> {
         Ok(self.raw.get_content()?.map(|raw| Control { raw }))
     }
@@ -2088,6 +2478,32 @@ impl Panel {
         self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
+        Ok(self)
+    }
     pub fn children(&self) -> Result<ControlList> {
         Ok(ControlList { raw: self.raw.get_children()? })
     }
@@ -2133,6 +2549,32 @@ impl HeaderedContentControl {
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
         self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -2191,6 +2633,32 @@ impl RangeBase {
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
         self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
         Ok(self)
     }
     pub fn get_minimum(&self) -> Result<f64> { Ok(self.raw.get_minimum()?) }
@@ -2286,6 +2754,32 @@ impl SelectingItemsControl {
         self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
+        Ok(self)
+    }
     pub fn items(&self) -> Result<ItemList> {
         Ok(ItemList { raw: self.raw.get_items()? })
     }
@@ -2354,6 +2848,32 @@ impl TemplatedControl {
         self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
+        Ok(self)
+    }
 }
 
 impl AsControl for TemplatedControl {
@@ -2392,6 +2912,32 @@ impl ToggleButton {
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
         self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -2477,6 +3023,32 @@ impl ProgressBar {
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
         self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
         Ok(self)
     }
     pub fn get_minimum(&self) -> Result<f64> { Ok(self.raw.get_minimum()?) }
@@ -2610,6 +3182,32 @@ impl RadioButton {
         self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
+        Ok(self)
+    }
     pub fn get_content(&self) -> Result<Option<Control>> {
         Ok(self.raw.get_content()?.map(|raw| Control { raw }))
     }
@@ -2704,6 +3302,32 @@ impl ScrollViewer {
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
         self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -2841,6 +3465,32 @@ impl Slider {
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
         self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
         Ok(self)
     }
     pub fn get_minimum(&self) -> Result<f64> { Ok(self.raw.get_minimum()?) }
@@ -2982,6 +3632,32 @@ impl StackPanel {
         self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
+        Ok(self)
+    }
     pub fn children(&self) -> Result<ControlList> {
         Ok(ControlList { raw: self.raw.get_children()? })
     }
@@ -3048,6 +3724,32 @@ impl TextBlock {
         self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
+        Ok(self)
+    }
     pub fn get_text(&self) -> Result<Option<String>> {
         unsafe { Ok(sys::take_utf16(self.raw.get_text()?)) }
     }
@@ -3097,6 +3799,32 @@ impl TextBox {
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
         self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
         Ok(self)
     }
     pub fn get_accepts_return(&self) -> Result<bool> { Ok(self.raw.get_accepts_return()?) }
@@ -3311,6 +4039,32 @@ impl ToggleSwitch {
         self.subscribe_key_down(callback)?.detach();
         Ok(self)
     }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
+        Ok(self)
+    }
     pub fn get_content(&self) -> Result<Option<Control>> {
         Ok(self.raw.get_content()?.map(|raw| Control { raw }))
     }
@@ -3416,6 +4170,32 @@ impl Window {
     }
     pub fn on_key_down(self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
         self.subscribe_key_down(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_entered(callback)?.detach();
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_pointer_exited(callback)?.detach();
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
