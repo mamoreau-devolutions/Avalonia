@@ -179,7 +179,7 @@ fn emit_type(ir: &ProjectionIr, ty: &ProjectedType) -> String {
             }
         }
         for method in &owner.methods {
-            out.push_str(&emit_method(method));
+            out.push_str(&emit_method(ty, method));
         }
         for event in &owner.events {
             out.push_str(&emit_event(event));
@@ -389,8 +389,16 @@ fn event_arguments_name(event: &ProjectedEvent) -> String {
     )
 }
 
-fn emit_method(method: &crate::ir::ProjectedMethod) -> String {
+fn emit_method(ty: &ProjectedType, method: &crate::ir::ProjectedMethod) -> String {
     let name = to_snake(&method.name);
+    if ty.name == "IAvnWindow" && method.name == "Show" {
+        return "    pub fn show(&self) -> Result<()> {\n\
+                \x20       self.raw.show()?;\n\
+                \x20       crate::runtime::persist_object_for_app(self.clone());\n\
+                \x20       Ok(())\n\
+                \x20   }\n"
+            .to_string();
+    }
     let arguments = method
         .parameters
         .iter()

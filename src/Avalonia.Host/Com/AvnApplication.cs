@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Styling;
 using Avalonia.Threading;
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 
 namespace Avalonia.Host.Com;
@@ -32,9 +33,12 @@ public partial class AvnApplication : IAvnApplication
                 .UseHarfBuzz()
                 .SetupWithLifetime(lifetime);
 
-            var started = handler.OnStarted();
-            if (started < 0)
-                return started;
+            lifetime.Startup += (_, _) =>
+            {
+                var started = handler.OnStarted();
+                if (started < 0)
+                    Marshal.ThrowExceptionForHR(started);
+            };
 
             lifetime.Start(Array.Empty<string>());
             return HResults.S_OK;

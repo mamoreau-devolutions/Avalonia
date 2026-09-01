@@ -4701,7 +4701,11 @@ impl Window {
         Ok(self)
     }
     pub fn close(&self) -> Result<()> { Ok(self.raw.close()?) }
-    pub fn show(&self) -> Result<()> { Ok(self.raw.show()?) }
+    pub fn show(&self) -> Result<()> {
+        self.raw.show()?;
+        crate::runtime::persist_object_for_app(self.clone());
+        Ok(())
+    }
     pub fn show_with_window(&self, owner: &Window) -> Result<()> { Ok(self.raw.show_with_window(&owner.raw)?) }
 }
 

@@ -1,5 +1,6 @@
 use crate::{Error, Result};
 use avalonia_sys as sys;
+use std::any::Any;
 use std::cell::RefCell;
 use std::fmt;
 use std::marker::PhantomData;
@@ -27,6 +28,7 @@ pub enum ResourceValue {
 thread_local! {
     static FACTORY: RefCell<Option<sys::ComPtr<sys::IAvnControlFactory>>> = const { RefCell::new(None) };
     static APP_SUBSCRIPTIONS: RefCell<Vec<EventSubscription>> = const { RefCell::new(Vec::new()) };
+    static APP_OBJECTS: RefCell<Vec<Box<dyn Any>>> = const { RefCell::new(Vec::new()) };
 }
 
 pub trait AsControl {
@@ -166,15 +168,24 @@ impl App {
             let previous = current.replace(Some(controls));
             let previous_subscriptions =
                 APP_SUBSCRIPTIONS.with(|subscriptions| subscriptions.take());
+            let previous_objects = APP_OBJECTS.with(|objects| objects.take());
             let result = self.application.run(&handler);
             APP_SUBSCRIPTIONS.with(|subscriptions| {
                 subscriptions.borrow_mut().clear();
                 subscriptions.replace(previous_subscriptions);
             });
+            APP_OBJECTS.with(|objects| {
+                objects.borrow_mut().clear();
+                objects.replace(previous_objects);
+            });
             current.replace(previous);
             Ok(result?)
         })
     }
+}
+
+pub(crate) fn persist_object_for_app(value: impl Any) {
+    APP_OBJECTS.with(|objects| objects.borrow_mut().push(Box::new(value)));
 }
 
 pub(crate) fn with_factory<T>(

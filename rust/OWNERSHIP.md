@@ -46,6 +46,17 @@ Builder-style `on_*` transfers that guard to an application-scoped subscription
 bag so handlers remain active after temporary builder values move into the
 managed tree. The bag is cleared deterministically when `App::run` ends.
 
+`Window::show` similarly retains a cloned projected handle in an
+application-scoped top-level bag. Unlike child controls, a shown Window cannot
+rely on a parent control to provide its managed root. The bag is released when
+the application lifetime exits.
+
+Rust application startup runs from
+`ClassicDesktopStyleApplicationLifetime.Startup`, after Avalonia installs its
+global window-open/window-close tracking. Windows shown before that point are
+not visible to `OnLastWindowClose` accounting and must never be created by the
+host bootstrap.
+
 The authoritative ABI is generated at
 `avalonia-sys/include/avalonia-rust-abi.h`. Interface ABI versions and IIDs are
 independent from the projection IR schema version.
