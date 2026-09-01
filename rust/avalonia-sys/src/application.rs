@@ -1,5 +1,7 @@
 use crate::app_handler::IAvnAppHandler;
+use crate::async_completion::IAvnAsyncCompletion;
 use crate::com::{ComInterface, ComPtr, IUnknown};
+use crate::generated::IAvnWindow;
 use crate::guid::Guid;
 use crate::hresult::{self, Result};
 use std::ffi::c_void;
@@ -108,6 +110,26 @@ struct IAvnApplicationVtbl {
         *mut i32,
         *mut *mut IAvnResourceValue,
     ) -> i32,
+    start_delay: unsafe extern "system" fn(
+        *mut IAvnApplication,
+        i32,
+        *mut IAvnAsyncCompletion,
+        *mut i64,
+    ) -> i32,
+    start_clipboard_set_text: unsafe extern "system" fn(
+        *mut IAvnApplication,
+        *mut IAvnWindow,
+        *const u16,
+        *mut IAvnAsyncCompletion,
+        *mut i64,
+    ) -> i32,
+    start_clipboard_get_text: unsafe extern "system" fn(
+        *mut IAvnApplication,
+        *mut IAvnWindow,
+        *mut IAvnAsyncCompletion,
+        *mut i64,
+    ) -> i32,
+    cancel_async_operation: unsafe extern "system" fn(*mut IAvnApplication, i64) -> i32,
 }
 
 #[repr(C)]
@@ -195,6 +217,79 @@ impl ComPtr<IAvnApplication> {
                     .map(Some)
                     .ok_or(crate::Error(hresult::E_POINTER))
             }
+        }
+    }
+
+    pub fn start_delay(
+        &self,
+        milliseconds: i32,
+        completion: &ComPtr<IAvnAsyncCompletion>,
+    ) -> Result<i64> {
+        unsafe {
+            let mut operation_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().start_delay)(
+                self.as_raw(),
+                milliseconds,
+                completion.as_raw(),
+                &mut operation_id,
+            );
+            hresult::check(hr).map(|_| operation_id)
+        }
+    }
+
+    pub fn start_clipboard_set_text(
+        &self,
+        window: &ComPtr<IAvnWindow>,
+        text: &[u16],
+        completion: &ComPtr<IAvnAsyncCompletion>,
+    ) -> Result<i64> {
+        unsafe {
+            let mut operation_id = 0;
+            let hr = ((*self.as_raw())
+                .vtbl
+                .as_ref()
+                .unwrap()
+                .start_clipboard_set_text)(
+                self.as_raw(),
+                window.as_raw(),
+                text.as_ptr(),
+                completion.as_raw(),
+                &mut operation_id,
+            );
+            hresult::check(hr).map(|_| operation_id)
+        }
+    }
+
+    pub fn start_clipboard_get_text(
+        &self,
+        window: &ComPtr<IAvnWindow>,
+        completion: &ComPtr<IAvnAsyncCompletion>,
+    ) -> Result<i64> {
+        unsafe {
+            let mut operation_id = 0;
+            let hr = ((*self.as_raw())
+                .vtbl
+                .as_ref()
+                .unwrap()
+                .start_clipboard_get_text)(
+                self.as_raw(),
+                window.as_raw(),
+                completion.as_raw(),
+                &mut operation_id,
+            );
+            hresult::check(hr).map(|_| operation_id)
+        }
+    }
+
+    pub fn cancel_async_operation(&self, operation_id: i64) -> Result<()> {
+        unsafe {
+            hresult::check(((*self.as_raw())
+                .vtbl
+                .as_ref()
+                .unwrap()
+                .cancel_async_operation)(
+                self.as_raw(), operation_id
+            ))
         }
     }
 }

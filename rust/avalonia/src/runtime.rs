@@ -1,13 +1,16 @@
-use crate::{Error, Result, Window};
+use crate::async_runtime::{decode_none, decode_string, ScopedTask};
+use crate::{AsyncOperation, Error, Result, Window};
 use avalonia_sys as sys;
 use std::any::Any;
 use std::cell::RefCell;
 use std::fmt;
+use std::future::Future;
 use std::marker::PhantomData;
 use std::ops::Deref;
 use std::path::Path;
 use std::rc::Rc;
 use std::sync::{Arc, Mutex};
+use std::time::Duration;
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -108,6 +111,7 @@ pub struct AppScope {
 struct AppScopeState {
     subscriptions: Mutex<Vec<PersistentSubscription>>,
     objects: Mutex<Vec<Box<dyn Any + Send>>>,
+    tasks: Mutex<Vec<Arc<ScopedTask>>>,
 }
 
 impl AppScope {
@@ -117,6 +121,7 @@ impl AppScope {
             state: Arc::new(AppScopeState {
                 subscriptions: Mutex::new(Vec::new()),
                 objects: Mutex::new(Vec::new()),
+                tasks: Mutex::new(Vec::new()),
             }),
         }
     }
@@ -131,6 +136,52 @@ impl AppScope {
         Ok(())
     }
 
+    pub fn delay(&self, duration: Duration) -> Result<AsyncOperation<()>> {
+        let milliseconds =
+            i32::try_from(duration.as_millis()).map_err(|_| Error::InvalidAsyncValue)?;
+        let application = self.context.application.clone();
+        AsyncOperation::start(
+            application.clone(),
+            move |completion| application.start_delay(milliseconds, completion),
+            decode_none,
+        )
+    }
+
+    pub fn clipboard_set_text(
+        &self,
+        window: &Window,
+        text: impl AsRef<str>,
+    ) -> Result<AsyncOperation<()>> {
+        let text: Vec<u16> = text.as_ref().encode_utf16().chain(Some(0)).collect();
+        let window = window.raw.clone();
+        let application = self.context.application.clone();
+        AsyncOperation::start(
+            application.clone(),
+            move |completion| application.start_clipboard_set_text(&window, &text, completion),
+            decode_none,
+        )
+    }
+
+    pub fn clipboard_get_text(&self, window: &Window) -> Result<AsyncOperation<Option<String>>> {
+        let window = window.raw.clone();
+        let application = self.context.application.clone();
+        AsyncOperation::start(
+            application.clone(),
+            move |completion| application.start_clipboard_get_text(&window, completion),
+            decode_string,
+        )
+    }
+
+    pub fn spawn(&self, future: impl Future<Output = ()> + Send + 'static) -> Result<()> {
+        let task = ScopedTask::spawn(self.context.dispatcher.clone(), future)?;
+        self.state
+            .tasks
+            .lock()
+            .expect("application task scope lock poisoned")
+            .push(task);
+        Ok(())
+    }
+
     pub(crate) fn retain_subscription(&self, subscription: EventSubscription) {
         self.state
             .subscriptions
@@ -140,6 +191,15 @@ impl AppScope {
     }
 
     fn clear(&self) {
+        for task in self
+            .state
+            .tasks
+            .lock()
+            .expect("application task scope lock poisoned")
+            .drain(..)
+        {
+            task.cancel();
+        }
         self.state
             .subscriptions
             .lock()
@@ -271,7 +331,11 @@ pub(crate) fn with_factory<T>(
 fn to_abi_error(error: Error) -> sys::Error {
     match error {
         Error::Abi(error) => error,
-        Error::Load(_) | Error::NoUiContext | Error::InvalidEnumValue(_) => sys::Error(sys::E_FAIL),
+        Error::Load(_)
+        | Error::NoUiContext
+        | Error::InvalidEnumValue(_)
+        | Error::InvalidAsyncValue
+        | Error::Async { .. } => sys::Error(sys::E_FAIL),
     }
 }
 

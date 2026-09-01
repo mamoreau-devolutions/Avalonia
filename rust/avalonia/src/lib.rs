@@ -1,7 +1,9 @@
 #[rustfmt::skip]
 mod generated;
+mod async_runtime;
 mod runtime;
 
+pub use async_runtime::{AsyncOperation, AsyncValue};
 pub use generated::*;
 pub use runtime::{
     App, AppContext, AppScope, AsControl, EventSubscription, ResourceValue, ThemeVariant,
@@ -13,6 +15,8 @@ pub enum Error {
     Load(String),
     NoUiContext,
     InvalidEnumValue(i32),
+    InvalidAsyncValue,
+    Async { hresult: i32, message: String },
 }
 
 impl From<avalonia_sys::Error> for Error {
@@ -31,6 +35,13 @@ impl std::fmt::Display for Error {
             }
             Self::InvalidEnumValue(value) => {
                 write!(formatter, "invalid projected enum value {value}")
+            }
+            Self::InvalidAsyncValue => formatter.write_str("invalid asynchronous result value"),
+            Self::Async { hresult, message } => {
+                write!(
+                    formatter,
+                    "asynchronous operation failed (0x{hresult:08X}): {message}"
+                )
             }
         }
     }

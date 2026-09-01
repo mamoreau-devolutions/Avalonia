@@ -5,6 +5,7 @@ use avalonia::{
 
 fn main() -> avalonia::Result<()> {
     App::load_from_env()?.run(|scope| {
+        let window = Window::new()?.title("Control basics")?;
         let click_count = TextBlock::new()?.text("Clicked 0 times")?;
         let click_count_for_handler = click_count.clone();
         let mut clicks = 0;
@@ -167,30 +168,113 @@ fn main() -> avalonia::Result<()> {
                     .expect("failed to update hover state");
             })?;
 
-        scope.mount(
-            Window::new()?.title("Control basics")?.content(
-                StackPanel::new()?
-                    .orientation(Orientation::Vertical)?
-                    .spacing(8.0)?
-                    .child(button)?
-                    .child(click_count)?
-                    .child(slider)?
-                    .child(slider_value)?
-                    .child(text_box)?
-                    .child(typed_text)?
-                    .child(key_readout)?
-                    .child(toggle)?
-                    .child(toggle_value)?
-                    .child(TextBlock::new()?.text("Selection & expand patterns")?)?
-                    .child(combo_box)?
-                    .child(combo_status)?
-                    .child(list_box)?
-                    .child(list_status)?
-                    .child(radio_buttons)?
-                    .child(expander)?
-                    .child(TextBlock::new()?.text("Hover")?)?
-                    .child(hover_panel)?,
-            )?,
-        )
+        let clipboard_text = TextBox::new()?.text("Hello clipboard")?;
+        let clipboard_status = TextBlock::new()?.text("")?;
+
+        let copy_scope = scope.clone();
+        let copy_window = window.clone();
+        let copy_text = clipboard_text.clone();
+        let copy_status = clipboard_status.clone();
+        let copy = Button::new()?
+            .content(TextBlock::new()?.text("Copy")?)?
+            .on_click(scope, move |_| {
+                let text = copy_text
+                    .get_text()
+                    .expect("failed to read clipboard text")
+                    .unwrap_or_default();
+                match copy_scope.clipboard_set_text(&copy_window, &text) {
+                    Ok(operation) => {
+                        let status = copy_status.clone();
+                        copy_scope
+                            .spawn(async move {
+                                match operation.await {
+                                    Ok(()) => status
+                                        .set_text(format!("copied {} chars", text.len()))
+                                        .expect("failed to update clipboard status"),
+                                    Err(error) => status
+                                        .set_text(error.to_string())
+                                        .expect("failed to update clipboard status"),
+                                }
+                            })
+                            .expect("failed to spawn clipboard copy");
+                    }
+                    Err(error) => copy_status
+                        .set_text(error.to_string())
+                        .expect("failed to update clipboard status"),
+                }
+            })?;
+
+        let paste_scope = scope.clone();
+        let paste_window = window.clone();
+        let paste_text = clipboard_text.clone();
+        let paste_status = clipboard_status.clone();
+        let paste = Button::new()?
+            .content(TextBlock::new()?.text("Paste")?)?
+            .on_click(scope, move |_| {
+                match paste_scope.clipboard_get_text(&paste_window) {
+                    Ok(operation) => {
+                        let text_box = paste_text.clone();
+                        let status = paste_status.clone();
+                        paste_scope
+                            .spawn(async move {
+                                match operation.await {
+                                    Ok(Some(text)) => {
+                                        text_box
+                                            .set_text(&text)
+                                            .expect("failed to update clipboard text");
+                                        status
+                                            .set_text(format!("pasted {} chars", text.len()))
+                                            .expect("failed to update clipboard status");
+                                    }
+                                    Ok(None) => status
+                                        .set_text("no text on clipboard")
+                                        .expect("failed to update clipboard status"),
+                                    Err(error) => status
+                                        .set_text(error.to_string())
+                                        .expect("failed to update clipboard status"),
+                                }
+                            })
+                            .expect("failed to spawn clipboard paste");
+                    }
+                    Err(error) => paste_status
+                        .set_text(error.to_string())
+                        .expect("failed to update clipboard status"),
+                }
+            })?;
+
+        window.set_content(
+            StackPanel::new()?
+                .orientation(Orientation::Vertical)?
+                .spacing(8.0)?
+                .child(button)?
+                .child(click_count)?
+                .child(slider)?
+                .child(slider_value)?
+                .child(text_box)?
+                .child(typed_text)?
+                .child(key_readout)?
+                .child(toggle)?
+                .child(toggle_value)?
+                .child(TextBlock::new()?.text("Selection & expand patterns")?)?
+                .child(combo_box)?
+                .child(combo_status)?
+                .child(list_box)?
+                .child(list_status)?
+                .child(radio_buttons)?
+                .child(expander)?
+                .child(TextBlock::new()?.text("Hover")?)?
+                .child(hover_panel)?
+                .child(TextBlock::new()?.text("Clipboard")?)?
+                .child(clipboard_text)?
+                .child(
+                    StackPanel::new()?
+                        .orientation(Orientation::Horizontal)?
+                        .spacing(8.0)?
+                        .child(copy)?
+                        .child(paste)?,
+                )?
+                .child(clipboard_status)?,
+        )?;
+        scope.mount(window)
     })
 }

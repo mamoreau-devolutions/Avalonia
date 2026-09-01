@@ -1,7 +1,9 @@
 using System;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using System.Runtime.InteropServices;
@@ -13,14 +15,24 @@ namespace Avalonia.Host.Com;
 public partial class AvnApplication : IAvnApplication
 {
     private ClassicDesktopStyleApplicationLifetime? _lifetime;
+    private readonly AvnAsyncOperations _asyncOperations = new();
 
     public int Run(IAvnAppHandler? handler)
     {
         if (handler is null)
             return HResults.E_POINTER;
 
+        var uninitializeOle = false;
         try
         {
+            if (OperatingSystem.IsWindows())
+            {
+                var oleResult = OleInitialize(0);
+                if (oleResult < 0)
+                    Marshal.ThrowExceptionForHR(oleResult);
+                uninitializeOle = true;
+            }
+
             var lifetime = new ClassicDesktopStyleApplicationLifetime
             {
                 ShutdownMode = ShutdownMode.OnLastWindowClose,
@@ -47,12 +59,18 @@ public partial class AvnApplication : IAvnApplication
         {
             return AbiError.Capture(e);
         }
+        finally
+        {
+            if (uninitializeOle)
+                OleUninitialize();
+        }
     }
 
     public int Shutdown()
     {
         try
         {
+            _asyncOperations.CancelAll();
             _lifetime?.Shutdown();
             return HResults.S_OK;
         }
@@ -61,6 +79,95 @@ public partial class AvnApplication : IAvnApplication
             return AbiError.Capture(e);
         }
     }
+
+    public int StartDelay(
+            int milliseconds,
+            IAvnAsyncCompletion? completion,
+            out long operationId)
+        {
+            operationId = 0;
+            if (milliseconds < 0)
+                return HResults.E_INVALIDARG;
+            return _asyncOperations.Start(
+                completion,
+                async cancellation =>
+                {
+                    await Task.Delay(milliseconds, cancellation);
+                    return AvnAsyncValue.None;
+                },
+                out operationId);
+        }
+
+    public int StartClipboardSetText(
+            IAvnWindow? window,
+            string? text,
+            IAvnAsyncCompletion? completion,
+            out long operationId)
+        {
+            operationId = 0;
+            if (window is null || text is null)
+                return HResults.E_POINTER;
+            try
+            {
+                Dispatcher.UIThread.VerifyAccess();
+                var managedWindow = (Window?)ProjectionRuntime.Unwrap(window)
+                    ?? throw new ObjectDisposedException(nameof(window));
+                var clipboard = managedWindow.Clipboard
+                    ?? throw new NotSupportedException("The top-level has no clipboard.");
+                return _asyncOperations.Start(
+                    completion,
+                    async cancellation =>
+                    {
+                        cancellation.ThrowIfCancellationRequested();
+                        var data = new DataTransfer();
+                        data.Add(DataTransferItem.CreateText(text));
+                        await clipboard.SetDataAsync(data);
+                        cancellation.ThrowIfCancellationRequested();
+                        return AvnAsyncValue.None;
+                    },
+                    out operationId);
+            }
+            catch (Exception e)
+            {
+                return AbiError.Capture(e);
+            }
+        }
+
+    public int StartClipboardGetText(
+            IAvnWindow? window,
+            IAvnAsyncCompletion? completion,
+            out long operationId)
+        {
+            operationId = 0;
+            if (window is null)
+                return HResults.E_POINTER;
+            try
+            {
+                Dispatcher.UIThread.VerifyAccess();
+                var managedWindow = (Window?)ProjectionRuntime.Unwrap(window)
+                    ?? throw new ObjectDisposedException(nameof(window));
+                var clipboard = managedWindow.Clipboard
+                    ?? throw new NotSupportedException("The top-level has no clipboard.");
+                return _asyncOperations.Start(
+                    completion,
+                    async cancellation =>
+                    {
+                        cancellation.ThrowIfCancellationRequested();
+                        using var data = await clipboard.TryGetDataAsync();
+                        var text = data is null ? null : await data.TryGetTextAsync();
+                        cancellation.ThrowIfCancellationRequested();
+                        return AvnAsyncValue.FromString(text);
+                    },
+                    out operationId);
+            }
+            catch (Exception e)
+            {
+                return AbiError.Capture(e);
+            }
+        }
+
+    public int CancelAsyncOperation(long operationId) =>
+        _asyncOperations.Cancel(operationId);
 
     public int GetRequestedThemeVariant(out int value)
         {
@@ -153,4 +260,10 @@ public partial class AvnApplication : IAvnApplication
             return 2;
         throw new NotSupportedException($"Custom theme variant '{value.Key}' is not supported by the ABI.");
     }
+
+    [LibraryImport("ole32.dll")]
+    private static partial int OleInitialize(nint reserved);
+
+    [LibraryImport("ole32.dll")]
+    private static partial void OleUninitialize();
 }

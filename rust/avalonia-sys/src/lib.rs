@@ -5,6 +5,7 @@
 
 mod app_handler;
 mod application;
+mod async_completion;
 mod com;
 mod dispatcher;
 mod echo;
@@ -17,6 +18,7 @@ mod hresult;
 
 pub use app_handler::{app_handler, IAvnAppHandler};
 pub use application::{IAvnApplication, IAvnResourceValue};
+pub use async_completion::{async_completion, AsyncCompletionArgs, IAvnAsyncCompletion};
 pub use com::{ComInterface, ComPtr, IUnknown};
 pub use dispatcher::{action, IAvnAction, IAvnDispatcher};
 pub use echo::IAvnEcho;

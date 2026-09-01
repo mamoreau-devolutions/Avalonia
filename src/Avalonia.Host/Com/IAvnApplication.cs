@@ -24,4 +24,23 @@ public partial interface IAvnApplication
 
     [PreserveSig]
     int TryGetResource(string? key, int themeVariant, out int found, out IAvnResourceValue? value);
+
+    [PreserveSig]
+    int StartDelay(int milliseconds, IAvnAsyncCompletion? completion, out long operationId);
+
+    [PreserveSig]
+    int StartClipboardSetText(
+        IAvnWindow? window,
+        string? text,
+        IAvnAsyncCompletion? completion,
+        out long operationId);
+
+    [PreserveSig]
+    int StartClipboardGetText(
+        IAvnWindow? window,
+        IAvnAsyncCompletion? completion,
+        out long operationId);
+
+    [PreserveSig]
+    int CancelAsyncOperation(long operationId);
 }

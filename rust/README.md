@@ -7,6 +7,8 @@ binding specifications.
 
 The native ownership contract and the MicroCom-versus-handle-table decision
 are documented in [OWNERSHIP.md](OWNERSHIP.md).
+The executor-neutral completion ABI and clipboard integration are documented
+in [ASYNC.md](ASYNC.md).
 
 ## Prerequisites
 
@@ -37,7 +39,8 @@ cargo run --manifest-path .\rust\Cargo.toml -p avalonia --example hello_world
 The examples progress from a basic window (`hello_world`) through a port of
 `AppWithoutLifetime` and the Button, Slider, TextBox, ToggleSwitch, ComboBox,
 ListBox, RadioButton, and Expander portion of `WinUIEmbedSample`
-(`control_basics`), including its typed keyboard and hover readouts.
+(`control_basics`), including its typed keyboard, hover, and asynchronous
+clipboard interactions.
 `text_test_input` ports the editable text, live preview, and new-window
 interaction from the top of `TextTestApp`. `progress_bar` ports the interactive
 core of ControlCatalog's `ProgressBarPage`, and `scroll_viewer` ports its basic

@@ -3,9 +3,13 @@ use avalonia::{
     ListBox, ListBoxItem, Orientation, ProgressBar, RadioButton, ScrollViewer, StackPanel,
     TextBlock, TextBox, ThemeVariant, ToggleSwitch, Window,
 };
+use std::future::Future;
 use std::path::PathBuf;
+use std::pin::Pin;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
+use std::task::{Context, Poll, Wake, Waker};
+use std::time::Duration;
 
 fn host_path() -> PathBuf {
     if let Ok(path) = std::env::var("AVN_HOST_NATIVE_LIB") {
@@ -30,6 +34,26 @@ fn host_path() -> PathBuf {
                  or set AVN_HOST_NATIVE_LIB."
             )
         })
+}
+
+struct ThreadWake(std::thread::Thread);
+
+impl Wake for ThreadWake {
+    fn wake(self: Arc<Self>) {
+        self.0.unpark();
+    }
+}
+
+fn block_on<T>(future: impl Future<Output = T>) -> T {
+    let mut future = Box::pin(future);
+    let waker = Waker::from(Arc::new(ThreadWake(std::thread::current())));
+    let mut context = Context::from_waker(&waker);
+    loop {
+        match Pin::new(&mut future).poll(&mut context) {
+            Poll::Ready(value) => return value,
+            Poll::Pending => std::thread::park(),
+        }
+    }
 }
 
 #[test]
@@ -164,8 +188,10 @@ fn builders_create_a_real_window_through_nativeaot() {
         called_from_handler.store(true, Ordering::SeqCst);
 
         let context = scope.clone();
+        let delay = scope.delay(Duration::from_millis(10))?;
         std::thread::spawn(move || {
             assert!(!context.check_access().unwrap());
+            block_on(delay).unwrap();
             context
                 .post(move || {
                     text_box_for_post.set_text("after").unwrap();
