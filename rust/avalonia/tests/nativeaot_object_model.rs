@@ -1,7 +1,7 @@
 use avalonia::{
     App, Border, Button, ComboBox, ComboBoxItem, Dock, DockPanel, ExpandDirection, Expander, Grid,
-    ListBox, ListBoxItem, Orientation, RadioButton, ScrollViewer, StackPanel, TextBlock, TextBox,
-    ThemeVariant, ToggleSwitch, Window,
+    ListBox, ListBoxItem, Orientation, ProgressBar, RadioButton, ScrollViewer, StackPanel,
+    TextBlock, TextBox, ThemeVariant, ToggleSwitch, Window,
 };
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -131,6 +131,15 @@ fn builders_create_a_real_window_through_nativeaot() {
             .subscribe_pointer_exited(|_| {})?
             .unsubscribe()?;
 
+        let progress = ProgressBar::new()?
+            .minimum(0.0)?
+            .maximum(100.0)?
+            .value(40.0)?
+            .show_progress_text(true)?
+            .progress_text_format("{0:0}%")?;
+        assert_eq!(progress.get_value()?, 40.0);
+        assert!(progress.get_show_progress_text()?);
+
         let panel = StackPanel::new()?
             .orientation(Orientation::Vertical)?
             .spacing(8.0)?
@@ -142,8 +151,9 @@ fn builders_create_a_real_window_through_nativeaot() {
             .child(radio_buttons)?
             .child(expander)?
             .child(hover_panel)?
+            .child(progress)?
             .child(button)?;
-        assert_eq!(panel.children()?.len()?, 9);
+        assert_eq!(panel.children()?.len()?, 10);
         assert_eq!(panel.get_orientation()?, Orientation::Vertical);
         assert_eq!(panel.get_spacing()?, 8.0);
 

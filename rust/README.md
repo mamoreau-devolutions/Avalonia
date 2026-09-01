@@ -36,7 +36,8 @@ The examples progress from a basic window (`hello_world`) through a port of
 ListBox, RadioButton, and Expander portion of `WinUIEmbedSample`
 (`control_basics`), including its typed keyboard and hover readouts.
 `text_test_input` ports the editable text, live preview, and new-window
-interaction from the top of `TextTestApp`.
+interaction from the top of `TextTestApp`. `progress_bar` ports the interactive
+core of ControlCatalog's `ProgressBarPage`.
 
 ## Regenerate bindings
 
