@@ -9,7 +9,7 @@ $repositoryRoot = Split-Path -Parent $PSScriptRoot
 $rid = "win-$Architecture"
 
 dotnet publish "$repositoryRoot\src\Avalonia.Host\Avalonia.Host.csproj" `
-    -c Release -r $rid
+    -c Release -r $rid -p:AvaloniaRustHostPlatform=Win32
 if ($LASTEXITCODE -ne 0)
 {
     exit $LASTEXITCODE

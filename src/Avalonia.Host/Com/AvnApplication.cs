@@ -24,16 +24,9 @@ public partial class AvnApplication : IAvnApplication
         if (handler is null)
             return HResults.E_POINTER;
 
-        var uninitializeOle = false;
         try
         {
-            if (OperatingSystem.IsWindows())
-            {
-                var oleResult = OleInitialize(0);
-                if (oleResult < 0)
-                    Marshal.ThrowExceptionForHR(oleResult);
-                uninitializeOle = true;
-            }
+            using var platformThread = RustHostPlatform.EnterThread();
 
             var lifetime = new ClassicDesktopStyleApplicationLifetime
             {
@@ -41,10 +34,7 @@ public partial class AvnApplication : IAvnApplication
             };
             _lifetime = lifetime;
 
-            AppBuilder.Configure<HostApplication>()
-                .UseWin32()
-                .UseSkia()
-                .UseHarfBuzz()
+            RustHostPlatform.Configure(AppBuilder.Configure<HostApplication>())
                 .SetupWithLifetime(lifetime);
 
             lifetime.Startup += (_, _) =>
@@ -60,11 +50,6 @@ public partial class AvnApplication : IAvnApplication
         catch (Exception e)
         {
             return AbiError.Capture(e);
-        }
-        finally
-        {
-            if (uninitializeOle)
-                OleUninitialize();
         }
     }
 
@@ -284,9 +269,4 @@ public partial class AvnApplication : IAvnApplication
         throw new NotSupportedException($"Custom theme variant '{value.Key}' is not supported by the ABI.");
     }
 
-    [LibraryImport("ole32.dll")]
-    private static partial int OleInitialize(nint reserved);
-
-    [LibraryImport("ole32.dll")]
-    private static partial void OleUninitialize();
 }

@@ -15,16 +15,32 @@
     <EnableRuntimeMarshalling>true</EnableRuntimeMarshalling>
     <UseMicroCom>true</UseMicroCom>
     <UseMicroComGeneratorRoslyn>true</UseMicroComGeneratorRoslyn>
+    <AvaloniaRustHostPlatform Condition="'$(AvaloniaRustHostPlatform)' == '' and $([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-'))">Win32</AvaloniaRustHostPlatform>
+    <AvaloniaRustHostPlatform Condition="'$(AvaloniaRustHostPlatform)' == '' and $([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('linux-'))">X11</AvaloniaRustHostPlatform>
+    <AvaloniaRustHostPlatform Condition="'$(AvaloniaRustHostPlatform)' == '' and $([MSBuild]::IsOSPlatform('Windows'))">Win32</AvaloniaRustHostPlatform>
+    <AvaloniaRustHostPlatform Condition="'$(AvaloniaRustHostPlatform)' == '' and $([MSBuild]::IsOSPlatform('Linux'))">X11</AvaloniaRustHostPlatform>
+    <DefineConstants Condition="'$(AvaloniaRustHostPlatform)' == 'Win32'">$(DefineConstants);AVN_HOST_WIN32</DefineConstants>
+    <DefineConstants Condition="'$(AvaloniaRustHostPlatform)' == 'X11'">$(DefineConstants);AVN_HOST_X11</DefineConstants>
   </PropertyGroup>
+  <Target Name="ValidateAvaloniaRustHostPlatform" BeforeTargets="PrepareForBuild">
+    <Error Condition="'$(AvaloniaRustHostPlatform)' != 'Win32' and '$(AvaloniaRustHostPlatform)' != 'X11'"
+           Text="AvaloniaRustHostPlatform must be Win32 or X11 for runtime identifier '$(RuntimeIdentifier)'." />
+  </Target>
   <ItemGroup>
     <InternalsVisibleTo Include="Avalonia.Host.Tests, PublicKey=$(AvaloniaPublicKey)" />
     <MicroComIdl Include="Ownership\microcom-ownership.idl" />
-    <ProjectReference Include="..\Windows\Avalonia.Win32\Avalonia.Win32.csproj" />
     <ProjectReference Include="..\Skia\Avalonia.Skia\Avalonia.Skia.csproj" />
     <ProjectReference Include="..\HarfBuzz\Avalonia.HarfBuzz\Avalonia.HarfBuzz.csproj" />
     <ProjectReference Include="..\Avalonia.Themes.Fluent\Avalonia.Themes.Fluent.csproj" />
     <ProjectReference Include="..\Avalonia.Rust.Interop\Avalonia.Rust.Interop.csproj" />
     <ProjectReference Include="..\..\samples\RustViewModelSample.Managed\RustViewModelSample.Managed.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(AvaloniaRustHostPlatform)' == 'Win32'">
+    <ProjectReference Include="..\Windows\Avalonia.Win32\Avalonia.Win32.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(AvaloniaRustHostPlatform)' == 'X11'">
+    <ProjectReference Include="..\Avalonia.X11\Avalonia.X11.csproj" />
+    <LinkerArg Include="-Wl,-rpath,'$ORIGIN'" />
   </ItemGroup>
   <Import Project="..\..\build\NullableEnable.props" />
   <Import Project="..\..\build\TrimmingEnable.props" />

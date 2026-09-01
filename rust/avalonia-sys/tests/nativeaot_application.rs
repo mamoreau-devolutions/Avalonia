@@ -9,17 +9,29 @@ fn host_path() -> PathBuf {
         return PathBuf::from(path);
     }
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
-    for relative in [
+    #[cfg(target_os = "windows")]
+    let candidates = [
         "src/Avalonia.Host/bin/Release/net10.0/win-x64/publish/Avalonia.Host.dll",
         "src/Avalonia.Host/bin/Release/net10.0/win-arm64/publish/Avalonia.Host.dll",
         "src/Avalonia.Host/bin/Debug/net10.0/win-x64/publish/Avalonia.Host.dll",
-    ] {
+    ];
+    #[cfg(target_os = "linux")]
+    let candidates = [
+        "rust/target/dotnet-linux-x64/publish/Avalonia.Host/release_linux-x64/Avalonia.Host.so",
+        "rust/target/dotnet-linux-arm64/publish/Avalonia.Host/release_linux-arm64/Avalonia.Host.so",
+    ];
+    #[cfg(not(any(target_os = "windows", target_os = "linux")))]
+    let candidates: [&str; 0] = [];
+    for relative in candidates {
         let path = root.join(relative);
         if path.exists() {
             return path;
         }
     }
-    panic!("Avalonia.Host native library not found");
+    panic!(
+        "Avalonia.Host native library not found. Run `rust/build.ps1` on \
+         Windows or `rust/build.sh` on Linux, or set AVN_HOST_NATIVE_LIB."
+    );
 }
 
 #[repr(C)]

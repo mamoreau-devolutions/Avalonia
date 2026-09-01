@@ -85,17 +85,14 @@ impl Host {
     pub fn load(path: impl AsRef<Path>) -> std::result::Result<Self, libloading::Error> {
         unsafe {
             let path = path.as_ref();
+            #[cfg(any(target_os = "windows", target_os = "macos"))]
             let directory = path.parent().unwrap_or_else(|| Path::new("."));
+            #[cfg(any(target_os = "windows", target_os = "macos"))]
             let mut dependencies = Vec::new();
+            #[cfg(not(any(target_os = "windows", target_os = "macos")))]
+            let dependencies: Vec<Library> = Vec::new();
             #[cfg(target_os = "windows")]
             for name in ["libSkiaSharp.dll", "libHarfBuzzSharp.dll"] {
-                let dependency = directory.join(name);
-                if dependency.exists() {
-                    dependencies.push(Library::new(dependency)?);
-                }
-            }
-            #[cfg(target_os = "linux")]
-            for name in ["libSkiaSharp.so", "libHarfBuzzSharp.so"] {
                 let dependency = directory.join(name);
                 if dependency.exists() {
                     dependencies.push(Library::new(dependency)?);

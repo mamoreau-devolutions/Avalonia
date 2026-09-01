@@ -11,16 +11,18 @@ The executor-neutral completion ABI and clipboard integration are documented
 in [ASYNC.md](ASYNC.md).
 The Rust-state/managed-presentation application model is documented in
 [VIEW_MODELS.md](VIEW_MODELS.md).
+Platform host selection and the Linux/X11 validation are documented in
+[PLATFORMS.md](PLATFORMS.md).
 
 ## Prerequisites
 
-- Windows 10 or later
+- Windows 10 or later, or Linux with X11
 - .NET SDK 10
 - A current stable Rust toolchain
 
 ## Build and test
 
-From the repository root:
+On Windows, from the repository root:
 
 ```powershell
 .\rust\build.ps1
@@ -29,6 +31,17 @@ From the repository root:
 The script publishes the Win32 NativeAOT host, points
 `AVN_HOST_NATIVE_LIB` at it, and runs the complete Rust workspace tests.
 Use `-Architecture arm64` for Windows ARM64.
+
+On Linux:
+
+```bash
+git submodule update --init external/Avalonia.DBus
+./rust/build.sh
+```
+
+The Linux script publishes the X11 NativeAOT host with an origin-relative
+native dependency runpath and runs the same Rust workspace tests. Pass `arm64`
+for Linux ARM64.
 
 To run an example:
 
