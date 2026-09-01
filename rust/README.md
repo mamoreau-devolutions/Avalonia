@@ -37,7 +37,8 @@ ListBox, RadioButton, and Expander portion of `WinUIEmbedSample`
 (`control_basics`), including its typed keyboard and hover readouts.
 `text_test_input` ports the editable text, live preview, and new-window
 interaction from the top of `TextTestApp`. `progress_bar` ports the interactive
-core of ControlCatalog's `ProgressBarPage`.
+core of ControlCatalog's `ProgressBarPage`, and `scroll_viewer` ports its basic
+`ScrollViewerPage` controls and command surface.
 
 ## Regenerate bindings
 
