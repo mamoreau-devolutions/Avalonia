@@ -67,6 +67,13 @@ cargo run -p avalonia-bindgen -- `
   .\avalonia\src\generated.rs
 cargo fmt --all
 Pop-Location
+
+dotnet run --project .\src\Avalonia.ViewModelProjection.Tool -- `
+  .\rust\view-model.ir.json `
+  .\samples\RustViewModelSample.Managed\Generated `
+  .\src\Avalonia.Host\Generated\ViewModels `
+  .\rust\avalonia\src\generated_view_models.rs `
+  .\rust\view-model.contract.md
 ```
 
 Public control coverage is declared in
@@ -74,6 +81,12 @@ Public control coverage is declared in
 members remain visible in `projection.ir.gaps.txt`. New samples must widen
 that shared policy and the generators when blocked; sample-specific host
 bindings are not accepted.
+
+The view-model command generates typed Rust traits and sinks, managed binding
+adapters, the host's view registry, and the readable
+`view-model.contract.md` report from one versioned schema. Application names
+are confined to generated files and the managed presentation project; the
+interop transport and handwritten Rust runtime remain model-independent.
 
 `Avalonia.Host` is currently non-packable. If it becomes a shipped NuGet
 package, its native library and bundled dependencies must be added to the

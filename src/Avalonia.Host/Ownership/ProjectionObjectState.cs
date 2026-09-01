@@ -102,6 +102,9 @@ internal sealed class ProjectionObjectState
             return;
 
         ProjectionRuntime.Forget(work.Target, work.ObjectId);
+        if (work.Cleanup.Count == 0)
+            return;
+
         void Cleanup()
         {
             foreach (var action in work.Cleanup)

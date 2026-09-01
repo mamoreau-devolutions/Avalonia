@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
+using Avalonia.Rust.Interop;
 
 namespace Avalonia.Host.Com;
 
@@ -45,5 +46,5 @@ public partial interface IAvnApplication
     int CancelAsyncOperation(long operationId);
 
     [PreserveSig]
-    int CreateRustVmWindow(IAvnRustViewModel? model, out IAvnWindow? window);
+    int CreateRustVmWindow(int viewId, IAvnRustViewModel? model, out IAvnWindow? window);
 }

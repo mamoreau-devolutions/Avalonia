@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "models": [
+    {
+      "id": 1,
+      "name": "SampleViewModel",
+      "managedNamespace": "Avalonia.Rust.Sample.Generated",
+      "properties": [
+        {
+          "id": 1,
+          "name": "Name",
+          "kind": "String",
+          "writable": true,
+          "initialString": "Avalonia from Rust"
+        },
+        {
+          "id": 2,
+          "name": "Count",
+          "kind": "Integer",
+          "writable": false
+        },
+        {
+          "id": 3,
+          "name": "NewItem",
+          "kind": "String",
+          "writable": true,
+          "initialString": ""
+        },
+        {
+          "id": 4,
+          "name": "Status",
+          "kind": "String",
+          "writable": false,
+          "initialString": "Ready"
+        }
+      ],
+      "collections": [
+        {
+          "id": 1,
+          "name": "Items",
+          "elementKind": "String"
+        }
+      ],
+      "commands": [
+        {
+          "id": 1,
+          "name": "Increment",
+          "isAsync": false
+        },
+        {
+          "id": 2,
+          "name": "Add",
+          "isAsync": false,
+          "parameterProperty": "NewItem"
+        },
+        {
+          "id": 3,
+          "name": "Save",
+          "isAsync": true
+        }
+      ]
+    }
+  ],
+  "views": [
+    {
+      "id": 1,
+      "name": "RustVmWindow",
+      "model": "SampleViewModel",
+      "managedTypeName": "Avalonia.Rust.Sample.Views.RustVmWindow"
+    }
+  ]
+}

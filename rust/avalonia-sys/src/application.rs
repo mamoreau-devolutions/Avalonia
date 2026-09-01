@@ -133,6 +133,7 @@ struct IAvnApplicationVtbl {
     cancel_async_operation: unsafe extern "system" fn(*mut IAvnApplication, i64) -> i32,
     create_rust_vm_window: unsafe extern "system" fn(
         *mut IAvnApplication,
+        i32,
         *mut IAvnRustViewModel,
         *mut *mut IAvnWindow,
     ) -> i32,
@@ -301,6 +302,7 @@ impl ComPtr<IAvnApplication> {
 
     pub fn create_rust_vm_window(
         &self,
+        view_id: i32,
         model: &ComPtr<IAvnRustViewModel>,
     ) -> Result<ComPtr<IAvnWindow>> {
         unsafe {
@@ -310,7 +312,7 @@ impl ComPtr<IAvnApplication> {
                 .as_ref()
                 .unwrap()
                 .create_rust_vm_window)(
-                self.as_raw(), model.as_raw(), &mut window
+                self.as_raw(), view_id, model.as_raw(), &mut window
             );
             hresult::check(hr)?;
             ComPtr::from_projected_raw(window)

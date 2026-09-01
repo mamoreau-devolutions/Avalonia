@@ -11,14 +11,14 @@ const IAVN_RUST_VIEW_MODEL_IID: Guid = Guid {
     data1: 0x6B2E8F10,
     data2: 0x4C91,
     data3: 0x4E3A,
-    data4: [0x9A, 0x77, 0x1F, 0x0C, 0x2B, 0x3A, 0x4D, 0x20],
+    data4: [0x9A, 0x77, 0x1F, 0x0C, 0x2B, 0x3A, 0x4D, 0x24],
 };
 
 const IAVN_RUST_VM_SINK_IID: Guid = Guid {
     data1: 0x6B2E8F10,
     data2: 0x4C91,
     data3: 0x4E3A,
-    data4: [0x9A, 0x77, 0x1F, 0x0C, 0x2B, 0x3A, 0x4D, 0x21],
+    data4: [0x9A, 0x77, 0x1F, 0x0C, 0x2B, 0x3A, 0x4D, 0x25],
 };
 
 #[repr(C)]
@@ -26,10 +26,11 @@ struct IAvnRustVmSinkVtbl {
     query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
-    set_name: unsafe extern "system" fn(*mut IAvnRustVmSink, *const u16) -> i32,
-    set_count: unsafe extern "system" fn(*mut IAvnRustVmSink, i32) -> i32,
-    add_item: unsafe extern "system" fn(*mut IAvnRustVmSink, *const u16) -> i32,
-    set_status: unsafe extern "system" fn(*mut IAvnRustVmSink, *const u16) -> i32,
+    set_string: unsafe extern "system" fn(*mut IAvnRustVmSink, i32, *const u16) -> i32,
+    set_integer: unsafe extern "system" fn(*mut IAvnRustVmSink, i32, i64) -> i32,
+    set_boolean: unsafe extern "system" fn(*mut IAvnRustVmSink, i32, i32) -> i32,
+    set_double: unsafe extern "system" fn(*mut IAvnRustVmSink, i32, f64) -> i32,
+    add_string: unsafe extern "system" fn(*mut IAvnRustVmSink, i32, *const u16) -> i32,
 }
 
 #[repr(C)]
@@ -42,37 +43,51 @@ unsafe impl ComInterface for IAvnRustVmSink {
 }
 
 impl ComPtr<IAvnRustVmSink> {
-    pub fn set_name(&self, value: &[u16]) -> Result<()> {
+    pub fn set_string(&self, property_id: i32, value: &[u16]) -> Result<()> {
         unsafe {
-            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().set_name)(
+            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().set_string)(
                 self.as_raw(),
+                property_id,
                 value.as_ptr(),
             ))
         }
     }
 
-    pub fn set_count(&self, value: i32) -> Result<()> {
+    pub fn set_integer(&self, property_id: i32, value: i64) -> Result<()> {
         unsafe {
-            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().set_count)(
+            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().set_integer)(
                 self.as_raw(),
+                property_id,
                 value,
             ))
         }
     }
 
-    pub fn add_item(&self, value: &[u16]) -> Result<()> {
+    pub fn set_boolean(&self, property_id: i32, value: bool) -> Result<()> {
         unsafe {
-            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().add_item)(
+            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().set_boolean)(
                 self.as_raw(),
-                value.as_ptr(),
+                property_id,
+                i32::from(value),
             ))
         }
     }
 
-    pub fn set_status(&self, value: &[u16]) -> Result<()> {
+    pub fn set_double(&self, property_id: i32, value: f64) -> Result<()> {
         unsafe {
-            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().set_status)(
+            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().set_double)(
                 self.as_raw(),
+                property_id,
+                value,
+            ))
+        }
+    }
+
+    pub fn add_string(&self, collection_id: i32, value: &[u16]) -> Result<()> {
+        unsafe {
+            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().add_string)(
+                self.as_raw(),
+                collection_id,
                 value.as_ptr(),
             ))
         }
@@ -82,10 +97,12 @@ impl ComPtr<IAvnRustVmSink> {
 pub struct RustViewModelCallbacks {
     pub attach: Box<dyn FnMut(ComPtr<IAvnRustVmSink>) -> Result<()> + Send>,
     pub detach: Box<dyn FnMut() -> Result<()> + Send>,
-    pub set_name: Box<dyn FnMut(String) -> Result<()> + Send>,
-    pub increment: Box<dyn FnMut() -> Result<()> + Send>,
-    pub add_item: Box<dyn FnMut(String) -> Result<()> + Send>,
-    pub begin_save: Box<dyn FnMut() -> Result<()> + Send>,
+    pub set_string: Box<dyn FnMut(i32, String) -> Result<()> + Send>,
+    pub set_integer: Box<dyn FnMut(i32, i64) -> Result<()> + Send>,
+    pub set_boolean: Box<dyn FnMut(i32, bool) -> Result<()> + Send>,
+    pub set_double: Box<dyn FnMut(i32, f64) -> Result<()> + Send>,
+    pub execute: Box<dyn FnMut(i32, Option<String>) -> Result<()> + Send>,
+    pub begin_async: Box<dyn FnMut(i32, Option<String>) -> Result<()> + Send>,
 }
 
 #[repr(C)]
@@ -95,10 +112,12 @@ struct IAvnRustViewModelVtbl {
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     attach: unsafe extern "system" fn(*mut IAvnRustViewModel, *mut IAvnRustVmSink) -> i32,
     detach: unsafe extern "system" fn(*mut IAvnRustViewModel) -> i32,
-    set_name: unsafe extern "system" fn(*mut IAvnRustViewModel, *const u16) -> i32,
-    increment: unsafe extern "system" fn(*mut IAvnRustViewModel) -> i32,
-    add_item: unsafe extern "system" fn(*mut IAvnRustViewModel, *const u16) -> i32,
-    begin_save: unsafe extern "system" fn(*mut IAvnRustViewModel) -> i32,
+    set_string: unsafe extern "system" fn(*mut IAvnRustViewModel, i32, *const u16) -> i32,
+    set_integer: unsafe extern "system" fn(*mut IAvnRustViewModel, i32, i64) -> i32,
+    set_boolean: unsafe extern "system" fn(*mut IAvnRustViewModel, i32, i32) -> i32,
+    set_double: unsafe extern "system" fn(*mut IAvnRustViewModel, i32, f64) -> i32,
+    execute: unsafe extern "system" fn(*mut IAvnRustViewModel, i32, *const u16) -> i32,
+    begin_async: unsafe extern "system" fn(*mut IAvnRustViewModel, i32, *const u16) -> i32,
 }
 
 #[repr(C)]
@@ -123,10 +142,12 @@ static RUST_VIEW_MODEL_VTBL: IAvnRustViewModelVtbl = IAvnRustViewModelVtbl {
     release,
     attach,
     detach,
-    set_name,
-    increment,
-    add_item,
-    begin_save,
+    set_string,
+    set_integer,
+    set_boolean,
+    set_double,
+    execute,
+    begin_async,
 };
 
 pub fn rust_view_model(callbacks: RustViewModelCallbacks) -> ComPtr<IAvnRustViewModel> {
@@ -186,22 +207,61 @@ unsafe extern "system" fn detach(this: *mut IAvnRustViewModel) -> i32 {
     invoke(this, |callbacks| (callbacks.detach)())
 }
 
-unsafe extern "system" fn set_name(this: *mut IAvnRustViewModel, value: *const u16) -> i32 {
+unsafe extern "system" fn set_string(
+    this: *mut IAvnRustViewModel,
+    property_id: i32,
+    value: *const u16,
+) -> i32 {
     let value = crate::clone_utf16(value).unwrap_or_default();
-    invoke(this, |callbacks| (callbacks.set_name)(value))
+    invoke(this, |callbacks| (callbacks.set_string)(property_id, value))
 }
 
-unsafe extern "system" fn increment(this: *mut IAvnRustViewModel) -> i32 {
-    invoke(this, |callbacks| (callbacks.increment)())
+unsafe extern "system" fn set_integer(
+    this: *mut IAvnRustViewModel,
+    property_id: i32,
+    value: i64,
+) -> i32 {
+    invoke(this, |callbacks| {
+        (callbacks.set_integer)(property_id, value)
+    })
 }
 
-unsafe extern "system" fn add_item(this: *mut IAvnRustViewModel, value: *const u16) -> i32 {
-    let value = crate::clone_utf16(value).unwrap_or_default();
-    invoke(this, |callbacks| (callbacks.add_item)(value))
+unsafe extern "system" fn set_boolean(
+    this: *mut IAvnRustViewModel,
+    property_id: i32,
+    value: i32,
+) -> i32 {
+    invoke(this, |callbacks| {
+        (callbacks.set_boolean)(property_id, value != 0)
+    })
 }
 
-unsafe extern "system" fn begin_save(this: *mut IAvnRustViewModel) -> i32 {
-    invoke(this, |callbacks| (callbacks.begin_save)())
+unsafe extern "system" fn set_double(
+    this: *mut IAvnRustViewModel,
+    property_id: i32,
+    value: f64,
+) -> i32 {
+    invoke(this, |callbacks| (callbacks.set_double)(property_id, value))
+}
+
+unsafe extern "system" fn execute(
+    this: *mut IAvnRustViewModel,
+    command_id: i32,
+    parameter: *const u16,
+) -> i32 {
+    let parameter = crate::clone_utf16(parameter);
+    invoke(this, |callbacks| (callbacks.execute)(command_id, parameter))
+}
+
+unsafe extern "system" fn begin_async(
+    this: *mut IAvnRustViewModel,
+    command_id: i32,
+    parameter: *const u16,
+) -> i32 {
+    let parameter = crate::clone_utf16(parameter);
+    invoke(this, |callbacks| {
+        (callbacks.begin_async)(command_id, parameter)
+    })
 }
 
 unsafe fn invoke(

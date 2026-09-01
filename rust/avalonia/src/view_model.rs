@@ -3,61 +3,72 @@ use avalonia_sys as sys;
 use std::sync::{Arc, Mutex};
 
 #[derive(Clone, Debug)]
-pub struct RustVmSink {
+pub(crate) struct ViewModelSink {
     raw: sys::ComPtr<sys::IAvnRustVmSink>,
 }
 
-impl RustVmSink {
-    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
-        self.raw.set_name(&utf16(value))?;
+impl ViewModelSink {
+    pub fn set_string(&self, property_id: i32, value: impl AsRef<str>) -> Result<()> {
+        self.raw.set_string(property_id, &utf16(value))?;
         Ok(())
     }
 
-    pub fn set_count(&self, value: i32) -> Result<()> {
-        self.raw.set_count(value)?;
+    pub fn set_integer(&self, property_id: i32, value: i64) -> Result<()> {
+        self.raw.set_integer(property_id, value)?;
         Ok(())
     }
 
-    pub fn add_item(&self, value: impl AsRef<str>) -> Result<()> {
-        self.raw.add_item(&utf16(value))?;
+    #[allow(dead_code)]
+    pub fn set_boolean(&self, property_id: i32, value: bool) -> Result<()> {
+        self.raw.set_boolean(property_id, value)?;
         Ok(())
     }
 
-    pub fn set_status(&self, value: impl AsRef<str>) -> Result<()> {
-        self.raw.set_status(&utf16(value))?;
+    #[allow(dead_code)]
+    pub fn set_double(&self, property_id: i32, value: f64) -> Result<()> {
+        self.raw.set_double(property_id, value)?;
+        Ok(())
+    }
+
+    pub fn add_string(&self, collection_id: i32, value: impl AsRef<str>) -> Result<()> {
+        self.raw.add_string(collection_id, &utf16(value))?;
         Ok(())
     }
 }
 
-pub trait RustViewModel: Send + 'static {
-    fn attach(&mut self, sink: RustVmSink) -> Result<()>;
+pub(crate) trait DynamicViewModel: Send + 'static {
+    fn attach(&mut self, sink: ViewModelSink) -> Result<()>;
     fn detach(&mut self) -> Result<()>;
-    fn set_name(&mut self, value: String) -> Result<()>;
-    fn increment(&mut self) -> Result<()>;
-    fn add_item(&mut self, value: String) -> Result<()>;
-    fn begin_save(&mut self) -> Result<()>;
+    fn set_string(&mut self, property_id: i32, value: String) -> Result<()>;
+    fn set_integer(&mut self, property_id: i32, value: i64) -> Result<()>;
+    fn set_boolean(&mut self, property_id: i32, value: bool) -> Result<()>;
+    fn set_double(&mut self, property_id: i32, value: f64) -> Result<()>;
+    fn execute(&mut self, command_id: i32, parameter: Option<String>) -> Result<()>;
+    fn begin_async(&mut self, command_id: i32, parameter: Option<String>) -> Result<()>;
 }
 
-struct RustViewModelHandle {
+struct ViewModelHandle {
     raw: sys::ComPtr<sys::IAvnRustViewModel>,
 }
 
-impl RustViewModelHandle {
-    fn new(model: impl RustViewModel) -> Self {
+impl ViewModelHandle {
+    fn new(model: impl DynamicViewModel) -> Self {
         let model = Arc::new(Mutex::new(model));
         let attach_model = model.clone();
         let detach_model = model.clone();
-        let name_model = model.clone();
-        let increment_model = model.clone();
-        let item_model = model.clone();
-        let save_model = model;
+        let string_model = model.clone();
+        let integer_model = model.clone();
+        let boolean_model = model.clone();
+        let double_model = model.clone();
+        let execute_model = model.clone();
+        let async_model = model;
         let raw = sys::rust_view_model(sys::RustViewModelCallbacks {
             attach: Box::new(move |sink| {
                 map_result(
                     attach_model
                         .lock()
                         .expect("Rust view-model lock poisoned")
-                        .attach(RustVmSink { raw: sink }),
+                        .attach(ViewModelSink { raw: sink }),
                 )
             }),
             detach: Box::new(move || {
@@ -68,36 +79,52 @@ impl RustViewModelHandle {
                         .detach(),
                 )
             }),
-            set_name: Box::new(move |value| {
+            set_string: Box::new(move |id, value| {
                 map_result(
-                    name_model
+                    string_model
                         .lock()
                         .expect("Rust view-model lock poisoned")
-                        .set_name(value),
+                        .set_string(id, value),
                 )
             }),
-            increment: Box::new(move || {
+            set_integer: Box::new(move |id, value| {
                 map_result(
-                    increment_model
+                    integer_model
                         .lock()
                         .expect("Rust view-model lock poisoned")
-                        .increment(),
+                        .set_integer(id, value),
                 )
             }),
-            add_item: Box::new(move |value| {
+            set_boolean: Box::new(move |id, value| {
                 map_result(
-                    item_model
+                    boolean_model
                         .lock()
                         .expect("Rust view-model lock poisoned")
-                        .add_item(value),
+                        .set_boolean(id, value),
                 )
             }),
-            begin_save: Box::new(move || {
+            set_double: Box::new(move |id, value| {
                 map_result(
-                    save_model
+                    double_model
                         .lock()
                         .expect("Rust view-model lock poisoned")
-                        .begin_save(),
+                        .set_double(id, value),
+                )
+            }),
+            execute: Box::new(move |id, parameter| {
+                map_result(
+                    execute_model
+                        .lock()
+                        .expect("Rust view-model lock poisoned")
+                        .execute(id, parameter),
+                )
+            }),
+            begin_async: Box::new(move |id, parameter| {
+                map_result(
+                    async_model
+                        .lock()
+                        .expect("Rust view-model lock poisoned")
+                        .begin_async(id, parameter),
                 )
             }),
         });
@@ -106,9 +133,15 @@ impl RustViewModelHandle {
 }
 
 impl AppScope {
-    pub fn mount_view_model(&self, model: impl RustViewModel) -> Result<()> {
-        let model = RustViewModelHandle::new(model);
-        let raw = self.application().create_rust_vm_window(&model.raw)?;
+    pub(crate) fn mount_dynamic_view_model(
+        &self,
+        view_id: i32,
+        model: impl DynamicViewModel,
+    ) -> Result<()> {
+        let model = ViewModelHandle::new(model);
+        let raw = self
+            .application()
+            .create_rust_vm_window(view_id, &model.raw)?;
         self.retain_object(model);
         self.mount(Window { raw })
     }

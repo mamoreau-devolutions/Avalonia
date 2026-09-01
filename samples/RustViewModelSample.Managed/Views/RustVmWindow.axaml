@@ -1,8 +1,8 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="using:Avalonia.Host.Views"
-        x:Class="Avalonia.Host.Views.RustVmWindow"
-        x:DataType="local:RustVmAdapter"
+        xmlns:vm="using:Avalonia.Rust.Sample.Generated"
+        x:Class="Avalonia.Rust.Sample.Views.RustVmWindow"
+        x:DataType="vm:SampleViewModelAdapter"
         Title="Rust VM + AXAML"
         Width="520"
         Height="480">

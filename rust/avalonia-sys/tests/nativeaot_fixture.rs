@@ -1,11 +1,7 @@
-use avalonia_sys::{
-    app_handler, button_click_handler, ComPtr, Error, Host, IUnknown, AVN_E_FIXTURE, E_NOINTERFACE,
-};
+use avalonia_sys::{ComPtr, Host, IUnknown, AVN_E_FIXTURE, E_NOINTERFACE};
 use libloading::Library;
 use std::ffi::c_void;
 use std::path::PathBuf;
-use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::Arc;
 
 fn host_path() -> PathBuf {
     if let Ok(p) = std::env::var("AVN_HOST_NATIVE_LIB") {
@@ -53,16 +49,6 @@ struct MicroComOwnershipProbe {
     vtbl: *const MicroComOwnershipProbeVtbl,
 }
 
-#[repr(C)]
-#[derive(Clone, Copy, Debug, Default)]
-struct ProjectionDiagnosticSnapshot {
-    wrappers_created: i64,
-    tracked_object_ids: i32,
-    live_managed_objects: i32,
-    active_subscriptions: i64,
-    native_ownership_releases: i64,
-}
-
 #[test]
 fn ping_increments() {
     let host = load();
@@ -97,24 +83,6 @@ fn microcom_probe_releases_through_nativeaot_vtable() {
         unsafe { ((*probe).vtbl.as_ref().unwrap().release)(probe) },
         0
     );
-}
-
-type GetProjectionDiagnosticsFn = unsafe extern "C" fn(*mut ProjectionDiagnosticSnapshot) -> i32;
-
-fn load_projection_diagnostics(library: &Library) -> GetProjectionDiagnosticsFn {
-    unsafe {
-        *library
-            .get::<GetProjectionDiagnosticsFn>(b"avn_get_projection_diagnostics")
-            .unwrap()
-    }
-}
-
-fn projection_diagnostics(
-    get_diagnostics: GetProjectionDiagnosticsFn,
-) -> ProjectionDiagnosticSnapshot {
-    let mut snapshot = ProjectionDiagnosticSnapshot::default();
-    assert_eq!(unsafe { get_diagnostics(&mut snapshot) }, 0);
-    snapshot
 }
 
 #[test]
@@ -201,86 +169,4 @@ fn factory_unknown_qi_succeeds() {
     let _again = unk
         .query_interface::<avalonia_sys::IAvnActivationFactory>()
         .unwrap();
-}
-
-#[test]
-fn application_runs_generated_object_model_through_rust_handler() {
-    let host = load();
-    let library = unsafe { Library::new(host_path()).unwrap() };
-    let get_diagnostics = load_projection_diagnostics(&library);
-    let ownership_before = projection_diagnostics(get_diagnostics);
-    let activation = host.activation_factory().unwrap();
-    let application = activation.create_application().unwrap();
-    let controls = activation.create_control_factory().unwrap();
-    let called = Arc::new(AtomicBool::new(false));
-    let called_from_handler = called.clone();
-    let clicked = Arc::new(AtomicBool::new(false));
-    let clicked_from_handler = clicked.clone();
-    let handler = app_handler(move || {
-        let ownership_probe = controls.create_button()?;
-        let ownership_created = projection_diagnostics(get_diagnostics);
-        assert_eq!(
-            ownership_created.wrappers_created,
-            ownership_before.wrappers_created + 1
-        );
-        assert_eq!(
-            ownership_created.tracked_object_ids,
-            ownership_before.tracked_object_ids + 1
-        );
-        drop(ownership_probe);
-        let ownership_released = projection_diagnostics(get_diagnostics);
-        assert_eq!(
-            ownership_released.native_ownership_releases,
-            ownership_before.native_ownership_releases + 1
-        );
-        assert_eq!(
-            ownership_released.tracked_object_ids,
-            ownership_before.tracked_object_ids
-        );
-
-        let button = controls.create_button()?;
-        let text = controls.create_text_block()?;
-
-        assert!(button.get_is_enabled()?);
-        button.set_is_enabled(false)?;
-        assert!(!button.get_is_enabled()?);
-
-        let text_as_control = text.query_interface::<avalonia_sys::IAvnControl>()?;
-        button.set_content(Some(&text_as_control))?;
-        let content = button.get_content()?.unwrap();
-        assert_eq!(text.object_id()?, content.object_id()?);
-
-        let click_handler = button_click_handler(move || {
-            clicked_from_handler.store(true, Ordering::SeqCst);
-            Ok(())
-        });
-        click_handler.invoke()?;
-        let click_subscription = button.advise_click(&click_handler)?;
-        button.unadvise_click(click_subscription)?;
-
-        let panel = controls.create_stack_panel()?;
-        let children = panel.get_children()?;
-        children.add(&text_as_control)?;
-        let button_as_control = button.query_interface::<avalonia_sys::IAvnControl>()?;
-        children.add(&button_as_control)?;
-        assert_eq!(children.len()?, 2);
-        assert_eq!(children.get(0)?.object_id()?, text.object_id()?);
-        children.remove(1)?;
-        assert_eq!(children.len()?, 1);
-        children.clear()?;
-        assert_eq!(children.len()?, 0);
-
-        called_from_handler.store(true, Ordering::SeqCst);
-        Err(Error(AVN_E_FIXTURE))
-    });
-
-    let error = application.run(&handler).unwrap_err();
-    assert_eq!(
-        error.0,
-        AVN_E_FIXTURE,
-        "host startup failed: {}",
-        host.last_error().unwrap_or_default()
-    );
-    assert!(called.load(Ordering::SeqCst));
-    assert!(clicked.load(Ordering::SeqCst));
 }

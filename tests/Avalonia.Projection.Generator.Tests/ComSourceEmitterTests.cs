@@ -229,6 +229,51 @@ public class ComSourceEmitterTests
             buttonHeader.IndexOf("get_classes", StringComparison.Ordinal));
     }
 
+    [Fact]
+    public void Checked_in_view_model_sources_match_generator()
+    {
+        var root = FindRepositoryRoot();
+        var ir = ViewModelIr.FromJson(File.ReadAllText(Path.Combine(
+            root,
+            "rust",
+            "view-model.ir.json")));
+        var adapterDirectory = Path.Combine(
+            root,
+            "samples",
+            "RustViewModelSample.Managed",
+            "Generated");
+        var registryDirectory = Path.Combine(
+            root,
+            "src",
+            "Avalonia.Host",
+            "Generated",
+            "ViewModels");
+
+        foreach (var (name, source) in ViewModelSourceEmitter.EmitCSharp(ir))
+        {
+            var directory = name == "RustViewRegistry.g.cs"
+                ? registryDirectory
+                : adapterDirectory;
+            Assert.Equal(
+                Normalize(source),
+                Normalize(File.ReadAllText(Path.Combine(directory, name))));
+        }
+        Assert.Equal(
+            Normalize(ViewModelSourceEmitter.EmitRust(ir)),
+            Normalize(File.ReadAllText(Path.Combine(
+                root,
+                "rust",
+                "avalonia",
+                "src",
+                "generated_view_models.rs"))));
+        Assert.Equal(
+            Normalize(ViewModelSourceEmitter.EmitContract(ir)),
+            Normalize(File.ReadAllText(Path.Combine(
+                root,
+                "rust",
+                "view-model.contract.md"))));
+    }
+
     private static string FindRepositoryRoot()
     {
         for (var current = new DirectoryInfo(AppContext.BaseDirectory);

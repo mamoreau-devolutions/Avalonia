@@ -4,7 +4,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
-using Avalonia.Host.Views;
+using Avalonia.Host.Generated.ViewModels;
+using Avalonia.Rust.Interop;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using System.Runtime.InteropServices;
@@ -171,6 +172,7 @@ public partial class AvnApplication : IAvnApplication
         _asyncOperations.Cancel(operationId);
 
     public int CreateRustVmWindow(
+        int viewId,
         IAvnRustViewModel? model,
         out IAvnWindow? window)
     {
@@ -180,7 +182,8 @@ public partial class AvnApplication : IAvnApplication
         try
         {
             Dispatcher.UIThread.VerifyAccess();
-            window = (IAvnWindow)ProjectionRuntime.Wrap(new RustVmWindow(model))!;
+            var managedWindow = RustViewRegistry.Create(viewId, model);
+            window = (IAvnWindow)ProjectionRuntime.Wrap(managedWindow)!;
             return HResults.S_OK;
         }
         catch (Exception e)

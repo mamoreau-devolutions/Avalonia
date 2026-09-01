@@ -1,12 +1,14 @@
+using System;
 using Avalonia.Controls;
-using Avalonia.Host.Com;
+using Avalonia.Rust.Interop;
 using Avalonia.Markup.Xaml;
+using Avalonia.Rust.Sample.Generated;
 
-namespace Avalonia.Host.Views;
+namespace Avalonia.Rust.Sample.Views;
 
 public partial class RustVmWindow : Window
 {
-    private readonly RustVmAdapter _adapter;
+    private readonly SampleViewModelAdapter _adapter;
 
     public RustVmWindow()
     {
@@ -17,7 +19,7 @@ public partial class RustVmWindow : Window
     public RustVmWindow(IAvnRustViewModel model)
         : this()
     {
-        _adapter = new RustVmAdapter(model);
+        _adapter = new SampleViewModelAdapter(model);
         DataContext = _adapter;
         Closed += (_, _) => _adapter.Dispose();
     }

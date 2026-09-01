@@ -347,6 +347,7 @@ fn to_abi_error(error: Error) -> sys::Error {
         | Error::NoUiContext
         | Error::InvalidEnumValue(_)
         | Error::InvalidAsyncValue
+        | Error::InvalidViewModelMember { .. }
         | Error::Async { .. } => sys::Error(sys::E_FAIL),
     }
 }

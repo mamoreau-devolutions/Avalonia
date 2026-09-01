@@ -1,15 +1,17 @@
 #[rustfmt::skip]
 mod generated;
+#[rustfmt::skip]
+mod generated_view_models;
 mod async_runtime;
 mod runtime;
 mod view_model;
 
 pub use async_runtime::{AsyncOperation, AsyncValue};
 pub use generated::*;
+pub use generated_view_models::*;
 pub use runtime::{
     App, AppContext, AppScope, AsControl, EventSubscription, ResourceValue, ThemeVariant,
 };
-pub use view_model::{RustViewModel, RustVmSink};
 
 #[derive(Debug)]
 pub enum Error {
@@ -18,6 +20,7 @@ pub enum Error {
     NoUiContext,
     InvalidEnumValue(i32),
     InvalidAsyncValue,
+    InvalidViewModelMember { kind: &'static str, id: i32 },
     Async { hresult: i32, message: String },
 }
 
@@ -39,6 +42,9 @@ impl std::fmt::Display for Error {
                 write!(formatter, "invalid projected enum value {value}")
             }
             Self::InvalidAsyncValue => formatter.write_str("invalid asynchronous result value"),
+            Self::InvalidViewModelMember { kind, id } => {
+                write!(formatter, "invalid view-model {kind} ID {id}")
+            }
             Self::Async { hresult, message } => {
                 write!(
                     formatter,
