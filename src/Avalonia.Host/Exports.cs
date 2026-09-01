@@ -1,7 +1,9 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 using Avalonia.Host.Com;
+using Avalonia.Host.Ownership;
 
 namespace Avalonia.Host;
 
@@ -28,10 +30,29 @@ public static class Exports
             *factory = Wrappers.GetOrCreateComInterfaceForObject(obj, CreateComInterfaceFlags.None);
             return HResults.S_OK;
         }
+
         catch
         {
             *factory = 0;
             return HResults.E_FAIL;
+        }
+    }
+
+    [UnmanagedCallersOnly(EntryPoint = "avn_get_microcom_ownership_probe")]
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(MicroComOwnershipProbe))]
+    internal static unsafe int GetMicroComOwnershipProbe(nint* probe)
+    {
+        if (probe is null)
+            return HResults.E_POINTER;
+        try
+        {
+            *probe = new MicroComOwnershipProbe().GetNativePointer();
+            return HResults.S_OK;
+        }
+        catch (Exception e)
+        {
+            *probe = 0;
+            return AbiError.Capture(e);
         }
     }
 

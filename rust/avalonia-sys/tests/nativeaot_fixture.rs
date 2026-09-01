@@ -1,6 +1,8 @@
 use avalonia_sys::{
     app_handler, button_click_handler, ComPtr, Error, Host, IUnknown, AVN_E_FIXTURE, E_NOINTERFACE,
 };
+use libloading::Library;
+use std::ffi::c_void;
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
@@ -34,12 +36,57 @@ fn load() -> Host {
     Host::load(&path).unwrap_or_else(|e| panic!("load {}: {e}", path.display()))
 }
 
+#[repr(C)]
+struct MicroComOwnershipProbeVtbl {
+    query_interface: unsafe extern "system" fn(
+        *mut MicroComOwnershipProbe,
+        *const c_void,
+        *mut *mut c_void,
+    ) -> i32,
+    add_ref: unsafe extern "system" fn(*mut MicroComOwnershipProbe) -> u32,
+    release: unsafe extern "system" fn(*mut MicroComOwnershipProbe) -> u32,
+    get_value: unsafe extern "system" fn(*mut MicroComOwnershipProbe, *mut i32) -> i32,
+}
+
+#[repr(C)]
+struct MicroComOwnershipProbe {
+    vtbl: *const MicroComOwnershipProbeVtbl,
+}
+
 #[test]
 fn ping_increments() {
     let host = load();
     let factory = host.activation_factory().unwrap();
     let echo = factory.create_echo().unwrap();
     assert_eq!(echo.ping(41).unwrap(), 42);
+}
+
+#[test]
+fn microcom_probe_releases_through_nativeaot_vtable() {
+    let _host = load();
+    let path = host_path();
+    let library = unsafe { Library::new(path).unwrap() };
+    let get_probe = unsafe {
+        library
+            .get::<unsafe extern "C" fn(*mut *mut MicroComOwnershipProbe) -> i32>(
+                b"avn_get_microcom_ownership_probe",
+            )
+            .unwrap()
+    };
+    let mut probe = std::ptr::null_mut();
+    assert_eq!(unsafe { get_probe(&mut probe) }, 0);
+    assert!(!probe.is_null());
+
+    let mut value = 0;
+    assert_eq!(
+        unsafe { ((*probe).vtbl.as_ref().unwrap().get_value)(probe, &mut value) },
+        0
+    );
+    assert_eq!(value, 42);
+    assert_eq!(
+        unsafe { ((*probe).vtbl.as_ref().unwrap().release)(probe) },
+        0
+    );
 }
 
 #[test]

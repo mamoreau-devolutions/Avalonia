@@ -13,9 +13,12 @@
     <RootNamespace>Avalonia.Host</RootNamespace>
     <IsAotCompatible>true</IsAotCompatible>
     <EnableRuntimeMarshalling>true</EnableRuntimeMarshalling>
+    <UseMicroCom>true</UseMicroCom>
+    <UseMicroComGeneratorRoslyn>true</UseMicroComGeneratorRoslyn>
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Avalonia.Host.Tests, PublicKey=$(AvaloniaPublicKey)" />
+    <MicroComIdl Include="Ownership\microcom-ownership.idl" />
     <ProjectReference Include="..\Windows\Avalonia.Win32\Avalonia.Win32.csproj" />
     <ProjectReference Include="..\Skia\Avalonia.Skia\Avalonia.Skia.csproj" />
     <ProjectReference Include="..\HarfBuzz\Avalonia.HarfBuzz\Avalonia.HarfBuzz.csproj" />
@@ -23,4 +26,5 @@
   </ItemGroup>
   <Import Project="..\..\build\NullableEnable.props" />
   <Import Project="..\..\build\TrimmingEnable.props" />
+  <Import Project="..\..\build\MicroCOM.props" />
 </Project>
