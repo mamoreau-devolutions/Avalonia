@@ -1,4 +1,7 @@
-use avalonia::{App, Button, Grid, Orientation, StackPanel, TextBlock, ThemeVariant, Window};
+use avalonia::{
+    App, Button, Dock, DockPanel, Grid, Orientation, ScrollViewer, StackPanel, TextBlock, TextBox,
+    ThemeVariant, Window,
+};
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
@@ -34,6 +37,8 @@ fn builders_create_a_real_window_through_nativeaot() {
     let called_from_handler = called.clone();
     let posted = Arc::new(AtomicBool::new(false));
     let posted_from_handler = posted.clone();
+    let text_changed = Arc::new(AtomicBool::new(false));
+    let text_changed_from_handler = text_changed.clone();
     let app = App::load(host_path()).unwrap();
 
     app.run(move |context| {
@@ -53,12 +58,22 @@ fn builders_create_a_real_window_through_nativeaot() {
         assert_eq!(Grid::get_row(&button)?, 1);
         button.subscribe_click(|_| {})?.unsubscribe()?;
         let button = button.on_click(|_| {})?;
+
+        let text_box = TextBox::new()?.text("before")?.on_text_changed(move |_| {
+            text_changed_from_handler.store(true, Ordering::SeqCst);
+        })?;
+        DockPanel::set_dock(&text_box, Dock::Top)?;
+        assert_eq!(DockPanel::get_dock(&text_box)?, Dock::Top);
+        let text_box_for_post = text_box.clone();
+        let text_box = ScrollViewer::new()?.content(DockPanel::new()?.child(text_box)?)?;
+
         let panel = StackPanel::new()?
             .orientation(Orientation::Vertical)?
             .spacing(8.0)?
             .child(TextBlock::new()?.text("Hello from Rust")?)?
+            .child(text_box)?
             .child(button)?;
-        assert_eq!(panel.children()?.len()?, 2);
+        assert_eq!(panel.children()?.len()?, 3);
         assert_eq!(panel.get_orientation()?, Orientation::Vertical);
         assert_eq!(panel.get_spacing()?, 8.0);
 
@@ -71,6 +86,11 @@ fn builders_create_a_real_window_through_nativeaot() {
             assert!(!context.check_access().unwrap());
             context
                 .post(move || {
+                    text_box_for_post.set_text("after").unwrap();
+                    assert_eq!(
+                        text_box_for_post.get_text().unwrap().as_deref(),
+                        Some("after")
+                    );
                     posted_from_handler.store(true, Ordering::SeqCst);
                     window.close().unwrap();
                 })
@@ -83,4 +103,5 @@ fn builders_create_a_real_window_through_nativeaot() {
 
     assert!(called.load(Ordering::SeqCst));
     assert!(posted.load(Ordering::SeqCst));
+    assert!(text_changed.load(Ordering::SeqCst));
 }
