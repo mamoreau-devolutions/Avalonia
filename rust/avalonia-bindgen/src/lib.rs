@@ -111,6 +111,47 @@ mod tests {
         assert!(slots.windows(2).all(|pair| pair[0].0 < pair[1].0));
     }
 
+    #[test]
+    fn checked_in_native_header_matches_rust_vtable_slots() {
+        let ir: ProjectionIr =
+            serde_json::from_str(include_str!("../../projection.ir.json")).unwrap();
+        let rust = include_str!("../../avalonia-sys/src/generated.rs");
+        let header = include_str!("../../avalonia-sys/include/avalonia-rust-abi.h");
+        let mut names: Vec<String> = ir
+            .types
+            .iter()
+            .filter(|ty| ty.kind == "Class" || ty.kind == "Interface")
+            .map(|ty| ty.name.clone())
+            .collect();
+
+        for event in ir.types.iter().flat_map(|ty| ty.events.iter()) {
+            push_unique(&mut names, simple_name(&event.handler_interface_name));
+        }
+        for property in ir
+            .types
+            .iter()
+            .flat_map(|ty| ty.properties.iter())
+            .filter(|property| property.kind == "ComCollection")
+        {
+            push_unique(
+                &mut names,
+                simple_name(property.interface_name.as_deref().unwrap()),
+            );
+        }
+        for property in &ir.attached_properties {
+            push_unique(&mut names, simple_name(&property.statics_interface_name));
+        }
+        push_unique(&mut names, "IAvnControlFactory");
+
+        for name in names {
+            assert_eq!(
+                rust_vtable_slots(rust, &name),
+                header_vtable_slots(header, &name),
+                "vtable drift for {name}"
+            );
+        }
+    }
+
     fn to_snake(value: &str) -> String {
         let mut output = String::new();
         for (index, character) in value.chars().enumerate() {
@@ -120,5 +161,52 @@ mod tests {
             output.push(character.to_ascii_lowercase());
         }
         output
+    }
+
+    fn simple_name(value: &str) -> &str {
+        value.rsplit('.').next().unwrap()
+    }
+
+    fn push_unique(values: &mut Vec<String>, value: &str) {
+        if !values.iter().any(|existing| existing == value) {
+            values.push(value.to_owned());
+        }
+    }
+
+    fn rust_vtable_slots<'a>(source: &'a str, name: &str) -> Vec<&'a str> {
+        let marker = format!("struct {name}Vtbl {{");
+        let section = source
+            .split_once(&marker)
+            .unwrap_or_else(|| panic!("missing Rust vtable {name}"))
+            .1
+            .split_once("\n}")
+            .unwrap()
+            .0;
+        section
+            .lines()
+            .filter_map(|line| {
+                let line = line.trim();
+                let (field, _) = line.split_once(':')?;
+                (!field.contains(' ')).then_some(field)
+            })
+            .collect()
+    }
+
+    fn header_vtable_slots<'a>(source: &'a str, name: &str) -> Vec<&'a str> {
+        let marker = format!("struct {name}Vtbl {{");
+        let section = source
+            .split_once(&marker)
+            .unwrap_or_else(|| panic!("missing native vtable {name}"))
+            .1
+            .split_once("\n};")
+            .unwrap()
+            .0;
+        section
+            .lines()
+            .filter_map(|line| {
+                let (_, after_pointer) = line.split_once('*')?;
+                after_pointer.split_once(')').map(|(field, _)| field)
+            })
+            .collect()
     }
 }
