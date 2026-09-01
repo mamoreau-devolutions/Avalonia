@@ -86,4 +86,39 @@ mod tests {
         let expected = include_str!("../../avalonia/src/generated.rs");
         assert_eq!(generate_safe_from_json(ir).unwrap(), expected);
     }
+
+    #[test]
+    fn factory_slots_are_sorted_by_interface_name() {
+        let ir: ProjectionIr =
+            serde_json::from_str(include_str!("../../projection.ir.json")).unwrap();
+        let generated = emit_sys_module(&ir);
+        let mut slots: Vec<_> = ir
+            .types
+            .iter()
+            .filter(|ty| ty.is_constructible)
+            .map(|ty| {
+                let suffix = ty.name.strip_prefix("IAvn").unwrap();
+                (
+                    &ty.full_name,
+                    generated
+                        .find(&format!("    create_{}:", to_snake(suffix)))
+                        .unwrap(),
+                )
+            })
+            .collect();
+        slots.sort_by_key(|(_, position)| *position);
+
+        assert!(slots.windows(2).all(|pair| pair[0].0 < pair[1].0));
+    }
+
+    fn to_snake(value: &str) -> String {
+        let mut output = String::new();
+        for (index, character) in value.chars().enumerate() {
+            if character.is_uppercase() && index > 0 {
+                output.push('_');
+            }
+            output.push(character.to_ascii_lowercase());
+        }
+        output
+    }
 }

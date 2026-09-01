@@ -15,4 +15,7 @@ public partial interface IAvnActivationFactory
 
     [PreserveSig]
     int CreateControlFactory(out IAvnControlFactory? factory);
+
+    [PreserveSig]
+    int CreateDispatcher(out IAvnDispatcher? dispatcher);
 }

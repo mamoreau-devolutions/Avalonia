@@ -13,6 +13,8 @@ public static class Exports
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(AvnActivationFactory))]
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(AvnEcho))]
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(AvnApplication))]
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(AvnDispatcher))]
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(AvnResourceValue))]
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(HostApplication))]
     public static unsafe int GetActivationFactory(nint* factory)
     {

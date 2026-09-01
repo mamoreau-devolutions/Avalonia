@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Host.Com;
 using Avalonia.Projection.Generator;
 using Avalonia.Projection.Ir;
@@ -42,13 +43,27 @@ public class ComSourceEmitterTests
         Type[] types =
         [
             typeof(AvaloniaObject),
+            typeof(StyledElement),
             typeof(Control),
             typeof(ContentControl),
+            typeof(Decorator),
+            typeof(Border),
             typeof(Panel),
+            typeof(Grid),
+            typeof(Canvas),
+            typeof(DockPanel),
             typeof(Window),
             typeof(StackPanel),
             typeof(TextBlock),
+            typeof(TemplatedControl),
             typeof(Button),
+            typeof(ToggleButton),
+            typeof(CheckBox),
+            typeof(TextBox),
+            typeof(ScrollViewer),
+            typeof(RangeBase),
+            typeof(Slider),
+            typeof(ProgressBar),
         ];
         var ir = ClrTypeExtractor.Extract(types, AvaloniaProjectionProfiles.ObjectModelKernel);
 
@@ -89,6 +104,12 @@ public class ComSourceEmitterTests
         Assert.Contains("typeof(AvnButton)", roots, StringComparison.Ordinal);
         Assert.Contains("typeof(AvnControlList)", roots, StringComparison.Ordinal);
         Assert.Contains("typeof(AvnWindow)", roots, StringComparison.Ordinal);
+
+        var gridStatics = files["IAvnGridStatics.g.cs"];
+        Assert.Contains("int SetRow(IAvnControl? target, int value);", gridStatics, StringComparison.Ordinal);
+
+        var stringList = files["IAvnStringList.g.cs"];
+        Assert.Contains("int Add(string value);", stringList, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -97,13 +118,27 @@ public class ComSourceEmitterTests
         Type[] types =
         [
             typeof(AvaloniaObject),
+            typeof(StyledElement),
             typeof(Control),
             typeof(ContentControl),
+            typeof(Decorator),
+            typeof(Border),
             typeof(Panel),
+            typeof(Grid),
+            typeof(Canvas),
+            typeof(DockPanel),
             typeof(Window),
             typeof(StackPanel),
             typeof(TextBlock),
+            typeof(TemplatedControl),
             typeof(Button),
+            typeof(ToggleButton),
+            typeof(CheckBox),
+            typeof(TextBox),
+            typeof(ScrollViewer),
+            typeof(RangeBase),
+            typeof(Slider),
+            typeof(ProgressBar),
         ];
         var ir = ClrTypeExtractor.Extract(types, AvaloniaProjectionProfiles.ObjectModelKernel);
         var root = FindRepositoryRoot();

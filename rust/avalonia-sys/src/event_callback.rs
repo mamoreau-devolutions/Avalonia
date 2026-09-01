@@ -7,11 +7,13 @@ use std::ptr;
 use std::sync::atomic::{fence, AtomicU32, Ordering};
 use std::sync::Mutex;
 
+type EventCallback = Box<dyn FnMut() -> Result<()> + Send>;
+
 #[repr(C)]
 pub(crate) struct EventHandlerObject<I> {
     interface: I,
     ref_count: AtomicU32,
-    callback: Mutex<Option<Box<dyn FnMut() -> Result<()> + Send>>>,
+    callback: Mutex<Option<EventCallback>>,
 }
 
 pub(crate) fn create<I: ComInterface>(

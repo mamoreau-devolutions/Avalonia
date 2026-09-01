@@ -12,6 +12,7 @@ public enum MarshallingKind
     F32,
     F64,
     Bool,
+    NullableBool,
     StringUtf16,
     ComInterface,
     ComCollection,

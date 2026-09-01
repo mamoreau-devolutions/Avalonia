@@ -1,4 +1,4 @@
-use avalonia::{App, Button, Error, Orientation, StackPanel, TextBlock, Window};
+use avalonia::{App, Button, Grid, Orientation, StackPanel, TextBlock, ThemeVariant, Window};
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
@@ -32,31 +32,55 @@ fn host_path() -> PathBuf {
 fn builders_create_a_real_window_through_nativeaot() {
     let called = Arc::new(AtomicBool::new(false));
     let called_from_handler = called.clone();
+    let posted = Arc::new(AtomicBool::new(false));
+    let posted_from_handler = posted.clone();
     let app = App::load(host_path()).unwrap();
 
-    let error = app
-        .run(move || {
-            let button = Button::new()?.content(TextBlock::new()?.text("Close")?)?;
-            button.subscribe_click(|_| {})?.unsubscribe()?;
-            let button = button.on_click(|_| {})?;
-            let panel = StackPanel::new()?
-                .orientation(Orientation::Vertical)?
-                .spacing(8.0)?
-                .child(TextBlock::new()?.text("Hello from Rust")?)?
-                .child(button)?;
-            assert_eq!(panel.children()?.len()?, 2);
-            assert_eq!(panel.get_orientation()?, Orientation::Vertical);
-            assert_eq!(panel.get_spacing()?, 8.0);
+    app.run(move |context| {
+        assert!(context.check_access()?);
+        context.set_requested_theme_variant(ThemeVariant::Dark)?;
+        assert_eq!(context.requested_theme_variant()?, ThemeVariant::Dark);
+        assert_eq!(
+            context.find_resource("__missing_rust_resource__", ThemeVariant::Dark)?,
+            None
+        );
+        let button = Button::new()?.content(TextBlock::new()?.text("Close")?)?;
+        let classes = button.classes()?;
+        classes.add("primary")?;
+        assert!(classes.contains("primary")?);
+        assert!(classes.remove_value("primary")?);
+        Grid::set_row(&button, 1)?;
+        assert_eq!(Grid::get_row(&button)?, 1);
+        button.subscribe_click(|_| {})?.unsubscribe()?;
+        let button = button.on_click(|_| {})?;
+        let panel = StackPanel::new()?
+            .orientation(Orientation::Vertical)?
+            .spacing(8.0)?
+            .child(TextBlock::new()?.text("Hello from Rust")?)?
+            .child(button)?;
+        assert_eq!(panel.children()?.len()?, 2);
+        assert_eq!(panel.get_orientation()?, Orientation::Vertical);
+        assert_eq!(panel.get_spacing()?, 8.0);
 
-            let window = Window::new()?.title("Avalonia Rust")?.content(panel)?;
-            window.show()?;
-            window.close()?;
-            called_from_handler.store(true, Ordering::SeqCst);
+        let window = Window::new()?.title("Avalonia Rust")?.content(panel)?;
+        window.show()?;
+        called_from_handler.store(true, Ordering::SeqCst);
 
-            Err(Error::NoUiContext)
-        })
-        .unwrap_err();
+        let context = context.clone();
+        std::thread::spawn(move || {
+            assert!(!context.check_access().unwrap());
+            context
+                .post(move || {
+                    posted_from_handler.store(true, Ordering::SeqCst);
+                    window.close().unwrap();
+                })
+                .unwrap();
+        });
 
-    assert!(matches!(error, Error::Abi(_)));
+        Ok(())
+    })
+    .unwrap();
+
     assert!(called.load(Ordering::SeqCst));
+    assert!(posted.load(Ordering::SeqCst));
 }

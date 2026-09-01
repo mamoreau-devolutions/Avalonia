@@ -1,6 +1,6 @@
 use crate::ir::{
-    ProjectedEvent, ProjectedMethod, ProjectedParameter, ProjectedProperty, ProjectedType,
-    ProjectionIr,
+    ProjectedAttachedProperty, ProjectedEvent, ProjectedMethod, ProjectedParameter,
+    ProjectedProperty, ProjectedType, ProjectionIr,
 };
 
 pub fn emit_sys_module(ir: &ProjectionIr) -> String {
@@ -28,7 +28,7 @@ pub fn emit_sys_module(ir: &ProjectionIr) -> String {
             .interface_name
             .as_deref()
             .expect("collection interfaceName");
-        if !emitted_collections.iter().any(|item| *item == name) {
+        if !emitted_collections.contains(&name) {
             out.push_str(&emit_collection(collection));
             out.push('\n');
             emitted_collections.push(name);
@@ -40,6 +40,10 @@ pub fn emit_sys_module(ir: &ProjectionIr) -> String {
         .filter(|t| t.kind == "Interface" || t.kind == "Class")
     {
         out.push_str(&emit_interface(ir, ty));
+        out.push('\n');
+    }
+    for properties in attached_property_groups(ir) {
+        out.push_str(&emit_attached_statics(&properties));
         out.push('\n');
     }
     if ir.types.iter().any(|t| t.is_constructible) {
@@ -55,18 +59,21 @@ fn emit_collection(collection: &ProjectedProperty) -> String {
             .as_deref()
             .expect("collection interfaceName"),
     );
-    let element_name = simple_name(
-        collection
-            .element_interface_name
-            .as_deref()
-            .expect("collection elementInterfaceName"),
-    );
+    let element_kind = collection
+        .element_kind
+        .as_deref()
+        .expect("collection elementKind");
+    let element_name = collection
+        .element_interface_name
+        .as_deref()
+        .map(simple_name);
+    let abi_type = rust_abi_type(element_kind, collection.element_interface_name.as_deref());
     let iid = collection
         .interface_iid
         .as_deref()
         .expect("collection interfaceIid");
     let iid_const = format!("{}_IID", to_shouty(interface_name));
-    format!(
+    let mut out = format!(
         "pub const {iid_const}: Guid = {iid};\n\n\
          #[repr(C)]\n\
          struct {interface_name}Vtbl {{\n\
@@ -74,8 +81,9 @@ fn emit_collection(collection: &ProjectedProperty) -> String {
          \x20   add_ref: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
          \x20   release: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
          \x20   get_count: unsafe extern \"system\" fn(*mut {interface_name}, *mut i32) -> i32,\n\
-         \x20   get_at: unsafe extern \"system\" fn(*mut {interface_name}, i32, *mut *mut {element_name}) -> i32,\n\
-         \x20   add: unsafe extern \"system\" fn(*mut {interface_name}, *mut {element_name}) -> i32,\n\
+         \x20   get_at: unsafe extern \"system\" fn(*mut {interface_name}, i32, *mut {abi_type}) -> i32,\n\
+         \x20   add: unsafe extern \"system\" fn(*mut {interface_name}, {abi_type}) -> i32,\n\
+         \x20   index_of: unsafe extern \"system\" fn(*mut {interface_name}, {abi_type}, *mut i32) -> i32,\n\
          \x20   remove_at: unsafe extern \"system\" fn(*mut {interface_name}, i32) -> i32,\n\
          \x20   clear: unsafe extern \"system\" fn(*mut {interface_name}) -> i32,\n\
          }}\n\n\
@@ -94,42 +102,77 @@ fn emit_collection(collection: &ProjectedProperty) -> String {
          \x20           hresult::check(hr).map(|_| value as usize)\n\
          \x20       }}\n\
          \x20   }}\n\
-         \x20   pub fn get(&self, index: usize) -> Result<ComPtr<{element_name}>> {{\n\
-         \x20       unsafe {{\n\
-         \x20           let mut value = ptr::null_mut();\n\
-         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_at)(self.as_raw(), index as i32, &mut value);\n\
-         \x20           hresult::check(hr)?;\n\
-         \x20           ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))\n\
-         \x20       }}\n\
-         \x20   }}\n\
-         \x20   pub fn add(&self, value: &ComPtr<{element_name}>) -> Result<()> {{\n\
-         \x20       unsafe {{\n\
-         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().add)(self.as_raw(), value.as_raw());\n\
-         \x20           hresult::check(hr)\n\
-         \x20       }}\n\
-         \x20   }}\n\
-         \x20   pub fn remove(&self, index: usize) -> Result<()> {{\n\
-         \x20       unsafe {{\n\
-         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().remove_at)(self.as_raw(), index as i32);\n\
-         \x20           hresult::check(hr)\n\
-         \x20       }}\n\
-         \x20   }}\n\
-         \x20   pub fn clear(&self) -> Result<()> {{\n\
-         \x20       unsafe {{\n\
-         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().clear)(self.as_raw());\n\
-         \x20           hresult::check(hr)\n\
-         \x20       }}\n\
-         \x20   }}\n\
-         }}\n",
+        \x20   pub fn is_empty(&self) -> Result<bool> {{\n\
+        \x20       Ok(self.len()? == 0)\n\
+        \x20   }}\n\
+",
         iid = guid_literal(iid)
-    )
+    );
+    match element_kind {
+        "ComInterface" => {
+            let element_name = element_name.expect("COM collection elementInterfaceName");
+            out.push_str(&format!(
+                "    pub fn get(&self, index: usize) -> Result<ComPtr<{element_name}>> {{\n\
+                 \x20       unsafe {{\n\
+                 \x20           let mut value = ptr::null_mut();\n\
+                 \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_at)(self.as_raw(), index as i32, &mut value);\n\
+                 \x20           hresult::check(hr)?;\n\
+                 \x20           ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))\n\
+                 \x20       }}\n\
+                 \x20   }}\n\
+                 \x20   pub fn add(&self, value: &ComPtr<{element_name}>) -> Result<()> {{\n\
+                 \x20       unsafe {{ hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().add)(self.as_raw(), value.as_raw())) }}\n\
+                 \x20   }}\n\
+                 \x20   pub fn index_of(&self, value: &ComPtr<{element_name}>) -> Result<Option<usize>> {{\n\
+                 \x20       unsafe {{\n\
+                 \x20           let mut index = -1;\n\
+                 \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().index_of)(self.as_raw(), value.as_raw(), &mut index);\n\
+                 \x20           hresult::check(hr).map(|_| (index >= 0).then_some(index as usize))\n\
+                 \x20       }}\n\
+                 \x20   }}\n"
+            ));
+        }
+        "StringUtf16" => out.push_str(
+            "    pub fn get(&self, index: usize) -> Result<*mut u16> {\n\
+             \x20       unsafe {\n\
+             \x20           let mut value = ptr::null_mut();\n\
+             \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_at)(self.as_raw(), index as i32, &mut value);\n\
+             \x20           hresult::check(hr).map(|_| value)\n\
+             \x20       }\n\
+             \x20   }\n\
+             \x20   pub fn add(&self, value: &[u16]) -> Result<()> {\n\
+             \x20       unsafe { hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().add)(self.as_raw(), value.as_ptr().cast_mut())) }\n\
+             \x20   }\n\
+             \x20   pub fn index_of(&self, value: &[u16]) -> Result<Option<usize>> {\n\
+             \x20       unsafe {\n\
+             \x20           let mut index = -1;\n\
+             \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().index_of)(self.as_raw(), value.as_ptr().cast_mut(), &mut index);\n\
+             \x20           hresult::check(hr).map(|_| (index >= 0).then_some(index as usize))\n\
+             \x20       }\n\
+             \x20   }\n",
+        ),
+        _ => panic!("unsupported collection element kind {element_kind}"),
+    }
+    out.push_str(
+        "    pub fn remove(&self, index: usize) -> Result<()> {\n\
+         \x20       unsafe { hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().remove_at)(self.as_raw(), index as i32)) }\n\
+         \x20   }\n\
+         \x20   pub fn clear(&self) -> Result<()> {\n\
+         \x20       unsafe { hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().clear)(self.as_raw())) }\n\
+         \x20   }\n\
+         }\n",
+    );
+    out
 }
 
 fn emit_interface(ir: &ProjectionIr, ty: &ProjectedType) -> String {
     let mut out = String::new();
     let iid_const = format!("{}_IID", to_shouty(&ty.name));
     if let Some(iid) = &ty.iid {
-        out.push_str(&format!("pub const {iid_const}: Guid = {};\n\n", guid_literal(iid)));
+        out.push_str(&format!(
+            "pub const {iid_const}: Guid = {};\n\n",
+            guid_literal(iid)
+        ));
     }
 
     out.push_str("#[repr(C)]\n");
@@ -204,10 +247,7 @@ fn emit_interface(ir: &ProjectionIr, ty: &ProjectedType) -> String {
 }
 
 fn emit_event_handler(event: &ProjectedEvent) -> String {
-    assert_eq!(
-        event.payload_kind, "None",
-        "unsupported event payload kind"
-    );
+    assert_eq!(event.payload_kind, "None", "unsupported event payload kind");
     let name = simple_name(&event.handler_interface_name);
     let iid_const = format!("{}_IID", to_shouty(name));
     let stem = to_snake(name);
@@ -263,10 +303,7 @@ fn emit_event_handler(event: &ProjectedEvent) -> String {
 }
 
 fn emit_event(event: &ProjectedEvent) -> String {
-    assert_eq!(
-        event.payload_kind, "None",
-        "unsupported event payload kind"
-    );
+    assert_eq!(event.payload_kind, "None", "unsupported event payload kind");
     let snake = to_snake(&event.name);
     let handler = simple_name(&event.handler_interface_name);
     format!(
@@ -287,7 +324,8 @@ fn emit_event(event: &ProjectedEvent) -> String {
 }
 
 fn emit_factory(ir: &ProjectionIr) -> String {
-    let types: Vec<_> = ir.types.iter().filter(|t| t.is_constructible).collect();
+    let mut types: Vec<_> = ir.types.iter().filter(|t| t.is_constructible).collect();
+    types.sort_by(|left, right| left.full_name.cmp(&right.full_name));
     let iid = ir
         .factory_iid
         .as_deref()
@@ -303,6 +341,15 @@ fn emit_factory(ir: &ProjectionIr) -> String {
             "    create_{}: unsafe extern \"system\" fn(*mut IAvnControlFactory, *mut *mut {}) -> i32,\n",
             to_snake(interface_suffix(&ty.name)),
             ty.name
+        ));
+    }
+    for properties in attached_property_groups(ir) {
+        let first = properties[0];
+        let interface_name = simple_name(&first.statics_interface_name);
+        out.push_str(&format!(
+            "    get_{}_statics: unsafe extern \"system\" fn(*mut IAvnControlFactory, *mut *mut {}) -> i32,\n",
+            to_snake(&first.owner_name),
+            interface_name
         ));
     }
     out.push_str("}\n\n#[repr(C)]\npub struct IAvnControlFactory {\n    vtbl: *const IAvnControlFactoryVtbl,\n}\n\n");
@@ -324,8 +371,104 @@ fn emit_factory(ir: &ProjectionIr) -> String {
             to_snake(suffix)
         ));
     }
+    for properties in attached_property_groups(ir) {
+        let first = properties[0];
+        let owner = to_snake(&first.owner_name);
+        let interface_name = simple_name(&first.statics_interface_name);
+        out.push_str(&format!(
+            "    pub fn get_{owner}_statics(&self) -> Result<ComPtr<{interface_name}>> {{\n\
+             \x20       unsafe {{\n\
+             \x20           let mut value = ptr::null_mut();\n\
+             \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_{owner}_statics)(self.as_raw(), &mut value);\n\
+             \x20           hresult::check(hr)?;\n\
+             \x20           ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))\n\
+             \x20       }}\n\
+             \x20   }}\n"
+        ));
+    }
     out.push_str("}\n");
     out
+}
+
+fn emit_attached_statics(properties: &[&ProjectedAttachedProperty]) -> String {
+    let first = properties[0];
+    let name = simple_name(&first.statics_interface_name);
+    let iid_const = format!("{}_IID", to_shouty(name));
+    let mut out = format!(
+        "pub const {iid_const}: Guid = {};\n\n#[repr(C)]\nstruct {name}Vtbl {{\n",
+        guid_literal(&first.statics_interface_iid)
+    );
+    emit_iunknown_slots(&mut out);
+    for property in properties {
+        let snake = to_snake(&property.name);
+        let abi_type = rust_abi_type(&property.kind, None);
+        out.push_str(&format!(
+            "    get_{snake}: unsafe extern \"system\" fn(*mut {name}, *mut IAvnControl, *mut {abi_type}) -> i32,\n\
+             \x20   set_{snake}: unsafe extern \"system\" fn(*mut {name}, *mut IAvnControl, {abi_type}) -> i32,\n"
+        ));
+    }
+    out.push_str(&format!(
+        "}}\n\n#[repr(C)]\npub struct {name} {{\n    vtbl: *const {name}Vtbl,\n}}\n\n\
+         unsafe impl ComInterface for {name} {{\n    const IID: Guid = {iid_const};\n}}\n\n\
+         impl ComPtr<{name}> {{\n"
+    ));
+    for property in properties {
+        let snake = to_snake(&property.name);
+        let abi_type = rust_abi_type(&property.kind, None);
+        let result = if property.kind == "Bool" {
+            "value != 0"
+        } else {
+            "value"
+        };
+        let input = if property.kind == "Bool" {
+            "i32::from(value)"
+        } else {
+            "value"
+        };
+        let rust_type = if property.kind == "Bool" {
+            "bool".to_string()
+        } else {
+            rust_abi_type(&property.kind, None)
+        };
+        out.push_str(&format!(
+            "    pub fn get_{snake}(&self, target: &ComPtr<IAvnControl>) -> Result<{rust_type}> {{\n\
+             \x20       unsafe {{\n\
+             \x20           let mut value: {abi_type} = {};\n\
+             \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_{snake})(self.as_raw(), target.as_raw(), &mut value);\n\
+             \x20           hresult::check(hr).map(|_| {result})\n\
+             \x20       }}\n\
+             \x20   }}\n\
+             \x20   pub fn set_{snake}(&self, target: &ComPtr<IAvnControl>, value: {rust_type}) -> Result<()> {{\n\
+             \x20       unsafe {{\n\
+             \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_{snake})(self.as_raw(), target.as_raw(), {input});\n\
+             \x20           hresult::check(hr)\n\
+             \x20       }}\n\
+             \x20   }}\n",
+            rust_abi_default(&property.kind)
+        ));
+    }
+    out.push_str("}\n");
+    out
+}
+
+fn attached_property_groups(ir: &ProjectionIr) -> Vec<Vec<&ProjectedAttachedProperty>> {
+    let mut result: Vec<Vec<&ProjectedAttachedProperty>> = Vec::new();
+    for property in &ir.attached_properties {
+        if let Some(group) = result
+            .iter_mut()
+            .find(|group| group[0].statics_interface_name == property.statics_interface_name)
+        {
+            group.push(property);
+        } else {
+            result.push(vec![property]);
+        }
+    }
+    result.sort_by(|left, right| {
+        left[0]
+            .statics_interface_name
+            .cmp(&right[0].statics_interface_name)
+    });
+    result
 }
 
 fn emit_iunknown_slots(out: &mut String) {
@@ -489,13 +632,16 @@ fn event_handler_function(event: &ProjectedEvent) -> String {
 
 fn rust_abi_type(kind: &str, interface_name: Option<&str>) -> String {
     match kind {
-        "I32" | "Bool" => "i32".into(),
+        "I32" | "Bool" | "NullableBool" => "i32".into(),
         "I64" => "i64".into(),
         "F32" => "f32".into(),
         "F64" => "f64".into(),
         "StringUtf16" => "*mut u16".into(),
         "ComInterface" | "ComCollection" => {
-            format!("*mut {}", simple_name(interface_name.expect("interfaceName")))
+            format!(
+                "*mut {}",
+                simple_name(interface_name.expect("interfaceName"))
+            )
         }
         _ => "c_void".into(),
     }
@@ -504,7 +650,7 @@ fn rust_abi_type(kind: &str, interface_name: Option<&str>) -> String {
 fn rust_abi_default(kind: &str) -> &'static str {
     match kind {
         "F32" | "F64" => "0.0",
-        "I32" | "I64" | "Bool" => "0",
+        "I32" | "I64" | "Bool" | "NullableBool" => "0",
         _ => "ptr::null_mut()",
     }
 }
@@ -516,6 +662,7 @@ fn rust_property_type(property: &ProjectedProperty) -> String {
         "F32" => "f32".into(),
         "F64" => "f64".into(),
         "Bool" => "bool".into(),
+        "NullableBool" => "Option<bool>".into(),
         "StringUtf16" => "*mut u16".into(),
         "ComInterface" | "ComCollection" => {
             let ty = simple_name(property.interface_name.as_deref().expect("interfaceName"));
@@ -532,6 +679,9 @@ fn rust_property_type(property: &ProjectedProperty) -> String {
 fn rust_property_result(property: &ProjectedProperty) -> String {
     match property.kind.as_str() {
         "Bool" => "Ok(value != 0)".into(),
+        "NullableBool" => {
+            "match value { -1 => Ok(None), 0 => Ok(Some(false)), 1 => Ok(Some(true)), _ => Err(Error(hresult::E_INVALIDARG)) }".into()
+        }
         "ComInterface" | "ComCollection" if property.is_nullable => {
             "Ok(ComPtr::from_raw(value))".into()
         }
@@ -545,6 +695,7 @@ fn rust_property_result(property: &ProjectedProperty) -> String {
 fn rust_property_input(property: &ProjectedProperty) -> (String, String) {
     match property.kind.as_str() {
         "Bool" => ("bool".into(), "i32::from(value)".into()),
+        "NullableBool" => ("Option<bool>".into(), "value.map_or(-1, i32::from)".into()),
         "StringUtf16" if property.is_nullable => (
             "Option<&[u16]>".into(),
             "value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut())".into(),
@@ -568,6 +719,7 @@ fn rust_property_input(property: &ProjectedProperty) -> (String, String) {
 fn rust_parameter_input_type(parameter: &ProjectedParameter) -> String {
     match parameter.kind.as_str() {
         "Bool" => "bool".into(),
+        "NullableBool" => "Option<bool>".into(),
         "StringUtf16" if parameter.is_nullable => "Option<&[u16]>".into(),
         "StringUtf16" => "&[u16]".into(),
         "ComInterface" if parameter.is_nullable => format!(
@@ -589,6 +741,7 @@ fn rust_parameter_call_value(parameter: &ProjectedParameter) -> String {
     }
     match parameter.kind.as_str() {
         "Bool" => format!("i32::from({name})"),
+        "NullableBool" => format!("{name}.map_or(-1, i32::from)"),
         "StringUtf16" if parameter.is_nullable => {
             format!("{name}.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut())")
         }
@@ -604,10 +757,7 @@ fn rust_parameter_call_value(parameter: &ProjectedParameter) -> String {
 fn rust_method_result_type(parameters: &[&ProjectedParameter]) -> String {
     match parameters.len() {
         0 => "()".into(),
-        1 => rust_abi_type(
-            &parameters[0].kind,
-            parameters[0].interface_name.as_deref(),
-        ),
+        1 => rust_abi_type(&parameters[0].kind, parameters[0].interface_name.as_deref()),
         _ => format!(
             "({})",
             parameters

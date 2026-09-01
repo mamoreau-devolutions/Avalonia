@@ -13,6 +13,8 @@ public sealed class ProjectionPolicy
         new Dictionary<string, MarshallingOverride>(StringComparer.Ordinal);
     public IReadOnlyDictionary<string, EventProjection> EventOverrides { get; init; } =
         new Dictionary<string, EventProjection>(StringComparer.Ordinal);
+    public IReadOnlyDictionary<string, IReadOnlyList<string>> AttachedProperties { get; init; } =
+        new Dictionary<string, IReadOnlyList<string>>(StringComparer.Ordinal);
     public string ProjectionNamespace { get; init; } = "Avalonia.Host.Com";
 
     public bool Includes(Type type)
@@ -58,5 +60,6 @@ public sealed class MarshallingOverride
     public required MarshallingKind Kind { get; init; }
     public string? InterfaceName { get; init; }
     public string? ElementInterfaceName { get; init; }
+    public MarshallingKind? ElementKind { get; init; }
     public bool? IsNullable { get; init; }
 }

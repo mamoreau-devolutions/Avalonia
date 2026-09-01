@@ -22,4 +22,10 @@ public partial class AvnActivationFactory : IAvnActivationFactory
         factory = new AvnControlFactory();
         return HResults.S_OK;
     }
+
+    public int CreateDispatcher(out IAvnDispatcher? dispatcher)
+    {
+        dispatcher = new AvnDispatcher();
+        return HResults.S_OK;
+    }
 }

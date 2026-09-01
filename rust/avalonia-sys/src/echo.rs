@@ -28,7 +28,8 @@ impl ComPtr<IAvnEcho> {
     pub fn ping(&self, value: i32) -> Result<i32> {
         unsafe {
             let mut result = 0;
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().ping)(self.as_raw(), value, &mut result);
+            let hr =
+                ((*self.as_raw()).vtbl.as_ref().unwrap().ping)(self.as_raw(), value, &mut result);
             hresult::check(hr).map(|_| result)
         }
     }

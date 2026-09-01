@@ -12,4 +12,16 @@ public partial interface IAvnApplication
 
     [PreserveSig]
     int Shutdown();
+
+    [PreserveSig]
+    int GetRequestedThemeVariant(out int value);
+
+    [PreserveSig]
+    int SetRequestedThemeVariant(int value);
+
+    [PreserveSig]
+    int GetActualThemeVariant(out int value);
+
+    [PreserveSig]
+    int TryGetResource(string? key, int themeVariant, out int found, out IAvnResourceValue? value);
 }

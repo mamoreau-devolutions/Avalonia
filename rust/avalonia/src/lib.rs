@@ -1,8 +1,9 @@
+#[rustfmt::skip]
 mod generated;
 mod runtime;
 
 pub use generated::*;
-pub use runtime::{App, AsControl, EventSubscription};
+pub use runtime::{App, AppContext, AsControl, EventSubscription, ResourceValue, ThemeVariant};
 
 #[derive(Debug)]
 pub enum Error {
@@ -23,8 +24,12 @@ impl std::fmt::Display for Error {
         match self {
             Self::Abi(error) => error.fmt(formatter),
             Self::Load(error) => write!(formatter, "failed to load Avalonia host: {error}"),
-            Self::NoUiContext => formatter.write_str("Avalonia controls must be created inside App::run"),
-            Self::InvalidEnumValue(value) => write!(formatter, "invalid projected enum value {value}"),
+            Self::NoUiContext => {
+                formatter.write_str("Avalonia controls must be created inside App::run")
+            }
+            Self::InvalidEnumValue(value) => {
+                write!(formatter, "invalid projected enum value {value}")
+            }
         }
     }
 }

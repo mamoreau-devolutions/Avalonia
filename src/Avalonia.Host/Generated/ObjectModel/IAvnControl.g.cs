@@ -6,8 +6,8 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("DC4DEADC-602B-5243-9D84-3FB2C6B1D4A4")]
-public partial interface IAvnControl : IAvnAvaloniaObject
+[Guid("4ABF3B9A-04B4-51B5-8F2D-AC0D407D53B2")]
+public partial interface IAvnControl : IAvnStyledElement
 {
     [PreserveSig]
     int GetIsEnabled(out int value);
@@ -34,6 +34,21 @@ public sealed partial class AvnControl : IAvnControl
     {
         value = ObjectId;
         return global::Avalonia.Host.HResults.S_OK;
+    }
+
+    public int GetClasses(out IAvnStringList value)
+    {
+        value = default!;
+        try
+        {
+            _value.VerifyAccess();
+            value = new AvnStringList(_value.Classes);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
     }
 
     public int GetIsEnabled(out int value)

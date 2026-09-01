@@ -3,33 +3,58 @@
 //! Handwritten for the phase-0 fixture. Later phases replace interface
 //! vtables with IR-generated code; `ComPtr` / `Host` stay.
 
-mod application;
 mod app_handler;
+mod application;
 mod com;
+mod dispatcher;
 mod echo;
 mod event_callback;
 mod factory;
+#[rustfmt::skip]
 mod generated;
 mod guid;
 mod hresult;
 
-pub use com::{ComInterface, ComPtr, IUnknown};
-pub use application::IAvnApplication;
 pub use app_handler::{app_handler, IAvnAppHandler};
+pub use application::{IAvnApplication, IAvnResourceValue};
+pub use com::{ComInterface, ComPtr, IUnknown};
+pub use dispatcher::{action, IAvnAction, IAvnDispatcher};
 pub use echo::IAvnEcho;
 pub use factory::IAvnActivationFactory;
 pub use generated::*;
 pub use guid::Guid;
-pub use hresult::{Error, Result, AVN_E_FIXTURE, E_FAIL, E_INVALIDARG, E_NOINTERFACE, E_POINTER, S_OK};
+pub use hresult::{
+    Error, Result, AVN_E_FIXTURE, E_FAIL, E_INVALIDARG, E_NOINTERFACE, E_POINTER, S_OK,
+};
 
 use libloading::Library;
 use std::ffi::c_void;
 use std::mem::ManuallyDrop;
 use std::path::Path;
+use std::sync::OnceLock;
 
 type GetActivationFactoryFn = unsafe extern "C" fn(*mut *mut c_void) -> i32;
 type FreeFn = unsafe extern "C" fn(*mut c_void);
 type GetLastErrorFn = unsafe extern "C" fn(*mut *mut u16) -> i32;
+static FREE: OnceLock<FreeFn> = OnceLock::new();
+
+/// Takes ownership of a host-allocated null-terminated UTF-16 string.
+///
+/// # Safety
+/// `ptr` must be null or allocated by the loaded Avalonia host.
+pub unsafe fn take_utf16(ptr: *mut u16) -> Option<String> {
+    if ptr.is_null() {
+        return None;
+    }
+    let mut len = 0;
+    while *ptr.add(len) != 0 {
+        len += 1;
+    }
+    let value = String::from_utf16_lossy(std::slice::from_raw_parts(ptr, len));
+    FREE.get()
+        .expect("Avalonia Host must be loaded before reading ABI strings")(ptr.cast());
+    Some(value)
+}
 
 pub struct Host {
     _lib: ManuallyDrop<Library>,
@@ -67,8 +92,10 @@ impl Host {
                 }
             }
             let lib = Library::new(path)?;
-            let get_activation_factory = *lib.get::<GetActivationFactoryFn>(b"avn_get_activation_factory\0")?;
+            let get_activation_factory =
+                *lib.get::<GetActivationFactoryFn>(b"avn_get_activation_factory\0")?;
             let free = *lib.get::<FreeFn>(b"avn_free\0")?;
+            let _ = FREE.set(free);
             let get_last_error = *lib.get::<GetLastErrorFn>(b"avn_get_last_error\0")?;
             Ok(Self {
                 _lib: ManuallyDrop::new(lib),
@@ -89,6 +116,10 @@ impl Host {
         }
     }
 
+    /// # Safety
+    ///
+    /// `ptr` must be null or an allocation returned by this host, and it must
+    /// not have been freed previously.
     pub unsafe fn free(&self, ptr: *mut c_void) {
         if !ptr.is_null() {
             (self.free)(ptr);

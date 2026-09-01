@@ -35,13 +35,27 @@ internal static class ProjectionRuntime
 
     private static IAvnAvaloniaObject CreateWrapper(global::Avalonia.AvaloniaObject value) => value switch
     {
+        global::Avalonia.Controls.CheckBox typed => new AvnCheckBox(typed),
+        global::Avalonia.Controls.Primitives.ToggleButton typed => new AvnToggleButton(typed),
         global::Avalonia.Controls.Button typed => new AvnButton(typed),
-        global::Avalonia.Controls.StackPanel typed => new AvnStackPanel(typed),
+        global::Avalonia.Controls.ProgressBar typed => new AvnProgressBar(typed),
+        global::Avalonia.Controls.ScrollViewer typed => new AvnScrollViewer(typed),
+        global::Avalonia.Controls.Slider typed => new AvnSlider(typed),
         global::Avalonia.Controls.Window typed => new AvnWindow(typed),
+        global::Avalonia.Controls.Border typed => new AvnBorder(typed),
+        global::Avalonia.Controls.Canvas typed => new AvnCanvas(typed),
         global::Avalonia.Controls.ContentControl typed => new AvnContentControl(typed),
+        global::Avalonia.Controls.DockPanel typed => new AvnDockPanel(typed),
+        global::Avalonia.Controls.Grid typed => new AvnGrid(typed),
+        global::Avalonia.Controls.Primitives.RangeBase typed => new AvnRangeBase(typed),
+        global::Avalonia.Controls.StackPanel typed => new AvnStackPanel(typed),
+        global::Avalonia.Controls.TextBox typed => new AvnTextBox(typed),
+        global::Avalonia.Controls.Decorator typed => new AvnDecorator(typed),
         global::Avalonia.Controls.Panel typed => new AvnPanel(typed),
+        global::Avalonia.Controls.Primitives.TemplatedControl typed => new AvnTemplatedControl(typed),
         global::Avalonia.Controls.TextBlock typed => new AvnTextBlock(typed),
         global::Avalonia.Controls.Control typed => new AvnControl(typed),
+        global::Avalonia.StyledElement typed => new AvnStyledElement(typed),
         global::Avalonia.AvaloniaObject typed => new AvnAvaloniaObject(typed),
         _ => throw new global::System.NotSupportedException($"Type '{value.GetType().FullName}' is not in the projection IR"),
     };

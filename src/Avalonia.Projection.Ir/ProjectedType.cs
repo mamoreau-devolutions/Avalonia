@@ -23,6 +23,7 @@ public sealed class ProjectedProperty
     public string? InterfaceName { get; init; }
     public string? InterfaceIid { get; init; }
     public string? ElementInterfaceName { get; init; }
+    public MarshallingKind? ElementKind { get; init; }
     public string? ManagedTypeName { get; init; }
     public bool IsNullable { get; init; }
 }

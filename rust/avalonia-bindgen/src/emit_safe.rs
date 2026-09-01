@@ -28,7 +28,9 @@ pub fn emit_safe_module(ir: &ProjectionIr) -> String {
                 value.value, value.name
             ));
         }
-        out.push_str("            _ => Err(crate::Error::InvalidEnumValue(value)),\n        }\n    }\n}\n\n");
+        out.push_str(
+            "            _ => Err(crate::Error::InvalidEnumValue(value)),\n        }\n    }\n}\n\n",
+        );
     }
 
     for collection in unique_collections(ir) {
@@ -40,45 +42,82 @@ pub fn emit_safe_module(ir: &ProjectionIr) -> String {
         out.push_str(&emit_type(ir, ty));
         out.push('\n');
     }
+    out.truncate(out.trim_end().len());
+    out.push('\n');
     out
 }
 
 fn emit_collection(property: &ProjectedProperty) -> String {
     let name = simple_name(property.interface_name.as_deref().expect("interfaceName"));
     let safe_name = name.strip_prefix("IAvn").unwrap_or(name);
-    let element = simple_name(
-        property
-            .element_interface_name
-            .as_deref()
-            .expect("elementInterfaceName"),
-    )
-    .strip_prefix("IAvn")
-    .unwrap();
-    format!(
-        "#[derive(Debug)]\n\
+    let mut out = format!(
+        "#[derive(Clone, Debug)]\n\
          pub struct {safe_name} {{\n\
-         \x20   pub(crate) raw: sys::{name},\n\
-         }}\n\n",
-        name = format!("ComPtr<sys::{name}>")
-    ) + &format!(
+         \x20   pub(crate) raw: sys::ComPtr<sys::{name}>,\n\
+         }}\n\n"
+    );
+    out.push_str(&format!(
         "impl {safe_name} {{\n\
          \x20   pub fn len(&self) -> Result<usize> {{ Ok(self.raw.len()?) }}\n\
-         \x20   pub fn is_empty(&self) -> Result<bool> {{ Ok(self.len()? == 0) }}\n\
-         \x20   pub fn add(&self, value: impl As{element}) -> Result<()> {{\n\
-         \x20       let value = value.as_{element_snake}()?;\n\
-         \x20       Ok(self.raw.add(&value)?)\n\
-         \x20   }}\n\
-         \x20   pub fn remove(&self, index: usize) -> Result<()> {{ Ok(self.raw.remove(index)?) }}\n\
-         \x20   pub fn clear(&self) -> Result<()> {{ Ok(self.raw.clear()?) }}\n\
-         }}\n",
-        element_snake = to_snake(element)
-    )
+         \x20   pub fn is_empty(&self) -> Result<bool> {{ Ok(self.len()? == 0) }}\n"
+    ));
+    match property.element_kind.as_deref() {
+        Some("ComInterface") => {
+            let element = simple_name(
+                property
+                    .element_interface_name
+                    .as_deref()
+                    .expect("elementInterfaceName"),
+            )
+            .strip_prefix("IAvn")
+            .unwrap();
+            out.push_str(&format!(
+                "    pub fn get(&self, index: usize) -> Result<{element}> {{\n\
+                 \x20       Ok({element} {{ raw: self.raw.get(index)? }})\n\
+                 \x20   }}\n\
+                 \x20   pub fn add(&self, value: impl As{element}) -> Result<()> {{\n\
+                 \x20       let value = value.as_{element_snake}()?;\n\
+                 \x20       Ok(self.raw.add(&value)?)\n\
+                 \x20   }}\n",
+                element_snake = to_snake(element)
+            ));
+        }
+        Some("StringUtf16") => out.push_str(
+            "    pub fn get(&self, index: usize) -> Result<String> {\n\
+             \x20       unsafe { sys::take_utf16(self.raw.get(index)?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }\n\
+             \x20   }\n\
+             \x20   pub fn add(&self, value: impl AsRef<str>) -> Result<()> {\n\
+             \x20       let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();\n\
+             \x20       Ok(self.raw.add(&value)?)\n\
+             \x20   }\n\
+             \x20   pub fn contains(&self, value: impl AsRef<str>) -> Result<bool> {\n\
+             \x20       let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();\n\
+             \x20       Ok(self.raw.index_of(&value)?.is_some())\n\
+             \x20   }\n\
+             \x20   pub fn remove_value(&self, value: impl AsRef<str>) -> Result<bool> {\n\
+             \x20       let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();\n\
+             \x20       if let Some(index) = self.raw.index_of(&value)? {\n\
+             \x20           self.raw.remove(index)?;\n\
+             \x20           Ok(true)\n\
+             \x20       } else {\n\
+             \x20           Ok(false)\n\
+             \x20       }\n\
+             \x20   }\n",
+        ),
+        kind => panic!("unsupported safe collection element kind {kind:?}"),
+    }
+    out.push_str(
+        "    pub fn remove(&self, index: usize) -> Result<()> { Ok(self.raw.remove(index)?) }\n\
+         \x20   pub fn clear(&self) -> Result<()> { Ok(self.raw.clear()?) }\n\
+         }\n",
+    );
+    out
 }
 
 fn emit_type(ir: &ProjectionIr, ty: &ProjectedType) -> String {
     let safe_name = interface_suffix(&ty.name);
     let mut out = format!(
-        "#[derive(Debug)]\n\
+        "#[derive(Clone, Debug)]\n\
          pub struct {safe_name} {{\n\
          \x20   pub(crate) raw: sys::ComPtr<sys::{interface_name}>,\n\
          }}\n\n\
@@ -115,6 +154,13 @@ fn emit_type(ir: &ProjectionIr, ty: &ProjectedType) -> String {
             out.push_str(&emit_event(event));
         }
     }
+    for property in ir
+        .attached_properties
+        .iter()
+        .filter(|property| property.owner_name == safe_name)
+    {
+        out.push_str(&emit_attached_property(property, ir));
+    }
     out.push_str("}\n\n");
 
     if is_control(ir, ty) {
@@ -126,17 +172,52 @@ fn emit_type(ir: &ProjectionIr, ty: &ProjectedType) -> String {
              }}\n"
         ));
     }
+
+    fn emit_attached_property(
+        property: &crate::ir::ProjectedAttachedProperty,
+        ir: &ProjectionIr,
+    ) -> String {
+        let owner = to_snake(&property.owner_name);
+        let name = to_snake(&property.name);
+        let enum_name = simple_name(&property.managed_type_name);
+        let is_enum = ir
+            .enums
+            .iter()
+            .any(|projected_enum| projected_enum.full_name == property.managed_type_name);
+        let safe_type = if is_enum {
+            enum_name.to_string()
+        } else {
+            rust_scalar_kind(&property.kind).to_string()
+        };
+        let raw_get = if is_enum {
+            format!("{enum_name}::try_from(value)")
+        } else {
+            "Ok(value)".to_string()
+        };
+        let raw_set = if is_enum { "value as i32" } else { "value" };
+        format!(
+            "    pub fn get_{name}(target: &impl AsControl) -> Result<{safe_type}> {{\n\
+             \x20       let target = target.as_control()?;\n\
+             \x20       let value = with_factory(|factory| factory.get_{owner}_statics()?.get_{name}(&target))?;\n\
+             \x20       {raw_get}\n\
+             \x20   }}\n\
+             \x20   pub fn set_{name}(target: &impl AsControl, value: {safe_type}) -> Result<()> {{\n\
+             \x20       let target = target.as_control()?;\n\
+             \x20       with_factory(|factory| factory.get_{owner}_statics()?.set_{name}(&target, {raw_set}))\n\
+             \x20   }}\n"
+        )
+    }
     out
 }
 
 fn emit_property(property: &ProjectedProperty) -> String {
     let snake = to_snake(&property.name);
-    let getter = if property.can_write && property.kind != "Bool" {
+    let getter = if property.can_write {
         format!("get_{snake}")
     } else {
         snake.clone()
     };
-    let builder = if property.kind == "Bool" {
+    let builder = if property.kind == "Bool" || property.kind == "NullableBool" {
         snake.strip_prefix("is_").unwrap_or(&snake)
     } else {
         &snake
@@ -145,7 +226,16 @@ fn emit_property(property: &ProjectedProperty) -> String {
 
     if property.can_read {
         match property.kind.as_str() {
-            "StringUtf16" => {}
+            "StringUtf16" if property.is_nullable => out.push_str(&format!(
+                "    pub fn {getter}(&self) -> Result<Option<String>> {{\n\
+                 \x20       unsafe {{ Ok(sys::take_utf16(self.raw.get_{snake}()?)) }}\n\
+                 \x20   }}\n"
+            )),
+            "StringUtf16" => out.push_str(&format!(
+                "    pub fn {getter}(&self) -> Result<String> {{\n\
+                 \x20       unsafe {{ sys::take_utf16(self.raw.get_{snake}()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }}\n\
+                 \x20   }}\n"
+            )),
             "ComInterface" => {
                 let safe_type = interface_suffix(simple_name(
                     property.interface_name.as_deref().expect("interfaceName"),
@@ -163,7 +253,6 @@ fn emit_property(property: &ProjectedProperty) -> String {
                          \x20   }}\n"
                     ));
                 }
-
             }
             "ComCollection" => {
                 let safe_type = interface_suffix(simple_name(
@@ -205,10 +294,7 @@ fn emit_property(property: &ProjectedProperty) -> String {
 }
 
 fn emit_event(event: &ProjectedEvent) -> String {
-    assert_eq!(
-        event.payload_kind, "None",
-        "unsupported event payload kind"
-    );
+    assert_eq!(event.payload_kind, "None", "unsupported event payload kind");
     let event_name = to_snake(&event.name);
     let handler_name = simple_name(&event.handler_interface_name)
         .strip_prefix("IAvn")
@@ -323,13 +409,13 @@ fn rust_scalar_kind(kind: &str) -> &str {
         "F32" => "f32",
         "F64" => "f64",
         "Bool" => "bool",
+        "NullableBool" => "Option<bool>",
         _ => "()",
     }
 }
 
 fn is_enum_property(property: &ProjectedProperty) -> bool {
-    property.kind == "I32"
-        && property.managed_type_name.as_deref() != Some("System.Int32")
+    property.kind == "I32" && property.managed_type_name.as_deref() != Some("System.Int32")
 }
 
 fn is_control(ir: &ProjectionIr, ty: &ProjectedType) -> bool {
@@ -361,9 +447,10 @@ fn unique_collections(ir: &ProjectionIr) -> Vec<&ProjectedProperty> {
         .flat_map(|ty| ty.properties.iter())
         .filter(|property| property.kind == "ComCollection")
     {
-        if !result.iter().any(|existing: &&ProjectedProperty| {
-            existing.interface_name == property.interface_name
-        }) {
+        if !result
+            .iter()
+            .any(|existing: &&ProjectedProperty| existing.interface_name == property.interface_name)
+        {
             result.push(property);
         }
     }

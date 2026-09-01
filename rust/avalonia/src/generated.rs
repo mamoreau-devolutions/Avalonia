@@ -6,6 +6,72 @@ use crate::{runtime::{with_factory, AsControl, EventSubscription}, Result};
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Dock {
+    Left = 0,
+    Bottom = 1,
+    Right = 2,
+    Top = 3,
+}
+
+impl TryFrom<i32> for Dock {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::Left),
+            1 => Ok(Self::Bottom),
+            2 => Ok(Self::Right),
+            3 => Ok(Self::Top),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ScrollBarVisibility {
+    Disabled = 0,
+    Auto = 1,
+    Hidden = 2,
+    Visible = 3,
+}
+
+impl TryFrom<i32> for ScrollBarVisibility {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::Disabled),
+            1 => Ok(Self::Auto),
+            2 => Ok(Self::Hidden),
+            3 => Ok(Self::Visible),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum TickPlacement {
+    None = 0,
+    TopLeft = 1,
+    BottomRight = 2,
+    Outside = 3,
+}
+
+impl TryFrom<i32> for TickPlacement {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::None),
+            1 => Ok(Self::TopLeft),
+            2 => Ok(Self::BottomRight),
+            3 => Ok(Self::Outside),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Orientation {
     Horizontal = 0,
     Vertical = 1,
@@ -22,7 +88,47 @@ impl TryFrom<i32> for Orientation {
     }
 }
 
-#[derive(Debug)]
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum BackgroundSizing {
+    InnerBorderEdge = 0,
+    OuterBorderEdge = 1,
+    CenterBorder = 2,
+}
+
+impl TryFrom<i32> for BackgroundSizing {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::InnerBorderEdge),
+            1 => Ok(Self::OuterBorderEdge),
+            2 => Ok(Self::CenterBorder),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum TextWrapping {
+    NoWrap = 0,
+    Wrap = 1,
+    WrapWithOverflow = 2,
+}
+
+impl TryFrom<i32> for TextWrapping {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::NoWrap),
+            1 => Ok(Self::Wrap),
+            2 => Ok(Self::WrapWithOverflow),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
 pub struct ControlList {
     pub(crate) raw: sys::ComPtr<sys::IAvnControlList>,
 }
@@ -30,6 +136,9 @@ pub struct ControlList {
 impl ControlList {
     pub fn len(&self) -> Result<usize> { Ok(self.raw.len()?) }
     pub fn is_empty(&self) -> Result<bool> { Ok(self.len()? == 0) }
+    pub fn get(&self, index: usize) -> Result<Control> {
+        Ok(Control { raw: self.raw.get(index)? })
+    }
     pub fn add(&self, value: impl AsControl) -> Result<()> {
         let value = value.as_control()?;
         Ok(self.raw.add(&value)?)
@@ -38,7 +147,39 @@ impl ControlList {
     pub fn clear(&self) -> Result<()> { Ok(self.raw.clear()?) }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
+pub struct StringList {
+    pub(crate) raw: sys::ComPtr<sys::IAvnStringList>,
+}
+
+impl StringList {
+    pub fn len(&self) -> Result<usize> { Ok(self.raw.len()?) }
+    pub fn is_empty(&self) -> Result<bool> { Ok(self.len()? == 0) }
+    pub fn get(&self, index: usize) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get(index)?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn add(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.add(&value)?)
+    }
+    pub fn contains(&self, value: impl AsRef<str>) -> Result<bool> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.index_of(&value)?.is_some())
+    }
+    pub fn remove_value(&self, value: impl AsRef<str>) -> Result<bool> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        if let Some(index) = self.raw.index_of(&value)? {
+            self.raw.remove(index)?;
+            Ok(true)
+        } else {
+            Ok(false)
+        }
+    }
+    pub fn remove(&self, index: usize) -> Result<()> { Ok(self.raw.remove(index)?) }
+    pub fn clear(&self) -> Result<()> { Ok(self.raw.clear()?) }
+}
+
+#[derive(Clone, Debug)]
 pub struct AvaloniaObject {
     pub(crate) raw: sys::ComPtr<sys::IAvnAvaloniaObject>,
 }
@@ -51,7 +192,58 @@ impl AvaloniaObject {
 }
 
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
+pub struct Border {
+    pub(crate) raw: sys::ComPtr<sys::IAvnBorder>,
+}
+
+impl Border {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_border())
+            .map(|raw| Self { raw })
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_child(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_child()?.map(|raw| Control { raw }))
+    }
+    pub fn set_child(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_child(Some(&value))?)
+    }
+    pub fn child(self, value: impl AsControl) -> Result<Self> {
+        self.set_child(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
+}
+
+impl AsControl for Border {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
 pub struct Button {
     pub(crate) raw: sys::ComPtr<sys::IAvnButton>,
 }
@@ -61,7 +253,10 @@ impl Button {
         with_factory(|factory| factory.create_button())
             .map(|raw| Self { raw })
     }
-    pub fn is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
     pub fn set_enabled(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_enabled(value)?)
     }
@@ -101,7 +296,153 @@ impl AsControl for Button {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
+pub struct Canvas {
+    pub(crate) raw: sys::ComPtr<sys::IAvnCanvas>,
+}
+
+impl Canvas {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_canvas())
+            .map(|raw| Self { raw })
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn children(&self) -> Result<ControlList> {
+        Ok(ControlList { raw: self.raw.get_children()? })
+    }
+    pub fn child(self, value: impl AsControl) -> Result<Self> {
+        self.children()?.add(value)?;
+        Ok(self)
+    }
+    pub fn get_left(target: &impl AsControl) -> Result<f64> {
+        let target = target.as_control()?;
+        let value = with_factory(|factory| factory.get_canvas_statics()?.get_left(&target))?;
+        Ok(value)
+    }
+    pub fn set_left(target: &impl AsControl, value: f64) -> Result<()> {
+        let target = target.as_control()?;
+        with_factory(|factory| factory.get_canvas_statics()?.set_left(&target, value))
+    }
+    pub fn get_top(target: &impl AsControl) -> Result<f64> {
+        let target = target.as_control()?;
+        let value = with_factory(|factory| factory.get_canvas_statics()?.get_top(&target))?;
+        Ok(value)
+    }
+    pub fn set_top(target: &impl AsControl, value: f64) -> Result<()> {
+        let target = target.as_control()?;
+        with_factory(|factory| factory.get_canvas_statics()?.set_top(&target, value))
+    }
+    pub fn get_right(target: &impl AsControl) -> Result<f64> {
+        let target = target.as_control()?;
+        let value = with_factory(|factory| factory.get_canvas_statics()?.get_right(&target))?;
+        Ok(value)
+    }
+    pub fn set_right(target: &impl AsControl, value: f64) -> Result<()> {
+        let target = target.as_control()?;
+        with_factory(|factory| factory.get_canvas_statics()?.set_right(&target, value))
+    }
+    pub fn get_bottom(target: &impl AsControl) -> Result<f64> {
+        let target = target.as_control()?;
+        let value = with_factory(|factory| factory.get_canvas_statics()?.get_bottom(&target))?;
+        Ok(value)
+    }
+    pub fn set_bottom(target: &impl AsControl, value: f64) -> Result<()> {
+        let target = target.as_control()?;
+        with_factory(|factory| factory.get_canvas_statics()?.set_bottom(&target, value))
+    }
+}
+
+impl AsControl for Canvas {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct CheckBox {
+    pub(crate) raw: sys::ComPtr<sys::IAvnCheckBox>,
+}
+
+impl CheckBox {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_check_box())
+            .map(|raw| Self { raw })
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_content(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_content()?.map(|raw| Control { raw }))
+    }
+    pub fn set_content(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_content(Some(&value))?)
+    }
+    pub fn content(self, value: impl AsControl) -> Result<Self> {
+        self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_click(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::button_click_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_click(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_click(subscription_id)))
+    }
+    pub fn on_click(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_click(callback)?.detach();
+        Ok(self)
+    }
+    pub fn get_is_checked(&self) -> Result<Option<bool>> { Ok(self.raw.get_is_checked()?) }
+    pub fn set_checked(&self, value: Option<bool>) -> Result<()> {
+        Ok(self.raw.set_is_checked(value)?)
+    }
+    pub fn checked(self, value: Option<bool>) -> Result<Self> {
+        self.set_checked(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_is_checked_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::toggle_button_is_checked_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_is_checked_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_is_checked_changed(subscription_id)))
+    }
+    pub fn on_is_checked_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_is_checked_changed(callback)?.detach();
+        Ok(self)
+    }
+}
+
+impl AsControl for CheckBox {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
 pub struct ContentControl {
     pub(crate) raw: sys::ComPtr<sys::IAvnContentControl>,
 }
@@ -111,7 +452,10 @@ impl ContentControl {
         with_factory(|factory| factory.create_content_control())
             .map(|raw| Self { raw })
     }
-    pub fn is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
     pub fn set_enabled(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_enabled(value)?)
     }
@@ -138,7 +482,7 @@ impl AsControl for ContentControl {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Control {
     pub(crate) raw: sys::ComPtr<sys::IAvnControl>,
 }
@@ -148,7 +492,10 @@ impl Control {
         with_factory(|factory| factory.create_control())
             .map(|raw| Self { raw })
     }
-    pub fn is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
     pub fn set_enabled(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_enabled(value)?)
     }
@@ -164,7 +511,221 @@ impl AsControl for Control {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
+pub struct Decorator {
+    pub(crate) raw: sys::ComPtr<sys::IAvnDecorator>,
+}
+
+impl Decorator {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_decorator())
+            .map(|raw| Self { raw })
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_child(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_child()?.map(|raw| Control { raw }))
+    }
+    pub fn set_child(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_child(Some(&value))?)
+    }
+    pub fn child(self, value: impl AsControl) -> Result<Self> {
+        self.set_child(value)?;
+        Ok(self)
+    }
+}
+
+impl AsControl for Decorator {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct DockPanel {
+    pub(crate) raw: sys::ComPtr<sys::IAvnDockPanel>,
+}
+
+impl DockPanel {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_dock_panel())
+            .map(|raw| Self { raw })
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn children(&self) -> Result<ControlList> {
+        Ok(ControlList { raw: self.raw.get_children()? })
+    }
+    pub fn child(self, value: impl AsControl) -> Result<Self> {
+        self.children()?.add(value)?;
+        Ok(self)
+    }
+    pub fn get_last_child_fill(&self) -> Result<bool> { Ok(self.raw.get_last_child_fill()?) }
+    pub fn set_last_child_fill(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_last_child_fill(value)?)
+    }
+    pub fn last_child_fill(self, value: bool) -> Result<Self> {
+        self.set_last_child_fill(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_spacing(&self) -> Result<f64> { Ok(self.raw.get_horizontal_spacing()?) }
+    pub fn set_horizontal_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_horizontal_spacing(value)?)
+    }
+    pub fn horizontal_spacing(self, value: f64) -> Result<Self> {
+        self.set_horizontal_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_spacing(&self) -> Result<f64> { Ok(self.raw.get_vertical_spacing()?) }
+    pub fn set_vertical_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_vertical_spacing(value)?)
+    }
+    pub fn vertical_spacing(self, value: f64) -> Result<Self> {
+        self.set_vertical_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_dock(target: &impl AsControl) -> Result<Dock> {
+        let target = target.as_control()?;
+        let value = with_factory(|factory| factory.get_dock_panel_statics()?.get_dock(&target))?;
+        Dock::try_from(value)
+    }
+    pub fn set_dock(target: &impl AsControl, value: Dock) -> Result<()> {
+        let target = target.as_control()?;
+        with_factory(|factory| factory.get_dock_panel_statics()?.set_dock(&target, value as i32))
+    }
+}
+
+impl AsControl for DockPanel {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct Grid {
+    pub(crate) raw: sys::ComPtr<sys::IAvnGrid>,
+}
+
+impl Grid {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_grid())
+            .map(|raw| Self { raw })
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn children(&self) -> Result<ControlList> {
+        Ok(ControlList { raw: self.raw.get_children()? })
+    }
+    pub fn child(self, value: impl AsControl) -> Result<Self> {
+        self.children()?.add(value)?;
+        Ok(self)
+    }
+    pub fn get_show_grid_lines(&self) -> Result<bool> { Ok(self.raw.get_show_grid_lines()?) }
+    pub fn set_show_grid_lines(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_show_grid_lines(value)?)
+    }
+    pub fn show_grid_lines(self, value: bool) -> Result<Self> {
+        self.set_show_grid_lines(value)?;
+        Ok(self)
+    }
+    pub fn get_row_spacing(&self) -> Result<f64> { Ok(self.raw.get_row_spacing()?) }
+    pub fn set_row_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_row_spacing(value)?)
+    }
+    pub fn row_spacing(self, value: f64) -> Result<Self> {
+        self.set_row_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_column_spacing(&self) -> Result<f64> { Ok(self.raw.get_column_spacing()?) }
+    pub fn set_column_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_column_spacing(value)?)
+    }
+    pub fn column_spacing(self, value: f64) -> Result<Self> {
+        self.set_column_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_column(target: &impl AsControl) -> Result<i32> {
+        let target = target.as_control()?;
+        let value = with_factory(|factory| factory.get_grid_statics()?.get_column(&target))?;
+        Ok(value)
+    }
+    pub fn set_column(target: &impl AsControl, value: i32) -> Result<()> {
+        let target = target.as_control()?;
+        with_factory(|factory| factory.get_grid_statics()?.set_column(&target, value))
+    }
+    pub fn get_row(target: &impl AsControl) -> Result<i32> {
+        let target = target.as_control()?;
+        let value = with_factory(|factory| factory.get_grid_statics()?.get_row(&target))?;
+        Ok(value)
+    }
+    pub fn set_row(target: &impl AsControl, value: i32) -> Result<()> {
+        let target = target.as_control()?;
+        with_factory(|factory| factory.get_grid_statics()?.set_row(&target, value))
+    }
+    pub fn get_column_span(target: &impl AsControl) -> Result<i32> {
+        let target = target.as_control()?;
+        let value = with_factory(|factory| factory.get_grid_statics()?.get_column_span(&target))?;
+        Ok(value)
+    }
+    pub fn set_column_span(target: &impl AsControl, value: i32) -> Result<()> {
+        let target = target.as_control()?;
+        with_factory(|factory| factory.get_grid_statics()?.set_column_span(&target, value))
+    }
+    pub fn get_row_span(target: &impl AsControl) -> Result<i32> {
+        let target = target.as_control()?;
+        let value = with_factory(|factory| factory.get_grid_statics()?.get_row_span(&target))?;
+        Ok(value)
+    }
+    pub fn set_row_span(target: &impl AsControl, value: i32) -> Result<()> {
+        let target = target.as_control()?;
+        with_factory(|factory| factory.get_grid_statics()?.set_row_span(&target, value))
+    }
+    pub fn get_is_shared_size_scope(target: &impl AsControl) -> Result<bool> {
+        let target = target.as_control()?;
+        let value = with_factory(|factory| factory.get_grid_statics()?.get_is_shared_size_scope(&target))?;
+        Ok(value)
+    }
+    pub fn set_is_shared_size_scope(target: &impl AsControl, value: bool) -> Result<()> {
+        let target = target.as_control()?;
+        with_factory(|factory| factory.get_grid_statics()?.set_is_shared_size_scope(&target, value))
+    }
+}
+
+impl AsControl for Grid {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
 pub struct Panel {
     pub(crate) raw: sys::ComPtr<sys::IAvnPanel>,
 }
@@ -174,7 +735,10 @@ impl Panel {
         with_factory(|factory| factory.create_panel())
             .map(|raw| Self { raw })
     }
-    pub fn is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
     pub fn set_enabled(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_enabled(value)?)
     }
@@ -197,7 +761,562 @@ impl AsControl for Panel {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
+pub struct RangeBase {
+    pub(crate) raw: sys::ComPtr<sys::IAvnRangeBase>,
+}
+
+impl RangeBase {
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_minimum(&self) -> Result<f64> { Ok(self.raw.get_minimum()?) }
+    pub fn set_minimum(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_minimum(value)?)
+    }
+    pub fn minimum(self, value: f64) -> Result<Self> {
+        self.set_minimum(value)?;
+        Ok(self)
+    }
+    pub fn get_maximum(&self) -> Result<f64> { Ok(self.raw.get_maximum()?) }
+    pub fn set_maximum(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_maximum(value)?)
+    }
+    pub fn maximum(self, value: f64) -> Result<Self> {
+        self.set_maximum(value)?;
+        Ok(self)
+    }
+    pub fn get_value(&self) -> Result<f64> { Ok(self.raw.get_value()?) }
+    pub fn set_value(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_value(value)?)
+    }
+    pub fn value(self, value: f64) -> Result<Self> {
+        self.set_value(value)?;
+        Ok(self)
+    }
+    pub fn get_small_change(&self) -> Result<f64> { Ok(self.raw.get_small_change()?) }
+    pub fn set_small_change(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_small_change(value)?)
+    }
+    pub fn small_change(self, value: f64) -> Result<Self> {
+        self.set_small_change(value)?;
+        Ok(self)
+    }
+    pub fn get_large_change(&self) -> Result<f64> { Ok(self.raw.get_large_change()?) }
+    pub fn set_large_change(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_large_change(value)?)
+    }
+    pub fn large_change(self, value: f64) -> Result<Self> {
+        self.set_large_change(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_value_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::range_base_value_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_value_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_value_changed(subscription_id)))
+    }
+    pub fn on_value_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_value_changed(callback)?.detach();
+        Ok(self)
+    }
+}
+
+impl AsControl for RangeBase {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct TemplatedControl {
+    pub(crate) raw: sys::ComPtr<sys::IAvnTemplatedControl>,
+}
+
+impl TemplatedControl {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_templated_control())
+            .map(|raw| Self { raw })
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+}
+
+impl AsControl for TemplatedControl {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct ToggleButton {
+    pub(crate) raw: sys::ComPtr<sys::IAvnToggleButton>,
+}
+
+impl ToggleButton {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_toggle_button())
+            .map(|raw| Self { raw })
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_content(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_content()?.map(|raw| Control { raw }))
+    }
+    pub fn set_content(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_content(Some(&value))?)
+    }
+    pub fn content(self, value: impl AsControl) -> Result<Self> {
+        self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_click(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::button_click_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_click(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_click(subscription_id)))
+    }
+    pub fn on_click(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_click(callback)?.detach();
+        Ok(self)
+    }
+    pub fn get_is_checked(&self) -> Result<Option<bool>> { Ok(self.raw.get_is_checked()?) }
+    pub fn set_checked(&self, value: Option<bool>) -> Result<()> {
+        Ok(self.raw.set_is_checked(value)?)
+    }
+    pub fn checked(self, value: Option<bool>) -> Result<Self> {
+        self.set_checked(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_is_checked_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::toggle_button_is_checked_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_is_checked_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_is_checked_changed(subscription_id)))
+    }
+    pub fn on_is_checked_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_is_checked_changed(callback)?.detach();
+        Ok(self)
+    }
+}
+
+impl AsControl for ToggleButton {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct ProgressBar {
+    pub(crate) raw: sys::ComPtr<sys::IAvnProgressBar>,
+}
+
+impl ProgressBar {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_progress_bar())
+            .map(|raw| Self { raw })
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_minimum(&self) -> Result<f64> { Ok(self.raw.get_minimum()?) }
+    pub fn set_minimum(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_minimum(value)?)
+    }
+    pub fn minimum(self, value: f64) -> Result<Self> {
+        self.set_minimum(value)?;
+        Ok(self)
+    }
+    pub fn get_maximum(&self) -> Result<f64> { Ok(self.raw.get_maximum()?) }
+    pub fn set_maximum(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_maximum(value)?)
+    }
+    pub fn maximum(self, value: f64) -> Result<Self> {
+        self.set_maximum(value)?;
+        Ok(self)
+    }
+    pub fn get_value(&self) -> Result<f64> { Ok(self.raw.get_value()?) }
+    pub fn set_value(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_value(value)?)
+    }
+    pub fn value(self, value: f64) -> Result<Self> {
+        self.set_value(value)?;
+        Ok(self)
+    }
+    pub fn get_small_change(&self) -> Result<f64> { Ok(self.raw.get_small_change()?) }
+    pub fn set_small_change(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_small_change(value)?)
+    }
+    pub fn small_change(self, value: f64) -> Result<Self> {
+        self.set_small_change(value)?;
+        Ok(self)
+    }
+    pub fn get_large_change(&self) -> Result<f64> { Ok(self.raw.get_large_change()?) }
+    pub fn set_large_change(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_large_change(value)?)
+    }
+    pub fn large_change(self, value: f64) -> Result<Self> {
+        self.set_large_change(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_value_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::range_base_value_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_value_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_value_changed(subscription_id)))
+    }
+    pub fn on_value_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_value_changed(callback)?.detach();
+        Ok(self)
+    }
+    pub fn get_is_indeterminate(&self) -> Result<bool> { Ok(self.raw.get_is_indeterminate()?) }
+    pub fn set_indeterminate(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_indeterminate(value)?)
+    }
+    pub fn indeterminate(self, value: bool) -> Result<Self> {
+        self.set_indeterminate(value)?;
+        Ok(self)
+    }
+    pub fn get_show_progress_text(&self) -> Result<bool> { Ok(self.raw.get_show_progress_text()?) }
+    pub fn set_show_progress_text(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_show_progress_text(value)?)
+    }
+    pub fn show_progress_text(self, value: bool) -> Result<Self> {
+        self.set_show_progress_text(value)?;
+        Ok(self)
+    }
+    pub fn get_progress_text_format(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_progress_text_format()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_progress_text_format(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_progress_text_format(&value)?)
+    }
+    pub fn progress_text_format(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_progress_text_format(value)?;
+        Ok(self)
+    }
+    pub fn get_orientation(&self) -> Result<Orientation> {
+        let value = self.raw.get_orientation()?;
+        Orientation::try_from(value)
+    }
+    pub fn set_orientation(&self, value: Orientation) -> Result<()> {
+        Ok(self.raw.set_orientation(value as i32)?)
+    }
+    pub fn orientation(self, value: Orientation) -> Result<Self> {
+        self.set_orientation(value)?;
+        Ok(self)
+    }
+}
+
+impl AsControl for ProgressBar {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct ScrollViewer {
+    pub(crate) raw: sys::ComPtr<sys::IAvnScrollViewer>,
+}
+
+impl ScrollViewer {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_scroll_viewer())
+            .map(|raw| Self { raw })
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_content(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_content()?.map(|raw| Control { raw }))
+    }
+    pub fn set_content(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_content(Some(&value))?)
+    }
+    pub fn content(self, value: impl AsControl) -> Result<Self> {
+        self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_bring_into_view_on_focus_change(&self) -> Result<bool> { Ok(self.raw.get_bring_into_view_on_focus_change()?) }
+    pub fn set_bring_into_view_on_focus_change(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_bring_into_view_on_focus_change(value)?)
+    }
+    pub fn bring_into_view_on_focus_change(self, value: bool) -> Result<Self> {
+        self.set_bring_into_view_on_focus_change(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_scroll_bar_visibility(&self) -> Result<ScrollBarVisibility> {
+        let value = self.raw.get_horizontal_scroll_bar_visibility()?;
+        ScrollBarVisibility::try_from(value)
+    }
+    pub fn set_horizontal_scroll_bar_visibility(&self, value: ScrollBarVisibility) -> Result<()> {
+        Ok(self.raw.set_horizontal_scroll_bar_visibility(value as i32)?)
+    }
+    pub fn horizontal_scroll_bar_visibility(self, value: ScrollBarVisibility) -> Result<Self> {
+        self.set_horizontal_scroll_bar_visibility(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_scroll_bar_visibility(&self) -> Result<ScrollBarVisibility> {
+        let value = self.raw.get_vertical_scroll_bar_visibility()?;
+        ScrollBarVisibility::try_from(value)
+    }
+    pub fn set_vertical_scroll_bar_visibility(&self, value: ScrollBarVisibility) -> Result<()> {
+        Ok(self.raw.set_vertical_scroll_bar_visibility(value as i32)?)
+    }
+    pub fn vertical_scroll_bar_visibility(self, value: ScrollBarVisibility) -> Result<Self> {
+        self.set_vertical_scroll_bar_visibility(value)?;
+        Ok(self)
+    }
+    pub fn is_expanded(&self) -> Result<bool> { Ok(self.raw.get_is_expanded()?) }
+    pub fn get_allow_auto_hide(&self) -> Result<bool> { Ok(self.raw.get_allow_auto_hide()?) }
+    pub fn set_allow_auto_hide(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_allow_auto_hide(value)?)
+    }
+    pub fn allow_auto_hide(self, value: bool) -> Result<Self> {
+        self.set_allow_auto_hide(value)?;
+        Ok(self)
+    }
+    pub fn get_is_scroll_chaining_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_scroll_chaining_enabled()?) }
+    pub fn set_scroll_chaining_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_scroll_chaining_enabled(value)?)
+    }
+    pub fn scroll_chaining_enabled(self, value: bool) -> Result<Self> {
+        self.set_scroll_chaining_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_is_scroll_inertia_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_scroll_inertia_enabled()?) }
+    pub fn set_scroll_inertia_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_scroll_inertia_enabled(value)?)
+    }
+    pub fn scroll_inertia_enabled(self, value: bool) -> Result<Self> {
+        self.set_scroll_inertia_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_is_deferred_scrolling_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_deferred_scrolling_enabled()?) }
+    pub fn set_deferred_scrolling_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_deferred_scrolling_enabled(value)?)
+    }
+    pub fn deferred_scrolling_enabled(self, value: bool) -> Result<Self> {
+        self.set_deferred_scrolling_enabled(value)?;
+        Ok(self)
+    }
+    pub fn line_up(&self) -> Result<()> { Ok(self.raw.line_up()?) }
+    pub fn line_down(&self) -> Result<()> { Ok(self.raw.line_down()?) }
+    pub fn line_left(&self) -> Result<()> { Ok(self.raw.line_left()?) }
+    pub fn line_right(&self) -> Result<()> { Ok(self.raw.line_right()?) }
+    pub fn page_up(&self) -> Result<()> { Ok(self.raw.page_up()?) }
+    pub fn page_down(&self) -> Result<()> { Ok(self.raw.page_down()?) }
+    pub fn page_left(&self) -> Result<()> { Ok(self.raw.page_left()?) }
+    pub fn page_right(&self) -> Result<()> { Ok(self.raw.page_right()?) }
+    pub fn scroll_to_home(&self) -> Result<()> { Ok(self.raw.scroll_to_home()?) }
+    pub fn scroll_to_end(&self) -> Result<()> { Ok(self.raw.scroll_to_end()?) }
+    pub fn subscribe_scroll_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::scroll_viewer_scroll_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_scroll_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_scroll_changed(subscription_id)))
+    }
+    pub fn on_scroll_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_scroll_changed(callback)?.detach();
+        Ok(self)
+    }
+}
+
+impl AsControl for ScrollViewer {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct Slider {
+    pub(crate) raw: sys::ComPtr<sys::IAvnSlider>,
+}
+
+impl Slider {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_slider())
+            .map(|raw| Self { raw })
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_minimum(&self) -> Result<f64> { Ok(self.raw.get_minimum()?) }
+    pub fn set_minimum(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_minimum(value)?)
+    }
+    pub fn minimum(self, value: f64) -> Result<Self> {
+        self.set_minimum(value)?;
+        Ok(self)
+    }
+    pub fn get_maximum(&self) -> Result<f64> { Ok(self.raw.get_maximum()?) }
+    pub fn set_maximum(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_maximum(value)?)
+    }
+    pub fn maximum(self, value: f64) -> Result<Self> {
+        self.set_maximum(value)?;
+        Ok(self)
+    }
+    pub fn get_value(&self) -> Result<f64> { Ok(self.raw.get_value()?) }
+    pub fn set_value(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_value(value)?)
+    }
+    pub fn value(self, value: f64) -> Result<Self> {
+        self.set_value(value)?;
+        Ok(self)
+    }
+    pub fn get_small_change(&self) -> Result<f64> { Ok(self.raw.get_small_change()?) }
+    pub fn set_small_change(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_small_change(value)?)
+    }
+    pub fn small_change(self, value: f64) -> Result<Self> {
+        self.set_small_change(value)?;
+        Ok(self)
+    }
+    pub fn get_large_change(&self) -> Result<f64> { Ok(self.raw.get_large_change()?) }
+    pub fn set_large_change(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_large_change(value)?)
+    }
+    pub fn large_change(self, value: f64) -> Result<Self> {
+        self.set_large_change(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_value_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::range_base_value_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_value_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_value_changed(subscription_id)))
+    }
+    pub fn on_value_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_value_changed(callback)?.detach();
+        Ok(self)
+    }
+    pub fn get_orientation(&self) -> Result<Orientation> {
+        let value = self.raw.get_orientation()?;
+        Orientation::try_from(value)
+    }
+    pub fn set_orientation(&self, value: Orientation) -> Result<()> {
+        Ok(self.raw.set_orientation(value as i32)?)
+    }
+    pub fn orientation(self, value: Orientation) -> Result<Self> {
+        self.set_orientation(value)?;
+        Ok(self)
+    }
+    pub fn get_is_direction_reversed(&self) -> Result<bool> { Ok(self.raw.get_is_direction_reversed()?) }
+    pub fn set_direction_reversed(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_direction_reversed(value)?)
+    }
+    pub fn direction_reversed(self, value: bool) -> Result<Self> {
+        self.set_direction_reversed(value)?;
+        Ok(self)
+    }
+    pub fn get_is_snap_to_tick_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_snap_to_tick_enabled()?) }
+    pub fn set_snap_to_tick_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_snap_to_tick_enabled(value)?)
+    }
+    pub fn snap_to_tick_enabled(self, value: bool) -> Result<Self> {
+        self.set_snap_to_tick_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_tick_frequency(&self) -> Result<f64> { Ok(self.raw.get_tick_frequency()?) }
+    pub fn set_tick_frequency(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_tick_frequency(value)?)
+    }
+    pub fn tick_frequency(self, value: f64) -> Result<Self> {
+        self.set_tick_frequency(value)?;
+        Ok(self)
+    }
+    pub fn get_tick_placement(&self) -> Result<TickPlacement> {
+        let value = self.raw.get_tick_placement()?;
+        TickPlacement::try_from(value)
+    }
+    pub fn set_tick_placement(&self, value: TickPlacement) -> Result<()> {
+        Ok(self.raw.set_tick_placement(value as i32)?)
+    }
+    pub fn tick_placement(self, value: TickPlacement) -> Result<Self> {
+        self.set_tick_placement(value)?;
+        Ok(self)
+    }
+}
+
+impl AsControl for Slider {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
 pub struct StackPanel {
     pub(crate) raw: sys::ComPtr<sys::IAvnStackPanel>,
 }
@@ -207,7 +1326,10 @@ impl StackPanel {
         with_factory(|factory| factory.create_stack_panel())
             .map(|raw| Self { raw })
     }
-    pub fn is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
     pub fn set_enabled(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_enabled(value)?)
     }
@@ -249,7 +1371,7 @@ impl AsControl for StackPanel {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct TextBlock {
     pub(crate) raw: sys::ComPtr<sys::IAvnTextBlock>,
 }
@@ -259,13 +1381,19 @@ impl TextBlock {
         with_factory(|factory| factory.create_text_block())
             .map(|raw| Self { raw })
     }
-    pub fn is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
     pub fn set_enabled(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_enabled(value)?)
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
         Ok(self)
+    }
+    pub fn get_text(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_text()?)) }
     }
     pub fn set_text(&self, value: impl AsRef<str>) -> Result<()> {
         let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
@@ -283,7 +1411,208 @@ impl AsControl for TextBlock {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
+pub struct TextBox {
+    pub(crate) raw: sys::ComPtr<sys::IAvnTextBox>,
+}
+
+impl TextBox {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_text_box())
+            .map(|raw| Self { raw })
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_accepts_return(&self) -> Result<bool> { Ok(self.raw.get_accepts_return()?) }
+    pub fn set_accepts_return(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_accepts_return(value)?)
+    }
+    pub fn accepts_return(self, value: bool) -> Result<Self> {
+        self.set_accepts_return(value)?;
+        Ok(self)
+    }
+    pub fn get_accepts_tab(&self) -> Result<bool> { Ok(self.raw.get_accepts_tab()?) }
+    pub fn set_accepts_tab(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_accepts_tab(value)?)
+    }
+    pub fn accepts_tab(self, value: bool) -> Result<Self> {
+        self.set_accepts_tab(value)?;
+        Ok(self)
+    }
+    pub fn get_caret_index(&self) -> Result<i32> { Ok(self.raw.get_caret_index()?) }
+    pub fn set_caret_index(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_caret_index(value)?)
+    }
+    pub fn caret_index(self, value: i32) -> Result<Self> {
+        self.set_caret_index(value)?;
+        Ok(self)
+    }
+    pub fn get_is_read_only(&self) -> Result<bool> { Ok(self.raw.get_is_read_only()?) }
+    pub fn set_read_only(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_read_only(value)?)
+    }
+    pub fn read_only(self, value: bool) -> Result<Self> {
+        self.set_read_only(value)?;
+        Ok(self)
+    }
+    pub fn get_selection_start(&self) -> Result<i32> { Ok(self.raw.get_selection_start()?) }
+    pub fn set_selection_start(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_selection_start(value)?)
+    }
+    pub fn selection_start(self, value: i32) -> Result<Self> {
+        self.set_selection_start(value)?;
+        Ok(self)
+    }
+    pub fn get_selection_end(&self) -> Result<i32> { Ok(self.raw.get_selection_end()?) }
+    pub fn set_selection_end(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_selection_end(value)?)
+    }
+    pub fn selection_end(self, value: i32) -> Result<Self> {
+        self.set_selection_end(value)?;
+        Ok(self)
+    }
+    pub fn get_max_length(&self) -> Result<i32> { Ok(self.raw.get_max_length()?) }
+    pub fn set_max_length(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_max_length(value)?)
+    }
+    pub fn max_length(self, value: i32) -> Result<Self> {
+        self.set_max_length(value)?;
+        Ok(self)
+    }
+    pub fn get_max_lines(&self) -> Result<i32> { Ok(self.raw.get_max_lines()?) }
+    pub fn set_max_lines(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_max_lines(value)?)
+    }
+    pub fn max_lines(self, value: i32) -> Result<Self> {
+        self.set_max_lines(value)?;
+        Ok(self)
+    }
+    pub fn get_min_lines(&self) -> Result<i32> { Ok(self.raw.get_min_lines()?) }
+    pub fn set_min_lines(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_min_lines(value)?)
+    }
+    pub fn min_lines(self, value: i32) -> Result<Self> {
+        self.set_min_lines(value)?;
+        Ok(self)
+    }
+    pub fn get_line_height(&self) -> Result<f64> { Ok(self.raw.get_line_height()?) }
+    pub fn set_line_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_line_height(value)?)
+    }
+    pub fn line_height(self, value: f64) -> Result<Self> {
+        self.set_line_height(value)?;
+        Ok(self)
+    }
+    pub fn get_text(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_text()?)) }
+    }
+    pub fn set_text(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_text(Some(&value))?)
+    }
+    pub fn text(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_text(value)?;
+        Ok(self)
+    }
+    pub fn get_placeholder_text(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_placeholder_text()?)) }
+    }
+    pub fn set_placeholder_text(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_placeholder_text(Some(&value))?)
+    }
+    pub fn placeholder_text(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_placeholder_text(value)?;
+        Ok(self)
+    }
+    pub fn get_reveal_password(&self) -> Result<bool> { Ok(self.raw.get_reveal_password()?) }
+    pub fn set_reveal_password(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_reveal_password(value)?)
+    }
+    pub fn reveal_password(self, value: bool) -> Result<Self> {
+        self.set_reveal_password(value)?;
+        Ok(self)
+    }
+    pub fn get_text_wrapping(&self) -> Result<TextWrapping> {
+        let value = self.raw.get_text_wrapping()?;
+        TextWrapping::try_from(value)
+    }
+    pub fn set_text_wrapping(&self, value: TextWrapping) -> Result<()> {
+        Ok(self.raw.set_text_wrapping(value as i32)?)
+    }
+    pub fn text_wrapping(self, value: TextWrapping) -> Result<Self> {
+        self.set_text_wrapping(value)?;
+        Ok(self)
+    }
+    pub fn get_new_line(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_new_line()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_new_line(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_new_line(&value)?)
+    }
+    pub fn new_line(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_new_line(value)?;
+        Ok(self)
+    }
+    pub fn can_cut(&self) -> Result<bool> { Ok(self.raw.get_can_cut()?) }
+    pub fn can_copy(&self) -> Result<bool> { Ok(self.raw.get_can_copy()?) }
+    pub fn can_paste(&self) -> Result<bool> { Ok(self.raw.get_can_paste()?) }
+    pub fn get_is_undo_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_undo_enabled()?) }
+    pub fn set_undo_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_undo_enabled(value)?)
+    }
+    pub fn undo_enabled(self, value: bool) -> Result<Self> {
+        self.set_undo_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_undo_limit(&self) -> Result<i32> { Ok(self.raw.get_undo_limit()?) }
+    pub fn set_undo_limit(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_undo_limit(value)?)
+    }
+    pub fn undo_limit(self, value: i32) -> Result<Self> {
+        self.set_undo_limit(value)?;
+        Ok(self)
+    }
+    pub fn can_undo(&self) -> Result<bool> { Ok(self.raw.get_can_undo()?) }
+    pub fn can_redo(&self) -> Result<bool> { Ok(self.raw.get_can_redo()?) }
+    pub fn cut(&self) -> Result<()> { Ok(self.raw.cut()?) }
+    pub fn copy(&self) -> Result<()> { Ok(self.raw.copy()?) }
+    pub fn paste(&self) -> Result<()> { Ok(self.raw.paste()?) }
+    pub fn clear(&self) -> Result<()> { Ok(self.raw.clear()?) }
+    pub fn undo(&self) -> Result<()> { Ok(self.raw.undo()?) }
+    pub fn redo(&self) -> Result<()> { Ok(self.raw.redo()?) }
+    pub fn subscribe_text_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::text_box_text_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_text_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_text_changed(subscription_id)))
+    }
+    pub fn on_text_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_text_changed(callback)?.detach();
+        Ok(self)
+    }
+}
+
+impl AsControl for TextBox {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
 pub struct Window {
     pub(crate) raw: sys::ComPtr<sys::IAvnWindow>,
 }
@@ -293,7 +1622,10 @@ impl Window {
         with_factory(|factory| factory.create_window())
             .map(|raw| Self { raw })
     }
-    pub fn is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
     pub fn set_enabled(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_enabled(value)?)
     }
@@ -311,6 +1643,9 @@ impl Window {
     pub fn content(self, value: impl AsControl) -> Result<Self> {
         self.set_content(value)?;
         Ok(self)
+    }
+    pub fn get_title(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_title()?)) }
     }
     pub fn set_title(&self, value: impl AsRef<str>) -> Result<()> {
         let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
@@ -331,3 +1666,17 @@ impl AsControl for Window {
     }
 }
 
+#[derive(Clone, Debug)]
+pub struct StyledElement {
+    pub(crate) raw: sys::ComPtr<sys::IAvnStyledElement>,
+}
+
+impl StyledElement {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_styled_element())
+            .map(|raw| Self { raw })
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+}

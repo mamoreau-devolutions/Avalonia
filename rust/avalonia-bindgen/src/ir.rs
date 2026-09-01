@@ -11,7 +11,21 @@ pub struct ProjectionIr {
     #[serde(default)]
     pub enums: Vec<ProjectedEnum>,
     #[serde(default)]
+    pub attached_properties: Vec<ProjectedAttachedProperty>,
+    #[serde(default)]
     pub skipped: Vec<SkippedMember>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ProjectedAttachedProperty {
+    pub owner_name: String,
+    pub owner_managed_full_name: String,
+    pub statics_interface_name: String,
+    pub statics_interface_iid: String,
+    pub name: String,
+    pub kind: String,
+    pub managed_type_name: String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -83,6 +97,7 @@ pub struct ProjectedProperty {
     pub interface_name: Option<String>,
     pub interface_iid: Option<String>,
     pub element_interface_name: Option<String>,
+    pub element_kind: Option<String>,
     pub managed_type_name: Option<String>,
     #[serde(default)]
     pub is_nullable: bool,

@@ -5,7 +5,8 @@ use std::ptr::{self, NonNull};
 
 #[repr(C)]
 struct IUnknownVtbl {
-    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut std::ffi::c_void) -> i32,
+    query_interface:
+        unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut std::ffi::c_void) -> i32,
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
 }
@@ -34,6 +35,11 @@ pub struct ComPtr<T: ComInterface> {
 
 impl<T: ComInterface> ComPtr<T> {
     /// Takes ownership of an already AddRef'd interface pointer.
+    ///
+    /// # Safety
+    ///
+    /// `ptr` must either be null or point to a valid interface whose reference
+    /// count is already owned by the caller.
     pub unsafe fn from_raw(ptr: *mut T) -> Option<Self> {
         NonNull::new(ptr).map(|ptr| Self {
             ptr,
@@ -52,11 +58,10 @@ impl<T: ComInterface> ComPtr<T> {
     pub fn query_interface<U: ComInterface>(&self) -> Result<ComPtr<U>> {
         unsafe {
             let mut out = ptr::null_mut();
-            let hr = (((*(self.as_unknown())).vtbl).as_ref().unwrap().query_interface)(
-                self.as_unknown(),
-                &U::IID,
-                &mut out,
-            );
+            let hr = (((*(self.as_unknown())).vtbl)
+                .as_ref()
+                .unwrap()
+                .query_interface)(self.as_unknown(), &U::IID, &mut out);
             hresult::check(hr)?;
             ComPtr::from_raw(out.cast()).ok_or(Error(hresult::E_POINTER))
         }

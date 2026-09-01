@@ -1,6 +1,5 @@
 use avalonia_sys::{
-    app_handler, button_click_handler, ComPtr, Error, Host, IUnknown, AVN_E_FIXTURE,
-    E_NOINTERFACE,
+    app_handler, button_click_handler, ComPtr, Error, Host, IUnknown, AVN_E_FIXTURE, E_NOINTERFACE,
 };
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -48,7 +47,10 @@ fn echo_string_roundtrips() {
     let host = load();
     let factory = host.activation_factory().unwrap();
     let echo = factory.create_echo().unwrap();
-    assert_eq!(echo.echo_string(&host, "hello nano-COM").unwrap(), "hello nano-COM");
+    assert_eq!(
+        echo.echo_string(&host, "hello nano-COM").unwrap(),
+        "hello nano-COM"
+    );
 }
 
 #[test]

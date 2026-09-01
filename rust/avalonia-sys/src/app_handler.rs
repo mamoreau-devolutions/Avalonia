@@ -16,8 +16,7 @@ const IAVN_APP_HANDLER_IID: Guid = Guid {
 
 #[repr(C)]
 struct IAvnAppHandlerVtbl {
-    query_interface:
-        unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     on_started: unsafe extern "system" fn(*mut IAvnAppHandler) -> i32,
@@ -32,11 +31,13 @@ unsafe impl ComInterface for IAvnAppHandler {
     const IID: Guid = IAVN_APP_HANDLER_IID;
 }
 
+type StartedCallback = Box<dyn FnOnce() -> Result<()> + Send>;
+
 #[repr(C)]
 struct AppHandlerObject {
     interface: IAvnAppHandler,
     ref_count: AtomicU32,
-    callback: Mutex<Option<Box<dyn FnOnce() -> Result<()> + Send>>>,
+    callback: Mutex<Option<StartedCallback>>,
 }
 
 static APP_HANDLER_VTBL: IAvnAppHandlerVtbl = IAvnAppHandlerVtbl {

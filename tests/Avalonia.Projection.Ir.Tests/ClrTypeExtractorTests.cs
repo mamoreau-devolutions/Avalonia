@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Projection.Ir;
 using Xunit;
 
@@ -11,13 +12,27 @@ public class ClrTypeExtractorTests
     private static readonly Type[] KernelTypes =
     [
         typeof(AvaloniaObject),
+        typeof(StyledElement),
         typeof(Control),
         typeof(ContentControl),
+        typeof(Decorator),
+        typeof(Border),
         typeof(Panel),
+        typeof(Grid),
+        typeof(Canvas),
+        typeof(DockPanel),
         typeof(Window),
         typeof(StackPanel),
         typeof(TextBlock),
+        typeof(TemplatedControl),
         typeof(Button),
+        typeof(ToggleButton),
+        typeof(CheckBox),
+        typeof(TextBox),
+        typeof(ScrollViewer),
+        typeof(RangeBase),
+        typeof(Slider),
+        typeof(ProgressBar),
     ];
 
     [Fact]
@@ -29,7 +44,7 @@ public class ClrTypeExtractorTests
         Assert.Equal(KernelTypes.Length, ir.Types.Count);
 
         var contentControl = Type(ir, "IAvnContentControl");
-        Assert.Equal("Avalonia.Host.Com.IAvnControl", contentControl.BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnTemplatedControl", contentControl.BaseFullName);
         var content = Assert.Single(contentControl.Properties);
         Assert.Equal(MarshallingKind.ComInterface, content.Kind);
         Assert.Equal("Avalonia.Host.Com.IAvnControl", content.InterfaceName);
@@ -49,6 +64,7 @@ public class ClrTypeExtractorTests
         Assert.Equal(MarshallingKind.ComCollection, children.Kind);
         Assert.Equal("Avalonia.Host.Com.IAvnControlList", children.InterfaceName);
         Assert.Equal("Avalonia.Host.Com.IAvnControl", children.ElementInterfaceName);
+        Assert.Equal(MarshallingKind.ComInterface, children.ElementKind);
 
         var text = Type(ir, "IAvnTextBlock").Properties.Single(p => p.Name == nameof(TextBlock.Text));
         Assert.Equal(MarshallingKind.StringUtf16, text.Kind);
@@ -59,6 +75,14 @@ public class ClrTypeExtractorTests
         Assert.Equal("Avalonia.Host.Com.IAvnButtonClickHandler", click.HandlerInterfaceName);
         Assert.Equal(EventPayloadKind.None, click.PayloadKind);
         Assert.False(string.IsNullOrWhiteSpace(click.HandlerInterfaceIid));
+
+        var isChecked = Type(ir, "IAvnToggleButton").Properties.Single();
+        Assert.Equal(MarshallingKind.NullableBool, isChecked.Kind);
+
+        var classes = Type(ir, "IAvnStyledElement").Properties.Single();
+        Assert.Equal(MarshallingKind.StringUtf16, classes.ElementKind);
+        Assert.Contains(ir.AttachedProperties, property =>
+            property.OwnerName == nameof(Grid) && property.Name == "Row");
     }
 
     [Fact]

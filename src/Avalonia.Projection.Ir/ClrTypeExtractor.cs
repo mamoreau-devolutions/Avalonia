@@ -23,6 +23,7 @@ public static class ClrTypeExtractor
 
         foreach (var type in selected)
             types.Add(ProjectType(type, selected, projectedNames, policy, skipped));
+        var attachedProperties = ExtractAttachedProperties(selected, projectedNames, policy, skipped);
 
         return new ProjectionIr
         {
@@ -32,6 +33,7 @@ public static class ClrTypeExtractor
             FactoryIid = CreateDeterministicIid($"{policy.ProjectionNamespace}.IAvnControlFactory"),
             Types = types,
             Enums = ExtractEnums(selected, policy),
+            AttachedProperties = attachedProperties,
             Skipped = skipped,
         };
     }
@@ -93,6 +95,9 @@ public static class ClrTypeExtractor
                     : null,
                 ElementInterfaceName = policy.TryGetOverride(type, property, out var memberOverride)
                     ? memberOverride.ElementInterfaceName
+                    : null,
+                ElementKind = policy.TryGetOverride(type, property, out memberOverride)
+                    ? memberOverride.ElementKind
                     : null,
                 ManagedTypeName = property.PropertyType.FullName,
                 IsNullable = isNullable,
@@ -252,9 +257,11 @@ public static class ClrTypeExtractor
                 return false;
             }
             if (kind == MarshallingKind.ComCollection &&
-                (string.IsNullOrWhiteSpace(interfaceName) || string.IsNullOrWhiteSpace(value.ElementInterfaceName)))
+                (string.IsNullOrWhiteSpace(interfaceName) || value.ElementKind is null ||
+                 value.ElementKind == MarshallingKind.ComInterface &&
+                 string.IsNullOrWhiteSpace(value.ElementInterfaceName)))
             {
-                reason = "COM collection override requires InterfaceName and ElementInterfaceName";
+                reason = "COM collection override requires InterfaceName, ElementKind, and an interface for COM elements";
                 return false;
             }
             return true;
@@ -273,6 +280,11 @@ public static class ClrTypeExtractor
     {
         interfaceName = null;
         reason = null;
+        if (Nullable.GetUnderlyingType(type) == typeof(bool))
+        {
+            kind = MarshallingKind.NullableBool;
+            return true;
+        }
         type = Nullable.GetUnderlyingType(type) ?? type;
 
         if (type == typeof(int) || type.IsEnum)
@@ -341,11 +353,21 @@ public static class ClrTypeExtractor
 
     private static IReadOnlyList<ProjectedEnum> ExtractEnums(
         IEnumerable<Type> selected,
-        ProjectionPolicy policy) =>
-        selected
+        ProjectionPolicy policy)
+    {
+        var selectedTypes = selected.ToArray();
+        return selectedTypes
             .SelectMany(type => type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(property => policy.Includes(type, property))
                 .Select(property => Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType))
+            .Concat(selectedTypes.SelectMany(type =>
+                policy.AttachedProperties.TryGetValue(type.FullName ?? type.Name, out var names)
+                    ? names.Select(name => type.GetMethod(
+                            $"Get{name}",
+                            BindingFlags.Public | BindingFlags.Static)?.ReturnType)
+                        .Where(attachedType => attachedType is not null)
+                        .Cast<Type>()
+                    : []))
             .Where(type => type.IsEnum)
             .Distinct()
             .OrderBy(type => type.FullName, StringComparer.Ordinal)
@@ -363,6 +385,71 @@ public static class ClrTypeExtractor
                     .ToArray(),
             })
             .ToArray();
+    }
+
+    private static IReadOnlyList<ProjectedAttachedProperty> ExtractAttachedProperties(
+        IReadOnlyCollection<Type> selected,
+        IReadOnlyDictionary<Type, string> projectedNames,
+        ProjectionPolicy policy,
+        List<SkippedMember> skipped)
+    {
+        var result = new List<ProjectedAttachedProperty>();
+        foreach (var (ownerName, names) in policy.AttachedProperties.OrderBy(p => p.Key, StringComparer.Ordinal))
+        {
+            var owner = selected.SingleOrDefault(type => type.FullName == ownerName);
+            if (owner is null)
+                continue;
+
+            var staticsInterfaceName = $"{policy.ProjectionNamespace}.IAvn{owner.Name}Statics";
+            foreach (var name in names)
+            {
+                var getter = owner.GetMethod(
+                    $"Get{name}",
+                    BindingFlags.Public | BindingFlags.Static);
+                var setter = owner.GetMethod(
+                    $"Set{name}",
+                    BindingFlags.Public | BindingFlags.Static);
+                if (getter is null || setter is null ||
+                    getter.GetParameters().Length != 1 || setter.GetParameters().Length != 2 ||
+                    getter.ReturnType != setter.GetParameters()[1].ParameterType)
+                {
+                    Skip(skipped, owner, name, "Attached property requires matching public static Get/Set methods");
+                    continue;
+                }
+
+                var targetType = getter.GetParameters()[0].ParameterType;
+                if (!projectedNames.Keys.Any(type => type.IsAssignableFrom(targetType)) &&
+                    !projectedNames.ContainsKey(targetType))
+                {
+                    Skip(skipped, owner, name, $"Attached property target '{targetType.FullName}' is not projected");
+                    continue;
+                }
+
+                if (!TryMapType(
+                        getter.ReturnType,
+                        projectedNames,
+                        out var kind,
+                        out _,
+                        out var reason))
+                {
+                    Skip(skipped, owner, name, reason!);
+                    continue;
+                }
+
+                result.Add(new ProjectedAttachedProperty
+                {
+                    OwnerName = owner.Name,
+                    OwnerManagedFullName = owner.FullName!,
+                    StaticsInterfaceName = staticsInterfaceName,
+                    StaticsInterfaceIid = CreateDeterministicIid(staticsInterfaceName),
+                    Name = name,
+                    Kind = kind,
+                    ManagedTypeName = getter.ReturnType.FullName!,
+                });
+            }
+        }
+        return result;
+    }
 
     private static string ManagedTypeName(Type type)
     {

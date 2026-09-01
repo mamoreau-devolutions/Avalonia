@@ -28,6 +28,11 @@ public static class ComSourceEmitter
             {
                 files[SimpleName(collection.InterfaceName!) + ".g.cs"] = EmitCollection(ir, collection);
             }
+            foreach (var statics in ir.AttachedProperties
+                         .GroupBy(p => p.StaticsInterfaceName, StringComparer.Ordinal))
+            {
+                files[SimpleName(statics.Key) + ".g.cs"] = EmitAttachedProperties(ir, statics.ToArray());
+            }
             files["ProjectionRuntime.g.cs"] = EmitRuntime(ir);
             files["IAvnControlFactory.g.cs"] = EmitFactory(ir);
             files["ProjectionAotRoots.g.cs"] = EmitAotRoots(ir);
@@ -242,6 +247,16 @@ public static class ComSourceEmitter
             sb.AppendLine($"    int Create{type.Name[4..]}(out {type.Name}? value);");
             sb.AppendLine();
         }
+        foreach (var statics in ir.AttachedProperties
+                     .GroupBy(p => p.StaticsInterfaceName, StringComparer.Ordinal)
+                     .OrderBy(g => g.Key, StringComparer.Ordinal))
+        {
+            var interfaceName = SimpleName(statics.Key);
+            var ownerName = statics.First().OwnerName;
+            sb.AppendLine("    [PreserveSig]");
+            sb.AppendLine($"    int Get{ownerName}Statics(out {interfaceName}? value);");
+            sb.AppendLine();
+        }
         sb.AppendLine("}");
         sb.AppendLine();
         sb.AppendLine("[GeneratedComClass]");
@@ -263,6 +278,19 @@ public static class ComSourceEmitter
             sb.AppendLine("        {");
             sb.AppendLine("            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);");
             sb.AppendLine("        }");
+            sb.AppendLine("    }");
+            sb.AppendLine();
+        }
+        foreach (var statics in ir.AttachedProperties
+                     .GroupBy(p => p.StaticsInterfaceName, StringComparer.Ordinal)
+                     .OrderBy(g => g.Key, StringComparer.Ordinal))
+        {
+            var interfaceName = SimpleName(statics.Key);
+            var ownerName = statics.First().OwnerName;
+            sb.AppendLine($"    public int Get{ownerName}Statics(out {interfaceName}? value)");
+            sb.AppendLine("    {");
+            sb.AppendLine($"        value = new {interfaceName[1..]}();");
+            sb.AppendLine("        return global::Avalonia.Host.HResults.S_OK;");
             sb.AppendLine("    }");
             sb.AppendLine();
         }
@@ -292,6 +320,13 @@ public static class ComSourceEmitter
         }
         foreach (var type in classes)
             sb.AppendLine($"    [global::System.Diagnostics.CodeAnalysis.DynamicDependency(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All, typeof({type.Name[1..]}))]");
+        foreach (var staticsName in ir.AttachedProperties
+                     .Select(p => SimpleName(p.StaticsInterfaceName)[1..])
+                     .Distinct(StringComparer.Ordinal)
+                     .OrderBy(n => n, StringComparer.Ordinal))
+        {
+            sb.AppendLine($"    [global::System.Diagnostics.CodeAnalysis.DynamicDependency(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All, typeof({staticsName}))]");
+        }
         sb.AppendLine("    internal static void Preserve() { }");
         sb.AppendLine("}");
         return sb.ToString();
@@ -302,7 +337,22 @@ public static class ComSourceEmitter
         var root = ir.Types.Single(t => t.Kind == ProjectedTypeKind.Class && t.BaseFullName is null);
         var interfaceName = SimpleName(collection.InterfaceName!);
         var className = interfaceName[1..];
-        var elementName = SimpleName(collection.ElementInterfaceName!);
+        var elementKind = collection.ElementKind
+            ?? throw new InvalidOperationException($"Collection '{interfaceName}' has no element kind.");
+        var elementName = CSharpType(elementKind, collection.ElementInterfaceName, false);
+        var readElement = elementKind switch
+        {
+            MarshallingKind.ComInterface =>
+                $"({elementName})ProjectionRuntime.Wrap(_value[index])!",
+            _ => "_value[index]",
+        };
+        var elementNullableSuffix = elementKind == MarshallingKind.ComInterface ? "?" : "";
+        var writeElement = elementKind switch
+        {
+            MarshallingKind.ComInterface =>
+                $"(global::Avalonia.Controls.Control)ProjectionRuntime.Unwrap(value)!",
+            _ => "value",
+        };
         var sb = Header(root);
         sb.AppendLine("[GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]");
         sb.AppendLine($"[Guid(\"{collection.InterfaceIid}\")]");
@@ -312,10 +362,13 @@ public static class ComSourceEmitter
         sb.AppendLine("    int GetCount(out int value);");
         sb.AppendLine();
         sb.AppendLine("    [PreserveSig]");
-        sb.AppendLine($"    int GetAt(int index, out {elementName}? value);");
+        sb.AppendLine($"    int GetAt(int index, out {elementName}{elementNullableSuffix} value);");
         sb.AppendLine();
         sb.AppendLine("    [PreserveSig]");
-        sb.AppendLine($"    int Add({elementName}? value);");
+        sb.AppendLine($"    int Add({elementName}{elementNullableSuffix} value);");
+        sb.AppendLine();
+        sb.AppendLine("    [PreserveSig]");
+        sb.AppendLine($"    int IndexOf({elementName}{elementNullableSuffix} value, out int index);");
         sb.AppendLine();
         sb.AppendLine("    [PreserveSig]");
         sb.AppendLine("    int RemoveAt(int index);");
@@ -339,16 +392,109 @@ public static class ComSourceEmitter
         EmitCollectionMethod(
             sb,
             "GetAt",
-            $"int index, out {elementName}? value",
-            $"value = ({elementName})ProjectionRuntime.Wrap(_value[index])!;",
-            initializeOut: "value = null;");
+            $"int index, out {elementName}{elementNullableSuffix} value",
+            $"value = {readElement};",
+            initializeOut: elementKind == MarshallingKind.StringUtf16
+                ? "value = string.Empty;"
+                : "value = null;");
         EmitCollectionMethod(
             sb,
             "Add",
-            $"{elementName}? value",
-            $"_value.Add((global::Avalonia.Controls.Control)ProjectionRuntime.Unwrap(value)!);");
+            $"{elementName}{elementNullableSuffix} value",
+            $"_value.Add({writeElement});");
+        EmitCollectionMethod(
+            sb,
+            "IndexOf",
+            $"{elementName}{elementNullableSuffix} value, out int index",
+            $"index = _value.IndexOf({writeElement});",
+            initializeOut: "index = -1;");
         EmitCollectionMethod(sb, "RemoveAt", "int index", "_value.RemoveAt(index);");
         EmitCollectionMethod(sb, "Clear", "", "_value.Clear();");
+        sb.AppendLine("}");
+        return sb.ToString();
+    }
+
+    public static string EmitAttachedProperties(
+        ProjectionIr ir,
+        IReadOnlyList<ProjectedAttachedProperty> properties)
+    {
+        var root = ir.Types.Single(t => t.Kind == ProjectedTypeKind.Class && t.BaseFullName is null);
+        var first = properties[0];
+        var interfaceName = SimpleName(first.StaticsInterfaceName);
+        var className = interfaceName[1..];
+        var sb = Header(root);
+        sb.AppendLine("[GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]");
+        sb.AppendLine($"[Guid(\"{first.StaticsInterfaceIid}\")]");
+        sb.AppendLine($"public partial interface {interfaceName}");
+        sb.AppendLine("{");
+        foreach (var property in properties)
+        {
+            var type = CSharpType(property.Kind, null, false);
+            sb.AppendLine("    [PreserveSig]");
+            sb.AppendLine($"    int Get{property.Name}(IAvnControl? target, out {type} value);");
+            sb.AppendLine();
+            sb.AppendLine("    [PreserveSig]");
+            sb.AppendLine($"    int Set{property.Name}(IAvnControl? target, {type} value);");
+            sb.AppendLine();
+        }
+        sb.AppendLine("}");
+        sb.AppendLine();
+        sb.AppendLine("[GeneratedComClass]");
+        sb.AppendLine($"public sealed partial class {className} : {interfaceName}");
+        sb.AppendLine("{");
+        foreach (var property in properties)
+        {
+            var type = CSharpType(property.Kind, null, false);
+            var managedValue = property.Kind switch
+            {
+                MarshallingKind.I32 when property.ManagedTypeName != "System.Int32" =>
+                    $"(global::{property.ManagedTypeName})value",
+                MarshallingKind.Bool => "value != 0",
+                _ => "value",
+            };
+            var abiValue = property.Kind switch
+            {
+                MarshallingKind.I32 when property.ManagedTypeName != "System.Int32" => "(int)result",
+                MarshallingKind.Bool => "result ? 1 : 0",
+                _ => "result",
+            };
+            sb.AppendLine($"    public int Get{property.Name}(IAvnControl? target, out {type} value)");
+            sb.AppendLine("    {");
+            sb.AppendLine("        value = default;");
+            sb.AppendLine("        if (target is null)");
+            sb.AppendLine("            return global::Avalonia.Host.HResults.E_POINTER;");
+            sb.AppendLine("        try");
+            sb.AppendLine("        {");
+            sb.AppendLine("            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();");
+            sb.AppendLine("            var control = (global::Avalonia.Controls.Control)ProjectionRuntime.Unwrap(target)!;");
+            sb.AppendLine($"            var result = global::{property.OwnerManagedFullName}.Get{property.Name}(control);");
+            sb.AppendLine($"            value = {abiValue};");
+            sb.AppendLine("            return global::Avalonia.Host.HResults.S_OK;");
+            sb.AppendLine("        }");
+            sb.AppendLine("        catch (global::System.Exception e)");
+            sb.AppendLine("        {");
+            sb.AppendLine("            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);");
+            sb.AppendLine("        }");
+            sb.AppendLine("    }");
+            sb.AppendLine();
+            sb.AppendLine($"    public int Set{property.Name}(IAvnControl? target, {type} value)");
+            sb.AppendLine("    {");
+            sb.AppendLine("        if (target is null)");
+            sb.AppendLine("            return global::Avalonia.Host.HResults.E_POINTER;");
+            sb.AppendLine("        try");
+            sb.AppendLine("        {");
+            sb.AppendLine("            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();");
+            sb.AppendLine("            var control = (global::Avalonia.Controls.Control)ProjectionRuntime.Unwrap(target)!;");
+            sb.AppendLine($"            global::{property.OwnerManagedFullName}.Set{property.Name}(control, {managedValue});");
+            sb.AppendLine("            return global::Avalonia.Host.HResults.S_OK;");
+            sb.AppendLine("        }");
+            sb.AppendLine("        catch (global::System.Exception e)");
+            sb.AppendLine("        {");
+            sb.AppendLine("            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);");
+            sb.AppendLine("        }");
+            sb.AppendLine("    }");
+            sb.AppendLine();
+        }
         sb.AppendLine("}");
         return sb.ToString();
     }
@@ -538,6 +684,8 @@ public static class ComSourceEmitter
             MarshallingKind.I32 when property.ManagedTypeName is not "System.Int32" =>
                 $"(int)_value.{property.Name}",
             MarshallingKind.Bool => $"_value.{property.Name} ? 1 : 0",
+            MarshallingKind.NullableBool =>
+                $"!_value.{property.Name}.HasValue ? -1 : _value.{property.Name}.Value ? 1 : 0",
             MarshallingKind.ComInterface =>
                 $"({SimpleName(property.InterfaceName!) }?)ProjectionRuntime.Wrap(_value.{property.Name} as global::Avalonia.AvaloniaObject)",
             MarshallingKind.ComCollection =>
@@ -551,6 +699,8 @@ public static class ComSourceEmitter
             MarshallingKind.I32 when property.ManagedTypeName is not "System.Int32" =>
                 $"(global::{property.ManagedTypeName})value",
             MarshallingKind.Bool => "value != 0",
+            MarshallingKind.NullableBool =>
+                "value switch { -1 => null, 0 => false, 1 => true, _ => throw new global::System.ArgumentOutOfRangeException(nameof(value)) }",
             MarshallingKind.ComInterface =>
                 $"(global::{property.ManagedTypeName})ProjectionRuntime.Unwrap(value)!",
             _ => "value",
@@ -562,6 +712,8 @@ public static class ComSourceEmitter
             MarshallingKind.I32 when parameter.ManagedTypeName is not "System.Int32" =>
                 $"(global::{parameter.ManagedTypeName}){parameter.Name}",
             MarshallingKind.Bool => $"{parameter.Name} != 0",
+            MarshallingKind.NullableBool =>
+                $"{parameter.Name} switch {{ -1 => null, 0 => false, 1 => true, _ => throw new global::System.ArgumentOutOfRangeException(nameof({parameter.Name})) }}",
             MarshallingKind.ComInterface =>
                 $"(global::{parameter.ManagedTypeName})ProjectionRuntime.Unwrap({parameter.Name})!",
             _ => parameter.Name,
@@ -615,6 +767,7 @@ public static class ComSourceEmitter
             MarshallingKind.F32 => "float",
             MarshallingKind.F64 => "double",
             MarshallingKind.Bool => "int",
+            MarshallingKind.NullableBool => "int",
             MarshallingKind.StringUtf16 => nullable ? "string?" : "string",
             MarshallingKind.ComInterface => (interfaceName is null ? "object" : SimpleName(interfaceName)) + (nullable ? "?" : ""),
             MarshallingKind.ComCollection => SimpleName(interfaceName!),

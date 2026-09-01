@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("2FDCB505-4C03-5F63-8E3D-C4B186A8AFE1")]
+[Guid("6E6E4856-EFCB-532C-950F-95CE9F1FF755")]
 public partial interface IAvnControlList
 {
     [PreserveSig]
@@ -17,6 +17,9 @@ public partial interface IAvnControlList
 
     [PreserveSig]
     int Add(IAvnControl? value);
+
+    [PreserveSig]
+    int IndexOf(IAvnControl? value, out int index);
 
     [PreserveSig]
     int RemoveAt(int index);
@@ -68,6 +71,21 @@ public sealed partial class AvnControlList : IAvnControlList
         {
             global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
             _value.Add((global::Avalonia.Controls.Control)ProjectionRuntime.Unwrap(value)!);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int IndexOf(IAvnControl? value, out int index)
+    {
+        index = -1;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            index = _value.IndexOf((global::Avalonia.Controls.Control)ProjectionRuntime.Unwrap(value)!);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

@@ -5,13 +5,14 @@ namespace Avalonia.Projection.Ir;
 
 public sealed class ProjectionIr
 {
-    public const int CurrentVersion = 3;
+    public const int CurrentVersion = 4;
 
     public int Version { get; init; } = CurrentVersion;
     public string? SourceAssembly { get; init; }
     public string? FactoryIid { get; init; }
     public IReadOnlyList<ProjectedType> Types { get; init; } = [];
     public IReadOnlyList<ProjectedEnum> Enums { get; init; } = [];
+    public IReadOnlyList<ProjectedAttachedProperty> AttachedProperties { get; init; } = [];
     public IReadOnlyList<SkippedMember> Skipped { get; init; } = [];
 
     public static JsonSerializerOptions JsonOptions { get; } = new()
