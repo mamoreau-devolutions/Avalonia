@@ -23,6 +23,7 @@ public static class AvaloniaProjectionProfiles
             "Avalonia.Controls.Button",
             "Avalonia.Controls.Primitives.ToggleButton",
             "Avalonia.Controls.CheckBox",
+            "Avalonia.Controls.ToggleSwitch",
             "Avalonia.Controls.TextBox",
             "Avalonia.Controls.ScrollViewer",
             "Avalonia.Controls.Primitives.RangeBase",
@@ -47,6 +48,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.Button"] = ["Click"],
             ["Avalonia.Controls.Primitives.ToggleButton"] = ["IsChecked", "IsCheckedChanged"],
             ["Avalonia.Controls.CheckBox"] = [],
+            ["Avalonia.Controls.ToggleSwitch"] = ["OnContent", "OffContent"],
             ["Avalonia.Controls.Primitives.TemplatedControl"] = [],
             ["Avalonia.Controls.TextBox"] =
             [
@@ -95,6 +97,18 @@ public static class AvaloniaProjectionProfiles
                 IsNullable = false,
             },
             ["Avalonia.Controls.Decorator.Child"] = new()
+            {
+                Kind = MarshallingKind.ComInterface,
+                InterfaceName = "Avalonia.Host.Com.IAvnControl",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.ToggleSwitch.OnContent"] = new()
+            {
+                Kind = MarshallingKind.ComInterface,
+                InterfaceName = "Avalonia.Host.Com.IAvnControl",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.ToggleSwitch.OffContent"] = new()
             {
                 Kind = MarshallingKind.ComInterface,
                 InterfaceName = "Avalonia.Host.Com.IAvnControl",

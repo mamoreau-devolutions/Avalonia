@@ -59,6 +59,7 @@ public class ComSourceEmitterTests
             typeof(Button),
             typeof(ToggleButton),
             typeof(CheckBox),
+            typeof(ToggleSwitch),
             typeof(TextBox),
             typeof(ScrollViewer),
             typeof(RangeBase),
@@ -86,6 +87,11 @@ public class ComSourceEmitterTests
         Assert.Contains("int GetTitle(out string? value);", window, StringComparison.Ordinal);
         Assert.Contains("public int Show()", window, StringComparison.Ordinal);
         Assert.Contains("_value.Show();", window, StringComparison.Ordinal);
+
+        var toggleSwitch = files["IAvnToggleSwitch.g.cs"];
+        Assert.Contains("public partial interface IAvnToggleSwitch : IAvnToggleButton", toggleSwitch, StringComparison.Ordinal);
+        Assert.Contains("int SetOnContent(IAvnControl? value);", toggleSwitch, StringComparison.Ordinal);
+        Assert.Contains("int SetOffContent(IAvnControl? value);", toggleSwitch, StringComparison.Ordinal);
 
         var runtime = files["ProjectionRuntime.g.cs"];
         Assert.Contains("global::Avalonia.Controls.Button typed => new AvnButton(typed)", runtime, StringComparison.Ordinal);
@@ -134,6 +140,7 @@ public class ComSourceEmitterTests
             typeof(Button),
             typeof(ToggleButton),
             typeof(CheckBox),
+            typeof(ToggleSwitch),
             typeof(TextBox),
             typeof(ScrollViewer),
             typeof(RangeBase),

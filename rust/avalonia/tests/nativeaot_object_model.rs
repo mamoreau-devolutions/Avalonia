@@ -1,6 +1,6 @@
 use avalonia::{
     App, Button, Dock, DockPanel, Grid, Orientation, ScrollViewer, StackPanel, TextBlock, TextBox,
-    ThemeVariant, Window,
+    ThemeVariant, ToggleSwitch, Window,
 };
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -39,6 +39,8 @@ fn builders_create_a_real_window_through_nativeaot() {
     let posted_from_handler = posted.clone();
     let text_changed = Arc::new(AtomicBool::new(false));
     let text_changed_from_handler = text_changed.clone();
+    let toggle_changed = Arc::new(AtomicBool::new(false));
+    let toggle_changed_from_handler = toggle_changed.clone();
     let app = App::load(host_path()).unwrap();
 
     app.run(move |context| {
@@ -67,13 +69,24 @@ fn builders_create_a_real_window_through_nativeaot() {
         let text_box_for_post = text_box.clone();
         let text_box = ScrollViewer::new()?.content(DockPanel::new()?.child(text_box)?)?;
 
+        let toggle = ToggleSwitch::new()?
+            .content(TextBlock::new()?.text("ToggleSwitch")?)?
+            .on_content(TextBlock::new()?.text("On")?)?
+            .off_content(TextBlock::new()?.text("Off")?)?
+            .checked(Some(true))?
+            .on_is_checked_changed(move |_| {
+                toggle_changed_from_handler.store(true, Ordering::SeqCst);
+            })?;
+        let toggle_for_post = toggle.clone();
+
         let panel = StackPanel::new()?
             .orientation(Orientation::Vertical)?
             .spacing(8.0)?
             .child(TextBlock::new()?.text("Hello from Rust")?)?
             .child(text_box)?
+            .child(toggle)?
             .child(button)?;
-        assert_eq!(panel.children()?.len()?, 3);
+        assert_eq!(panel.children()?.len()?, 4);
         assert_eq!(panel.get_orientation()?, Orientation::Vertical);
         assert_eq!(panel.get_spacing()?, 8.0);
 
@@ -91,6 +104,8 @@ fn builders_create_a_real_window_through_nativeaot() {
                         text_box_for_post.get_text().unwrap().as_deref(),
                         Some("after")
                     );
+                    toggle_for_post.set_checked(Some(false)).unwrap();
+                    assert_eq!(toggle_for_post.get_is_checked().unwrap(), Some(false));
                     posted_from_handler.store(true, Ordering::SeqCst);
                     window.close().unwrap();
                 })
@@ -104,4 +119,5 @@ fn builders_create_a_real_window_through_nativeaot() {
     assert!(called.load(Ordering::SeqCst));
     assert!(posted.load(Ordering::SeqCst));
     assert!(text_changed.load(Ordering::SeqCst));
+    assert!(toggle_changed.load(Ordering::SeqCst));
 }

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("9731694F-6628-518B-A2C9-4D4696F1ADCA")]
+[Guid("4C1505B2-239D-59E1-8084-302D1ECB98DE")]
 public partial interface IAvnControlFactory
 {
     [PreserveSig]
@@ -68,6 +68,9 @@ public partial interface IAvnControlFactory
 
     [PreserveSig]
     int CreateToggleButton(out IAvnToggleButton? value);
+
+    [PreserveSig]
+    int CreateToggleSwitch(out IAvnToggleSwitch? value);
 
     [PreserveSig]
     int CreateWindow(out IAvnWindow? value);
@@ -378,6 +381,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         {
             global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
             value = (IAvnToggleButton)ProjectionRuntime.Wrap(new global::Avalonia.Controls.Primitives.ToggleButton())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateToggleSwitch(out IAvnToggleSwitch? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnToggleSwitch)ProjectionRuntime.Wrap(new global::Avalonia.Controls.ToggleSwitch())!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

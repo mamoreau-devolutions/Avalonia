@@ -1,4 +1,6 @@
-use avalonia::{App, Button, Orientation, Slider, StackPanel, TextBlock, Window};
+use avalonia::{
+    App, Button, Orientation, Slider, StackPanel, TextBlock, TextBox, ToggleSwitch, Window,
+};
 
 fn main() -> avalonia::Result<()> {
     App::load_from_env()?.run(|_| {
@@ -31,6 +33,45 @@ fn main() -> avalonia::Result<()> {
                 .expect("failed to update slider readout");
         })?;
 
+        let typed_text = TextBlock::new()?.text("Text: Hello from Avalonia")?;
+        let typed_text_for_handler = typed_text.clone();
+        let text_box = TextBox::new()?
+            .placeholder_text("Type something")?
+            .text("Hello from Avalonia")?;
+        let text_box_for_handler = text_box.clone();
+        let text_box = text_box.on_text_changed(move |_| {
+            let value = text_box_for_handler
+                .get_text()
+                .expect("failed to read text")
+                .unwrap_or_default();
+            typed_text_for_handler
+                .set_text(format!("Text: {value}"))
+                .expect("failed to update text readout");
+        })?;
+
+        let toggle_value = TextBlock::new()?.text("Toggle: on")?;
+        let toggle_value_for_handler = toggle_value.clone();
+        let toggle = ToggleSwitch::new()?
+            .content(TextBlock::new()?.text("ToggleSwitch")?)?
+            .on_content(TextBlock::new()?.text("On")?)?
+            .off_content(TextBlock::new()?.text("Off")?)?
+            .checked(Some(true))?;
+        let toggle_for_handler = toggle.clone();
+        let toggle = toggle.on_is_checked_changed(move |_| {
+            let state = if toggle_for_handler
+                .get_is_checked()
+                .expect("failed to read toggle state")
+                == Some(true)
+            {
+                "on"
+            } else {
+                "off"
+            };
+            toggle_value_for_handler
+                .set_text(format!("Toggle: {state}"))
+                .expect("failed to update toggle readout");
+        })?;
+
         Window::new()?
             .title("Control basics")?
             .content(
@@ -40,7 +81,11 @@ fn main() -> avalonia::Result<()> {
                     .child(button)?
                     .child(click_count)?
                     .child(slider)?
-                    .child(slider_value)?,
+                    .child(slider_value)?
+                    .child(text_box)?
+                    .child(typed_text)?
+                    .child(toggle)?
+                    .child(toggle_value)?,
             )?
             .show()
     })

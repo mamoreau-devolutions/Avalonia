@@ -28,6 +28,7 @@ public class ClrTypeExtractorTests
         typeof(Button),
         typeof(ToggleButton),
         typeof(CheckBox),
+        typeof(ToggleSwitch),
         typeof(TextBox),
         typeof(ScrollViewer),
         typeof(RangeBase),
@@ -78,6 +79,11 @@ public class ClrTypeExtractorTests
 
         var isChecked = Type(ir, "IAvnToggleButton").Properties.Single();
         Assert.Equal(MarshallingKind.NullableBool, isChecked.Kind);
+
+        var toggleSwitch = Type(ir, "IAvnToggleSwitch");
+        Assert.Equal("Avalonia.Host.Com.IAvnToggleButton", toggleSwitch.BaseFullName);
+        Assert.All(toggleSwitch.Properties, property =>
+            Assert.Equal("Avalonia.Host.Com.IAvnControl", property.InterfaceName));
 
         var classes = Type(ir, "IAvnStyledElement").Properties.Single();
         Assert.Equal(MarshallingKind.StringUtf16, classes.ElementKind);

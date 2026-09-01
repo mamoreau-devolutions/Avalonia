@@ -1613,6 +1613,102 @@ impl AsControl for TextBox {
 }
 
 #[derive(Clone, Debug)]
+pub struct ToggleSwitch {
+    pub(crate) raw: sys::ComPtr<sys::IAvnToggleSwitch>,
+}
+
+impl ToggleSwitch {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_toggle_switch())
+            .map(|raw| Self { raw })
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_content(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_content()?.map(|raw| Control { raw }))
+    }
+    pub fn set_content(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_content(Some(&value))?)
+    }
+    pub fn content(self, value: impl AsControl) -> Result<Self> {
+        self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_click(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::button_click_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_click(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_click(subscription_id)))
+    }
+    pub fn on_click(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_click(callback)?.detach();
+        Ok(self)
+    }
+    pub fn get_is_checked(&self) -> Result<Option<bool>> { Ok(self.raw.get_is_checked()?) }
+    pub fn set_checked(&self, value: Option<bool>) -> Result<()> {
+        Ok(self.raw.set_is_checked(value)?)
+    }
+    pub fn checked(self, value: Option<bool>) -> Result<Self> {
+        self.set_checked(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_is_checked_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::toggle_button_is_checked_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_is_checked_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_is_checked_changed(subscription_id)))
+    }
+    pub fn on_is_checked_changed(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_is_checked_changed(callback)?.detach();
+        Ok(self)
+    }
+    pub fn get_on_content(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_on_content()?.map(|raw| Control { raw }))
+    }
+    pub fn set_on_content(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_on_content(Some(&value))?)
+    }
+    pub fn on_content(self, value: impl AsControl) -> Result<Self> {
+        self.set_on_content(value)?;
+        Ok(self)
+    }
+    pub fn get_off_content(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_off_content()?.map(|raw| Control { raw }))
+    }
+    pub fn set_off_content(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_off_content(Some(&value))?)
+    }
+    pub fn off_content(self, value: impl AsControl) -> Result<Self> {
+        self.set_off_content(value)?;
+        Ok(self)
+    }
+}
+
+impl AsControl for ToggleSwitch {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
 pub struct Window {
     pub(crate) raw: sys::ComPtr<sys::IAvnWindow>,
 }

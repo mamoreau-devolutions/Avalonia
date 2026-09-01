@@ -6,21 +6,33 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("BEC90E8C-E665-5069-A6D4-33CC722A4FEA")]
-public partial interface IAvnCheckBox : IAvnToggleButton
+[Guid("0BE05DD9-DEBB-5DE4-A4F6-10E44328C585")]
+public partial interface IAvnToggleSwitch : IAvnToggleButton
 {
+    [PreserveSig]
+    int GetOnContent(out IAvnControl? value);
+
+    [PreserveSig]
+    int SetOnContent(IAvnControl? value);
+
+    [PreserveSig]
+    int GetOffContent(out IAvnControl? value);
+
+    [PreserveSig]
+    int SetOffContent(IAvnControl? value);
+
 }
 
 [GeneratedComClass]
-public sealed partial class AvnCheckBox : IAvnCheckBox
+public sealed partial class AvnToggleSwitch : IAvnToggleSwitch
 {
-    private readonly global::Avalonia.Controls.CheckBox _value;
+    private readonly global::Avalonia.Controls.ToggleSwitch _value;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnButtonClickHandler Handler, global::System.Action Unsubscribe)> _clickSubscriptions = new();
     private long _nextClickSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnToggleButtonIsCheckedChangedHandler Handler, global::System.Action Unsubscribe)> _isCheckedChangedSubscriptions = new();
     private long _nextIsCheckedChangedSubscriptionId;
 
-    internal AvnCheckBox(global::Avalonia.Controls.CheckBox value)
+    internal AvnToggleSwitch(global::Avalonia.Controls.ToggleSwitch value)
     {
         _value = value;
         ObjectId = ProjectionRuntime.Register(value);
@@ -210,6 +222,64 @@ public sealed partial class AvnCheckBox : IAvnCheckBox
             if (!_isCheckedChangedSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
             subscription.Unsubscribe();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetOnContent(out IAvnControl? value)
+    {
+        value = default!;
+        try
+        {
+            _value.VerifyAccess();
+            value = (IAvnControl?)ProjectionRuntime.Wrap(_value.OnContent as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetOnContent(IAvnControl? value)
+    {
+        try
+        {
+            _value.VerifyAccess();
+            _value.OnContent = (global::System.Object)ProjectionRuntime.Unwrap(value)!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetOffContent(out IAvnControl? value)
+    {
+        value = default!;
+        try
+        {
+            _value.VerifyAccess();
+            value = (IAvnControl?)ProjectionRuntime.Wrap(_value.OffContent as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetOffContent(IAvnControl? value)
+    {
+        try
+        {
+            _value.VerifyAccess();
+            _value.OffContent = (global::System.Object)ProjectionRuntime.Unwrap(value)!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
