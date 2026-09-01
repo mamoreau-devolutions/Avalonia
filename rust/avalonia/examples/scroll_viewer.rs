@@ -23,6 +23,7 @@ fn main() -> avalonia::Result<()> {
         let status_for_handler = status.clone();
         let mut scroll_events = 0;
         let viewer = ScrollViewer::new()?
+            .height(400.0)?
             .horizontal_scroll_bar_visibility(ScrollBarVisibility::Auto)?
             .vertical_scroll_bar_visibility(ScrollBarVisibility::Auto)?
             .allow_auto_hide(true)?

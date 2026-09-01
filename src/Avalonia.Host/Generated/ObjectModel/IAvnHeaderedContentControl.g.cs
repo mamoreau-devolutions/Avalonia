@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("FF765019-0530-52BD-9B1D-EF1EE2061C69")]
+[Guid("531D8161-6B83-5E05-BC09-DAB4EF5B8B12")]
 public partial interface IAvnHeaderedContentControl : IAvnContentControl
 {
     [PreserveSig]
@@ -49,6 +49,64 @@ public sealed partial class AvnHeaderedContentControl : IAvnHeaderedContentContr
         {
             _value.VerifyAccess();
             value = new AvnStringList(_value.Classes);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetWidth(out double value)
+    {
+        value = default!;
+        try
+        {
+            _value.VerifyAccess();
+            value = _value.Width;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetWidth(double value)
+    {
+        try
+        {
+            _value.VerifyAccess();
+            _value.Width = value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetHeight(out double value)
+    {
+        value = default!;
+        try
+        {
+            _value.VerifyAccess();
+            value = _value.Height;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetHeight(double value)
+    {
+        try
+        {
+            _value.VerifyAccess();
+            _value.Height = value;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

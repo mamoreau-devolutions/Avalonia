@@ -100,6 +100,10 @@ public class ClrTypeExtractorTests
         Assert.All(
             controlEvents.Where(@event => @event.Name.StartsWith("Pointer", StringComparison.Ordinal)),
             @event => Assert.Equal(EventPayloadKind.None, @event.PayloadKind));
+        Assert.All(
+            Type(ir, "IAvnControl").Properties.Where(property =>
+                property.Name is nameof(Control.Width) or nameof(Control.Height)),
+            property => Assert.Equal(MarshallingKind.F64, property.Kind));
 
         var toggleSwitch = Type(ir, "IAvnToggleSwitch");
         Assert.Equal("Avalonia.Host.Com.IAvnToggleButton", toggleSwitch.BaseFullName);

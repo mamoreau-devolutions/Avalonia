@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("70026657-7B97-56D7-9490-126B306C8932")]
+[Guid("CA75AA96-ADF5-5958-B2BE-808D664E1FE1")]
 public partial interface IAvnSelectingItemsControlSelectionChangedHandler
 {
     [PreserveSig]

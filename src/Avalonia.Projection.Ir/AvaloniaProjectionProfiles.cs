@@ -44,7 +44,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.AvaloniaObject"] = [],
             ["Avalonia.StyledElement"] = ["Classes"],
             ["Avalonia.Controls.Control"] =
-                ["IsEnabled", "KeyDown", "PointerEntered", "PointerExited"],
+                ["Width", "Height", "IsEnabled", "KeyDown", "PointerEntered", "PointerExited"],
             ["Avalonia.Controls.ContentControl"] = ["Content"],
             ["Avalonia.Controls.Primitives.HeaderedContentControl"] = ["Header"],
             ["Avalonia.Controls.ItemsControl"] = ["Items"],
