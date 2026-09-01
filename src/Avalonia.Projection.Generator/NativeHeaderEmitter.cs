@@ -1,0 +1,337 @@
+using System.Globalization;
+using System.Text;
+using Avalonia.Projection.Ir;
+
+namespace Avalonia.Projection.Generator;
+
+public static class NativeHeaderEmitter
+{
+    public static string Emit(ProjectionIr ir)
+    {
+        var events = ir.Types
+            .SelectMany(type => type.Events)
+            .GroupBy(@event => @event.HandlerInterfaceName, StringComparer.Ordinal)
+            .Select(group => group.First())
+            .OrderBy(@event => @event.HandlerInterfaceName, StringComparer.Ordinal)
+            .ToArray();
+        var collections = ir.Types
+            .SelectMany(type => type.Properties)
+            .Where(property => property.Kind == MarshallingKind.ComCollection)
+            .GroupBy(property => property.InterfaceName, StringComparer.Ordinal)
+            .Select(group => group.First())
+            .OrderBy(property => property.InterfaceName, StringComparer.Ordinal)
+            .ToArray();
+        var types = ir.Types
+            .Where(type => type.Kind == ProjectedTypeKind.Class)
+            .OrderBy(type => type.FullName, StringComparer.Ordinal)
+            .ToArray();
+        var statics = ir.AttachedProperties
+            .GroupBy(property => property.StaticsInterfaceName, StringComparer.Ordinal)
+            .OrderBy(group => group.Key, StringComparer.Ordinal)
+            .ToArray();
+
+        var names = events.Select(@event => SimpleName(@event.HandlerInterfaceName))
+            .Concat(collections.Select(property => SimpleName(property.InterfaceName!)))
+            .Concat(types.Select(type => type.Name))
+            .Concat(statics.Select(group => SimpleName(group.Key)))
+            .Append("IAvnControlFactory")
+            .Distinct(StringComparer.Ordinal)
+            .OrderBy(name => name, StringComparer.Ordinal)
+            .ToArray();
+
+        var sb = new StringBuilder();
+        sb.AppendLine("/* Generated from projection.ir.json. Do not edit. */");
+        sb.AppendLine("#ifndef AVALONIA_RUST_ABI_H");
+        sb.AppendLine("#define AVALONIA_RUST_ABI_H");
+        sb.AppendLine();
+        sb.AppendLine("#include <stdint.h>");
+        sb.AppendLine();
+        sb.AppendLine("#if defined(_WIN32)");
+        sb.AppendLine("#define AVN_CALL __stdcall");
+        sb.AppendLine("#else");
+        sb.AppendLine("#define AVN_CALL");
+        sb.AppendLine("#endif");
+        sb.AppendLine();
+        sb.AppendLine("typedef int32_t AvnHResult;");
+        sb.AppendLine("typedef struct AvnGuid {");
+        sb.AppendLine("    uint32_t data1;");
+        sb.AppendLine("    uint16_t data2;");
+        sb.AppendLine("    uint16_t data3;");
+        sb.AppendLine("    uint8_t data4[8];");
+        sb.AppendLine("} AvnGuid;");
+        sb.AppendLine();
+
+        foreach (var name in names)
+        {
+            sb.AppendLine($"typedef struct {name} {name};");
+            sb.AppendLine($"typedef struct {name}Vtbl {name}Vtbl;");
+        }
+        sb.AppendLine();
+
+        foreach (var @event in events)
+        {
+            var name = SimpleName(@event.HandlerInterfaceName);
+            EmitIid(sb, name, @event.HandlerInterfaceIid, @event.HandlerInterfaceAbiVersion);
+            BeginInterface(sb, name);
+            var arguments = @event.Parameters.Select(EventParameter).ToArray();
+            EmitSlot(sb, 3, "invoke", name, arguments);
+            EndInterface(sb, name, 4);
+        }
+
+        foreach (var collection in collections)
+        {
+            var name = SimpleName(collection.InterfaceName!);
+            var element = AbiType(
+                collection.ElementKind!.Value,
+                collection.ElementInterfaceName,
+                pointerForInterface: true);
+            EmitIid(sb, name, collection.InterfaceIid!, collection.InterfaceAbiVersion);
+            BeginInterface(sb, name);
+            EmitSlot(sb, 3, "get_count", name, ["int32_t* value"]);
+            EmitSlot(sb, 4, "get_at", name, ["int32_t index", $"{element}* value"]);
+            EmitSlot(sb, 5, "add", name, [$"{InputType(collection.ElementKind.Value, collection.ElementInterfaceName)} value"]);
+            EmitSlot(sb, 6, "index_of", name,
+                [$"{InputType(collection.ElementKind.Value, collection.ElementInterfaceName)} value", "int32_t* index"]);
+            EmitSlot(sb, 7, "remove_at", name, ["int32_t index"]);
+            EmitSlot(sb, 8, "clear", name, []);
+            EndInterface(sb, name, 9);
+        }
+
+        foreach (var type in types)
+        {
+            EmitIid(sb, type.Name, type.Iid!, type.AbiVersion);
+            BeginInterface(sb, type.Name);
+            var slot = 3;
+            EmitSlot(sb, slot++, "get_object_id", type.Name, ["int64_t* value"]);
+            foreach (var owner in Lineage(ir, type))
+            {
+                foreach (var property in owner.Properties)
+                {
+                    if (property.CanRead)
+                    {
+                        EmitSlot(
+                            sb,
+                            slot++,
+                            $"get_{Snake(property.Name)}",
+                            type.Name,
+                            [$"{OutputType(property.Kind, property.InterfaceName)} value"]);
+                    }
+                    if (property.CanWrite)
+                    {
+                        EmitSlot(
+                            sb,
+                            slot++,
+                            $"set_{Snake(property.Name)}",
+                            type.Name,
+                            [$"{InputType(property.Kind, property.InterfaceName)} value"]);
+                    }
+                }
+                foreach (var method in owner.Methods)
+                {
+                    EmitSlot(
+                        sb,
+                        slot++,
+                        Snake(method.Name),
+                        type.Name,
+                        method.Parameters.Select(MethodParameter).ToArray());
+                }
+                foreach (var @event in owner.Events)
+                {
+                    EmitSlot(
+                        sb,
+                        slot++,
+                        $"advise_{Snake(@event.Name)}",
+                        type.Name,
+                        [$"{SimpleName(@event.HandlerInterfaceName)}* handler", "int64_t* subscription_id"]);
+                    EmitSlot(
+                        sb,
+                        slot++,
+                        $"unadvise_{Snake(@event.Name)}",
+                        type.Name,
+                        ["int64_t subscription_id"]);
+                }
+            }
+            EndInterface(sb, type.Name, slot);
+        }
+
+        foreach (var group in statics)
+        {
+            var name = SimpleName(group.Key);
+            EmitIid(
+                sb,
+                name,
+                group.First().StaticsInterfaceIid,
+                group.First().StaticsInterfaceAbiVersion);
+            BeginInterface(sb, name);
+            var slot = 3;
+            foreach (var property in group)
+            {
+                EmitSlot(
+                    sb,
+                    slot++,
+                    $"get_{Snake(property.Name)}",
+                    name,
+                    ["IAvnControl* target", $"{OutputType(property.Kind, null)} value"]);
+                EmitSlot(
+                    sb,
+                    slot++,
+                    $"set_{Snake(property.Name)}",
+                    name,
+                    ["IAvnControl* target", $"{InputType(property.Kind, null)} value"]);
+            }
+            EndInterface(sb, name, slot);
+        }
+
+        EmitIid(sb, "IAvnControlFactory", ir.FactoryIid!, ir.FactoryAbiVersion);
+        BeginInterface(sb, "IAvnControlFactory");
+        var factorySlot = 3;
+        foreach (var type in types.Where(type => type.IsConstructible))
+        {
+            EmitSlot(
+                sb,
+                factorySlot++,
+                $"create_{Snake(type.Name[4..])}",
+                "IAvnControlFactory",
+                [$"{type.Name}** value"]);
+        }
+        foreach (var group in statics)
+        {
+            var name = SimpleName(group.Key);
+            EmitSlot(
+                sb,
+                factorySlot++,
+                $"get_{Snake(group.First().OwnerName)}_statics",
+                "IAvnControlFactory",
+                [$"{name}** value"]);
+        }
+        EndInterface(sb, "IAvnControlFactory", factorySlot);
+
+        sb.AppendLine("#endif /* AVALONIA_RUST_ABI_H */");
+        return sb.ToString();
+    }
+
+    private static void BeginInterface(StringBuilder sb, string name)
+    {
+        sb.AppendLine($"struct {name}Vtbl {{");
+        sb.AppendLine($"    AvnHResult (AVN_CALL *query_interface)({name}* self, const AvnGuid* iid, void** result); /* slot 0 */");
+        sb.AppendLine($"    uint32_t (AVN_CALL *add_ref)({name}* self); /* slot 1 */");
+        sb.AppendLine($"    uint32_t (AVN_CALL *release)({name}* self); /* slot 2 */");
+    }
+
+    private static void EndInterface(StringBuilder sb, string name, int slots)
+    {
+        sb.AppendLine("};");
+        sb.AppendLine($"struct {name} {{ const {name}Vtbl* vtbl; }};");
+        sb.AppendLine($"#define {Snake(name).ToUpperInvariant()}_VTABLE_SLOTS {slots}");
+        sb.AppendLine();
+    }
+
+    private static void EmitSlot(
+        StringBuilder sb,
+        int slot,
+        string method,
+        string owner,
+        IReadOnlyList<string> parameters)
+    {
+        var suffix = parameters.Count == 0 ? "" : ", " + string.Join(", ", parameters);
+        sb.AppendLine(
+            $"    AvnHResult (AVN_CALL *{method})({owner}* self{suffix}); /* slot {slot} */");
+    }
+
+    private static void EmitIid(StringBuilder sb, string name, string value, int abiVersion)
+    {
+        var guid = Guid.Parse(value);
+        var bytes = guid.ToByteArray();
+        sb.AppendLine($"static const AvnGuid {Snake(name).ToUpperInvariant()}_IID = {{");
+        sb.AppendLine($"    0x{guid.ToString("N", CultureInfo.InvariantCulture)[..8].ToUpperInvariant()},");
+        sb.AppendLine($"    0x{guid.ToString("N", CultureInfo.InvariantCulture)[8..12].ToUpperInvariant()},");
+        sb.AppendLine($"    0x{guid.ToString("N", CultureInfo.InvariantCulture)[12..16].ToUpperInvariant()},");
+        sb.Append("    { ");
+        sb.Append(string.Join(", ", bytes[8..].Select(value => $"0x{value:X2}")));
+        sb.AppendLine(" }");
+        sb.AppendLine("};");
+        sb.AppendLine($"#define {Snake(name).ToUpperInvariant()}_ABI_VERSION {abiVersion}");
+    }
+
+    private static IReadOnlyList<ProjectedType> Lineage(ProjectionIr ir, ProjectedType type)
+    {
+        var result = new List<ProjectedType> { type };
+        var current = type;
+        while (current.BaseFullName is { } baseName)
+        {
+            current = ir.Types.Single(candidate => candidate.FullName == baseName);
+            result.Add(current);
+        }
+        result.Reverse();
+        return result;
+    }
+
+    private static string EventParameter(ProjectedParameter parameter) =>
+        parameter.Direction == ParameterDirection.InOut
+            ? $"{AbiType(parameter.Kind, parameter.InterfaceName, pointerForInterface: false)}* {Snake(parameter.Name)}"
+            : $"{InputType(parameter.Kind, parameter.InterfaceName)} {Snake(parameter.Name)}";
+
+    private static string MethodParameter(ProjectedParameter parameter) =>
+        parameter.Direction switch
+        {
+            ParameterDirection.Out =>
+                $"{OutputType(parameter.Kind, parameter.InterfaceName)} {Snake(parameter.Name)}",
+            ParameterDirection.InOut =>
+                $"{AbiType(parameter.Kind, parameter.InterfaceName, pointerForInterface: false)}* {Snake(parameter.Name)}",
+            _ => $"{InputType(parameter.Kind, parameter.InterfaceName)} {Snake(parameter.Name)}",
+        };
+
+    private static string OutputType(MarshallingKind kind, string? interfaceName) =>
+        kind switch
+        {
+            MarshallingKind.StringUtf16 => "uint16_t**",
+            MarshallingKind.ComInterface or MarshallingKind.ComCollection =>
+                $"{SimpleName(interfaceName!)}**",
+            _ => $"{AbiType(kind, interfaceName, pointerForInterface: false)}*",
+        };
+
+    private static string InputType(MarshallingKind kind, string? interfaceName) =>
+        kind switch
+        {
+            MarshallingKind.StringUtf16 => "const uint16_t*",
+            MarshallingKind.ComInterface or MarshallingKind.ComCollection =>
+                $"{SimpleName(interfaceName!)}*",
+            _ => AbiType(kind, interfaceName, pointerForInterface: false),
+        };
+
+    private static string AbiType(
+        MarshallingKind kind,
+        string? interfaceName,
+        bool pointerForInterface) =>
+        kind switch
+        {
+            MarshallingKind.I32 or MarshallingKind.Bool or MarshallingKind.NullableBool => "int32_t",
+            MarshallingKind.I64 => "int64_t",
+            MarshallingKind.F32 => "float",
+            MarshallingKind.F64 => "double",
+            MarshallingKind.StringUtf16 => "uint16_t*",
+            MarshallingKind.ComInterface or MarshallingKind.ComCollection =>
+                SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
+            _ => throw new InvalidOperationException($"Unsupported ABI kind '{kind}'."),
+        };
+
+    private static string SimpleName(string fullName) =>
+        fullName[(fullName.LastIndexOf('.') + 1)..];
+
+    private static string Snake(string value)
+    {
+        var sb = new StringBuilder();
+        for (var index = 0; index < value.Length; index++)
+        {
+            var character = value[index];
+            if (char.IsUpper(character) && index > 0 &&
+                (!char.IsUpper(value[index - 1]) ||
+                 index + 1 < value.Length && char.IsLower(value[index + 1])))
+            {
+                sb.Append('_');
+            }
+            sb.Append(char.ToLowerInvariant(character));
+        }
+        return sb.ToString();
+    }
+}

@@ -208,6 +208,25 @@ public class ComSourceEmitterTests
         var generatedDirectory = Path.Combine(root, "src", "Avalonia.Host", "Generated", "ObjectModel");
         foreach (var (name, source) in ComSourceEmitter.Emit(ir))
             Assert.Equal(Normalize(source), Normalize(File.ReadAllText(Path.Combine(generatedDirectory, name))));
+
+        Assert.Equal(
+            Normalize(NativeHeaderEmitter.Emit(ir)),
+            Normalize(File.ReadAllText(Path.Combine(
+                root,
+                "rust",
+                "avalonia-sys",
+                "include",
+                "avalonia-rust-abi.h"))));
+
+        var header = NativeHeaderEmitter.Emit(ir);
+        var buttonStart = header.IndexOf("struct IAvnButtonVtbl", StringComparison.Ordinal);
+        var buttonEnd = header.IndexOf("struct IAvnButton {", buttonStart, StringComparison.Ordinal);
+        var buttonHeader = header[buttonStart..buttonEnd];
+        Assert.Contains("get_object_id", buttonHeader, StringComparison.Ordinal);
+        Assert.Contains("#define I_AVN_BUTTON_ABI_VERSION 1", header, StringComparison.Ordinal);
+        Assert.True(
+            buttonHeader.IndexOf("get_object_id", StringComparison.Ordinal) <
+            buttonHeader.IndexOf("get_classes", StringComparison.Ordinal));
     }
 
     private static string FindRepositoryRoot()

@@ -30,7 +30,10 @@ public static class ClrTypeExtractor
             SourceAssembly = string.Join(
                 ",",
                 selected.Select(t => t.Assembly.GetName().Name).Distinct(StringComparer.Ordinal)),
-            FactoryIid = CreateDeterministicIid($"{policy.ProjectionNamespace}.IAvnControlFactory"),
+            FactoryIid = CreateDeterministicIid(
+                $"{policy.ProjectionNamespace}.IAvnControlFactory",
+                policy.GetAbiVersion($"{policy.ProjectionNamespace}.IAvnControlFactory")),
+            FactoryAbiVersion = policy.GetAbiVersion($"{policy.ProjectionNamespace}.IAvnControlFactory"),
             Types = types,
             Enums = ExtractEnums(selected, policy),
             AttachedProperties = attachedProperties,
@@ -38,10 +41,10 @@ public static class ClrTypeExtractor
         };
     }
 
-    public static string CreateDeterministicIid(string projectedFullName)
+    public static string CreateDeterministicIid(string projectedFullName, int abiVersion = 1)
     {
         var hash = SHA256.HashData(Encoding.UTF8.GetBytes(
-            $"Avalonia.Rust.Projection/v{ProjectionIr.CurrentVersion}/{projectedFullName}"));
+            $"Avalonia.Rust.ABI/{projectedFullName}/v{abiVersion}"));
         Span<byte> guidBytes = stackalloc byte[16];
         hash.AsSpan(0, guidBytes.Length).CopyTo(guidBytes);
         guidBytes[7] = (byte)((guidBytes[7] & 0x0f) | 0x50);
@@ -91,8 +94,11 @@ public static class ClrTypeExtractor
                 Kind = kind,
                 InterfaceName = interfaceName,
                 InterfaceIid = kind == MarshallingKind.ComCollection
-                    ? CreateDeterministicIid(interfaceName!)
+                    ? CreateDeterministicIid(interfaceName!, policy.GetAbiVersion(interfaceName!))
                     : null,
+                InterfaceAbiVersion = kind == MarshallingKind.ComCollection
+                    ? policy.GetAbiVersion(interfaceName!)
+                    : 1,
                 ElementInterfaceName = policy.TryGetOverride(type, property, out var memberOverride)
                     ? memberOverride.ElementInterfaceName
                     : null,
@@ -202,7 +208,10 @@ public static class ClrTypeExtractor
             {
                 Name = @event.Name,
                 HandlerInterfaceName = handlerInterfaceName,
-                HandlerInterfaceIid = CreateDeterministicIid(handlerInterfaceName),
+                HandlerInterfaceIid = CreateDeterministicIid(
+                    handlerInterfaceName,
+                    policy.GetAbiVersion(handlerInterfaceName)),
+                HandlerInterfaceAbiVersion = policy.GetAbiVersion(handlerInterfaceName),
                 PayloadKind = eventProjection.PayloadKind,
                 ManagedHandlerTypeName = @event.EventHandlerType is { } handlerType
                     ? ManagedTypeName(handlerType)
@@ -238,7 +247,10 @@ public static class ClrTypeExtractor
             FullName = projectedFullName,
             ManagedFullName = type.FullName ?? type.Name,
             Kind = ProjectedTypeKind.Class,
-            Iid = CreateDeterministicIid(projectedFullName),
+            Iid = CreateDeterministicIid(
+                projectedFullName,
+                policy.GetAbiVersion(projectedFullName)),
+            AbiVersion = policy.GetAbiVersion(projectedFullName),
             BaseFullName = FindProjectedBase(type.BaseType, selected, projectedNames),
             IsConstructible = !type.IsAbstract && type.GetConstructor(Type.EmptyTypes) is not null,
             Properties = properties,
@@ -527,7 +539,10 @@ public static class ClrTypeExtractor
                     OwnerName = owner.Name,
                     OwnerManagedFullName = owner.FullName!,
                     StaticsInterfaceName = staticsInterfaceName,
-                    StaticsInterfaceIid = CreateDeterministicIid(staticsInterfaceName),
+                    StaticsInterfaceIid = CreateDeterministicIid(
+                        staticsInterfaceName,
+                        policy.GetAbiVersion(staticsInterfaceName)),
+                    StaticsInterfaceAbiVersion = policy.GetAbiVersion(staticsInterfaceName),
                     Name = name,
                     Kind = kind,
                     ManagedTypeName = getter.ReturnType.FullName!,

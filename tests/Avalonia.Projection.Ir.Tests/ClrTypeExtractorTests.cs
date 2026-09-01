@@ -140,6 +140,19 @@ public class ClrTypeExtractorTests
             s.Reason == "Not included by projection policy");
     }
 
+    [Fact]
+    public void Iids_are_versioned_per_interface_not_by_ir_schema()
+    {
+        const string name = "Avalonia.Host.Com.IAvnButton";
+
+        Assert.Equal(
+            ClrTypeExtractor.CreateDeterministicIid(name, 1),
+            ClrTypeExtractor.CreateDeterministicIid(name));
+        Assert.NotEqual(
+            ClrTypeExtractor.CreateDeterministicIid(name, 1),
+            ClrTypeExtractor.CreateDeterministicIid(name, 2));
+    }
+
     private static ProjectedType Type(ProjectionIr ir, string name) =>
         ir.Types.Single(t => t.Name == name);
 }

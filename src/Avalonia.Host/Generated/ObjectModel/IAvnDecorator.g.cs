@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("17B7629C-2615-55D6-8E40-4FF378F87600")]
+[Guid("D76FE4D5-CBB2-58CE-9E1C-C8B24647633C")]
 public partial interface IAvnDecorator : IAvnControl
 {
     [PreserveSig]

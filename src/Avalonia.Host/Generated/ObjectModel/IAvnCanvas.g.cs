@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("13D23085-FA0F-544B-BD93-E1636B5B9B2F")]
+[Guid("E3EF0F53-3DBE-5364-86E2-93DD4239B494")]
 public partial interface IAvnCanvas : IAvnPanel
 {
 }

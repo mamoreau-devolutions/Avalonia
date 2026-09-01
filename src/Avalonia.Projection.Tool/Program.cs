@@ -6,9 +6,10 @@ using Avalonia.Controls;
 using Avalonia.Projection.Generator;
 using Avalonia.Projection.Ir;
 
-if (args.Length != 2)
+if (args.Length is not (2 or 3))
 {
-    Console.Error.WriteLine("Usage: Avalonia.Projection.Tool <ir-output> <csharp-output-directory>");
+    Console.Error.WriteLine(
+        "Usage: Avalonia.Projection.Tool <ir-output> <csharp-output-directory> [native-header-output]");
     return 2;
 }
 
@@ -26,6 +27,13 @@ foreach (var existing in Directory.EnumerateFiles(csharpDirectory, "*.g.cs"))
     File.Delete(existing);
 foreach (var (name, source) in ComSourceEmitter.Emit(ir))
     File.WriteAllText(Path.Combine(csharpDirectory, name), source);
+
+if (args.Length == 3)
+{
+    var headerPath = Path.GetFullPath(args[2]);
+    Directory.CreateDirectory(Path.GetDirectoryName(headerPath)!);
+    File.WriteAllText(headerPath, NativeHeaderEmitter.Emit(ir));
+}
 
 var reportPath = Path.ChangeExtension(irPath, ".gaps.txt");
 File.WriteAllLines(

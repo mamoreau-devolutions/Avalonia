@@ -44,7 +44,9 @@ core of ControlCatalog's `ProgressBarPage`, and `scroll_viewer` ports its basic
 
 ```powershell
 dotnet run --project .\src\Avalonia.Projection.Tool `
-  -- .\rust\projection.ir.json .\src\Avalonia.Host\Generated\ObjectModel
+  -- .\rust\projection.ir.json `
+  .\src\Avalonia.Host\Generated\ObjectModel `
+  .\rust\avalonia-sys\include\avalonia-rust-abi.h
 
 Push-Location .\rust
 cargo run -p avalonia-bindgen -- `

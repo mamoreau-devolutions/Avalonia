@@ -1,13 +1,15 @@
 {
   "version": 10,
   "sourceAssembly": "Avalonia.Base,Avalonia.Controls",
-  "factoryIid": "3A268FC3-994F-53BB-967B-AF57D2E9527C",
+  "factoryIid": "91404D32-3815-5EC7-BA4B-6CDCD2ED9DD9",
+  "factoryAbiVersion": 1,
   "types": [
     {
       "name": "IAvnAvaloniaObject",
       "fullName": "Avalonia.Host.Com.IAvnAvaloniaObject",
       "kind": "Class",
-      "iid": "469F5A7A-A8F0-5165-82D7-3CCA06C412D9",
+      "iid": "41BE85D0-BB9E-57A8-AEBC-FDB08A944B54",
+      "abiVersion": 1,
       "managedFullName": "Avalonia.AvaloniaObject",
       "isConstructible": true,
       "methods": [],
@@ -18,7 +20,8 @@
       "name": "IAvnBorder",
       "fullName": "Avalonia.Host.Com.IAvnBorder",
       "kind": "Class",
-      "iid": "08BE6D8D-ABEF-59B4-A740-F4B61846459D",
+      "iid": "3C222396-41E4-5AB6-B2D6-D3F0E754D7A1",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnDecorator",
       "managedFullName": "Avalonia.Controls.Border",
       "isConstructible": true,
@@ -29,6 +32,7 @@
           "kind": "I32",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Media.BackgroundSizing",
           "isNullable": false
         }
@@ -39,7 +43,8 @@
       "name": "IAvnButton",
       "fullName": "Avalonia.Host.Com.IAvnButton",
       "kind": "Class",
-      "iid": "8DC88DDE-6A9A-5747-891A-A3002269C74B",
+      "iid": "8F85E906-9A9E-5A8E-B581-63A649C752B4",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
       "managedFullName": "Avalonia.Controls.Button",
       "isConstructible": true,
@@ -49,7 +54,8 @@
         {
           "name": "Click",
           "handlerInterfaceName": "Avalonia.Host.Com.IAvnButtonClickHandler",
-          "handlerInterfaceIid": "FDAC29D7-FBAD-57A1-A650-ACA94BF7502D",
+          "handlerInterfaceIid": "4D76B167-C926-5DBD-86F0-EF352D9CBF9B",
+          "handlerInterfaceAbiVersion": 1,
           "payloadKind": "None",
           "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E",
           "parameters": []
@@ -60,7 +66,8 @@
       "name": "IAvnCanvas",
       "fullName": "Avalonia.Host.Com.IAvnCanvas",
       "kind": "Class",
-      "iid": "13D23085-FA0F-544B-BD93-E1636B5B9B2F",
+      "iid": "E3EF0F53-3DBE-5364-86E2-93DD4239B494",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnPanel",
       "managedFullName": "Avalonia.Controls.Canvas",
       "isConstructible": true,
@@ -72,7 +79,8 @@
       "name": "IAvnCheckBox",
       "fullName": "Avalonia.Host.Com.IAvnCheckBox",
       "kind": "Class",
-      "iid": "EE2F2F7B-1974-532B-92F6-400059F0A31E",
+      "iid": "45FF6E5C-9DCD-504F-8C64-16302FBDA2ED",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnToggleButton",
       "managedFullName": "Avalonia.Controls.CheckBox",
       "isConstructible": true,
@@ -84,7 +92,8 @@
       "name": "IAvnComboBox",
       "fullName": "Avalonia.Host.Com.IAvnComboBox",
       "kind": "Class",
-      "iid": "D98E73A7-A752-50CF-AD3C-F8D8A861DA70",
+      "iid": "3A33EF55-C31D-537B-A140-A310A94497AF",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnSelectingItemsControl",
       "managedFullName": "Avalonia.Controls.ComboBox",
       "isConstructible": true,
@@ -95,6 +104,7 @@
           "kind": "StringUtf16",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.String",
           "isNullable": true
         }
@@ -105,7 +115,8 @@
       "name": "IAvnComboBoxItem",
       "fullName": "Avalonia.Host.Com.IAvnComboBoxItem",
       "kind": "Class",
-      "iid": "8C0C54C8-D9AB-5523-85C0-12B9B8F509AC",
+      "iid": "0C9B54F2-2EEA-57A5-B63C-59148CC6F48D",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnListBoxItem",
       "managedFullName": "Avalonia.Controls.ComboBoxItem",
       "isConstructible": true,
@@ -117,7 +128,8 @@
       "name": "IAvnContentControl",
       "fullName": "Avalonia.Host.Com.IAvnContentControl",
       "kind": "Class",
-      "iid": "666A8F7D-9871-5C50-A86C-DD7CCC321640",
+      "iid": "7D1DEC3D-0F1B-5A5E-A73F-2CDCAD2A4A1D",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.ContentControl",
       "isConstructible": true,
@@ -129,6 +141,7 @@
           "canRead": true,
           "canWrite": true,
           "interfaceName": "Avalonia.Host.Com.IAvnControl",
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Object",
           "isNullable": true
         }
@@ -139,7 +152,8 @@
       "name": "IAvnControl",
       "fullName": "Avalonia.Host.Com.IAvnControl",
       "kind": "Class",
-      "iid": "E138C141-7945-5F1E-89EE-0778B85B12AD",
+      "iid": "7957F94D-95D8-597A-AF91-CBDF962A88EB",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnStyledElement",
       "managedFullName": "Avalonia.Controls.Control",
       "isConstructible": true,
@@ -150,6 +164,7 @@
           "kind": "F64",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Double",
           "isNullable": false
         },
@@ -158,6 +173,7 @@
           "kind": "F64",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Double",
           "isNullable": false
         },
@@ -166,6 +182,7 @@
           "kind": "Bool",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
         }
@@ -174,7 +191,8 @@
         {
           "name": "KeyDown",
           "handlerInterfaceName": "Avalonia.Host.Com.IAvnControlKeyDownHandler",
-          "handlerInterfaceIid": "63B6416A-D64C-51A5-9AE9-F1A9E90886E6",
+          "handlerInterfaceIid": "9232F26F-2F3B-5BA2-B098-E4CB6B26BDA3",
+          "handlerInterfaceAbiVersion": 1,
           "payloadKind": "Fields",
           "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Input.KeyEventArgs\u003E",
           "parameters": [
@@ -218,7 +236,8 @@
         {
           "name": "PointerEntered",
           "handlerInterfaceName": "Avalonia.Host.Com.IAvnControlPointerEnteredHandler",
-          "handlerInterfaceIid": "F5E6CC34-CD17-5B3D-A6A8-2074CFFB8100",
+          "handlerInterfaceIid": "CC8694AC-C51C-5791-A898-1B0DE4D84DC8",
+          "handlerInterfaceAbiVersion": 1,
           "payloadKind": "None",
           "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Input.PointerEventArgs\u003E",
           "parameters": []
@@ -226,7 +245,8 @@
         {
           "name": "PointerExited",
           "handlerInterfaceName": "Avalonia.Host.Com.IAvnControlPointerExitedHandler",
-          "handlerInterfaceIid": "2B7579CF-BE3A-58CA-90E2-69CE5995F7E8",
+          "handlerInterfaceIid": "218295EF-A88D-5B93-8A33-97ABD41E6645",
+          "handlerInterfaceAbiVersion": 1,
           "payloadKind": "None",
           "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Input.PointerEventArgs\u003E",
           "parameters": []
@@ -237,7 +257,8 @@
       "name": "IAvnDecorator",
       "fullName": "Avalonia.Host.Com.IAvnDecorator",
       "kind": "Class",
-      "iid": "17B7629C-2615-55D6-8E40-4FF378F87600",
+      "iid": "D76FE4D5-CBB2-58CE-9E1C-C8B24647633C",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnControl",
       "managedFullName": "Avalonia.Controls.Decorator",
       "isConstructible": true,
@@ -249,6 +270,7 @@
           "canRead": true,
           "canWrite": true,
           "interfaceName": "Avalonia.Host.Com.IAvnControl",
+          "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Controls.Control",
           "isNullable": true
         }
@@ -259,7 +281,8 @@
       "name": "IAvnDockPanel",
       "fullName": "Avalonia.Host.Com.IAvnDockPanel",
       "kind": "Class",
-      "iid": "62CE1024-11A5-5F84-B1C8-CACF1B2F0569",
+      "iid": "6766F2C4-9569-5780-B29F-68549E88981F",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnPanel",
       "managedFullName": "Avalonia.Controls.DockPanel",
       "isConstructible": true,
@@ -270,6 +293,7 @@
           "kind": "Bool",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
         },
@@ -278,6 +302,7 @@
           "kind": "F64",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Double",
           "isNullable": false
         },
@@ -286,6 +311,7 @@
           "kind": "F64",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Double",
           "isNullable": false
         }
@@ -296,7 +322,8 @@
       "name": "IAvnExpander",
       "fullName": "Avalonia.Host.Com.IAvnExpander",
       "kind": "Class",
-      "iid": "8F90C23A-4EFB-5A7E-A870-2A52AF791E2F",
+      "iid": "18073BEA-351A-5328-905C-A806D66F1098",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnHeaderedContentControl",
       "managedFullName": "Avalonia.Controls.Expander",
       "isConstructible": true,
@@ -307,6 +334,7 @@
           "kind": "I32",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Controls.ExpandDirection",
           "isNullable": false
         },
@@ -315,6 +343,7 @@
           "kind": "Bool",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
         }
@@ -323,7 +352,8 @@
         {
           "name": "Collapsed",
           "handlerInterfaceName": "Avalonia.Host.Com.IAvnExpanderCollapsedHandler",
-          "handlerInterfaceIid": "504F6FAA-8095-5F15-A542-2AE070DD3FE5",
+          "handlerInterfaceIid": "09BF1232-4B8A-5657-A774-A27995501A13",
+          "handlerInterfaceAbiVersion": 1,
           "payloadKind": "None",
           "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E",
           "parameters": []
@@ -331,7 +361,8 @@
         {
           "name": "Expanded",
           "handlerInterfaceName": "Avalonia.Host.Com.IAvnExpanderExpandedHandler",
-          "handlerInterfaceIid": "6FB169C1-F851-5221-A98A-622D43C07C10",
+          "handlerInterfaceIid": "9CB04F88-445A-51C5-81EC-9E5CFE52CED4",
+          "handlerInterfaceAbiVersion": 1,
           "payloadKind": "None",
           "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E",
           "parameters": []
@@ -342,7 +373,8 @@
       "name": "IAvnGrid",
       "fullName": "Avalonia.Host.Com.IAvnGrid",
       "kind": "Class",
-      "iid": "B4E4CA40-EC29-5EC9-8F7D-2CE88F489A73",
+      "iid": "C6A7C566-BD63-537E-88BD-88A47515F1A7",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnPanel",
       "managedFullName": "Avalonia.Controls.Grid",
       "isConstructible": true,
@@ -353,6 +385,7 @@
           "kind": "Bool",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
         },
@@ -361,6 +394,7 @@
           "kind": "F64",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Double",
           "isNullable": false
         },
@@ -369,6 +403,7 @@
           "kind": "F64",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Double",
           "isNullable": false
         }
@@ -379,7 +414,8 @@
       "name": "IAvnItemsControl",
       "fullName": "Avalonia.Host.Com.IAvnItemsControl",
       "kind": "Class",
-      "iid": "7483D7E1-CC71-50C9-A855-818814741BCF",
+      "iid": "B45D730F-FBAA-594E-BF74-3C98CE8FCBF2",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.ItemsControl",
       "isConstructible": true,
@@ -391,7 +427,8 @@
           "canRead": true,
           "canWrite": false,
           "interfaceName": "Avalonia.Host.Com.IAvnItemList",
-          "interfaceIid": "872BD123-5E7C-540B-9B08-1C6086D8835F",
+          "interfaceIid": "59A429A7-CF8A-5EB0-B615-912A3DEF0704",
+          "interfaceAbiVersion": 1,
           "elementInterfaceName": "Avalonia.Host.Com.IAvnControl",
           "elementKind": "ComInterface",
           "managedTypeName": "Avalonia.Controls.ItemCollection",
@@ -404,7 +441,8 @@
       "name": "IAvnListBox",
       "fullName": "Avalonia.Host.Com.IAvnListBox",
       "kind": "Class",
-      "iid": "3907B7BF-5066-5A3C-865D-5D6433A3CD5F",
+      "iid": "082171C1-8E1D-54D4-B467-F41A9DD6781D",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnSelectingItemsControl",
       "managedFullName": "Avalonia.Controls.ListBox",
       "isConstructible": true,
@@ -416,7 +454,8 @@
       "name": "IAvnListBoxItem",
       "fullName": "Avalonia.Host.Com.IAvnListBoxItem",
       "kind": "Class",
-      "iid": "6E39CEC1-1997-5E63-BF4D-F5C87D200EF5",
+      "iid": "2E7D1580-4F66-59F9-9E11-9D7F1114F6F1",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
       "managedFullName": "Avalonia.Controls.ListBoxItem",
       "isConstructible": true,
@@ -427,6 +466,7 @@
           "kind": "Bool",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
         }
@@ -437,7 +477,8 @@
       "name": "IAvnPanel",
       "fullName": "Avalonia.Host.Com.IAvnPanel",
       "kind": "Class",
-      "iid": "385B6F4C-6CCE-5F92-8B3B-F48EEB9FB8FC",
+      "iid": "26CE095C-E2C8-50B7-ABFB-0B6251999080",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnControl",
       "managedFullName": "Avalonia.Controls.Panel",
       "isConstructible": true,
@@ -449,7 +490,8 @@
           "canRead": true,
           "canWrite": false,
           "interfaceName": "Avalonia.Host.Com.IAvnControlList",
-          "interfaceIid": "E2CDB726-57E7-5374-A565-672AD66C591C",
+          "interfaceIid": "30347281-9A69-5CF9-AEEF-9F706A7DFE07",
+          "interfaceAbiVersion": 1,
           "elementInterfaceName": "Avalonia.Host.Com.IAvnControl",
           "elementKind": "ComInterface",
           "managedTypeName": "Avalonia.Controls.Controls",
@@ -462,7 +504,8 @@
       "name": "IAvnHeaderedContentControl",
       "fullName": "Avalonia.Host.Com.IAvnHeaderedContentControl",
       "kind": "Class",
-      "iid": "531D8161-6B83-5E05-BC09-DAB4EF5B8B12",
+      "iid": "37306C50-C581-5C6F-91DB-547350B968F7",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
       "managedFullName": "Avalonia.Controls.Primitives.HeaderedContentControl",
       "isConstructible": true,
@@ -474,6 +517,7 @@
           "canRead": true,
           "canWrite": true,
           "interfaceName": "Avalonia.Host.Com.IAvnControl",
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Object",
           "isNullable": true
         }
@@ -484,7 +528,8 @@
       "name": "IAvnRangeBase",
       "fullName": "Avalonia.Host.Com.IAvnRangeBase",
       "kind": "Class",
-      "iid": "54A49E0E-5108-5CFC-9365-A4BA3FC3BDFB",
+      "iid": "9C938271-776E-52C9-B850-5AE644ED86DC",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.Primitives.RangeBase",
       "isConstructible": false,
@@ -495,6 +540,7 @@
           "kind": "F64",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Double",
           "isNullable": false
         },
@@ -503,6 +549,7 @@
           "kind": "F64",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Double",
           "isNullable": false
         },
@@ -511,6 +558,7 @@
           "kind": "F64",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Double",
           "isNullable": false
         },
@@ -519,6 +567,7 @@
           "kind": "F64",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Double",
           "isNullable": false
         },
@@ -527,6 +576,7 @@
           "kind": "F64",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Double",
           "isNullable": false
         }
@@ -535,7 +585,8 @@
         {
           "name": "ValueChanged",
           "handlerInterfaceName": "Avalonia.Host.Com.IAvnRangeBaseValueChangedHandler",
-          "handlerInterfaceIid": "7DF0F0CC-596E-51E6-ACD2-109513C283DC",
+          "handlerInterfaceIid": "DAEDA8F7-D1F6-54B6-900D-4AAB0B0C72BA",
+          "handlerInterfaceAbiVersion": 1,
           "payloadKind": "None",
           "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Controls.Primitives.RangeBaseValueChangedEventArgs\u003E",
           "parameters": []
@@ -546,7 +597,8 @@
       "name": "IAvnSelectingItemsControl",
       "fullName": "Avalonia.Host.Com.IAvnSelectingItemsControl",
       "kind": "Class",
-      "iid": "C8FC2F3F-F09C-52C7-8479-B83F05766213",
+      "iid": "ADD333AC-64FC-5673-B3D8-32711A1BC8F2",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnItemsControl",
       "managedFullName": "Avalonia.Controls.Primitives.SelectingItemsControl",
       "isConstructible": true,
@@ -557,6 +609,7 @@
           "kind": "I32",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Int32",
           "isNullable": false
         }
@@ -565,7 +618,8 @@
         {
           "name": "SelectionChanged",
           "handlerInterfaceName": "Avalonia.Host.Com.IAvnSelectingItemsControlSelectionChangedHandler",
-          "handlerInterfaceIid": "CA75AA96-ADF5-5958-B2BE-808D664E1FE1",
+          "handlerInterfaceIid": "80E817ED-8F0E-5208-9EFD-ECBDEBC56A46",
+          "handlerInterfaceAbiVersion": 1,
           "payloadKind": "None",
           "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Controls.SelectionChangedEventArgs\u003E",
           "parameters": []
@@ -576,7 +630,8 @@
       "name": "IAvnTemplatedControl",
       "fullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "kind": "Class",
-      "iid": "2A56991B-CA10-5B1E-825B-16F9EBAEA5C1",
+      "iid": "10997B61-6CD6-59D5-85A6-563D4543B6B9",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnControl",
       "managedFullName": "Avalonia.Controls.Primitives.TemplatedControl",
       "isConstructible": true,
@@ -588,7 +643,8 @@
       "name": "IAvnToggleButton",
       "fullName": "Avalonia.Host.Com.IAvnToggleButton",
       "kind": "Class",
-      "iid": "7171CF42-D012-5D01-93C8-09A91CFD8391",
+      "iid": "E6EE5DD2-299D-5F82-B885-F735C376E6AB",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnButton",
       "managedFullName": "Avalonia.Controls.Primitives.ToggleButton",
       "isConstructible": true,
@@ -599,6 +655,7 @@
           "kind": "NullableBool",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Nullable\u00601[[System.Boolean, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
           "isNullable": true
         }
@@ -607,7 +664,8 @@
         {
           "name": "IsCheckedChanged",
           "handlerInterfaceName": "Avalonia.Host.Com.IAvnToggleButtonIsCheckedChangedHandler",
-          "handlerInterfaceIid": "EC386A0A-178F-5E42-8F79-B1854A50B45A",
+          "handlerInterfaceIid": "FF444C66-8E6C-5B93-9DB3-A7D94349103C",
+          "handlerInterfaceAbiVersion": 1,
           "payloadKind": "None",
           "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E",
           "parameters": []
@@ -618,7 +676,8 @@
       "name": "IAvnProgressBar",
       "fullName": "Avalonia.Host.Com.IAvnProgressBar",
       "kind": "Class",
-      "iid": "F8763325-B380-57F1-AC99-798AF28AE1D6",
+      "iid": "60DB64F4-8EF2-5FF8-B088-C61928F99C4B",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnRangeBase",
       "managedFullName": "Avalonia.Controls.ProgressBar",
       "isConstructible": true,
@@ -629,6 +688,7 @@
           "kind": "Bool",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
         },
@@ -637,6 +697,7 @@
           "kind": "Bool",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
         },
@@ -645,6 +706,7 @@
           "kind": "StringUtf16",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.String",
           "isNullable": false
         },
@@ -653,6 +715,7 @@
           "kind": "I32",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Layout.Orientation",
           "isNullable": false
         }
@@ -663,7 +726,8 @@
       "name": "IAvnRadioButton",
       "fullName": "Avalonia.Host.Com.IAvnRadioButton",
       "kind": "Class",
-      "iid": "420113EB-E7FA-50C1-BCC0-EDA1F4F784DC",
+      "iid": "0B134C64-01C2-55FA-9321-7C31FE4AE232",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnToggleButton",
       "managedFullName": "Avalonia.Controls.RadioButton",
       "isConstructible": true,
@@ -674,6 +738,7 @@
           "kind": "StringUtf16",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.String",
           "isNullable": true
         }
@@ -684,7 +749,8 @@
       "name": "IAvnScrollViewer",
       "fullName": "Avalonia.Host.Com.IAvnScrollViewer",
       "kind": "Class",
-      "iid": "C090413F-EF2F-53F9-B527-813EF27B46E6",
+      "iid": "B925209A-16D2-5648-BC34-29D3A2BCAD12",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
       "managedFullName": "Avalonia.Controls.ScrollViewer",
       "isConstructible": true,
@@ -766,6 +832,7 @@
           "kind": "Bool",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
         },
@@ -774,6 +841,7 @@
           "kind": "I32",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Controls.Primitives.ScrollBarVisibility",
           "isNullable": false
         },
@@ -782,6 +850,7 @@
           "kind": "I32",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Controls.Primitives.ScrollBarVisibility",
           "isNullable": false
         },
@@ -790,6 +859,7 @@
           "kind": "Bool",
           "canRead": true,
           "canWrite": false,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
         },
@@ -798,6 +868,7 @@
           "kind": "Bool",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
         },
@@ -806,6 +877,7 @@
           "kind": "Bool",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
         },
@@ -814,6 +886,7 @@
           "kind": "Bool",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
         },
@@ -822,6 +895,7 @@
           "kind": "Bool",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
         }
@@ -830,7 +904,8 @@
         {
           "name": "ScrollChanged",
           "handlerInterfaceName": "Avalonia.Host.Com.IAvnScrollViewerScrollChangedHandler",
-          "handlerInterfaceIid": "9E163D0D-332E-576C-9AB2-9200B0A7DD98",
+          "handlerInterfaceIid": "66A75556-3AA6-5EC7-B4A4-0265CFD78139",
+          "handlerInterfaceAbiVersion": 1,
           "payloadKind": "None",
           "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Controls.ScrollChangedEventArgs\u003E",
           "parameters": []
@@ -841,7 +916,8 @@
       "name": "IAvnSlider",
       "fullName": "Avalonia.Host.Com.IAvnSlider",
       "kind": "Class",
-      "iid": "51F1C754-F7F5-57BA-ACEC-11408D966FE5",
+      "iid": "FDFBF518-4D53-5856-87A2-379BD5EA8B9E",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnRangeBase",
       "managedFullName": "Avalonia.Controls.Slider",
       "isConstructible": true,
@@ -852,6 +928,7 @@
           "kind": "I32",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Layout.Orientation",
           "isNullable": false
         },
@@ -860,6 +937,7 @@
           "kind": "Bool",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
         },
@@ -868,6 +946,7 @@
           "kind": "Bool",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
         },
@@ -876,6 +955,7 @@
           "kind": "F64",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Double",
           "isNullable": false
         },
@@ -884,6 +964,7 @@
           "kind": "I32",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Controls.TickPlacement",
           "isNullable": false
         }
@@ -894,7 +975,8 @@
       "name": "IAvnStackPanel",
       "fullName": "Avalonia.Host.Com.IAvnStackPanel",
       "kind": "Class",
-      "iid": "65285B2B-06D6-5D6A-B9AB-D0B94FBA713C",
+      "iid": "80F88347-C0C4-52EE-A659-F6BD5F5633F4",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnPanel",
       "managedFullName": "Avalonia.Controls.StackPanel",
       "isConstructible": true,
@@ -905,6 +987,7 @@
           "kind": "F64",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Double",
           "isNullable": false
         },
@@ -913,6 +996,7 @@
           "kind": "I32",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Layout.Orientation",
           "isNullable": false
         }
@@ -923,7 +1007,8 @@
       "name": "IAvnTextBlock",
       "fullName": "Avalonia.Host.Com.IAvnTextBlock",
       "kind": "Class",
-      "iid": "26BE4E32-2951-5DE9-A086-EA6A9AD755C1",
+      "iid": "5A53AF95-84A1-5356-A57C-EDA5AF0E75B7",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnControl",
       "managedFullName": "Avalonia.Controls.TextBlock",
       "isConstructible": true,
@@ -934,6 +1019,7 @@
           "kind": "StringUtf16",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.String",
           "isNullable": true
         }
@@ -944,7 +1030,8 @@
       "name": "IAvnTextBox",
       "fullName": "Avalonia.Host.Com.IAvnTextBox",
       "kind": "Class",
-      "iid": "0BC2DD0C-4CA8-553C-BD26-49ED5F1E93C1",
+      "iid": "7914E5DA-2872-57BF-BF7C-FE39ED8D38F0",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.TextBox",
       "isConstructible": true,
@@ -998,6 +1085,7 @@
           "kind": "Bool",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
         },
@@ -1006,6 +1094,7 @@
           "kind": "Bool",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
         },
@@ -1014,6 +1103,7 @@
           "kind": "I32",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Int32",
           "isNullable": false
         },
@@ -1022,6 +1112,7 @@
           "kind": "Bool",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
         },
@@ -1030,6 +1121,7 @@
           "kind": "I32",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Int32",
           "isNullable": false
         },
@@ -1038,6 +1130,7 @@
           "kind": "I32",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Int32",
           "isNullable": false
         },
@@ -1046,6 +1139,7 @@
           "kind": "I32",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Int32",
           "isNullable": false
         },
@@ -1054,6 +1148,7 @@
           "kind": "I32",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Int32",
           "isNullable": false
         },
@@ -1062,6 +1157,7 @@
           "kind": "I32",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Int32",
           "isNullable": false
         },
@@ -1070,6 +1166,7 @@
           "kind": "F64",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Double",
           "isNullable": false
         },
@@ -1078,6 +1175,7 @@
           "kind": "StringUtf16",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.String",
           "isNullable": true
         },
@@ -1086,6 +1184,7 @@
           "kind": "StringUtf16",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.String",
           "isNullable": true
         },
@@ -1094,6 +1193,7 @@
           "kind": "Bool",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
         },
@@ -1102,6 +1202,7 @@
           "kind": "I32",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Media.TextWrapping",
           "isNullable": false
         },
@@ -1110,6 +1211,7 @@
           "kind": "StringUtf16",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.String",
           "isNullable": false
         },
@@ -1118,6 +1220,7 @@
           "kind": "Bool",
           "canRead": true,
           "canWrite": false,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
         },
@@ -1126,6 +1229,7 @@
           "kind": "Bool",
           "canRead": true,
           "canWrite": false,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
         },
@@ -1134,6 +1238,7 @@
           "kind": "Bool",
           "canRead": true,
           "canWrite": false,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
         },
@@ -1142,6 +1247,7 @@
           "kind": "Bool",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
         },
@@ -1150,6 +1256,7 @@
           "kind": "I32",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Int32",
           "isNullable": false
         },
@@ -1158,6 +1265,7 @@
           "kind": "Bool",
           "canRead": true,
           "canWrite": false,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
         },
@@ -1166,6 +1274,7 @@
           "kind": "Bool",
           "canRead": true,
           "canWrite": false,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
         }
@@ -1174,7 +1283,8 @@
         {
           "name": "TextChanged",
           "handlerInterfaceName": "Avalonia.Host.Com.IAvnTextBoxTextChangedHandler",
-          "handlerInterfaceIid": "211C4522-381C-5132-AE57-904BEC05663F",
+          "handlerInterfaceIid": "599D5C79-E8CB-52F0-BD79-CEFE66D99C0C",
+          "handlerInterfaceAbiVersion": 1,
           "payloadKind": "None",
           "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Controls.TextChangedEventArgs\u003E",
           "parameters": []
@@ -1185,7 +1295,8 @@
       "name": "IAvnToggleSwitch",
       "fullName": "Avalonia.Host.Com.IAvnToggleSwitch",
       "kind": "Class",
-      "iid": "300152A5-00FD-5B3D-8A81-71E43DF67CF5",
+      "iid": "2A0A5B57-D244-5556-90EF-92413D6B272E",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnToggleButton",
       "managedFullName": "Avalonia.Controls.ToggleSwitch",
       "isConstructible": true,
@@ -1197,6 +1308,7 @@
           "canRead": true,
           "canWrite": true,
           "interfaceName": "Avalonia.Host.Com.IAvnControl",
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Object",
           "isNullable": true
         },
@@ -1206,6 +1318,7 @@
           "canRead": true,
           "canWrite": true,
           "interfaceName": "Avalonia.Host.Com.IAvnControl",
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.Object",
           "isNullable": true
         }
@@ -1216,7 +1329,8 @@
       "name": "IAvnWindow",
       "fullName": "Avalonia.Host.Com.IAvnWindow",
       "kind": "Class",
-      "iid": "F97B745F-14C6-5B28-97E9-8EA4CABEE7D3",
+      "iid": "96DE9544-7BDD-5FC4-8B69-30505363649C",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
       "managedFullName": "Avalonia.Controls.Window",
       "isConstructible": true,
@@ -1258,6 +1372,7 @@
           "kind": "StringUtf16",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
           "managedTypeName": "System.String",
           "isNullable": true
         }
@@ -1268,7 +1383,8 @@
       "name": "IAvnStyledElement",
       "fullName": "Avalonia.Host.Com.IAvnStyledElement",
       "kind": "Class",
-      "iid": "969A289F-0629-5EEF-9539-7F7724EE37DD",
+      "iid": "0BBCD53A-7440-580D-9866-18FCCE4598EB",
+      "abiVersion": 1,
       "baseFullName": "Avalonia.Host.Com.IAvnAvaloniaObject",
       "managedFullName": "Avalonia.StyledElement",
       "isConstructible": true,
@@ -1280,7 +1396,8 @@
           "canRead": true,
           "canWrite": false,
           "interfaceName": "Avalonia.Host.Com.IAvnStringList",
-          "interfaceIid": "316D6CE0-DA61-5ED6-AC97-B8DE4A428D5D",
+          "interfaceIid": "DD13073B-22E0-5372-86F8-3B10D48BC601",
+          "interfaceAbiVersion": 1,
           "elementKind": "StringUtf16",
           "managedTypeName": "Avalonia.Controls.Classes",
           "isNullable": false
@@ -3024,7 +3141,8 @@
       "ownerName": "Canvas",
       "ownerManagedFullName": "Avalonia.Controls.Canvas",
       "staticsInterfaceName": "Avalonia.Host.Com.IAvnCanvasStatics",
-      "staticsInterfaceIid": "160B56D4-089F-57E1-A65A-92C944F39D40",
+      "staticsInterfaceIid": "5F4ABE7B-F5E4-58E1-B37B-F29FF689D0A0",
+      "staticsInterfaceAbiVersion": 1,
       "name": "Left",
       "kind": "F64",
       "managedTypeName": "System.Double"
@@ -3033,7 +3151,8 @@
       "ownerName": "Canvas",
       "ownerManagedFullName": "Avalonia.Controls.Canvas",
       "staticsInterfaceName": "Avalonia.Host.Com.IAvnCanvasStatics",
-      "staticsInterfaceIid": "160B56D4-089F-57E1-A65A-92C944F39D40",
+      "staticsInterfaceIid": "5F4ABE7B-F5E4-58E1-B37B-F29FF689D0A0",
+      "staticsInterfaceAbiVersion": 1,
       "name": "Top",
       "kind": "F64",
       "managedTypeName": "System.Double"
@@ -3042,7 +3161,8 @@
       "ownerName": "Canvas",
       "ownerManagedFullName": "Avalonia.Controls.Canvas",
       "staticsInterfaceName": "Avalonia.Host.Com.IAvnCanvasStatics",
-      "staticsInterfaceIid": "160B56D4-089F-57E1-A65A-92C944F39D40",
+      "staticsInterfaceIid": "5F4ABE7B-F5E4-58E1-B37B-F29FF689D0A0",
+      "staticsInterfaceAbiVersion": 1,
       "name": "Right",
       "kind": "F64",
       "managedTypeName": "System.Double"
@@ -3051,7 +3171,8 @@
       "ownerName": "Canvas",
       "ownerManagedFullName": "Avalonia.Controls.Canvas",
       "staticsInterfaceName": "Avalonia.Host.Com.IAvnCanvasStatics",
-      "staticsInterfaceIid": "160B56D4-089F-57E1-A65A-92C944F39D40",
+      "staticsInterfaceIid": "5F4ABE7B-F5E4-58E1-B37B-F29FF689D0A0",
+      "staticsInterfaceAbiVersion": 1,
       "name": "Bottom",
       "kind": "F64",
       "managedTypeName": "System.Double"
@@ -3060,7 +3181,8 @@
       "ownerName": "DockPanel",
       "ownerManagedFullName": "Avalonia.Controls.DockPanel",
       "staticsInterfaceName": "Avalonia.Host.Com.IAvnDockPanelStatics",
-      "staticsInterfaceIid": "88C792F7-9FB6-5749-BDF5-904BA70DCDAC",
+      "staticsInterfaceIid": "CFAE424D-A4EB-5486-90DB-3BC2D5A20A3E",
+      "staticsInterfaceAbiVersion": 1,
       "name": "Dock",
       "kind": "I32",
       "managedTypeName": "Avalonia.Controls.Dock"
@@ -3069,7 +3191,8 @@
       "ownerName": "Grid",
       "ownerManagedFullName": "Avalonia.Controls.Grid",
       "staticsInterfaceName": "Avalonia.Host.Com.IAvnGridStatics",
-      "staticsInterfaceIid": "05BDD0B1-BB8E-5E7B-A996-FE13DBE6CCB3",
+      "staticsInterfaceIid": "37D5F766-D7F5-57CD-BE7F-A03A1AA9B683",
+      "staticsInterfaceAbiVersion": 1,
       "name": "Column",
       "kind": "I32",
       "managedTypeName": "System.Int32"
@@ -3078,7 +3201,8 @@
       "ownerName": "Grid",
       "ownerManagedFullName": "Avalonia.Controls.Grid",
       "staticsInterfaceName": "Avalonia.Host.Com.IAvnGridStatics",
-      "staticsInterfaceIid": "05BDD0B1-BB8E-5E7B-A996-FE13DBE6CCB3",
+      "staticsInterfaceIid": "37D5F766-D7F5-57CD-BE7F-A03A1AA9B683",
+      "staticsInterfaceAbiVersion": 1,
       "name": "Row",
       "kind": "I32",
       "managedTypeName": "System.Int32"
@@ -3087,7 +3211,8 @@
       "ownerName": "Grid",
       "ownerManagedFullName": "Avalonia.Controls.Grid",
       "staticsInterfaceName": "Avalonia.Host.Com.IAvnGridStatics",
-      "staticsInterfaceIid": "05BDD0B1-BB8E-5E7B-A996-FE13DBE6CCB3",
+      "staticsInterfaceIid": "37D5F766-D7F5-57CD-BE7F-A03A1AA9B683",
+      "staticsInterfaceAbiVersion": 1,
       "name": "ColumnSpan",
       "kind": "I32",
       "managedTypeName": "System.Int32"
@@ -3096,7 +3221,8 @@
       "ownerName": "Grid",
       "ownerManagedFullName": "Avalonia.Controls.Grid",
       "staticsInterfaceName": "Avalonia.Host.Com.IAvnGridStatics",
-      "staticsInterfaceIid": "05BDD0B1-BB8E-5E7B-A996-FE13DBE6CCB3",
+      "staticsInterfaceIid": "37D5F766-D7F5-57CD-BE7F-A03A1AA9B683",
+      "staticsInterfaceAbiVersion": 1,
       "name": "RowSpan",
       "kind": "I32",
       "managedTypeName": "System.Int32"
@@ -3105,7 +3231,8 @@
       "ownerName": "Grid",
       "ownerManagedFullName": "Avalonia.Controls.Grid",
       "staticsInterfaceName": "Avalonia.Host.Com.IAvnGridStatics",
-      "staticsInterfaceIid": "05BDD0B1-BB8E-5E7B-A996-FE13DBE6CCB3",
+      "staticsInterfaceIid": "37D5F766-D7F5-57CD-BE7F-A03A1AA9B683",
+      "staticsInterfaceAbiVersion": 1,
       "name": "IsSharedSizeScope",
       "kind": "Bool",
       "managedTypeName": "System.Boolean"

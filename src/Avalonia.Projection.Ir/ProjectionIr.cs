@@ -10,6 +10,7 @@ public sealed class ProjectionIr
     public int Version { get; init; } = CurrentVersion;
     public string? SourceAssembly { get; init; }
     public string? FactoryIid { get; init; }
+    public int FactoryAbiVersion { get; init; } = 1;
     public IReadOnlyList<ProjectedType> Types { get; init; } = [];
     public IReadOnlyList<ProjectedEnum> Enums { get; init; } = [];
     public IReadOnlyList<ProjectedAttachedProperty> AttachedProperties { get; init; } = [];
