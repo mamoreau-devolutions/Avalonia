@@ -45,6 +45,18 @@ pub struct ProjectedType {
     pub methods: Vec<ProjectedMethod>,
     #[serde(default)]
     pub properties: Vec<ProjectedProperty>,
+    #[serde(default)]
+    pub events: Vec<ProjectedEvent>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ProjectedEvent {
+    pub name: String,
+    pub handler_interface_name: String,
+    pub handler_interface_iid: String,
+    pub payload_kind: String,
+    pub managed_handler_type_name: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]

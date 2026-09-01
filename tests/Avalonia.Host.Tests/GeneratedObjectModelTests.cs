@@ -1,4 +1,7 @@
+using System.Reflection;
+using Avalonia.Controls;
 using Avalonia.Host.Com;
+using Avalonia.Interactivity;
 using Xunit;
 
 namespace Avalonia.Host.Tests;
@@ -35,5 +38,38 @@ public class GeneratedObjectModelTests
         Assert.IsAssignableFrom<IAvnContentControl>(button);
         Assert.IsAssignableFrom<IAvnControl>(button);
         Assert.IsAssignableFrom<IAvnAvaloniaObject>(button);
+    }
+
+    [Fact]
+    public void Generated_event_bridge_advises_invokes_and_unadvises()
+    {
+        var factory = new AvnControlFactory();
+        Assert.Equal(0, factory.CreateButton(out var projected));
+        var wrapper = Assert.IsType<AvnButton>(projected);
+        var value = Assert.IsType<Button>(
+            typeof(AvnButton)
+                .GetField("_value", BindingFlags.Instance | BindingFlags.NonPublic)!
+                .GetValue(wrapper));
+        var handler = new ClickHandler();
+
+        Assert.Equal(0, wrapper.AdviseClick(handler, out var subscriptionId));
+        value.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        Assert.Equal(1, handler.CallCount);
+
+        Assert.Equal(0, wrapper.UnadviseClick(subscriptionId));
+        value.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        Assert.Equal(1, handler.CallCount);
+        Assert.True(wrapper.UnadviseClick(subscriptionId) < 0);
+    }
+
+    private sealed class ClickHandler : IAvnButtonClickHandler
+    {
+        public int CallCount { get; private set; }
+
+        public int Invoke()
+        {
+            CallCount++;
+            return 0;
+        }
     }
 }

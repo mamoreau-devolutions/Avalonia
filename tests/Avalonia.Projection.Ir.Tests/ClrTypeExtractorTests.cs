@@ -53,6 +53,12 @@ public class ClrTypeExtractorTests
         var text = Type(ir, "IAvnTextBlock").Properties.Single(p => p.Name == nameof(TextBlock.Text));
         Assert.Equal(MarshallingKind.StringUtf16, text.Kind);
         Assert.True(text.IsNullable);
+
+        var click = Assert.Single(Type(ir, "IAvnButton").Events);
+        Assert.Equal(nameof(Button.Click), click.Name);
+        Assert.Equal("Avalonia.Host.Com.IAvnButtonClickHandler", click.HandlerInterfaceName);
+        Assert.Equal(EventPayloadKind.None, click.PayloadKind);
+        Assert.False(string.IsNullOrWhiteSpace(click.HandlerInterfaceIid));
     }
 
     [Fact]

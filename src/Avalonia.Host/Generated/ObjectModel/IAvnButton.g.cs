@@ -6,15 +6,23 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("0E740E4A-A102-5ADB-A63F-8022BA7EBF9D")]
+[Guid("514BBD75-B270-51D6-B6CC-56850A9DC48A")]
 public partial interface IAvnButton : IAvnContentControl
 {
+    [PreserveSig]
+    int AdviseClick(IAvnButtonClickHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadviseClick(long subscriptionId);
+
 }
 
 [GeneratedComClass]
 public sealed partial class AvnButton : IAvnButton
 {
     private readonly global::Avalonia.Controls.Button _value;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnButtonClickHandler Handler, global::System.Action Unsubscribe)> _clickSubscriptions = new();
+    private long _nextClickSubscriptionId;
 
     internal AvnButton(global::Avalonia.Controls.Button value)
     {
@@ -80,6 +88,47 @@ public sealed partial class AvnButton : IAvnButton
         {
             _value.VerifyAccess();
             _value.Content = (global::System.Object)ProjectionRuntime.Unwrap(value)!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseClick(IAvnButtonClickHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            _value.VerifyAccess();
+            var callback = new global::System.EventHandler<Avalonia.Interactivity.RoutedEventArgs>((_, _) =>
+            {
+                var hr = handler.Invoke();
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            _value.Click += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextClickSubscriptionId);
+            _clickSubscriptions.Add(subscriptionId, (handler, () => _value.Click -= callback));
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseClick(long subscriptionId)
+    {
+        try
+        {
+            _value.VerifyAccess();
+            if (!_clickSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

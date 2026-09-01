@@ -2,7 +2,7 @@
 #![allow(dead_code)]
 
 use avalonia_sys as sys;
-use crate::{runtime::{with_factory, AsControl}, Result};
+use crate::{runtime::{with_factory, AsControl, EventSubscription}, Result};
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -78,6 +78,19 @@ impl Button {
     }
     pub fn content(self, value: impl AsControl) -> Result<Self> {
         self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_click(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::button_click_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_click(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_click(subscription_id)))
+    }
+    pub fn on_click(self, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        self.subscribe_click(callback)?.detach();
         Ok(self)
     }
 }

@@ -1,34 +1,44 @@
 {
-  "version": 2,
+  "version": 3,
   "sourceAssembly": "Avalonia.Base,Avalonia.Controls",
-  "factoryIid": "2B245C89-D703-54E1-914F-58683EFFD2C8",
+  "factoryIid": "E11331F8-0B6B-5A7C-A1BB-6D449BF20070",
   "types": [
     {
       "name": "IAvnAvaloniaObject",
       "fullName": "Avalonia.Host.Com.IAvnAvaloniaObject",
       "kind": "Class",
-      "iid": "57D5FB2B-ED86-525C-B65D-498A84C75AFA",
+      "iid": "C6AC58CF-45CF-54BF-AB0B-55556F03E39A",
       "managedFullName": "Avalonia.AvaloniaObject",
       "isConstructible": true,
       "methods": [],
-      "properties": []
+      "properties": [],
+      "events": []
     },
     {
       "name": "IAvnButton",
       "fullName": "Avalonia.Host.Com.IAvnButton",
       "kind": "Class",
-      "iid": "0E740E4A-A102-5ADB-A63F-8022BA7EBF9D",
+      "iid": "514BBD75-B270-51D6-B6CC-56850A9DC48A",
       "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
       "managedFullName": "Avalonia.Controls.Button",
       "isConstructible": true,
       "methods": [],
-      "properties": []
+      "properties": [],
+      "events": [
+        {
+          "name": "Click",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnButtonClickHandler",
+          "handlerInterfaceIid": "05D26ED4-DA87-5CBB-A047-817723911796",
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E"
+        }
+      ]
     },
     {
       "name": "IAvnContentControl",
       "fullName": "Avalonia.Host.Com.IAvnContentControl",
       "kind": "Class",
-      "iid": "503C621A-9937-5F82-B580-0D72D6781EE8",
+      "iid": "885C8CCF-A38F-5B61-AA71-CA35B0C9EE4E",
       "baseFullName": "Avalonia.Host.Com.IAvnControl",
       "managedFullName": "Avalonia.Controls.ContentControl",
       "isConstructible": true,
@@ -43,13 +53,14 @@
           "managedTypeName": "System.Object",
           "isNullable": true
         }
-      ]
+      ],
+      "events": []
     },
     {
       "name": "IAvnControl",
       "fullName": "Avalonia.Host.Com.IAvnControl",
       "kind": "Class",
-      "iid": "2030D5A1-E324-559C-98BD-99804D622615",
+      "iid": "DC4DEADC-602B-5243-9D84-3FB2C6B1D4A4",
       "baseFullName": "Avalonia.Host.Com.IAvnAvaloniaObject",
       "managedFullName": "Avalonia.Controls.Control",
       "isConstructible": true,
@@ -63,13 +74,14 @@
           "managedTypeName": "System.Boolean",
           "isNullable": false
         }
-      ]
+      ],
+      "events": []
     },
     {
       "name": "IAvnPanel",
       "fullName": "Avalonia.Host.Com.IAvnPanel",
       "kind": "Class",
-      "iid": "1BDD67C1-5AB4-5AC5-A865-A68476A4227B",
+      "iid": "E046062C-E709-5BC1-84AC-B463D5BEF5E8",
       "baseFullName": "Avalonia.Host.Com.IAvnControl",
       "managedFullName": "Avalonia.Controls.Panel",
       "isConstructible": true,
@@ -81,18 +93,19 @@
           "canRead": true,
           "canWrite": false,
           "interfaceName": "Avalonia.Host.Com.IAvnControlList",
-          "interfaceIid": "4CBDF266-1DCD-58C5-B1E5-AE74CF5B422A",
+          "interfaceIid": "2FDCB505-4C03-5F63-8E3D-C4B186A8AFE1",
           "elementInterfaceName": "Avalonia.Host.Com.IAvnControl",
           "managedTypeName": "Avalonia.Controls.Controls",
           "isNullable": false
         }
-      ]
+      ],
+      "events": []
     },
     {
       "name": "IAvnStackPanel",
       "fullName": "Avalonia.Host.Com.IAvnStackPanel",
       "kind": "Class",
-      "iid": "8B8C126D-9D75-5542-83A3-A7224D3C0C6D",
+      "iid": "03AB1A66-3B45-51A5-8E1D-6E30141FDDC8",
       "baseFullName": "Avalonia.Host.Com.IAvnPanel",
       "managedFullName": "Avalonia.Controls.StackPanel",
       "isConstructible": true,
@@ -114,13 +127,14 @@
           "managedTypeName": "Avalonia.Layout.Orientation",
           "isNullable": false
         }
-      ]
+      ],
+      "events": []
     },
     {
       "name": "IAvnTextBlock",
       "fullName": "Avalonia.Host.Com.IAvnTextBlock",
       "kind": "Class",
-      "iid": "EB7ECAEC-C3EB-5A23-850C-28B7A5CA679B",
+      "iid": "4D865988-D36F-53D3-8AC7-8ED39EAE2168",
       "baseFullName": "Avalonia.Host.Com.IAvnControl",
       "managedFullName": "Avalonia.Controls.TextBlock",
       "isConstructible": true,
@@ -134,13 +148,14 @@
           "managedTypeName": "System.String",
           "isNullable": true
         }
-      ]
+      ],
+      "events": []
     },
     {
       "name": "IAvnWindow",
       "fullName": "Avalonia.Host.Com.IAvnWindow",
       "kind": "Class",
-      "iid": "178A1A08-F7D2-5383-A85F-53159CE728B1",
+      "iid": "EC53D901-E166-5DA1-B304-E76BC37125E0",
       "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
       "managedFullName": "Avalonia.Controls.Window",
       "isConstructible": true,
@@ -185,7 +200,8 @@
           "managedTypeName": "System.String",
           "isNullable": true
         }
-      ]
+      ],
+      "events": []
     }
   ],
   "enums": [
@@ -218,6 +234,11 @@
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "Dispatcher",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.AvaloniaObject",
+      "member": "PropertyChanged",
       "reason": "Not included by projection policy"
     },
     {
@@ -451,6 +472,21 @@
       "reason": "Not included by projection policy"
     },
     {
+      "owner": "Avalonia.Controls.Control",
+      "member": "Loaded",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Control",
+      "member": "Unloaded",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Control",
+      "member": "SizeChanged",
+      "reason": "Not included by projection policy"
+    },
+    {
       "owner": "Avalonia.Controls.Panel",
       "member": "Background",
       "reason": "Not included by projection policy"
@@ -473,6 +509,16 @@
     {
       "owner": "Avalonia.Controls.StackPanel",
       "member": "AreVerticalSnapPointsRegular",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.StackPanel",
+      "member": "HorizontalSnapPointsChanged",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.StackPanel",
+      "member": "VerticalSnapPointsChanged",
       "reason": "Not included by projection policy"
     },
     {
@@ -698,6 +744,11 @@
     {
       "owner": "Avalonia.Controls.Window",
       "member": "IsDialog",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Window",
+      "member": "Closing",
       "reason": "Not included by projection policy"
     },
     {

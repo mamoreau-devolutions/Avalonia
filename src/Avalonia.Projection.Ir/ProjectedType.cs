@@ -11,6 +11,7 @@ public sealed class ProjectedType
     public bool IsConstructible { get; init; }
     public IReadOnlyList<ProjectedMethod> Methods { get; init; } = [];
     public IReadOnlyList<ProjectedProperty> Properties { get; init; } = [];
+    public IReadOnlyList<ProjectedEvent> Events { get; init; } = [];
 }
 
 public sealed class ProjectedProperty

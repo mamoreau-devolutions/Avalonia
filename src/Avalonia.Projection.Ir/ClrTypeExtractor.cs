@@ -56,6 +56,7 @@ public static class ClrTypeExtractor
     {
         var properties = new List<ProjectedProperty>();
         var methods = new List<ProjectedMethod>();
+        var events = new List<ProjectedEvent>();
         var flags = BindingFlags.Public | BindingFlags.Instance;
 
         foreach (var property in type.GetProperties(flags).OrderBy(p => p.MetadataToken))
@@ -100,6 +101,41 @@ public static class ClrTypeExtractor
             });
         }
 
+        foreach (var @event in type.GetEvents(flags).OrderBy(e => e.MetadataToken))
+        {
+            if (!policy.Includes(type, @event))
+            {
+                if (@event.DeclaringType == type)
+                    Skip(skipped, type, @event.Name, "Not included by projection policy");
+                continue;
+            }
+
+            if (!policy.TryGetEventOverride(type, @event, out var eventProjection))
+            {
+                Skip(skipped, type, @event.Name, "Included event requires an explicit event projection");
+                continue;
+            }
+
+            if (@event.EventHandlerType?.GetMethod("Invoke")?.ReturnType != typeof(void))
+            {
+                Skip(skipped, type, @event.Name, "Event handler must return void");
+                continue;
+            }
+
+            var handlerInterfaceName =
+                $"{policy.ProjectionNamespace}.IAvn{type.Name}{@event.Name}Handler";
+            events.Add(new ProjectedEvent
+            {
+                Name = @event.Name,
+                HandlerInterfaceName = handlerInterfaceName,
+                HandlerInterfaceIid = CreateDeterministicIid(handlerInterfaceName),
+                PayloadKind = eventProjection.PayloadKind,
+                ManagedHandlerTypeName = @event.EventHandlerType is { } handlerType
+                    ? ManagedTypeName(handlerType)
+                    : null,
+            });
+        }
+
         foreach (var method in type.GetMethods(flags)
                      .Where(m => !m.IsSpecialName)
                      .OrderBy(m => m.MetadataToken))
@@ -132,6 +168,7 @@ public static class ClrTypeExtractor
             IsConstructible = !type.IsAbstract && type.GetConstructor(Type.EmptyTypes) is not null,
             Properties = properties,
             Methods = methods,
+            Events = events,
         };
     }
 
@@ -326,4 +363,14 @@ public static class ClrTypeExtractor
                     .ToArray(),
             })
             .ToArray();
+
+    private static string ManagedTypeName(Type type)
+    {
+        if (!type.IsGenericType)
+            return type.FullName ?? type.Name;
+
+        var definitionName = type.GetGenericTypeDefinition().FullName!;
+        definitionName = definitionName[..definitionName.IndexOf('`')];
+        return $"{definitionName}<{string.Join(", ", type.GetGenericArguments().Select(ManagedTypeName))}>";
+    }
 }

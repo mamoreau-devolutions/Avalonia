@@ -7,6 +7,7 @@ mod application;
 mod app_handler;
 mod com;
 mod echo;
+mod event_callback;
 mod factory;
 mod generated;
 mod guid;

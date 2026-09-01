@@ -59,6 +59,13 @@ public class ComSourceEmitterTests
         Assert.Contains("public sealed partial class AvnButton : IAvnButton", button, StringComparison.Ordinal);
         Assert.Contains("public int SetContent(IAvnControl? value)", button, StringComparison.Ordinal);
         Assert.Contains("_value.Content = (global::System.Object)ProjectionRuntime.Unwrap(value)!;", button, StringComparison.Ordinal);
+        Assert.Contains("int AdviseClick(IAvnButtonClickHandler? handler, out long subscriptionId);", button, StringComparison.Ordinal);
+        Assert.Contains("_value.Click += callback;", button, StringComparison.Ordinal);
+        Assert.Contains("_value.Click -= callback", button, StringComparison.Ordinal);
+
+        var clickHandler = files["IAvnButtonClickHandler.g.cs"];
+        Assert.Contains("public partial interface IAvnButtonClickHandler", clickHandler, StringComparison.Ordinal);
+        Assert.Contains("int Invoke();", clickHandler, StringComparison.Ordinal);
 
         var window = files["IAvnWindow.g.cs"];
         Assert.Contains("int GetTitle(out string? value);", window, StringComparison.Ordinal);

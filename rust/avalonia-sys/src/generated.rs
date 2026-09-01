@@ -7,7 +7,62 @@ use crate::hresult::{self, Error, Result};
 use std::ffi::c_void;
 use std::ptr;
 
-pub const I_AVN_CONTROL_LIST_IID: Guid = Guid { data1: 0x4CBDF266, data2: 0x1DCD, data3: 0x58C5, data4: [0xB1, 0xE5, 0xAE, 0x74, 0xCF, 0x5B, 0x42, 0x2A] };
+pub const I_AVN_BUTTON_CLICK_HANDLER_IID: Guid = Guid { data1: 0x05D26ED4, data2: 0xDA87, data3: 0x5CBB, data4: [0xA0, 0x47, 0x81, 0x77, 0x23, 0x91, 0x17, 0x96] };
+
+#[repr(C)]
+struct IAvnButtonClickHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnButtonClickHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnButtonClickHandler {
+    vtbl: *const IAvnButtonClickHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnButtonClickHandler {
+    const IID: Guid = I_AVN_BUTTON_CLICK_HANDLER_IID;
+}
+
+impl ComPtr<IAvnButtonClickHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_BUTTON_CLICK_HANDLER_VTBL: IAvnButtonClickHandlerVtbl = IAvnButtonClickHandlerVtbl {
+    query_interface: i_avn_button_click_handler_query_interface,
+    add_ref: i_avn_button_click_handler_add_ref,
+    release: i_avn_button_click_handler_release,
+    invoke: i_avn_button_click_handler_invoke,
+};
+
+pub fn button_click_handler(callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnButtonClickHandler> {
+    crate::event_callback::create(IAvnButtonClickHandler { vtbl: &I_AVN_BUTTON_CLICK_HANDLER_VTBL }, callback)
+}
+
+unsafe extern "system" fn i_avn_button_click_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnButtonClickHandler>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_button_click_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnButtonClickHandler>(this)
+}
+
+unsafe extern "system" fn i_avn_button_click_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnButtonClickHandler>(this)
+}
+
+unsafe extern "system" fn i_avn_button_click_handler_invoke(this: *mut IAvnButtonClickHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnButtonClickHandler>(this)
+}
+
+pub const I_AVN_CONTROL_LIST_IID: Guid = Guid { data1: 0x2FDCB505, data2: 0x4C03, data3: 0x5F63, data4: [0x8E, 0x3D, 0xC4, 0xB1, 0x86, 0xA8, 0xAF, 0xE1] };
 
 #[repr(C)]
 struct IAvnControlListVtbl {
@@ -66,7 +121,7 @@ impl ComPtr<IAvnControlList> {
     }
 }
 
-pub const I_AVN_AVALONIA_OBJECT_IID: Guid = Guid { data1: 0x57D5FB2B, data2: 0xED86, data3: 0x525C, data4: [0xB6, 0x5D, 0x49, 0x8A, 0x84, 0xC7, 0x5A, 0xFA] };
+pub const I_AVN_AVALONIA_OBJECT_IID: Guid = Guid { data1: 0xC6AC58CF, data2: 0x45CF, data3: 0x54BF, data4: [0xAB, 0x0B, 0x55, 0x55, 0x6F, 0x03, 0xE3, 0x9A] };
 
 #[repr(C)]
 struct IAvnAvaloniaObjectVtbl {
@@ -95,7 +150,7 @@ impl ComPtr<IAvnAvaloniaObject> {
     }
 }
 
-pub const I_AVN_BUTTON_IID: Guid = Guid { data1: 0x0E740E4A, data2: 0xA102, data3: 0x5ADB, data4: [0xA6, 0x3F, 0x80, 0x22, 0xBA, 0x7E, 0xBF, 0x9D] };
+pub const I_AVN_BUTTON_IID: Guid = Guid { data1: 0x514BBD75, data2: 0xB270, data3: 0x51D6, data4: [0xB6, 0xCC, 0x56, 0x85, 0x0A, 0x9D, 0xC4, 0x8A] };
 
 #[repr(C)]
 struct IAvnButtonVtbl {
@@ -107,6 +162,8 @@ struct IAvnButtonVtbl {
     set_is_enabled: unsafe extern "system" fn(*mut IAvnButton, i32) -> i32,
     get_content: unsafe extern "system" fn(*mut IAvnButton, *mut *mut IAvnControl) -> i32,
     set_content: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnControl) -> i32,
+    advise_click: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnButtonClickHandler, *mut i64) -> i32,
+    unadvise_click: unsafe extern "system" fn(*mut IAvnButton, i64) -> i32,
 }
 
 #[repr(C)]
@@ -154,9 +211,22 @@ impl ComPtr<IAvnButton> {
             hresult::check(hr)
         }
     }
+    pub fn advise_click(&self, handler: &ComPtr<IAvnButtonClickHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_click)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_click(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_click)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
 }
 
-pub const I_AVN_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x503C621A, data2: 0x9937, data3: 0x5F82, data4: [0xB5, 0x80, 0x0D, 0x72, 0xD6, 0x78, 0x1E, 0xE8] };
+pub const I_AVN_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x885C8CCF, data2: 0xA38F, data3: 0x5B61, data4: [0xAA, 0x71, 0xCA, 0x35, 0xB0, 0xC9, 0xEE, 0x4E] };
 
 #[repr(C)]
 struct IAvnContentControlVtbl {
@@ -217,7 +287,7 @@ impl ComPtr<IAvnContentControl> {
     }
 }
 
-pub const I_AVN_CONTROL_IID: Guid = Guid { data1: 0x2030D5A1, data2: 0xE324, data3: 0x559C, data4: [0x98, 0xBD, 0x99, 0x80, 0x4D, 0x62, 0x26, 0x15] };
+pub const I_AVN_CONTROL_IID: Guid = Guid { data1: 0xDC4DEADC, data2: 0x602B, data3: 0x5243, data4: [0x9D, 0x84, 0x3F, 0xB2, 0xC6, 0xB1, 0xD4, 0xA4] };
 
 #[repr(C)]
 struct IAvnControlVtbl {
@@ -262,7 +332,7 @@ impl ComPtr<IAvnControl> {
     }
 }
 
-pub const I_AVN_PANEL_IID: Guid = Guid { data1: 0x1BDD67C1, data2: 0x5AB4, data3: 0x5AC5, data4: [0xA8, 0x65, 0xA6, 0x84, 0x76, 0xA4, 0x22, 0x7B] };
+pub const I_AVN_PANEL_IID: Guid = Guid { data1: 0xE046062C, data2: 0xE709, data3: 0x5BC1, data4: [0x84, 0xAC, 0xB4, 0x63, 0xD5, 0xBE, 0xF5, 0xE8] };
 
 #[repr(C)]
 struct IAvnPanelVtbl {
@@ -316,7 +386,7 @@ impl ComPtr<IAvnPanel> {
     }
 }
 
-pub const I_AVN_STACK_PANEL_IID: Guid = Guid { data1: 0x8B8C126D, data2: 0x9D75, data3: 0x5542, data4: [0x83, 0xA3, 0xA7, 0x22, 0x4D, 0x3C, 0x0C, 0x6D] };
+pub const I_AVN_STACK_PANEL_IID: Guid = Guid { data1: 0x03AB1A66, data2: 0x3B45, data3: 0x51A5, data4: [0x8E, 0x1D, 0x6E, 0x30, 0x14, 0x1F, 0xDD, 0xC8] };
 
 #[repr(C)]
 struct IAvnStackPanelVtbl {
@@ -402,7 +472,7 @@ impl ComPtr<IAvnStackPanel> {
     }
 }
 
-pub const I_AVN_TEXT_BLOCK_IID: Guid = Guid { data1: 0xEB7ECAEC, data2: 0xC3EB, data3: 0x5A23, data4: [0x85, 0x0C, 0x28, 0xB7, 0xA5, 0xCA, 0x67, 0x9B] };
+pub const I_AVN_TEXT_BLOCK_IID: Guid = Guid { data1: 0x4D865988, data2: 0xD36F, data3: 0x53D3, data4: [0x8A, 0xC7, 0x8E, 0xD3, 0x9E, 0xAE, 0x21, 0x68] };
 
 #[repr(C)]
 struct IAvnTextBlockVtbl {
@@ -463,7 +533,7 @@ impl ComPtr<IAvnTextBlock> {
     }
 }
 
-pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0x178A1A08, data2: 0xF7D2, data3: 0x5383, data4: [0xA8, 0x5F, 0x53, 0x15, 0x9C, 0xE7, 0x28, 0xB1] };
+pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0xEC53D901, data2: 0xE166, data3: 0x5DA1, data4: [0xB3, 0x04, 0xE7, 0x6B, 0xC3, 0x71, 0x25, 0xE0] };
 
 #[repr(C)]
 struct IAvnWindowVtbl {
@@ -561,7 +631,7 @@ impl ComPtr<IAvnWindow> {
     }
 }
 
-pub const IAVN_CONTROL_FACTORY_IID: Guid = Guid { data1: 0x2B245C89, data2: 0xD703, data3: 0x54E1, data4: [0x91, 0x4F, 0x58, 0x68, 0x3E, 0xFF, 0xD2, 0xC8] };
+pub const IAVN_CONTROL_FACTORY_IID: Guid = Guid { data1: 0xE11331F8, data2: 0x0B6B, data3: 0x5A7C, data4: [0xA1, 0xBB, 0x6D, 0x44, 0x9B, 0xF2, 0x00, 0x70] };
 
 #[repr(C)]
 struct IAvnControlFactoryVtbl {

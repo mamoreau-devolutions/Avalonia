@@ -1,7 +1,10 @@
 use crate::{Error, Result};
 use avalonia_sys as sys;
 use std::cell::RefCell;
+use std::fmt;
+use std::marker::PhantomData;
 use std::path::Path;
+use std::rc::Rc;
 
 thread_local! {
     static FACTORY: RefCell<Option<sys::ComPtr<sys::IAvnControlFactory>>> = const { RefCell::new(None) };
@@ -9,6 +12,51 @@ thread_local! {
 
 pub trait AsControl {
     fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>>;
+}
+
+pub struct EventSubscription {
+    unsubscribe: Option<Box<dyn Fn() -> sys::Result<()>>>,
+    _thread_affinity: PhantomData<Rc<()>>,
+}
+
+impl EventSubscription {
+    pub(crate) fn new(
+        unsubscribe: impl Fn() -> sys::Result<()> + 'static,
+    ) -> Self {
+        Self {
+            unsubscribe: Some(Box::new(unsubscribe)),
+            _thread_affinity: PhantomData,
+        }
+    }
+
+    pub fn unsubscribe(&mut self) -> Result<()> {
+        if let Some(unsubscribe) = self.unsubscribe.as_ref() {
+            unsubscribe()?;
+            self.unsubscribe = None;
+        }
+        Ok(())
+    }
+
+    pub fn detach(mut self) {
+        self.unsubscribe = None;
+    }
+}
+
+impl fmt::Debug for EventSubscription {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter
+            .debug_struct("EventSubscription")
+            .field("active", &self.unsubscribe.is_some())
+            .finish()
+    }
+}
+
+impl Drop for EventSubscription {
+    fn drop(&mut self) {
+        if let Some(unsubscribe) = self.unsubscribe.as_ref() {
+            let _ = unsubscribe();
+        }
+    }
 }
 
 pub struct App {

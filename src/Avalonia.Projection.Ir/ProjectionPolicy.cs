@@ -11,6 +11,8 @@ public sealed class ProjectionPolicy
         new Dictionary<string, IReadOnlyList<string>>(StringComparer.Ordinal);
     public IReadOnlyDictionary<string, MarshallingOverride> MemberOverrides { get; init; } =
         new Dictionary<string, MarshallingOverride>(StringComparer.Ordinal);
+    public IReadOnlyDictionary<string, EventProjection> EventOverrides { get; init; } =
+        new Dictionary<string, EventProjection>(StringComparer.Ordinal);
     public string ProjectionNamespace { get; init; } = "Avalonia.Host.Com";
 
     public bool Includes(Type type)
@@ -39,6 +41,16 @@ public sealed class ProjectionPolicy
         MemberOverrides.TryGetValue(
             $"{projectionOwner.FullName}.{member.Name}",
             out value!);
+
+    public bool TryGetEventOverride(Type projectionOwner, EventInfo member, out EventProjection value) =>
+        EventOverrides.TryGetValue(
+            $"{projectionOwner.FullName}.{member.Name}",
+            out value!);
+}
+
+public sealed class EventProjection
+{
+    public required EventPayloadKind PayloadKind { get; init; }
 }
 
 public sealed class MarshallingOverride

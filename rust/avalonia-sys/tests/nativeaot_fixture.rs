@@ -1,4 +1,7 @@
-use avalonia_sys::{app_handler, ComPtr, Error, Host, IUnknown, AVN_E_FIXTURE, E_NOINTERFACE};
+use avalonia_sys::{
+    app_handler, button_click_handler, ComPtr, Error, Host, IUnknown, AVN_E_FIXTURE,
+    E_NOINTERFACE,
+};
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
@@ -131,6 +134,8 @@ fn application_runs_generated_object_model_through_rust_handler() {
     let controls = activation.create_control_factory().unwrap();
     let called = Arc::new(AtomicBool::new(false));
     let called_from_handler = called.clone();
+    let clicked = Arc::new(AtomicBool::new(false));
+    let clicked_from_handler = clicked.clone();
     let handler = app_handler(move || {
         let button = controls.create_button()?;
         let text = controls.create_text_block()?;
@@ -143,6 +148,14 @@ fn application_runs_generated_object_model_through_rust_handler() {
         button.set_content(Some(&text_as_control))?;
         let content = button.get_content()?.unwrap();
         assert_eq!(text.object_id()?, content.object_id()?);
+
+        let click_handler = button_click_handler(move || {
+            clicked_from_handler.store(true, Ordering::SeqCst);
+            Ok(())
+        });
+        click_handler.invoke()?;
+        let click_subscription = button.advise_click(&click_handler)?;
+        button.unadvise_click(click_subscription)?;
 
         let panel = controls.create_stack_panel()?;
         let children = panel.get_children()?;
@@ -168,4 +181,5 @@ fn application_runs_generated_object_model_through_rust_handler() {
         host.last_error().unwrap_or_default()
     );
     assert!(called.load(Ordering::SeqCst));
+    assert!(clicked.load(Ordering::SeqCst));
 }

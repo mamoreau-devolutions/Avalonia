@@ -2,7 +2,7 @@ mod generated;
 mod runtime;
 
 pub use generated::*;
-pub use runtime::{App, AsControl};
+pub use runtime::{App, AsControl, EventSubscription};
 
 #[derive(Debug)]
 pub enum Error {

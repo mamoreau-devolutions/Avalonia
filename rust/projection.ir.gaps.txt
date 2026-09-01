@@ -1,6 +1,7 @@
 Avalonia.AvaloniaObject.Item: Not included by projection policy
 Avalonia.AvaloniaObject.Item: Not included by projection policy
 Avalonia.AvaloniaObject.Dispatcher: Not included by projection policy
+Avalonia.AvaloniaObject.PropertyChanged: Not included by projection policy
 Avalonia.AvaloniaObject.CheckAccess(): Not included by projection policy
 Avalonia.AvaloniaObject.VerifyAccess(): Not included by projection policy
 Avalonia.AvaloniaObject.ClearValue(AvaloniaProperty): Not included by projection policy
@@ -47,11 +48,16 @@ Avalonia.Controls.Control.ContextMenu: Not included by projection policy
 Avalonia.Controls.Control.ContextFlyout: Not included by projection policy
 Avalonia.Controls.Control.IsLoaded: Not included by projection policy
 Avalonia.Controls.Control.Tag: Not included by projection policy
+Avalonia.Controls.Control.Loaded: Not included by projection policy
+Avalonia.Controls.Control.Unloaded: Not included by projection policy
+Avalonia.Controls.Control.SizeChanged: Not included by projection policy
 Avalonia.Controls.Panel.Background: Not included by projection policy
 Avalonia.Controls.Panel.IsItemsHost: Not included by projection policy
 Avalonia.Controls.Panel.Render(DrawingContext): Not included by projection policy
 Avalonia.Controls.StackPanel.AreHorizontalSnapPointsRegular: Not included by projection policy
 Avalonia.Controls.StackPanel.AreVerticalSnapPointsRegular: Not included by projection policy
+Avalonia.Controls.StackPanel.HorizontalSnapPointsChanged: Not included by projection policy
+Avalonia.Controls.StackPanel.VerticalSnapPointsChanged: Not included by projection policy
 Avalonia.Controls.StackPanel.GetIrregularSnapPoints(Orientation, SnapPointsAlignment): Not included by projection policy
 Avalonia.Controls.StackPanel.GetRegularSnapPoints(Orientation, SnapPointsAlignment, Double&): Not included by projection policy
 Avalonia.Controls.TextBlock.TextLayout: Not included by projection policy
@@ -97,6 +103,7 @@ Avalonia.Controls.Window.Icon: Not included by projection policy
 Avalonia.Controls.Window.WindowStartupLocation: Not included by projection policy
 Avalonia.Controls.Window.Position: Not included by projection policy
 Avalonia.Controls.Window.IsDialog: Not included by projection policy
+Avalonia.Controls.Window.Closing: Not included by projection policy
 Avalonia.Controls.Window.BeginMoveDrag(PointerPressedEventArgs): Not included by projection policy
 Avalonia.Controls.Window.BeginResizeDrag(WindowEdge, PointerPressedEventArgs): Not included by projection policy
 Avalonia.Controls.Window.Close(Object): Parameter 'dialogResult': Type 'System.Object' is not marshallable

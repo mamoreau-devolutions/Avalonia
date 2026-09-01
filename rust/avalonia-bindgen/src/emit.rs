@@ -1,5 +1,6 @@
 use crate::ir::{
-    ProjectedMethod, ProjectedParameter, ProjectedProperty, ProjectedType, ProjectionIr,
+    ProjectedEvent, ProjectedMethod, ProjectedParameter, ProjectedProperty, ProjectedType,
+    ProjectionIr,
 };
 
 pub fn emit_sys_module(ir: &ProjectionIr) -> String {
@@ -12,6 +13,10 @@ pub fn emit_sys_module(ir: &ProjectionIr) -> String {
          use std::ffi::c_void;\n\
          use std::ptr;\n\n",
     );
+    for event in unique_events(ir) {
+        out.push_str(&emit_event_handler(event));
+        out.push('\n');
+    }
     let mut emitted_collections = Vec::new();
     for collection in ir
         .types
@@ -147,6 +152,15 @@ fn emit_interface(ir: &ProjectionIr, ty: &ProjectedType) -> String {
                 vtbl_method_args(ty, method)
             ));
         }
+        for event in &owner.events {
+            let handler = simple_name(&event.handler_interface_name);
+            let snake = to_snake(&event.name);
+            out.push_str(&format!(
+                "    advise_{snake}: unsafe extern \"system\" fn(*mut {}, *mut {handler}, *mut i64) -> i32,\n\
+                 \x20   unadvise_{snake}: unsafe extern \"system\" fn(*mut {}, i64) -> i32,\n",
+                ty.name, ty.name
+            ));
+        }
     }
     out.push_str("}\n\n");
 
@@ -180,9 +194,96 @@ fn emit_interface(ir: &ProjectionIr, ty: &ProjectedType) -> String {
         for method in &owner.methods {
             out.push_str(&emit_method(ty, method));
         }
+        for event in &owner.events {
+            out.push_str(&emit_event(event));
+        }
     }
+
     out.push_str("}\n");
     out
+}
+
+fn emit_event_handler(event: &ProjectedEvent) -> String {
+    assert_eq!(
+        event.payload_kind, "None",
+        "unsupported event payload kind"
+    );
+    let name = simple_name(&event.handler_interface_name);
+    let iid_const = format!("{}_IID", to_shouty(name));
+    let stem = to_snake(name);
+    format!(
+        "pub const {iid_const}: Guid = {iid};\n\n\
+         #[repr(C)]\n\
+         struct {name}Vtbl {{\n\
+         \x20   query_interface: unsafe extern \"system\" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,\n\
+         \x20   add_ref: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+         \x20   release: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+         \x20   invoke: unsafe extern \"system\" fn(*mut {name}) -> i32,\n\
+         }}\n\n\
+         #[repr(C)]\n\
+         pub struct {name} {{\n\
+         \x20   vtbl: *const {name}Vtbl,\n\
+         }}\n\n\
+         unsafe impl ComInterface for {name} {{\n\
+         \x20   const IID: Guid = {iid_const};\n\
+         }}\n\n\
+         impl ComPtr<{name}> {{\n\
+         \x20   pub fn invoke(&self) -> Result<()> {{\n\
+         \x20       unsafe {{\n\
+         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());\n\
+         \x20           hresult::check(hr)\n\
+         \x20       }}\n\
+         \x20   }}\n\
+         }}\n\n\
+         static {shouty}_VTBL: {name}Vtbl = {name}Vtbl {{\n\
+         \x20   query_interface: {stem}_query_interface,\n\
+         \x20   add_ref: {stem}_add_ref,\n\
+         \x20   release: {stem}_release,\n\
+         \x20   invoke: {stem}_invoke,\n\
+         }};\n\n\
+         pub fn {handler_fn}(callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<{name}> {{\n\
+         \x20   crate::event_callback::create({name} {{ vtbl: &{shouty}_VTBL }}, callback)\n\
+         }}\n\n\
+         unsafe extern \"system\" fn {stem}_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {{\n\
+         \x20   crate::event_callback::query_interface::<{name}>(this, iid, result)\n\
+         }}\n\n\
+         unsafe extern \"system\" fn {stem}_add_ref(this: *mut IUnknown) -> u32 {{\n\
+         \x20   crate::event_callback::add_ref::<{name}>(this)\n\
+         }}\n\n\
+         unsafe extern \"system\" fn {stem}_release(this: *mut IUnknown) -> u32 {{\n\
+         \x20   crate::event_callback::release::<{name}>(this)\n\
+         }}\n\n\
+         unsafe extern \"system\" fn {stem}_invoke(this: *mut {name}) -> i32 {{\n\
+         \x20   crate::event_callback::invoke::<{name}>(this)\n\
+         }}\n",
+        iid = guid_literal(&event.handler_interface_iid),
+        shouty = to_shouty(name),
+        handler_fn = event_handler_function(event),
+    )
+}
+
+fn emit_event(event: &ProjectedEvent) -> String {
+    assert_eq!(
+        event.payload_kind, "None",
+        "unsupported event payload kind"
+    );
+    let snake = to_snake(&event.name);
+    let handler = simple_name(&event.handler_interface_name);
+    format!(
+        "    pub fn advise_{snake}(&self, handler: &ComPtr<{handler}>) -> Result<i64> {{\n\
+         \x20       unsafe {{\n\
+         \x20           let mut subscription_id = 0;\n\
+         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_{snake})(self.as_raw(), handler.as_raw(), &mut subscription_id);\n\
+         \x20           hresult::check(hr).map(|_| subscription_id)\n\
+         \x20       }}\n\
+         \x20   }}\n\
+         \x20   pub fn unadvise_{snake}(&self, subscription_id: i64) -> Result<()> {{\n\
+         \x20       unsafe {{\n\
+         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_{snake})(self.as_raw(), subscription_id);\n\
+         \x20           hresult::check(hr)\n\
+         \x20       }}\n\
+         \x20   }}\n"
+    )
 }
 
 fn emit_factory(ir: &ProjectionIr) -> String {
@@ -356,8 +457,34 @@ fn lineage<'a>(ir: &'a ProjectionIr, ty: &'a ProjectedType) -> Vec<&'a Projected
             .expect("base type must be present in projection IR");
         result.push(current);
     }
+
     result.reverse();
     result
+}
+
+fn unique_events(ir: &ProjectionIr) -> Vec<&ProjectedEvent> {
+    let mut result = Vec::new();
+    for event in ir.types.iter().flat_map(|ty| ty.events.iter()) {
+        if !result.iter().any(|existing: &&ProjectedEvent| {
+            existing.handler_interface_name == event.handler_interface_name
+        }) {
+            result.push(event);
+        }
+    }
+    result
+}
+
+fn event_handler_function(event: &ProjectedEvent) -> String {
+    let name = simple_name(&event.handler_interface_name)
+        .strip_prefix("IAvn")
+        .unwrap_or_else(|| simple_name(&event.handler_interface_name))
+        .strip_suffix("Handler")
+        .unwrap_or_else(|| {
+            simple_name(&event.handler_interface_name)
+                .strip_prefix("IAvn")
+                .unwrap_or_else(|| simple_name(&event.handler_interface_name))
+        });
+    format!("{}_handler", to_snake(name))
 }
 
 fn rust_abi_type(kind: &str, interface_name: Option<&str>) -> String {

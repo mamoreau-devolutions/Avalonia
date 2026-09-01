@@ -36,11 +36,14 @@ fn builders_create_a_real_window_through_nativeaot() {
 
     let error = app
         .run(move || {
+            let button = Button::new()?.content(TextBlock::new()?.text("Close")?)?;
+            button.subscribe_click(|_| {})?.unsubscribe()?;
+            let button = button.on_click(|_| {})?;
             let panel = StackPanel::new()?
                 .orientation(Orientation::Vertical)?
                 .spacing(8.0)?
                 .child(TextBlock::new()?.text("Hello from Rust")?)?
-                .child(Button::new()?.content(TextBlock::new()?.text("Close")?)?)?;
+                .child(button)?;
             assert_eq!(panel.children()?.len()?, 2);
             assert_eq!(panel.get_orientation()?, Orientation::Vertical);
             assert_eq!(panel.get_spacing()?, 8.0);

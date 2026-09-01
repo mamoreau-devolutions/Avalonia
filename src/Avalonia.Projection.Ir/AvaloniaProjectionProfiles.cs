@@ -24,7 +24,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.Window"] = ["Title", "Show", "Close"],
             ["Avalonia.Controls.StackPanel"] = ["Orientation", "Spacing"],
             ["Avalonia.Controls.TextBlock"] = ["Text"],
-            ["Avalonia.Controls.Button"] = [],
+            ["Avalonia.Controls.Button"] = ["Click"],
         },
         MemberOverrides = new Dictionary<string, MarshallingOverride>(StringComparer.Ordinal)
         {
@@ -40,6 +40,13 @@ public static class AvaloniaProjectionProfiles
                 InterfaceName = "Avalonia.Host.Com.IAvnControlList",
                 ElementInterfaceName = "Avalonia.Host.Com.IAvnControl",
                 IsNullable = false,
+            },
+        },
+        EventOverrides = new Dictionary<string, EventProjection>(StringComparer.Ordinal)
+        {
+            ["Avalonia.Controls.Button.Click"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
             },
         },
     };
