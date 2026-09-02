@@ -118,6 +118,8 @@ rust/templates/*/target/
 rust/templates/*/Cargo.lock
 # Instantiated application scaffolds and packaged artifacts stay local.
 rust/artifacts/
+__pycache__/
+*.pyc
 
 # Others
 sql/
