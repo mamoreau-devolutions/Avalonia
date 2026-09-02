@@ -73,6 +73,17 @@ def run(command, cwd=None, env=None):
     subprocess.run([str(part) for part in command], cwd=cwd, env=env, check=True)
 
 
+def configure_rust_environment(environment, target):
+    if not target.endswith("-pc-windows-msvc"):
+        return environment
+    key = f"CARGO_TARGET_{target.upper().replace('-', '_')}_RUSTFLAGS"
+    required = "-C target-feature=+crt-static"
+    current = environment.get(key, "").strip()
+    if required not in current:
+        environment[key] = f"{current} {required}".strip()
+    return environment
+
+
 def copy_files(source, destination, extension):
     for path in sorted(source.glob(f"*{extension}")):
         if path.is_file():
@@ -116,6 +127,7 @@ def package(producer_root, manifest_path, document):
     cargo_environment = os.environ.copy()
     cargo_target = manifest_path.parent / ".avalonia" / "cargo-target"
     cargo_environment["CARGO_TARGET_DIR"] = str(cargo_target)
+    configure_rust_environment(cargo_environment, target)
     cargo_arguments = ["cargo", "build", "--manifest-path", paths["cargoManifest"], "-p", document["packageName"],
                        "--bin", document["binary"], "--target", target]
     profile = "debug"

@@ -43,6 +43,9 @@ maps to an explicit native Rust target triple; packaging and executable tests
 require a matching runner CPU rather than silently producing an untested cross
 architecture binary.
 Never substitute dependencies or combine directories from different RIDs.
+Windows Rust executables use the static MSVC CRT; adding a dependency that
+reintroduces a redistributable runtime DLL is a delivery-scope change and must
+update packaging, SBOM coverage, and compatibility validation together.
 
 Official release artifacts must be signed with the platform-appropriate
 signing identity before the SBOM and checksums are generated. The optional

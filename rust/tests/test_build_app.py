@@ -71,6 +71,30 @@ class ConsumerManifestTests(unittest.TestCase):
             subprocess.run(command, check=True)
             self.assertEqual(first, (bundle / "sbom.cdx.json").read_bytes())
 
+    def test_windows_msvc_consumers_link_the_crt_statically(self):
+        environment = {"CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_RUSTFLAGS": "-C opt-level=2"}
+
+        result = build_app.configure_rust_environment(
+            environment,
+            "x86_64-pc-windows-msvc")
+
+        self.assertEqual(
+            "-C opt-level=2 -C target-feature=+crt-static",
+            result["CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_RUSTFLAGS"])
+        build_app.configure_rust_environment(result, "x86_64-pc-windows-msvc")
+        self.assertEqual(
+            "-C opt-level=2 -C target-feature=+crt-static",
+            result["CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_RUSTFLAGS"])
+
+    def test_non_msvc_consumers_keep_their_rust_environment(self):
+        environment = {"RUSTFLAGS": "-C opt-level=2"}
+
+        result = build_app.configure_rust_environment(
+            environment,
+            "x86_64-unknown-linux-gnu")
+
+        self.assertEqual(environment, result)
+
 
 if __name__ == "__main__":
     unittest.main()

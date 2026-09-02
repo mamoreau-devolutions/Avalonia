@@ -76,6 +76,11 @@ checksums to the manifest's adjacent output directory. A local
 `AVALONIA_RUST_SIGN_COMMAND` wrapper may sign final binaries before SBOM and
 checksums; it is never downloaded or shell-expanded.
 
+Windows MSVC Rust binaries are built with `target-feature=+crt-static`, so the
+adjacent bundle does not require a separately installed Visual C++ runtime.
+The external template carries the same target-specific Cargo configuration;
+`build-app` also enforces it for existing consumer workspaces.
+
 ## One-command developer workflow
 
 `regenerate-and-build.ps1` / `regenerate-and-build.sh` replace the four

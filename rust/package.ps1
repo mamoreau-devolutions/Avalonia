@@ -22,6 +22,15 @@ $rustTarget = switch ($Rid)
     "win-arm64" { "aarch64-pc-windows-msvc" }
     default { throw "No Rust target triple is configured for RID '$Rid'." }
 }
+$rustFlagsVariable = "CARGO_TARGET_$($rustTarget.ToUpperInvariant().Replace('-', '_'))_RUSTFLAGS"
+$rustFlags = [Environment]::GetEnvironmentVariable($rustFlagsVariable, "Process")
+if ($rustFlags -notlike "*target-feature=+crt-static*")
+{
+    [Environment]::SetEnvironmentVariable(
+        $rustFlagsVariable,
+        "$rustFlags -C target-feature=+crt-static".Trim(),
+        "Process")
+}
 $installedRustTargets = & rustup target list --installed
 if ($LASTEXITCODE -ne 0 -or $installedRustTargets -notcontains $rustTarget)
 {
