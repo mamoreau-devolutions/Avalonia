@@ -116,6 +116,15 @@ an unmodified `projection.ir.json`/`view-model.ir.json` reproduces byte-identica
 generated output) and fail fast: each step's exit code stops the script before
 the next one runs.
 
+## Tabular presentation
+
+Schema version 3 table metadata is generated with the normal consumer
+presentation sources. Consumers use built-in `TableView` columns and compiled
+AXAML cell bindings; no DataGrid package, runtime binding reflection, or
+application-specific host code is required. A large model snapshot still has
+one managed row adapter per delivered row, while `TableView` virtualizes visual
+rows. Range/lazy data sources remain a future stage-30 optimization.
+
 Useful switches/environment variables:
 
 | PowerShell | Bash (env var) | Effect |

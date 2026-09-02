@@ -32,18 +32,27 @@ impl SampleViewModelSink {
     pub fn set_priority(&self, value: Priority) -> crate::Result<()> { self.0.set_integer(6, value as i64) }
     pub fn set_address<M: AddressViewModel>(&self, value: Option<M>) -> crate::Result<()> { self.0.set_model(7, value.map(|model| AddressViewModelDispatch { model })) }
     pub fn set_new_task_title(&self, value: impl AsRef<str>) -> crate::Result<()> { self.0.set_string(8, value) }
+    pub fn set_selected_trace_index(&self, value: i64) -> crate::Result<()> { self.0.set_integer(9, value) }
+    pub fn set_selected_trace_key(&self, value: impl AsRef<str>) -> crate::Result<()> { self.0.set_string(10, value) }
+    pub fn set_trace_sort_direction(&self, value: impl AsRef<str>) -> crate::Result<()> { self.0.set_string(11, value) }
     pub fn add_items(&self, value: impl AsRef<str>) -> crate::Result<()> { self.0.add_string(1, value) }
     pub fn insert_items(&self, index: i32, value: impl AsRef<str>) -> crate::Result<()> { self.0.insert_string(1, index, value) }
     pub fn replace_items(&self, index: i32, value: impl AsRef<str>) -> crate::Result<()> { self.0.replace_string(1, index, value) }
     pub fn add_tasks(&self, value: impl TaskItemViewModel) -> crate::Result<()> { self.0.add_model(2, TaskItemViewModelDispatch { model: value }) }
     pub fn insert_tasks(&self, index: i32, value: impl TaskItemViewModel) -> crate::Result<()> { self.0.insert_model(2, index, TaskItemViewModelDispatch { model: value }) }
     pub fn replace_tasks(&self, index: i32, value: impl TaskItemViewModel) -> crate::Result<()> { self.0.replace_model(2, index, TaskItemViewModelDispatch { model: value }) }
+    pub fn add_trace_rows(&self, value: impl TraceRowViewModel) -> crate::Result<()> { self.0.add_model(3, TraceRowViewModelDispatch { model: value }) }
+    pub fn insert_trace_rows(&self, index: i32, value: impl TraceRowViewModel) -> crate::Result<()> { self.0.insert_model(3, index, TraceRowViewModelDispatch { model: value }) }
+    pub fn replace_trace_rows(&self, index: i32, value: impl TraceRowViewModel) -> crate::Result<()> { self.0.replace_model(3, index, TraceRowViewModelDispatch { model: value }) }
     pub fn remove_items(&self, index: i32) -> crate::Result<()> { self.0.remove_string_at(1, index) }
     pub fn move_items(&self, from_index: i32, to_index: i32) -> crate::Result<()> { self.0.move_string_item(1, from_index, to_index) }
     pub fn clear_items(&self) -> crate::Result<()> { self.0.clear_string_collection(1) }
     pub fn remove_tasks(&self, index: i32) -> crate::Result<()> { self.0.remove_model_at(2, index) }
     pub fn move_tasks(&self, from_index: i32, to_index: i32) -> crate::Result<()> { self.0.move_model_item(2, from_index, to_index) }
     pub fn clear_tasks(&self) -> crate::Result<()> { self.0.clear_model_collection(2) }
+    pub fn remove_trace_rows(&self, index: i32) -> crate::Result<()> { self.0.remove_model_at(3, index) }
+    pub fn move_trace_rows(&self, from_index: i32, to_index: i32) -> crate::Result<()> { self.0.move_model_item(3, from_index, to_index) }
+    pub fn clear_trace_rows(&self) -> crate::Result<()> { self.0.clear_model_collection(3) }
     pub fn set_increment_enabled(&self, enabled: bool) -> crate::Result<()> { self.0.set_command_enabled(1, enabled) }
     pub fn set_add_enabled(&self, enabled: bool) -> crate::Result<()> { self.0.set_command_enabled(2, enabled) }
     pub fn set_save_enabled(&self, enabled: bool) -> crate::Result<()> { self.0.set_command_enabled(3, enabled) }
@@ -53,6 +62,7 @@ impl SampleViewModelSink {
     pub fn set_remove_first_task_enabled(&self, enabled: bool) -> crate::Result<()> { self.0.set_command_enabled(7, enabled) }
     pub fn set_shuffle_tasks_enabled(&self, enabled: bool) -> crate::Result<()> { self.0.set_command_enabled(8, enabled) }
     pub fn set_clear_tasks_enabled(&self, enabled: bool) -> crate::Result<()> { self.0.set_command_enabled(9, enabled) }
+    pub fn set_sort_trace_rows_enabled(&self, enabled: bool) -> crate::Result<()> { self.0.set_command_enabled(10, enabled) }
     pub fn set_name_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(1, message) }
     pub fn set_count_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(2, message) }
     pub fn set_new_item_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(3, message) }
@@ -60,6 +70,9 @@ impl SampleViewModelSink {
     pub fn set_nickname_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(5, message) }
     pub fn set_priority_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(6, message) }
     pub fn set_new_task_title_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(8, message) }
+    pub fn set_selected_trace_index_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(9, message) }
+    pub fn set_selected_trace_key_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(10, message) }
+    pub fn set_trace_sort_direction_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(11, message) }
     /// Creates a worker-safe immutable update batch with a monotonic generation.
     pub fn batch(&self, generation: i64) -> SampleViewModelSinkBatch { SampleViewModelSinkBatch(crate::view_model::ViewModelBatch::new(generation)) }
     pub fn submit_batch(&self, batch: SampleViewModelSinkBatch) -> crate::Result<crate::view_model::BatchCompletion> { self.0.submit_batch(batch.0) }
@@ -93,6 +106,15 @@ impl SampleViewModelSinkBatch {
     pub fn set_new_task_title(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 8, 0, value); }
     pub fn set_new_task_title_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 8, 0, message); }
     pub fn clear_new_task_title_error(&mut self) { self.0.push_clear_error(8); }
+    pub fn set_selected_trace_index(&mut self, value: i64) { self.0.push_integer(9, value); }
+    pub fn set_selected_trace_index_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 9, 0, message); }
+    pub fn clear_selected_trace_index_error(&mut self) { self.0.push_clear_error(9); }
+    pub fn set_selected_trace_key(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 10, 0, value); }
+    pub fn set_selected_trace_key_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 10, 0, message); }
+    pub fn clear_selected_trace_key_error(&mut self) { self.0.push_clear_error(10); }
+    pub fn set_trace_sort_direction(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 11, 0, value); }
+    pub fn set_trace_sort_direction_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 11, 0, message); }
+    pub fn clear_trace_sort_direction_error(&mut self) { self.0.push_clear_error(11); }
     pub fn add_items(&mut self, value: impl AsRef<str>) { self.0.push_string(7, 1, 0, value); }
     pub fn insert_items(&mut self, index: i32, value: impl AsRef<str>) { self.0.push_string(9, 1, index, value); }
     pub fn replace_items(&mut self, index: i32, value: impl AsRef<str>) { self.0.push_string(11, 1, index, value); }
@@ -107,6 +129,13 @@ impl SampleViewModelSinkBatch {
     pub fn remove_tasks(&mut self, index: i32) { self.0.push_model_indices(13, 2, index, 0); }
     pub fn move_tasks(&mut self, from_index: i32, to_index: i32) { self.0.push_model_indices(14, 2, from_index, to_index); }
     pub fn clear_tasks(&mut self) { self.0.push_model_clear(2); }
+    pub fn add_trace_rows(&mut self, value: impl TraceRowViewModel) { self.0.push_model(8, 3, 0, TraceRowViewModelDispatch { model: value }); }
+    pub fn insert_trace_rows(&mut self, index: i32, value: impl TraceRowViewModel) { self.0.push_model(10, 3, index, TraceRowViewModelDispatch { model: value }); }
+    pub fn replace_trace_rows(&mut self, index: i32, value: impl TraceRowViewModel) { self.0.push_model(12, 3, index, TraceRowViewModelDispatch { model: value }); }
+    pub fn replace_trace_rows_snapshot<M: TraceRowViewModel>(&mut self, values: impl IntoIterator<Item = M>) { self.0.push_model_snapshot(3, values.into_iter().map(|value| TraceRowViewModelDispatch { model: value })); }
+    pub fn remove_trace_rows(&mut self, index: i32) { self.0.push_model_indices(13, 3, index, 0); }
+    pub fn move_trace_rows(&mut self, from_index: i32, to_index: i32) { self.0.push_model_indices(14, 3, from_index, to_index); }
+    pub fn clear_trace_rows(&mut self) { self.0.push_model_clear(3); }
     pub fn set_increment_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 1, enabled); }
     pub fn set_add_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 2, enabled); }
     pub fn set_save_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 3, enabled); }
@@ -116,6 +145,7 @@ impl SampleViewModelSinkBatch {
     pub fn set_remove_first_task_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 7, enabled); }
     pub fn set_shuffle_tasks_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 8, enabled); }
     pub fn set_clear_tasks_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 9, enabled); }
+    pub fn set_sort_trace_rows_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 10, enabled); }
 }
 
 pub trait SampleViewModel: Send + 'static {
@@ -126,6 +156,8 @@ pub trait SampleViewModel: Send + 'static {
     fn set_nickname(&mut self, value: String) -> crate::Result<()>;
     fn set_priority(&mut self, value: Priority) -> crate::Result<()>;
     fn set_new_task_title(&mut self, value: String) -> crate::Result<()>;
+    fn set_selected_trace_index(&mut self, value: i64) -> crate::Result<()>;
+    fn set_selected_trace_key(&mut self, value: String) -> crate::Result<()>;
     fn increment(&mut self) -> crate::Result<()>;
     fn add(&mut self, value: String) -> crate::Result<()>;
     fn save(&mut self) -> crate::Result<()>;
@@ -135,6 +167,7 @@ pub trait SampleViewModel: Send + 'static {
     fn remove_first_task(&mut self) -> crate::Result<()>;
     fn shuffle_tasks(&mut self) -> crate::Result<()>;
     fn clear_tasks(&mut self) -> crate::Result<()>;
+    fn sort_trace_rows(&mut self, value: String) -> crate::Result<()>;
 }
 
 struct SampleViewModelDispatch<T: SampleViewModel> { model: T }
@@ -148,12 +181,14 @@ impl<T: SampleViewModel> crate::view_model::DynamicViewModel for SampleViewModel
             3 => self.model.set_new_item(value),
             5 => self.model.set_nickname(value),
             8 => self.model.set_new_task_title(value),
+            10 => self.model.set_selected_trace_key(value),
             _ => Err(crate::Error::InvalidViewModelMember { kind: "property", id: property_id }),
         }
     }
     fn set_integer(&mut self, property_id: i32, value: i64) -> crate::Result<()> {
         match property_id {
             6 => self.model.set_priority(Priority::try_from(value).map_err(|_| crate::Error::InvalidViewModelMember { kind: "property", id: property_id })?),
+            9 => self.model.set_selected_trace_index(value),
             _ => Err(crate::Error::InvalidViewModelMember { kind: "property", id: property_id }),
         }
     }
@@ -173,6 +208,7 @@ impl<T: SampleViewModel> crate::view_model::DynamicViewModel for SampleViewModel
             7 => self.model.remove_first_task(),
             8 => self.model.shuffle_tasks(),
             9 => self.model.clear_tasks(),
+            10 => self.model.sort_trace_rows(parameter.unwrap_or_default()),
             _ => Err(crate::Error::InvalidViewModelMember { kind: "command", id: command_id }),
         }
     }
@@ -314,6 +350,126 @@ impl<T: TaskItemViewModel> crate::view_model::DynamicViewModel for TaskItemViewM
             2 => self.model.set_done(value),
             _ => Err(crate::Error::InvalidViewModelMember { kind: "property", id: property_id }),
         }
+    }
+    fn set_double(&mut self, property_id: i32, _value: f64) -> crate::Result<()> {
+        Err(crate::Error::InvalidViewModelMember { kind: "property", id: property_id })
+    }
+    fn execute(&mut self, command_id: i32, _parameter: Option<String>) -> crate::Result<()> {
+        Err(crate::Error::InvalidViewModelMember { kind: "command", id: command_id })
+    }
+    fn begin_async(&mut self, command_id: i32, _parameter: Option<String>) -> crate::Result<()> {
+        Err(crate::Error::InvalidViewModelMember { kind: "command", id: command_id })
+    }
+}
+
+
+#[derive(Clone, Debug)]
+pub struct TraceRowViewModelSink(crate::view_model::ViewModelSink);
+
+impl TraceRowViewModelSink {
+    pub fn set_timestamp(&self, value: impl AsRef<str>) -> crate::Result<()> { self.0.set_string(1, value) }
+    pub fn set_severity(&self, value: impl AsRef<str>) -> crate::Result<()> { self.0.set_string(2, value) }
+    pub fn set_message(&self, value: impl AsRef<str>) -> crate::Result<()> { self.0.set_string(3, value) }
+    pub fn set_event<M: TraceEventViewModel>(&self, value: Option<M>) -> crate::Result<()> { self.0.set_model(4, value.map(|model| TraceEventViewModelDispatch { model })) }
+    pub fn set_timestamp_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(1, message) }
+    pub fn set_severity_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(2, message) }
+    pub fn set_message_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(3, message) }
+    /// Creates a worker-safe immutable update batch with a monotonic generation.
+    pub fn batch(&self, generation: i64) -> TraceRowViewModelSinkBatch { TraceRowViewModelSinkBatch(crate::view_model::ViewModelBatch::new(generation)) }
+    pub fn submit_batch(&self, batch: TraceRowViewModelSinkBatch) -> crate::Result<crate::view_model::BatchCompletion> { self.0.submit_batch(batch.0) }
+}
+
+pub struct TraceRowViewModelSinkBatch(crate::view_model::ViewModelBatch);
+
+impl TraceRowViewModelSinkBatch {
+    pub fn set_timestamp(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 1, 0, value); }
+    pub fn set_timestamp_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 1, 0, message); }
+    pub fn clear_timestamp_error(&mut self) { self.0.push_clear_error(1); }
+    pub fn set_severity(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 2, 0, value); }
+    pub fn set_severity_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 2, 0, message); }
+    pub fn clear_severity_error(&mut self) { self.0.push_clear_error(2); }
+    pub fn set_message(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 3, 0, value); }
+    pub fn set_message_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 3, 0, message); }
+    pub fn clear_message_error(&mut self) { self.0.push_clear_error(3); }
+    pub fn set_event(&mut self, value: impl TraceEventViewModel) { self.0.push_model(6, 4, 0, TraceEventViewModelDispatch { model: value }); }
+    pub fn clear_event(&mut self) { self.0.push_model_null(4); }
+    pub fn set_event_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 4, 0, message); }
+    pub fn clear_event_error(&mut self) { self.0.push_clear_error(4); }
+}
+
+pub trait TraceRowViewModel: Send + 'static {
+    fn attach(&mut self, sink: TraceRowViewModelSink) -> crate::Result<()>;
+    fn detach(&mut self) -> crate::Result<()>;
+}
+
+struct TraceRowViewModelDispatch<T: TraceRowViewModel> { model: T }
+
+impl<T: TraceRowViewModel> crate::view_model::DynamicViewModel for TraceRowViewModelDispatch<T> {
+    fn attach(&mut self, sink: crate::view_model::ViewModelSink) -> crate::Result<()> { self.model.attach(TraceRowViewModelSink(sink)) }
+    fn detach(&mut self) -> crate::Result<()> { self.model.detach() }
+    fn set_string(&mut self, property_id: i32, _value: String) -> crate::Result<()> {
+        Err(crate::Error::InvalidViewModelMember { kind: "property", id: property_id })
+    }
+    fn set_integer(&mut self, property_id: i32, _value: i64) -> crate::Result<()> {
+        Err(crate::Error::InvalidViewModelMember { kind: "property", id: property_id })
+    }
+    fn set_boolean(&mut self, property_id: i32, _value: bool) -> crate::Result<()> {
+        Err(crate::Error::InvalidViewModelMember { kind: "property", id: property_id })
+    }
+    fn set_double(&mut self, property_id: i32, _value: f64) -> crate::Result<()> {
+        Err(crate::Error::InvalidViewModelMember { kind: "property", id: property_id })
+    }
+    fn execute(&mut self, command_id: i32, _parameter: Option<String>) -> crate::Result<()> {
+        Err(crate::Error::InvalidViewModelMember { kind: "command", id: command_id })
+    }
+    fn begin_async(&mut self, command_id: i32, _parameter: Option<String>) -> crate::Result<()> {
+        Err(crate::Error::InvalidViewModelMember { kind: "command", id: command_id })
+    }
+}
+
+
+#[derive(Clone, Debug)]
+pub struct TraceEventViewModelSink(crate::view_model::ViewModelSink);
+
+impl TraceEventViewModelSink {
+    pub fn set_id(&self, value: impl AsRef<str>) -> crate::Result<()> { self.0.set_string(1, value) }
+    pub fn set_source(&self, value: impl AsRef<str>) -> crate::Result<()> { self.0.set_string(2, value) }
+    pub fn set_id_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(1, message) }
+    pub fn set_source_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(2, message) }
+    /// Creates a worker-safe immutable update batch with a monotonic generation.
+    pub fn batch(&self, generation: i64) -> TraceEventViewModelSinkBatch { TraceEventViewModelSinkBatch(crate::view_model::ViewModelBatch::new(generation)) }
+    pub fn submit_batch(&self, batch: TraceEventViewModelSinkBatch) -> crate::Result<crate::view_model::BatchCompletion> { self.0.submit_batch(batch.0) }
+}
+
+pub struct TraceEventViewModelSinkBatch(crate::view_model::ViewModelBatch);
+
+impl TraceEventViewModelSinkBatch {
+    pub fn set_id(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 1, 0, value); }
+    pub fn set_id_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 1, 0, message); }
+    pub fn clear_id_error(&mut self) { self.0.push_clear_error(1); }
+    pub fn set_source(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 2, 0, value); }
+    pub fn set_source_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 2, 0, message); }
+    pub fn clear_source_error(&mut self) { self.0.push_clear_error(2); }
+}
+
+pub trait TraceEventViewModel: Send + 'static {
+    fn attach(&mut self, sink: TraceEventViewModelSink) -> crate::Result<()>;
+    fn detach(&mut self) -> crate::Result<()>;
+}
+
+struct TraceEventViewModelDispatch<T: TraceEventViewModel> { model: T }
+
+impl<T: TraceEventViewModel> crate::view_model::DynamicViewModel for TraceEventViewModelDispatch<T> {
+    fn attach(&mut self, sink: crate::view_model::ViewModelSink) -> crate::Result<()> { self.model.attach(TraceEventViewModelSink(sink)) }
+    fn detach(&mut self) -> crate::Result<()> { self.model.detach() }
+    fn set_string(&mut self, property_id: i32, _value: String) -> crate::Result<()> {
+        Err(crate::Error::InvalidViewModelMember { kind: "property", id: property_id })
+    }
+    fn set_integer(&mut self, property_id: i32, _value: i64) -> crate::Result<()> {
+        Err(crate::Error::InvalidViewModelMember { kind: "property", id: property_id })
+    }
+    fn set_boolean(&mut self, property_id: i32, _value: bool) -> crate::Result<()> {
+        Err(crate::Error::InvalidViewModelMember { kind: "property", id: property_id })
     }
     fn set_double(&mut self, property_id: i32, _value: f64) -> crate::Result<()> {
         Err(crate::Error::InvalidViewModelMember { kind: "property", id: property_id })

@@ -63,6 +63,33 @@ builder remains useful for small tools, tests, and applications that do not
 want AXAML. Future projection growth should be justified by one of these two
 application modes rather than raw API-coverage goals.
 
+## Virtualized tabular data (stage 28)
+
+A model collection may declare optional `table` metadata in
+`view-model.ir.json`. It contains stable column IDs/names, headers, validated
+row-property paths, pixel/star/auto widths, resize/sort flags and alignment,
+plus selection and sort metadata. Schema version 3 validates table columns,
+nested row paths, duplicates, width modes, selection property compatibility,
+and the associated sort command.
+
+The generator emits a `RustTableDescriptor` and a named
+`Create<Collection>TableColumns` factory in the presentation assembly. That
+factory creates `TableViewColumn` header/layout definitions only. Cell bindings
+remain in compiled AXAML, where their CLR types are statically known; the
+descriptor intentionally never turns a path into a reflection binding, so the
+NativeAOT path stays trim-safe. `TableView` itself virtualizes
+`TableViewRow` controls. The sample's `TraceRows` table uses compiled AXAML
+with fixed headers, resizable columns, nested `Event.Source`, severity
+presentation, selected index/key, and header commands.
+
+The 100,000-row CMTrace sample publishes one generation-stamped
+`ReplaceModelSnapshot` batch, yielding exactly one collection Reset. Rust owns
+the sort and retains selection by its `Event.Id` row key before publishing the
+next generation; the managed batch gate rejects an older snapshot. This stage
+does create a managed nested adapter for every snapshot row (and its nested
+event): virtualization bounds controls, **not** data objects. A lazy/range
+data source is deliberately deferred to stage 30.
+
 ## Rust value converters
 
 Rust can also author `IValueConverter` implementations consumed by both
@@ -402,4 +429,3 @@ cached and reported verbatim, so a transport error is never silently downgraded
 to "this host has no batch support". A host that only implements v1/v2 still
 attaches and publishes normally, and only `submit_batch` reports
 `E_NOINTERFACE`.
-

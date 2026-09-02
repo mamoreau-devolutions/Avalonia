@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "enums": [
     {
       "id": 1,
@@ -89,6 +89,30 @@
           "writable": true,
           "nullable": false,
           "initialString": ""
+        },
+        {
+          "id": 9,
+          "name": "SelectedTraceIndex",
+          "kind": "Integer",
+          "writable": true,
+          "nullable": false,
+          "initialInteger": 0
+        },
+        {
+          "id": 10,
+          "name": "SelectedTraceKey",
+          "kind": "String",
+          "writable": true,
+          "nullable": false,
+          "initialString": "trace-000000"
+        },
+        {
+          "id": 11,
+          "name": "TraceSortDirection",
+          "kind": "String",
+          "writable": false,
+          "nullable": false,
+          "initialString": "Ascending"
         }
       ],
       "collections": [
@@ -102,6 +126,76 @@
           "name": "Tasks",
           "elementKind": "Model",
           "elementModelName": "TaskItemViewModel"
+        },
+        {
+          "id": 3,
+          "name": "TraceRows",
+          "elementKind": "Model",
+          "elementModelName": "TraceRowViewModel",
+          "table": {
+            "columns": [
+              {
+                "id": 1,
+                "name": "Timestamp",
+                "header": "Timestamp",
+                "path": "Timestamp",
+                "width": 150,
+                "star": false,
+                "auto": false,
+                "minWidth": 100,
+                "resizable": true,
+                "sortable": true,
+                "horizontalAlignment": "Left"
+              },
+              {
+                "id": 2,
+                "name": "Severity",
+                "header": "Severity",
+                "path": "Severity",
+                "width": 90,
+                "star": false,
+                "auto": false,
+                "minWidth": 70,
+                "resizable": true,
+                "sortable": true,
+                "horizontalAlignment": "Center"
+              },
+              {
+                "id": 3,
+                "name": "Source",
+                "header": "Source",
+                "path": "Event.Source",
+                "width": 120,
+                "star": false,
+                "auto": false,
+                "resizable": true,
+                "sortable": true,
+                "horizontalAlignment": "Left"
+              },
+              {
+                "id": 4,
+                "name": "Message",
+                "header": "Message",
+                "path": "Message",
+                "star": true,
+                "auto": false,
+                "minWidth": 260,
+                "resizable": true,
+                "sortable": false,
+                "horizontalAlignment": "Left"
+              }
+            ],
+            "selection": {
+              "selectedIndexProperty": "SelectedTraceIndex",
+              "selectedKeyProperty": "SelectedTraceKey",
+              "rowKeyPath": "Event.Id"
+            },
+            "sort": {
+              "command": "SortTraceRows",
+              "column": "Timestamp",
+              "directionProperty": "TraceSortDirection"
+            }
+          }
         }
       ],
       "commands": [
@@ -151,6 +245,11 @@
           "id": 9,
           "name": "ClearTasks",
           "isAsync": false
+        },
+        {
+          "id": 10,
+          "name": "SortTraceRows",
+          "isAsync": false
         }
       ]
     },
@@ -198,6 +297,72 @@
           "kind": "Boolean",
           "writable": true,
           "nullable": false
+        }
+      ],
+      "collections": [],
+      "commands": []
+    },
+    {
+      "id": 4,
+      "name": "TraceRowViewModel",
+      "managedNamespace": "Avalonia.Rust.Sample.Generated",
+      "properties": [
+        {
+          "id": 1,
+          "name": "Timestamp",
+          "kind": "String",
+          "writable": false,
+          "nullable": false,
+          "initialString": ""
+        },
+        {
+          "id": 2,
+          "name": "Severity",
+          "kind": "String",
+          "writable": false,
+          "nullable": false,
+          "initialString": ""
+        },
+        {
+          "id": 3,
+          "name": "Message",
+          "kind": "String",
+          "writable": false,
+          "nullable": false,
+          "initialString": ""
+        },
+        {
+          "id": 4,
+          "name": "Event",
+          "kind": "Model",
+          "writable": false,
+          "nullable": true,
+          "modelName": "TraceEventViewModel"
+        }
+      ],
+      "collections": [],
+      "commands": []
+    },
+    {
+      "id": 5,
+      "name": "TraceEventViewModel",
+      "managedNamespace": "Avalonia.Rust.Sample.Generated",
+      "properties": [
+        {
+          "id": 1,
+          "name": "Id",
+          "kind": "String",
+          "writable": false,
+          "nullable": false,
+          "initialString": ""
+        },
+        {
+          "id": 2,
+          "name": "Source",
+          "kind": "String",
+          "writable": false,
+          "nullable": false,
+          "initialString": ""
         }
       ],
       "collections": [],

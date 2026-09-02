@@ -55,6 +55,13 @@ if [[ -n "$validate_template" ]]; then
     template_consumer="$script_dir/target/template-validation"
     rm -rf "$template_consumer"
     "$script_dir/new-app.sh" template_validation "$template_consumer" "$repository_root"
+    dotnet run --project "$repository_root/src/Avalonia.ViewModelProjection.Tool" -c "$configuration" -- \
+        "$template_consumer/view-model.ir.json" \
+        "$template_consumer/managed/Generated" \
+        "$template_consumer/generated" \
+        "$template_consumer/generated/generated_view_models.rs" \
+        "$template_consumer/generated/view-model.contract.md" \
+        --external-rust
     cargo check --manifest-path "$template_consumer/Cargo.toml"
     rm -rf "$template_consumer"
 fi

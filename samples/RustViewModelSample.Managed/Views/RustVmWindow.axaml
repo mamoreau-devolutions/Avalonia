@@ -7,7 +7,7 @@
         x:DataType="vm:SampleViewModelAdapter"
         Title="Rust VM + AXAML"
         Width="560"
-        Height="760">
+        Height="900">
   <Window.Resources>
     <!--
       Deferred realization: this DataTemplate resource is only built by a
@@ -87,6 +87,54 @@
         <Button Content="Clear" Command="{Binding ClearTasksCommand}" />
       </StackPanel>
       <ListBox ItemsSource="{Binding Tasks}" ItemTemplate="{StaticResource TaskTemplate}" Height="120" />
+
+      <TextBlock Text="CMTrace snapshot (100,000 Rust-owned rows)" FontWeight="Bold" />
+      <TextBlock Text="{Binding TraceSortDirection, StringFormat='Sort: {0}'}" />
+      <!-- TableView virtualizes TableViewRow containers.  Its cells use compiled
+           AXAML bindings; the generated descriptor supplies the matching stable
+           table contract without manufacturing reflection bindings. -->
+      <TableView x:Name="TraceTable"
+                 ItemsSource="{Binding TraceRows}"
+                 SelectedIndex="{Binding SelectedTraceIndex, Mode=TwoWay}"
+                 Height="300"
+                 CanUserResizeColumns="True">
+        <TableView.Columns>
+          <TableViewColumn Width="150" CanUserResize="True" Binding="{Binding Timestamp}">
+            <TableViewColumn.Header>
+              <Button x:DataType="vm:SampleViewModelAdapter"
+                      Command="{Binding SortTraceRowsCommand}"
+                      CommandParameter="Timestamp:Descending"
+                      Content="Timestamp" />
+            </TableViewColumn.Header>
+          </TableViewColumn>
+          <TableViewColumn Width="90" CanUserResize="True"
+                           HorizontalContentAlignment="Center">
+            <TableViewColumn.Header>
+              <Button x:DataType="vm:SampleViewModelAdapter"
+                      Command="{Binding SortTraceRowsCommand}"
+                      CommandParameter="Severity:Ascending"
+                      Content="Severity" />
+            </TableViewColumn.Header>
+            <TableViewColumn.CellTemplate>
+              <DataTemplate x:DataType="vm:TraceRowViewModelAdapter">
+                <Border Background="#33D97706" CornerRadius="3" Padding="4,1">
+                  <TextBlock Text="{Binding Severity}" FontWeight="Bold" Foreground="#B45309" />
+                </Border>
+              </DataTemplate>
+            </TableViewColumn.CellTemplate>
+          </TableViewColumn>
+          <TableViewColumn Width="120" CanUserResize="True" Binding="{Binding Event.Source}">
+            <TableViewColumn.Header>
+              <Button x:DataType="vm:SampleViewModelAdapter"
+                      Command="{Binding SortTraceRowsCommand}"
+                      CommandParameter="Source:Ascending"
+                      Content="Source" />
+            </TableViewColumn.Header>
+          </TableViewColumn>
+          <TableViewColumn Width="*" CanUserResize="True" Binding="{Binding Message}" />
+        </TableView.Columns>
+      </TableView>
+      <TextBlock Text="{Binding SelectedTraceKey, StringFormat='Selected row: {0}'}" />
     </StackPanel>
   </ScrollViewer>
 </Window>

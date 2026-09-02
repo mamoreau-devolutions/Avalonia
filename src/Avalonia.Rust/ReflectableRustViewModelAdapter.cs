@@ -63,24 +63,91 @@ public sealed class RustViewModelCollectionDescriptor(
     int id,
     string name,
     RustViewModelValueKind elementKind,
-    RustViewModelDescriptor? elementDescriptor = null)
+    RustViewModelDescriptor? elementDescriptor = null,
+    RustTableDescriptor? table = null)
 {
     public int Id { get; } = id;
     public string Name { get; } = name;
     public RustViewModelValueKind ElementKind { get; } = elementKind;
     public RustViewModelDescriptor? ElementDescriptor { get; } = elementDescriptor;
+    public RustTableDescriptor? Table { get; } = table;
+
+    public RustViewModelCollectionDescriptor(
+        int id,
+        string name,
+        RustViewModelValueKind elementKind,
+        RustViewModelDescriptor? elementDescriptor)
+        : this(id, name, elementKind, elementDescriptor, null)
+    {
+    }
+}
+
+/// <summary>
+/// Build-time table presentation metadata. Generated presentation assemblies use
+/// path data in compiled AXAML; no reflection binding is created from it.
+/// </summary>
+public sealed class RustTableDescriptor(
+    IReadOnlyList<RustTableColumnDescriptor> columns,
+    RustTableSelectionDescriptor? selection = null,
+    RustTableSortDescriptor? sort = null)
+{
+    public IReadOnlyList<RustTableColumnDescriptor> Columns { get; } = columns;
+    public RustTableSelectionDescriptor? Selection { get; } = selection;
+    public RustTableSortDescriptor? Sort { get; } = sort;
+}
+
+public sealed class RustTableColumnDescriptor(
+    int id, string name, string header, string path, double? width, bool star, bool auto,
+    double? minWidth, double? maxWidth, bool resizable, bool sortable,
+    RustTableHorizontalAlignment horizontalAlignment)
+{
+    public int Id { get; } = id;
+    public string Name { get; } = name;
+    public string Header { get; } = header;
+    public string Path { get; } = path;
+    public double? Width { get; } = width;
+    public bool Star { get; } = star;
+    public bool Auto { get; } = auto;
+    public double? MinWidth { get; } = minWidth;
+    public double? MaxWidth { get; } = maxWidth;
+    public bool Resizable { get; } = resizable;
+    public bool Sortable { get; } = sortable;
+    public RustTableHorizontalAlignment HorizontalAlignment { get; } = horizontalAlignment;
+}
+
+public enum RustTableHorizontalAlignment { Left, Center, Right, Stretch }
+
+public sealed class RustTableSelectionDescriptor(string? selectedIndexProperty, string? selectedKeyProperty, string? rowKeyPath)
+{
+    public string? SelectedIndexProperty { get; } = selectedIndexProperty;
+    public string? SelectedKeyProperty { get; } = selectedKeyProperty;
+    public string? RowKeyPath { get; } = rowKeyPath;
+}
+
+public sealed class RustTableSortDescriptor(string command, string column, string directionProperty)
+{
+    public string Command { get; } = command;
+    public string Column { get; } = column;
+    public string DirectionProperty { get; } = directionProperty;
 }
 
 public sealed class RustViewModelCommandDescriptor(
     int id,
     string name,
     bool isAsync,
-    string? parameterProperty)
+    string? parameterProperty,
+    bool acceptsParameter = false)
 {
     public int Id { get; } = id;
     public string Name { get; } = name;
     public bool IsAsync { get; } = isAsync;
     public string? ParameterProperty { get; } = parameterProperty;
+    public bool AcceptsParameter { get; } = acceptsParameter;
+
+    public RustViewModelCommandDescriptor(int id, string name, bool isAsync, string? parameterProperty)
+        : this(id, name, isAsync, parameterProperty, false)
+    {
+    }
 }
 
 public sealed class RustViewModelDescriptor(
@@ -193,7 +260,7 @@ public sealed partial class ReflectableRustViewModelAdapter :
 
         foreach (var command in descriptor.Commands)
         {
-            var value = new DelegateCommand(() => Execute(command));
+            var value = new DelegateCommand(parameter => Execute(command, parameter));
             _commandsById.Add(command.Id, value);
             _membersByName.Add(
                 command.Name,
@@ -755,10 +822,10 @@ public sealed partial class ReflectableRustViewModelAdapter :
     }
 
 
-    private void Execute(RustViewModelCommandDescriptor command)
+    private void Execute(RustViewModelCommandDescriptor command, object? commandParameter)
     {
         var parameter = command.ParameterProperty is null
-            ? null
+            ? command.AcceptsParameter ? commandParameter as string : null
             : (string?)_membersByName[command.ParameterProperty].GetValue();
         Check(command.IsAsync
             ? _model.BeginAsync(command.Id, parameter)
@@ -920,13 +987,17 @@ public sealed partial class ReflectableRustViewModelAdapter :
         }
     }
 
-    public sealed class DelegateCommand(Action execute) : ICommand, IRustVmBatchCommand
+    public sealed class DelegateCommand(Action<object?> execute) : ICommand, IRustVmBatchCommand
     {
         private bool _canExecute = true;
 
+        public DelegateCommand(Action execute) : this(_ => execute())
+        {
+        }
+
         public event EventHandler? CanExecuteChanged;
         public bool CanExecute(object? parameter) => _canExecute;
-        public void Execute(object? parameter) => execute();
+        public void Execute(object? parameter) => execute(parameter);
 
         public void SetEnabled(bool value)
         {

@@ -139,7 +139,7 @@ public class ViewModelSourceEmitterTests
         Assert.DoesNotContain("RustVmBatchSubmission", csharp, StringComparison.Ordinal);
 
         // Commands expose the notification-free batch surface.
-        Assert.Contains("public sealed class DelegateCommand(Action execute) : ICommand, IRustVmBatchCommand", csharp, StringComparison.Ordinal);
+        Assert.Contains("public sealed class DelegateCommand(Action<object?> execute) : ICommand, IRustVmBatchCommand", csharp, StringComparison.Ordinal);
         Assert.Contains("public bool SetEnabledCore(bool enabled)", csharp, StringComparison.Ordinal);
     }
 
@@ -407,6 +407,59 @@ public class ViewModelSourceEmitterTests
             "fn try_from(value: i64) -> std::result::Result<Self, ()>",
             rust,
             StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Emits_table_metadata_and_parameterized_sort_command_without_reflection_bindings()
+    {
+        var ir = new ViewModelIr
+        {
+            Models =
+            [
+                new()
+                {
+                    Id = 1, Name = "Parent", ManagedNamespace = "Tests",
+                    Properties =
+                    [
+                        new() { Id = 1, Name = "SelectedIndex", Kind = ViewModelValueKind.Integer, Writable = true },
+                        new() { Id = 2, Name = "SelectedKey", Kind = ViewModelValueKind.String, Writable = true },
+                        new() { Id = 3, Name = "Direction", Kind = ViewModelValueKind.String },
+                    ],
+                    Collections =
+                    [
+                        new()
+                        {
+                            Id = 1, Name = "Rows", ElementKind = ViewModelValueKind.Model, ElementModelName = "Row",
+                            Table = new ViewModelTable
+                            {
+                                Columns = [new() { Id = 1, Name = "Message", Header = "Message", Path = "Message", Star = true, Sortable = true }],
+                                Selection = new ViewModelTableSelection { SelectedIndexProperty = "SelectedIndex", SelectedKeyProperty = "SelectedKey", RowKeyPath = "Key" },
+                                Sort = new ViewModelTableSort { Command = "Sort", Column = "Message", DirectionProperty = "Direction" },
+                            },
+                        },
+                    ],
+                    Commands = [new() { Id = 1, Name = "Sort" }],
+                },
+                new()
+                {
+                    Id = 2, Name = "Row", ManagedNamespace = "Tests",
+                    Properties =
+                    [
+                        new() { Id = 1, Name = "Key", Kind = ViewModelValueKind.String },
+                        new() { Id = 2, Name = "Message", Kind = ViewModelValueKind.String },
+                    ],
+                },
+            ],
+        };
+
+        var source = ViewModelSourceEmitter.EmitCSharp(ir)["ParentMetadata.g.cs"];
+        var rust = ViewModelSourceEmitter.EmitRust(ir);
+        Assert.Contains("CreateRowsTableColumns", source, StringComparison.Ordinal);
+        Assert.Contains("new(\"SortCommand\", \"Message\", \"Direction\")", source, StringComparison.Ordinal);
+        Assert.Contains("new global::Avalonia.Controls.GridLength(1D, global::Avalonia.Controls.GridUnitType.Star)", source, StringComparison.Ordinal);
+        Assert.DoesNotContain("new Binding(", source, StringComparison.Ordinal);
+        Assert.Contains("fn sort(&mut self, value: String)", rust, StringComparison.Ordinal);
+        Assert.Contains("self.model.sort(parameter.unwrap_or_default())", rust, StringComparison.Ordinal);
     }
 
     private static ViewModelIr SampleIr() => SampleIr(SampleConverters());

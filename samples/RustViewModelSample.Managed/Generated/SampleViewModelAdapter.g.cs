@@ -33,6 +33,9 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     private global::Avalonia.Rust.Sample.Generated.Priority _priority = (global::Avalonia.Rust.Sample.Generated.Priority)(1L);
     private global::Avalonia.Rust.Sample.Generated.AddressViewModelAdapter? _address = null;
     private string _newTaskTitle = "";
+    private long _selectedTraceIndex = 0L;
+    private string _selectedTraceKey = "trace-000000";
+    private string _traceSortDirection = "Ascending";
 
     /// <summary>Creates an adapter that dispatches and posts through <see cref="Dispatcher.UIThread"/>.</summary>
     public SampleViewModelAdapter(IAvnRustViewModel model) : this(model, null, null) { }
@@ -55,15 +58,16 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         _dispatch = dispatch ?? Dispatch;
         _post = post;
         _batch = new RustVmBatchCoordinator(this, post);
-        IncrementCommand = new DelegateCommand(() => Check(_model.Execute(1, null)));
-        AddCommand = new DelegateCommand(() => Check(_model.Execute(2, NewItem)));
-        SaveCommand = new DelegateCommand(() => Check(_model.BeginAsync(3, null)));
-        ClearNicknameCommand = new DelegateCommand(() => Check(_model.Execute(4, null)));
-        ToggleAddressCommand = new DelegateCommand(() => Check(_model.Execute(5, null)));
-        AddTaskCommand = new DelegateCommand(() => Check(_model.Execute(6, NewTaskTitle)));
-        RemoveFirstTaskCommand = new DelegateCommand(() => Check(_model.Execute(7, null)));
-        ShuffleTasksCommand = new DelegateCommand(() => Check(_model.Execute(8, null)));
-        ClearTasksCommand = new DelegateCommand(() => Check(_model.Execute(9, null)));
+        IncrementCommand = new DelegateCommand(parameter => Check(_model.Execute(1, null)));
+        AddCommand = new DelegateCommand(parameter => Check(_model.Execute(2, NewItem)));
+        SaveCommand = new DelegateCommand(parameter => Check(_model.BeginAsync(3, null)));
+        ClearNicknameCommand = new DelegateCommand(parameter => Check(_model.Execute(4, null)));
+        ToggleAddressCommand = new DelegateCommand(parameter => Check(_model.Execute(5, null)));
+        AddTaskCommand = new DelegateCommand(parameter => Check(_model.Execute(6, NewTaskTitle)));
+        RemoveFirstTaskCommand = new DelegateCommand(parameter => Check(_model.Execute(7, null)));
+        ShuffleTasksCommand = new DelegateCommand(parameter => Check(_model.Execute(8, null)));
+        ClearTasksCommand = new DelegateCommand(parameter => Check(_model.Execute(9, null)));
+        SortTraceRowsCommand = new DelegateCommand(parameter => Check(_model.Execute(10, parameter as string)));
         try
         {
             Check(_model.Attach(this));
@@ -255,8 +259,78 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         }
     }
 
+    public long SelectedTraceIndex
+    {
+        get => _selectedTraceIndex;
+        set
+        {
+            var accepted = value;
+            if (Equals(_selectedTraceIndex, accepted))
+                return;
+            var previous = _selectedTraceIndex;
+            var inbound = _inboundWrites.Begin(9);
+            try
+            {
+                Check(_model.SetInteger(9, accepted));
+                if (!_inboundWrites.WasPublished(inbound))
+                {
+                    _inboundWrites.CommitLocal(9);
+                    SetField(ref _selectedTraceIndex, accepted, nameof(SelectedTraceIndex));
+                }
+            }
+            catch
+            {
+                if (_inboundWrites.ShouldRollback(inbound))
+                {
+                    _inboundWrites.CommitLocal(9);
+                    SetField(ref _selectedTraceIndex, previous, nameof(SelectedTraceIndex));
+                }
+                throw;
+            }
+            finally { _inboundWrites.End(inbound); }
+        }
+    }
+
+    public string SelectedTraceKey
+    {
+        get => _selectedTraceKey;
+        set
+        {
+            var accepted = value ?? "";
+            if (Equals(_selectedTraceKey, accepted))
+                return;
+            var previous = _selectedTraceKey;
+            var inbound = _inboundWrites.Begin(10);
+            try
+            {
+                Check(_model.SetString(10, accepted));
+                if (!_inboundWrites.WasPublished(inbound))
+                {
+                    _inboundWrites.CommitLocal(10);
+                    SetField(ref _selectedTraceKey, accepted, nameof(SelectedTraceKey));
+                }
+            }
+            catch
+            {
+                if (_inboundWrites.ShouldRollback(inbound))
+                {
+                    _inboundWrites.CommitLocal(10);
+                    SetField(ref _selectedTraceKey, previous, nameof(SelectedTraceKey));
+                }
+                throw;
+            }
+            finally { _inboundWrites.End(inbound); }
+        }
+    }
+
+    public string TraceSortDirection
+    {
+        get => _traceSortDirection;
+    }
+
     public BatchObservableCollection<string> Items { get; } = [];
     public BatchObservableCollection<global::Avalonia.Rust.Sample.Generated.TaskItemViewModelAdapter> Tasks { get; } = [];
+    public BatchObservableCollection<global::Avalonia.Rust.Sample.Generated.TraceRowViewModelAdapter> TraceRows { get; } = [];
 
     public DelegateCommand IncrementCommand { get; }
     public DelegateCommand AddCommand { get; }
@@ -267,6 +341,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     public DelegateCommand RemoveFirstTaskCommand { get; }
     public DelegateCommand ShuffleTasksCommand { get; }
     public DelegateCommand ClearTasksCommand { get; }
+    public DelegateCommand SortTraceRowsCommand { get; }
 
     public bool HasErrors => _errors.Count > 0;
 
@@ -285,6 +360,8 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
             4 => Apply(() => { var converted = value ?? ""; if (!Equals(_status, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _status, converted, nameof(Status)); } }),
             5 => Apply(() => { var converted = value; if (!Equals(_nickname, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _nickname, converted, nameof(Nickname)); } }),
             8 => Apply(() => { var converted = value ?? ""; if (!Equals(_newTaskTitle, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _newTaskTitle, converted, nameof(NewTaskTitle)); } }),
+            10 => Apply(() => { var converted = value ?? ""; if (!Equals(_selectedTraceKey, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _selectedTraceKey, converted, nameof(SelectedTraceKey)); } }),
+            11 => Apply(() => { var converted = value ?? ""; if (!Equals(_traceSortDirection, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _traceSortDirection, converted, nameof(TraceSortDirection)); } }),
             _ => unchecked((int)0x80070057),
         };
     }
@@ -296,6 +373,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         {
             2 => Apply(() => { var converted = value; if (!Equals(_count, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _count, converted, nameof(Count)); } }),
             6 => !global::System.Enum.IsDefined(typeof(global::Avalonia.Rust.Sample.Generated.Priority), value) ? unchecked((int)0x80070057) : Apply(() => { var converted = (global::Avalonia.Rust.Sample.Generated.Priority)value; if (!Equals(_priority, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _priority, converted, nameof(Priority)); } }),
+            9 => Apply(() => { var converted = value; if (!Equals(_selectedTraceIndex, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _selectedTraceIndex, converted, nameof(SelectedTraceIndex)); } }),
             _ => unchecked((int)0x80070057),
         };
     }
@@ -343,6 +421,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     public int AddModel(int collectionId, IAvnRustViewModel? model) => collectionId switch
     {
         2 => model is null ? unchecked((int)0x80070057) : Apply(() => Tasks.Add(new global::Avalonia.Rust.Sample.Generated.TaskItemViewModelAdapter(model, _dispatch, _post))),
+        3 => model is null ? unchecked((int)0x80070057) : Apply(() => TraceRows.Add(new global::Avalonia.Rust.Sample.Generated.TraceRowViewModelAdapter(model, _dispatch, _post))),
         _ => unchecked((int)0x80070057),
     };
 
@@ -355,6 +434,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     public int InsertModel(int collectionId, int index, IAvnRustViewModel? model) => collectionId switch
     {
         2 => model is null ? unchecked((int)0x80070057) : Apply(() => { if ((uint)index > (uint)Tasks.Count) return unchecked((int)0x80070057); Tasks.Insert(index, new global::Avalonia.Rust.Sample.Generated.TaskItemViewModelAdapter(model, _dispatch, _post)); return 0; }),
+        3 => model is null ? unchecked((int)0x80070057) : Apply(() => { if ((uint)index > (uint)TraceRows.Count) return unchecked((int)0x80070057); TraceRows.Insert(index, new global::Avalonia.Rust.Sample.Generated.TraceRowViewModelAdapter(model, _dispatch, _post)); return 0; }),
         _ => unchecked((int)0x80070057),
     };
 
@@ -374,6 +454,14 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
             previous.Dispose();
             return 0;
         }),
+        3 => model is null ? unchecked((int)0x80070057) : Apply(() =>
+        {
+            if ((uint)index >= (uint)TraceRows.Count) return unchecked((int)0x80070057);
+            var previous = TraceRows[index];
+            TraceRows[index] = new global::Avalonia.Rust.Sample.Generated.TraceRowViewModelAdapter(model, _dispatch, _post);
+            previous.Dispose();
+            return 0;
+        }),
         _ => unchecked((int)0x80070057),
     };
 
@@ -388,6 +476,14 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
             item.Dispose();
             return 0;
         }),
+        3 => Apply(() =>
+        {
+            if ((uint)index >= (uint)TraceRows.Count) return unchecked((int)0x80070057);
+            var item = TraceRows[index];
+            TraceRows.RemoveAt(index);
+            item.Dispose();
+            return 0;
+        }),
         _ => unchecked((int)0x80070057),
     };
 
@@ -395,6 +491,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     {
         1 => Apply(() => { if ((uint)fromIndex >= (uint)Items.Count || (uint)toIndex >= (uint)Items.Count) return unchecked((int)0x80070057); Items.Move(fromIndex, toIndex); return 0; }),
         2 => Apply(() => { if ((uint)fromIndex >= (uint)Tasks.Count || (uint)toIndex >= (uint)Tasks.Count) return unchecked((int)0x80070057); Tasks.Move(fromIndex, toIndex); return 0; }),
+        3 => Apply(() => { if ((uint)fromIndex >= (uint)TraceRows.Count || (uint)toIndex >= (uint)TraceRows.Count) return unchecked((int)0x80070057); TraceRows.Move(fromIndex, toIndex); return 0; }),
         _ => unchecked((int)0x80070057),
     };
 
@@ -405,6 +502,11 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         {
             foreach (var item in Tasks) item.Dispose();
             Tasks.Clear();
+        }),
+        3 => Apply(() =>
+        {
+            foreach (var item in TraceRows) item.Dispose();
+            TraceRows.Clear();
         }),
         _ => unchecked((int)0x80070057),
     };
@@ -420,6 +522,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         7 => Apply(() => RemoveFirstTaskCommand.SetEnabled(enabled != 0)),
         8 => Apply(() => ShuffleTasksCommand.SetEnabled(enabled != 0)),
         9 => Apply(() => ClearTasksCommand.SetEnabled(enabled != 0)),
+        10 => Apply(() => SortTraceRowsCommand.SetEnabled(enabled != 0)),
         _ => unchecked((int)0x80070057),
     };
 
@@ -433,6 +536,9 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         6 => Apply(() => SetError(nameof(Priority), message)),
         7 => Apply(() => SetError(nameof(Address), message)),
         8 => Apply(() => SetError(nameof(NewTaskTitle), message)),
+        9 => Apply(() => SetError(nameof(SelectedTraceIndex), message)),
+        10 => Apply(() => SetError(nameof(SelectedTraceKey), message)),
+        11 => Apply(() => SetError(nameof(TraceSortDirection), message)),
         _ => unchecked((int)0x80070057),
     };
 
@@ -459,6 +565,15 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
             Tasks.ReplaceSnapshot(staged);
             foreach (var value in previous) TryDispose(value);
         }),
+        3 => Apply(() =>
+        {
+            var staged = new List<global::Avalonia.Rust.Sample.Generated.TraceRowViewModelAdapter>();
+            try { foreach (var value in values) staged.Add(new global::Avalonia.Rust.Sample.Generated.TraceRowViewModelAdapter(value, _dispatch, _post)); }
+            catch { foreach (var value in staged) TryDispose(value); throw; }
+            var previous = TraceRows.ToArray();
+            TraceRows.ReplaceSnapshot(staged);
+            foreach (var value in previous) TryDispose(value);
+        }),
         _ => unchecked((int)0x80070057),
     };
 
@@ -474,6 +589,9 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
             6 => new RustVmBatchProperty(nameof(Priority), RustVmValueWireKind.Integer, false, true),
             7 => new RustVmBatchProperty(nameof(Address), RustVmValueWireKind.Model, true, false),
             8 => new RustVmBatchProperty(nameof(NewTaskTitle), RustVmValueWireKind.String, false, false),
+            9 => new RustVmBatchProperty(nameof(SelectedTraceIndex), RustVmValueWireKind.Integer, false, false),
+            10 => new RustVmBatchProperty(nameof(SelectedTraceKey), RustVmValueWireKind.String, false, false),
+            11 => new RustVmBatchProperty(nameof(TraceSortDirection), RustVmValueWireKind.String, false, false),
             _ => default,
         };
         return property.Name is not null;
@@ -485,6 +603,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         {
             1 => new RustVmBatchCollectionInfo(nameof(Items), RustVmValueWireKind.String, Items),
             2 => new RustVmBatchCollectionInfo(nameof(Tasks), RustVmValueWireKind.Model, Tasks),
+            3 => new RustVmBatchCollectionInfo(nameof(TraceRows), RustVmValueWireKind.Model, TraceRows),
             _ => default,
         };
         return collection.Items is not null;
@@ -503,6 +622,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
             7 => RemoveFirstTaskCommand,
             8 => ShuffleTasksCommand,
             9 => ClearTasksCommand,
+            10 => SortTraceRowsCommand,
             _ => null!,
         };
         return command is not null;
@@ -523,6 +643,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     IDisposable IRustVmBatchTarget.CreateNestedElement(int collectionId, IAvnRustViewModel model) => collectionId switch
     {
         2 => new global::Avalonia.Rust.Sample.Generated.TaskItemViewModelAdapter(model, _dispatch, _post),
+        3 => new global::Avalonia.Rust.Sample.Generated.TraceRowViewModelAdapter(model, _dispatch, _post),
         _ => throw new ArgumentOutOfRangeException(nameof(collectionId)),
     };
 
@@ -588,6 +709,27 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
                 _newTaskTitle = next;
                 return true;
             }
+            case 9:
+            {
+                var next = value.Integer;
+                if (Equals(_selectedTraceIndex, next)) return false;
+                _selectedTraceIndex = next;
+                return true;
+            }
+            case 10:
+            {
+                var next = value.Text ?? "";
+                if (Equals(_selectedTraceKey, next)) return false;
+                _selectedTraceKey = next;
+                return true;
+            }
+            case 11:
+            {
+                var next = value.Text ?? "";
+                if (Equals(_traceSortDirection, next)) return false;
+                _traceSortDirection = next;
+                return true;
+            }
             default: return false;
         }
     }
@@ -630,6 +772,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     {
         TryDispose(_address);
         foreach (var item in Tasks) TryDispose(item);
+        foreach (var item in TraceRows) TryDispose(item);
     }
 
     private static void TryDispose(IDisposable? value)
@@ -685,13 +828,15 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
     }
 
-    public sealed class DelegateCommand(Action execute) : ICommand, IRustVmBatchCommand
+    public sealed class DelegateCommand(Action<object?> execute) : ICommand, IRustVmBatchCommand
     {
         private bool _canExecute = true;
 
+        public DelegateCommand(Action execute) : this(_ => execute()) { }
+
         public event EventHandler? CanExecuteChanged;
         public bool CanExecute(object? parameter) => _canExecute;
-        public void Execute(object? parameter) => execute();
+        public void Execute(object? parameter) => execute(parameter);
 
         public void SetEnabled(bool value)
         {

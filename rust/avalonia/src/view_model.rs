@@ -396,8 +396,7 @@ impl ViewModelSink {
     /// use generated named batch builders rather than per-item methods.
     pub fn submit_batch(&self, batch: ViewModelBatch) -> Result<BatchCompletion> {
         let (completion, callback) = BatchCompletion::channel();
-        self.submit(batch, move |outcome, error| callback(outcome, error))
-            .map(|()| completion)
+        self.submit(batch, callback).map(|()| completion)
     }
 
     /// Same as [`ViewModelSink::submit_batch`], with a callback invoked after the

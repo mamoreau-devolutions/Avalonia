@@ -17,7 +17,7 @@ using Avalonia.Threading;
 namespace Avalonia.Rust.Sample.Generated;
 
 [GeneratedComClass]
-public sealed partial class AddressViewModelAdapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, IRustVmBatchTarget, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable
+public sealed partial class TraceRowViewModelAdapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, IRustVmBatchTarget, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable
 {
     private readonly IAvnRustViewModel _model;
     private readonly Action<Action> _dispatch;
@@ -25,25 +25,27 @@ public sealed partial class AddressViewModelAdapter : IAvnRustVmSink, IAvnRustVm
     private readonly RustVmBatchCoordinator _batch;
     private readonly Dictionary<string, string> _errors = new(StringComparer.Ordinal);
     private readonly RustVmInboundWriteTracker _inboundWrites = new();
-    private string _street = "";
-    private string _city = "";
+    private string _timestamp = "";
+    private string _severity = "";
+    private string _message = "";
+    private global::Avalonia.Rust.Sample.Generated.TraceEventViewModelAdapter? _event = null;
 
     /// <summary>Creates an adapter that dispatches and posts through <see cref="Dispatcher.UIThread"/>.</summary>
-    public AddressViewModelAdapter(IAvnRustViewModel model) : this(model, null, null) { }
+    public TraceRowViewModelAdapter(IAvnRustViewModel model) : this(model, null, null) { }
 
     /// <summary>
     /// Creates an adapter with a custom synchronous dispatch for the legacy v1/v2
     /// sink path. Kept as a distinct CLR signature (not an optional parameter) so
     /// already-compiled callers keep binding to it.
     /// </summary>
-    public AddressViewModelAdapter(IAvnRustViewModel model, Action<Action>? dispatch) : this(model, dispatch, null) { }
+    public TraceRowViewModelAdapter(IAvnRustViewModel model, Action<Action>? dispatch) : this(model, dispatch, null) { }
 
     /// <summary>
     /// Creates an adapter with a custom synchronous <paramref name="dispatch"/> for the
     /// legacy v1/v2 sink path and a custom nonblocking <paramref name="post"/> for
     /// batch submission.
     /// </summary>
-    public AddressViewModelAdapter(IAvnRustViewModel model, Action<Action>? dispatch, Action<Action>? post)
+    public TraceRowViewModelAdapter(IAvnRustViewModel model, Action<Action>? dispatch, Action<Action>? post)
     {
         _model = model;
         _dispatch = dispatch ?? Dispatch;
@@ -65,68 +67,24 @@ public sealed partial class AddressViewModelAdapter : IAvnRustVmSink, IAvnRustVm
     public event PropertyChangedEventHandler? PropertyChanged;
     public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
-    public string Street
+    public string Timestamp
     {
-        get => _street;
-        set
-        {
-            var accepted = value ?? "";
-            if (Equals(_street, accepted))
-                return;
-            var previous = _street;
-            var inbound = _inboundWrites.Begin(1);
-            try
-            {
-                Check(_model.SetString(1, accepted));
-                if (!_inboundWrites.WasPublished(inbound))
-                {
-                    _inboundWrites.CommitLocal(1);
-                    SetField(ref _street, accepted, nameof(Street));
-                }
-            }
-            catch
-            {
-                if (_inboundWrites.ShouldRollback(inbound))
-                {
-                    _inboundWrites.CommitLocal(1);
-                    SetField(ref _street, previous, nameof(Street));
-                }
-                throw;
-            }
-            finally { _inboundWrites.End(inbound); }
-        }
+        get => _timestamp;
     }
 
-    public string City
+    public string Severity
     {
-        get => _city;
-        set
-        {
-            var accepted = value ?? "";
-            if (Equals(_city, accepted))
-                return;
-            var previous = _city;
-            var inbound = _inboundWrites.Begin(2);
-            try
-            {
-                Check(_model.SetString(2, accepted));
-                if (!_inboundWrites.WasPublished(inbound))
-                {
-                    _inboundWrites.CommitLocal(2);
-                    SetField(ref _city, accepted, nameof(City));
-                }
-            }
-            catch
-            {
-                if (_inboundWrites.ShouldRollback(inbound))
-                {
-                    _inboundWrites.CommitLocal(2);
-                    SetField(ref _city, previous, nameof(City));
-                }
-                throw;
-            }
-            finally { _inboundWrites.End(inbound); }
-        }
+        get => _severity;
+    }
+
+    public string Message
+    {
+        get => _message;
+    }
+
+    public global::Avalonia.Rust.Sample.Generated.TraceEventViewModelAdapter? Event
+    {
+        get => _event;
     }
 
 
@@ -142,8 +100,9 @@ public sealed partial class AddressViewModelAdapter : IAvnRustVmSink, IAvnRustVm
         var inbound = _inboundWrites.MarkPublication(propertyId);
         return propertyId switch
         {
-            1 => Apply(() => { var converted = value ?? ""; if (!Equals(_street, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _street, converted, nameof(Street)); } }),
-            2 => Apply(() => { var converted = value ?? ""; if (!Equals(_city, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _city, converted, nameof(City)); } }),
+            1 => Apply(() => { var converted = value ?? ""; if (!Equals(_timestamp, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _timestamp, converted, nameof(Timestamp)); } }),
+            2 => Apply(() => { var converted = value ?? ""; if (!Equals(_severity, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _severity, converted, nameof(Severity)); } }),
+            3 => Apply(() => { var converted = value ?? ""; if (!Equals(_message, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _message, converted, nameof(Message)); } }),
             _ => unchecked((int)0x80070057),
         };
     }
@@ -186,6 +145,13 @@ public sealed partial class AddressViewModelAdapter : IAvnRustVmSink, IAvnRustVm
 
     public int SetModel(int propertyId, IAvnRustViewModel? model) => propertyId switch
     {
+        4 => Apply(() =>
+        {
+            var previous = _event;
+            _event = model is null ? null : new global::Avalonia.Rust.Sample.Generated.TraceEventViewModelAdapter(model, _dispatch, _post);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Event)));
+            previous?.Dispose();
+        }),
         _ => unchecked((int)0x80070057),
     };
 
@@ -236,8 +202,10 @@ public sealed partial class AddressViewModelAdapter : IAvnRustVmSink, IAvnRustVm
 
     public int SetPropertyError(int propertyId, string? message) => propertyId switch
     {
-        1 => Apply(() => SetError(nameof(Street), message)),
-        2 => Apply(() => SetError(nameof(City), message)),
+        1 => Apply(() => SetError(nameof(Timestamp), message)),
+        2 => Apply(() => SetError(nameof(Severity), message)),
+        3 => Apply(() => SetError(nameof(Message), message)),
+        4 => Apply(() => SetError(nameof(Event), message)),
         _ => unchecked((int)0x80070057),
     };
 
@@ -260,8 +228,10 @@ public sealed partial class AddressViewModelAdapter : IAvnRustVmSink, IAvnRustVm
     {
         property = propertyId switch
         {
-            1 => new RustVmBatchProperty(nameof(Street), RustVmValueWireKind.String, false, false),
-            2 => new RustVmBatchProperty(nameof(City), RustVmValueWireKind.String, false, false),
+            1 => new RustVmBatchProperty(nameof(Timestamp), RustVmValueWireKind.String, false, false),
+            2 => new RustVmBatchProperty(nameof(Severity), RustVmValueWireKind.String, false, false),
+            3 => new RustVmBatchProperty(nameof(Message), RustVmValueWireKind.String, false, false),
+            4 => new RustVmBatchProperty(nameof(Event), RustVmValueWireKind.Model, true, false),
             _ => default,
         };
         return property.Name is not null;
@@ -292,6 +262,7 @@ public sealed partial class AddressViewModelAdapter : IAvnRustVmSink, IAvnRustVm
 
     IDisposable IRustVmBatchTarget.CreateNestedProperty(int propertyId, IAvnRustViewModel model) => propertyId switch
     {
+        4 => new global::Avalonia.Rust.Sample.Generated.TraceEventViewModelAdapter(model, _dispatch, _post),
         _ => throw new ArgumentOutOfRangeException(nameof(propertyId)),
     };
 
@@ -308,15 +279,30 @@ public sealed partial class AddressViewModelAdapter : IAvnRustVmSink, IAvnRustVm
             case 1:
             {
                 var next = value.Text ?? "";
-                if (Equals(_street, next)) return false;
-                _street = next;
+                if (Equals(_timestamp, next)) return false;
+                _timestamp = next;
                 return true;
             }
             case 2:
             {
                 var next = value.Text ?? "";
-                if (Equals(_city, next)) return false;
-                _city = next;
+                if (Equals(_severity, next)) return false;
+                _severity = next;
+                return true;
+            }
+            case 3:
+            {
+                var next = value.Text ?? "";
+                if (Equals(_message, next)) return false;
+                _message = next;
+                return true;
+            }
+            case 4:
+            {
+                var next = (global::Avalonia.Rust.Sample.Generated.TraceEventViewModelAdapter?)value.Model;
+                if (Equals(_event, next)) return false;
+                replaced = _event;
+                _event = next;
                 return true;
             }
             default: return false;
@@ -359,6 +345,7 @@ public sealed partial class AddressViewModelAdapter : IAvnRustVmSink, IAvnRustVm
 
     private void DisposeNestedAdapters()
     {
+        TryDispose(_event);
     }
 
     private static void TryDispose(IDisposable? value)

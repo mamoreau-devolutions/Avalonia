@@ -16,10 +16,10 @@ public class ViewModelIrTests
         var ir = ViewModelIr.FromJson(File.ReadAllText(path));
 
         Assert.Equal(ViewModelIr.CurrentVersion, ir.Version);
-        Assert.Equal(3, ir.Models.Count);
+        Assert.Equal(5, ir.Models.Count);
         var model = ir.Models.Single(candidate => candidate.Name == "SampleViewModel");
-        Assert.Equal(8, model.Properties.Count);
-        Assert.Equal(9, model.Commands.Count);
+        Assert.Equal(11, model.Properties.Count);
+        Assert.Equal(10, model.Commands.Count);
         Assert.True(model.Commands.Single(command => command.Name == "Save").IsAsync);
         var enumDefinition = Assert.Single(ir.Enums);
         Assert.Equal("Priority", enumDefinition.Name);
@@ -27,6 +27,47 @@ public class ViewModelIrTests
         Assert.Equal(
             Normalize(File.ReadAllText(path)),
             Normalize(ir.ToJson()));
+    }
+
+    [Fact]
+    public void Table_metadata_validates_nested_paths_selection_and_sort_contract()
+    {
+        var ir = ViewModelIr.FromJson(File.ReadAllText(Path.Combine(FindRepositoryRoot(), "rust", "view-model.ir.json")));
+        var table = ir.Models.Single(model => model.Name == "SampleViewModel")
+            .Collections.Single(collection => collection.Name == "TraceRows").Table!;
+
+        Assert.Equal(4, table.Columns.Count);
+        Assert.Equal("Event.Source", table.Columns.Single(column => column.Name == "Source").Path);
+        Assert.Equal("SelectedTraceIndex", table.Selection!.SelectedIndexProperty);
+        Assert.Equal("SortTraceRows", table.Sort!.Command);
+    }
+
+    [Fact]
+    public void Table_metadata_rejects_unknown_row_property_path()
+    {
+        var ir = new ViewModelIr
+        {
+            Models =
+            [
+                new() { Id = 1, Name = "Parent", ManagedNamespace = "Tests", Collections = [new()
+                {
+                    Id = 1, Name = "Rows", ElementKind = ViewModelValueKind.Model, ElementModelName = "Row",
+                    Table = new ViewModelTable { Columns = [new() { Id = 1, Name = "Value", Header = "Value", Path = "Missing", Width = 10 }] },
+                }] },
+                new() { Id = 2, Name = "Row", ManagedNamespace = "Tests" },
+            ],
+        };
+
+        Assert.Contains("unknown property", Assert.Throws<InvalidOperationException>(() => ir.Validate()).Message);
+    }
+
+    [Fact]
+    public void Version_two_schema_without_table_metadata_remains_accepted()
+    {
+        var ir = CreateModel();
+        ir = new ViewModelIr { Version = 2, Models = ir.Models };
+
+        ir.Validate();
     }
 
     [Fact]

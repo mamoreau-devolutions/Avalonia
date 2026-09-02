@@ -1,6 +1,6 @@
 # Generated Rust view-model contract
 
-Schema version: `2`
+Schema version: `3`
 
 ## Enums
 
@@ -20,8 +20,12 @@ Schema version: `2`
 | Property | 6 | `Priority` | Enum `Priority` | Rust and managed |
 | Property | 7 | `Address` | Model `AddressViewModel`, nullable | Rust to managed |
 | Property | 8 | `NewTaskTitle` | `String` | Rust and managed |
+| Property | 9 | `SelectedTraceIndex` | `Integer` | Rust and managed |
+| Property | 10 | `SelectedTraceKey` | `String` | Rust and managed |
+| Property | 11 | `TraceSortDirection` | `String` | Rust to managed |
 | Collection | 1 | `Items` | `String` | Rust to managed |
 | Collection | 2 | `Tasks` | Model `TaskItemViewModel` | Rust to managed |
+| Collection | 3 | `TraceRows` | Model `TraceRowViewModel` | Rust to managed |
 | Command | 1 | `Increment` | None | Managed to Rust |
 | Command | 2 | `Add` | `NewItem` | Managed to Rust |
 | Async command | 3 | `Save` | None | Managed to Rust |
@@ -31,6 +35,18 @@ Schema version: `2`
 | Command | 7 | `RemoveFirstTask` | None | Managed to Rust |
 | Command | 8 | `ShuffleTasks` | None | Managed to Rust |
 | Command | 9 | `ClearTasks` | None | Managed to Rust |
+| Command | 10 | `SortTraceRows` | None | Managed to Rust |
+
+### Table `TraceRows`
+
+| ID | Name | Header | Row path | Width | Resize | Sort | Alignment |
+| ---: | --- | --- | --- | --- | --- | --- | --- |
+| 1 | `Timestamp` | Timestamp | `Timestamp` | 150 | Yes | Yes | Left |
+| 2 | `Severity` | Severity | `Severity` | 90 | Yes | Yes | Center |
+| 3 | `Source` | Source | `Event.Source` | 120 | Yes | Yes | Left |
+| 4 | `Message` | Message | `Message` | * | Yes | No | Left |
+Selection: index `SelectedTraceIndex`, key `SelectedTraceKey`, row key `Event.Id`.
+Sort: `SortTraceRows` command, initial column `Timestamp`, direction property `TraceSortDirection`.
 
 ## Model `AddressViewModel` (`2`)
 
@@ -45,6 +61,22 @@ Schema version: `2`
 | --- | ---: | --- | --- | --- |
 | Property | 1 | `Title` | `String` | Rust to managed |
 | Property | 2 | `Done` | `Boolean` | Rust and managed |
+
+## Model `TraceRowViewModel` (`4`)
+
+| Kind | ID | Name | Type | Direction |
+| --- | ---: | --- | --- | --- |
+| Property | 1 | `Timestamp` | `String` | Rust to managed |
+| Property | 2 | `Severity` | `String` | Rust to managed |
+| Property | 3 | `Message` | `String` | Rust to managed |
+| Property | 4 | `Event` | Model `TraceEventViewModel`, nullable | Rust to managed |
+
+## Model `TraceEventViewModel` (`5`)
+
+| Kind | ID | Name | Type | Direction |
+| --- | ---: | --- | --- | --- |
+| Property | 1 | `Id` | `String` | Rust to managed |
+| Property | 2 | `Source` | `String` | Rust to managed |
 
 ## Value converters
 

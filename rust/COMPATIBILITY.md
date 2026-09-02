@@ -13,6 +13,9 @@ outputs in the same change. Additive, optional schema fields require a schema
 version bump and readers that reject unsupported future versions clearly.
 Removing or changing the meaning, type, ordering, or requiredness of an
 existing field is breaking and requires a coordinated major release.
+Version 3 adds optional table metadata only. It reuses the existing
+collection/property/command transport: compiled AXAML owns cell bindings and
+the generated table descriptor contains no runtime reflection path.
 
 Consumer application manifests are independently versioned by
 `consumer-app-manifest.schema.json`; version 1 is validated before any build

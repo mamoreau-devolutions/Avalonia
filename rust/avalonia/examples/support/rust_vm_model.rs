@@ -1,11 +1,21 @@
 use avalonia::{
     AddressViewModel, AddressViewModelSink, Priority, SampleViewModel, SampleViewModelSink,
-    TaskItemViewModel, TaskItemViewModelSink, ValueConverters,
+    TaskItemViewModel, TaskItemViewModelSink, TraceEventViewModel, TraceEventViewModelSink,
+    TraceRowViewModel, TraceRowViewModelSink, ValueConverters,
 };
 use std::sync::atomic::{AtomicI64, Ordering};
 use std::time::Duration;
 
-static SAVE_GENERATION: AtomicI64 = AtomicI64::new(0);
+static NEXT_GENERATION: AtomicI64 = AtomicI64::new(0);
+
+#[derive(Clone)]
+struct TraceRecord {
+    id: String,
+    timestamp: String,
+    severity: String,
+    source: String,
+    message: String,
+}
 
 pub struct Model {
     sink: Option<SampleViewModelSink>,
@@ -18,6 +28,10 @@ pub struct Model {
     address_set: bool,
     new_task_title: String,
     task_count: usize,
+    trace_rows: Vec<TraceRecord>,
+    selected_trace_index: i64,
+    selected_trace_key: String,
+    trace_sort_direction: String,
 }
 
 /// Formats `Count` the way a real Rust application would: purely, with no
@@ -128,6 +142,23 @@ impl Model {
             address_set: false,
             new_task_title: String::new(),
             task_count: 0,
+            trace_rows: (0..100_000)
+                .map(|index| TraceRecord {
+                    id: format!("trace-{index:06}"),
+                    timestamp: format!(
+                        "2026-09-02T12:{:02}:{:02}.{:03}",
+                        (index / 60) % 60,
+                        index % 60,
+                        index % 1000
+                    ),
+                    severity: ["Information", "Warning", "Error"][index % 3].to_string(),
+                    source: format!("CMTrace.{}", index % 64),
+                    message: format!("CMTrace event {index}: Rust-owned virtualized table row"),
+                })
+                .collect(),
+            selected_trace_index: 0,
+            selected_trace_key: "trace-000000".to_string(),
+            trace_sort_direction: "Ascending".to_string(),
         }
     }
 
@@ -141,7 +172,72 @@ impl Model {
         sink.set_status("Ready")?;
         sink.set_nickname(self.nickname.as_deref())?;
         sink.set_priority(self.priority)?;
-        sink.set_new_task_title(&self.new_task_title)
+        sink.set_new_task_title(&self.new_task_title)?;
+        sink.set_selected_trace_index(self.selected_trace_index)?;
+        sink.set_selected_trace_key(&self.selected_trace_key)?;
+        sink.set_trace_sort_direction(&self.trace_sort_direction)?;
+        self.publish_trace_snapshot(sink)
+    }
+
+    fn next_generation() -> i64 {
+        NEXT_GENERATION.fetch_add(1, Ordering::Relaxed) + 1
+    }
+
+    fn publish_trace_snapshot(&self, sink: &SampleViewModelSink) -> avalonia::Result<()> {
+        let mut batch = sink.batch(Self::next_generation());
+        batch.replace_trace_rows_snapshot(self.trace_rows.iter().cloned().map(TraceRowModel::from));
+        batch.set_selected_trace_index(self.selected_trace_index);
+        batch.set_selected_trace_key(&self.selected_trace_key);
+        batch.set_trace_sort_direction(&self.trace_sort_direction);
+        sink.submit_batch(batch).map(|_| ())
+    }
+
+    fn update_trace_selection(&mut self, index: i64) {
+        let index = index.clamp(0, self.trace_rows.len().saturating_sub(1) as i64);
+        self.selected_trace_index = index;
+        self.selected_trace_key = self.trace_rows[index as usize].id.clone();
+    }
+}
+
+struct TraceEventModel {
+    id: String,
+    source: String,
+}
+
+impl TraceEventViewModel for TraceEventModel {
+    fn attach(&mut self, sink: TraceEventViewModelSink) -> avalonia::Result<()> {
+        sink.set_id(&self.id)?;
+        sink.set_source(&self.source)
+    }
+
+    fn detach(&mut self) -> avalonia::Result<()> {
+        Ok(())
+    }
+}
+
+struct TraceRowModel {
+    record: TraceRecord,
+}
+
+impl From<TraceRecord> for TraceRowModel {
+    fn from(record: TraceRecord) -> Self {
+        Self { record }
+    }
+}
+
+impl TraceRowViewModel for TraceRowModel {
+    fn attach(&mut self, sink: TraceRowViewModelSink) -> avalonia::Result<()> {
+        sink.set_timestamp(&self.record.timestamp)?;
+        sink.set_severity(&self.record.severity)?;
+        sink.set_message(&self.record.message)?;
+        sink.set_event(Some(TraceEventModel {
+            id: self.record.id.clone(),
+            source: self.record.source.clone(),
+        }))
+    }
+
+    fn detach(&mut self) -> avalonia::Result<()> {
+        Ok(())
     }
 }
 
@@ -237,7 +333,7 @@ impl SampleViewModel for Model {
             // The two UI changes publish together. Repeated clicks/workers can
             // overlap safely: the newest generation wins and completion occurs
             // only after UI application, never on this worker's call stack.
-            let mut batch = sink.batch(SAVE_GENERATION.fetch_add(1, Ordering::Relaxed) + 1);
+            let mut batch = sink.batch(Self::next_generation());
             batch.set_status("Saved by Rust async worker");
             batch.set_save_enabled(true);
             let _completion = sink
@@ -306,6 +402,80 @@ impl SampleViewModel for Model {
         self.task_count = 0;
         if let Some(sink) = &self.sink {
             sink.clear_tasks()?;
+        }
+        Ok(())
+    }
+
+    fn set_selected_trace_index(&mut self, value: i64) -> avalonia::Result<()> {
+        // TableView clears the selected container during a snapshot Reset. The
+        // retained row key remains authoritative, so immediately republish its
+        // post-sort index instead of accepting that transient `-1`.
+        if value < 0 {
+            if let Some(sink) = &self.sink {
+                sink.set_selected_trace_index(self.selected_trace_index)?;
+            }
+            return Ok(());
+        }
+        self.update_trace_selection(value);
+        if let Some(sink) = &self.sink {
+            sink.set_selected_trace_key(&self.selected_trace_key)?;
+        }
+        Ok(())
+    }
+
+    fn set_selected_trace_key(&mut self, value: String) -> avalonia::Result<()> {
+        if let Some(index) = self.trace_rows.iter().position(|row| row.id == value) {
+            self.update_trace_selection(index as i64);
+            if let Some(sink) = &self.sink {
+                sink.set_selected_trace_index(self.selected_trace_index)?;
+            }
+        }
+        Ok(())
+    }
+
+    fn sort_trace_rows(&mut self, value: String) -> avalonia::Result<()> {
+        let (column, direction) =
+            value
+                .split_once(':')
+                .ok_or(avalonia::Error::InvalidViewModelMember {
+                    kind: "sort",
+                    id: 10,
+                })?;
+        let descending = match direction {
+            "Ascending" => false,
+            "Descending" => true,
+            _ => {
+                return Err(avalonia::Error::InvalidViewModelMember {
+                    kind: "sort",
+                    id: 10,
+                })
+            }
+        };
+        let selected = self.selected_trace_key.clone();
+        self.trace_rows.sort_by(|left, right| {
+            let comparison = match column {
+                "Timestamp" => left.timestamp.cmp(&right.timestamp),
+                "Severity" => left.severity.cmp(&right.severity),
+                "Source" => left.source.cmp(&right.source),
+                _ => return left.id.cmp(&right.id),
+            };
+            if descending {
+                comparison.reverse()
+            } else {
+                comparison
+            }
+        });
+        self.trace_sort_direction = direction.to_string();
+        self.selected_trace_index = self
+            .trace_rows
+            .iter()
+            .position(|row| row.id == selected)
+            .unwrap_or(0) as i64;
+        self.selected_trace_key = self.trace_rows[self.selected_trace_index as usize]
+            .id
+            .clone();
+        if let Some(sink) = &self.sink {
+            self.publish_trace_snapshot(sink)?;
         }
         Ok(())
     }

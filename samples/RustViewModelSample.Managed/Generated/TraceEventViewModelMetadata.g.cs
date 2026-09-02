@@ -5,14 +5,14 @@ using Avalonia.Rust;
 
 namespace Avalonia.Rust.Sample.Generated;
 
-public static class TaskItemViewModelMetadata
+public static class TraceEventViewModelMetadata
 {
     public static RustViewModelDescriptor Descriptor { get; } = new(
-        3,
-        "TaskItemViewModel",
+        5,
+        "TraceEventViewModel",
         [
-            new(1, "Title", RustViewModelValueKind.String, false, false, "", null),
-            new(2, "Done", RustViewModelValueKind.Boolean, true, false, false, null),
+            new(1, "Id", RustViewModelValueKind.String, false, false, "", null),
+            new(2, "Source", RustViewModelValueKind.String, false, false, "", null),
         ],
         [
         ],

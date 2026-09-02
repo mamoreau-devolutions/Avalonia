@@ -5,7 +5,7 @@ namespace Avalonia.Projection.Ir;
 
 public sealed class ViewModelIr
 {
-    public const int CurrentVersion = 2;
+    public const int CurrentVersion = 3;
 
     public int Version { get; init; } = CurrentVersion;
     public IReadOnlyList<ViewModelEnumDefinition> Enums { get; init; } = [];
@@ -29,8 +29,10 @@ public sealed class ViewModelIr
 
     public void Validate()
     {
-        if (Version != CurrentVersion)
+        if (Version is not (2 or CurrentVersion))
             throw new InvalidOperationException($"Unsupported view-model IR version {Version}.");
+        if (Version == 2 && Models.Any(model => model.Collections.Any(collection => collection.Table is not null)))
+            throw new InvalidOperationException("View-model IR version 2 does not support table metadata; upgrade to version 3.");
         EnsurePositiveIds(Enums, enumDefinition => enumDefinition.Id, "enum");
         EnsurePositiveIds(Models, model => model.Id, "model");
         EnsurePositiveIds(Views, view => view.Id, "view");
@@ -50,19 +52,19 @@ public sealed class ViewModelIr
 
         foreach (var enumDefinition in Enums)
         {
-            EnsureNotBlank(enumDefinition.Name, "Enum name");
+            EnsureIdentifier(enumDefinition.Name, "Enum name");
             EnsureNotBlank(enumDefinition.ManagedNamespace, $"Managed namespace for enum '{enumDefinition.Name}'");
             if (enumDefinition.Members.Count == 0)
                 throw new InvalidOperationException($"Enum '{enumDefinition.Name}' must declare at least one member.");
             EnsureUnique(enumDefinition.Members, member => member.Name, $"{enumDefinition.Name} member name");
             EnsureUnique(enumDefinition.Members, member => member.Value, $"{enumDefinition.Name} member value");
             foreach (var member in enumDefinition.Members)
-                EnsureNotBlank(member.Name, $"Member name in enum '{enumDefinition.Name}'");
+                EnsureIdentifier(member.Name, $"Member name in enum '{enumDefinition.Name}'");
         }
 
         foreach (var view in Views)
         {
-            EnsureNotBlank(view.Name, "View name");
+            EnsureIdentifier(view.Name, "View name");
             EnsureNotBlank(view.ManagedTypeName, $"Managed type for view '{view.Name}'");
             if (!modelNames.Contains(view.Model))
                 throw new InvalidOperationException(
@@ -77,7 +79,7 @@ public sealed class ViewModelIr
 
         foreach (var converter in Converters)
         {
-            EnsureNotBlank(converter.Name, "Converter name");
+            EnsureIdentifier(converter.Name, "Converter name");
             EnsureNotBlank(converter.ManagedNamespace, $"Managed namespace for converter '{converter.Name}'");
             if (!IsScalarKind(converter.ValueKind))
                 throw new InvalidOperationException(
@@ -92,7 +94,7 @@ public sealed class ViewModelIr
 
         foreach (var model in Models)
         {
-            EnsureNotBlank(model.Name, "Model name");
+            EnsureIdentifier(model.Name, "Model name");
             EnsureNotBlank(model.ManagedNamespace, $"Managed namespace for model '{model.Name}'");
             EnsurePositiveIds(model.Properties, property => property.Id, $"{model.Name} property");
             EnsurePositiveIds(model.Collections, collection => collection.Id, $"{model.Name} collection");
@@ -108,14 +110,14 @@ public sealed class ViewModelIr
                 .ToDictionary(property => property.Name, StringComparer.Ordinal);
             foreach (var property in model.Properties)
             {
-                EnsureNotBlank(property.Name, $"Property name in model '{model.Name}'");
+                EnsureIdentifier(property.Name, $"Property name in model '{model.Name}'");
                 ValidateInitialValue(model, property);
                 ValidateEnumProperty(model, property, enumsByName);
                 ValidateModelProperty(model, property, modelNames);
             }
             foreach (var collection in model.Collections)
             {
-                EnsureNotBlank(collection.Name, $"Collection name in model '{model.Name}'");
+                EnsureIdentifier(collection.Name, $"Collection name in model '{model.Name}'");
                 switch (collection.ElementKind)
                 {
                     case ViewModelValueKind.String:
@@ -132,10 +134,11 @@ public sealed class ViewModelIr
                         throw new InvalidOperationException(
                             $"Collection '{model.Name}.{collection.Name}' must contain strings or nested view models.");
                 }
+                ValidateTable(model, collection, properties, Models);
             }
             foreach (var command in model.Commands)
             {
-                EnsureNotBlank(command.Name, $"Command name in model '{model.Name}'");
+                EnsureIdentifier(command.Name, $"Command name in model '{model.Name}'");
                 if (command.ParameterProperty is null)
                     continue;
                 if (!properties.TryGetValue(command.ParameterProperty, out var property))
@@ -154,6 +157,96 @@ public sealed class ViewModelIr
         }
 
         ValidateAcyclicModelGraph();
+    }
+
+    private static void ValidateTable(
+        ViewModelDefinition owner,
+        ViewModelCollection collection,
+        IReadOnlyDictionary<string, ViewModelProperty> ownerProperties,
+        IReadOnlyList<ViewModelDefinition> models)
+    {
+        var table = collection.Table;
+        if (table is null)
+            return;
+        if (collection.ElementKind != ViewModelValueKind.Model || collection.ElementModelName is null)
+            throw new InvalidOperationException($"Table '{owner.Name}.{collection.Name}' must contain nested view models.");
+        if (table.Columns.Count == 0)
+            throw new InvalidOperationException($"Table '{owner.Name}.{collection.Name}' must declare at least one column.");
+        EnsureUnique(table.Columns, column => column.Id, $"{owner.Name}.{collection.Name} table column ID");
+        EnsureUnique(table.Columns, column => column.Name, $"{owner.Name}.{collection.Name} table column name");
+        var row = models.Single(model => model.Name == collection.ElementModelName);
+        foreach (var column in table.Columns)
+        {
+            if (column.Id <= 0)
+                throw new InvalidOperationException($"Table column '{owner.Name}.{collection.Name}.{column.Name}' ID must be positive.");
+            EnsureIdentifier(column.Name, $"Table column name in '{owner.Name}.{collection.Name}'");
+            EnsureNotBlank(column.Header, $"Header for table column '{owner.Name}.{collection.Name}.{column.Name}'");
+            ValidateRowPath(owner, collection, row, column.Path, models);
+            if (column.Width is { } width && width < 0 ||
+                column.MinWidth is { } min && min < 0 ||
+                column.MaxWidth is { } max && max < 0 ||
+                column.MinWidth is { } minimum && column.MaxWidth is { } maximum && minimum > maximum)
+                throw new InvalidOperationException($"Table column '{owner.Name}.{collection.Name}.{column.Name}' has invalid width limits.");
+            if (column.Width is null && !column.Star && !column.Auto ||
+                column.Width is not null && (column.Star || column.Auto))
+                throw new InvalidOperationException($"Table column '{owner.Name}.{collection.Name}.{column.Name}' must declare exactly one width mode.");
+        }
+        if (table.Selection is { } selection)
+        {
+            ValidateSelectionProperty(selection.SelectedIndexProperty, ViewModelValueKind.Integer, "selectedIndexProperty");
+            ValidateSelectionProperty(selection.SelectedKeyProperty, ViewModelValueKind.String, "selectedKeyProperty");
+            if (selection.SelectedIndexProperty is null && selection.SelectedKeyProperty is null)
+                throw new InvalidOperationException($"Table '{owner.Name}.{collection.Name}' selection must declare an index or key property.");
+            if (selection.RowKeyPath is not null)
+                ValidateRowPath(owner, collection, row, selection.RowKeyPath, models);
+        }
+        if (table.Sort is { } sort)
+        {
+            if (!table.Columns.Any(column => column.Name == sort.Column))
+                throw new InvalidOperationException($"Table '{owner.Name}.{collection.Name}' sort references unknown column '{sort.Column}'.");
+            var command = owner.Commands.SingleOrDefault(candidate => candidate.Name == sort.Command)
+                ?? throw new InvalidOperationException($"Table '{owner.Name}.{collection.Name}' sort references unknown command '{sort.Command}'.");
+            if (command.ParameterProperty is not null)
+                throw new InvalidOperationException($"Table sort command '{owner.Name}.{command.Name}' must not use parameterProperty.");
+            if (!ownerProperties.TryGetValue(sort.DirectionProperty, out var direction) ||
+                direction.Kind != ViewModelValueKind.String || direction.Nullable)
+                throw new InvalidOperationException($"Table '{owner.Name}.{collection.Name}' directionProperty '{sort.DirectionProperty}' must reference a non-nullable String property.");
+        }
+        return;
+
+        void ValidateSelectionProperty(string? name, ViewModelValueKind kind, string field)
+        {
+            if (name is null)
+                return;
+            if (!ownerProperties.TryGetValue(name, out var property) || !property.Writable ||
+                property.Kind != kind || property.Nullable)
+                throw new InvalidOperationException($"Table '{owner.Name}.{collection.Name}' {field} '{name}' must reference a writable non-nullable {kind} property.");
+        }
+    }
+
+    private static void ValidateRowPath(
+        ViewModelDefinition owner, ViewModelCollection collection, ViewModelDefinition row,
+        string path, IReadOnlyList<ViewModelDefinition> models)
+    {
+        EnsureNotBlank(path, $"Row path in table '{owner.Name}.{collection.Name}'");
+        var current = row;
+        var segments = path.Split('.');
+        for (var index = 0; index < segments.Length; index++)
+        {
+            var segment = segments[index];
+            EnsureIdentifier(segment, $"Path segment '{segment}' in table '{owner.Name}.{collection.Name}'");
+            var property = current.Properties.SingleOrDefault(candidate => candidate.Name == segment)
+                ?? throw new InvalidOperationException($"Table '{owner.Name}.{collection.Name}' path '{path}' references unknown property '{segment}' on '{current.Name}'.");
+            if (index == segments.Length - 1)
+            {
+                if (property.Kind == ViewModelValueKind.Model)
+                    throw new InvalidOperationException($"Table '{owner.Name}.{collection.Name}' path '{path}' must end in a scalar property.");
+                return;
+            }
+            if (property.Kind != ViewModelValueKind.Model || property.ModelName is null)
+                throw new InvalidOperationException($"Table '{owner.Name}.{collection.Name}' path '{path}' cannot traverse scalar property '{segment}'.");
+            current = models.Single(model => model.Name == property.ModelName);
+        }
     }
 
     private void ValidateAcyclicModelGraph()
@@ -309,6 +402,13 @@ public sealed class ViewModelIr
             throw new InvalidOperationException($"{description} cannot be empty.");
     }
 
+    private static void EnsureIdentifier(string value, string description)
+    {
+        EnsureNotBlank(value, description);
+        if (!(char.IsLetter(value[0]) || value[0] == '_') || value.Skip(1).Any(character => !char.IsLetterOrDigit(character) && character != '_'))
+            throw new InvalidOperationException($"{description} '{value}' is not a valid identifier.");
+    }
+
     private static void EnsurePositiveIds<T>(
         IEnumerable<T> values,
         Func<T, int> id,
@@ -393,6 +493,48 @@ public sealed class ViewModelCollection
 
     /// <summary>Name of the nested model each element is. Required when <see cref="ElementKind"/> is <see cref="ViewModelValueKind.Model"/>.</summary>
     public string? ElementModelName { get; init; }
+
+    /// <summary>Optional first-class presentation metadata for a virtualized table over this collection.</summary>
+    public ViewModelTable? Table { get; init; }
+}
+
+public sealed class ViewModelTable
+{
+    public IReadOnlyList<ViewModelTableColumn> Columns { get; init; } = [];
+    public ViewModelTableSelection? Selection { get; init; }
+    public ViewModelTableSort? Sort { get; init; }
+}
+
+public sealed class ViewModelTableColumn
+{
+    public required int Id { get; init; }
+    public required string Name { get; init; }
+    public required string Header { get; init; }
+    public required string Path { get; init; }
+    public double? Width { get; init; }
+    public bool Star { get; init; }
+    public bool Auto { get; init; }
+    public double? MinWidth { get; init; }
+    public double? MaxWidth { get; init; }
+    public bool Resizable { get; init; } = true;
+    public bool Sortable { get; init; }
+    public ViewModelTableHorizontalAlignment HorizontalAlignment { get; init; } = ViewModelTableHorizontalAlignment.Left;
+}
+
+public enum ViewModelTableHorizontalAlignment { Left, Center, Right, Stretch }
+
+public sealed class ViewModelTableSelection
+{
+    public string? SelectedIndexProperty { get; init; }
+    public string? SelectedKeyProperty { get; init; }
+    public string? RowKeyPath { get; init; }
+}
+
+public sealed class ViewModelTableSort
+{
+    public required string Command { get; init; }
+    public required string Column { get; init; }
+    public required string DirectionProperty { get; init; }
 }
 
 public sealed class ViewModelCommand

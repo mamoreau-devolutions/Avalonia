@@ -152,6 +152,12 @@ deterministically, and completion is asynchronous. Both the generated and
 reflectable adapters apply a batch through one shared staged transactional
 engine, so a batch either applies whole or leaves state and notifications
 untouched.
+Stage 28 adds optional schema-v3 `TableView` metadata for model collections.
+It emits typed table descriptors and named sort-command APIs, while compiled
+AXAML owns the actual cell bindings. The CMTrace sample atomically publishes
+100,000 nested rows: `TableView` virtualizes viewport controls, although the
+current snapshot ABI still creates managed row adapters for every row. Lazy
+range data is intentionally deferred to stage 30.
 
 ## Start a new application
 

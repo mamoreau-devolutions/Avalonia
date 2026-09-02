@@ -95,6 +95,13 @@ if ($ValidateTemplate)
     $templateConsumer = "$repositoryRoot\rust\target\template-validation"
     Remove-Item $templateConsumer -Recurse -Force -ErrorAction SilentlyContinue
     & "$PSScriptRoot\new-app.ps1" -Name template_validation -Destination $templateConsumer -ProducerRoot $repositoryRoot
+    dotnet run --project "$repositoryRoot\src\Avalonia.ViewModelProjection.Tool" -c $Configuration -- `
+        "$templateConsumer\view-model.ir.json" `
+        "$templateConsumer\managed\Generated" `
+        "$templateConsumer\generated" `
+        "$templateConsumer\generated\generated_view_models.rs" `
+        "$templateConsumer\generated\view-model.contract.md" `
+        --external-rust
     cargo check --manifest-path "$templateConsumer\Cargo.toml"
     if ($LASTEXITCODE -ne 0)
     {

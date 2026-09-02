@@ -387,13 +387,15 @@ public sealed partial class TaskItemViewModelAdapter : IAvnRustVmSink, IAvnRustV
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
     }
 
-    public sealed class DelegateCommand(Action execute) : ICommand, IRustVmBatchCommand
+    public sealed class DelegateCommand(Action<object?> execute) : ICommand, IRustVmBatchCommand
     {
         private bool _canExecute = true;
 
+        public DelegateCommand(Action execute) : this(_ => execute()) { }
+
         public event EventHandler? CanExecuteChanged;
         public bool CanExecute(object? parameter) => _canExecute;
-        public void Execute(object? parameter) => execute();
+        public void Execute(object? parameter) => execute(parameter);
 
         public void SetEnabled(bool value)
         {
