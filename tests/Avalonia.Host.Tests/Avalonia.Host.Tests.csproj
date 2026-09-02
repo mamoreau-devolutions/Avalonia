@@ -10,6 +10,7 @@
     <ProjectReference Include="..\..\src\Avalonia.Host\Avalonia.Host.csproj" />
     <ProjectReference Include="..\..\src\Avalonia.Rust\Avalonia.Rust.csproj" />
     <ProjectReference Include="..\..\samples\RustViewModelSample.Managed\RustViewModelSample.Managed.csproj" />
+    <ProjectReference Include="..\Avalonia.UnitTests\Avalonia.UnitTests.csproj" />
   </ItemGroup>
   <Import Project="..\..\build\UnitTests.NetCore.targets" />
   <Import Project="..\..\build\XUnit.props" />

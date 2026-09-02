@@ -6,9 +6,13 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia.Controls;
+using Avalonia.Data;
 using Avalonia.Rust;
 using Avalonia.Rust.Interop;
 using Avalonia.Rust.Sample.Generated;
+using Avalonia.Rust.Sample.Views;
+using Avalonia.UnitTests;
 using Xunit;
 
 namespace Avalonia.Host.Tests;
@@ -78,6 +82,40 @@ public class RustVmAdapterTests
         Assert.Equal(["Error", ""], dynamicModel.StringWrites);
         Assert.Equal("", dynamic.GetMemberValue(nameof(generated.NewItem)));
         Assert.Equal([nameof(generated.NewItem), nameof(generated.NewItem)], dynamicChanges);
+    }
+
+    [Fact]
+    public void Compiled_two_way_text_binding_writes_when_returning_to_initial_empty_value()
+    {
+        using var app = UnitTestApplication.Start(TestServices.StyledWindow);
+        var model = new NonEchoingModel();
+        using var adapter = new SampleViewModelAdapter(model, action => action());
+        var textBox = new TextBox { DataContext = adapter };
+        using var binding = textBox.Bind(
+            TextBox.TextProperty,
+            CompiledBinding.Create<SampleViewModelAdapter, string>(
+                viewModel => viewModel.NewItem,
+                mode: BindingMode.TwoWay));
+
+        textBox.Text = "Error";
+        textBox.Text = "";
+
+        Assert.Equal(["Error", ""], model.StringWrites);
+    }
+
+    [Fact]
+    public void Compiled_axaml_text_binding_writes_when_returning_to_initial_empty_value()
+    {
+        using var app = UnitTestApplication.Start(TestServices.StyledWindow);
+        var model = new NonEchoingModel();
+        var window = new RustVmWindow(model);
+        var textBox = window.FindControl<TextBox>("NewItemTextBox")!;
+
+        textBox.Text = "Error";
+        textBox.Text = "";
+
+        Assert.Equal(["Error", ""], model.StringWrites);
+        window.Close();
     }
 
     [Fact]
