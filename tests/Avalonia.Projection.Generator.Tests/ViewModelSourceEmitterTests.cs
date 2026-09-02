@@ -65,6 +65,7 @@ public class ViewModelSourceEmitterTests
         var rust = ViewModelSourceEmitter.EmitRust(SampleIr());
         var csharp = ViewModelSourceEmitter.EmitCSharp(SampleIr())["SampleViewModelAdapter.g.cs"];
 
+        Assert.Contains("using Avalonia.Rust;", csharp, StringComparison.Ordinal);
         Assert.Contains("remove_items(&self, index: i32) -> crate::Result<()> { self.0.remove_string_at(1, index) }", rust, StringComparison.Ordinal);
         Assert.Contains("move_items(&self, from_index: i32, to_index: i32) -> crate::Result<()> { self.0.move_string_item(1, from_index, to_index) }", rust, StringComparison.Ordinal);
         Assert.Contains("clear_items(&self) -> crate::Result<()> { self.0.clear_string_collection(1) }", rust, StringComparison.Ordinal);

@@ -10,6 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 using System.Windows.Input;
+using Avalonia.Rust;
 using Avalonia.Rust.Interop;
 using Avalonia.Threading;
 

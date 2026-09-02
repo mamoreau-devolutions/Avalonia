@@ -140,6 +140,7 @@ public static class ViewModelSourceEmitter
         sb.AppendLine("using System.Runtime.InteropServices;");
         sb.AppendLine("using System.Runtime.InteropServices.Marshalling;");
         sb.AppendLine("using System.Windows.Input;");
+        sb.AppendLine("using Avalonia.Rust;");
         sb.AppendLine("using Avalonia.Rust.Interop;");
         sb.AppendLine("using Avalonia.Threading;");
         sb.AppendLine();
