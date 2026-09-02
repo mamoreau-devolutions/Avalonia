@@ -57,6 +57,18 @@ const IAVN_RUST_VM_UPDATE_OPERATION_IID: Guid = Guid {
     data4: [0x9A, 0x77, 0x1F, 0x0C, 0x2B, 0x3A, 0x4D, 0x29],
 };
 
+/// The batch's separately versioned ownership-commit capability. It is a
+/// distinct IID and vtable rather than an extension of
+/// `IAvnRustVmUpdateBatch`, so the immutable batch contract that already
+/// shipped is untouched. Managed code calls it exactly once, after every
+/// notification-free state store and before any notification is published.
+const IAVN_RUST_VM_UPDATE_BATCH2_IID: Guid = Guid {
+    data1: 0x6B2E8F10,
+    data2: 0x4C91,
+    data3: 0x4E3A,
+    data4: [0x9A, 0x77, 0x1F, 0x0C, 0x2B, 0x3A, 0x4D, 0x2A],
+};
+
 #[repr(C)]
 struct IAvnRustVmSinkVtbl {
     query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
@@ -200,6 +212,32 @@ impl ComPtr<IAvnRustVmSink3> {
     }
 }
 
+impl ComPtr<IAvnRustVmUpdateBatch> {
+    /// Reports a terminal outcome. Only managed code calls this in production;
+    /// it is exposed so the Rust side can be exercised without a managed host.
+    pub fn complete(&self, outcome: i32, error: i32) -> Result<()> {
+        unsafe {
+            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().complete)(
+                self.as_raw(),
+                outcome,
+                error,
+            ))
+        }
+    }
+}
+
+impl ComPtr<IAvnRustVmUpdateBatch2> {
+    /// Hands the batch's nested ownership to its producer. Managed code calls
+    /// this exactly once, between the state commit and the notifications.
+    pub fn commit_ownership(&self) -> Result<()> {
+        unsafe {
+            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().commit_ownership)(
+                self.as_raw(),
+            ))
+        }
+    }
+}
+
 #[repr(C)]
 pub struct IAvnRustVmUpdateBatch {
     vtbl: *const IAvnRustVmUpdateBatchVtbl,
@@ -216,6 +254,25 @@ pub struct IAvnRustVmUpdateOperation {
 
 unsafe impl ComInterface for IAvnRustVmUpdateOperation {
     const IID: Guid = IAVN_RUST_VM_UPDATE_OPERATION_IID;
+}
+
+/// The batch's ownership-commit interface. Deliberately a separate vtable from
+/// [`IAvnRustVmUpdateBatch`]; the two are exposed by the same object.
+#[repr(C)]
+pub struct IAvnRustVmUpdateBatch2 {
+    vtbl: *const IAvnRustVmUpdateBatch2Vtbl,
+}
+
+unsafe impl ComInterface for IAvnRustVmUpdateBatch2 {
+    const IID: Guid = IAVN_RUST_VM_UPDATE_BATCH2_IID;
+}
+
+#[repr(C)]
+struct IAvnRustVmUpdateBatch2Vtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    commit_ownership: unsafe extern "system" fn(*mut IAvnRustVmUpdateBatch2) -> i32,
 }
 
 #[repr(C)]
@@ -628,15 +685,25 @@ impl RustVmUpdate {
 
 pub type RustVmBatchCompletion = Box<dyn FnOnce(i32, i32) + Send>;
 
+/// Invoked exactly once, by managed code, after every notification-free state
+/// store and before any notification is published. This is where the batch's
+/// nested ownership is handed to the producer.
+pub type RustVmBatchOwnershipCommit = Box<dyn FnOnce() + Send>;
+
 struct RustVmBatchState {
     generation: i64,
     operations: Vec<RustVmUpdate>,
+    ownership: Mutex<Option<RustVmBatchOwnershipCommit>>,
     completion: Mutex<Option<RustVmBatchCompletion>>,
 }
 
+/// One allocation exposing two interfaces: the immutable batch itself and the
+/// separately versioned ownership-commit capability. Both share the object's
+/// single reference count.
 #[repr(C)]
 struct RustVmBatchObject {
     interface: IAvnRustVmUpdateBatch,
+    ownership_interface: IAvnRustVmUpdateBatch2,
     references: AtomicU32,
     state: Arc<RustVmBatchState>,
 }
@@ -663,6 +730,13 @@ static RUST_VM_BATCH_VTBL: IAvnRustVmUpdateBatchVtbl = IAvnRustVmUpdateBatchVtbl
     complete: batch_complete,
 };
 
+static RUST_VM_BATCH_OWNERSHIP_VTBL: IAvnRustVmUpdateBatch2Vtbl = IAvnRustVmUpdateBatch2Vtbl {
+    query_interface: ownership_query_interface,
+    add_ref: ownership_add_ref,
+    release: ownership_release,
+    commit_ownership: batch_commit_ownership,
+};
+
 static RUST_VM_BATCH_OPERATION_VTBL: IAvnRustVmUpdateOperationVtbl =
     IAvnRustVmUpdateOperationVtbl {
         query_interface: operation_query_interface,
@@ -680,21 +754,30 @@ static RUST_VM_BATCH_OPERATION_VTBL: IAvnRustVmUpdateOperationVtbl =
         get_model: operation_get_model,
     };
 
-/// Creates an immutable nano-COM batch. The completion is taken exactly once on
-/// the UI dispatcher after apply/stale/cancel/error, never by SubmitBatch.
+/// Creates an immutable nano-COM batch exposing both the batch interface and
+/// its separately versioned ownership-commit capability. `ownership` is taken
+/// exactly once, by managed code, between the state commit and the
+/// notifications; `completion` is taken exactly once after apply/stale/cancel/
+/// error. Neither is ever invoked by SubmitBatch. Dropping the batch without an
+/// ownership commit simply drops the callback (and everything it owns).
 pub fn rust_vm_update_batch(
     generation: i64,
     operations: Vec<RustVmUpdate>,
+    ownership: Option<RustVmBatchOwnershipCommit>,
     completion: Option<RustVmBatchCompletion>,
 ) -> ComPtr<IAvnRustVmUpdateBatch> {
     let object = Box::new(RustVmBatchObject {
         interface: IAvnRustVmUpdateBatch {
             vtbl: &RUST_VM_BATCH_VTBL,
         },
+        ownership_interface: IAvnRustVmUpdateBatch2 {
+            vtbl: &RUST_VM_BATCH_OWNERSHIP_VTBL,
+        },
         references: AtomicU32::new(1),
         state: Arc::new(RustVmBatchState {
             generation,
             operations,
+            ownership: Mutex::new(ownership),
             completion: Mutex::new(completion),
         }),
     });
@@ -702,6 +785,33 @@ pub fn rust_vm_update_batch(
         ComPtr::from_raw(Box::into_raw(object).cast())
             .expect("Box allocation cannot produce a null pointer")
     }
+}
+
+/// Resolves the owning object from either of the two interface pointers it
+/// exposes.
+unsafe fn batch_object_from_ownership(this: *mut c_void) -> *mut RustVmBatchObject {
+    this.cast::<u8>()
+        .sub(std::mem::offset_of!(RustVmBatchObject, ownership_interface))
+        .cast::<RustVmBatchObject>()
+}
+
+unsafe fn batch_query(
+    object: *mut RustVmBatchObject,
+    iid: *const Guid,
+    result: *mut *mut c_void,
+) -> i32 {
+    *result = ptr::null_mut();
+    if *iid == Guid::IUNKNOWN || *iid == IAVN_RUST_VM_UPDATE_BATCH_IID {
+        (*object).references.fetch_add(1, Ordering::Relaxed);
+        *result = ptr::addr_of_mut!((*object).interface).cast();
+        return hresult::S_OK;
+    }
+    if *iid == IAVN_RUST_VM_UPDATE_BATCH2_IID {
+        (*object).references.fetch_add(1, Ordering::Relaxed);
+        *result = ptr::addr_of_mut!((*object).ownership_interface).cast();
+        return hresult::S_OK;
+    }
+    hresult::E_NOINTERFACE
 }
 
 unsafe extern "system" fn batch_query_interface(
@@ -712,13 +822,18 @@ unsafe extern "system" fn batch_query_interface(
     if this.is_null() || iid.is_null() || result.is_null() {
         return hresult::E_POINTER;
     }
-    *result = ptr::null_mut();
-    if *iid != Guid::IUNKNOWN && *iid != IAVN_RUST_VM_UPDATE_BATCH_IID {
-        return hresult::E_NOINTERFACE;
+    batch_query(this.cast::<RustVmBatchObject>(), iid, result)
+}
+
+unsafe extern "system" fn ownership_query_interface(
+    this: *mut IUnknown,
+    iid: *const Guid,
+    result: *mut *mut c_void,
+) -> i32 {
+    if this.is_null() || iid.is_null() || result.is_null() {
+        return hresult::E_POINTER;
     }
-    batch_add_ref(this);
-    *result = this.cast();
-    hresult::S_OK
+    batch_query(batch_object_from_ownership(this.cast()), iid, result)
 }
 
 unsafe extern "system" fn batch_add_ref(this: *mut IUnknown) -> u32 {
@@ -726,6 +841,10 @@ unsafe extern "system" fn batch_add_ref(this: *mut IUnknown) -> u32 {
         .references
         .fetch_add(1, Ordering::Relaxed)
         + 1
+}
+
+unsafe extern "system" fn ownership_add_ref(this: *mut IUnknown) -> u32 {
+    batch_add_ref(batch_object_from_ownership(this.cast()).cast())
 }
 
 unsafe extern "system" fn batch_release(this: *mut IUnknown) -> u32 {
@@ -736,6 +855,31 @@ unsafe extern "system" fn batch_release(this: *mut IUnknown) -> u32 {
         drop(Box::from_raw(object));
     }
     remaining
+}
+
+unsafe extern "system" fn ownership_release(this: *mut IUnknown) -> u32 {
+    batch_release(batch_object_from_ownership(this.cast()).cast())
+}
+
+/// Hands the batch's nested ownership to the producer. The callback is taken
+/// under the state lock, so it runs at most once no matter how many times
+/// managed code calls this.
+unsafe extern "system" fn batch_commit_ownership(this: *mut IAvnRustVmUpdateBatch2) -> i32 {
+    ffi(|| {
+        if this.is_null() {
+            return Err(hresult::Error(hresult::E_POINTER));
+        }
+        let state = (*batch_object_from_ownership(this.cast())).state.clone();
+        let ownership = state
+            .ownership
+            .lock()
+            .map_err(|_| hresult::Error(hresult::E_FAIL))?
+            .take();
+        if let Some(ownership) = ownership {
+            ownership();
+        }
+        Ok(())
+    })
 }
 
 unsafe fn batch_state(this: *mut IAvnRustVmUpdateBatch) -> Result<Arc<RustVmBatchState>> {

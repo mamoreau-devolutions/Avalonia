@@ -306,7 +306,9 @@ complete as `Stale`. `BatchCompletion` (or `submit_batch_with_callback`) reports
 `Applied`, `Stale`, `Cancelled` after disposal, or `Error` after UI processing.
 The batch owns strings and retained nested model COM references until that
 outcome, and the FFI accessors validate pointers, indices, and tags under a
-panic boundary.
+panic boundary. The batch object also exposes the separately versioned
+`IAvnRustVmUpdateBatch2` ownership-commit capability described below; the
+original batch IID and vtable are unchanged.
 
 `replace_*_snapshot` stages a complete string or nested-model collection then
 commits it with one collection `Reset`; it is the required path for large
@@ -339,17 +341,37 @@ and performs notification-free stores. A batch runs in four ordered phases:
 4. **Commit, then publish.** Fields, command `CanExecute` state, validation
    errors and collection contents are stored with no externally observable
    notification (collections go through `IRustVmBatchCollection.SetContents`).
-   Only then are coalesced `PropertyChanged`, `ErrorsChanged`,
-   `CanExecuteChanged` and at most one collection `Reset` per changed collection
-   published; each is isolated, so a throwing observer cannot suppress the
-   others. State is already fully committed at that point, so the batch still
-   completes as `Applied`: a notification failure is logged, never reported as a
-   rollback that did not happen.
+   The producer's nested ownership is then transferred through
+   `IAvnRustVmUpdateBatch2.CommitOwnership`, and only after that are coalesced
+   `PropertyChanged`, `ErrorsChanged`, `CanExecuteChanged` and at most one
+   collection `Reset` per changed collection published; each is isolated, so a
+   throwing observer cannot suppress the others. State is already fully
+   committed at that point, so the batch still completes as `Applied`: a
+   notification failure is logged, never reported as a rollback that did not
+   happen.
 
 Nested adapters a batch displaces are disposed after publication, so ownership
 transfer is complete exactly once whether the batch replaced a model property,
 replaced or removed a collection element, cleared a collection or replaced a
 whole snapshot.
+
+### Ownership transfer ordering
+
+`IAvnRustVmUpdateBatch2` is a separately versioned IID and vtable exposed by the
+same batch object; the original `IAvnRustVmUpdateBatch` contract is untouched.
+The adapter requires it and resolves it before it decodes or stages anything, so
+a producer that cannot hand over ownership at the right point fails the batch
+with zero mutation.
+
+`CommitOwnership` runs exactly once, strictly between the notification-free
+state commit and the first notification. That ordering is what makes a reentrant
+publish safe: when a notification observer synchronously publishes a further
+nested update through the v1/v2 sink, the batch's own nested handles are already
+reconciled on the producer side, so the observer's update applies on top of them
+instead of racing them. A batch that is rejected during validation or staging,
+or that completes as stale, cancelled or in error, never receives the call and
+simply drops its candidate handles. Completion still arrives last, after every
+notification.
 
 ### The non-reentrant batch lifecycle gate
 
@@ -365,12 +387,19 @@ submitted afterwards, complete as `Cancelled`.
 ### Rust-side ownership
 
 Each batch carries its managed-visible operations and a matching nested
-ownership delta. The delta is reconciled into `NestedSlots` exactly once, only
-on `Applied`; a `Stale`, `Cancelled` or `Error` outcome drops the batch's
+ownership delta. The delta is applied to `NestedSlots` exactly once, by the
+batch's `CommitOwnership` capability, which managed code calls between the state
+commit and the notifications. A batch that never reaches that point - stale,
+cancelled, rejected or failed - simply drops the callback, releasing its
 candidate handles without touching the slots that are still live. Slot updates
 are bounds-checked rather than panicking, and a model snapshot installs a real
 slot list, so synchronous v1/v2 `remove`/`move`/`replace`/`clear` keeps working
-after a batch snapshot has been applied. `IAvnRustVmSink3` is resolved lazily on
-first submission and cached: a host that only implements v1/v2 still attaches
-and publishes normally, and only `submit_batch` reports `E_NOINTERFACE`.
+after a batch snapshot has been applied.
+
+`IAvnRustVmSink3` is resolved lazily on first submission and cached. Only
+`E_NOINTERFACE` is cached as "absent": any other `QueryInterface` failure is
+cached and reported verbatim, so a transport error is never silently downgraded
+to "this host has no batch support". A host that only implements v1/v2 still
+attaches and publishes normally, and only `submit_batch` reports
+`E_NOINTERFACE`.
 

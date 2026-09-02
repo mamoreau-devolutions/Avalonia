@@ -721,6 +721,225 @@ public class RustVmBatchTests
         public void Dispose() => Disposed = true;
     }
 
+    [Fact]
+    public void Ownership_commits_once_between_the_state_commit_and_the_notifications()
+    {
+        using var host = GeneratedHost();
+        var batch = new FakeBatch(1);
+        batch.SetString(1, "Batched");
+        batch.SetInteger(2, 5);
+        batch.AddString(1, "second");
+        batch.SetCommandEnabled(1, 0);
+        batch.SetPropertyError(1, "bad");
+
+        host.Adapter.PropertyChanged += (_, e) =>
+        {
+            // Every notification-free store already happened, and so did the
+            // producer's ownership transfer.
+            Assert.Equal(1, batch.OwnershipCommits);
+            batch.Trace.Add($"property:{e.PropertyName}");
+        };
+        host.Adapter.Items.CollectionChanged += (_, _) => batch.Trace.Add("collection");
+        host.Adapter.IncrementCommand.CanExecuteChanged += (_, _) => batch.Trace.Add("command");
+        host.Adapter.ErrorsChanged += (_, e) => batch.Trace.Add($"errors:{e.PropertyName}");
+
+        Assert.Equal(0, host.Sink3.SubmitBatch(batch));
+        host.Drain();
+
+        Assert.Equal(RustVmBatchOutcome.Applied, batch.Outcome);
+        Assert.Equal(1, batch.OwnershipCommits);
+        Assert.Equal(
+            [
+                "ownership",
+                "property:Name",
+                "property:Count",
+                "collection",
+                "command",
+                "errors:Name",
+                "complete:Applied",
+            ],
+            batch.Trace);
+    }
+
+    [Fact]
+    public void Ownership_is_not_committed_for_stale_cancelled_or_rejected_batches()
+    {
+        var host = GeneratedHost();
+
+        var applied = new FakeBatch(5);
+        applied.SetString(1, "Fifth");
+        Assert.Equal(0, host.Sink3.SubmitBatch(applied));
+        host.Drain();
+        Assert.Equal(1, applied.OwnershipCommits);
+
+        var stale = new FakeBatch(5);
+        stale.SetString(1, "Stale");
+        Assert.Equal(0, host.Sink3.SubmitBatch(stale));
+        host.Drain();
+        Assert.Equal(RustVmBatchOutcome.Stale, stale.Outcome);
+        Assert.Equal(0, stale.OwnershipCommits);
+
+        var invalid = new FakeBatch(6);
+        invalid.SetString(1, "Invalid");
+        invalid.ReplaceString(1, 9, "out of range");
+        Assert.Equal(0, host.Sink3.SubmitBatch(invalid));
+        host.Drain();
+        Assert.Equal(RustVmBatchOutcome.Error, invalid.Outcome);
+        Assert.Equal(0, invalid.OwnershipCommits);
+
+        var failedStaging = new FakeBatch(7);
+        failedStaging.AddModel(2, new FailingNested());
+        Assert.Equal(0, host.Sink3.SubmitBatch(failedStaging));
+        host.Drain();
+        Assert.Equal(RustVmBatchOutcome.Error, failedStaging.Outcome);
+        Assert.Equal(0, failedStaging.OwnershipCommits);
+
+        var cancelled = new FakeBatch(8);
+        cancelled.SetString(1, "Never");
+        Assert.Equal(0, host.Sink3.SubmitBatch(cancelled));
+        host.Adapter.Dispose();
+        host.Drain();
+        Assert.Equal(RustVmBatchOutcome.Cancelled, cancelled.Outcome);
+        Assert.Equal(0, cancelled.OwnershipCommits);
+
+        Assert.Equal("Fifth", host.Adapter.Name);
+    }
+
+    [Fact]
+    public void A_batch_without_the_ownership_capability_is_rejected_with_zero_mutation()
+    {
+        using var host = GeneratedHost();
+        var changed = 0;
+        host.Adapter.PropertyChanged += (_, _) => changed++;
+        var collectionChanges = 0;
+        host.Adapter.Items.CollectionChanged += (_, _) => collectionChanges++;
+
+        var batch = new LegacyBatch(1);
+        Assert.Equal(0, host.Sink3.SubmitBatch(batch));
+        host.Drain();
+
+        Assert.Equal(RustVmBatchOutcome.Error, batch.Outcome);
+        Assert.Equal(unchecked((int)0x80004002), batch.Error);
+        Assert.Equal("Initial", host.Adapter.Name);
+        Assert.Equal(["First"], host.Adapter.Items);
+        Assert.Equal(0, changed);
+        Assert.Equal(0, collectionChanges);
+        // A rejected batch does not advance the generation.
+        Assert.Equal(0, batch.OperationReads);
+
+        var next = new FakeBatch(1);
+        next.SetString(1, "Applies");
+        Assert.Equal(0, host.Sink3.SubmitBatch(next));
+        host.Drain();
+        Assert.Equal(RustVmBatchOutcome.Applied, next.Outcome);
+        Assert.Equal("Applies", host.Adapter.Name);
+    }
+
+    [Fact]
+    public void A_nested_update_published_from_a_notification_lands_after_ownership_transfer()
+    {
+        using var host = GeneratedHost();
+        var batch = new FakeBatch(1);
+        batch.SetString(1, "Batched");
+        batch.AddModel(2, new FakeNested());
+
+        var sink2 = (IAvnRustVmSink2)host.Model.Sink;
+        var reentrant = new FakeNested();
+        var published = false;
+        host.Adapter.PropertyChanged += (_, _) =>
+        {
+            if (published)
+                return;
+            published = true;
+            // A reentrant synchronous nested publish from an observer: the
+            // batch's own ownership must already be committed.
+            Assert.Equal(1, batch.OwnershipCommits);
+            Assert.Equal(0, sink2.AddModel(2, reentrant));
+            batch.Trace.Add("reentrant-add");
+        };
+
+        Assert.Equal(0, host.Sink3.SubmitBatch(batch));
+        host.Drain();
+
+        Assert.Equal(RustVmBatchOutcome.Applied, batch.Outcome);
+        Assert.Equal(2, host.Adapter.Tasks.Count);
+        Assert.Equal(
+            ["ownership", "reentrant-add", "complete:Applied"],
+            batch.Trace.Where(entry => entry is "ownership" or "reentrant-add" or "complete:Applied"));
+    }
+
+    [Fact]
+    public void A_failed_ownership_commit_is_logged_without_undoing_the_committed_batch()
+    {
+        using var host = GeneratedHost();
+        var batch = new FakeBatch(1) { OwnershipResult = unchecked((int)0x80004005) };
+        batch.SetString(1, "Committed");
+
+        Assert.Equal(0, host.Sink3.SubmitBatch(batch));
+        host.Drain();
+
+        Assert.Equal(RustVmBatchOutcome.Applied, batch.Outcome);
+        Assert.Equal(1, batch.OwnershipCommits);
+        Assert.Equal("Committed", host.Adapter.Name);
+    }
+
+    [Fact]
+    public void Reflectable_adapter_commits_ownership_before_notifying()
+    {
+        using var host = ReflectableHost();
+        var batch = new FakeBatch(1);
+        batch.SetString(1, "Batched");
+        batch.AddString(1, "second");
+
+        ((INotifyPropertyChanged)host.Adapter).PropertyChanged += (_, e) =>
+        {
+            Assert.Equal(1, batch.OwnershipCommits);
+            batch.Trace.Add($"property:{e.PropertyName}");
+        };
+        Items(host.Adapter, "Items").CollectionChanged += (_, _) => batch.Trace.Add("collection");
+
+        Assert.Equal(0, host.Sink3.SubmitBatch(batch));
+        host.Drain();
+
+        Assert.Equal(RustVmBatchOutcome.Applied, batch.Outcome);
+        Assert.Equal(
+            ["ownership", "property:Name", "collection", "complete:Applied"],
+            batch.Trace);
+    }
+
+    [Fact]
+    public void Reflectable_adapter_preserves_its_original_constructor_signatures()
+    {
+        // Optional parameters do not preserve CLR constructor signatures, so the
+        // pre-batch arities must remain distinct overloads for already-compiled
+        // callers.
+        var type = typeof(ReflectableRustViewModelAdapter);
+        Assert.NotNull(type.GetConstructor(
+            [typeof(IAvnRustViewModel), typeof(RustViewModelDescriptor)]));
+        Assert.NotNull(type.GetConstructor(
+            [typeof(IAvnRustViewModel), typeof(RustViewModelDescriptor), typeof(Action<Action>)]));
+        Assert.NotNull(type.GetConstructor(
+            [
+                typeof(IAvnRustViewModel),
+                typeof(RustViewModelDescriptor),
+                typeof(Action<Action>),
+                typeof(Action<Action>),
+            ]));
+
+        var generated = typeof(SampleViewModelAdapter);
+        Assert.NotNull(generated.GetConstructor([typeof(IAvnRustViewModel)]));
+        Assert.NotNull(generated.GetConstructor([typeof(IAvnRustViewModel), typeof(Action<Action>)]));
+        Assert.NotNull(generated.GetConstructor(
+            [typeof(IAvnRustViewModel), typeof(Action<Action>), typeof(Action<Action>)]));
+
+        // Late-bound activation through the historical 3-argument shape still works.
+        var model = new BatchModel();
+        using var adapter = (ReflectableRustViewModelAdapter)Activator.CreateInstance(
+            type,
+            [model, SampleViewModelMetadata.Descriptor, (Action<Action>)(action => action())])!;
+        Assert.Equal("Initial", Member(adapter, "Name"));
+    }
+
     private static GeneratedFixture GeneratedHost()
     {
         var model = new BatchModel();
@@ -847,7 +1066,7 @@ public class RustVmBatchTests
     /// completion (count, outcome, error and the completing call stack) so tests
     /// can assert that nothing completes on the submitting stack.
     /// </summary>
-    private sealed class FakeBatch(long generation) : IAvnRustVmUpdateBatch
+    private sealed class FakeBatch(long generation) : IAvnRustVmUpdateBatch, IAvnRustVmUpdateBatch2
     {
         private readonly List<Operation> _operations = [];
 
@@ -856,8 +1075,16 @@ public class RustVmBatchTests
         public int CompletionCount { get; private set; }
         public List<string> CompletionStacks { get; } = [];
 
+        /// <summary>Ordered trace of ownership commits and completions.</summary>
+        public List<string> Trace { get; } = [];
+
+        public int OwnershipCommits { get; private set; }
+
         /// <summary>Makes the operation at this index fail one of its getters.</summary>
         public int FailGetterAt { get; set; } = -1;
+
+        /// <summary>Forces <see cref="CommitOwnership"/> to report a failure.</summary>
+        public int OwnershipResult { get; set; }
 
         public void SetString(int propertyId, string value) => Add(RustVmUpdateKind.SetString, propertyId, text: value);
         public void SetInteger(int propertyId, long value) => Add(RustVmUpdateKind.SetInteger, propertyId, integer: value);
@@ -948,7 +1175,15 @@ public class RustVmBatchTests
             Outcome = (RustVmBatchOutcome)outcome;
             Error = error;
             CompletionStacks.Add(Environment.StackTrace);
+            Trace.Add($"complete:{(RustVmBatchOutcome)outcome}");
             return 0;
+        }
+
+        public int CommitOwnership()
+        {
+            OwnershipCommits++;
+            Trace.Add("ownership");
+            return OwnershipResult;
         }
 
         internal static unsafe int Copy(string value, char* destination, int capacity)
@@ -987,6 +1222,74 @@ public class RustVmBatchTests
             IAvnRustViewModel? Model,
             IReadOnlyList<string>? Strings,
             IReadOnlyList<IAvnRustViewModel>? Models);
+    }
+
+    /// <summary>
+    /// A batch that implements only the original immutable-batch contract. It
+    /// stands in for a producer that has not been rebuilt against the
+    /// ownership-commit capability.
+    /// </summary>
+    private sealed class LegacyBatch(long generation) : IAvnRustVmUpdateBatch
+    {
+        public RustVmBatchOutcome Outcome { get; private set; }
+        public int Error { get; private set; }
+
+        /// <summary>Counts reads the coordinator must never perform.</summary>
+        public int OperationReads { get; private set; }
+
+        public int GetGeneration(out long value)
+        {
+            value = generation;
+            return 0;
+        }
+
+        public int GetOperationCount(out int count)
+        {
+            OperationReads++;
+            count = 0;
+            return 0;
+        }
+
+        public int GetOperation(int index, out IAvnRustVmUpdateOperation? operation)
+        {
+            OperationReads++;
+            operation = null;
+            return InvalidArgument;
+        }
+
+        public int GetSnapshotItemCount(int operationIndex, out int count)
+        {
+            OperationReads++;
+            count = 0;
+            return InvalidArgument;
+        }
+
+        public int GetSnapshotStringLength(int operationIndex, int itemIndex, out int length)
+        {
+            OperationReads++;
+            length = 0;
+            return InvalidArgument;
+        }
+
+        public unsafe int CopySnapshotString(int operationIndex, int itemIndex, char* destination, int capacity)
+        {
+            OperationReads++;
+            return InvalidArgument;
+        }
+
+        public int GetSnapshotModel(int operationIndex, int itemIndex, out IAvnRustViewModel? model)
+        {
+            OperationReads++;
+            model = null;
+            return InvalidArgument;
+        }
+
+        public int Complete(int outcome, int error)
+        {
+            Outcome = (RustVmBatchOutcome)outcome;
+            Error = error;
+            return 0;
+        }
     }
 
     private sealed class FakeOperation(FakeBatch.Operation operation, bool fail) : IAvnRustVmUpdateOperation

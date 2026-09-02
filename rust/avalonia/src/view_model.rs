@@ -133,20 +133,16 @@ impl NestedBatchDelta {
     }
 }
 
-/// Reconciles a batch's nested ownership after managed code reached a terminal
-/// outcome. Called from the batch completion, which the batch object invokes
-/// exactly once, so `Applied` can never reconcile twice.
-fn reconcile_nested(nested: &NestedSlots, delta: Vec<NestedBatchDelta>, outcome: i32) {
-    if outcome != BATCH_APPLIED {
-        return;
-    }
+/// Reconciles a batch's nested ownership. Invoked only from the batch's
+/// ownership-commit capability, which managed code calls exactly once after it
+/// has stored the batch's state and before it publishes any notification. A
+/// batch that never reaches that point simply drops this callback, which
+/// releases its candidate handles without touching the live slots.
+fn reconcile_nested(nested: &NestedSlots, delta: Vec<NestedBatchDelta>) {
     for change in delta {
         change.apply(nested);
     }
 }
-
-/// The `Applied` wire outcome, mirroring `Avalonia.Rust.RustVmBatchOutcome`.
-const BATCH_APPLIED: i32 = 0;
 
 /// Small helper so lock-poisoning has one documented, consistent message
 /// across every `NestedSlots` accessor (a poisoned lock here means an
@@ -175,9 +171,15 @@ impl fmt::Debug for NestedSlots {
 pub struct ViewModelSink {
     raw: sys::ComPtr<sys::IAvnRustVmSink>,
     raw2: sys::ComPtr<sys::IAvnRustVmSink2>,
-    raw3: Arc<OnceLock<Option<sys::ComPtr<sys::IAvnRustVmSink3>>>>,
+    raw3: Arc<OnceLock<BatchCapability>>,
     nested: Arc<NestedSlots>,
 }
+
+/// The cached result of the one-time `IAvnRustVmSink3` query. Only
+/// `E_NOINTERFACE` is recorded as "absent"; any other `QueryInterface` failure
+/// is recorded verbatim and reported to every later submission instead of being
+/// silently downgraded to "this host has no batch support".
+type BatchCapability = std::result::Result<Option<sys::ComPtr<sys::IAvnRustVmSink3>>, sys::Error>;
 
 impl ViewModelSink {
     /// Wraps a freshly attached v1 sink and eagerly resolves the v2
@@ -203,10 +205,17 @@ impl ViewModelSink {
 
     /// Resolves (once) the optional batch capability.
     fn batch_sink(&self) -> Result<&sys::ComPtr<sys::IAvnRustVmSink3>> {
-        self.raw3
-            .get_or_init(|| self.raw.query_interface::<sys::IAvnRustVmSink3>().ok())
-            .as_ref()
-            .ok_or(Error::Abi(sys::Error(sys::E_NOINTERFACE)))
+        match self.raw3.get_or_init(
+            || match self.raw.query_interface::<sys::IAvnRustVmSink3>() {
+                Ok(value) => Ok(Some(value)),
+                Err(error) if error.0 == sys::E_NOINTERFACE => Ok(None),
+                Err(error) => Err(error),
+            },
+        ) {
+            Ok(Some(sink)) => Ok(sink),
+            Ok(None) => Err(Error::Abi(sys::Error(sys::E_NOINTERFACE))),
+            Err(error) => Err(Error::Abi(*error)),
+        }
     }
 
     pub fn set_string(&self, property_id: i32, value: impl AsRef<str>) -> Result<()> {
@@ -421,10 +430,11 @@ impl ViewModelSink {
         let raw = sys::rust_vm_update_batch(
             generation,
             operations,
-            Some(Box::new(move |outcome, error| {
-                reconcile_nested(&nested, delta, outcome);
-                callback(outcome, error);
-            })),
+            // Ownership moves on the managed ownership commit, which lands
+            // between the state commit and the notifications. The completion
+            // callback below deliberately no longer reconciles anything.
+            Some(Box::new(move || reconcile_nested(&nested, delta))),
+            Some(Box::new(callback)),
         );
         sink.submit_batch(&raw)?;
         Ok(())
@@ -772,7 +782,7 @@ fn map_result(result: Result<()>) -> sys::Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::sync::atomic::{AtomicUsize, Ordering};
+    use std::sync::atomic::{AtomicU32, AtomicUsize, Ordering};
 
     /// A minimal `DynamicViewModel` whose `Drop` increments a shared counter,
     /// so tests can assert that nested handles are actually released (not
@@ -936,42 +946,74 @@ mod tests {
         batch
     }
 
-    /// Mirrors what a real submission leaves behind at completion time: the
-    /// immutable operation list (and the COM references it retains) has already
-    /// been released by managed code, so only the ownership delta remains.
-    fn completed_delta(batch: ViewModelBatch) -> Vec<NestedBatchDelta> {
+    /// Builds the real immutable nano-COM batch exactly as
+    /// `ViewModelSink::submit` does, so tests exercise the shipped ownership and
+    /// completion plumbing rather than a stand-in.
+    fn raw_batch(
+        batch: ViewModelBatch,
+        nested: &Arc<NestedSlots>,
+    ) -> (sys::ComPtr<sys::IAvnRustVmUpdateBatch>, BatchCompletion) {
+        let (completion, callback) = BatchCompletion::channel();
         let ViewModelBatch {
-            operations, delta, ..
+            generation,
+            operations,
+            delta,
         } = batch;
-        drop(operations);
-        delta
+        let nested = nested.clone();
+        let raw = sys::rust_vm_update_batch(
+            generation,
+            operations,
+            Some(Box::new(move || reconcile_nested(&nested, delta))),
+            Some(callback),
+        );
+        (raw, completion)
     }
 
     #[test]
-    fn an_applied_batch_reconciles_nested_ownership_exactly_once() {
+    fn committing_ownership_reconciles_nested_slots_exactly_once() {
         let alive = Arc::new(AtomicUsize::new(0));
-        let slots = NestedSlots::default();
-        let batch = batch_with_models(1, &alive);
+        let slots = Arc::new(NestedSlots::default());
+        let (raw, completion) = raw_batch(batch_with_models(1, &alive), &slots);
         assert_eq!(2, alive.load(Ordering::SeqCst), "the batch owns candidates");
+        assert!(slots.properties.lock_slots().is_empty());
 
-        reconcile_nested(&slots, completed_delta(batch), APPLIED);
+        let ownership = raw
+            .query_interface::<sys::IAvnRustVmUpdateBatch2>()
+            .expect("the batch must expose its ownership capability");
+        ownership.commit_ownership().expect("commit must succeed");
 
-        assert_eq!(2, alive.load(Ordering::SeqCst));
         assert_eq!(1, slots.properties.lock_slots().len());
         assert_eq!(1, slots.collections.lock_slots()[&2].len());
 
+        // A second call is a no-op: the callback was consumed by the first.
+        ownership.commit_ownership().expect("commit must stay safe");
+        assert_eq!(1, slots.properties.lock_slots().len());
+        assert_eq!(1, slots.collections.lock_slots()[&2].len());
+
+        // Completion still arrives after ownership, and only once.
+        raw.complete(APPLIED, 0).expect("complete must succeed");
+        drop(ownership);
+        drop(raw);
+        assert_eq!(Ok(BatchOutcome::Applied), completion.wait());
+        assert_eq!(2, alive.load(Ordering::SeqCst), "committed handles live on");
+
         // A second applied batch replaces the property slot and appends to the
         // collection, so ownership tracks managed state rather than accumulating.
-        let second = batch_with_models(2, &alive);
-        reconcile_nested(&slots, completed_delta(second), APPLIED);
+        let (second, _) = raw_batch(batch_with_models(2, &alive), &slots);
+        second
+            .query_interface::<sys::IAvnRustVmUpdateBatch2>()
+            .expect("capability")
+            .commit_ownership()
+            .expect("commit");
+        drop(second);
         assert_eq!(3, alive.load(Ordering::SeqCst));
         assert_eq!(2, slots.collections.lock_slots()[&2].len());
     }
 
     #[test]
-    fn stale_cancelled_and_failed_batches_drop_candidates_without_changing_slots() {
+    fn a_batch_that_never_commits_ownership_drops_its_candidates_unchanged() {
         let alive = Arc::new(AtomicUsize::new(0));
-        let slots = NestedSlots::default();
+        let slots = Arc::new(NestedSlots::default());
         slots.set_property(
             1,
             Some(ViewModelHandle::new(CountedModel::new(alive.clone()))),
@@ -980,9 +1022,13 @@ mod tests {
         assert_eq!(2, alive.load(Ordering::SeqCst));
 
         for outcome in [STALE, CANCELLED, ERROR] {
-            let batch = batch_with_models(7, &alive);
+            let (raw, completion) = raw_batch(batch_with_models(7, &alive), &slots);
             assert_eq!(4, alive.load(Ordering::SeqCst));
-            reconcile_nested(&slots, completed_delta(batch), outcome);
+
+            // Stale/cancel/error never reach the ownership commit.
+            raw.complete(outcome, 0).expect("complete must succeed");
+            drop(raw);
+
             assert_eq!(
                 2,
                 alive.load(Ordering::SeqCst),
@@ -990,13 +1036,53 @@ mod tests {
             );
             assert_eq!(1, slots.properties.lock_slots().len());
             assert_eq!(1, slots.collections.lock_slots()[&2].len());
+            assert!(matches!(
+                completion.wait(),
+                Ok(BatchOutcome::Stale | BatchOutcome::Cancelled | BatchOutcome::Error(_))
+            ));
         }
+    }
+
+    #[test]
+    fn a_nested_update_published_after_ownership_applies_on_top_of_the_batch() {
+        // Mirrors an observer that synchronously publishes a nested update from
+        // a batch notification: managed code commits ownership first, so the
+        // synchronous update lands on the batch's slots instead of racing them.
+        let alive = Arc::new(AtomicUsize::new(0));
+        let slots = Arc::new(NestedSlots::default());
+        let mut batch = ViewModelBatch::new(1);
+        batch.push_model_snapshot(
+            2,
+            (0..2)
+                .map(|_| CountedModel::new(alive.clone()))
+                .collect::<Vec<_>>(),
+        );
+        let (raw, _completion) = raw_batch(batch, &slots);
+
+        raw.query_interface::<sys::IAvnRustVmUpdateBatch2>()
+            .expect("capability")
+            .commit_ownership()
+            .expect("commit");
+        assert_eq!(2, slots.collections.lock_slots()[&2].len());
+
+        // The "observer" update.
+        slots.push_collection_item(2, ViewModelHandle::new(CountedModel::new(alive.clone())));
+        assert_eq!(3, slots.collections.lock_slots()[&2].len());
+
+        raw.complete(APPLIED, 0).expect("complete");
+        drop(raw);
+        assert_eq!(
+            3,
+            alive.load(Ordering::SeqCst),
+            "the batch's handles and the observer's must both be tracked"
+        );
+        assert_eq!(3, slots.collections.lock_slots()[&2].len());
     }
 
     #[test]
     fn synchronous_collection_updates_work_after_an_applied_batch_snapshot() {
         let alive = Arc::new(AtomicUsize::new(0));
-        let slots = NestedSlots::default();
+        let slots = Arc::new(NestedSlots::default());
         let mut batch = ViewModelBatch::new(1);
         batch.push_model_snapshot(
             2,
@@ -1004,7 +1090,13 @@ mod tests {
                 .map(|_| CountedModel::new(alive.clone()))
                 .collect::<Vec<_>>(),
         );
-        reconcile_nested(&slots, completed_delta(batch), APPLIED);
+        let (raw, _completion) = raw_batch(batch, &slots);
+        raw.query_interface::<sys::IAvnRustVmUpdateBatch2>()
+            .expect("capability")
+            .commit_ownership()
+            .expect("commit");
+        raw.complete(APPLIED, 0).expect("complete");
+        drop(raw);
         assert_eq!(3, alive.load(Ordering::SeqCst));
 
         // The snapshot must leave a real slot list behind so the synchronous
@@ -1061,5 +1153,108 @@ mod tests {
         assert_eq!(18, batch.operations[2].kind);
         assert_eq!(0, batch.operations[2].boolean);
         assert_eq!(Some(String::new()), batch.operations[2].text);
+    }
+
+    /// A hand-rolled sink whose `QueryInterface` answers a chosen HRESULT for
+    /// the v3 batch IID while still satisfying the mandatory v2 query, so the
+    /// lazy capability cache can be tested for both "absent" and "failed".
+    #[repr(C)]
+    struct FakeSink {
+        vtbl: *const FakeSinkVtbl,
+        references: AtomicU32,
+        sink3_result: i32,
+        queries: Arc<AtomicUsize>,
+    }
+
+    #[repr(C)]
+    struct FakeSinkVtbl {
+        query_interface: unsafe extern "system" fn(
+            *mut FakeSink,
+            *const sys::Guid,
+            *mut *mut std::ffi::c_void,
+        ) -> i32,
+        add_ref: unsafe extern "system" fn(*mut FakeSink) -> u32,
+        release: unsafe extern "system" fn(*mut FakeSink) -> u32,
+    }
+
+    static FAKE_SINK_VTBL: FakeSinkVtbl = FakeSinkVtbl {
+        query_interface: fake_query_interface,
+        add_ref: fake_add_ref,
+        release: fake_release,
+    };
+
+    unsafe extern "system" fn fake_query_interface(
+        this: *mut FakeSink,
+        iid: *const sys::Guid,
+        result: *mut *mut std::ffi::c_void,
+    ) -> i32 {
+        *result = std::ptr::null_mut();
+
+        if *iid == <sys::IAvnRustVmSink3 as sys::ComInterface>::IID {
+            (*this).queries.fetch_add(1, Ordering::SeqCst);
+            return (*this).sink3_result;
+        }
+        // Everything else (IUnknown, v1 and v2) resolves to the same object;
+        // only the header layout matters for these tests.
+        fake_add_ref(this);
+        *result = this.cast();
+        sys::S_OK
+    }
+
+    unsafe extern "system" fn fake_add_ref(this: *mut FakeSink) -> u32 {
+        (*this).references.fetch_add(1, Ordering::Relaxed) + 1
+    }
+
+    unsafe extern "system" fn fake_release(this: *mut FakeSink) -> u32 {
+        let remaining = (*this).references.fetch_sub(1, Ordering::Release) - 1;
+        if remaining == 0 {
+            drop(Box::from_raw(this));
+        }
+        remaining
+    }
+
+    fn fake_sink(sink3_result: i32) -> (ViewModelSink, Arc<AtomicUsize>) {
+        let queries = Arc::new(AtomicUsize::new(0));
+        let object = Box::new(FakeSink {
+            vtbl: &FAKE_SINK_VTBL,
+            references: AtomicU32::new(1),
+            sink3_result,
+            queries: queries.clone(),
+        });
+        let raw = unsafe {
+            sys::ComPtr::<sys::IAvnRustVmSink>::from_raw(Box::into_raw(object).cast())
+                .expect("non-null")
+        };
+        (ViewModelSink::new(raw).expect("v2 must resolve"), queries)
+    }
+
+    #[test]
+    fn an_absent_batch_capability_is_cached_as_e_nointerface() {
+        let (sink, queries) = fake_sink(sys::E_NOINTERFACE);
+
+        for _ in 0..3 {
+            match sink.batch_sink() {
+                Err(Error::Abi(error)) => assert_eq!(sys::E_NOINTERFACE, error.0),
+                other => panic!("expected E_NOINTERFACE, got {other:?}"),
+            }
+        }
+        assert_eq!(1, queries.load(Ordering::SeqCst), "the query is cached");
+    }
+
+    #[test]
+    fn a_failed_batch_capability_query_is_reported_verbatim_not_as_absence() {
+        let (sink, queries) = fake_sink(sys::E_FAIL);
+
+        for _ in 0..3 {
+            match sink.batch_sink() {
+                Err(Error::Abi(error)) => assert_eq!(
+                    sys::E_FAIL,
+                    error.0,
+                    "a transport failure must not be downgraded to E_NOINTERFACE"
+                ),
+                other => panic!("expected E_FAIL, got {other:?}"),
+            }
+        }
+        assert_eq!(1, queries.load(Ordering::SeqCst), "the failure is cached");
     }
 }

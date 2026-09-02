@@ -32,7 +32,22 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     private global::Avalonia.Rust.Sample.Generated.AddressViewModelAdapter? _address = null;
     private string _newTaskTitle = "";
 
-    public SampleViewModelAdapter(IAvnRustViewModel model, Action<Action>? dispatch = null, Action<Action>? post = null)
+    /// <summary>Creates an adapter that dispatches and posts through <see cref="Dispatcher.UIThread"/>.</summary>
+    public SampleViewModelAdapter(IAvnRustViewModel model) : this(model, null, null) { }
+
+    /// <summary>
+    /// Creates an adapter with a custom synchronous dispatch for the legacy v1/v2
+    /// sink path. Kept as a distinct CLR signature (not an optional parameter) so
+    /// already-compiled callers keep binding to it.
+    /// </summary>
+    public SampleViewModelAdapter(IAvnRustViewModel model, Action<Action>? dispatch) : this(model, dispatch, null) { }
+
+    /// <summary>
+    /// Creates an adapter with a custom synchronous <paramref name="dispatch"/> for the
+    /// legacy v1/v2 sink path and a custom nonblocking <paramref name="post"/> for
+    /// batch submission.
+    /// </summary>
+    public SampleViewModelAdapter(IAvnRustViewModel model, Action<Action>? dispatch, Action<Action>? post)
     {
         _model = model;
         _dispatch = dispatch ?? Dispatch;

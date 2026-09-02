@@ -22,7 +22,9 @@ namespace Avalonia.Rust;
 /// attached off to the side. A failure disposes the adapters staged so far and
 /// leaves target state and notifications completely untouched;</item>
 /// <item>commit then publish - fields, commands, errors and collection contents
-/// are stored with no externally observable notification, and only then are
+/// are stored with no externally observable notification, the producer's nested
+/// ownership is transferred through
+/// <see cref="IAvnRustVmUpdateBatch2.CommitOwnership"/>, and only then are
 /// coalesced <c>PropertyChanged</c>/<c>ErrorsChanged</c>/<c>CanExecuteChanged</c>
 /// and at most one collection Reset per changed collection published.</item>
 /// </list>
@@ -31,6 +33,7 @@ public sealed class RustVmBatchCoordinator
 {
     private const int InvalidArgument = unchecked((int)0x80070057);
     private const int Failure = unchecked((int)0x80004005);
+    private const int NoInterface = unchecked((int)0x80004002);
 
     private readonly IRustVmBatchTarget _target;
     private readonly Action<Action> _post;
@@ -103,6 +106,7 @@ public sealed class RustVmBatchCoordinator
     private void ApplyCore(IAvnRustVmUpdateBatch batch)
     {
         var plan = new BatchPlan();
+        IAvnRustVmUpdateBatch2 ownership;
         long generation;
         try
         {
@@ -120,6 +124,17 @@ public sealed class RustVmBatchCoordinator
                 RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Stale);
                 return;
             }
+
+            // The ownership-commit capability is required, and it is resolved
+            // before anything is decoded or staged: a producer that cannot hand
+            // over nested ownership at the right point must fail with zero
+            // mutation rather than leave the two sides' nested state divergent.
+            if (batch is not IAvnRustVmUpdateBatch2 batch2)
+            {
+                RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, NoInterface);
+                return;
+            }
+            ownership = batch2;
 
             hr = Decode(batch, out var entries);
             if (hr < 0)
@@ -175,9 +190,37 @@ public sealed class RustVmBatchCoordinator
         }
 
         _lastGeneration = generation;
+        // Ownership transfers between the state commit and the notifications, so
+        // an observer that synchronously publishes further nested updates sees a
+        // producer whose nested handles already match the committed state.
+        CommitOwnership(ownership);
         Publish(plan);
         plan.DisposeOrphans();
         RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Applied);
+    }
+
+    private void CommitOwnership(IAvnRustVmUpdateBatch2 ownership)
+    {
+        int hr;
+        try
+        {
+            hr = ownership.CommitOwnership();
+        }
+        catch (Exception error)
+        {
+            hr = HResultOf(error);
+        }
+
+        if (hr >= 0)
+            return;
+
+        // The state is committed, so this is not reported as a failed batch. It
+        // is logged because the producer's nested bookkeeping may now lag the
+        // published state.
+        Logger.TryGet(LogEventLevel.Error, LogArea.Binding)?.Log(
+            _target,
+            "A Rust view-model batch committed but its producer refused ownership transfer: 0x{Result:X8}",
+            hr);
     }
 
     private static int HResultOf(Exception error) =>

@@ -156,7 +156,22 @@ public static class ViewModelSourceEmitter
         foreach (var property in model.Properties)
             sb.AppendLine($"    private {CSharpType(ir, property)} _{Lower(property.Name)} = {CSharpInitial(ir, property)};");
         sb.AppendLine();
-        sb.AppendLine($"    public {model.Name}Adapter(IAvnRustViewModel model, Action<Action>? dispatch = null, Action<Action>? post = null)");
+        sb.AppendLine("    /// <summary>Creates an adapter that dispatches and posts through <see cref=\"Dispatcher.UIThread\"/>.</summary>");
+        sb.AppendLine($"    public {model.Name}Adapter(IAvnRustViewModel model) : this(model, null, null) {{ }}");
+        sb.AppendLine();
+        sb.AppendLine("    /// <summary>");
+        sb.AppendLine("    /// Creates an adapter with a custom synchronous dispatch for the legacy v1/v2");
+        sb.AppendLine("    /// sink path. Kept as a distinct CLR signature (not an optional parameter) so");
+        sb.AppendLine("    /// already-compiled callers keep binding to it.");
+        sb.AppendLine("    /// </summary>");
+        sb.AppendLine($"    public {model.Name}Adapter(IAvnRustViewModel model, Action<Action>? dispatch) : this(model, dispatch, null) {{ }}");
+        sb.AppendLine();
+        sb.AppendLine("    /// <summary>");
+        sb.AppendLine("    /// Creates an adapter with a custom synchronous <paramref name=\"dispatch\"/> for the");
+        sb.AppendLine("    /// legacy v1/v2 sink path and a custom nonblocking <paramref name=\"post\"/> for");
+        sb.AppendLine("    /// batch submission.");
+        sb.AppendLine("    /// </summary>");
+        sb.AppendLine($"    public {model.Name}Adapter(IAvnRustViewModel model, Action<Action>? dispatch, Action<Action>? post)");
         sb.AppendLine("    {");
         sb.AppendLine("        _model = model;");
         sb.AppendLine("        _dispatch = dispatch ?? Dispatch;");

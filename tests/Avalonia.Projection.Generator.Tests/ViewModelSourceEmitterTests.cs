@@ -143,6 +143,28 @@ public class ViewModelSourceEmitterTests
     }
 
     [Fact]
+    public void Emits_distinct_constructor_overloads_rather_than_optional_parameters()
+    {
+        var csharp = ViewModelSourceEmitter.EmitCSharp(SampleIr())["SampleViewModelAdapter.g.cs"];
+
+        // Optional parameters do not preserve CLR constructor signatures, so
+        // every arity is emitted as its own overload for already-compiled callers.
+        Assert.Contains(
+            "public SampleViewModelAdapter(IAvnRustViewModel model) : this(model, null, null) { }",
+            csharp,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "public SampleViewModelAdapter(IAvnRustViewModel model, Action<Action>? dispatch) : this(model, dispatch, null) { }",
+            csharp,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "public SampleViewModelAdapter(IAvnRustViewModel model, Action<Action>? dispatch, Action<Action>? post)",
+            csharp,
+            StringComparison.Ordinal);
+        Assert.DoesNotContain("Action<Action>? dispatch = null", csharp, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Emits_exact_wire_kind_nullability_and_enum_domain_metadata_for_every_property()
     {
         var ir = new ViewModelIr

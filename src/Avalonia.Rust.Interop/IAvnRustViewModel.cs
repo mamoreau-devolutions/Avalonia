@@ -159,6 +159,37 @@ public partial interface IAvnRustVmUpdateBatch
     int Complete(int outcome, int error);
 }
 
+/// <summary>
+/// The batch's separately versioned ownership-commit capability. It is a
+/// distinct IID and vtable rather than an extension of
+/// <see cref="IAvnRustVmUpdateBatch"/>, so the immutable batch contract that
+/// already shipped is untouched.
+///
+/// The adapter calls <see cref="CommitOwnership"/> exactly once, immediately
+/// after every notification-free managed state store and strictly before any
+/// <c>PropertyChanged</c>/<c>ErrorsChanged</c>/<c>CanExecuteChanged</c>/collection
+/// Reset is published. That ordering is what keeps nested ownership consistent
+/// when a notification observer synchronously publishes further nested updates:
+/// the batch's own nested handles are already reconciled on the producer side,
+/// so the observer's updates apply on top of them instead of racing them.
+///
+/// A batch that is rejected during validation or staging, or that completes as
+/// stale, cancelled or in error before the managed commit, never receives this
+/// call and simply drops its candidate handles.
+/// </summary>
+[GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
+[Guid("6B2E8F10-4C91-4E3A-9A77-1F0C2B3A4D2A")]
+public partial interface IAvnRustVmUpdateBatch2
+{
+    /// <summary>
+    /// Transfers the batch's nested ownership to the producer. Called at most
+    /// once per batch; the implementation must be idempotent-safe by consuming
+    /// its callback.
+    /// </summary>
+    [PreserveSig]
+    int CommitOwnership();
+}
+
 /// <summary>One immutable operation in an <see cref="IAvnRustVmUpdateBatch"/>.</summary>
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
 [Guid("6B2E8F10-4C91-4E3A-9A77-1F0C2B3A4D29")]

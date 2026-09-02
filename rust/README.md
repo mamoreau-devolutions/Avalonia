@@ -144,11 +144,12 @@ schema-wide enums and nested-model/nullable/collection-element-kind
 properties (see [VIEW_MODELS.md](VIEW_MODELS.md#real-application-data-model-support));
 these ride the existing versioned `IAvnRustVmSink`/`IAvnRustVmSink2`
 transport rather than a per-application ABI. Stage 27 additionally introduces
-the independently versioned `IAvnRustVmSink3` immutable batch capability.
-Worker and high-volume publishers must use generated named batch builders:
-submission is one nonblocking dispatcher post, stale/equal generations are
-rejected deterministically, and completion is asynchronous. Both the generated
-and reflectable adapters apply a batch through one shared staged transactional
+the independently versioned `IAvnRustVmSink3` immutable batch capability and its
+`IAvnRustVmUpdateBatch2` ownership-commit companion. Worker and high-volume
+publishers must use generated named batch builders: submission is one
+nonblocking dispatcher post, stale/equal generations are rejected
+deterministically, and completion is asynchronous. Both the generated and
+reflectable adapters apply a batch through one shared staged transactional
 engine, so a batch either applies whole or leaves state and notifications
 untouched.
 

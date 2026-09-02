@@ -121,11 +121,40 @@ public sealed partial class ReflectableRustViewModelAdapter :
     private readonly RustVmBatchCoordinator _batch;
     private readonly Action<Action>? _post;
 
+    /// <summary>
+    /// Creates an adapter that dispatches and posts through
+    /// <see cref="Dispatcher.UIThread"/>.
+    /// </summary>
+    public ReflectableRustViewModelAdapter(
+        IAvnRustViewModel model,
+        RustViewModelDescriptor descriptor)
+        : this(model, descriptor, null, null)
+    {
+    }
+
+    /// <summary>
+    /// Creates an adapter with a custom synchronous dispatch for the legacy
+    /// v1/v2 sink path. This overload is kept as a distinct CLR signature (not
+    /// an optional parameter) so already-compiled callers keep binding to it.
+    /// </summary>
     public ReflectableRustViewModelAdapter(
         IAvnRustViewModel model,
         RustViewModelDescriptor descriptor,
-        Action<Action>? dispatch = null,
-        Action<Action>? post = null)
+        Action<Action>? dispatch)
+        : this(model, descriptor, dispatch, null)
+    {
+    }
+
+    /// <summary>
+    /// Creates an adapter with a custom synchronous <paramref name="dispatch"/>
+    /// for the legacy v1/v2 sink path and a custom nonblocking
+    /// <paramref name="post"/> for batch submission.
+    /// </summary>
+    public ReflectableRustViewModelAdapter(
+        IAvnRustViewModel model,
+        RustViewModelDescriptor descriptor,
+        Action<Action>? dispatch,
+        Action<Action>? post)
     {
         _model = model ?? throw new ArgumentNullException(nameof(model));
         ArgumentNullException.ThrowIfNull(descriptor);

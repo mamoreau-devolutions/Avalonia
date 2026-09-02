@@ -32,8 +32,8 @@ pub use hresult::{
 };
 pub use rust_vm::{
     rust_view_model, rust_vm_update_batch, IAvnRustViewModel, IAvnRustVmSink, IAvnRustVmSink2,
-    IAvnRustVmSink3, IAvnRustVmUpdateBatch, IAvnRustVmUpdateOperation, RustViewModelCallbacks,
-    RustVmBatchCompletion, RustVmUpdate,
+    IAvnRustVmSink3, IAvnRustVmUpdateBatch, IAvnRustVmUpdateBatch2, IAvnRustVmUpdateOperation,
+    RustViewModelCallbacks, RustVmBatchCompletion, RustVmBatchOwnershipCommit, RustVmUpdate,
 };
 pub use value_converter::{
     rust_value_converter_provider, ConversionDirection, ConvertFn, ConverterAbiError,
