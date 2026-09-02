@@ -39,6 +39,7 @@ public sealed class RustBindingExtension : CompiledBinding
     {
         private Action<object?>? _listener;
         private WeakPropertyChangedSubscription? _subscription;
+        private int _eventVersion;
 
         public Type PropertyType => property.PropertyType;
 
@@ -52,8 +53,10 @@ public sealed class RustBindingExtension : CompiledBinding
             if (!property.CanSet || !target.TryGetTarget(out var instance) || instance is null)
                 return false;
 
+            var eventVersion = _eventVersion;
             property.Set(instance, value);
-            PublishValue();
+            if (_eventVersion == eventVersion)
+                PublishValue();
             return true;
         }
 
@@ -82,7 +85,10 @@ public sealed class RustBindingExtension : CompiledBinding
         private void OnPropertyChanged(PropertyChangedEventArgs args)
         {
             if (string.IsNullOrEmpty(args.PropertyName) || args.PropertyName == property.Name)
+            {
+                _eventVersion++;
                 PublishValue();
+            }
         }
 
         private void PublishValue()

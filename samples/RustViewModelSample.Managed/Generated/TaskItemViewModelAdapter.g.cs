@@ -23,6 +23,7 @@ public sealed partial class TaskItemViewModelAdapter : IAvnRustVmSink, IAvnRustV
     private readonly Action<Action>? _post;
     private readonly RustVmBatchCoordinator _batch;
     private readonly Dictionary<string, string> _errors = new(StringComparer.Ordinal);
+    private readonly RustVmInboundWriteTracker _inboundWrites = new();
     private string _title = "";
     private bool _done = false;
 
@@ -73,9 +74,30 @@ public sealed partial class TaskItemViewModelAdapter : IAvnRustVmSink, IAvnRustV
         get => _done;
         set
         {
-            if (Equals(_done, value))
+            var accepted = value;
+            if (Equals(_done, accepted))
                 return;
-            Check(_model.SetBoolean(2, (value ? 1 : 0)));
+            var previous = _done;
+            var inbound = _inboundWrites.Begin(2);
+            try
+            {
+                Check(_model.SetBoolean(2, (accepted ? 1 : 0)));
+                if (!_inboundWrites.WasPublished(inbound))
+                {
+                    _inboundWrites.CommitLocal(2);
+                    SetField(ref _done, accepted, nameof(Done));
+                }
+            }
+            catch
+            {
+                if (_inboundWrites.ShouldRollback(inbound))
+                {
+                    _inboundWrites.CommitLocal(2);
+                    SetField(ref _done, previous, nameof(Done));
+                }
+                throw;
+            }
+            finally { _inboundWrites.End(inbound); }
         }
     }
 
@@ -87,32 +109,52 @@ public sealed partial class TaskItemViewModelAdapter : IAvnRustVmSink, IAvnRustV
             ? new[] { message }
             : Array.Empty<string>();
 
-    public int SetString(int propertyId, string? value) => propertyId switch
+    public int SetString(int propertyId, string? value)
     {
-        1 => Apply(() => SetField(ref _title, value ?? "", nameof(Title))),
-        _ => unchecked((int)0x80070057),
-    };
+        var inbound = _inboundWrites.MarkPublication(propertyId);
+        return propertyId switch
+        {
+            1 => Apply(() => { var converted = value ?? ""; if (!Equals(_title, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _title, converted, nameof(Title)); } }),
+            _ => unchecked((int)0x80070057),
+        };
+    }
 
-    public int SetInteger(int propertyId, long value) => propertyId switch
+    public int SetInteger(int propertyId, long value)
     {
-        _ => unchecked((int)0x80070057),
-    };
+        var inbound = _inboundWrites.MarkPublication(propertyId);
+        return propertyId switch
+        {
+            _ => unchecked((int)0x80070057),
+        };
+    }
 
-    public int SetBoolean(int propertyId, int value) => propertyId switch
+    public int SetBoolean(int propertyId, int value)
     {
-        2 => Apply(() => SetField(ref _done, value != 0, nameof(Done))),
-        _ => unchecked((int)0x80070057),
-    };
+        var inbound = _inboundWrites.MarkPublication(propertyId);
+        return propertyId switch
+        {
+            2 => Apply(() => { var converted = value != 0; if (!Equals(_done, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _done, converted, nameof(Done)); } }),
+            _ => unchecked((int)0x80070057),
+        };
+    }
 
-    public int SetDouble(int propertyId, double value) => propertyId switch
+    public int SetDouble(int propertyId, double value)
     {
-        _ => unchecked((int)0x80070057),
-    };
+        var inbound = _inboundWrites.MarkPublication(propertyId);
+        return propertyId switch
+        {
+            _ => unchecked((int)0x80070057),
+        };
+    }
 
-    public int SetNull(int propertyId) => propertyId switch
+    public int SetNull(int propertyId)
     {
-        _ => unchecked((int)0x80070057),
-    };
+        var inbound = _inboundWrites.MarkPublication(propertyId);
+        return propertyId switch
+        {
+            _ => unchecked((int)0x80070057),
+        };
+    }
 
     public int SetModel(int propertyId, IAvnRustViewModel? model) => propertyId switch
     {

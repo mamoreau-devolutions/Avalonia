@@ -48,6 +48,111 @@ public class RustVmAdapterTests
         adapter.Dispose();
         Assert.Equal(1, model.DetachCalls);
     }
+
+    [Fact]
+    public void Writable_properties_commit_successful_non_echoing_writes_and_can_return_to_initial_value()
+    {
+        var generatedModel = new NonEchoingModel();
+        using var generated = new SampleViewModelAdapter(generatedModel, action => action());
+        var generatedChanges = new List<string?>();
+        generated.PropertyChanged += (_, args) => generatedChanges.Add(args.PropertyName);
+
+        generated.NewItem = "Error";
+        generated.NewItem = "";
+
+        Assert.Equal(["Error", ""], generatedModel.StringWrites);
+        Assert.Equal("", generated.NewItem);
+        Assert.Equal([nameof(generated.NewItem), nameof(generated.NewItem)], generatedChanges);
+
+        var dynamicModel = new NonEchoingModel();
+        using var dynamic = new ReflectableRustViewModelAdapter(
+            dynamicModel,
+            SampleViewModelMetadata.Descriptor,
+            action => action());
+        var dynamicChanges = new List<string?>();
+        dynamic.PropertyChanged += (_, args) => dynamicChanges.Add(args.PropertyName);
+
+        dynamic.SetMemberValue(nameof(generated.NewItem), "Error");
+        dynamic.SetMemberValue(nameof(generated.NewItem), "");
+
+        Assert.Equal(["Error", ""], dynamicModel.StringWrites);
+        Assert.Equal("", dynamic.GetMemberValue(nameof(generated.NewItem)));
+        Assert.Equal([nameof(generated.NewItem), nameof(generated.NewItem)], dynamicChanges);
+    }
+
+    [Fact]
+    public void Writable_properties_do_not_commit_failed_non_echoing_writes()
+    {
+        var model = new NonEchoingModel(failWrites: true);
+        using var adapter = new SampleViewModelAdapter(model, action => action());
+
+        Assert.ThrowsAny<Exception>(() => adapter.NewItem = "Rejected");
+
+        Assert.Equal("", adapter.NewItem);
+    }
+
+    [Fact]
+    public void Synchronous_same_value_normalization_is_authoritative()
+    {
+        var generatedModel = new NormalizingModel();
+        using var generated = new SampleViewModelAdapter(generatedModel, action => action());
+        var generatedChanges = 0;
+        generated.PropertyChanged += (_, _) => generatedChanges++;
+
+        generated.Name = " abc ";
+
+        Assert.Equal("abc", generated.Name);
+        Assert.Equal(0, generatedChanges);
+
+        var dynamicModel = new NormalizingModel();
+        using var dynamic = new ReflectableRustViewModelAdapter(
+            dynamicModel,
+            SampleViewModelMetadata.Descriptor,
+            action => action());
+        var dynamicChanges = 0;
+        dynamic.PropertyChanged += (_, _) => dynamicChanges++;
+
+        dynamic.SetMemberValue(nameof(generated.Name), " abc ");
+
+        Assert.Equal("abc", dynamic.GetMemberValue(nameof(generated.Name)));
+        Assert.Equal(0, dynamicChanges);
+    }
+
+    [Fact]
+    public void Reflectable_non_echoing_enum_write_retains_the_concrete_enum_type()
+    {
+        var model = new NonEchoingModel();
+        using var adapter = new ReflectableRustViewModelAdapter(
+            model,
+            SampleViewModelMetadata.Descriptor,
+            action => action());
+
+        adapter.SetMemberValue("Priority", 2L);
+
+        Assert.Equal([2L], model.IntegerWrites);
+        Assert.Equal(Priority.High, Assert.IsType<Priority>(adapter.GetMemberValue("Priority")));
+    }
+
+    [Fact]
+    public void Synchronous_nullable_normalization_to_null_is_authoritative()
+    {
+        var generatedModel = new NullNormalizingModel();
+        using var generated = new SampleViewModelAdapter(generatedModel, action => action());
+
+        generated.Nickname = "   ";
+
+        Assert.Null(generated.Nickname);
+
+        var dynamicModel = new NullNormalizingModel();
+        using var dynamic = new ReflectableRustViewModelAdapter(
+            dynamicModel,
+            SampleViewModelMetadata.Descriptor,
+            action => action());
+
+        dynamic.SetMemberValue(nameof(generated.Nickname), "   ");
+
+        Assert.Null(dynamic.GetMemberValue(nameof(generated.Nickname)));
+    }
     [Fact]
     public void Repeated_attach_detach_balances()
     {
@@ -610,6 +715,93 @@ public class RustVmAdapterTests
             return 0;
         }
 
+        public int SetDouble(int propertyId, double value) => unchecked((int)0x80070057);
+        public int Execute(int commandId, string? parameter) => unchecked((int)0x80070057);
+        public int BeginAsync(int commandId, string? parameter) => unchecked((int)0x80070057);
+    }
+
+    private sealed class NonEchoingModel(bool failWrites = false) : IAvnRustViewModel
+    {
+        public List<string> StringWrites { get; } = [];
+        public List<long> IntegerWrites { get; } = [];
+
+        public int Attach(IAvnRustVmSink? sink) => 0;
+        public int Detach() => 0;
+
+        public int SetString(int propertyId, string? value)
+        {
+            if (propertyId != 3)
+                return unchecked((int)0x80070057);
+            if (failWrites)
+                return unchecked((int)0x80004005);
+            StringWrites.Add(value ?? "");
+            return 0;
+        }
+
+        public int SetInteger(int propertyId, long value)
+        {
+            if (propertyId != 6)
+                return unchecked((int)0x80070057);
+            IntegerWrites.Add(value);
+            return 0;
+        }
+        public int SetBoolean(int propertyId, int value) => unchecked((int)0x80070057);
+        public int SetDouble(int propertyId, double value) => unchecked((int)0x80070057);
+        public int Execute(int commandId, string? parameter) => unchecked((int)0x80070057);
+        public int BeginAsync(int commandId, string? parameter) => unchecked((int)0x80070057);
+    }
+
+    private sealed class NormalizingModel : IAvnRustViewModel
+    {
+        private IAvnRustVmSink? _sink;
+
+        public int Attach(IAvnRustVmSink? sink)
+        {
+            _sink = sink;
+            return sink!.SetString(1, "abc");
+        }
+
+        public int Detach()
+        {
+            _sink = null;
+            return 0;
+        }
+
+        public int SetString(int propertyId, string? value) =>
+            propertyId == 1
+                ? _sink!.SetString(1, value?.Trim())
+                : unchecked((int)0x80070057);
+
+        public int SetInteger(int propertyId, long value) => unchecked((int)0x80070057);
+        public int SetBoolean(int propertyId, int value) => unchecked((int)0x80070057);
+        public int SetDouble(int propertyId, double value) => unchecked((int)0x80070057);
+        public int Execute(int commandId, string? parameter) => unchecked((int)0x80070057);
+        public int BeginAsync(int commandId, string? parameter) => unchecked((int)0x80070057);
+    }
+
+    private sealed class NullNormalizingModel : IAvnRustViewModel
+    {
+        private IAvnRustVmSink2? _sink;
+
+        public int Attach(IAvnRustVmSink? sink)
+        {
+            _sink = (IAvnRustVmSink2)sink!;
+            return 0;
+        }
+
+        public int Detach()
+        {
+            _sink = null;
+            return 0;
+        }
+
+        public int SetString(int propertyId, string? value) =>
+            propertyId == 5
+                ? _sink!.SetNull(5)
+                : unchecked((int)0x80070057);
+
+        public int SetInteger(int propertyId, long value) => unchecked((int)0x80070057);
+        public int SetBoolean(int propertyId, int value) => unchecked((int)0x80070057);
         public int SetDouble(int propertyId, double value) => unchecked((int)0x80070057);
         public int Execute(int commandId, string? parameter) => unchecked((int)0x80070057);
         public int BeginAsync(int commandId, string? parameter) => unchecked((int)0x80070057);

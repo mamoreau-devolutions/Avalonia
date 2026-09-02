@@ -153,6 +153,7 @@ public static class ViewModelSourceEmitter
         sb.AppendLine("    private readonly Action<Action>? _post;");
         sb.AppendLine("    private readonly RustVmBatchCoordinator _batch;");
         sb.AppendLine("    private readonly Dictionary<string, string> _errors = new(StringComparer.Ordinal);");
+        sb.AppendLine("    private readonly RustVmInboundWriteTracker _inboundWrites = new();");
         foreach (var property in model.Properties)
             sb.AppendLine($"    private {CSharpType(ir, property)} _{Lower(property.Name)} = {CSharpInitial(ir, property)};");
         sb.AppendLine();
@@ -210,9 +211,30 @@ public static class ViewModelSourceEmitter
             {
                 sb.AppendLine("        set");
                 sb.AppendLine("        {");
-                sb.AppendLine($"            if (Equals(_{Lower(property.Name)}, value))");
+                sb.AppendLine($"            var accepted = {CSharpAcceptedValue(property, "value")};");
+                sb.AppendLine($"            if (Equals(_{Lower(property.Name)}, accepted))");
                 sb.AppendLine("                return;");
-                sb.AppendLine($"            Check(_model.Set{TransportSuffix(WireKind(property.Kind))}({property.Id}, {CSharpToTransport(property, "value")}));");
+                sb.AppendLine($"            var previous = _{Lower(property.Name)};");
+                sb.AppendLine($"            var inbound = _inboundWrites.Begin({property.Id});");
+                sb.AppendLine("            try");
+                sb.AppendLine("            {");
+                sb.AppendLine($"                Check(_model.Set{TransportSuffix(WireKind(property.Kind))}({property.Id}, {CSharpToTransport(property, "accepted")}));");
+                sb.AppendLine("                if (!_inboundWrites.WasPublished(inbound))");
+                sb.AppendLine("                {");
+                sb.AppendLine($"                    _inboundWrites.CommitLocal({property.Id});");
+                sb.AppendLine($"                    SetField(ref _{Lower(property.Name)}, accepted, nameof({property.Name}));");
+                sb.AppendLine("                }");
+                sb.AppendLine("            }");
+                sb.AppendLine("            catch");
+                sb.AppendLine("            {");
+                sb.AppendLine("                if (_inboundWrites.ShouldRollback(inbound))");
+                sb.AppendLine("                {");
+                sb.AppendLine($"                    _inboundWrites.CommitLocal({property.Id});");
+                sb.AppendLine($"                    SetField(ref _{Lower(property.Name)}, previous, nameof({property.Name}));");
+                sb.AppendLine("                }");
+                sb.AppendLine("                throw;");
+                sb.AppendLine("            }");
+                sb.AppendLine("            finally { _inboundWrites.End(inbound); }");
                 sb.AppendLine("        }");
             }
             sb.AppendLine("    }");
@@ -520,33 +542,43 @@ public static class ViewModelSourceEmitter
         foreach (var wireKind in ScalarWireKinds)
         {
             var properties = model.Properties.Where(property => WireKind(property.Kind) == wireKind).ToArray();
-            sb.AppendLine($"    public int Set{TransportSuffix(wireKind)}(int propertyId, {CSharpTransportType(wireKind)} value) => propertyId switch");
+            sb.AppendLine($"    public int Set{TransportSuffix(wireKind)}(int propertyId, {CSharpTransportType(wireKind)} value)");
             sb.AppendLine("    {");
+            sb.AppendLine("        var inbound = _inboundWrites.MarkPublication(propertyId);");
+            sb.AppendLine("        return propertyId switch");
+            sb.AppendLine("        {");
             foreach (var property in properties)
             {
                 if (property.Kind == ViewModelValueKind.Enum)
                 {
                     var enumType = CSharpEnumTypeName(ir, property.EnumName!);
+                    var converted = CSharpFromTransport(ir, property, "value");
                     sb.AppendLine(
-                        $"        {property.Id} => !global::System.Enum.IsDefined(typeof({enumType}), value) ? unchecked((int)0x80070057) : Apply(() => SetField(ref _{Lower(property.Name)}, {CSharpFromTransport(ir, property, "value")}, nameof({property.Name}))),");
+                        $"            {property.Id} => !global::System.Enum.IsDefined(typeof({enumType}), value) ? unchecked((int)0x80070057) : Apply(() => {{ var converted = {converted}; if (!Equals(_{Lower(property.Name)}, converted)) {{ _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _{Lower(property.Name)}, converted, nameof({property.Name})); }} }}),");
                 }
                 else
                 {
-                    sb.AppendLine($"        {property.Id} => Apply(() => SetField(ref _{Lower(property.Name)}, {CSharpFromTransport(ir, property, "value")}, nameof({property.Name}))),");
+                    var converted = CSharpFromTransport(ir, property, "value");
+                    sb.AppendLine($"            {property.Id} => Apply(() => {{ var converted = {converted}; if (!Equals(_{Lower(property.Name)}, converted)) {{ _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _{Lower(property.Name)}, converted, nameof({property.Name})); }} }}),");
                 }
             }
-            sb.AppendLine("        _ => unchecked((int)0x80070057),");
-            sb.AppendLine("    };");
+            sb.AppendLine("            _ => unchecked((int)0x80070057),");
+            sb.AppendLine("        };");
+            sb.AppendLine("    }");
             sb.AppendLine();
         }
 
         var nullableProperties = model.Properties.Where(property => property.Nullable && property.Kind != ViewModelValueKind.Model).ToArray();
-        sb.AppendLine("    public int SetNull(int propertyId) => propertyId switch");
+        sb.AppendLine("    public int SetNull(int propertyId)");
         sb.AppendLine("    {");
+        sb.AppendLine("        var inbound = _inboundWrites.MarkPublication(propertyId);");
+        sb.AppendLine("        return propertyId switch");
+        sb.AppendLine("        {");
         foreach (var property in nullableProperties)
-            sb.AppendLine($"        {property.Id} => Apply(() => SetField(ref _{Lower(property.Name)}, null, nameof({property.Name}))),");
-        sb.AppendLine("        _ => unchecked((int)0x80070057),");
-        sb.AppendLine("    };");
+            sb.AppendLine($"            {property.Id} => Apply(() => {{ if (_{Lower(property.Name)} is not null) {{ _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _{Lower(property.Name)}, null, nameof({property.Name})); }} }}),");
+        sb.AppendLine("            _ => unchecked((int)0x80070057),");
+        sb.AppendLine("        };");
+        sb.AppendLine("    }");
         sb.AppendLine();
 
         var modelProperties = model.Properties.Where(property => property.Kind == ViewModelValueKind.Model).ToArray();
@@ -1298,6 +1330,11 @@ public static class ViewModelSourceEmitter
         ViewModelValueKind.Enum => $"(long){value}",
         _ => value,
     };
+
+    private static string CSharpAcceptedValue(ViewModelProperty property, string value) =>
+        property.Kind == ViewModelValueKind.String && !property.Nullable
+            ? $"{value} ?? \"\""
+            : value;
 
     private static string CSharpFromTransport(ViewModelIr ir, ViewModelProperty property, string value) => property.Kind switch
     {

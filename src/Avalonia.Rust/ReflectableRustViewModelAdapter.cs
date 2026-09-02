@@ -115,6 +115,7 @@ public sealed partial class ReflectableRustViewModelAdapter :
     private readonly Dictionary<int, RuntimeCollection> _collectionsById = [];
     private readonly Dictionary<int, DelegateCommand> _commandsById = [];
     private readonly Dictionary<string, string> _errors = new(StringComparer.Ordinal);
+    private readonly RustVmInboundWriteTracker _inboundWrites = new();
     private readonly Dictionary<string, RuntimeMember> _membersByName =
         new(StringComparer.Ordinal);
     private readonly TypeInfo _typeInfo;
@@ -355,12 +356,14 @@ public sealed partial class ReflectableRustViewModelAdapter :
 
     public int SetNull(int propertyId)
     {
+        var inbound = _inboundWrites.MarkPublication(propertyId);
         if (!_propertiesById.TryGetValue(propertyId, out var property) || !property.Descriptor.Nullable)
             return InvalidArgument;
         return Apply(() =>
         {
             if (property.Value is null)
                 return;
+            _inboundWrites.CommitPublication(propertyId, inbound);
             property.Value = null;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property.Descriptor.Name));
         });
@@ -492,6 +495,7 @@ public sealed partial class ReflectableRustViewModelAdapter :
 
     private int ApplyProperty(int propertyId, RustViewModelValueKind wireKind, object? rawValue)
     {
+        var inbound = _inboundWrites.MarkPublication(propertyId);
         if (!_propertiesById.TryGetValue(propertyId, out var property) ||
             WireKind(property.Descriptor.Kind) != wireKind)
         {
@@ -516,6 +520,7 @@ public sealed partial class ReflectableRustViewModelAdapter :
             if (Equals(property.Value, value))
                 return;
 
+            _inboundWrites.CommitPublication(propertyId, inbound);
             property.Value = value;
             PropertyChanged?.Invoke(
                 this,
@@ -678,20 +683,77 @@ public sealed partial class ReflectableRustViewModelAdapter :
             throw new InvalidOperationException(
                 $"Rust view-model property '{property.Descriptor.Name}' is read-only.");
 
-        var result = WireKind(property.Descriptor.Kind) switch
+        var acceptedValue = property.Descriptor.Kind switch
         {
-            RustViewModelValueKind.String =>
-                _model.SetString(property.Descriptor.Id, Convert.ToString(value, CultureInfo.InvariantCulture)),
-            RustViewModelValueKind.Integer =>
-                _model.SetInteger(property.Descriptor.Id, Convert.ToInt64(value, CultureInfo.InvariantCulture)),
-            RustViewModelValueKind.Boolean =>
-                _model.SetBoolean(property.Descriptor.Id, Convert.ToBoolean(value, CultureInfo.InvariantCulture) ? 1 : 0),
-            RustViewModelValueKind.Double =>
-                _model.SetDouble(property.Descriptor.Id, Convert.ToDouble(value, CultureInfo.InvariantCulture)),
+            RustViewModelValueKind.String when property.Descriptor.Nullable => value as string,
+            RustViewModelValueKind.String => Convert.ToString(value, CultureInfo.InvariantCulture) ?? "",
+            RustViewModelValueKind.Integer => Convert.ToInt64(value, CultureInfo.InvariantCulture),
+            RustViewModelValueKind.Boolean => Convert.ToBoolean(value, CultureInfo.InvariantCulture),
+            RustViewModelValueKind.Double => Convert.ToDouble(value, CultureInfo.InvariantCulture),
+            RustViewModelValueKind.Enum => ConvertEnumValue(property, value),
             _ => throw new ArgumentOutOfRangeException(),
         };
-        Check(result);
+        if (Equals(property.Value, acceptedValue))
+            return;
+
+        var previous = property.Value;
+        var inbound = _inboundWrites.Begin(property.Descriptor.Id);
+        try
+        {
+            var result = property.Descriptor.Kind switch
+            {
+                RustViewModelValueKind.String =>
+                    _model.SetString(property.Descriptor.Id, (string?)acceptedValue),
+                RustViewModelValueKind.Integer =>
+                    _model.SetInteger(property.Descriptor.Id, (long)acceptedValue!),
+                RustViewModelValueKind.Boolean =>
+                    _model.SetBoolean(property.Descriptor.Id, (bool)acceptedValue! ? 1 : 0),
+                RustViewModelValueKind.Double =>
+                    _model.SetDouble(property.Descriptor.Id, (double)acceptedValue!),
+                RustViewModelValueKind.Enum =>
+                    _model.SetInteger(
+                        property.Descriptor.Id,
+                        Convert.ToInt64(acceptedValue, CultureInfo.InvariantCulture)),
+                _ => throw new ArgumentOutOfRangeException(),
+            };
+            Check(result);
+            if (!_inboundWrites.WasPublished(inbound))
+            {
+                _inboundWrites.CommitLocal(property.Descriptor.Id);
+                property.Value = acceptedValue;
+                PropertyChanged?.Invoke(
+                    this,
+                    new PropertyChangedEventArgs(property.Descriptor.Name));
+            }
+        }
+        catch
+        {
+            if (_inboundWrites.ShouldRollback(inbound))
+            {
+                _inboundWrites.CommitLocal(property.Descriptor.Id);
+                property.Value = previous;
+                PropertyChanged?.Invoke(
+                    this,
+                    new PropertyChangedEventArgs(property.Descriptor.Name));
+            }
+            throw;
+        }
+        finally { _inboundWrites.End(inbound); }
     }
+
+    private static object ConvertEnumValue(RuntimeProperty property, object? value)
+    {
+        var enumType = property.EnumType
+            ?? throw new InvalidOperationException(
+                $"Enum property '{property.Descriptor.Name}' has no concrete enum type.");
+        var converted = value is not null && value.GetType() == enumType
+            ? value
+            : Enum.ToObject(enumType, Convert.ToInt64(value, CultureInfo.InvariantCulture));
+        if (!Enum.IsDefined(enumType, converted))
+            throw new ArgumentOutOfRangeException(nameof(value), value, $"Invalid value for enum '{enumType.Name}'.");
+        return converted;
+    }
+
 
     private void Execute(RustViewModelCommandDescriptor command)
     {

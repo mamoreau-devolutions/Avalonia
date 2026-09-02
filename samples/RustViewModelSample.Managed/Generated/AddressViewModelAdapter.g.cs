@@ -23,6 +23,7 @@ public sealed partial class AddressViewModelAdapter : IAvnRustVmSink, IAvnRustVm
     private readonly Action<Action>? _post;
     private readonly RustVmBatchCoordinator _batch;
     private readonly Dictionary<string, string> _errors = new(StringComparer.Ordinal);
+    private readonly RustVmInboundWriteTracker _inboundWrites = new();
     private string _street = "";
     private string _city = "";
 
@@ -68,9 +69,30 @@ public sealed partial class AddressViewModelAdapter : IAvnRustVmSink, IAvnRustVm
         get => _street;
         set
         {
-            if (Equals(_street, value))
+            var accepted = value ?? "";
+            if (Equals(_street, accepted))
                 return;
-            Check(_model.SetString(1, value));
+            var previous = _street;
+            var inbound = _inboundWrites.Begin(1);
+            try
+            {
+                Check(_model.SetString(1, accepted));
+                if (!_inboundWrites.WasPublished(inbound))
+                {
+                    _inboundWrites.CommitLocal(1);
+                    SetField(ref _street, accepted, nameof(Street));
+                }
+            }
+            catch
+            {
+                if (_inboundWrites.ShouldRollback(inbound))
+                {
+                    _inboundWrites.CommitLocal(1);
+                    SetField(ref _street, previous, nameof(Street));
+                }
+                throw;
+            }
+            finally { _inboundWrites.End(inbound); }
         }
     }
 
@@ -79,9 +101,30 @@ public sealed partial class AddressViewModelAdapter : IAvnRustVmSink, IAvnRustVm
         get => _city;
         set
         {
-            if (Equals(_city, value))
+            var accepted = value ?? "";
+            if (Equals(_city, accepted))
                 return;
-            Check(_model.SetString(2, value));
+            var previous = _city;
+            var inbound = _inboundWrites.Begin(2);
+            try
+            {
+                Check(_model.SetString(2, accepted));
+                if (!_inboundWrites.WasPublished(inbound))
+                {
+                    _inboundWrites.CommitLocal(2);
+                    SetField(ref _city, accepted, nameof(City));
+                }
+            }
+            catch
+            {
+                if (_inboundWrites.ShouldRollback(inbound))
+                {
+                    _inboundWrites.CommitLocal(2);
+                    SetField(ref _city, previous, nameof(City));
+                }
+                throw;
+            }
+            finally { _inboundWrites.End(inbound); }
         }
     }
 
@@ -93,32 +136,52 @@ public sealed partial class AddressViewModelAdapter : IAvnRustVmSink, IAvnRustVm
             ? new[] { message }
             : Array.Empty<string>();
 
-    public int SetString(int propertyId, string? value) => propertyId switch
+    public int SetString(int propertyId, string? value)
     {
-        1 => Apply(() => SetField(ref _street, value ?? "", nameof(Street))),
-        2 => Apply(() => SetField(ref _city, value ?? "", nameof(City))),
-        _ => unchecked((int)0x80070057),
-    };
+        var inbound = _inboundWrites.MarkPublication(propertyId);
+        return propertyId switch
+        {
+            1 => Apply(() => { var converted = value ?? ""; if (!Equals(_street, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _street, converted, nameof(Street)); } }),
+            2 => Apply(() => { var converted = value ?? ""; if (!Equals(_city, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _city, converted, nameof(City)); } }),
+            _ => unchecked((int)0x80070057),
+        };
+    }
 
-    public int SetInteger(int propertyId, long value) => propertyId switch
+    public int SetInteger(int propertyId, long value)
     {
-        _ => unchecked((int)0x80070057),
-    };
+        var inbound = _inboundWrites.MarkPublication(propertyId);
+        return propertyId switch
+        {
+            _ => unchecked((int)0x80070057),
+        };
+    }
 
-    public int SetBoolean(int propertyId, int value) => propertyId switch
+    public int SetBoolean(int propertyId, int value)
     {
-        _ => unchecked((int)0x80070057),
-    };
+        var inbound = _inboundWrites.MarkPublication(propertyId);
+        return propertyId switch
+        {
+            _ => unchecked((int)0x80070057),
+        };
+    }
 
-    public int SetDouble(int propertyId, double value) => propertyId switch
+    public int SetDouble(int propertyId, double value)
     {
-        _ => unchecked((int)0x80070057),
-    };
+        var inbound = _inboundWrites.MarkPublication(propertyId);
+        return propertyId switch
+        {
+            _ => unchecked((int)0x80070057),
+        };
+    }
 
-    public int SetNull(int propertyId) => propertyId switch
+    public int SetNull(int propertyId)
     {
-        _ => unchecked((int)0x80070057),
-    };
+        var inbound = _inboundWrites.MarkPublication(propertyId);
+        return propertyId switch
+        {
+            _ => unchecked((int)0x80070057),
+        };
+    }
 
     public int SetModel(int propertyId, IAvnRustViewModel? model) => propertyId switch
     {

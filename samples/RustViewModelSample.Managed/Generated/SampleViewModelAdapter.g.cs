@@ -23,6 +23,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     private readonly Action<Action>? _post;
     private readonly RustVmBatchCoordinator _batch;
     private readonly Dictionary<string, string> _errors = new(StringComparer.Ordinal);
+    private readonly RustVmInboundWriteTracker _inboundWrites = new();
     private string _name = "Avalonia from Rust";
     private long _count = 0L;
     private string _newItem = "";
@@ -83,9 +84,30 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         get => _name;
         set
         {
-            if (Equals(_name, value))
+            var accepted = value ?? "";
+            if (Equals(_name, accepted))
                 return;
-            Check(_model.SetString(1, value));
+            var previous = _name;
+            var inbound = _inboundWrites.Begin(1);
+            try
+            {
+                Check(_model.SetString(1, accepted));
+                if (!_inboundWrites.WasPublished(inbound))
+                {
+                    _inboundWrites.CommitLocal(1);
+                    SetField(ref _name, accepted, nameof(Name));
+                }
+            }
+            catch
+            {
+                if (_inboundWrites.ShouldRollback(inbound))
+                {
+                    _inboundWrites.CommitLocal(1);
+                    SetField(ref _name, previous, nameof(Name));
+                }
+                throw;
+            }
+            finally { _inboundWrites.End(inbound); }
         }
     }
 
@@ -99,9 +121,30 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         get => _newItem;
         set
         {
-            if (Equals(_newItem, value))
+            var accepted = value ?? "";
+            if (Equals(_newItem, accepted))
                 return;
-            Check(_model.SetString(3, value));
+            var previous = _newItem;
+            var inbound = _inboundWrites.Begin(3);
+            try
+            {
+                Check(_model.SetString(3, accepted));
+                if (!_inboundWrites.WasPublished(inbound))
+                {
+                    _inboundWrites.CommitLocal(3);
+                    SetField(ref _newItem, accepted, nameof(NewItem));
+                }
+            }
+            catch
+            {
+                if (_inboundWrites.ShouldRollback(inbound))
+                {
+                    _inboundWrites.CommitLocal(3);
+                    SetField(ref _newItem, previous, nameof(NewItem));
+                }
+                throw;
+            }
+            finally { _inboundWrites.End(inbound); }
         }
     }
 
@@ -115,9 +158,30 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         get => _nickname;
         set
         {
-            if (Equals(_nickname, value))
+            var accepted = value;
+            if (Equals(_nickname, accepted))
                 return;
-            Check(_model.SetString(5, value));
+            var previous = _nickname;
+            var inbound = _inboundWrites.Begin(5);
+            try
+            {
+                Check(_model.SetString(5, accepted));
+                if (!_inboundWrites.WasPublished(inbound))
+                {
+                    _inboundWrites.CommitLocal(5);
+                    SetField(ref _nickname, accepted, nameof(Nickname));
+                }
+            }
+            catch
+            {
+                if (_inboundWrites.ShouldRollback(inbound))
+                {
+                    _inboundWrites.CommitLocal(5);
+                    SetField(ref _nickname, previous, nameof(Nickname));
+                }
+                throw;
+            }
+            finally { _inboundWrites.End(inbound); }
         }
     }
 
@@ -126,9 +190,30 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         get => _priority;
         set
         {
-            if (Equals(_priority, value))
+            var accepted = value;
+            if (Equals(_priority, accepted))
                 return;
-            Check(_model.SetInteger(6, (long)value));
+            var previous = _priority;
+            var inbound = _inboundWrites.Begin(6);
+            try
+            {
+                Check(_model.SetInteger(6, (long)accepted));
+                if (!_inboundWrites.WasPublished(inbound))
+                {
+                    _inboundWrites.CommitLocal(6);
+                    SetField(ref _priority, accepted, nameof(Priority));
+                }
+            }
+            catch
+            {
+                if (_inboundWrites.ShouldRollback(inbound))
+                {
+                    _inboundWrites.CommitLocal(6);
+                    SetField(ref _priority, previous, nameof(Priority));
+                }
+                throw;
+            }
+            finally { _inboundWrites.End(inbound); }
         }
     }
 
@@ -142,9 +227,30 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         get => _newTaskTitle;
         set
         {
-            if (Equals(_newTaskTitle, value))
+            var accepted = value ?? "";
+            if (Equals(_newTaskTitle, accepted))
                 return;
-            Check(_model.SetString(8, value));
+            var previous = _newTaskTitle;
+            var inbound = _inboundWrites.Begin(8);
+            try
+            {
+                Check(_model.SetString(8, accepted));
+                if (!_inboundWrites.WasPublished(inbound))
+                {
+                    _inboundWrites.CommitLocal(8);
+                    SetField(ref _newTaskTitle, accepted, nameof(NewTaskTitle));
+                }
+            }
+            catch
+            {
+                if (_inboundWrites.ShouldRollback(inbound))
+                {
+                    _inboundWrites.CommitLocal(8);
+                    SetField(ref _newTaskTitle, previous, nameof(NewTaskTitle));
+                }
+                throw;
+            }
+            finally { _inboundWrites.End(inbound); }
         }
     }
 
@@ -168,38 +274,58 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
             ? new[] { message }
             : Array.Empty<string>();
 
-    public int SetString(int propertyId, string? value) => propertyId switch
+    public int SetString(int propertyId, string? value)
     {
-        1 => Apply(() => SetField(ref _name, value ?? "", nameof(Name))),
-        3 => Apply(() => SetField(ref _newItem, value ?? "", nameof(NewItem))),
-        4 => Apply(() => SetField(ref _status, value ?? "", nameof(Status))),
-        5 => Apply(() => SetField(ref _nickname, value, nameof(Nickname))),
-        8 => Apply(() => SetField(ref _newTaskTitle, value ?? "", nameof(NewTaskTitle))),
-        _ => unchecked((int)0x80070057),
-    };
+        var inbound = _inboundWrites.MarkPublication(propertyId);
+        return propertyId switch
+        {
+            1 => Apply(() => { var converted = value ?? ""; if (!Equals(_name, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _name, converted, nameof(Name)); } }),
+            3 => Apply(() => { var converted = value ?? ""; if (!Equals(_newItem, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _newItem, converted, nameof(NewItem)); } }),
+            4 => Apply(() => { var converted = value ?? ""; if (!Equals(_status, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _status, converted, nameof(Status)); } }),
+            5 => Apply(() => { var converted = value; if (!Equals(_nickname, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _nickname, converted, nameof(Nickname)); } }),
+            8 => Apply(() => { var converted = value ?? ""; if (!Equals(_newTaskTitle, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _newTaskTitle, converted, nameof(NewTaskTitle)); } }),
+            _ => unchecked((int)0x80070057),
+        };
+    }
 
-    public int SetInteger(int propertyId, long value) => propertyId switch
+    public int SetInteger(int propertyId, long value)
     {
-        2 => Apply(() => SetField(ref _count, value, nameof(Count))),
-        6 => !global::System.Enum.IsDefined(typeof(global::Avalonia.Rust.Sample.Generated.Priority), value) ? unchecked((int)0x80070057) : Apply(() => SetField(ref _priority, (global::Avalonia.Rust.Sample.Generated.Priority)value, nameof(Priority))),
-        _ => unchecked((int)0x80070057),
-    };
+        var inbound = _inboundWrites.MarkPublication(propertyId);
+        return propertyId switch
+        {
+            2 => Apply(() => { var converted = value; if (!Equals(_count, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _count, converted, nameof(Count)); } }),
+            6 => !global::System.Enum.IsDefined(typeof(global::Avalonia.Rust.Sample.Generated.Priority), value) ? unchecked((int)0x80070057) : Apply(() => { var converted = (global::Avalonia.Rust.Sample.Generated.Priority)value; if (!Equals(_priority, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _priority, converted, nameof(Priority)); } }),
+            _ => unchecked((int)0x80070057),
+        };
+    }
 
-    public int SetBoolean(int propertyId, int value) => propertyId switch
+    public int SetBoolean(int propertyId, int value)
     {
-        _ => unchecked((int)0x80070057),
-    };
+        var inbound = _inboundWrites.MarkPublication(propertyId);
+        return propertyId switch
+        {
+            _ => unchecked((int)0x80070057),
+        };
+    }
 
-    public int SetDouble(int propertyId, double value) => propertyId switch
+    public int SetDouble(int propertyId, double value)
     {
-        _ => unchecked((int)0x80070057),
-    };
+        var inbound = _inboundWrites.MarkPublication(propertyId);
+        return propertyId switch
+        {
+            _ => unchecked((int)0x80070057),
+        };
+    }
 
-    public int SetNull(int propertyId) => propertyId switch
+    public int SetNull(int propertyId)
     {
-        5 => Apply(() => SetField(ref _nickname, null, nameof(Nickname))),
-        _ => unchecked((int)0x80070057),
-    };
+        var inbound = _inboundWrites.MarkPublication(propertyId);
+        return propertyId switch
+        {
+            5 => Apply(() => { if (_nickname is not null) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _nickname, null, nameof(Nickname)); } }),
+            _ => unchecked((int)0x80070057),
+        };
+    }
 
     public int SetModel(int propertyId, IAvnRustViewModel? model) => propertyId switch
     {
