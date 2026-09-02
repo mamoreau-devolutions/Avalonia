@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
@@ -170,6 +171,7 @@ public sealed partial class ReflectableRustViewModelAdapter :
     IAvnRustVmSink2,
     IAvnRustVmSink3,
     IRustVmBatchTarget,
+    IRustVmTableSelectionBatchTarget,
     INotifyPropertyChanged,
     INotifyDataErrorInfo,
     IReflectableType,
@@ -584,10 +586,10 @@ public sealed partial class ReflectableRustViewModelAdapter :
 
         return Apply(() =>
         {
+            _inboundWrites.CommitPublication(propertyId, inbound);
             if (Equals(property.Value, value))
                 return;
 
-            _inboundWrites.CommitPublication(propertyId, inbound);
             property.Value = value;
             PropertyChanged?.Invoke(
                 this,
@@ -727,6 +729,15 @@ public sealed partial class ReflectableRustViewModelAdapter :
 
     bool IRustVmBatchTarget.CommitError(string propertyName, string? message) =>
         RustVmBatchErrors.Set(_errors, propertyName, message);
+
+    bool IRustVmTableSelectionBatchTarget.IsPostCollectionPropertyNotification(
+        string propertyName,
+        IReadOnlySet<string> changedCollections) =>
+        _collectionsById.Values.Any(collection =>
+            changedCollections.Contains(collection.Descriptor.Name) &&
+            collection.Descriptor.Table?.Selection is { } selection &&
+            (string.Equals(selection.SelectedIndexProperty, propertyName, StringComparison.Ordinal) ||
+             string.Equals(selection.SelectedKeyProperty, propertyName, StringComparison.Ordinal)));
 
     void IRustVmBatchTarget.RaisePropertyChanged(string propertyName) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

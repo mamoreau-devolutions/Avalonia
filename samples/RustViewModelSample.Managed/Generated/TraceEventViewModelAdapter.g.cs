@@ -17,7 +17,7 @@ using Avalonia.Threading;
 namespace Avalonia.Rust.Sample.Generated;
 
 [GeneratedComClass]
-public sealed partial class TraceEventViewModelAdapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, IRustVmBatchTarget, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable
+public sealed partial class TraceEventViewModelAdapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, IRustVmBatchTarget, IRustVmTableSelectionBatchTarget, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable
 {
     private readonly IAvnRustViewModel _model;
     private readonly Action<Action> _dispatch;
@@ -88,8 +88,8 @@ public sealed partial class TraceEventViewModelAdapter : IAvnRustVmSink, IAvnRus
         var inbound = _inboundWrites.MarkPublication(propertyId);
         return propertyId switch
         {
-            1 => Apply(() => { var converted = value ?? ""; if (!Equals(_id, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _id, converted, nameof(Id)); } }),
-            2 => Apply(() => { var converted = value ?? ""; if (!Equals(_source, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _source, converted, nameof(Source)); } }),
+            1 => Apply(() => { var converted = value ?? ""; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_id, converted)) SetField(ref _id, converted, nameof(Id)); }),
+            2 => Apply(() => { var converted = value ?? ""; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_source, converted)) SetField(ref _source, converted, nameof(Source)); }),
             _ => unchecked((int)0x80070057),
         };
     }
@@ -271,6 +271,11 @@ public sealed partial class TraceEventViewModelAdapter : IAvnRustVmSink, IAvnRus
 
     bool IRustVmBatchTarget.CommitError(string propertyName, string? message) =>
         RustVmBatchErrors.Set(_errors, propertyName, message);
+
+    bool IRustVmTableSelectionBatchTarget.IsPostCollectionPropertyNotification(string propertyName, IReadOnlySet<string> changedCollections) => propertyName switch
+    {
+        _ => false,
+    };
 
     void IRustVmBatchTarget.RaisePropertyChanged(string propertyName) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

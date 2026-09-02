@@ -201,6 +201,16 @@ public interface IRustVmBatchTarget
     void RaiseErrorsChanged(string propertyName);
 }
 
+/// <summary>
+/// Optional table-selection notification capability. Kept separate from
+/// <see cref="IRustVmBatchTarget"/> so existing compiled batch targets retain
+/// their original contract and receive the normal notification ordering.
+/// </summary>
+public interface IRustVmTableSelectionBatchTarget
+{
+    bool IsPostCollectionPropertyNotification(string propertyName, IReadOnlySet<string> changedCollections);
+}
+
 /// <summary>Shared validation-error storage used by every batch target.</summary>
 public static class RustVmBatchErrors
 {

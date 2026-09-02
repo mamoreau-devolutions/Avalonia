@@ -165,7 +165,7 @@ public static class ViewModelSourceEmitter
         sb.AppendLine($"namespace {model.ManagedNamespace};");
         sb.AppendLine();
         sb.AppendLine("[GeneratedComClass]");
-        sb.AppendLine($"public sealed partial class {model.Name}Adapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, IRustVmBatchTarget, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable");
+        sb.AppendLine($"public sealed partial class {model.Name}Adapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, IRustVmBatchTarget, IRustVmTableSelectionBatchTarget, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable");
         sb.AppendLine("{");
         sb.AppendLine("    private readonly IAvnRustViewModel _model;");
         sb.AppendLine("    private readonly Action<Action> _dispatch;");
@@ -522,6 +522,21 @@ public static class ViewModelSourceEmitter
         sb.AppendLine("    bool IRustVmBatchTarget.CommitError(string propertyName, string? message) =>");
         sb.AppendLine("        RustVmBatchErrors.Set(_errors, propertyName, message);");
         sb.AppendLine();
+        sb.AppendLine("    bool IRustVmTableSelectionBatchTarget.IsPostCollectionPropertyNotification(string propertyName, IReadOnlySet<string> changedCollections) => propertyName switch");
+        sb.AppendLine("    {");
+        foreach (var property in model.Properties)
+        {
+            var collections = model.Collections
+                .Where(collection => collection.Table?.Selection is { } selection &&
+                    (selection.SelectedIndexProperty == property.Name || selection.SelectedKeyProperty == property.Name))
+                .Select(collection => $"changedCollections.Contains(nameof({collection.Name}))")
+                .ToArray();
+            if (collections.Length > 0)
+                sb.AppendLine($"        nameof({property.Name}) => {string.Join(" || ", collections)},");
+        }
+        sb.AppendLine("        _ => false,");
+        sb.AppendLine("    };");
+        sb.AppendLine();
         sb.AppendLine("    void IRustVmBatchTarget.RaisePropertyChanged(string propertyName) =>");
         sb.AppendLine("        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));");
         sb.AppendLine();
@@ -574,12 +589,12 @@ public static class ViewModelSourceEmitter
                     var enumType = CSharpEnumTypeName(ir, property.EnumName!);
                     var converted = CSharpFromTransport(ir, property, "value");
                     sb.AppendLine(
-                        $"            {property.Id} => !global::System.Enum.IsDefined(typeof({enumType}), value) ? unchecked((int)0x80070057) : Apply(() => {{ var converted = {converted}; if (!Equals(_{Lower(property.Name)}, converted)) {{ _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _{Lower(property.Name)}, converted, nameof({property.Name})); }} }}),");
+                        $"            {property.Id} => !global::System.Enum.IsDefined(typeof({enumType}), value) ? unchecked((int)0x80070057) : Apply(() => {{ var converted = {converted}; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_{Lower(property.Name)}, converted)) SetField(ref _{Lower(property.Name)}, converted, nameof({property.Name})); }}),");
                 }
                 else
                 {
                     var converted = CSharpFromTransport(ir, property, "value");
-                    sb.AppendLine($"            {property.Id} => Apply(() => {{ var converted = {converted}; if (!Equals(_{Lower(property.Name)}, converted)) {{ _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _{Lower(property.Name)}, converted, nameof({property.Name})); }} }}),");
+                    sb.AppendLine($"            {property.Id} => Apply(() => {{ var converted = {converted}; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_{Lower(property.Name)}, converted)) SetField(ref _{Lower(property.Name)}, converted, nameof({property.Name})); }}),");
                 }
             }
             sb.AppendLine("            _ => unchecked((int)0x80070057),");
@@ -1273,7 +1288,8 @@ public static class ViewModelSourceEmitter
     {
         var method = asyncCommands ? "begin_async" : "execute";
         var commands = model.Commands.Where(command => command.IsAsync == asyncCommands).ToArray();
-        var parameterName = commands.Any(command => command.ParameterProperty is not null)
+        var parameterName = commands.Any(command =>
+                command.ParameterProperty is not null || IsTableSortCommand(model, command))
             ? "parameter"
             : "_parameter";
         sb.AppendLine($"    fn {method}(&mut self, command_id: i32, {parameterName}: Option<String>) -> crate::Result<()> {{");

@@ -157,7 +157,9 @@ It emits typed table descriptors and named sort-command APIs, while compiled
 AXAML owns the actual cell bindings. The CMTrace sample atomically publishes
 100,000 nested rows: `TableView` virtualizes viewport controls, although the
 current snapshot ABI still creates managed row adapters for every row. Lazy
-range data is intentionally deferred to stage 30.
+range data is intentionally deferred to stage 30. Batch publication raises a
+table collection Reset before its associated selection properties, preserving
+the Rust-owned row-key selection across a sort snapshot.
 
 ## Start a new application
 

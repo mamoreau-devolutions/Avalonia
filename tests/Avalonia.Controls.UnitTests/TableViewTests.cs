@@ -31,6 +31,30 @@ public sealed class TableViewTests : ScopedTestBase
     }
 
     [Fact]
+    public void Fixed_height_table_virtualizes_a_100000_item_source_when_scrolling()
+    {
+        using var app = Start();
+
+        var target = CreateTarget(Enumerable.Range(0, 100_000).ToArray());
+        target.Columns.Add(new TableViewColumn { Width = new GridLength(1, GridUnitType.Star) });
+        Prepare(target, width: 300, height: 100);
+        target.SelectedIndex = 50_000;
+
+        var initial = target.GetRealizedContainers().ToArray();
+        Assert.NotEmpty(initial);
+        Assert.True(initial.Length < 100, $"Expected viewport-bounded realization, got {initial.Length} rows.");
+
+        target.ScrollIntoView(50_000);
+        Layout(target);
+
+        var distant = target.GetRealizedContainers().ToArray();
+        Assert.NotEmpty(distant);
+        Assert.True(distant.Length < 100, $"Expected viewport-bounded realization, got {distant.Length} rows.");
+        Assert.Contains(distant, row => target.IndexFromContainer(row) == 50_000);
+        Assert.Equal(50_000, target.SelectedIndex);
+    }
+
+    [Fact]
     public void Row_Has_One_Cell_Per_Column()
     {
         using var app = Start();

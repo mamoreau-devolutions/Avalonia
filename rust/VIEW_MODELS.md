@@ -85,7 +85,14 @@ presentation, selected index/key, and header commands.
 The 100,000-row CMTrace sample publishes one generation-stamped
 `ReplaceModelSnapshot` batch, yielding exactly one collection Reset. Rust owns
 the sort and retains selection by its `Event.Id` row key before publishing the
-next generation; the managed batch gate rejects an older snapshot. This stage
+next generation; the managed batch gate rejects an older snapshot. Selection
+properties associated with a changed table collection are committed atomically
+but notified after that collection's Reset, allowing `TableView` to rebuild
+before it receives the authoritative retained index/key. A transient `-1`
+write from the selection model is returned to Rust and synchronously echoed
+with that authoritative index. This ordering is negotiated through the optional
+managed `IRustVmTableSelectionBatchTarget` capability, so pre-stage-28 batch
+targets retain their original contract and ordering. This stage
 does create a managed nested adapter for every snapshot row (and its nested
 event): virtualization bounds controls, **not** data objects. A lazy/range
 data source is deliberately deferred to stage 30.

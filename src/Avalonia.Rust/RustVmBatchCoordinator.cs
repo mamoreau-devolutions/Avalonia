@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Avalonia.Logging;
 using Avalonia.Rust.Interop;
 using Avalonia.Threading;
@@ -583,6 +584,19 @@ public sealed class RustVmBatchCoordinator
                 plan.MarkInstalled(value);
             collection.Changed = true;
         }
+
+        // A Reset clears a selecting control even when Rust retained the same
+        // key/index. Force the accompanying authoritative selection
+        // notification so it can restore that unchanged value after Reset.
+        var changedCollections = plan.Collections
+            .Where(collection => collection.Changed)
+            .Select(collection => collection.Info.Name)
+            .ToHashSet(StringComparer.Ordinal);
+        foreach (var property in plan.Properties)
+        {
+            if (IsPostCollectionPropertyNotification(property.Schema.Name, changedCollections))
+                property.Changed = true;
+        }
     }
 
     private static bool Unchanged(CollectionPlan collection)
@@ -623,9 +637,15 @@ public sealed class RustVmBatchCoordinator
     /// </summary>
     private void Publish(BatchPlan plan)
     {
+        var changedCollections = plan.Collections
+            .Where(collection => collection.Changed)
+            .Select(collection => collection.Info.Name)
+            .ToHashSet(StringComparer.Ordinal);
+
         foreach (var property in plan.Properties)
         {
-            if (property.Changed)
+            if (property.Changed &&
+                !IsPostCollectionPropertyNotification(property.Schema.Name, changedCollections))
                 Notify(property.Schema.Name, () => _target.RaisePropertyChanged(property.Schema.Name));
         }
 
@@ -633,6 +653,15 @@ public sealed class RustVmBatchCoordinator
         {
             if (collection.Changed)
                 Notify(collection.Info.Name, collection.Info.Items.RaiseReset);
+        }
+
+        foreach (var property in plan.Properties)
+        {
+            if (property.Changed &&
+                IsPostCollectionPropertyNotification(property.Schema.Name, changedCollections))
+            {
+                Notify(property.Schema.Name, () => _target.RaisePropertyChanged(property.Schema.Name));
+            }
         }
 
         foreach (var command in plan.Commands)
@@ -654,6 +683,7 @@ public sealed class RustVmBatchCoordinator
         {
             publish();
         }
+
         catch (Exception error)
         {
             Logger.TryGet(LogEventLevel.Error, LogArea.Binding)?.Log(
@@ -663,6 +693,12 @@ public sealed class RustVmBatchCoordinator
                 error);
         }
     }
+
+    private bool IsPostCollectionPropertyNotification(
+        string propertyName,
+        IReadOnlySet<string> changedCollections) =>
+        _target is IRustVmTableSelectionBatchTarget tableTarget &&
+        tableTarget.IsPostCollectionPropertyNotification(propertyName, changedCollections);
 
     private sealed class PendingModel(IAvnRustViewModel model)
     {

@@ -127,6 +127,7 @@ public class ViewModelSourceEmitterTests
         Assert.Contains("bool IRustVmBatchTarget.TryGetProperty(int propertyId, out RustVmBatchProperty property)", csharp, StringComparison.Ordinal);
         Assert.Contains("bool IRustVmBatchTarget.TryGetCollection(int collectionId, out RustVmBatchCollectionInfo collection)", csharp, StringComparison.Ordinal);
         Assert.Contains("bool IRustVmBatchTarget.TryGetCommand(int commandId, out IRustVmBatchCommand command)", csharp, StringComparison.Ordinal);
+        Assert.Contains("IRustVmTableSelectionBatchTarget", csharp, StringComparison.Ordinal);
         Assert.Contains("IDisposable IRustVmBatchTarget.CreateNestedElement(int collectionId, IAvnRustViewModel model)", csharp, StringComparison.Ordinal);
         Assert.Contains("bool IRustVmBatchTarget.CommitProperty(int propertyId, in RustVmBatchValue value, out IDisposable? replaced)", csharp, StringComparison.Ordinal);
         Assert.Contains("2 => new RustVmBatchCollectionInfo(nameof(Tasks), RustVmValueWireKind.Model, Tasks),", csharp, StringComparison.Ordinal);
@@ -459,6 +460,7 @@ public class ViewModelSourceEmitterTests
         Assert.Contains("new global::Avalonia.Controls.GridLength(1D, global::Avalonia.Controls.GridUnitType.Star)", source, StringComparison.Ordinal);
         Assert.DoesNotContain("new Binding(", source, StringComparison.Ordinal);
         Assert.Contains("fn sort(&mut self, value: String)", rust, StringComparison.Ordinal);
+        Assert.Contains("fn execute(&mut self, command_id: i32, parameter: Option<String>)", rust, StringComparison.Ordinal);
         Assert.Contains("self.model.sort(parameter.unwrap_or_default())", rust, StringComparison.Ordinal);
     }
 

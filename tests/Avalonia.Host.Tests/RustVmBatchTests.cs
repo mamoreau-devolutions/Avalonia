@@ -7,9 +7,17 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
+using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Templates;
+using Avalonia.Data;
 using Avalonia.Rust;
 using Avalonia.Rust.Interop;
 using Avalonia.Rust.Sample.Generated;
+using Avalonia.Styling;
+using Avalonia.UnitTests;
 using Xunit;
 
 namespace Avalonia.Host.Tests;
@@ -81,6 +89,53 @@ public class RustVmBatchTests
         Assert.Equal(1, resets);
         Assert.Equal(1, canExecute);
         Assert.Equal(["Name"], errors);
+    }
+
+    [Fact]
+    public void Table_selection_is_restored_after_snapshot_reset_then_selection_notification()
+    {
+        using var app = UnitTestApplication.Start(TestServices.MockPlatformRenderInterface);
+        using var host = GeneratedHost();
+        var sink2 = (IAvnRustVmSink2)host.Model.Sink;
+        Assert.Equal(0, sink2.AddModel(3, new FakeNested()));
+        Assert.Equal(0, sink2.AddModel(3, new FakeNested()));
+        Assert.Equal(0, host.Model.Sink.SetInteger(9, 1));
+        Assert.Equal(0, host.Model.Sink.SetString(10, "trace-selected"));
+        var table = new TableView
+        {
+            DataContext = host.Adapter,
+            ItemsSource = host.Adapter.TraceRows,
+            Template = TableTemplate(),
+            ItemContainerTheme = RowTheme(),
+            Width = 300,
+            Height = 100,
+        };
+        table.Columns.Add(new TableViewColumn());
+        table.Bind(
+            SelectingItemsControl.SelectedIndexProperty,
+            new Binding(nameof(SampleViewModelAdapter.SelectedTraceIndex)) { Mode = BindingMode.TwoWay });
+        var root = new TestRoot(table);
+        root.Measure(new Size(300, 100));
+        root.Arrange(new Rect(0, 0, 300, 100));
+        Assert.Equal(1, table.SelectedIndex);
+
+        var batch = new FakeBatch(1);
+        batch.ReplaceModelSnapshot(3, [new FakeNested(), new FakeNested()]);
+        batch.SetInteger(9, 0);
+        batch.SetString(10, "trace-selected");
+
+        Assert.Equal(0, host.Sink3.SubmitBatch(batch));
+        host.Drain();
+        root.Measure(new Size(300, 100));
+        root.Arrange(new Rect(0, 0, 300, 100));
+
+        Assert.Equal(RustVmBatchOutcome.Applied, batch.Outcome);
+        Assert.Equal(0, host.Adapter.SelectedTraceIndex);
+        Assert.Equal("trace-selected", host.Adapter.SelectedTraceKey);
+        Assert.Equal(0, table.SelectedIndex);
+        // The selection model's Reset write reaches Rust, whose authoritative
+        // key/index is synchronously echoed through the sink.
+        Assert.Contains((9, -1L), host.Model.IntegerWrites);
     }
 
     [Fact]
@@ -940,6 +995,47 @@ public class RustVmBatchTests
         Assert.Equal("Initial", Member(adapter, "Name"));
     }
 
+    private static FuncControlTemplate TableTemplate() =>
+        new FuncControlTemplate<TableView>((parent, scope) =>
+            new DockPanel
+            {
+                Children =
+                {
+                    new TableViewColumnHeadersPresenter { [DockPanel.DockProperty] = Dock.Top },
+                    new ScrollViewer
+                    {
+                        Name = "PART_ScrollViewer",
+                        Template = new FuncControlTemplate<ScrollViewer>((_, scope) =>
+                            new Panel
+                            {
+                                Children =
+                                {
+                                    new ScrollContentPresenter { Name = "PART_ContentPresenter" }
+                                        .RegisterInNameScope(scope),
+                                },
+                            }),
+                        Content = new ItemsPresenter
+                        {
+                            Name = "PART_ItemsPresenter",
+                            [~ItemsPresenter.ItemsPanelProperty] =
+                                parent.GetObservable(ItemsControl.ItemsPanelProperty).ToBinding(),
+                        }.RegisterInNameScope(scope),
+                    }.RegisterInNameScope(scope),
+                },
+            });
+
+    private static ControlTheme RowTheme() => new(typeof(TableViewRow))
+    {
+        Setters =
+        {
+            new Setter(
+                TemplatedControl.TemplateProperty,
+                new FuncControlTemplate<TableViewRow>((_, scope) =>
+                    new TableViewCellsPresenter { Name = "PART_CellsPresenter" }
+                        .RegisterInNameScope(scope))),
+        },
+    };
+
     private static GeneratedFixture GeneratedHost()
     {
         var model = new BatchModel();
@@ -1009,6 +1105,7 @@ public class RustVmBatchTests
 
         public IAvnRustVmSink Sink => _sink!;
         public int DetachCalls { get; private set; }
+        public List<(int PropertyId, long Value)> IntegerWrites { get; } = [];
 
         public int Attach(IAvnRustVmSink? sink)
         {
@@ -1026,7 +1123,15 @@ public class RustVmBatchTests
         }
 
         public int SetString(int propertyId, string? value) => 0;
-        public int SetInteger(int propertyId, long value) => 0;
+        public int SetInteger(int propertyId, long value)
+        {
+            IntegerWrites.Add((propertyId, value));
+            // Models the Rust table owner retaining its declared row key during
+            // a Reset and rejecting the selection model's transient -1 write.
+            if (propertyId == 9 && value < 0)
+                _sink!.SetInteger(9, 0);
+            return 0;
+        }
         public int SetBoolean(int propertyId, int value) => 0;
         public int SetDouble(int propertyId, double value) => 0;
         public int Execute(int commandId, string? parameter) => 0;

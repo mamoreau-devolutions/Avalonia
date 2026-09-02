@@ -17,7 +17,7 @@ using Avalonia.Threading;
 namespace Avalonia.Rust.Sample.Generated;
 
 [GeneratedComClass]
-public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, IRustVmBatchTarget, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable
+public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, IRustVmBatchTarget, IRustVmTableSelectionBatchTarget, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable
 {
     private readonly IAvnRustViewModel _model;
     private readonly Action<Action> _dispatch;
@@ -355,13 +355,13 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         var inbound = _inboundWrites.MarkPublication(propertyId);
         return propertyId switch
         {
-            1 => Apply(() => { var converted = value ?? ""; if (!Equals(_name, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _name, converted, nameof(Name)); } }),
-            3 => Apply(() => { var converted = value ?? ""; if (!Equals(_newItem, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _newItem, converted, nameof(NewItem)); } }),
-            4 => Apply(() => { var converted = value ?? ""; if (!Equals(_status, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _status, converted, nameof(Status)); } }),
-            5 => Apply(() => { var converted = value; if (!Equals(_nickname, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _nickname, converted, nameof(Nickname)); } }),
-            8 => Apply(() => { var converted = value ?? ""; if (!Equals(_newTaskTitle, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _newTaskTitle, converted, nameof(NewTaskTitle)); } }),
-            10 => Apply(() => { var converted = value ?? ""; if (!Equals(_selectedTraceKey, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _selectedTraceKey, converted, nameof(SelectedTraceKey)); } }),
-            11 => Apply(() => { var converted = value ?? ""; if (!Equals(_traceSortDirection, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _traceSortDirection, converted, nameof(TraceSortDirection)); } }),
+            1 => Apply(() => { var converted = value ?? ""; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_name, converted)) SetField(ref _name, converted, nameof(Name)); }),
+            3 => Apply(() => { var converted = value ?? ""; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_newItem, converted)) SetField(ref _newItem, converted, nameof(NewItem)); }),
+            4 => Apply(() => { var converted = value ?? ""; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_status, converted)) SetField(ref _status, converted, nameof(Status)); }),
+            5 => Apply(() => { var converted = value; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_nickname, converted)) SetField(ref _nickname, converted, nameof(Nickname)); }),
+            8 => Apply(() => { var converted = value ?? ""; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_newTaskTitle, converted)) SetField(ref _newTaskTitle, converted, nameof(NewTaskTitle)); }),
+            10 => Apply(() => { var converted = value ?? ""; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_selectedTraceKey, converted)) SetField(ref _selectedTraceKey, converted, nameof(SelectedTraceKey)); }),
+            11 => Apply(() => { var converted = value ?? ""; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_traceSortDirection, converted)) SetField(ref _traceSortDirection, converted, nameof(TraceSortDirection)); }),
             _ => unchecked((int)0x80070057),
         };
     }
@@ -371,9 +371,9 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         var inbound = _inboundWrites.MarkPublication(propertyId);
         return propertyId switch
         {
-            2 => Apply(() => { var converted = value; if (!Equals(_count, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _count, converted, nameof(Count)); } }),
-            6 => !global::System.Enum.IsDefined(typeof(global::Avalonia.Rust.Sample.Generated.Priority), value) ? unchecked((int)0x80070057) : Apply(() => { var converted = (global::Avalonia.Rust.Sample.Generated.Priority)value; if (!Equals(_priority, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _priority, converted, nameof(Priority)); } }),
-            9 => Apply(() => { var converted = value; if (!Equals(_selectedTraceIndex, converted)) { _inboundWrites.CommitPublication(propertyId, inbound); SetField(ref _selectedTraceIndex, converted, nameof(SelectedTraceIndex)); } }),
+            2 => Apply(() => { var converted = value; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_count, converted)) SetField(ref _count, converted, nameof(Count)); }),
+            6 => !global::System.Enum.IsDefined(typeof(global::Avalonia.Rust.Sample.Generated.Priority), value) ? unchecked((int)0x80070057) : Apply(() => { var converted = (global::Avalonia.Rust.Sample.Generated.Priority)value; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_priority, converted)) SetField(ref _priority, converted, nameof(Priority)); }),
+            9 => Apply(() => { var converted = value; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_selectedTraceIndex, converted)) SetField(ref _selectedTraceIndex, converted, nameof(SelectedTraceIndex)); }),
             _ => unchecked((int)0x80070057),
         };
     }
@@ -736,6 +736,13 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
 
     bool IRustVmBatchTarget.CommitError(string propertyName, string? message) =>
         RustVmBatchErrors.Set(_errors, propertyName, message);
+
+    bool IRustVmTableSelectionBatchTarget.IsPostCollectionPropertyNotification(string propertyName, IReadOnlySet<string> changedCollections) => propertyName switch
+    {
+        nameof(SelectedTraceIndex) => changedCollections.Contains(nameof(TraceRows)),
+        nameof(SelectedTraceKey) => changedCollections.Contains(nameof(TraceRows)),
+        _ => false,
+    };
 
     void IRustVmBatchTarget.RaisePropertyChanged(string propertyName) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
