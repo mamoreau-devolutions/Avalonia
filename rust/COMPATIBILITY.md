@@ -16,6 +16,11 @@ existing field is breaking and requires a coordinated major release.
 Version 3 adds optional table metadata only. It reuses the existing
 collection/property/command transport: compiled AXAML owns cell bindings and
 the generated table descriptor contains no runtime reflection path.
+Version 4 adds the stage 30 richer data shapes as optional members only:
+`maps` on a model, `window`/`tree`/`recursive` on a collection, and
+`resultModelName`/`supportsProgress`/`supportsCancellation` on a command. A
+schema that declares any of them while claiming version 3 or lower is rejected
+with an explicit upgrade message rather than being silently downgraded.
 
 Consumer application manifests are independently versioned by
 `consumer-app-manifest.schema.json`; version 1 is validated before any build
@@ -30,8 +35,13 @@ Published interface IIDs, vtable slot order, method signatures, calling
 conventions, ownership rules, and error semantics are immutable. Never reuse an
 IID for a changed interface and never insert a slot into an existing vtable.
 Add a separately named, separately versioned interface with a new IID (for
-example `IAvnRustVmSink2`, or stage 29's `IAvnApplication3` desktop file
-integration capability), then negotiate/query it as optional capability.
+example `IAvnRustVmSink2`, stage 29's `IAvnApplication3` desktop file
+integration capability, or stage 30's `IAvnRustVmSink4` richer data shapes,
+`IAvnRustVmRangeBatch` windowed range payload, `IAvnRustRangeSource` and
+`IAvnRustViewModel2`), then negotiate/query it as optional capability.
+A producer or host that predates an optional capability must report
+`E_NOINTERFACE` explicitly; silently dropping the affected updates is not an
+acceptable degradation.
 Any unavoidable incompatible ABI change requires a new host ABI generation and
 a coordinated major release.
 

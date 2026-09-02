@@ -55,6 +55,29 @@
       <Button Content="Run Rust async save" Command="{Binding SaveCommand}" />
       <TextBlock Text="{Binding Status}" />
 
+      <TextBlock Text="Async progress, cancellation and structured result (Stage 30)" FontWeight="Bold" />
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <ProgressBar x:Name="SaveProgressBar"
+                     Width="200"
+                     Minimum="0"
+                     Maximum="1"
+                     Value="{Binding SaveProgress, FallbackValue=0}"
+                     IsIndeterminate="{Binding SaveProgress, Converter={x:Static conv:ObjectConverters.IsNull}}"
+                     IsVisible="{Binding SaveIsRunning}" />
+        <Button x:Name="CancelSaveButton" Content="Cancel save" Command="{Binding CancelSaveCommand}" />
+        <TextBlock x:Name="SaveProgressText" Text="{Binding SaveProgressMessage}" VerticalAlignment="Center" />
+      </StackPanel>
+      <!--
+        The structured result is a real nested view model, not a formatted
+        string: its own generated adapter carries typed members.
+      -->
+      <StackPanel Orientation="Horizontal" Spacing="8"
+                  IsVisible="{Binding SaveResult, Converter={x:Static conv:ObjectConverters.IsNotNull}}">
+        <TextBlock x:Name="SaveResultDestination" Text="{Binding SaveResult.Destination}" />
+        <TextBlock x:Name="SaveResultBytes" Text="{Binding SaveResult.Bytes, StringFormat='{}{0} bytes'}" />
+        <TextBlock x:Name="SaveResultSucceeded" Text="{Binding SaveResult.Succeeded, StringFormat='succeeded: {0}'}" />
+      </StackPanel>
+
       <TextBlock Text="Desktop files (Rust-owned, platform-neutral)" FontWeight="Bold" />
       <!--
         These three buttons are the only thing in the sample that opens a
@@ -166,6 +189,76 @@
         </TableView.Columns>
       </TableView>
       <TextBlock Text="{Binding SelectedTraceKey, StringFormat='Selected row: {0}'}" />
+
+      <TextBlock Text="Windowed CMTrace log (Stage 30: data objects bounded, not just visuals)" FontWeight="Bold" />
+      <TextBlock x:Name="LogWindowStatusText" Text="{Binding LogWindowStatus}" />
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button x:Name="RefreshLogWindowButton" Content="New generation" Command="{Binding RefreshLogWindowCommand}" />
+        <TextBlock Text="{Binding LogWindow.Count, StringFormat='Total rows: {0}'}" VerticalAlignment="Center" />
+        <TextBlock x:Name="LogWindowLiveText"
+                   Text="{Binding LogWindow.LiveElementCount, StringFormat='Live row adapters: {0}'}"
+                   VerticalAlignment="Center" />
+      </StackPanel>
+      <!--
+        Unlike TraceRows above, this TableView's ItemsSource reports the full
+        Rust dataset size while only the realized pages ever become managed row
+        adapters. Rows outside a realized page read as null until Rust answers
+        the range request the indexer posted.
+      -->
+      <TableView x:Name="LogWindowTable"
+                 ItemsSource="{Binding LogWindow}"
+                 Height="220"
+                 CanUserResizeColumns="True">
+        <TableView.Columns>
+          <!--
+            The window's element type is `object?` (an unrealized row reads as
+            null), so cells use typed CellTemplates rather than a column
+            Binding: compiled bindings still resolve against the real row
+            adapter, and a null row simply renders empty.
+          -->
+          <TableViewColumn Width="150" CanUserResize="True" Header="Timestamp">
+            <TableViewColumn.CellTemplate>
+              <DataTemplate x:DataType="vm:TraceRowViewModelAdapter">
+                <TextBlock Text="{Binding Timestamp}" />
+              </DataTemplate>
+            </TableViewColumn.CellTemplate>
+          </TableViewColumn>
+          <TableViewColumn Width="90" CanUserResize="True" Header="Severity">
+            <TableViewColumn.CellTemplate>
+              <DataTemplate x:DataType="vm:TraceRowViewModelAdapter">
+                <TextBlock Text="{Binding Severity}" />
+              </DataTemplate>
+            </TableViewColumn.CellTemplate>
+          </TableViewColumn>
+          <TableViewColumn Width="*" CanUserResize="True" Header="Message">
+            <TableViewColumn.CellTemplate>
+              <DataTemplate x:DataType="vm:TraceRowViewModelAdapter">
+                <TextBlock Text="{Binding Message}" />
+              </DataTemplate>
+            </TableViewColumn.CellTemplate>
+          </TableViewColumn>
+        </TableView.Columns>
+      </TableView>
+
+      <TextBlock Text="Hierarchical model (TreeDataTemplate over recursive Rust children)" FontWeight="Bold" />
+      <TreeView x:Name="LogTreeView" ItemsSource="{Binding LogTree}" Height="140">
+        <TreeView.ItemTemplate>
+          <TreeDataTemplate x:DataType="vm:LogNodeViewModelAdapter" ItemsSource="{Binding Children}">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="{Binding Label}" FontWeight="Bold" />
+              <TextBlock Text="{Binding Detail}" />
+            </StackPanel>
+          </TreeDataTemplate>
+        </TreeView.ItemTemplate>
+      </TreeView>
+
+      <TextBlock Text="Observable keyed maps" FontWeight="Bold" />
+      <!--
+        A map enumerates as KeyValuePair, so the default ItemsControl template
+        renders each entry directly. The point being demonstrated is the
+        incremental notification, not the formatting.
+      -->
+      <ItemsControl x:Name="SeverityCountsList" ItemsSource="{Binding SeverityCounts}" />
     </StackPanel>
   </ScrollViewer>
 </Window>

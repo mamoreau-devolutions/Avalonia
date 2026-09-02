@@ -1,7 +1,10 @@
 //! This crate owns Rust state; `generated/generated_view_models.rs` is emitted
 //! from `view-model.ir.json` by the repository-owned consumer build tool.
 
-pub use avalonia::{AppScope, ConversionDirection, Error, Result, ScalarKind, ScalarValue};
+pub use avalonia::{
+    AppScope, CancellationToken, ConversionDirection, Error, MapKey, RangeBatch, RangeRequest,
+    Result, ScalarKind, ScalarValue,
+};
 pub mod view_model {
     pub use avalonia::view_model::{
         BatchCompletion, DynamicViewModel, ViewModelBatch, ViewModelSink,

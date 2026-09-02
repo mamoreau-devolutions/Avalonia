@@ -1,3 +1,7 @@
+use crate::data_shapes::{
+    CancellationRegistry, CancellationToken, CompletionSlots, MapKey, RangeBatch, RangeQueue,
+    RangeQueueGuard, RangeRequest, RangeStates,
+};
 use crate::{AppScope, Error, Result, Window};
 use avalonia_sys as sys;
 use std::any::Any;
@@ -15,10 +19,21 @@ use std::sync::{Arc, Mutex, OnceLock};
 /// contribution to that nested object's reference count immediately, and
 /// dropping the whole `NestedSlots` (when the last `ViewModelSink` clone for
 /// a mount is dropped) releases everything still tracked.
+/// One nested handle slot. Boxed as `Any` so `NestedSlots` can hold the
+/// generic `ViewModelHandle` without leaking its type into every map.
+type NestedSlot = Box<dyn Any + Send>;
+
 #[derive(Default)]
 struct NestedSlots {
-    properties: Mutex<HashMap<i32, Box<dyn Any + Send>>>,
-    collections: Mutex<HashMap<i32, Vec<Box<dyn Any + Send>>>>,
+    properties: Mutex<HashMap<i32, NestedSlot>>,
+    collections: Mutex<HashMap<i32, Vec<NestedSlot>>>,
+    /// One slot per live map entry. A windowed collection deliberately has no
+    /// equivalent: its rows are *transferred* to the range batch, because
+    /// their managed lifetime is decided by page eviction, which Rust cannot
+    /// observe. Map entries, like collection items, are removed explicitly.
+    maps: Mutex<HashMap<i32, HashMap<MapKey, NestedSlot>>>,
+    /// One slot per command holding its last published structured result.
+    command_results: Mutex<HashMap<i32, NestedSlot>>,
 }
 
 impl NestedSlots {
@@ -95,9 +110,40 @@ impl NestedSlots {
             collection_id,
             handles
                 .into_iter()
-                .map(|handle| Box::new(handle) as Box<dyn Any + Send>)
+                .map(|handle| Box::new(handle) as NestedSlot)
                 .collect(),
         );
+    }
+
+    fn set_map_value(&self, map_id: i32, key: MapKey, handle: Option<ViewModelHandle>) {
+        let mut maps = self.maps.lock_slots();
+        let entries = maps.entry(map_id).or_default();
+        match handle {
+            Some(handle) => {
+                entries.insert(key, Box::new(handle));
+            }
+            None => {
+                entries.remove(&key);
+            }
+        }
+    }
+
+    fn clear_map(&self, map_id: i32) {
+        if let Some(entries) = self.maps.lock_slots().get_mut(&map_id) {
+            entries.clear();
+        }
+    }
+
+    fn set_command_result(&self, command_id: i32, handle: Option<ViewModelHandle>) {
+        let mut results = self.command_results.lock_slots();
+        match handle {
+            Some(handle) => {
+                results.insert(command_id, Box::new(handle));
+            }
+            None => {
+                results.remove(&command_id);
+            }
+        }
     }
 }
 
@@ -172,7 +218,10 @@ pub struct ViewModelSink {
     raw: sys::ComPtr<sys::IAvnRustVmSink>,
     raw2: sys::ComPtr<sys::IAvnRustVmSink2>,
     raw3: Arc<OnceLock<BatchCapability>>,
+    raw4: Arc<OnceLock<ShapesCapability>>,
     nested: Arc<NestedSlots>,
+    ranges: Arc<RangeStates>,
+    completions: Arc<CompletionSlots>,
 }
 
 /// The cached result of the one-time `IAvnRustVmSink3` query. Only
@@ -180,6 +229,12 @@ pub struct ViewModelSink {
 /// is recorded verbatim and reported to every later submission instead of being
 /// silently downgraded to "this host has no batch support".
 type BatchCapability = std::result::Result<Option<sys::ComPtr<sys::IAvnRustVmSink3>>, sys::Error>;
+
+/// The cached result of the one-time `IAvnRustVmSink4` query, resolved with
+/// exactly the same discipline as the batch capability. A host that predates
+/// stage 30 reports `E_NOINTERFACE` from every map/progress/result/range call
+/// instead of silently dropping the update.
+type ShapesCapability = std::result::Result<Option<sys::ComPtr<sys::IAvnRustVmSink4>>, sys::Error>;
 
 impl ViewModelSink {
     /// Wraps a freshly attached v1 sink and eagerly resolves the v2
@@ -193,14 +248,36 @@ impl ViewModelSink {
     /// lazily on first batch submission and cached, so a v1/v2-only host still
     /// attaches and publishes normally and only `submit_batch` reports
     /// `E_NOINTERFACE`.
-    fn new(raw: sys::ComPtr<sys::IAvnRustVmSink>) -> Result<Self> {
+    fn with_state(
+        raw: sys::ComPtr<sys::IAvnRustVmSink>,
+        ranges: Arc<RangeStates>,
+        completions: Arc<CompletionSlots>,
+    ) -> Result<Self> {
         let raw2 = raw.query_interface::<sys::IAvnRustVmSink2>()?;
         Ok(Self {
             raw,
             raw2,
             raw3: Arc::new(OnceLock::new()),
+            raw4: Arc::new(OnceLock::new()),
             nested: Arc::new(NestedSlots::default()),
+            ranges,
+            completions,
         })
+    }
+
+    /// Resolves (once) the optional stage 30 richer-shapes capability.
+    fn shapes_sink(&self) -> Result<&sys::ComPtr<sys::IAvnRustVmSink4>> {
+        match self.raw4.get_or_init(
+            || match self.raw.query_interface::<sys::IAvnRustVmSink4>() {
+                Ok(value) => Ok(Some(value)),
+                Err(error) if error.0 == sys::E_NOINTERFACE => Ok(None),
+                Err(error) => Err(error),
+            },
+        ) {
+            Ok(Some(sink)) => Ok(sink),
+            Ok(None) => Err(Error::Abi(sys::Error(sys::E_NOINTERFACE))),
+            Err(error) => Err(Error::Abi(*error)),
+        }
     }
 
     /// Resolves (once) the optional batch capability.
@@ -373,9 +450,230 @@ impl ViewModelSink {
     }
 
     /// Publishes a command's current `ICommand.CanExecute` state.
+    /// Publishes a command's current <c>ICommand.CanExecute</c> state.
     pub fn set_command_enabled(&self, command_id: i32, enabled: bool) -> Result<()> {
         self.raw2.set_command_enabled(command_id, enabled)?;
         Ok(())
+    }
+
+    /// True when the attached host implements the stage 30 sink capability.
+    /// The reflectable (dynamic-binding) adapter deliberately does not, so a
+    /// model shared by both mounts checks this once instead of treating an
+    /// explicit `E_NOINTERFACE` as a failure.
+    pub fn supports_richer_shapes(&self) -> bool {
+        self.shapes_sink().is_ok()
+    }
+
+    // ---- Stage 30: observable keyed maps -------------------------------
+
+    /// Inserts or replaces a string value for one map key.
+    pub fn map_set_string(&self, map_id: i32, key: MapKey, value: impl AsRef<str>) -> Result<()> {
+        self.shapes_sink()?
+            .map_set_string(map_id, &key.to_wire(), &utf16(value))?;
+        self.nested.set_map_value(map_id, key, None);
+        Ok(())
+    }
+
+    pub fn map_set_integer(&self, map_id: i32, key: MapKey, value: i64) -> Result<()> {
+        self.shapes_sink()?
+            .map_set_integer(map_id, &key.to_wire(), value)?;
+        self.nested.set_map_value(map_id, key, None);
+        Ok(())
+    }
+
+    pub fn map_set_boolean(&self, map_id: i32, key: MapKey, value: bool) -> Result<()> {
+        self.shapes_sink()?
+            .map_set_boolean(map_id, &key.to_wire(), value)?;
+        self.nested.set_map_value(map_id, key, None);
+        Ok(())
+    }
+
+    pub fn map_set_double(&self, map_id: i32, key: MapKey, value: f64) -> Result<()> {
+        self.shapes_sink()?
+            .map_set_double(map_id, &key.to_wire(), value)?;
+        self.nested.set_map_value(map_id, key, None);
+        Ok(())
+    }
+
+    /// Inserts or replaces a nested view-model value. The previous value's
+    /// Rust handle is dropped only after the managed side accepted the new
+    /// one, so a failed publication never orphans the live entry.
+    pub fn map_set_model(
+        &self,
+        map_id: i32,
+        key: MapKey,
+        model: impl DynamicViewModel,
+    ) -> Result<()> {
+        let handle = ViewModelHandle::new(model);
+        self.shapes_sink()?
+            .map_set_model(map_id, &key.to_wire(), &handle.raw)?;
+        self.nested.set_map_value(map_id, key, Some(handle));
+        Ok(())
+    }
+
+    /// Removes one key. A missing key is a no-op, not an error.
+    pub fn map_remove(&self, map_id: i32, key: MapKey) -> Result<()> {
+        self.shapes_sink()?.map_remove(map_id, &key.to_wire())?;
+        self.nested.set_map_value(map_id, key, None);
+        Ok(())
+    }
+
+    pub fn map_clear(&self, map_id: i32) -> Result<()> {
+        self.shapes_sink()?.map_clear(map_id)?;
+        self.nested.clear_map(map_id);
+        Ok(())
+    }
+
+    // ---- Stage 30: async progress, cancellation and structured results ---
+
+    /// Publishes determinate (`Some`, clamped to 0..1) or indeterminate
+    /// (`None`) progress for an async command.
+    pub fn set_command_progress(
+        &self,
+        command_id: i32,
+        value: Option<f64>,
+        message: Option<&str>,
+    ) -> Result<()> {
+        let message = message.map(utf16);
+        self.shapes_sink()?.set_command_progress(
+            command_id,
+            value.map(|value| value.clamp(0.0, 1.0)),
+            message.as_deref(),
+        )?;
+        Ok(())
+    }
+
+    /// Publishes a command's running state. Managed code gates its generated
+    /// cancel command on it.
+    pub fn set_command_running(&self, command_id: i32, running: bool) -> Result<()> {
+        self.shapes_sink()?
+            .set_command_running(command_id, running)?;
+        if !running {
+            self.completions.forget(command_id);
+        }
+        Ok(())
+    }
+
+    /// Publishes a command's typed structured result, or clears it.
+    pub fn set_command_result(
+        &self,
+        command_id: i32,
+        model: Option<impl DynamicViewModel>,
+    ) -> Result<()> {
+        match model {
+            Some(model) => {
+                let handle = ViewModelHandle::new(model);
+                self.shapes_sink()?
+                    .set_command_result(command_id, Some(&handle.raw))?;
+                self.nested.set_command_result(command_id, Some(handle));
+            }
+            None => self.clear_command_result(command_id)?,
+        }
+        Ok(())
+    }
+
+    /// Clears a command's structured result and drops Rust's handle to it.
+    pub fn clear_command_result(&self, command_id: i32) -> Result<()> {
+        self.shapes_sink()?.set_command_result(command_id, None)?;
+        self.nested.set_command_result(command_id, None);
+        Ok(())
+    }
+
+    /// Claims the single terminal transition of one tracked async invocation.
+    /// Returns false when success, failure or cancellation already claimed it,
+    /// which is what makes "completes exactly once" observable rather than
+    /// merely intended.
+    pub fn claim_completion(&self, command_id: i32, token: &CancellationToken) -> bool {
+        self.completions.claim(command_id, token.operation_id())
+    }
+
+    // ---- Stage 30: windowed range publication ---------------------------
+
+    /// Republishes a windowed collection's identity. Every realized page is
+    /// invalidated managed-side, because rows may no longer be at the same
+    /// index. This is also what primes a freshly attached window.
+    pub fn publish_range_reset(
+        &self,
+        collection_id: i32,
+        generation: i64,
+        total_count: i64,
+    ) -> Result<()> {
+        self.ranges.set(collection_id, generation, total_count);
+        let batch = sys::rust_vm_range_batch(
+            sys::RUST_VM_RANGE_RESET,
+            collection_id,
+            generation,
+            total_count,
+            0,
+            Vec::new(),
+            None,
+        );
+        self.shapes_sink()?.publish_range(&batch)?;
+        Ok(())
+    }
+
+    /// Publishes one realized page.
+    ///
+    /// Ownership of every element model transfers to the batch: Rust keeps no
+    /// slot for a windowed row, because its managed lifetime is decided by page
+    /// eviction, which Rust cannot observe. A stale or rejected batch simply
+    /// drops, releasing those models without touching anything live.
+    pub fn publish_range(&self, batch: RangeBatch) -> Result<BatchCompletion> {
+        let (completion, callback) = BatchCompletion::channel();
+        self.publish_range_raw(batch, callback).map(|()| completion)
+    }
+
+    /// Same as [`ViewModelSink::publish_range`], with a callback invoked after
+    /// the UI dispatcher applies or rejects the range.
+    pub fn publish_range_with_callback(
+        &self,
+        batch: RangeBatch,
+        callback: impl FnOnce(BatchOutcome) + Send + 'static,
+    ) -> Result<()> {
+        self.publish_range_raw(batch, move |outcome, error| {
+            callback(BatchOutcome::from_wire(outcome, error))
+        })
+    }
+
+    fn publish_range_raw(
+        &self,
+        batch: RangeBatch,
+        callback: impl FnOnce(i32, i32) + Send + 'static,
+    ) -> Result<()> {
+        // Resolve the optional capability before taking ownership of the
+        // elements, so a host without stage 30 support leaves them untouched.
+        let sink = self.shapes_sink()?.clone();
+        let (collection_id, generation, total_count, offset, items) = batch.into_parts();
+        let raw = sys::rust_vm_range_batch(
+            sys::RUST_VM_RANGE_FILL,
+            collection_id,
+            generation,
+            total_count,
+            offset,
+            items,
+            Some(Box::new(callback)),
+        );
+        sink.publish_range(&raw)?;
+        Ok(())
+    }
+
+    /// Starts a range batch for `collection_id` at the collection's currently
+    /// published generation and total count.
+    pub fn range_batch(&self, collection_id: i32, offset: i64) -> Option<RangeBatch> {
+        let (generation, total_count) = self.ranges.get(collection_id)?;
+        Some(RangeBatch::new(
+            collection_id,
+            generation,
+            total_count,
+            offset,
+        ))
+    }
+
+    #[doc(hidden)]
+    pub fn push_range_model(&self, batch: &mut RangeBatch, model: impl DynamicViewModel) {
+        // The handle's single reference moves straight into the batch.
+        let handle = ViewModelHandle::new(model);
+        batch.push_raw_model(handle.into_raw());
     }
 
     /// Publishes (or clears, when `message` is `None`) a validation error for
@@ -664,6 +962,27 @@ pub trait DynamicViewModel: Send + 'static {
     fn set_double(&mut self, property_id: i32, value: f64) -> Result<()>;
     fn execute(&mut self, command_id: i32, parameter: Option<String>) -> Result<()>;
     fn begin_async(&mut self, command_id: i32, parameter: Option<String>) -> Result<()>;
+
+    /// Starts a tracked async invocation with a cancellation token whose
+    /// handle managed code can cancel. The default forwards to
+    /// [`DynamicViewModel::begin_async`], so a model that predates stage 30
+    /// keeps working -- it simply ignores cancellation.
+    fn begin_async_tracked(
+        &mut self,
+        command_id: i32,
+        parameter: Option<String>,
+        _token: CancellationToken,
+    ) -> Result<()> {
+        self.begin_async(command_id, parameter)
+    }
+
+    /// Realizes one page of a windowed collection. Called on the runtime's
+    /// dedicated range thread, never on the UI thread, so it may take as long
+    /// as the dataset needs. The default rejects the request, which is what a
+    /// model that declares no windowed collection should do.
+    fn request_range(&mut self, _request: RangeRequest) -> Result<()> {
+        Err(Error::Abi(sys::Error(sys::E_NOTIMPL)))
+    }
 }
 
 struct ViewModelHandle {
@@ -671,8 +990,19 @@ struct ViewModelHandle {
 }
 
 impl ViewModelHandle {
+    /// Consumes the handle, transferring its single COM reference to the
+    /// caller. Used for windowed range rows, whose managed lifetime Rust does
+    /// not track.
+    fn into_raw(self) -> sys::ComPtr<sys::IAvnRustViewModel> {
+        self.raw
+    }
+
     fn new(model: impl DynamicViewModel) -> Self {
         let model = Arc::new(Mutex::new(model));
+        let ranges = Arc::new(RangeStates::default());
+        let completions = Arc::new(CompletionSlots::default());
+        let cancellations = Arc::new(CancellationRegistry::default());
+        let queue = Arc::new(RangeQueue::default());
         let attach_model = model.clone();
         let detach_model = model.clone();
         let string_model = model.clone();
@@ -680,74 +1010,143 @@ impl ViewModelHandle {
         let boolean_model = model.clone();
         let double_model = model.clone();
         let execute_model = model.clone();
-        let async_model = model;
-        let raw = sys::rust_view_model(sys::RustViewModelCallbacks {
-            attach: Box::new(move |sink| {
-                map_result((|| {
-                    let sink = ViewModelSink::new(sink)?;
-                    attach_model
-                        .lock()
-                        .expect("Rust view-model lock poisoned")
-                        .attach(sink)
-                })())
-            }),
-            detach: Box::new(move || {
+        let async_model = model.clone();
+        let tracked_model = model.clone();
+        let range_model = model;
+        let attach_ranges = ranges.clone();
+        let attach_completions = completions.clone();
+        let state_ranges = ranges;
+        let guard = RangeQueueGuard(queue);
+        let tracked_cancellations = cancellations.clone();
+        let raw = sys::rust_view_model_with_control(
+            sys::RustViewModelCallbacks {
+                attach: Box::new(move |sink| {
+                    map_result((|| {
+                        let sink = ViewModelSink::with_state(
+                            sink,
+                            attach_ranges.clone(),
+                            attach_completions.clone(),
+                        )?;
+                        attach_model
+                            .lock()
+                            .expect("Rust view-model lock poisoned")
+                            .attach(sink)
+                    })())
+                }),
+                detach: Box::new(move || {
+                    map_result(
+                        detach_model
+                            .lock()
+                            .expect("Rust view-model lock poisoned")
+                            .detach(),
+                    )
+                }),
+                set_string: Box::new(move |id, value| {
+                    map_result(
+                        string_model
+                            .lock()
+                            .expect("Rust view-model lock poisoned")
+                            .set_string(id, value),
+                    )
+                }),
+                set_integer: Box::new(move |id, value| {
+                    map_result(
+                        integer_model
+                            .lock()
+                            .expect("Rust view-model lock poisoned")
+                            .set_integer(id, value),
+                    )
+                }),
+                set_boolean: Box::new(move |id, value| {
+                    map_result(
+                        boolean_model
+                            .lock()
+                            .expect("Rust view-model lock poisoned")
+                            .set_boolean(id, value),
+                    )
+                }),
+                set_double: Box::new(move |id, value| {
+                    map_result(
+                        double_model
+                            .lock()
+                            .expect("Rust view-model lock poisoned")
+                            .set_double(id, value),
+                    )
+                }),
+                execute: Box::new(move |id, parameter| {
+                    map_result(
+                        execute_model
+                            .lock()
+                            .expect("Rust view-model lock poisoned")
+                            .execute(id, parameter),
+                    )
+                }),
+                begin_async: Box::new(move |id, parameter| {
+                    map_result(
+                        async_model
+                            .lock()
+                            .expect("Rust view-model lock poisoned")
+                            .begin_async(id, parameter),
+                    )
+                }),
+            },
+            sys::RustViewModelControlCallbacks {
+                // Reads only the range-state map; it never touches the
+                // view-model lock, so the UI thread cannot queue behind a
+                // running Rust worker.
+                get_range_state: Box::new(move |collection_id| {
+                    state_ranges
+                        .get(collection_id)
+                        .ok_or(sys::Error(sys::E_INVALIDARG))
+                }),
+                // Enqueues and returns; the dedicated drain thread is the only
+                // place the model is locked for a range request. The queue
+                // guard lives in this closure, so releasing the COM object
+                // closes the queue and the drain thread exits.
+                request_range: Box::new(move |collection_id, offset, length, generation| {
+                    let request = RangeRequest {
+                        collection_id,
+                        offset,
+                        length,
+                        generation,
+                    };
+                    let enqueued = guard.0.enqueue(request);
+                    if enqueued.start {
+                        let worker = guard.0.clone();
+                        let model = range_model.clone();
+                        std::thread::Builder::new()
+                            .name("avalonia-rust-range".to_owned())
+                            .spawn(move || {
+                                while let Some(request) = worker.take() {
+                                    let _ = model
+                                        .lock()
+                                        .expect("Rust view-model lock poisoned")
+                                        .request_range(request);
+                                }
+                            })
+                            .map_err(|_| sys::Error(sys::E_FAIL))?;
+                        // Latched only now, so a failed spawn leaves the queue
+                        // unstarted and the next request tries again.
+                        guard.0.mark_started();
+                    }
+                    Ok(enqueued.dropped.unwrap_or((0, -1)))
+                }),
+                // Flips a flag; never blocks behind the worker it cancels.
+                cancel_async: Box::new(move |_, operation_id| {
+                    cancellations.cancel(operation_id);
+                    Ok(())
+                }),
+            },
+            Some(Box::new(move |id, parameter, operation_id| {
+                let token = tracked_cancellations.create(operation_id);
                 map_result(
-                    detach_model
+                    tracked_model
                         .lock()
                         .expect("Rust view-model lock poisoned")
-                        .detach(),
+                        .begin_async_tracked(id, parameter, token),
                 )
-            }),
-            set_string: Box::new(move |id, value| {
-                map_result(
-                    string_model
-                        .lock()
-                        .expect("Rust view-model lock poisoned")
-                        .set_string(id, value),
-                )
-            }),
-            set_integer: Box::new(move |id, value| {
-                map_result(
-                    integer_model
-                        .lock()
-                        .expect("Rust view-model lock poisoned")
-                        .set_integer(id, value),
-                )
-            }),
-            set_boolean: Box::new(move |id, value| {
-                map_result(
-                    boolean_model
-                        .lock()
-                        .expect("Rust view-model lock poisoned")
-                        .set_boolean(id, value),
-                )
-            }),
-            set_double: Box::new(move |id, value| {
-                map_result(
-                    double_model
-                        .lock()
-                        .expect("Rust view-model lock poisoned")
-                        .set_double(id, value),
-                )
-            }),
-            execute: Box::new(move |id, parameter| {
-                map_result(
-                    execute_model
-                        .lock()
-                        .expect("Rust view-model lock poisoned")
-                        .execute(id, parameter),
-                )
-            }),
-            begin_async: Box::new(move |id, parameter| {
-                map_result(
-                    async_model
-                        .lock()
-                        .expect("Rust view-model lock poisoned")
-                        .begin_async(id, parameter),
-                )
-            }),
-        });
+            })),
+        );
         Self { raw }
     }
 }
@@ -1162,7 +1561,9 @@ mod tests {
         vtbl: *const FakeSinkVtbl,
         references: AtomicU32,
         sink3_result: i32,
+        sink4_result: i32,
         queries: Arc<AtomicUsize>,
+        shape_queries: Arc<AtomicUsize>,
     }
 
     #[repr(C)]
@@ -1193,6 +1594,10 @@ mod tests {
             (*this).queries.fetch_add(1, Ordering::SeqCst);
             return (*this).sink3_result;
         }
+        if *iid == <sys::IAvnRustVmSink4 as sys::ComInterface>::IID {
+            (*this).shape_queries.fetch_add(1, Ordering::SeqCst);
+            return (*this).sink4_result;
+        }
         // Everything else (IUnknown, v1 and v2) resolves to the same object;
         // only the header layout matters for these tests.
         fake_add_ref(this);
@@ -1213,18 +1618,38 @@ mod tests {
     }
 
     fn fake_sink(sink3_result: i32) -> (ViewModelSink, Arc<AtomicUsize>) {
+        let (sink, queries, _) = fake_sink_with_shapes(sink3_result, sys::E_NOINTERFACE);
+        (sink, queries)
+    }
+
+    fn fake_sink_with_shapes(
+        sink3_result: i32,
+        sink4_result: i32,
+    ) -> (ViewModelSink, Arc<AtomicUsize>, Arc<AtomicUsize>) {
         let queries = Arc::new(AtomicUsize::new(0));
+        let shape_queries = Arc::new(AtomicUsize::new(0));
         let object = Box::new(FakeSink {
             vtbl: &FAKE_SINK_VTBL,
             references: AtomicU32::new(1),
             sink3_result,
+            sink4_result,
             queries: queries.clone(),
+            shape_queries: shape_queries.clone(),
         });
         let raw = unsafe {
             sys::ComPtr::<sys::IAvnRustVmSink>::from_raw(Box::into_raw(object).cast())
                 .expect("non-null")
         };
-        (ViewModelSink::new(raw).expect("v2 must resolve"), queries)
+        (
+            ViewModelSink::with_state(
+                raw,
+                Arc::new(RangeStates::default()),
+                Arc::new(CompletionSlots::default()),
+            )
+            .expect("v2 must resolve"),
+            queries,
+            shape_queries,
+        )
     }
 
     #[test]
@@ -1255,5 +1680,295 @@ mod tests {
             }
         }
         assert_eq!(1, queries.load(Ordering::SeqCst), "the failure is cached");
+    }
+    /// The stage 30 capability is optional and resolved exactly once, with the
+    /// same discipline as the batch capability: a producer attached to a host
+    /// that predates it reports `E_NOINTERFACE` from every richer-shape call
+    /// instead of silently dropping the update.
+    #[test]
+    fn an_absent_richer_shapes_capability_is_reported_and_cached() {
+        let (sink, _, shape_queries) =
+            fake_sink_with_shapes(sys::E_NOINTERFACE, sys::E_NOINTERFACE);
+
+        assert!(!sink.supports_richer_shapes());
+        for _ in 0..3 {
+            match sink.map_set_integer(1, MapKey::Text("Error".to_owned()), 1) {
+                Err(Error::Abi(error)) => assert_eq!(sys::E_NOINTERFACE, error.0),
+                other => panic!("expected E_NOINTERFACE, got {other:?}"),
+            }
+        }
+        match sink.publish_range_reset(5, 1, 100) {
+            Err(Error::Abi(error)) => assert_eq!(sys::E_NOINTERFACE, error.0),
+            other => panic!("expected E_NOINTERFACE, got {other:?}"),
+        }
+        assert_eq!(
+            1,
+            shape_queries.load(Ordering::SeqCst),
+            "the capability query is cached"
+        );
+    }
+
+    #[test]
+    fn a_failed_richer_shapes_query_is_reported_verbatim_not_as_absence() {
+        let (sink, _, _) = fake_sink_with_shapes(sys::E_NOINTERFACE, sys::E_FAIL);
+
+        match sink.map_clear(1) {
+            Err(Error::Abi(error)) => assert_eq!(sys::E_FAIL, error.0),
+            other => panic!("expected E_FAIL, got {other:?}"),
+        }
+        assert!(!sink.supports_richer_shapes());
+    }
+
+    /// A range batch is only meaningful against a published generation, so
+    /// `range_batch` refuses to build one for a collection whose identity was
+    /// never reset.
+    #[test]
+    fn a_range_page_requires_a_published_generation() {
+        let (sink, _, _) = fake_sink_with_shapes(sys::E_NOINTERFACE, sys::E_NOINTERFACE);
+
+        assert!(sink.range_batch(5, 0).is_none());
+    }
+
+    #[test]
+    fn a_completion_is_claimed_once_per_invocation() {
+        let (sink, _, _) = fake_sink_with_shapes(sys::E_NOINTERFACE, sys::E_NOINTERFACE);
+        let first = CancellationToken::none();
+
+        assert!(sink.claim_completion(3, &first));
+        assert!(!sink.claim_completion(3, &first));
+        assert!(sink.claim_completion(4, &first), "claims are per command");
+    }
+
+    /// Map entries own their nested handles exactly like collection items: a
+    /// replaced or removed value releases Rust's contribution immediately.
+    #[test]
+    fn map_slots_release_replaced_and_removed_nested_handles() {
+        let alive = Arc::new(AtomicUsize::new(0));
+        let slots = NestedSlots::default();
+
+        slots.set_map_value(
+            1,
+            MapKey::Text("a".to_owned()),
+            Some(ViewModelHandle::new(CountedModel::new(alive.clone()))),
+        );
+        slots.set_map_value(
+            1,
+            MapKey::Text("b".to_owned()),
+            Some(ViewModelHandle::new(CountedModel::new(alive.clone()))),
+        );
+        assert_eq!(2, alive.load(Ordering::SeqCst));
+
+        slots.set_map_value(
+            1,
+            MapKey::Text("a".to_owned()),
+            Some(ViewModelHandle::new(CountedModel::new(alive.clone()))),
+        );
+        assert_eq!(
+            2,
+            alive.load(Ordering::SeqCst),
+            "replace drops the previous"
+        );
+
+        slots.set_map_value(1, MapKey::Text("b".to_owned()), None);
+        assert_eq!(1, alive.load(Ordering::SeqCst));
+
+        slots.clear_map(1);
+        assert_eq!(0, alive.load(Ordering::SeqCst));
+    }
+
+    #[test]
+    fn command_result_slots_replace_and_release_exactly_one_handle() {
+        let alive = Arc::new(AtomicUsize::new(0));
+        let slots = NestedSlots::default();
+
+        slots.set_command_result(
+            3,
+            Some(ViewModelHandle::new(CountedModel::new(alive.clone()))),
+        );
+        slots.set_command_result(
+            3,
+            Some(ViewModelHandle::new(CountedModel::new(alive.clone()))),
+        );
+        assert_eq!(1, alive.load(Ordering::SeqCst));
+
+        slots.set_command_result(3, None);
+        assert_eq!(0, alive.load(Ordering::SeqCst));
+    }
+    /// A model that records the range requests the runtime's drain thread
+    /// delivers, so the nonblocking contract can be asserted rather than
+    /// assumed.
+    struct RangeModel {
+        seen: Arc<Mutex<Vec<RangeRequest>>>,
+        signal: Arc<std::sync::Condvar>,
+        delivered_on: Arc<Mutex<Option<std::thread::ThreadId>>>,
+    }
+
+    impl DynamicViewModel for RangeModel {
+        fn attach(&mut self, _sink: ViewModelSink) -> Result<()> {
+            Ok(())
+        }
+        fn detach(&mut self) -> Result<()> {
+            Ok(())
+        }
+        fn set_string(&mut self, _property_id: i32, _value: String) -> Result<()> {
+            Ok(())
+        }
+        fn set_integer(&mut self, _property_id: i32, _value: i64) -> Result<()> {
+            Ok(())
+        }
+        fn set_boolean(&mut self, _property_id: i32, _value: bool) -> Result<()> {
+            Ok(())
+        }
+        fn set_double(&mut self, _property_id: i32, _value: f64) -> Result<()> {
+            Ok(())
+        }
+        fn execute(&mut self, _command_id: i32, _parameter: Option<String>) -> Result<()> {
+            Ok(())
+        }
+        fn begin_async(&mut self, _command_id: i32, _parameter: Option<String>) -> Result<()> {
+            Ok(())
+        }
+        fn request_range(&mut self, request: RangeRequest) -> Result<()> {
+            *self.delivered_on.lock().expect("thread lock") = Some(std::thread::current().id());
+            self.seen.lock().expect("seen lock").push(request);
+            self.signal.notify_all();
+            Ok(())
+        }
+    }
+
+    /// `IAvnRustRangeSource::RequestRange` is called on the UI thread. It must
+    /// return immediately and hand the work to the runtime's own thread, so a
+    /// long-running model callback can never stall the UI.
+    #[test]
+    fn a_range_request_returns_immediately_and_is_delivered_off_the_calling_thread() {
+        let seen = Arc::new(Mutex::new(Vec::new()));
+        let signal = Arc::new(std::sync::Condvar::new());
+        let delivered_on = Arc::new(Mutex::new(None));
+        let handle = ViewModelHandle::new(RangeModel {
+            seen: seen.clone(),
+            signal: signal.clone(),
+            delivered_on: delivered_on.clone(),
+        });
+        let source = handle
+            .raw
+            .query_interface::<sys::IAvnRustRangeSource>()
+            .expect("range source");
+        let caller = std::thread::current().id();
+
+        source.request_range(5, 0, 64, 3).expect("request accepted");
+        // Identical requests coalesce; a different offset does not.
+        source.request_range(5, 0, 64, 3).expect("request accepted");
+        source
+            .request_range(5, 64, 64, 3)
+            .expect("request accepted");
+
+        let mut guard = seen.lock().expect("seen lock");
+        while guard.len() < 2 {
+            let (next, timeout) = signal
+                .wait_timeout(guard, std::time::Duration::from_secs(5))
+                .expect("condvar");
+            assert!(!timeout.timed_out(), "the drain thread never delivered");
+            guard = next;
+        }
+        assert_eq!(
+            vec![
+                RangeRequest {
+                    collection_id: 5,
+                    offset: 0,
+                    length: 64,
+                    generation: 3
+                },
+                RangeRequest {
+                    collection_id: 5,
+                    offset: 64,
+                    length: 64,
+                    generation: 3
+                },
+            ],
+            *guard
+        );
+        drop(guard);
+        assert_ne!(
+            Some(caller),
+            *delivered_on.lock().expect("thread lock"),
+            "the model must be locked on the runtime's range thread, not the caller's"
+        );
+    }
+
+    /// Releasing the view model closes the queue, so the drain thread exits
+    /// instead of outliving the model it serves.
+    #[test]
+    fn releasing_the_view_model_stops_the_range_thread() {
+        let seen = Arc::new(Mutex::new(Vec::new()));
+        let signal = Arc::new(std::sync::Condvar::new());
+        let alive = Arc::new(AtomicUsize::new(0));
+        let handle = ViewModelHandle::new(TrackedRangeModel {
+            inner: RangeModel {
+                seen,
+                signal,
+                delivered_on: Arc::new(Mutex::new(None)),
+            },
+            alive: alive.clone(),
+        });
+        alive.store(1, Ordering::SeqCst);
+        let source = handle
+            .raw
+            .query_interface::<sys::IAvnRustRangeSource>()
+            .expect("range source");
+        source.request_range(5, 0, 8, 1).expect("request accepted");
+
+        drop(source);
+        drop(handle);
+
+        // The drain thread holds the last model reference until it observes the
+        // closed queue; give it a bounded window to exit.
+        for _ in 0..500 {
+            if alive.load(Ordering::SeqCst) == 0 {
+                return;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(10));
+        }
+        panic!("the range thread kept the model alive after release");
+    }
+
+    struct TrackedRangeModel {
+        inner: RangeModel,
+        alive: Arc<AtomicUsize>,
+    }
+
+    impl Drop for TrackedRangeModel {
+        fn drop(&mut self) {
+            self.alive.store(0, Ordering::SeqCst);
+        }
+    }
+
+    impl DynamicViewModel for TrackedRangeModel {
+        fn attach(&mut self, sink: ViewModelSink) -> Result<()> {
+            self.inner.attach(sink)
+        }
+        fn detach(&mut self) -> Result<()> {
+            self.inner.detach()
+        }
+        fn set_string(&mut self, property_id: i32, value: String) -> Result<()> {
+            self.inner.set_string(property_id, value)
+        }
+        fn set_integer(&mut self, property_id: i32, value: i64) -> Result<()> {
+            self.inner.set_integer(property_id, value)
+        }
+        fn set_boolean(&mut self, property_id: i32, value: bool) -> Result<()> {
+            self.inner.set_boolean(property_id, value)
+        }
+        fn set_double(&mut self, property_id: i32, value: f64) -> Result<()> {
+            self.inner.set_double(property_id, value)
+        }
+        fn execute(&mut self, command_id: i32, parameter: Option<String>) -> Result<()> {
+            self.inner.execute(command_id, parameter)
+        }
+        fn begin_async(&mut self, command_id: i32, parameter: Option<String>) -> Result<()> {
+            self.inner.begin_async(command_id, parameter)
+        }
+        fn request_range(&mut self, request: RangeRequest) -> Result<()> {
+            self.inner.request_range(request)
+        }
     }
 }

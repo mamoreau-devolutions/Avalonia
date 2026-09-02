@@ -85,14 +85,41 @@ public static class ViewModelSourceEmitter
                 var type = collection.ElementKind == ViewModelValueKind.Model
                     ? $"Model `{collection.ElementModelName}`"
                     : $"`{collection.ElementKind}`";
-                sb.AppendLine($"| Collection | {collection.Id} | `{collection.Name}` | {type} | Rust to managed |");
+                var shape = collection.Window is { } window
+                    ? $" (windowed: page {window.PageSize}, {window.MaxLivePages} live pages)"
+                    : collection.Tree is not null ? " (tree root)"
+                    : collection.Recursive ? " (recursive children)" : "";
+                sb.AppendLine($"| Collection | {collection.Id} | `{collection.Name}` | {type}{shape} | Rust to managed |");
+            }
+            foreach (var map in model.Maps)
+            {
+                var value = map.ValueKind == ViewModelValueKind.Model
+                    ? $"Model `{map.ValueModelName}`"
+                    : $"`{map.ValueKind}`";
+                sb.AppendLine($"| Map | {map.Id} | `{map.Name}` | `{map.KeyKind}` to {value} | Rust to managed |");
             }
             foreach (var command in model.Commands)
             {
                 var parameter = command.ParameterProperty is null
                     ? "None"
                     : $"`{command.ParameterProperty}`";
-                sb.AppendLine($"| {(command.IsAsync ? "Async command" : "Command")} | {command.Id} | `{command.Name}` | {parameter} | Managed to Rust |");
+                var extras = new List<string>();
+                if (command.ResultModelName is not null)
+                    extras.Add($"result `{command.ResultModelName}`");
+                if (command.SupportsProgress)
+                    extras.Add("progress");
+                if (command.SupportsCancellation)
+                    extras.Add("cancellable");
+                var suffix = extras.Count == 0 ? "" : $" ({string.Join(", ", extras)})";
+                sb.AppendLine($"| {(command.IsAsync ? "Async command" : "Command")} | {command.Id} | `{command.Name}`{suffix} | {parameter} | Managed to Rust |");
+            }
+            foreach (var collection in model.Collections.Where(collection => collection.Tree is not null))
+            {
+                var tree = collection.Tree!;
+                sb.AppendLine();
+                sb.AppendLine($"### Tree `{collection.Name}`");
+                sb.AppendLine();
+                sb.AppendLine($"Node model `{collection.ElementModelName}`, children `{tree.ChildrenCollection}`, header `{tree.HeaderPath}`, has-children `{tree.HasChildrenProperty ?? "-"}`.");
             }
             foreach (var collection in model.Collections.Where(collection => collection.Table is not null))
             {
@@ -164,8 +191,20 @@ public static class ViewModelSourceEmitter
         sb.AppendLine();
         sb.AppendLine($"namespace {model.ManagedNamespace};");
         sb.AppendLine();
+        var maps = model.Maps;
+        var windowedCollections = model.Collections.Where(collection => collection.Window is not null).ToArray();
+        var materializedCollections = model.Collections.Where(collection => collection.Window is null).ToArray();
+        var resultCommands = model.Commands.Where(command => command.ResultModelName is not null).ToArray();
+        var progressCommands = model.Commands.Where(command => command.SupportsProgress).ToArray();
+        var cancellableCommands = model.Commands.Where(command => command.SupportsCancellation).ToArray();
+        var trackedCommands = model.Commands.Where(command => command.SupportsCancellation || command.SupportsProgress).ToArray();
+        var shapes = maps.Count > 0 || windowedCollections.Length > 0 ||
+            resultCommands.Length > 0 || progressCommands.Length > 0 || cancellableCommands.Length > 0;
         sb.AppendLine("[GeneratedComClass]");
-        sb.AppendLine($"public sealed partial class {model.Name}Adapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, IRustVmBatchTarget, IRustVmTableSelectionBatchTarget, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable");
+        var interfaces = "IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, " +
+            (shapes ? "IAvnRustVmSink4, " : "") +
+            "IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, IRustVmBatchTarget, IRustVmTableSelectionBatchTarget, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable";
+        sb.AppendLine($"public sealed partial class {model.Name}Adapter : {interfaces}");
         sb.AppendLine("{");
         sb.AppendLine("    private readonly IAvnRustViewModel _model;");
         sb.AppendLine("    private readonly Action<Action> _dispatch;");
@@ -173,8 +212,23 @@ public static class ViewModelSourceEmitter
         sb.AppendLine("    private readonly RustVmBatchCoordinator _batch;");
         sb.AppendLine("    private readonly Dictionary<string, string> _errors = new(StringComparer.Ordinal);");
         sb.AppendLine("    private readonly RustVmInboundWriteTracker _inboundWrites = new();");
+        if (trackedCommands.Length > 0)
+            sb.AppendLine("    private readonly IAvnRustViewModel2? _tracked;");
+        if (windowedCollections.Length > 0)
+            sb.AppendLine("    private readonly RustRangeCoordinator _ranges;");
+        foreach (var command in trackedCommands)
+            sb.AppendLine($"    private long _{Lower(command.Name)}Operation;");
         foreach (var property in model.Properties)
             sb.AppendLine($"    private {CSharpType(ir, property)} _{Lower(property.Name)} = {CSharpInitial(ir, property)};");
+        foreach (var command in resultCommands)
+            sb.AppendLine($"    private {CSharpModelAdapterTypeName(ir, command.ResultModelName!)}? _{Lower(command.Name)}Result;");
+        foreach (var command in progressCommands)
+        {
+            sb.AppendLine($"    private double? _{Lower(command.Name)}Progress;");
+            sb.AppendLine($"    private string? _{Lower(command.Name)}ProgressMessage;");
+        }
+        foreach (var command in trackedCommands)
+            sb.AppendLine($"    private bool _{Lower(command.Name)}IsRunning;");
         sb.AppendLine();
         sb.AppendLine("    /// <summary>Creates an adapter that dispatches and posts through <see cref=\"Dispatcher.UIThread\"/>.</summary>");
         sb.AppendLine($"    public {model.Name}Adapter(IAvnRustViewModel model) : this(model, null, null) {{ }}");
@@ -197,16 +251,53 @@ public static class ViewModelSourceEmitter
         sb.AppendLine("        _dispatch = dispatch ?? Dispatch;");
         sb.AppendLine("        _post = post;");
         sb.AppendLine("        _batch = new RustVmBatchCoordinator(this, post);");
+        if (trackedCommands.Length > 0)
+            sb.AppendLine("        _tracked = RustAsyncCommands.TryResolve(model);");
+        if (windowedCollections.Length > 0)
+        {
+            sb.AppendLine("        _ranges = new RustRangeCoordinator(ResolveWindow, post);");
+            sb.AppendLine("        var rangeSource = RustAsyncCommands.TryResolveRangeSource(model);");
+            foreach (var collection in windowedCollections)
+            {
+                var window = collection.Window!;
+                var elementType = CSharpElementType(ir, collection.ElementKind, collection.ElementModelName);
+                var factory = collection.ElementKind == ViewModelValueKind.Model
+                    ? $"(nested, _) => new {elementType}(nested!, _dispatch, _post)"
+                    : "(_, text) => text ?? string.Empty";
+                sb.AppendLine($"        {collection.Name} = new RustWindowedCollection({collection.Id}, {window.PageSize}, {window.MaxLivePages}, {factory});");
+                sb.AppendLine($"        {collection.Name}.SetSource(rangeSource);");
+            }
+        }
         foreach (var command in model.Commands)
         {
             var invocation = command.IsAsync ? "BeginAsync" : "Execute";
             var acceptsParameter = IsTableSortCommand(model, command);
             var parameter = command.ParameterProperty ?? (acceptsParameter ? "parameter as string" : "null");
-            sb.AppendLine($"        {command.Name}Command = new DelegateCommand(parameter => Check(_model.{invocation}({command.Id}, {parameter})));");
+            if (command.IsAsync && (command.SupportsCancellation || command.SupportsProgress))
+            {
+                sb.AppendLine(
+                    $"        {command.Name}Command = new DelegateCommand(parameter => _{Lower(command.Name)}Operation = RustAsyncCommands.Begin(_model, _tracked, {command.Id}, {parameter}));");
+            }
+            else
+            {
+                sb.AppendLine($"        {command.Name}Command = new DelegateCommand(parameter => Check(_model.{invocation}({command.Id}, {parameter})));");
+            }
+            if (command.SupportsCancellation)
+            {
+                sb.AppendLine(
+                    $"        Cancel{command.Name}Command = new DelegateCommand(_ => RustAsyncCommands.Cancel(_tracked, {command.Id}, _{Lower(command.Name)}Operation));");
+                sb.AppendLine($"        Cancel{command.Name}Command.SetEnabledCore(false);");
+            }
         }
         sb.AppendLine("        try");
         sb.AppendLine("        {");
         sb.AppendLine("            Check(_model.Attach(this));");
+        if (windowedCollections.Length > 0)
+        {
+            sb.AppendLine("            // Primed after attach: a producer publishes its dataset identity");
+            sb.AppendLine("            // from attach, so reading it before would always come back empty.");
+            sb.AppendLine("            PrimeWindows(rangeSource);");
+        }
         sb.AppendLine("        }");
         sb.AppendLine("        catch");
         sb.AppendLine("        {");
@@ -258,12 +349,40 @@ public static class ViewModelSourceEmitter
             sb.AppendLine("    }");
             sb.AppendLine();
         }
-        foreach (var collection in model.Collections)
+        foreach (var collection in materializedCollections)
             sb.AppendLine($"    public BatchObservableCollection<{CSharpElementType(ir, collection.ElementKind, collection.ElementModelName)}> {collection.Name} {{ get; }} = [];");
-        if (model.Collections.Count > 0)
+        foreach (var collection in windowedCollections)
+        {
+            sb.AppendLine("    /// <summary>");
+            sb.AppendLine($"    /// Range-backed projection: <c>Count</c> is the Rust dataset's total size while at");
+            sb.AppendLine($"    /// most {collection.Window!.PageSize} x {collection.Window.MaxLivePages} element objects are live.");
+            sb.AppendLine("    /// </summary>");
+            sb.AppendLine($"    public RustWindowedCollection {collection.Name} {{ get; }}");
+        }
+        foreach (var map in maps)
+            sb.AppendLine($"    public RustObservableMap<{CSharpMapKeyType(map)}, {CSharpMapValueType(ir, map)}> {map.Name} {{ get; }} = new();");
+        if (model.Collections.Count > 0 || maps.Count > 0)
             sb.AppendLine();
         foreach (var command in model.Commands)
             sb.AppendLine($"    public DelegateCommand {command.Name}Command {{ get; }}");
+        foreach (var command in cancellableCommands)
+        {
+            sb.AppendLine("    /// <summary>Cancels the in-flight invocation. Disabled while nothing is running.</summary>");
+            sb.AppendLine($"    public DelegateCommand Cancel{command.Name}Command {{ get; }}");
+        }
+        foreach (var command in resultCommands)
+        {
+            sb.AppendLine($"    /// <summary>The command's last typed structured result, or null.</summary>");
+            sb.AppendLine($"    public {CSharpModelAdapterTypeName(ir, command.ResultModelName!)}? {command.Name}Result => _{Lower(command.Name)}Result;");
+        }
+        foreach (var command in progressCommands)
+        {
+            sb.AppendLine("    /// <summary>Determinate progress in 0..1, or null while progress is indeterminate.</summary>");
+            sb.AppendLine($"    public double? {command.Name}Progress => _{Lower(command.Name)}Progress;");
+            sb.AppendLine($"    public string? {command.Name}ProgressMessage => _{Lower(command.Name)}ProgressMessage;");
+        }
+        foreach (var command in trackedCommands)
+            sb.AppendLine($"    public bool {command.Name}IsRunning => _{Lower(command.Name)}IsRunning;");
         sb.AppendLine();
         sb.AppendLine("    public bool HasErrors => _errors.Count > 0;");
         sb.AppendLine();
@@ -273,16 +392,18 @@ public static class ViewModelSourceEmitter
         sb.AppendLine("            : Array.Empty<string>();");
         sb.AppendLine();
         EmitCSharpSinkMethods(sb, ir, model);
+        if (shapes)
+            EmitCSharpShapeSinkMethods(sb, ir, model, maps, windowedCollections, resultCommands, progressCommands, trackedCommands);
         sb.AppendLine("    public int ReplaceStringSnapshot(int collectionId, IReadOnlyList<string> values) => collectionId switch");
         sb.AppendLine("    {");
-        foreach (var collection in model.Collections.Where(collection => collection.ElementKind == ViewModelValueKind.String))
+        foreach (var collection in materializedCollections.Where(collection => collection.ElementKind == ViewModelValueKind.String))
             sb.AppendLine($"        {collection.Id} => Apply(() => {collection.Name}.ReplaceSnapshot(values)),");
         sb.AppendLine("        _ => unchecked((int)0x80070057),");
         sb.AppendLine("    };");
         sb.AppendLine();
         sb.AppendLine("    public int ReplaceModelSnapshot(int collectionId, IReadOnlyList<IAvnRustViewModel> values) => collectionId switch");
         sb.AppendLine("    {");
-        foreach (var collection in model.Collections.Where(collection => collection.ElementKind == ViewModelValueKind.Model))
+        foreach (var collection in materializedCollections.Where(collection => collection.ElementKind == ViewModelValueKind.Model))
         {
             var adapter = CSharpModelAdapterTypeName(ir, collection.ElementModelName!);
             sb.AppendLine($"        {collection.Id} => Apply(() =>");
@@ -314,6 +435,8 @@ public static class ViewModelSourceEmitter
         sb.AppendLine();
         sb.AppendLine("    private void DisposeCore()");
         sb.AppendLine("    {");
+        if (windowedCollections.Length > 0)
+            sb.AppendLine("        _ranges.Close();");
         sb.AppendLine("        try");
         sb.AppendLine("        {");
         sb.AppendLine("            Check(_model.Detach());");
@@ -324,12 +447,43 @@ public static class ViewModelSourceEmitter
         sb.AppendLine("        }");
         sb.AppendLine("    }");
         sb.AppendLine();
+        if (windowedCollections.Length > 0)
+        {
+            sb.AppendLine("    private RustWindowedCollection? ResolveWindow(int collectionId) => collectionId switch");
+            sb.AppendLine("    {");
+            foreach (var collection in windowedCollections)
+                sb.AppendLine($"        {collection.Id} => {collection.Name},");
+            sb.AppendLine("        _ => null,");
+            sb.AppendLine("    };");
+            sb.AppendLine();
+            sb.AppendLine("    /// <summary>");
+            sb.AppendLine("    /// Reads each window's dataset identity once, so the first frame already");
+            sb.AppendLine("    /// reports the real total count instead of an empty list. Reading it is a");
+            sb.AppendLine("    /// lock-free producer-side lookup; it never enters application model code.");
+            sb.AppendLine("    /// </summary>");
+            sb.AppendLine("    private void PrimeWindows(IAvnRustRangeSource? source)");
+            sb.AppendLine("    {");
+            sb.AppendLine("        if (source is null) return;");
+            foreach (var collection in windowedCollections)
+            {
+                sb.AppendLine($"        if (source.GetRangeState({collection.Id}, out var generation{collection.Id}, out var total{collection.Id}) >= 0)");
+                sb.AppendLine($"            {collection.Name}.ResetTo(generation{collection.Id}, total{collection.Id});");
+            }
+            sb.AppendLine("    }");
+            sb.AppendLine();
+        }
         sb.AppendLine("    private void DisposeNestedAdapters()");
         sb.AppendLine("    {");
         foreach (var property in model.Properties.Where(property => property.Kind == ViewModelValueKind.Model))
             sb.AppendLine($"        TryDispose(_{Lower(property.Name)});");
-        foreach (var collection in model.Collections.Where(collection => collection.ElementKind == ViewModelValueKind.Model))
+        foreach (var collection in materializedCollections.Where(collection => collection.ElementKind == ViewModelValueKind.Model))
             sb.AppendLine($"        foreach (var item in {collection.Name}) TryDispose(item);");
+        foreach (var collection in windowedCollections)
+            sb.AppendLine($"        TryDispose({collection.Name});");
+        foreach (var map in maps.Where(map => map.ValueKind == ViewModelValueKind.Model))
+            sb.AppendLine($"        foreach (var entry in {map.Name}) TryDispose(entry.Value);");
+        foreach (var command in resultCommands)
+            sb.AppendLine($"        TryDispose(_{Lower(command.Name)}Result);");
         sb.AppendLine("    }");
         sb.AppendLine();
         sb.AppendLine("    private static void TryDispose(IDisposable? value)");
@@ -423,7 +577,10 @@ public static class ViewModelSourceEmitter
     private static void EmitCSharpBatchTarget(StringBuilder sb, ViewModelIr ir, ViewModelDefinition model)
     {
         var modelProperties = model.Properties.Where(property => property.Kind == ViewModelValueKind.Model).ToArray();
-        var modelCollections = model.Collections.Where(collection => collection.ElementKind == ViewModelValueKind.Model).ToArray();
+        // A windowed collection has no materialized managed list, so it never
+        // participates in a batch; its pages arrive through PublishRange.
+        var batchCollections = model.Collections.Where(collection => collection.Window is null).ToArray();
+        var modelCollections = batchCollections.Where(collection => collection.ElementKind == ViewModelValueKind.Model).ToArray();
 
         sb.AppendLine("    bool IRustVmBatchTarget.TryGetProperty(int propertyId, out RustVmBatchProperty property)");
         sb.AppendLine("    {");
@@ -446,7 +603,7 @@ public static class ViewModelSourceEmitter
         sb.AppendLine("    {");
         sb.AppendLine("        collection = collectionId switch");
         sb.AppendLine("        {");
-        foreach (var collection in model.Collections)
+        foreach (var collection in batchCollections)
         {
             sb.AppendLine(
                 $"            {collection.Id} => new RustVmBatchCollectionInfo(nameof({collection.Name}), RustVmValueWireKind.{BatchWireKind(collection.ElementKind)}, {collection.Name}),");
@@ -545,6 +702,201 @@ public static class ViewModelSourceEmitter
         sb.AppendLine();
     }
 
+    /// <summary>
+    /// Emits the adapter's <c>IAvnRustVmSink4</c> implementation: observable
+    /// keyed maps, structured command results, async progress and windowed
+    /// range publication. Every entry point is a pure switch over a schema ID
+    /// that dispatches onto the UI thread through the same <c>Apply</c> used by
+    /// the v1/v2 sinks, except <c>PublishRange</c>, which must not decode on the
+    /// submitting stack and therefore goes through the range coordinator.
+    /// </summary>
+    private static void EmitCSharpShapeSinkMethods(
+        StringBuilder sb,
+        ViewModelIr ir,
+        ViewModelDefinition model,
+        IReadOnlyList<ViewModelMap> maps,
+        IReadOnlyList<ViewModelCollection> windowedCollections,
+        IReadOnlyList<ViewModelCommand> resultCommands,
+        IReadOnlyList<ViewModelCommand> progressCommands,
+        IReadOnlyList<ViewModelCommand> trackedCommands)
+    {
+        foreach (var (suffix, transport) in MapScalarKinds)
+        {
+            var matching = maps
+                .Where(map => map.ValueKind != ViewModelValueKind.Model &&
+                    TransportSuffix(WireKind(map.ValueKind)) == suffix)
+                .ToArray();
+            sb.AppendLine($"    public int MapSet{suffix}(int mapId, string? stringKey, long integerKey, {transport} value) => mapId switch");
+            sb.AppendLine("    {");
+            foreach (var map in matching)
+                sb.AppendLine($"        {map.Id} => Apply(() => SetMapEntry({map.Name}, {CSharpMapKeyExpression(map)}, {CSharpMapScalarValue(map)}, nameof({map.Name}))),");
+            sb.AppendLine("        _ => unchecked((int)0x80070057),");
+            sb.AppendLine("    };");
+            sb.AppendLine();
+        }
+
+        sb.AppendLine("    public int MapSetModel(int mapId, string? stringKey, long integerKey, IAvnRustViewModel? value) => mapId switch");
+        sb.AppendLine("    {");
+        foreach (var map in maps.Where(map => map.ValueKind == ViewModelValueKind.Model))
+        {
+            var adapter = CSharpModelAdapterTypeName(ir, map.ValueModelName!);
+            sb.AppendLine($"        {map.Id} => value is null ? unchecked((int)0x80070057) : Apply(() =>");
+            sb.AppendLine("        {");
+            sb.AppendLine($"            var adapter = new {adapter}(value, _dispatch, _post);");
+            sb.AppendLine($"            if ({map.Name}.Set({CSharpMapKeyExpression(map)}, adapter, out var displaced))");
+            sb.AppendLine("            {");
+            sb.AppendLine($"                RaiseMapChanged(nameof({map.Name}));");
+            sb.AppendLine("                TryDispose(displaced);");
+            sb.AppendLine("            }");
+            sb.AppendLine("            else");
+            sb.AppendLine("            {");
+            sb.AppendLine("                TryDispose(adapter);");
+            sb.AppendLine("            }");
+            sb.AppendLine("        }),");
+        }
+        sb.AppendLine("        _ => unchecked((int)0x80070057),");
+        sb.AppendLine("    };");
+        sb.AppendLine();
+
+        sb.AppendLine("    public int MapRemove(int mapId, string? stringKey, long integerKey) => mapId switch");
+        sb.AppendLine("    {");
+        foreach (var map in maps)
+        {
+            var dispose = map.ValueKind == ViewModelValueKind.Model ? " TryDispose(removed);" : "";
+            sb.AppendLine($"        {map.Id} => Apply(() => {{ if ({map.Name}.Remove({CSharpMapKeyExpression(map)}, out var removed)) {{ RaiseMapChanged(nameof({map.Name}));{dispose} }} }}),");
+        }
+        sb.AppendLine("        _ => unchecked((int)0x80070057),");
+        sb.AppendLine("    };");
+        sb.AppendLine();
+
+        sb.AppendLine("    public int MapClear(int mapId) => mapId switch");
+        sb.AppendLine("    {");
+        foreach (var map in maps)
+        {
+            var dispose = map.ValueKind == ViewModelValueKind.Model
+                ? " foreach (var value in removed) TryDispose(value);"
+                : "";
+            sb.AppendLine($"        {map.Id} => Apply(() => {{ var removed = {map.Name}.Clear(); if (removed.Count > 0) RaiseMapChanged(nameof({map.Name}));{dispose} }}),");
+        }
+        sb.AppendLine("        _ => unchecked((int)0x80070057),");
+        sb.AppendLine("    };");
+        sb.AppendLine();
+
+        sb.AppendLine("    public int SetCommandProgress(int commandId, int hasValue, double value, string? message) => commandId switch");
+        sb.AppendLine("    {");
+        foreach (var command in progressCommands)
+        {
+            sb.AppendLine($"        {command.Id} => Apply(() =>");
+            sb.AppendLine("        {");
+            sb.AppendLine("            var progress = hasValue != 0 ? RustAsyncCommands.ClampProgress(value) : (double?)null;");
+            sb.AppendLine($"            SetField(ref _{Lower(command.Name)}Progress, progress, nameof({command.Name}Progress));");
+            sb.AppendLine($"            SetField(ref _{Lower(command.Name)}ProgressMessage, message, nameof({command.Name}ProgressMessage));");
+            sb.AppendLine("        }),");
+        }
+        sb.AppendLine("        _ => unchecked((int)0x80070057),");
+        sb.AppendLine("    };");
+        sb.AppendLine();
+
+        sb.AppendLine("    public int SetCommandResult(int commandId, IAvnRustViewModel? result) => commandId switch");
+        sb.AppendLine("    {");
+        foreach (var command in resultCommands)
+        {
+            var adapter = CSharpModelAdapterTypeName(ir, command.ResultModelName!);
+            sb.AppendLine($"        {command.Id} => Apply(() =>");
+            sb.AppendLine("        {");
+            sb.AppendLine($"            var previous = _{Lower(command.Name)}Result;");
+            sb.AppendLine($"            _{Lower(command.Name)}Result = result is null ? null : new {adapter}(result, _dispatch, _post);");
+            sb.AppendLine($"            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof({command.Name}Result)));");
+            sb.AppendLine("            TryDispose(previous);");
+            sb.AppendLine("        }),");
+        }
+        sb.AppendLine("        _ => unchecked((int)0x80070057),");
+        sb.AppendLine("    };");
+        sb.AppendLine();
+
+        sb.AppendLine("    public int SetCommandRunning(int commandId, int running) => commandId switch");
+        sb.AppendLine("    {");
+        foreach (var command in trackedCommands)
+        {
+            sb.AppendLine($"        {command.Id} => Apply(() =>");
+            sb.AppendLine("        {");
+            sb.AppendLine("            var isRunning = running != 0;");
+            sb.AppendLine($"            SetField(ref _{Lower(command.Name)}IsRunning, isRunning, nameof({command.Name}IsRunning));");
+            if (command.SupportsCancellation)
+            {
+                sb.AppendLine($"            if (!isRunning) _{Lower(command.Name)}Operation = 0;");
+                sb.AppendLine($"            Cancel{command.Name}Command.SetEnabled(isRunning);");
+            }
+            if (command.SupportsProgress)
+            {
+                sb.AppendLine("            if (!isRunning)");
+                sb.AppendLine("            {");
+                sb.AppendLine($"                SetField(ref _{Lower(command.Name)}Progress, null, nameof({command.Name}Progress));");
+                sb.AppendLine($"                SetField(ref _{Lower(command.Name)}ProgressMessage, null, nameof({command.Name}ProgressMessage));");
+                sb.AppendLine("            }");
+            }
+            sb.AppendLine("        }),");
+        }
+        sb.AppendLine("        _ => unchecked((int)0x80070057),");
+        sb.AppendLine("    };");
+        sb.AppendLine();
+
+        sb.AppendLine("    /// <summary>");
+        sb.AppendLine("    /// Enqueues one range batch. Like <see cref=\"SubmitBatch\"/> this never reads,");
+        sb.AppendLine("    /// applies or completes the batch on the submitting (Rust worker) stack.");
+        sb.AppendLine("    /// </summary>");
+        if (windowedCollections.Count > 0)
+            sb.AppendLine("    public int PublishRange(IAvnRustVmRangeBatch? batch) => _ranges.Publish(batch);");
+        else
+            sb.AppendLine("    public int PublishRange(IAvnRustVmRangeBatch? batch) => unchecked((int)0x80070057);");
+        sb.AppendLine();
+
+        if (maps.Count > 0)
+        {
+            sb.AppendLine("    private void RaiseMapChanged(string name) =>");
+            sb.AppendLine("        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));");
+            sb.AppendLine();
+            sb.AppendLine("    private void SetMapEntry<TKey, TValue>(RustObservableMap<TKey, TValue> map, TKey key, TValue value, string name)");
+            sb.AppendLine("        where TKey : notnull");
+            sb.AppendLine("    {");
+            sb.AppendLine("        if (map.Set(key, value, out _)) RaiseMapChanged(name);");
+            sb.AppendLine("    }");
+            sb.AppendLine();
+        }
+        _ = model;
+    }
+
+    private static readonly (string Suffix, string Transport)[] MapScalarKinds =
+    [
+        ("String", "string?"),
+        ("Integer", "long"),
+        ("Boolean", "int"),
+        ("Double", "double"),
+    ];
+
+    private static string CSharpMapKeyType(ViewModelMap map) =>
+        map.KeyKind == ViewModelValueKind.String ? "string" : "long";
+
+    private static string CSharpMapKeyExpression(ViewModelMap map) =>
+        map.KeyKind == ViewModelValueKind.String ? "stringKey ?? \"\"" : "integerKey";
+
+    private static string CSharpMapScalarValue(ViewModelMap map) => map.ValueKind switch
+    {
+        ViewModelValueKind.String => "value ?? \"\"",
+        ViewModelValueKind.Boolean => "value != 0",
+        _ => "value",
+    };
+
+    private static string CSharpMapValueType(ViewModelIr ir, ViewModelMap map) => map.ValueKind switch
+    {
+        ViewModelValueKind.String => "string",
+        ViewModelValueKind.Integer => "long",
+        ViewModelValueKind.Boolean => "bool",
+        ViewModelValueKind.Double => "double",
+        ViewModelValueKind.Model => CSharpModelAdapterTypeName(ir, map.ValueModelName!),
+        _ => throw new ArgumentOutOfRangeException(nameof(map)),
+    };
+
     private static string BatchWireKind(ViewModelValueKind kind) => kind switch
     {
         ViewModelValueKind.String => "String",
@@ -634,8 +986,12 @@ public static class ViewModelSourceEmitter
         sb.AppendLine("    };");
         sb.AppendLine();
 
-        var modelCollections = model.Collections.Where(collection => collection.ElementKind == ViewModelValueKind.Model).ToArray();
-        var stringCollections = model.Collections.Where(collection => collection.ElementKind == ViewModelValueKind.String).ToArray();
+        // A windowed collection is deliberately excluded from every
+        // materializing path: it has no managed element list to insert into,
+        // and its pages arrive through IAvnRustVmSink4.PublishRange instead.
+        var materialized = model.Collections.Where(collection => collection.Window is null).ToArray();
+        var modelCollections = materialized.Where(collection => collection.ElementKind == ViewModelValueKind.Model).ToArray();
+        var stringCollections = materialized.Where(collection => collection.ElementKind == ViewModelValueKind.String).ToArray();
 
         sb.AppendLine("    public int AddModel(int collectionId, IAvnRustViewModel? model) => collectionId switch");
         sb.AppendLine("    {");
@@ -714,7 +1070,7 @@ public static class ViewModelSourceEmitter
 
         sb.AppendLine("    public int MoveItem(int collectionId, int fromIndex, int toIndex) => collectionId switch");
         sb.AppendLine("    {");
-        foreach (var collection in model.Collections)
+        foreach (var collection in materialized)
             sb.AppendLine($"        {collection.Id} => Apply(() => {{ if ((uint)fromIndex >= (uint){collection.Name}.Count || (uint)toIndex >= (uint){collection.Name}.Count) return unchecked((int)0x80070057); {collection.Name}.Move(fromIndex, toIndex); return 0; }}),");
         sb.AppendLine("        _ => unchecked((int)0x80070057),");
         sb.AppendLine("    };");
@@ -794,11 +1150,21 @@ public static class ViewModelSourceEmitter
         sb.AppendLine("        [");
         foreach (var collection in model.Collections)
         {
-            var elementDescriptor = collection.ElementKind == ViewModelValueKind.Model
+            // A recursive (tree children) collection deliberately publishes a
+            // null element descriptor: its element model is its own owner, and
+            // a self-referencing static initializer would be a cycle. The
+            // Recursive flag plus the tree descriptor carry that shape instead.
+            var elementDescriptor = collection.ElementKind == ViewModelValueKind.Model && !collection.Recursive
                 ? $"{CSharpModelMetadataTypeName(ir, collection.ElementModelName!)}.Descriptor"
                 : "null";
             var table = collection.Table is null ? "null" : $"Create{collection.Name}Table()";
-            sb.AppendLine($"            new({collection.Id}, {JsonSerializer.Serialize(collection.Name)}, RustViewModelValueKind.{collection.ElementKind}, {elementDescriptor}, {table}),");
+            var window = collection.Window is null
+                ? "null"
+                : $"new({collection.Window.PageSize}, {collection.Window.MaxLivePages})";
+            var tree = collection.Tree is null
+                ? "null"
+                : $"new({JsonSerializer.Serialize(collection.Tree.ChildrenCollection)}, {JsonSerializer.Serialize(collection.Tree.HeaderPath)}, {CSharpNullableString(collection.Tree.HasChildrenProperty)})";
+            sb.AppendLine($"            new({collection.Id}, {JsonSerializer.Serialize(collection.Name)}, RustViewModelValueKind.{collection.ElementKind}, {elementDescriptor}, {table}, {window}, {tree}, {collection.Recursive.ToString().ToLowerInvariant()}),");
         }
         sb.AppendLine("        ],");
         sb.AppendLine("        [");
@@ -807,8 +1173,20 @@ public static class ViewModelSourceEmitter
             var parameter = command.ParameterProperty is null
                 ? "null"
                 : JsonSerializer.Serialize(command.ParameterProperty);
+            var result = command.ResultModelName is null
+                ? "null"
+                : $"{CSharpModelMetadataTypeName(ir, command.ResultModelName)}.Descriptor";
             sb.AppendLine(
-                $"            new({command.Id}, {JsonSerializer.Serialize(command.Name + "Command")}, {command.IsAsync.ToString().ToLowerInvariant()}, {parameter}, {IsTableSortCommand(model, command).ToString().ToLowerInvariant()}),");
+                $"            new({command.Id}, {JsonSerializer.Serialize(command.Name + "Command")}, {command.IsAsync.ToString().ToLowerInvariant()}, {parameter}, {IsTableSortCommand(model, command).ToString().ToLowerInvariant()}, {result}, {command.SupportsProgress.ToString().ToLowerInvariant()}, {command.SupportsCancellation.ToString().ToLowerInvariant()}),");
+        }
+        sb.AppendLine("        ],");
+        sb.AppendLine("        [");
+        foreach (var map in model.Maps)
+        {
+            var valueDescriptor = map.ValueKind == ViewModelValueKind.Model
+                ? $"{CSharpModelMetadataTypeName(ir, map.ValueModelName!)}.Descriptor"
+                : "null";
+            sb.AppendLine($"            new({map.Id}, {JsonSerializer.Serialize(map.Name)}, RustViewModelValueKind.{map.KeyKind}, RustViewModelValueKind.{map.ValueKind}, {valueDescriptor}),");
         }
         sb.AppendLine("        ]);");
         foreach (var collection in model.Collections.Where(collection => collection.Table is not null))
@@ -915,8 +1293,11 @@ public static class ViewModelSourceEmitter
     {
         var traitName = model.Name;
         var sinkName = $"{model.Name}Sink";
-        var stringCollections = model.Collections.Where(collection => collection.ElementKind == ViewModelValueKind.String).ToArray();
-        var modelCollections = model.Collections.Where(collection => collection.ElementKind == ViewModelValueKind.Model).ToArray();
+        var materialized = model.Collections.Where(collection => collection.Window is null).ToArray();
+        var windowedCollections = model.Collections.Where(collection => collection.Window is not null).ToArray();
+        var stringCollections = materialized.Where(collection => collection.ElementKind == ViewModelValueKind.String).ToArray();
+        var modelCollections = materialized.Where(collection => collection.ElementKind == ViewModelValueKind.Model).ToArray();
+        var trackedCommands = model.Commands.Where(command => command.SupportsCancellation || command.SupportsProgress).ToArray();
         sb.AppendLine("#[derive(Clone, Debug)]");
         sb.AppendLine($"pub struct {sinkName}(crate::view_model::ViewModelSink);");
         sb.AppendLine();
@@ -952,6 +1333,7 @@ public static class ViewModelSourceEmitter
             sb.AppendLine($"    pub fn set_{Snake(command.Name)}_enabled(&self, enabled: bool) -> crate::Result<()> {{ self.0.set_command_enabled({command.Id}, enabled) }}");
         foreach (var property in model.Properties.Where(property => property.Kind != ViewModelValueKind.Model))
             sb.AppendLine($"    pub fn set_{Snake(property.Name)}_error(&self, message: Option<&str>) -> crate::Result<()> {{ self.0.set_property_error({property.Id}, message) }}");
+        EmitRustShapeSinkMethods(sb, ir, model, windowedCollections, trackedCommands);
         sb.AppendLine($"    /// Creates a worker-safe immutable update batch with a monotonic generation.");
         sb.AppendLine($"    pub fn batch(&self, generation: i64) -> {sinkName}Batch {{ {sinkName}Batch(crate::view_model::ViewModelBatch::new(generation)) }}");
         sb.AppendLine($"    pub fn submit_batch(&self, batch: {sinkName}Batch) -> crate::Result<crate::view_model::BatchCompletion> {{ self.0.submit_batch(batch.0) }}");
@@ -968,7 +1350,14 @@ public static class ViewModelSourceEmitter
             var parameter = command.ParameterProperty is { } parameterProperty
                 ? $", value: {RustOwnedType(model.Properties.Single(property => property.Name == parameterProperty).Kind)}"
                 : IsTableSortCommand(model, command) ? ", value: String" : "";
-            sb.AppendLine($"    fn {Snake(command.Name)}(&mut self{parameter}) -> crate::Result<()>;");
+            var token = command.SupportsCancellation ? ", token: crate::CancellationToken" : "";
+            sb.AppendLine($"    fn {Snake(command.Name)}(&mut self{parameter}{token}) -> crate::Result<()>;");
+        }
+        foreach (var collection in windowedCollections)
+        {
+            sb.AppendLine($"    /// Realizes one page of `{collection.Name}`. Called on the runtime's dedicated");
+            sb.AppendLine("    /// range thread, never on the UI thread, so it may take as long as the dataset needs.");
+            sb.AppendLine($"    fn request_{Snake(collection.Name)}_range(&mut self, request: crate::RangeRequest) -> crate::Result<()>;");
         }
         sb.AppendLine("}");
         sb.AppendLine();
@@ -983,6 +1372,8 @@ public static class ViewModelSourceEmitter
         EmitRustPropertyDispatch(sb, model, ViewModelValueKind.Double);
         EmitRustCommandDispatch(sb, model, asyncCommands: false);
         EmitRustCommandDispatch(sb, model, asyncCommands: true);
+        EmitRustTrackedCommandDispatch(sb, model);
+        EmitRustRangeDispatch(sb, windowedCollections);
         sb.AppendLine("}");
         sb.AppendLine();
         foreach (var view in views)
@@ -1305,12 +1696,147 @@ public static class ViewModelSourceEmitter
             var argument = command.ParameterProperty is null && !IsTableSortCommand(model, command)
                 ? ""
                 : "parameter.unwrap_or_default()";
-            sb.AppendLine($"            {command.Id} => self.model.{Snake(command.Name)}({argument}),");
+            var token = command.SupportsCancellation
+                ? (argument.Length == 0 ? "crate::CancellationToken::none()" : ", crate::CancellationToken::none()")
+                : "";
+            sb.AppendLine($"            {command.Id} => self.model.{Snake(command.Name)}({argument}{token}),");
         }
         sb.AppendLine($"            _ => Err(crate::Error::InvalidViewModelMember {{ kind: \"command\", id: command_id }}),");
         sb.AppendLine("        }");
         sb.AppendLine("    }");
     }
+
+    /// <summary>
+    /// Emits the tracked-async entry point. Only cancellable commands need the
+    /// real token; every other async command reuses the plain dispatch, so a
+    /// producer never has two divergent code paths for the same command.
+    /// </summary>
+    private static void EmitRustTrackedCommandDispatch(StringBuilder sb, ViewModelDefinition model)
+    {
+        var cancellable = model.Commands.Where(command => command.SupportsCancellation).ToArray();
+        if (cancellable.Length == 0)
+            return;
+        sb.AppendLine("    fn begin_async_tracked(&mut self, command_id: i32, parameter: Option<String>, token: crate::CancellationToken) -> crate::Result<()> {");
+        sb.AppendLine("        match command_id {");
+        foreach (var command in cancellable)
+        {
+            var argument = command.ParameterProperty is null && !IsTableSortCommand(model, command)
+                ? "token"
+                : "parameter.unwrap_or_default(), token";
+            sb.AppendLine($"            {command.Id} => self.model.{Snake(command.Name)}({argument}),");
+        }
+        sb.AppendLine("            _ => self.begin_async(command_id, parameter),");
+        sb.AppendLine("        }");
+        sb.AppendLine("    }");
+    }
+
+    /// <summary>
+    /// Emits the range entry point. Only models declaring a windowed
+    /// collection implement it; every other model keeps the trait default,
+    /// which rejects the request explicitly rather than silently succeeding.
+    /// </summary>
+    private static void EmitRustRangeDispatch(
+        StringBuilder sb,
+        IReadOnlyList<ViewModelCollection> windowedCollections)
+    {
+        if (windowedCollections.Count == 0)
+            return;
+        sb.AppendLine("    fn request_range(&mut self, request: crate::RangeRequest) -> crate::Result<()> {");
+        sb.AppendLine("        match request.collection_id {");
+        foreach (var collection in windowedCollections)
+            sb.AppendLine($"            {collection.Id} => self.model.request_{Snake(collection.Name)}_range(request),");
+        sb.AppendLine("            _ => Err(crate::Error::InvalidViewModelMember { kind: \"collection\", id: request.collection_id }),");
+        sb.AppendLine("        }");
+        sb.AppendLine("    }");
+    }
+
+    /// <summary>
+    /// Emits the sink's named stage 30 APIs: keyed map mutation, async
+    /// progress/result/running publication and windowed range publication.
+    /// Application authors never see a map ID, a key encoding, or a range
+    /// batch's wire kind.
+    /// </summary>
+    private static void EmitRustShapeSinkMethods(
+        StringBuilder sb,
+        ViewModelIr ir,
+        ViewModelDefinition model,
+        IReadOnlyList<ViewModelCollection> windowedCollections,
+        IReadOnlyList<ViewModelCommand> trackedCommands)
+    {
+        if (model.Maps.Count > 0 || windowedCollections.Count > 0 || trackedCommands.Count > 0 ||
+            model.Commands.Any(command => command.ResultModelName is not null))
+        {
+            sb.AppendLine("    /// True when the attached host implements the stage 30 sink capability.");
+            sb.AppendLine("    /// The reflectable (dynamic-binding) adapter deliberately does not.");
+            sb.AppendLine("    pub fn supports_richer_shapes(&self) -> bool { self.0.supports_richer_shapes() }");
+        }
+        foreach (var map in model.Maps)
+        {
+            var name = Snake(map.Name);
+            var key = RustMapKeyType(map);
+            switch (map.ValueKind)
+            {
+                case ViewModelValueKind.String:
+                    sb.AppendLine($"    pub fn set_{name}(&self, key: {key}, value: impl AsRef<str>) -> crate::Result<()> {{ self.0.map_set_string({map.Id}, key.into(), value) }}");
+                    break;
+                case ViewModelValueKind.Integer:
+                    sb.AppendLine($"    pub fn set_{name}(&self, key: {key}, value: i64) -> crate::Result<()> {{ self.0.map_set_integer({map.Id}, key.into(), value) }}");
+                    break;
+                case ViewModelValueKind.Boolean:
+                    sb.AppendLine($"    pub fn set_{name}(&self, key: {key}, value: bool) -> crate::Result<()> {{ self.0.map_set_boolean({map.Id}, key.into(), value) }}");
+                    break;
+                case ViewModelValueKind.Double:
+                    sb.AppendLine($"    pub fn set_{name}(&self, key: {key}, value: f64) -> crate::Result<()> {{ self.0.map_set_double({map.Id}, key.into(), value) }}");
+                    break;
+                case ViewModelValueKind.Model:
+                    sb.AppendLine($"    pub fn set_{name}(&self, key: {key}, value: impl {map.ValueModelName}) -> crate::Result<()> {{ self.0.map_set_model({map.Id}, key.into(), {map.ValueModelName}Dispatch {{ model: value }}) }}");
+                    break;
+            }
+            sb.AppendLine($"    pub fn remove_{name}(&self, key: {key}) -> crate::Result<()> {{ self.0.map_remove({map.Id}, key.into()) }}");
+            sb.AppendLine($"    pub fn clear_{name}(&self) -> crate::Result<()> {{ self.0.map_clear({map.Id}) }}");
+        }
+        foreach (var command in trackedCommands)
+        {
+            var name = Snake(command.Name);
+            if (command.SupportsProgress)
+            {
+                sb.AppendLine($"    pub fn set_{name}_progress(&self, value: Option<f64>, message: Option<&str>) -> crate::Result<()> {{ self.0.set_command_progress({command.Id}, value, message) }}");
+            }
+            sb.AppendLine($"    pub fn set_{name}_running(&self, running: bool) -> crate::Result<()> {{ self.0.set_command_running({command.Id}, running) }}");
+            if (command.SupportsCancellation)
+            {
+                sb.AppendLine($"    /// Claims the single terminal transition of one `{command.Name}` invocation.");
+                sb.AppendLine($"    /// Returns false when success, failure or cancellation already claimed it.");
+                sb.AppendLine($"    pub fn claim_{name}_completion(&self, token: &crate::CancellationToken) -> bool {{ self.0.claim_completion({command.Id}, token) }}");
+            }
+        }
+        foreach (var command in model.Commands.Where(command => command.ResultModelName is not null))
+        {
+            var name = Snake(command.Name);
+            sb.AppendLine($"    pub fn set_{name}_result(&self, value: impl {command.ResultModelName}) -> crate::Result<()> {{ self.0.set_command_result({command.Id}, Some({command.ResultModelName}Dispatch {{ model: value }})) }}");
+            sb.AppendLine($"    pub fn clear_{name}_result(&self) -> crate::Result<()> {{ self.0.clear_command_result({command.Id}) }}");
+        }
+        foreach (var collection in windowedCollections)
+        {
+            var name = Snake(collection.Name);
+            sb.AppendLine($"    /// Republishes `{collection.Name}`'s dataset identity, invalidating every realized page.");
+            sb.AppendLine($"    pub fn reset_{name}(&self, generation: i64, total_count: i64) -> crate::Result<()> {{ self.0.publish_range_reset({collection.Id}, generation, total_count) }}");
+            sb.AppendLine($"    /// Starts a page for `{collection.Name}` at the currently published generation.");
+            sb.AppendLine($"    pub fn {name}_page(&self, offset: i64) -> Option<crate::RangeBatch> {{ self.0.range_batch({collection.Id}, offset) }}");
+            if (collection.ElementKind == ViewModelValueKind.Model)
+            {
+                sb.AppendLine($"    pub fn push_{name}_row(&self, page: &mut crate::RangeBatch, value: impl {collection.ElementModelName}) {{ self.0.push_range_model(page, {collection.ElementModelName}Dispatch {{ model: value }}); }}");
+            }
+            else
+            {
+                sb.AppendLine($"    pub fn push_{name}_row(&self, page: &mut crate::RangeBatch, value: impl AsRef<str>) {{ let _ = self; page.push_text(value); }}");
+            }
+            sb.AppendLine($"    pub fn publish_{name}_page(&self, page: crate::RangeBatch) -> crate::Result<crate::view_model::BatchCompletion> {{ self.0.publish_range(page) }}");
+        }
+    }
+
+    private static string RustMapKeyType(ViewModelMap map) =>
+        map.KeyKind == ViewModelValueKind.String ? "impl Into<crate::MapKey>" : "i64";
 
     private static readonly ViewModelValueKind[] ScalarWireKinds =
     [
@@ -1508,3 +2034,4 @@ public static class ViewModelSourceEmitter
         return sb.ToString();
     }
 }
+

@@ -126,9 +126,12 @@ the next one runs.
 Schema version 3 table metadata is generated with the normal consumer
 presentation sources. Consumers use built-in `TableView` columns and compiled
 AXAML cell bindings; no DataGrid package, runtime binding reflection, or
-application-specific host code is required. A large model snapshot still has
+application-specific host code is required. A stage-28 model snapshot still has
 one managed row adapter per delivered row, while `TableView` virtualizes visual
-rows. Range/lazy data sources remain a future stage-30 optimization.
+rows. Stage 30's schema-v4 `window` metadata is the range-backed answer: the
+projection reports the whole Rust dataset size while keeping live element
+objects bounded by `pageSize * maxLivePages`, and both shapes ship in the
+sample so the difference is measurable rather than asserted.
 
 Useful switches/environment variables:
 

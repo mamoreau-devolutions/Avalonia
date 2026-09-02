@@ -3,12 +3,14 @@ mod generated;
 #[rustfmt::skip]
 mod generated_view_models;
 mod async_runtime;
+pub mod data_shapes;
 mod runtime;
 pub mod storage;
 pub mod value_converter;
 pub mod view_model;
 
 pub use async_runtime::{AsyncOperation, AsyncValue};
+pub use data_shapes::{CancellationToken, MapKey, RangeBatch, RangeRequest};
 pub use generated::*;
 pub use generated_view_models::*;
 pub use runtime::{

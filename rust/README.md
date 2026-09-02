@@ -161,12 +161,20 @@ Stage 28 adds optional schema-v3 `TableView` metadata for model collections.
 It emits typed table descriptors and named sort-command APIs, while compiled
 AXAML owns the actual cell bindings. The CMTrace sample atomically publishes
 100,000 nested rows: `TableView` virtualizes viewport controls, although the
-current snapshot ABI still creates managed row adapters for every row. Lazy
-range data is intentionally deferred to stage 30. Batch publication raises a
+stage-28 snapshot ABI still creates managed row adapters for every row. Stage
+30's range-backed windows bound the data objects too. Batch publication raises a
 table collection Reset before its associated selection properties, preserving
 the Rust-owned row-key selection across a sort snapshot.
-Stage 29 adds platform-neutral desktop file integration through a third,
-separately versioned application capability (`IAvnApplication3`): multi-select
+Stage 30 adds richer application data shapes on schema v4 through one more
+separately versioned sink capability (`IAvnRustVmSink4`) plus Rust-implemented
+`IAvnRustRangeSource`/`IAvnRustViewModel2`: observable keyed maps, hierarchical
+`TreeDataTemplate` models, range-backed windows, typed structured command
+results, and async progress with cancellation. A windowed collection reports
+the full Rust dataset size while keeping live element objects bounded by
+`pageSize * maxLivePages`, so 100,000 rows realize fewer than 1,000 adapters.
+See [VIEW_MODELS.md](VIEW_MODELS.md).
+
+Stage 29 adds platform-neutral desktop file integration through a third,separately versioned application capability (`IAvnApplication3`): multi-select
 open, folder and save/export pickers, incoming file drag-and-drop, and
 startup/"open with" activation. It reuses `TopLevel.StorageProvider`, the
 `DragDrop` routed events and the desktop lifetime rather than any platform

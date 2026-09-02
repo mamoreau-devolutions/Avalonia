@@ -17,5 +17,7 @@ public static class TraceEventViewModelMetadata
         [
         ],
         [
+        ],
+        [
         ]);
 }

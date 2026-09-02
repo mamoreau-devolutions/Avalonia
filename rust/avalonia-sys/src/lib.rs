@@ -29,12 +29,16 @@ pub use factory::IAvnActivationFactory;
 pub use generated::*;
 pub use guid::Guid;
 pub use hresult::{
-    Error, Result, AVN_E_FIXTURE, E_FAIL, E_INVALIDARG, E_NOINTERFACE, E_POINTER, S_OK,
+    Error, Result, AVN_E_FIXTURE, E_FAIL, E_INVALIDARG, E_NOINTERFACE, E_NOTIMPL, E_POINTER, S_OK,
 };
 pub use rust_vm::{
-    rust_view_model, rust_vm_update_batch, IAvnRustViewModel, IAvnRustVmSink, IAvnRustVmSink2,
-    IAvnRustVmSink3, IAvnRustVmUpdateBatch, IAvnRustVmUpdateBatch2, IAvnRustVmUpdateOperation,
-    RustViewModelCallbacks, RustVmBatchCompletion, RustVmBatchOwnershipCommit, RustVmUpdate,
+    rust_view_model, rust_view_model_with_control, rust_vm_range_batch, rust_vm_update_batch,
+    IAvnRustRangeSource, IAvnRustViewModel, IAvnRustViewModel2, IAvnRustVmRangeBatch,
+    IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IAvnRustVmSink4, IAvnRustVmUpdateBatch,
+    IAvnRustVmUpdateBatch2, IAvnRustVmUpdateOperation, MapKey, RustViewModelBeginTracked,
+    RustViewModelCallbacks, RustViewModelControlCallbacks, RustVmBatchCompletion,
+    RustVmBatchOwnershipCommit, RustVmDroppedRange, RustVmRangeItem, RustVmUpdate,
+    RUST_VM_RANGE_FILL, RUST_VM_RANGE_RESET,
 };
 pub use storage::{
     activation_handler, file_drop_handler, storage_completion, ActivationArgs, FileDropArgs,

@@ -17,7 +17,7 @@ using Avalonia.Threading;
 namespace Avalonia.Rust.Sample.Generated;
 
 [GeneratedComClass]
-public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, IRustVmBatchTarget, IRustVmTableSelectionBatchTarget, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable
+public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IAvnRustVmSink4, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, IRustVmBatchTarget, IRustVmTableSelectionBatchTarget, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable
 {
     private readonly IAvnRustViewModel _model;
     private readonly Action<Action> _dispatch;
@@ -25,6 +25,9 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     private readonly RustVmBatchCoordinator _batch;
     private readonly Dictionary<string, string> _errors = new(StringComparer.Ordinal);
     private readonly RustVmInboundWriteTracker _inboundWrites = new();
+    private readonly IAvnRustViewModel2? _tracked;
+    private readonly RustRangeCoordinator _ranges;
+    private long _saveOperation;
     private string _name = "Avalonia from Rust";
     private long _count = 0L;
     private string _newItem = "";
@@ -39,6 +42,11 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     private string _fileStatus = "No file operation yet";
     private string _dropStatus = "Drop files or folders onto the panel below";
     private string _activationStatus = "No startup files";
+    private string _logWindowStatus = "Idle";
+    private global::Avalonia.Rust.Sample.Generated.SaveReportViewModelAdapter? _saveResult;
+    private double? _saveProgress;
+    private string? _saveProgressMessage;
+    private bool _saveIsRunning;
 
     /// <summary>Creates an adapter that dispatches and posts through <see cref="Dispatcher.UIThread"/>.</summary>
     public SampleViewModelAdapter(IAvnRustViewModel model) : this(model, null, null) { }
@@ -61,9 +69,16 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         _dispatch = dispatch ?? Dispatch;
         _post = post;
         _batch = new RustVmBatchCoordinator(this, post);
+        _tracked = RustAsyncCommands.TryResolve(model);
+        _ranges = new RustRangeCoordinator(ResolveWindow, post);
+        var rangeSource = RustAsyncCommands.TryResolveRangeSource(model);
+        LogWindow = new RustWindowedCollection(5, 64, 8, (nested, _) => new global::Avalonia.Rust.Sample.Generated.TraceRowViewModelAdapter(nested!, _dispatch, _post));
+        LogWindow.SetSource(rangeSource);
         IncrementCommand = new DelegateCommand(parameter => Check(_model.Execute(1, null)));
         AddCommand = new DelegateCommand(parameter => Check(_model.Execute(2, NewItem)));
-        SaveCommand = new DelegateCommand(parameter => Check(_model.BeginAsync(3, null)));
+        SaveCommand = new DelegateCommand(parameter => _saveOperation = RustAsyncCommands.Begin(_model, _tracked, 3, null));
+        CancelSaveCommand = new DelegateCommand(_ => RustAsyncCommands.Cancel(_tracked, 3, _saveOperation));
+        CancelSaveCommand.SetEnabledCore(false);
         ClearNicknameCommand = new DelegateCommand(parameter => Check(_model.Execute(4, null)));
         ToggleAddressCommand = new DelegateCommand(parameter => Check(_model.Execute(5, null)));
         AddTaskCommand = new DelegateCommand(parameter => Check(_model.Execute(6, NewTaskTitle)));
@@ -74,9 +89,13 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         OpenFilesCommand = new DelegateCommand(parameter => Check(_model.BeginAsync(11, null)));
         OpenFolderCommand = new DelegateCommand(parameter => Check(_model.BeginAsync(12, null)));
         SaveExportCommand = new DelegateCommand(parameter => Check(_model.BeginAsync(13, null)));
+        RefreshLogWindowCommand = new DelegateCommand(parameter => Check(_model.Execute(14, null)));
         try
         {
             Check(_model.Attach(this));
+            // Primed after attach: a producer publishes its dataset identity
+            // from attach, so reading it before would always come back empty.
+            PrimeWindows(rangeSource);
         }
         catch
         {
@@ -349,10 +368,23 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         get => _activationStatus;
     }
 
+    public string LogWindowStatus
+    {
+        get => _logWindowStatus;
+    }
+
     public BatchObservableCollection<string> Items { get; } = [];
     public BatchObservableCollection<global::Avalonia.Rust.Sample.Generated.TaskItemViewModelAdapter> Tasks { get; } = [];
     public BatchObservableCollection<global::Avalonia.Rust.Sample.Generated.TraceRowViewModelAdapter> TraceRows { get; } = [];
     public BatchObservableCollection<string> SelectedFiles { get; } = [];
+    public BatchObservableCollection<global::Avalonia.Rust.Sample.Generated.LogNodeViewModelAdapter> LogTree { get; } = [];
+    /// <summary>
+    /// Range-backed projection: <c>Count</c> is the Rust dataset's total size while at
+    /// most 64 x 8 element objects are live.
+    /// </summary>
+    public RustWindowedCollection LogWindow { get; }
+    public RustObservableMap<string, long> SeverityCounts { get; } = new();
+    public RustObservableMap<string, global::Avalonia.Rust.Sample.Generated.TraceEventViewModelAdapter> SourceDetails { get; } = new();
 
     public DelegateCommand IncrementCommand { get; }
     public DelegateCommand AddCommand { get; }
@@ -367,6 +399,15 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     public DelegateCommand OpenFilesCommand { get; }
     public DelegateCommand OpenFolderCommand { get; }
     public DelegateCommand SaveExportCommand { get; }
+    public DelegateCommand RefreshLogWindowCommand { get; }
+    /// <summary>Cancels the in-flight invocation. Disabled while nothing is running.</summary>
+    public DelegateCommand CancelSaveCommand { get; }
+    /// <summary>The command's last typed structured result, or null.</summary>
+    public global::Avalonia.Rust.Sample.Generated.SaveReportViewModelAdapter? SaveResult => _saveResult;
+    /// <summary>Determinate progress in 0..1, or null while progress is indeterminate.</summary>
+    public double? SaveProgress => _saveProgress;
+    public string? SaveProgressMessage => _saveProgressMessage;
+    public bool SaveIsRunning => _saveIsRunning;
 
     public bool HasErrors => _errors.Count > 0;
 
@@ -390,6 +431,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
             12 => Apply(() => { var converted = value ?? ""; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_fileStatus, converted)) SetField(ref _fileStatus, converted, nameof(FileStatus)); }),
             13 => Apply(() => { var converted = value ?? ""; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_dropStatus, converted)) SetField(ref _dropStatus, converted, nameof(DropStatus)); }),
             14 => Apply(() => { var converted = value ?? ""; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_activationStatus, converted)) SetField(ref _activationStatus, converted, nameof(ActivationStatus)); }),
+            15 => Apply(() => { var converted = value ?? ""; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_logWindowStatus, converted)) SetField(ref _logWindowStatus, converted, nameof(LogWindowStatus)); }),
             _ => unchecked((int)0x80070057),
         };
     }
@@ -450,6 +492,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     {
         2 => model is null ? unchecked((int)0x80070057) : Apply(() => Tasks.Add(new global::Avalonia.Rust.Sample.Generated.TaskItemViewModelAdapter(model, _dispatch, _post))),
         3 => model is null ? unchecked((int)0x80070057) : Apply(() => TraceRows.Add(new global::Avalonia.Rust.Sample.Generated.TraceRowViewModelAdapter(model, _dispatch, _post))),
+        6 => model is null ? unchecked((int)0x80070057) : Apply(() => LogTree.Add(new global::Avalonia.Rust.Sample.Generated.LogNodeViewModelAdapter(model, _dispatch, _post))),
         _ => unchecked((int)0x80070057),
     };
 
@@ -464,6 +507,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     {
         2 => model is null ? unchecked((int)0x80070057) : Apply(() => { if ((uint)index > (uint)Tasks.Count) return unchecked((int)0x80070057); Tasks.Insert(index, new global::Avalonia.Rust.Sample.Generated.TaskItemViewModelAdapter(model, _dispatch, _post)); return 0; }),
         3 => model is null ? unchecked((int)0x80070057) : Apply(() => { if ((uint)index > (uint)TraceRows.Count) return unchecked((int)0x80070057); TraceRows.Insert(index, new global::Avalonia.Rust.Sample.Generated.TraceRowViewModelAdapter(model, _dispatch, _post)); return 0; }),
+        6 => model is null ? unchecked((int)0x80070057) : Apply(() => { if ((uint)index > (uint)LogTree.Count) return unchecked((int)0x80070057); LogTree.Insert(index, new global::Avalonia.Rust.Sample.Generated.LogNodeViewModelAdapter(model, _dispatch, _post)); return 0; }),
         _ => unchecked((int)0x80070057),
     };
 
@@ -492,6 +536,14 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
             previous.Dispose();
             return 0;
         }),
+        6 => model is null ? unchecked((int)0x80070057) : Apply(() =>
+        {
+            if ((uint)index >= (uint)LogTree.Count) return unchecked((int)0x80070057);
+            var previous = LogTree[index];
+            LogTree[index] = new global::Avalonia.Rust.Sample.Generated.LogNodeViewModelAdapter(model, _dispatch, _post);
+            previous.Dispose();
+            return 0;
+        }),
         _ => unchecked((int)0x80070057),
     };
 
@@ -515,6 +567,14 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
             item.Dispose();
             return 0;
         }),
+        6 => Apply(() =>
+        {
+            if ((uint)index >= (uint)LogTree.Count) return unchecked((int)0x80070057);
+            var item = LogTree[index];
+            LogTree.RemoveAt(index);
+            item.Dispose();
+            return 0;
+        }),
         _ => unchecked((int)0x80070057),
     };
 
@@ -524,6 +584,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         2 => Apply(() => { if ((uint)fromIndex >= (uint)Tasks.Count || (uint)toIndex >= (uint)Tasks.Count) return unchecked((int)0x80070057); Tasks.Move(fromIndex, toIndex); return 0; }),
         3 => Apply(() => { if ((uint)fromIndex >= (uint)TraceRows.Count || (uint)toIndex >= (uint)TraceRows.Count) return unchecked((int)0x80070057); TraceRows.Move(fromIndex, toIndex); return 0; }),
         4 => Apply(() => { if ((uint)fromIndex >= (uint)SelectedFiles.Count || (uint)toIndex >= (uint)SelectedFiles.Count) return unchecked((int)0x80070057); SelectedFiles.Move(fromIndex, toIndex); return 0; }),
+        6 => Apply(() => { if ((uint)fromIndex >= (uint)LogTree.Count || (uint)toIndex >= (uint)LogTree.Count) return unchecked((int)0x80070057); LogTree.Move(fromIndex, toIndex); return 0; }),
         _ => unchecked((int)0x80070057),
     };
 
@@ -540,6 +601,11 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         {
             foreach (var item in TraceRows) item.Dispose();
             TraceRows.Clear();
+        }),
+        6 => Apply(() =>
+        {
+            foreach (var item in LogTree) item.Dispose();
+            LogTree.Clear();
         }),
         _ => unchecked((int)0x80070057),
     };
@@ -559,6 +625,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         11 => Apply(() => OpenFilesCommand.SetEnabled(enabled != 0)),
         12 => Apply(() => OpenFolderCommand.SetEnabled(enabled != 0)),
         13 => Apply(() => SaveExportCommand.SetEnabled(enabled != 0)),
+        14 => Apply(() => RefreshLogWindowCommand.SetEnabled(enabled != 0)),
         _ => unchecked((int)0x80070057),
     };
 
@@ -578,6 +645,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         12 => Apply(() => SetError(nameof(FileStatus), message)),
         13 => Apply(() => SetError(nameof(DropStatus), message)),
         14 => Apply(() => SetError(nameof(ActivationStatus), message)),
+        15 => Apply(() => SetError(nameof(LogWindowStatus), message)),
         _ => unchecked((int)0x80070057),
     };
 
@@ -587,6 +655,114 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         4 => Apply(() => SelectedFiles.Add(value ?? "")),
         _ => unchecked((int)0x80070057),
     };
+
+    public int MapSetString(int mapId, string? stringKey, long integerKey, string? value) => mapId switch
+    {
+        _ => unchecked((int)0x80070057),
+    };
+
+    public int MapSetInteger(int mapId, string? stringKey, long integerKey, long value) => mapId switch
+    {
+        1 => Apply(() => SetMapEntry(SeverityCounts, stringKey ?? "", value, nameof(SeverityCounts))),
+        _ => unchecked((int)0x80070057),
+    };
+
+    public int MapSetBoolean(int mapId, string? stringKey, long integerKey, int value) => mapId switch
+    {
+        _ => unchecked((int)0x80070057),
+    };
+
+    public int MapSetDouble(int mapId, string? stringKey, long integerKey, double value) => mapId switch
+    {
+        _ => unchecked((int)0x80070057),
+    };
+
+    public int MapSetModel(int mapId, string? stringKey, long integerKey, IAvnRustViewModel? value) => mapId switch
+    {
+        2 => value is null ? unchecked((int)0x80070057) : Apply(() =>
+        {
+            var adapter = new global::Avalonia.Rust.Sample.Generated.TraceEventViewModelAdapter(value, _dispatch, _post);
+            if (SourceDetails.Set(stringKey ?? "", adapter, out var displaced))
+            {
+                RaiseMapChanged(nameof(SourceDetails));
+                TryDispose(displaced);
+            }
+            else
+            {
+                TryDispose(adapter);
+            }
+        }),
+        _ => unchecked((int)0x80070057),
+    };
+
+    public int MapRemove(int mapId, string? stringKey, long integerKey) => mapId switch
+    {
+        1 => Apply(() => { if (SeverityCounts.Remove(stringKey ?? "", out var removed)) { RaiseMapChanged(nameof(SeverityCounts)); } }),
+        2 => Apply(() => { if (SourceDetails.Remove(stringKey ?? "", out var removed)) { RaiseMapChanged(nameof(SourceDetails)); TryDispose(removed); } }),
+        _ => unchecked((int)0x80070057),
+    };
+
+    public int MapClear(int mapId) => mapId switch
+    {
+        1 => Apply(() => { var removed = SeverityCounts.Clear(); if (removed.Count > 0) RaiseMapChanged(nameof(SeverityCounts)); }),
+        2 => Apply(() => { var removed = SourceDetails.Clear(); if (removed.Count > 0) RaiseMapChanged(nameof(SourceDetails)); foreach (var value in removed) TryDispose(value); }),
+        _ => unchecked((int)0x80070057),
+    };
+
+    public int SetCommandProgress(int commandId, int hasValue, double value, string? message) => commandId switch
+    {
+        3 => Apply(() =>
+        {
+            var progress = hasValue != 0 ? RustAsyncCommands.ClampProgress(value) : (double?)null;
+            SetField(ref _saveProgress, progress, nameof(SaveProgress));
+            SetField(ref _saveProgressMessage, message, nameof(SaveProgressMessage));
+        }),
+        _ => unchecked((int)0x80070057),
+    };
+
+    public int SetCommandResult(int commandId, IAvnRustViewModel? result) => commandId switch
+    {
+        3 => Apply(() =>
+        {
+            var previous = _saveResult;
+            _saveResult = result is null ? null : new global::Avalonia.Rust.Sample.Generated.SaveReportViewModelAdapter(result, _dispatch, _post);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SaveResult)));
+            TryDispose(previous);
+        }),
+        _ => unchecked((int)0x80070057),
+    };
+
+    public int SetCommandRunning(int commandId, int running) => commandId switch
+    {
+        3 => Apply(() =>
+        {
+            var isRunning = running != 0;
+            SetField(ref _saveIsRunning, isRunning, nameof(SaveIsRunning));
+            if (!isRunning) _saveOperation = 0;
+            CancelSaveCommand.SetEnabled(isRunning);
+            if (!isRunning)
+            {
+                SetField(ref _saveProgress, null, nameof(SaveProgress));
+                SetField(ref _saveProgressMessage, null, nameof(SaveProgressMessage));
+            }
+        }),
+        _ => unchecked((int)0x80070057),
+    };
+
+    /// <summary>
+    /// Enqueues one range batch. Like <see cref="SubmitBatch"/> this never reads,
+    /// applies or completes the batch on the submitting (Rust worker) stack.
+    /// </summary>
+    public int PublishRange(IAvnRustVmRangeBatch? batch) => _ranges.Publish(batch);
+
+    private void RaiseMapChanged(string name) =>
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+    private void SetMapEntry<TKey, TValue>(RustObservableMap<TKey, TValue> map, TKey key, TValue value, string name)
+        where TKey : notnull
+    {
+        if (map.Set(key, value, out _)) RaiseMapChanged(name);
+    }
 
     public int ReplaceStringSnapshot(int collectionId, IReadOnlyList<string> values) => collectionId switch
     {
@@ -615,6 +791,15 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
             TraceRows.ReplaceSnapshot(staged);
             foreach (var value in previous) TryDispose(value);
         }),
+        6 => Apply(() =>
+        {
+            var staged = new List<global::Avalonia.Rust.Sample.Generated.LogNodeViewModelAdapter>();
+            try { foreach (var value in values) staged.Add(new global::Avalonia.Rust.Sample.Generated.LogNodeViewModelAdapter(value, _dispatch, _post)); }
+            catch { foreach (var value in staged) TryDispose(value); throw; }
+            var previous = LogTree.ToArray();
+            LogTree.ReplaceSnapshot(staged);
+            foreach (var value in previous) TryDispose(value);
+        }),
         _ => unchecked((int)0x80070057),
     };
 
@@ -636,6 +821,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
             12 => new RustVmBatchProperty(nameof(FileStatus), RustVmValueWireKind.String, false, false),
             13 => new RustVmBatchProperty(nameof(DropStatus), RustVmValueWireKind.String, false, false),
             14 => new RustVmBatchProperty(nameof(ActivationStatus), RustVmValueWireKind.String, false, false),
+            15 => new RustVmBatchProperty(nameof(LogWindowStatus), RustVmValueWireKind.String, false, false),
             _ => default,
         };
         return property.Name is not null;
@@ -649,6 +835,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
             2 => new RustVmBatchCollectionInfo(nameof(Tasks), RustVmValueWireKind.Model, Tasks),
             3 => new RustVmBatchCollectionInfo(nameof(TraceRows), RustVmValueWireKind.Model, TraceRows),
             4 => new RustVmBatchCollectionInfo(nameof(SelectedFiles), RustVmValueWireKind.String, SelectedFiles),
+            6 => new RustVmBatchCollectionInfo(nameof(LogTree), RustVmValueWireKind.Model, LogTree),
             _ => default,
         };
         return collection.Items is not null;
@@ -671,6 +858,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
             11 => OpenFilesCommand,
             12 => OpenFolderCommand,
             13 => SaveExportCommand,
+            14 => RefreshLogWindowCommand,
             _ => null!,
         };
         return command is not null;
@@ -692,6 +880,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     {
         2 => new global::Avalonia.Rust.Sample.Generated.TaskItemViewModelAdapter(model, _dispatch, _post),
         3 => new global::Avalonia.Rust.Sample.Generated.TraceRowViewModelAdapter(model, _dispatch, _post),
+        6 => new global::Avalonia.Rust.Sample.Generated.LogNodeViewModelAdapter(model, _dispatch, _post),
         _ => throw new ArgumentOutOfRangeException(nameof(collectionId)),
     };
 
@@ -799,6 +988,13 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
                 _activationStatus = next;
                 return true;
             }
+            case 15:
+            {
+                var next = value.Text ?? "";
+                if (Equals(_logWindowStatus, next)) return false;
+                _logWindowStatus = next;
+                return true;
+            }
             default: return false;
         }
     }
@@ -834,6 +1030,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
 
     private void DisposeCore()
     {
+        _ranges.Close();
         try
         {
             Check(_model.Detach());
@@ -844,11 +1041,33 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         }
     }
 
+    private RustWindowedCollection? ResolveWindow(int collectionId) => collectionId switch
+    {
+        5 => LogWindow,
+        _ => null,
+    };
+
+    /// <summary>
+    /// Reads each window's dataset identity once, so the first frame already
+    /// reports the real total count instead of an empty list. Reading it is a
+    /// lock-free producer-side lookup; it never enters application model code.
+    /// </summary>
+    private void PrimeWindows(IAvnRustRangeSource? source)
+    {
+        if (source is null) return;
+        if (source.GetRangeState(5, out var generation5, out var total5) >= 0)
+            LogWindow.ResetTo(generation5, total5);
+    }
+
     private void DisposeNestedAdapters()
     {
         TryDispose(_address);
         foreach (var item in Tasks) TryDispose(item);
         foreach (var item in TraceRows) TryDispose(item);
+        foreach (var item in LogTree) TryDispose(item);
+        TryDispose(LogWindow);
+        foreach (var entry in SourceDetails) TryDispose(entry.Value);
+        TryDispose(_saveResult);
     }
 
     private static void TryDispose(IDisposable? value)

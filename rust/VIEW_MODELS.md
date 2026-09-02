@@ -94,8 +94,9 @@ with that authoritative index. This ordering is negotiated through the optional
 managed `IRustVmTableSelectionBatchTarget` capability, so pre-stage-28 batch
 targets retain their original contract and ordering. This stage
 does create a managed nested adapter for every snapshot row (and its nested
-event): virtualization bounds controls, **not** data objects. A lazy/range
-data source is deliberately deferred to stage 30.
+event): virtualization bounds controls, **not** data objects. Stage 30's
+range-backed windows bound the data objects too; see
+[Stage 30: richer application data shapes](#stage-30-richer-application-data-shapes).
 
 ## Rust value converters
 
@@ -436,3 +437,131 @@ cached and reported verbatim, so a transport error is never silently downgraded
 to "this host has no batch support". A host that only implements v1/v2 still
 attaches and publishes normally, and only `submit_batch` reports
 `E_NOINTERFACE`.
+
+## Stage 30: richer application data shapes
+
+Stage 28 bounded *visuals*. Stage 30 bounds *data objects*, and adds the four
+other shapes a diagnostic workspace needs: observable keyed maps, hierarchical
+trees, typed structured command results, and async progress with cancellation.
+
+Everything here is one new, separately versioned sink capability
+(`IAvnRustVmSink4`) plus two Rust-implemented capabilities queried from
+`IAvnRustViewModel` (`IAvnRustRangeSource`, `IAvnRustViewModel2`) and one new
+immutable batch interface (`IAvnRustVmRangeBatch`). No already-published vtable
+was widened. Schema version 4 gates every new shape; a version 3 schema that
+declares one is rejected with an explicit upgrade message.
+
+### Range-backed windows (the highest-impact item)
+
+A model collection may declare `window` metadata (`pageSize`,
+`maxLivePages`). Rust owns the whole dataset; the managed projection is a
+`RustWindowedCollection`:
+
+- `Count` is the Rust total, so a `TableView`/`ItemsControl` scrolls the real
+  dataset;
+- the indexer realizes only the page it is asked for, and returns `null` for an
+  unrealized row while one nonblocking range request is posted;
+- at most `pageSize * maxLivePages` element objects are live. The least
+  recently used page beyond that budget is evicted and each of its adapters is
+  detached, so a 100,000-row window keeps fewer than 1,000 live row adapters
+  (the checked-in sample budget is 64 x 8 = 512);
+- enumeration deliberately never realizes anything, so a stray `foreach` cannot
+  materialize the dataset.
+
+The request path is honest about threads. `IAvnRustRangeSource::RequestRange`
+is called on the UI thread and only enqueues: it never produces a range inline,
+and it takes a *separate* lock from the view model, so it can never queue behind
+a running Rust worker. A dedicated Rust thread drains that bounded, coalescing
+queue and is the only place the application model is locked for a range. When
+the queue is full the *oldest* request is dropped, because during fast
+scrolling the newest viewport is the one worth answering.
+
+Ranges come back as generation-stamped `IAvnRustVmRangeBatch` objects with two
+kinds: `Reset` republishes the dataset identity (generation and total count) and
+invalidates every realized page, and `Fill` realizes one page. A `Fill` whose
+generation, total or offset alignment does not match is rejected as `Stale`
+*before* a single adapter is created, and the batch's element models are
+released when it drops. Because a windowed row's managed lifetime is decided by
+page eviction, which Rust cannot observe, Rust transfers ownership of each row
+into the batch instead of retaining a nested slot for it.
+
+`TableView` cannot ask a source for a realized index range today, so the window
+is driven by indexer misses rather than an explicit viewport request. That is
+why the collection also exposes `LiveElementCount`, `DetachedElementCount` and
+`ViewportStart`: the bound is asserted, not assumed.
+
+### Observable keyed maps
+
+A model may declare `maps` with a stable key kind (`String` or `Integer`) and a
+value kind (scalar or nested model). The managed projection is a
+`RustObservableMap<TKey, TValue>`: insert, replace, remove and clear publish
+incrementally (one `Replace` for a replaced key, never a whole-map reset), and
+insertion order is stable so the index-carrying notifications are meaningful.
+It implements `IList` as well as `IDictionary`-shaped members because Avalonia's
+`ItemsSourceView` rejects a source that notifies without indexed access. Nested
+model values are owned exactly like collection items: a displaced or removed
+value is detached on both sides.
+
+The key is transported in both representations (`stringKey`, `integerKey`)
+because the *schema*, not the call site, decides which is meaningful. Generated
+named APIs (`set_severity_counts`, `remove_severity_counts`, ...) never expose
+that encoding.
+
+### Hierarchical (tree) models
+
+A tree is a nested-model collection whose element model owns a `recursive`
+children collection of its own type. `recursive` is the only place the schema
+graph may be cyclic, and the validator still rejects an accidental cycle.
+Children arrive through the node's own collection operations, so expanding a
+branch is incremental and never rematerializes the tree.
+
+The generated descriptor names the children collection, the header path and an
+optional "has children" property - enough to author an Avalonia
+`TreeDataTemplate` in compiled AXAML. There is no WPF `HierarchicalDataTemplate`
+equivalent and no reflection binding is manufactured. A recursive collection
+publishes a `null` element descriptor with `Recursive = true`, because a
+self-referencing static descriptor would be a cycle.
+
+### Structured results, progress and cancellation
+
+An async command may declare `resultModelName`, `supportsProgress` and
+`supportsCancellation`. The generated adapter then exposes `{Name}Result` (a
+real nested adapter, not a formatted string), `{Name}Progress` (`double?`,
+`null` while indeterminate), `{Name}ProgressMessage`, `{Name}IsRunning` and a
+`Cancel{Name}Command` that is disabled while nothing is running.
+
+`IAvnRustViewModel2::BeginAsyncTracked` returns a never-reused invocation
+handle, so a cancellation that arrives after its invocation finished is dropped
+instead of aborting the successor. `CancelAsync` takes only the control lock, so
+cancelling never blocks the UI thread behind the worker it is cancelling.
+Success, failure and cancellation all race on the terminal transition; the
+generated `claim_{command}_completion` lets exactly one of them win.
+
+### Honest limits
+
+- The dynamic (reflectable) adapter deliberately does not implement
+  `IAvnRustVmSink4`. Rust resolves the capability once, reports
+  `E_NOINTERFACE` explicitly rather than silently dropping updates, and exposes
+  `supports_richer_shapes()` so a model shared by both mounts checks instead of
+  failing.
+- A windowed collection is excluded from every materializing path: it has no
+  batch collection entry and no add/insert/replace/remove/clear surface,
+  because it has no managed element list.
+- Stage 28's `TraceRows` table is unchanged and still materializes a row
+  adapter per row. Stage 30's `LogWindow` is the bounded one; both ship in the
+  sample so the difference is visible rather than asserted.
+
+### Verified behaviour
+
+Windows UI automation against the packaged `win-x64` NativeAOT build reports,
+for the sample's `LogWindow`:
+
+- `Generation 0 (100000 rows owned by Rust)` -- the Rust dataset size;
+- `Live row adapters: 64` -- exactly one realized page of data objects;
+- 5 realized `TableViewRow` containers -- the viewport's worth of visuals;
+- three tree roots that realize no children while collapsed;
+- a keyed map reading `[Information, 33334] [Warning, 33333] [Error, 33333]`,
+  summing to 100,000.
+
+That is the whole stage 28 / stage 30 distinction in three numbers: 100,000
+logical rows, 64 live data objects, 5 live visuals.

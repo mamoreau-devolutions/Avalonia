@@ -16,13 +16,13 @@ public class ViewModelIrTests
         var ir = ViewModelIr.FromJson(File.ReadAllText(path));
 
         Assert.Equal(ViewModelIr.CurrentVersion, ir.Version);
-        Assert.Equal(5, ir.Models.Count);
+        Assert.Equal(7, ir.Models.Count);
         var model = ir.Models.Single(candidate => candidate.Name == "SampleViewModel");
-        Assert.Equal(14, model.Properties.Count);
-        Assert.Equal(13, model.Commands.Count);
+        Assert.Equal(15, model.Properties.Count);
+        Assert.Equal(14, model.Commands.Count);
         Assert.True(model.Commands.Single(command => command.Name == "Save").IsAsync);
         Assert.True(model.Commands.Single(command => command.Name == "OpenFiles").IsAsync);
-        Assert.Equal(4, model.Collections.Count);
+        Assert.Equal(6, model.Collections.Count);
         var enumDefinition = Assert.Single(ir.Enums);
         Assert.Equal("Priority", enumDefinition.Name);
         Assert.Equal(3, enumDefinition.Members.Count);
@@ -73,9 +73,210 @@ public class ViewModelIrTests
     }
 
     [Fact]
-    public void Duplicate_ids_are_rejected()
+    public void Checked_in_schema_declares_the_stage_thirty_shapes()
     {
-        var ir = new ViewModelIr
+        var ir = ViewModelIr.FromJson(File.ReadAllText(Path.Combine(FindRepositoryRoot(), "rust", "view-model.ir.json")));
+        var model = ir.Models.Single(candidate => candidate.Name == "SampleViewModel");
+
+        var window = model.Collections.Single(collection => collection.Name == "LogWindow");
+        Assert.Equal(64, window.Window!.PageSize);
+        Assert.Equal(8, window.Window.MaxLivePages);
+
+        var tree = model.Collections.Single(collection => collection.Name == "LogTree");
+        Assert.Equal("Children", tree.Tree!.ChildrenCollection);
+        Assert.Equal("Label", tree.Tree.HeaderPath);
+        Assert.True(ir.Models.Single(candidate => candidate.Name == "LogNodeViewModel")
+            .Collections.Single().Recursive);
+
+        Assert.Equal(2, model.Maps.Count);
+        Assert.Equal(ViewModelValueKind.String, model.Maps[0].KeyKind);
+        Assert.Equal(ViewModelValueKind.Model, model.Maps[1].ValueKind);
+        Assert.Equal("TraceEventViewModel", model.Maps[1].ValueModelName);
+
+        var save = model.Commands.Single(command => command.Name == "Save");
+        Assert.True(save.SupportsProgress);
+        Assert.True(save.SupportsCancellation);
+        Assert.Equal("SaveReportViewModel", save.ResultModelName);
+    }
+
+    [Fact]
+    public void Older_schema_versions_reject_the_stage_thirty_shapes()
+    {
+        var ir = CreateModel(maps: [new() { Id = 1, Name = "Counters", KeyKind = ViewModelValueKind.String, ValueKind = ViewModelValueKind.Integer }]);
+
+        ir.Validate();
+        Assert.Contains(
+            "upgrade to version 4",
+            Assert.Throws<InvalidOperationException>(
+                () => new ViewModelIr { Version = 3, Models = ir.Models }.Validate()).Message);
+    }
+
+    [Fact]
+    public void Maps_reject_unsupported_key_kinds_and_unknown_value_models()
+    {
+        Assert.Contains(
+            "string or integer key",
+            Assert.Throws<InvalidOperationException>(() => CreateModel(
+                maps: [new() { Id = 1, Name = "Bad", KeyKind = ViewModelValueKind.Double, ValueKind = ViewModelValueKind.Integer }]).Validate()).Message);
+
+        Assert.Contains(
+            "unknown model",
+            Assert.Throws<InvalidOperationException>(() => CreateModel(
+                maps: [new() { Id = 1, Name = "Bad", KeyKind = ViewModelValueKind.String, ValueKind = ViewModelValueKind.Model, ValueModelName = "Missing" }]).Validate()).Message);
+
+        Assert.Contains(
+            "must declare 'valueModelName'",
+            Assert.Throws<InvalidOperationException>(() => CreateModel(
+                maps: [new() { Id = 1, Name = "Bad", KeyKind = ViewModelValueKind.String, ValueKind = ViewModelValueKind.Model }]).Validate()).Message);
+    }
+
+    [Fact]
+    public void A_map_may_not_reuse_another_members_name()
+    {
+        var ir = CreateModel(
+            collections: [new() { Id = 1, Name = "Shared", ElementKind = ViewModelValueKind.String }],
+            maps: [new() { Id = 1, Name = "Shared", KeyKind = ViewModelValueKind.String, ValueKind = ViewModelValueKind.Integer }]);
+
+        Assert.Contains("Duplicate", Assert.Throws<InvalidOperationException>(() => ir.Validate()).Message);
+    }
+
+    [Fact]
+    public void Recursive_children_are_the_only_permitted_schema_cycle()
+    {
+        var valid = new ViewModelIr
+        {
+            Version = ViewModelIr.CurrentVersion,
+            Models =
+            [
+                new()
+                {
+                    Id = 1,
+                    Name = "Node",
+                    ManagedNamespace = "Tests",
+                    Properties = [new() { Id = 1, Name = "Label", Kind = ViewModelValueKind.String }],
+                    Collections =
+                    [
+                        new() { Id = 1, Name = "Children", ElementKind = ViewModelValueKind.Model, ElementModelName = "Node", Recursive = true },
+                    ],
+                },
+            ],
+        };
+        valid.Validate();
+
+        var invalid = new ViewModelIr
+        {
+            Version = ViewModelIr.CurrentVersion,
+            Models =
+            [
+                new()
+                {
+                    Id = 1,
+                    Name = "Node",
+                    ManagedNamespace = "Tests",
+                    Collections = [new() { Id = 1, Name = "Children", ElementKind = ViewModelValueKind.Model, ElementModelName = "Node" }],
+                },
+            ],
+        };
+        Assert.Contains("Recursive view-model schema graph", Assert.Throws<InvalidOperationException>(() => invalid.Validate()).Message);
+    }
+
+    [Fact]
+    public void A_tree_requires_a_recursive_children_collection_and_a_string_header()
+    {
+        Assert.Contains(
+            "must declare 'recursive'",
+            Assert.Throws<InvalidOperationException>(() => Tree(recursive: false, header: "Label").Validate()).Message);
+        Assert.Contains(
+            "must end in a String property",
+            Assert.Throws<InvalidOperationException>(() => Tree(recursive: true, header: "Count").Validate()).Message);
+        Tree(recursive: true, header: "Label").Validate();
+
+        static ViewModelIr Tree(bool recursive, string header) => new()
+        {
+            Version = ViewModelIr.CurrentVersion,
+            Models =
+            [
+                new()
+                {
+                    Id = 1,
+                    Name = "Root",
+                    ManagedNamespace = "Tests",
+                    Collections =
+                    [
+                        new()
+                        {
+                            Id = 1,
+                            Name = "Nodes",
+                            ElementKind = ViewModelValueKind.Model,
+                            ElementModelName = "Node",
+                            Tree = new ViewModelTree { ChildrenCollection = "Children", HeaderPath = header, HasChildrenProperty = "Expandable" },
+                        },
+                    ],
+                },
+                new()
+                {
+                    Id = 2,
+                    Name = "Node",
+                    ManagedNamespace = "Tests",
+                    Properties =
+                    [
+                        new() { Id = 1, Name = "Label", Kind = ViewModelValueKind.String },
+                        new() { Id = 2, Name = "Count", Kind = ViewModelValueKind.Integer },
+                        new() { Id = 3, Name = "Expandable", Kind = ViewModelValueKind.Boolean },
+                    ],
+                    Collections =
+                    [
+                        new() { Id = 1, Name = "Children", ElementKind = ViewModelValueKind.Model, ElementModelName = "Node", Recursive = recursive },
+                    ],
+                },
+            ],
+        };
+    }
+
+    [Fact]
+    public void A_windowed_collection_rejects_invalid_paging_and_conflicting_shapes()
+    {
+        Assert.Contains(
+            "pageSize must be positive",
+            Assert.Throws<InvalidOperationException>(() => Window(new ViewModelCollectionWindow { PageSize = 0 }).Validate()).Message);
+        Assert.Contains(
+            "maxLivePages must be positive",
+            Assert.Throws<InvalidOperationException>(() => Window(new ViewModelCollectionWindow { MaxLivePages = 0 }).Validate()).Message);
+        Window(new ViewModelCollectionWindow()).Validate();
+
+        static ViewModelIr Window(ViewModelCollectionWindow window) => new()
+        {
+            Version = ViewModelIr.CurrentVersion,
+            Models =
+            [
+                new()
+                {
+                    Id = 1,
+                    Name = "Root",
+                    ManagedNamespace = "Tests",
+                    Collections = [new() { Id = 1, Name = "Rows", ElementKind = ViewModelValueKind.String, Window = window }],
+                },
+            ],
+        };
+    }
+
+    [Fact]
+    public void Progress_cancellation_and_results_are_validated_against_the_command()
+    {
+        Assert.Contains(
+            "must be asynchronous",
+            Assert.Throws<InvalidOperationException>(() => CreateModel(
+                commands: [new() { Id = 1, Name = "Go", SupportsProgress = true }]).Validate()).Message);
+        Assert.Contains(
+            "unknown result model",
+            Assert.Throws<InvalidOperationException>(() => CreateModel(
+                commands: [new() { Id = 1, Name = "Go", IsAsync = true, ResultModelName = "Missing" }]).Validate()).Message);
+        CreateModel(commands: [new() { Id = 1, Name = "Go", IsAsync = true, SupportsProgress = true, SupportsCancellation = true }]).Validate();
+    }
+
+    [Fact]
+    public void Duplicate_ids_are_rejected()
+    {        var ir = new ViewModelIr
         {
             Models =
             [
@@ -321,7 +522,8 @@ public class ViewModelIrTests
         IReadOnlyList<ViewModelProperty>? properties = null,
         IReadOnlyList<ViewModelCollection>? collections = null,
         IReadOnlyList<ViewModelCommand>? commands = null,
-        IReadOnlyList<ViewModelEnumDefinition>? enums = null) => new()
+        IReadOnlyList<ViewModelEnumDefinition>? enums = null,
+        IReadOnlyList<ViewModelMap>? maps = null) => new()
         {
             Enums = enums ?? [],
             Models =
@@ -333,6 +535,7 @@ public class ViewModelIrTests
                 ManagedNamespace = "Tests",
                 Properties = properties ?? [],
                 Collections = collections ?? [],
+                Maps = maps ?? [],
                 Commands = commands ?? [],
             },
         ],
@@ -354,3 +557,4 @@ public class ViewModelIrTests
     private static string Normalize(string value) =>
         value.Replace("\r\n", "\n", StringComparison.Ordinal).Trim();
 }
+

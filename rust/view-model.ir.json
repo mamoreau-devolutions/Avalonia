@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "enums": [
     {
       "id": 1,
@@ -137,19 +137,29 @@
           "writable": false,
           "nullable": false,
           "initialString": "No startup files"
+        },
+        {
+          "id": 15,
+          "name": "LogWindowStatus",
+          "kind": "String",
+          "writable": false,
+          "nullable": false,
+          "initialString": "Idle"
         }
       ],
       "collections": [
         {
           "id": 1,
           "name": "Items",
-          "elementKind": "String"
+          "elementKind": "String",
+          "recursive": false
         },
         {
           "id": 2,
           "name": "Tasks",
           "elementKind": "Model",
-          "elementModelName": "TaskItemViewModel"
+          "elementModelName": "TaskItemViewModel",
+          "recursive": false
         },
         {
           "id": 3,
@@ -219,81 +229,155 @@
               "column": "Timestamp",
               "directionProperty": "TraceSortDirection"
             }
-          }
+          },
+          "recursive": false
         },
         {
           "id": 4,
           "name": "SelectedFiles",
-          "elementKind": "String"
+          "elementKind": "String",
+          "recursive": false
+        },
+        {
+          "id": 5,
+          "name": "LogWindow",
+          "elementKind": "Model",
+          "elementModelName": "TraceRowViewModel",
+          "window": {
+            "pageSize": 64,
+            "maxLivePages": 8
+          },
+          "recursive": false
+        },
+        {
+          "id": 6,
+          "name": "LogTree",
+          "elementKind": "Model",
+          "elementModelName": "LogNodeViewModel",
+          "recursive": false,
+          "tree": {
+            "childrenCollection": "Children",
+            "headerPath": "Label",
+            "hasChildrenProperty": "HasChildren"
+          }
+        }
+      ],
+      "maps": [
+        {
+          "id": 1,
+          "name": "SeverityCounts",
+          "keyKind": "String",
+          "valueKind": "Integer"
+        },
+        {
+          "id": 2,
+          "name": "SourceDetails",
+          "keyKind": "String",
+          "valueKind": "Model",
+          "valueModelName": "TraceEventViewModel"
         }
       ],
       "commands": [
         {
           "id": 1,
           "name": "Increment",
-          "isAsync": false
+          "isAsync": false,
+          "supportsProgress": false,
+          "supportsCancellation": false
         },
         {
           "id": 2,
           "name": "Add",
           "isAsync": false,
-          "parameterProperty": "NewItem"
+          "parameterProperty": "NewItem",
+          "supportsProgress": false,
+          "supportsCancellation": false
         },
         {
           "id": 3,
           "name": "Save",
-          "isAsync": true
+          "isAsync": true,
+          "resultModelName": "SaveReportViewModel",
+          "supportsProgress": true,
+          "supportsCancellation": true
         },
         {
           "id": 4,
           "name": "ClearNickname",
-          "isAsync": false
+          "isAsync": false,
+          "supportsProgress": false,
+          "supportsCancellation": false
         },
         {
           "id": 5,
           "name": "ToggleAddress",
-          "isAsync": false
+          "isAsync": false,
+          "supportsProgress": false,
+          "supportsCancellation": false
         },
         {
           "id": 6,
           "name": "AddTask",
           "isAsync": false,
-          "parameterProperty": "NewTaskTitle"
+          "parameterProperty": "NewTaskTitle",
+          "supportsProgress": false,
+          "supportsCancellation": false
         },
         {
           "id": 7,
           "name": "RemoveFirstTask",
-          "isAsync": false
+          "isAsync": false,
+          "supportsProgress": false,
+          "supportsCancellation": false
         },
         {
           "id": 8,
           "name": "ShuffleTasks",
-          "isAsync": false
+          "isAsync": false,
+          "supportsProgress": false,
+          "supportsCancellation": false
         },
         {
           "id": 9,
           "name": "ClearTasks",
-          "isAsync": false
+          "isAsync": false,
+          "supportsProgress": false,
+          "supportsCancellation": false
         },
         {
           "id": 10,
           "name": "SortTraceRows",
-          "isAsync": false
+          "isAsync": false,
+          "supportsProgress": false,
+          "supportsCancellation": false
         },
         {
           "id": 11,
           "name": "OpenFiles",
-          "isAsync": true
+          "isAsync": true,
+          "supportsProgress": false,
+          "supportsCancellation": false
         },
         {
           "id": 12,
           "name": "OpenFolder",
-          "isAsync": true
+          "isAsync": true,
+          "supportsProgress": false,
+          "supportsCancellation": false
         },
         {
           "id": 13,
           "name": "SaveExport",
-          "isAsync": true
+          "isAsync": true,
+          "supportsProgress": false,
+          "supportsCancellation": false
+        },
+        {
+          "id": 14,
+          "name": "RefreshLogWindow",
+          "isAsync": false,
+          "supportsProgress": false,
+          "supportsCancellation": false
         }
       ]
     },
@@ -320,6 +404,7 @@
         }
       ],
       "collections": [],
+      "maps": [],
       "commands": []
     },
     {
@@ -344,6 +429,7 @@
         }
       ],
       "collections": [],
+      "maps": [],
       "commands": []
     },
     {
@@ -385,6 +471,7 @@
         }
       ],
       "collections": [],
+      "maps": [],
       "commands": []
     },
     {
@@ -410,6 +497,83 @@
         }
       ],
       "collections": [],
+      "maps": [],
+      "commands": []
+    },
+    {
+      "id": 6,
+      "name": "LogNodeViewModel",
+      "managedNamespace": "Avalonia.Rust.Sample.Generated",
+      "properties": [
+        {
+          "id": 1,
+          "name": "Label",
+          "kind": "String",
+          "writable": false,
+          "nullable": false,
+          "initialString": ""
+        },
+        {
+          "id": 2,
+          "name": "Detail",
+          "kind": "String",
+          "writable": false,
+          "nullable": false,
+          "initialString": ""
+        },
+        {
+          "id": 3,
+          "name": "HasChildren",
+          "kind": "Boolean",
+          "writable": false,
+          "nullable": false,
+          "initialBoolean": false
+        }
+      ],
+      "collections": [
+        {
+          "id": 1,
+          "name": "Children",
+          "elementKind": "Model",
+          "elementModelName": "LogNodeViewModel",
+          "recursive": true
+        }
+      ],
+      "maps": [],
+      "commands": []
+    },
+    {
+      "id": 7,
+      "name": "SaveReportViewModel",
+      "managedNamespace": "Avalonia.Rust.Sample.Generated",
+      "properties": [
+        {
+          "id": 1,
+          "name": "Destination",
+          "kind": "String",
+          "writable": false,
+          "nullable": false,
+          "initialString": ""
+        },
+        {
+          "id": 2,
+          "name": "Bytes",
+          "kind": "Integer",
+          "writable": false,
+          "nullable": false,
+          "initialInteger": 0
+        },
+        {
+          "id": 3,
+          "name": "Succeeded",
+          "kind": "Boolean",
+          "writable": false,
+          "nullable": false,
+          "initialBoolean": false
+        }
+      ],
+      "collections": [],
+      "maps": [],
       "commands": []
     }
   ],

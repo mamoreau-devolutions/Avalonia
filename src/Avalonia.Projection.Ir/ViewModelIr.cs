@@ -5,7 +5,10 @@ namespace Avalonia.Projection.Ir;
 
 public sealed class ViewModelIr
 {
-    public const int CurrentVersion = 3;
+    public const int CurrentVersion = 4;
+
+    /// <summary>The first schema version that accepts stage 30 richer data shapes.</summary>
+    public const int RicherDataShapesVersion = 4;
 
     public int Version { get; init; } = CurrentVersion;
     public IReadOnlyList<ViewModelEnumDefinition> Enums { get; init; } = [];
@@ -29,10 +32,13 @@ public sealed class ViewModelIr
 
     public void Validate()
     {
-        if (Version is not (2 or CurrentVersion))
+        if (Version is not (2 or 3 or CurrentVersion))
             throw new InvalidOperationException($"Unsupported view-model IR version {Version}.");
         if (Version == 2 && Models.Any(model => model.Collections.Any(collection => collection.Table is not null)))
             throw new InvalidOperationException("View-model IR version 2 does not support table metadata; upgrade to version 3.");
+        if (Version < RicherDataShapesVersion && Models.Any(HasRicherDataShapes))
+            throw new InvalidOperationException(
+                $"View-model IR version {Version} does not support keyed maps, windowed collections, tree metadata, structured command results, progress or cancellation; upgrade to version {RicherDataShapesVersion}.");
         EnsurePositiveIds(Enums, enumDefinition => enumDefinition.Id, "enum");
         EnsurePositiveIds(Models, model => model.Id, "model");
         EnsurePositiveIds(Views, view => view.Id, "view");
@@ -98,13 +104,22 @@ public sealed class ViewModelIr
             EnsureNotBlank(model.ManagedNamespace, $"Managed namespace for model '{model.Name}'");
             EnsurePositiveIds(model.Properties, property => property.Id, $"{model.Name} property");
             EnsurePositiveIds(model.Collections, collection => collection.Id, $"{model.Name} collection");
+            EnsurePositiveIds(model.Maps, map => map.Id, $"{model.Name} map");
             EnsurePositiveIds(model.Commands, command => command.Id, $"{model.Name} command");
             EnsureUnique(model.Properties, property => property.Id, $"{model.Name} property ID");
             EnsureUnique(model.Properties, property => property.Name, $"{model.Name} property name");
             EnsureUnique(model.Collections, collection => collection.Id, $"{model.Name} collection ID");
             EnsureUnique(model.Collections, collection => collection.Name, $"{model.Name} collection name");
+            EnsureUnique(model.Maps, map => map.Id, $"{model.Name} map ID");
+            EnsureUnique(model.Maps, map => map.Name, $"{model.Name} map name");
             EnsureUnique(model.Commands, command => command.Id, $"{model.Name} command ID");
             EnsureUnique(model.Commands, command => command.Name, $"{model.Name} command name");
+            EnsureUnique(
+                model.Properties.Select(property => property.Name)
+                    .Concat(model.Collections.Select(collection => collection.Name))
+                    .Concat(model.Maps.Select(map => map.Name)),
+                name => name,
+                $"{model.Name} member name");
 
             var properties = model.Properties
                 .ToDictionary(property => property.Name, StringComparer.Ordinal);
@@ -135,10 +150,42 @@ public sealed class ViewModelIr
                             $"Collection '{model.Name}.{collection.Name}' must contain strings or nested view models.");
                 }
                 ValidateTable(model, collection, properties, Models);
+                ValidateWindow(model, collection);
+                ValidateTree(model, collection, Models);
+            }
+            foreach (var map in model.Maps)
+            {
+                EnsureIdentifier(map.Name, $"Map name in model '{model.Name}'");
+                if (map.KeyKind is not (ViewModelValueKind.String or ViewModelValueKind.Integer))
+                    throw new InvalidOperationException(
+                        $"Map '{model.Name}.{map.Name}' must declare a string or integer key kind.");
+                switch (map.ValueKind)
+                {
+                    case ViewModelValueKind.String:
+                    case ViewModelValueKind.Integer:
+                    case ViewModelValueKind.Boolean:
+                    case ViewModelValueKind.Double:
+                        if (map.ValueModelName is not null)
+                            throw new InvalidOperationException(
+                                $"Map '{model.Name}.{map.Name}' declares 'valueModelName' but is not a nested view-model map.");
+                        break;
+                    case ViewModelValueKind.Model:
+                        if (map.ValueModelName is null)
+                            throw new InvalidOperationException(
+                                $"Map '{model.Name}.{map.Name}' must declare 'valueModelName'.");
+                        if (!modelNames.Contains(map.ValueModelName))
+                            throw new InvalidOperationException(
+                                $"Map '{model.Name}.{map.Name}' references unknown model '{map.ValueModelName}'.");
+                        break;
+                    default:
+                        throw new InvalidOperationException(
+                            $"Map '{model.Name}.{map.Name}' has an unsupported value kind '{map.ValueKind}'.");
+                }
             }
             foreach (var command in model.Commands)
             {
                 EnsureIdentifier(command.Name, $"Command name in model '{model.Name}'");
+                ValidateCommandOutcome(model, command, modelNames);
                 if (command.ParameterProperty is null)
                     continue;
                 if (!properties.TryGetValue(command.ParameterProperty, out var property))
@@ -224,6 +271,105 @@ public sealed class ViewModelIr
         }
     }
 
+    private static void ValidateWindow(ViewModelDefinition owner, ViewModelCollection collection)
+    {
+        var window = collection.Window;
+        if (window is null)
+            return;
+        if (window.PageSize <= 0)
+            throw new InvalidOperationException($"Windowed collection '{owner.Name}.{collection.Name}' pageSize must be positive.");
+        if (window.MaxLivePages <= 0)
+            throw new InvalidOperationException($"Windowed collection '{owner.Name}.{collection.Name}' maxLivePages must be positive.");
+        if (collection.Tree is not null)
+            throw new InvalidOperationException($"Collection '{owner.Name}.{collection.Name}' cannot be both windowed and a tree root.");
+        if (collection.Recursive)
+            throw new InvalidOperationException($"Collection '{owner.Name}.{collection.Name}' cannot be both windowed and recursive.");
+    }
+
+    private static void ValidateTree(
+        ViewModelDefinition owner,
+        ViewModelCollection collection,
+        IReadOnlyList<ViewModelDefinition> models)
+    {
+        if (collection.Recursive)
+        {
+            if (collection.ElementKind != ViewModelValueKind.Model || collection.ElementModelName != owner.Name)
+                throw new InvalidOperationException(
+                    $"Recursive collection '{owner.Name}.{collection.Name}' must contain elements of its own model '{owner.Name}'.");
+        }
+        var tree = collection.Tree;
+        if (tree is null)
+            return;
+        if (collection.ElementKind != ViewModelValueKind.Model || collection.ElementModelName is null)
+            throw new InvalidOperationException($"Tree '{owner.Name}.{collection.Name}' must contain nested view models.");
+        var node = models.Single(model => model.Name == collection.ElementModelName);
+        var children = node.Collections.SingleOrDefault(candidate => candidate.Name == tree.ChildrenCollection)
+            ?? throw new InvalidOperationException(
+                $"Tree '{owner.Name}.{collection.Name}' references unknown children collection '{tree.ChildrenCollection}' on '{node.Name}'.");
+        if (children.ElementKind != ViewModelValueKind.Model || children.ElementModelName != node.Name)
+            throw new InvalidOperationException(
+                $"Tree '{owner.Name}.{collection.Name}' children collection '{node.Name}.{children.Name}' must contain '{node.Name}' elements.");
+        if (!children.Recursive)
+            throw new InvalidOperationException(
+                $"Tree '{owner.Name}.{collection.Name}' children collection '{node.Name}.{children.Name}' must declare 'recursive'.");
+        ValidateNodePath(owner, collection, node, tree.HeaderPath, models, ViewModelValueKind.String);
+        if (tree.HasChildrenProperty is { } hasChildren)
+        {
+            var property = node.Properties.SingleOrDefault(candidate => candidate.Name == hasChildren)
+                ?? throw new InvalidOperationException(
+                    $"Tree '{owner.Name}.{collection.Name}' hasChildrenProperty '{hasChildren}' is not a property of '{node.Name}'.");
+            if (property.Kind != ViewModelValueKind.Boolean)
+                throw new InvalidOperationException(
+                    $"Tree '{owner.Name}.{collection.Name}' hasChildrenProperty '{hasChildren}' must be a Boolean property.");
+        }
+    }
+
+    private static void ValidateCommandOutcome(
+        ViewModelDefinition model,
+        ViewModelCommand command,
+        IReadOnlySet<string> modelNames)
+    {
+        if (command.ResultModelName is { } result)
+        {
+            if (!modelNames.Contains(result))
+                throw new InvalidOperationException(
+                    $"Command '{model.Name}.{command.Name}' references unknown result model '{result}'.");
+        }
+        if ((command.SupportsProgress || command.SupportsCancellation) && !command.IsAsync)
+            throw new InvalidOperationException(
+                $"Command '{model.Name}.{command.Name}' must be asynchronous to support progress or cancellation.");
+    }
+
+    private static bool HasRicherDataShapes(ViewModelDefinition model) =>
+        model.Maps.Count > 0 ||
+        model.Collections.Any(collection => collection.Window is not null || collection.Tree is not null || collection.Recursive) ||
+        model.Commands.Any(command => command.ResultModelName is not null || command.SupportsProgress || command.SupportsCancellation);
+
+    private static void ValidateNodePath(
+        ViewModelDefinition owner, ViewModelCollection collection, ViewModelDefinition node,
+        string path, IReadOnlyList<ViewModelDefinition> models, ViewModelValueKind terminalKind)
+    {
+        EnsureNotBlank(path, $"Node path in tree '{owner.Name}.{collection.Name}'");
+        var current = node;
+        var segments = path.Split('.');
+        for (var index = 0; index < segments.Length; index++)
+        {
+            var segment = segments[index];
+            EnsureIdentifier(segment, $"Path segment '{segment}' in tree '{owner.Name}.{collection.Name}'");
+            var property = current.Properties.SingleOrDefault(candidate => candidate.Name == segment)
+                ?? throw new InvalidOperationException($"Tree '{owner.Name}.{collection.Name}' path '{path}' references unknown property '{segment}' on '{current.Name}'.");
+            if (index == segments.Length - 1)
+            {
+                if (property.Kind != terminalKind)
+                    throw new InvalidOperationException($"Tree '{owner.Name}.{collection.Name}' path '{path}' must end in a {terminalKind} property.");
+                return;
+            }
+            if (property.Kind != ViewModelValueKind.Model || property.ModelName is null)
+                throw new InvalidOperationException($"Tree '{owner.Name}.{collection.Name}' path '{path}' cannot traverse scalar property '{segment}'.");
+            current = models.Single(model => model.Name == property.ModelName);
+        }
+    }
+
     private static void ValidateRowPath(
         ViewModelDefinition owner, ViewModelCollection collection, ViewModelDefinition row,
         string path, IReadOnlyList<ViewModelDefinition> models)
@@ -249,6 +395,13 @@ public sealed class ViewModelIr
         }
     }
 
+    /// <summary>
+    /// Rejects an accidental recursive schema graph. A collection explicitly
+    /// declared <c>recursive</c> is the one deliberate exception: it is how a
+    /// hierarchical (tree) model is expressed, and its self-edge is skipped
+    /// here because the generated adapters own children lazily, per node,
+    /// exactly like any other nested collection.
+    /// </summary>
     private void ValidateAcyclicModelGraph()
     {
         var edges = Models.ToDictionary(
@@ -257,8 +410,11 @@ public sealed class ViewModelIr
                 .Where(property => property.Kind == ViewModelValueKind.Model)
                 .Select(property => property.ModelName!)
                 .Concat(model.Collections
-                    .Where(collection => collection.ElementKind == ViewModelValueKind.Model)
+                    .Where(collection => collection.ElementKind == ViewModelValueKind.Model && !collection.Recursive)
                     .Select(collection => collection.ElementModelName!))
+                .Concat(model.Maps
+                    .Where(map => map.ValueKind == ViewModelValueKind.Model)
+                    .Select(map => map.ValueModelName!))
                 .ToArray(),
             StringComparer.Ordinal);
         var states = new Dictionary<string, VisitState>(StringComparer.Ordinal);
@@ -452,7 +608,34 @@ public sealed class ViewModelDefinition
     public required string ManagedNamespace { get; init; }
     public IReadOnlyList<ViewModelProperty> Properties { get; init; } = [];
     public IReadOnlyList<ViewModelCollection> Collections { get; init; } = [];
+
+    /// <summary>
+    /// Observable keyed maps owned by this model. Maps have their own ID space
+    /// (like properties, collections and commands) because they are addressed
+    /// by dedicated map transport operations.
+    /// </summary>
+    public IReadOnlyList<ViewModelMap> Maps { get; init; } = [];
+
     public IReadOnlyList<ViewModelCommand> Commands { get; init; } = [];
+}
+
+/// <summary>
+/// A schema-declared observable keyed map. The key kind is fixed
+/// (<see cref="ViewModelValueKind.String"/> or
+/// <see cref="ViewModelValueKind.Integer"/>) so the transport never has to
+/// guess how to decode a key, and the value kind may be a scalar or a nested
+/// model whose ownership follows exactly the same rules as a nested
+/// collection element.
+/// </summary>
+public sealed class ViewModelMap
+{
+    public required int Id { get; init; }
+    public required string Name { get; init; }
+    public required ViewModelValueKind KeyKind { get; init; }
+    public required ViewModelValueKind ValueKind { get; init; }
+
+    /// <summary>Name of the nested model each value is. Required when <see cref="ValueKind"/> is <see cref="ViewModelValueKind.Model"/>.</summary>
+    public string? ValueModelName { get; init; }
 }
 
 public sealed class ViewModelProperty
@@ -496,6 +679,54 @@ public sealed class ViewModelCollection
 
     /// <summary>Optional first-class presentation metadata for a virtualized table over this collection.</summary>
     public ViewModelTable? Table { get; init; }
+
+    /// <summary>
+    /// Optional windowed (range-backed) projection. When present the managed
+    /// side never materializes an adapter per element: it exposes the Rust
+    /// total count and realizes only the pages the presentation actually asks
+    /// for, evicting the least recently used page beyond
+    /// <see cref="ViewModelCollectionWindow.MaxLivePages"/>.
+    /// </summary>
+    public ViewModelCollectionWindow? Window { get; init; }
+
+    /// <summary>
+    /// Declares that this collection's elements are of its own owner model,
+    /// which is how a hierarchical (tree) node's children are expressed. It is
+    /// the only place the schema graph is allowed to be cyclic.
+    /// </summary>
+    public bool Recursive { get; init; }
+
+    /// <summary>Optional hierarchical metadata making this collection a tree root.</summary>
+    public ViewModelTree? Tree { get; init; }
+}
+
+/// <summary>Range-backed projection parameters for one collection.</summary>
+public sealed class ViewModelCollectionWindow
+{
+    /// <summary>Number of elements Rust delivers per realized page.</summary>
+    public int PageSize { get; init; } = 128;
+
+    /// <summary>Maximum number of pages kept live; older pages are detached and released.</summary>
+    public int MaxLivePages { get; init; } = 8;
+}
+
+/// <summary>
+/// Hierarchical metadata for a collection of nested models, sufficient to
+/// author an Avalonia <c>TreeDataTemplate</c> in compiled AXAML. There is no
+/// WPF <c>HierarchicalDataTemplate</c> equivalent here: the descriptor names
+/// the node's own children collection, its header path, and an optional
+/// "has children" flag used for lazy expansion.
+/// </summary>
+public sealed class ViewModelTree
+{
+    /// <summary>Name of the recursive children collection on the element model.</summary>
+    public required string ChildrenCollection { get; init; }
+
+    /// <summary>Dotted path on the element model that produces the node header text.</summary>
+    public required string HeaderPath { get; init; }
+
+    /// <summary>Optional Boolean property on the element model reporting whether children exist but are not loaded.</summary>
+    public string? HasChildrenProperty { get; init; }
 }
 
 public sealed class ViewModelTable
@@ -543,6 +774,19 @@ public sealed class ViewModelCommand
     public required string Name { get; init; }
     public bool IsAsync { get; init; }
     public string? ParameterProperty { get; init; }
+
+    /// <summary>
+    /// Optional typed outcome model. When present, the generated adapter
+    /// exposes a nullable <c>{Name}Result</c> nested adapter that Rust
+    /// publishes with the same nested ownership rules as any model property.
+    /// </summary>
+    public string? ResultModelName { get; init; }
+
+    /// <summary>Whether Rust publishes determinate/indeterminate progress for this async command.</summary>
+    public bool SupportsProgress { get; init; }
+
+    /// <summary>Whether the generated adapter exposes a <c>Cancel{Name}Command</c> for this async command.</summary>
+    public bool SupportsCancellation { get; init; }
 }
 
 public sealed class ViewDefinition

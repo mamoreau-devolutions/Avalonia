@@ -1,6 +1,6 @@
 # Generated Rust view-model contract
 
-Schema version: `3`
+Schema version: `4`
 
 ## Enums
 
@@ -26,13 +26,18 @@ Schema version: `3`
 | Property | 12 | `FileStatus` | `String` | Rust to managed |
 | Property | 13 | `DropStatus` | `String` | Rust to managed |
 | Property | 14 | `ActivationStatus` | `String` | Rust to managed |
+| Property | 15 | `LogWindowStatus` | `String` | Rust to managed |
 | Collection | 1 | `Items` | `String` | Rust to managed |
 | Collection | 2 | `Tasks` | Model `TaskItemViewModel` | Rust to managed |
 | Collection | 3 | `TraceRows` | Model `TraceRowViewModel` | Rust to managed |
 | Collection | 4 | `SelectedFiles` | `String` | Rust to managed |
+| Collection | 5 | `LogWindow` | Model `TraceRowViewModel` (windowed: page 64, 8 live pages) | Rust to managed |
+| Collection | 6 | `LogTree` | Model `LogNodeViewModel` (tree root) | Rust to managed |
+| Map | 1 | `SeverityCounts` | `String` to `Integer` | Rust to managed |
+| Map | 2 | `SourceDetails` | `String` to Model `TraceEventViewModel` | Rust to managed |
 | Command | 1 | `Increment` | None | Managed to Rust |
 | Command | 2 | `Add` | `NewItem` | Managed to Rust |
-| Async command | 3 | `Save` | None | Managed to Rust |
+| Async command | 3 | `Save` (result `SaveReportViewModel`, progress, cancellable) | None | Managed to Rust |
 | Command | 4 | `ClearNickname` | None | Managed to Rust |
 | Command | 5 | `ToggleAddress` | None | Managed to Rust |
 | Command | 6 | `AddTask` | `NewTaskTitle` | Managed to Rust |
@@ -43,6 +48,11 @@ Schema version: `3`
 | Async command | 11 | `OpenFiles` | None | Managed to Rust |
 | Async command | 12 | `OpenFolder` | None | Managed to Rust |
 | Async command | 13 | `SaveExport` | None | Managed to Rust |
+| Command | 14 | `RefreshLogWindow` | None | Managed to Rust |
+
+### Tree `LogTree`
+
+Node model `LogNodeViewModel`, children `Children`, header `Label`, has-children `HasChildren`.
 
 ### Table `TraceRows`
 
@@ -84,6 +94,23 @@ Sort: `SortTraceRows` command, initial column `Timestamp`, direction property `T
 | --- | ---: | --- | --- | --- |
 | Property | 1 | `Id` | `String` | Rust to managed |
 | Property | 2 | `Source` | `String` | Rust to managed |
+
+## Model `LogNodeViewModel` (`6`)
+
+| Kind | ID | Name | Type | Direction |
+| --- | ---: | --- | --- | --- |
+| Property | 1 | `Label` | `String` | Rust to managed |
+| Property | 2 | `Detail` | `String` | Rust to managed |
+| Property | 3 | `HasChildren` | `Boolean` | Rust to managed |
+| Collection | 1 | `Children` | Model `LogNodeViewModel` (recursive children) | Rust to managed |
+
+## Model `SaveReportViewModel` (`7`)
+
+| Kind | ID | Name | Type | Direction |
+| --- | ---: | --- | --- | --- |
+| Property | 1 | `Destination` | `String` | Rust to managed |
+| Property | 2 | `Bytes` | `Integer` | Rust to managed |
+| Property | 3 | `Succeeded` | `Boolean` | Rust to managed |
 
 ## Value converters
 

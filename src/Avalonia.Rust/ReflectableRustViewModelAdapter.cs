@@ -65,13 +65,25 @@ public sealed class RustViewModelCollectionDescriptor(
     string name,
     RustViewModelValueKind elementKind,
     RustViewModelDescriptor? elementDescriptor = null,
-    RustTableDescriptor? table = null)
+    RustTableDescriptor? table = null,
+    RustWindowDescriptor? window = null,
+    RustTreeDescriptor? tree = null,
+    bool recursive = false)
 {
     public int Id { get; } = id;
     public string Name { get; } = name;
     public RustViewModelValueKind ElementKind { get; } = elementKind;
     public RustViewModelDescriptor? ElementDescriptor { get; } = elementDescriptor;
     public RustTableDescriptor? Table { get; } = table;
+
+    /// <summary>Range-backed projection parameters, or null for a fully materialized collection.</summary>
+    public RustWindowDescriptor? Window { get; } = window;
+
+    /// <summary>Hierarchical metadata when this collection is a tree root.</summary>
+    public RustTreeDescriptor? Tree { get; } = tree;
+
+    /// <summary>True when this collection holds children of its own owner model.</summary>
+    public bool Recursive { get; } = recursive;
 
     public RustViewModelCollectionDescriptor(
         int id,
@@ -81,6 +93,40 @@ public sealed class RustViewModelCollectionDescriptor(
         : this(id, name, elementKind, elementDescriptor, null)
     {
     }
+}
+
+/// <summary>Build-time parameters of a range-backed collection projection.</summary>
+public sealed class RustWindowDescriptor(int pageSize, int maxLivePages)
+{
+    public int PageSize { get; } = pageSize;
+    public int MaxLivePages { get; } = maxLivePages;
+}
+
+/// <summary>
+/// Build-time hierarchical metadata. Generated presentation assemblies use it
+/// to author an Avalonia <c>TreeDataTemplate</c> in compiled AXAML; no
+/// reflection binding is created from it.
+/// </summary>
+public sealed class RustTreeDescriptor(string childrenCollection, string headerPath, string? hasChildrenProperty)
+{
+    public string ChildrenCollection { get; } = childrenCollection;
+    public string HeaderPath { get; } = headerPath;
+    public string? HasChildrenProperty { get; } = hasChildrenProperty;
+}
+
+/// <summary>Build-time description of one observable keyed map.</summary>
+public sealed class RustViewModelMapDescriptor(
+    int id,
+    string name,
+    RustViewModelValueKind keyKind,
+    RustViewModelValueKind valueKind,
+    RustViewModelDescriptor? valueDescriptor = null)
+{
+    public int Id { get; } = id;
+    public string Name { get; } = name;
+    public RustViewModelValueKind KeyKind { get; } = keyKind;
+    public RustViewModelValueKind ValueKind { get; } = valueKind;
+    public RustViewModelDescriptor? ValueDescriptor { get; } = valueDescriptor;
 }
 
 /// <summary>
@@ -137,13 +183,22 @@ public sealed class RustViewModelCommandDescriptor(
     string name,
     bool isAsync,
     string? parameterProperty,
-    bool acceptsParameter = false)
+    bool acceptsParameter = false,
+    RustViewModelDescriptor? resultDescriptor = null,
+    bool supportsProgress = false,
+    bool supportsCancellation = false)
 {
     public int Id { get; } = id;
     public string Name { get; } = name;
     public bool IsAsync { get; } = isAsync;
     public string? ParameterProperty { get; } = parameterProperty;
     public bool AcceptsParameter { get; } = acceptsParameter;
+
+    /// <summary>Typed structured-result model, or null when the command has no result.</summary>
+    public RustViewModelDescriptor? ResultDescriptor { get; } = resultDescriptor;
+
+    public bool SupportsProgress { get; } = supportsProgress;
+    public bool SupportsCancellation { get; } = supportsCancellation;
 
     public RustViewModelCommandDescriptor(int id, string name, bool isAsync, string? parameterProperty)
         : this(id, name, isAsync, parameterProperty, false)
@@ -156,13 +211,17 @@ public sealed class RustViewModelDescriptor(
     string name,
     IReadOnlyList<RustViewModelPropertyDescriptor> properties,
     IReadOnlyList<RustViewModelCollectionDescriptor> collections,
-    IReadOnlyList<RustViewModelCommandDescriptor> commands)
+    IReadOnlyList<RustViewModelCommandDescriptor> commands,
+    IReadOnlyList<RustViewModelMapDescriptor>? maps = null)
 {
     public int Id { get; } = id;
     public string Name { get; } = name;
     public IReadOnlyList<RustViewModelPropertyDescriptor> Properties { get; } = properties;
     public IReadOnlyList<RustViewModelCollectionDescriptor> Collections { get; } = collections;
     public IReadOnlyList<RustViewModelCommandDescriptor> Commands { get; } = commands;
+
+    /// <summary>Observable keyed maps declared by this model.</summary>
+    public IReadOnlyList<RustViewModelMapDescriptor> Maps { get; } = maps ?? [];
 }
 
 [GeneratedComClass]

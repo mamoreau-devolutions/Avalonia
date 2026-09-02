@@ -3,6 +3,7 @@ pub const E_POINTER: i32 = 0x8000_4003u32 as i32;
 pub const E_FAIL: i32 = 0x8000_4005u32 as i32;
 pub const E_INVALIDARG: i32 = 0x8007_0057u32 as i32;
 pub const E_NOINTERFACE: i32 = 0x8000_4002u32 as i32;
+pub const E_NOTIMPL: i32 = 0x8000_4001u32 as i32;
 pub const AVN_E_FIXTURE: i32 = 0xA7A7_0001u32 as i32;
 
 pub fn succeeded(hr: i32) -> bool {

@@ -1,6 +1,7 @@
 use crate::support::desktop_files::DesktopFiles;
 use avalonia::{
-    AddressViewModel, AddressViewModelSink, Priority, SampleViewModel, SampleViewModelSink,
+    AddressViewModel, AddressViewModelSink, LogNodeViewModel, LogNodeViewModelSink, Priority,
+    SampleViewModel, SampleViewModelSink, SaveReportViewModel, SaveReportViewModelSink,
     TaskItemViewModel, TaskItemViewModelSink, TraceEventViewModel, TraceEventViewModelSink,
     TraceRowViewModel, TraceRowViewModelSink, ValueConverters,
 };
@@ -31,6 +32,10 @@ pub struct Model {
     new_task_title: String,
     task_count: usize,
     trace_rows: Vec<TraceRecord>,
+    /// The stage 30 windowed dataset. Rust owns all 100,000 rows; managed code
+    /// only ever materializes the pages it indexes.
+    log_rows: Vec<TraceRecord>,
+    log_generation: i64,
     selected_trace_index: i64,
     selected_trace_key: String,
     trace_sort_direction: String,
@@ -137,6 +142,20 @@ impl Model {
     /// the example can wire the mounted window and application scope into it
     /// after the host creates them.
     pub fn with_desktop_files(desktop_files: Arc<DesktopFiles>) -> Self {
+        let records: Vec<TraceRecord> = (0..100_000)
+            .map(|index| TraceRecord {
+                id: format!("trace-{index:06}"),
+                timestamp: format!(
+                    "2026-09-02T12:{:02}:{:02}.{:03}",
+                    (index / 60) % 60,
+                    index % 60,
+                    index % 1000
+                ),
+                severity: ["Information", "Warning", "Error"][index % 3].to_string(),
+                source: format!("CMTrace.{}", index % 64),
+                message: format!("CMTrace event {index}: Rust-owned virtualized table row"),
+            })
+            .collect();
         Self {
             sink: None,
             name: "Avalonia from Rust".to_string(),
@@ -148,20 +167,9 @@ impl Model {
             address_set: false,
             new_task_title: String::new(),
             task_count: 0,
-            trace_rows: (0..100_000)
-                .map(|index| TraceRecord {
-                    id: format!("trace-{index:06}"),
-                    timestamp: format!(
-                        "2026-09-02T12:{:02}:{:02}.{:03}",
-                        (index / 60) % 60,
-                        index % 60,
-                        index % 1000
-                    ),
-                    severity: ["Information", "Warning", "Error"][index % 3].to_string(),
-                    source: format!("CMTrace.{}", index % 64),
-                    message: format!("CMTrace event {index}: Rust-owned virtualized table row"),
-                })
-                .collect(),
+            log_rows: records.clone(),
+            log_generation: 0,
+            trace_rows: records,
             selected_trace_index: 0,
             selected_trace_key: "trace-000000".to_string(),
             trace_sort_direction: "Ascending".to_string(),
@@ -186,7 +194,50 @@ impl Model {
         sink.set_selected_trace_index(self.selected_trace_index)?;
         sink.set_selected_trace_key(&self.selected_trace_key)?;
         sink.set_trace_sort_direction(&self.trace_sort_direction)?;
+        self.publish_richer_shapes(sink)?;
         self.publish_trace_snapshot(sink)
+    }
+
+    /// Publishes the stage 30 shapes: an observable keyed map, a hierarchical
+    /// tree and the windowed dataset's identity.
+    ///
+    /// The reflectable (dynamic-binding) adapter deliberately does not
+    /// implement the stage 30 sink capability, so the model asks once instead
+    /// of treating an explicit `E_NOINTERFACE` as a failure.
+    fn publish_richer_shapes(&self, sink: &SampleViewModelSink) -> avalonia::Result<()> {
+        if !sink.supports_richer_shapes() {
+            return Ok(());
+        }
+        let mut counts = [0i64; 3];
+        for record in &self.trace_rows {
+            let index = match record.severity.as_str() {
+                "Warning" => 1,
+                "Error" => 2,
+                _ => 0,
+            };
+            counts[index] += 1;
+        }
+        for (severity, count) in ["Information", "Warning", "Error"].iter().zip(counts) {
+            sink.set_severity_counts(*severity, count)?;
+        }
+        for source in 0..4 {
+            sink.set_source_details(
+                format!("CMTrace.{source}"),
+                TraceEventModel {
+                    id: format!("source-{source}"),
+                    source: format!("CMTrace.{source}"),
+                },
+            )?;
+        }
+        for severity in ["Information", "Warning", "Error"] {
+            sink.add_log_tree(LogNodeModel::severity(severity))?;
+        }
+        sink.reset_log_window(self.log_generation, self.log_rows.len() as i64)?;
+        sink.set_log_window_status(format!(
+            "Generation {} ({} rows owned by Rust)",
+            self.log_generation,
+            self.log_rows.len()
+        ))
     }
 
     fn next_generation() -> i64 {
@@ -213,7 +264,6 @@ struct TraceEventModel {
     id: String,
     source: String,
 }
-
 impl TraceEventViewModel for TraceEventModel {
     fn attach(&mut self, sink: TraceEventViewModelSink) -> avalonia::Result<()> {
         sink.set_id(&self.id)?;
@@ -228,7 +278,6 @@ impl TraceEventViewModel for TraceEventModel {
 struct TraceRowModel {
     record: TraceRecord,
 }
-
 impl From<TraceRecord> for TraceRowModel {
     fn from(record: TraceRecord) -> Self {
         Self { record }
@@ -244,6 +293,66 @@ impl TraceRowViewModel for TraceRowModel {
             id: self.record.id.clone(),
             source: self.record.source.clone(),
         }))
+    }
+
+    fn detach(&mut self) -> avalonia::Result<()> {
+        Ok(())
+    }
+}
+
+/// A hierarchical node. Children are published incrementally through the node's
+/// own recursive `Children` collection, so expanding a branch never
+/// rematerializes the tree.
+struct LogNodeModel {
+    label: String,
+    detail: String,
+    children: Vec<LogNodeModel>,
+}
+
+impl LogNodeModel {
+    fn severity(severity: &str) -> Self {
+        Self {
+            label: severity.to_string(),
+            detail: format!("{severity} events grouped by source"),
+            children: (0..3)
+                .map(|source| Self {
+                    label: format!("CMTrace.{source}"),
+                    detail: format!("{severity} from CMTrace.{source}"),
+                    children: Vec::new(),
+                })
+                .collect(),
+        }
+    }
+}
+
+impl LogNodeViewModel for LogNodeModel {
+    fn attach(&mut self, sink: LogNodeViewModelSink) -> avalonia::Result<()> {
+        sink.set_label(&self.label)?;
+        sink.set_detail(&self.detail)?;
+        sink.set_has_children(!self.children.is_empty())?;
+        for child in self.children.drain(..) {
+            sink.add_children(child)?;
+        }
+        Ok(())
+    }
+
+    fn detach(&mut self) -> avalonia::Result<()> {
+        Ok(())
+    }
+}
+
+/// The typed structured result of the async `Save` command.
+struct SaveReportModel {
+    destination: String,
+    bytes: i64,
+    succeeded: bool,
+}
+
+impl SaveReportViewModel for SaveReportModel {
+    fn attach(&mut self, sink: SaveReportViewModelSink) -> avalonia::Result<()> {
+        sink.set_destination(&self.destination)?;
+        sink.set_bytes(self.bytes)?;
+        sink.set_succeeded(self.succeeded)
     }
 
     fn detach(&mut self) -> avalonia::Result<()> {
@@ -332,7 +441,7 @@ impl SampleViewModel for Model {
         Ok(())
     }
 
-    fn save(&mut self) -> avalonia::Result<()> {
+    fn save(&mut self, token: avalonia::CancellationToken) -> avalonia::Result<()> {
         let Some(sink) = self.sink.clone() else {
             return Ok(());
         };
@@ -340,19 +449,99 @@ impl SampleViewModel for Model {
         // CanExecute demonstration: disable the Save command itself while
         // the background save is in flight, and re-enable it on completion.
         sink.set_save_enabled(false)?;
+        let shapes = sink.supports_richer_shapes();
+        if shapes {
+            sink.set_save_running(true)?;
+            sink.set_save_progress(Some(0.0), Some("Starting"))?;
+            sink.clear_save_result()?;
+        }
         std::thread::spawn(move || {
-            std::thread::sleep(Duration::from_millis(250));
+            let mut written = 0i64;
+            let mut cancelled = false;
+            for step in 1..=5 {
+                std::thread::sleep(Duration::from_millis(50));
+                if token.is_cancelled() {
+                    cancelled = true;
+                    break;
+                }
+                written += 4096;
+                if shapes {
+                    let _ = sink.set_save_progress(
+                        Some(f64::from(step) / 5.0),
+                        Some(&format!("Wrote {written} bytes")),
+                    );
+                }
+            }
+            // Success, failure and cancellation all race here; exactly one of
+            // them may publish the terminal state.
+            if shapes && !sink.claim_save_completion(&token) {
+                return;
+            }
+            if shapes {
+                let _ = sink.set_save_result(SaveReportModel {
+                    destination: "rust://sample/export.log".to_string(),
+                    bytes: written,
+                    succeeded: !cancelled,
+                });
+                let _ = sink.set_save_running(false);
+            }
             // The two UI changes publish together. Repeated clicks/workers can
             // overlap safely: the newest generation wins and completion occurs
             // only after UI application, never on this worker's call stack.
             let mut batch = sink.batch(Self::next_generation());
-            batch.set_status("Saved by Rust async worker");
+            batch.set_status(if cancelled {
+                "Save cancelled by managed request"
+            } else {
+                "Saved by Rust async worker"
+            });
             batch.set_save_enabled(true);
             let _completion = sink
                 .submit_batch(batch)
                 .expect("failed to submit Rust save batch");
         });
         Ok(())
+    }
+
+    fn refresh_log_window(&mut self) -> avalonia::Result<()> {
+        let Some(sink) = self.sink.clone() else {
+            return Ok(());
+        };
+        if !sink.supports_richer_shapes() {
+            return Ok(());
+        }
+        // Bumping the generation invalidates every realized page: managed code
+        // rejects any range still in flight for the previous generation.
+        self.log_generation = Self::next_generation();
+        self.log_rows.rotate_left(1);
+        sink.reset_log_window(self.log_generation, self.log_rows.len() as i64)?;
+        sink.set_log_window_status(format!(
+            "Generation {} ({} rows owned by Rust)",
+            self.log_generation,
+            self.log_rows.len()
+        ))
+    }
+
+    fn request_log_window_range(
+        &mut self,
+        request: avalonia::RangeRequest,
+    ) -> avalonia::Result<()> {
+        let Some(sink) = self.sink.clone() else {
+            return Ok(());
+        };
+        // Rust owns the dataset; only the requested slice is ever turned into
+        // managed presentation objects.
+        let Some(mut page) = sink.log_window_page(request.offset) else {
+            return Ok(());
+        };
+        if page.generation() != request.generation {
+            return Ok(());
+        }
+        let start = request.offset.max(0) as usize;
+        let end = (start + request.length.max(0) as usize).min(self.log_rows.len());
+        for record in &self.log_rows[start.min(end)..end] {
+            sink.push_log_window_row(&mut page, TraceRowModel::from(record.clone()));
+        }
+        sink.publish_log_window_page(page).map(|_| ())
     }
 
     fn clear_nickname(&mut self) -> avalonia::Result<()> {

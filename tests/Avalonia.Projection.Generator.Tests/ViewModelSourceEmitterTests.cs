@@ -464,6 +464,168 @@ public class ViewModelSourceEmitterTests
         Assert.Contains("self.model.sort(parameter.unwrap_or_default())", rust, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void Emits_deterministic_richer_shape_surfaces_on_both_sides()
+    {
+        var ir = ShapesIr();
+
+        var csharpFirst = ViewModelSourceEmitter.EmitCSharp(ir);
+        var csharpSecond = ViewModelSourceEmitter.EmitCSharp(ir);
+        foreach (var key in csharpFirst.Keys)
+            Assert.Equal(csharpFirst[key], csharpSecond[key]);
+        Assert.Equal(ViewModelSourceEmitter.EmitRust(ir), ViewModelSourceEmitter.EmitRust(ir));
+        Assert.Equal(
+            ViewModelSourceEmitter.EmitRust(ir, externalConsumer: true),
+            ViewModelSourceEmitter.EmitRust(ir, externalConsumer: true));
+        Assert.Equal(ViewModelSourceEmitter.EmitContract(ir), ViewModelSourceEmitter.EmitContract(ir));
+    }
+
+    [Fact]
+    public void Emits_named_map_apis_without_exposing_ids_or_key_encoding()
+    {
+        var rust = ViewModelSourceEmitter.EmitRust(ShapesIr());
+        var adapter = ViewModelSourceEmitter.EmitCSharp(ShapesIr())["ShapesViewModelAdapter.g.cs"];
+
+        Assert.Contains("pub fn set_counters(&self, key: impl Into<crate::MapKey>, value: i64)", rust, StringComparison.Ordinal);
+        Assert.Contains("pub fn remove_counters(&self, key: impl Into<crate::MapKey>)", rust, StringComparison.Ordinal);
+        Assert.Contains("pub fn clear_counters(&self)", rust, StringComparison.Ordinal);
+        Assert.Contains("pub fn set_lookup(&self, key: i64, value: impl RowViewModel)", rust, StringComparison.Ordinal);
+
+        Assert.Contains("public RustObservableMap<string, long> Counters { get; } = new();", adapter, StringComparison.Ordinal);
+        Assert.Contains("public RustObservableMap<long, global::Tests.RowViewModelAdapter> Lookup { get; } = new();", adapter, StringComparison.Ordinal);
+        Assert.Contains("IAvnRustVmSink4", adapter, StringComparison.Ordinal);
+        Assert.Contains("public int MapClear(int mapId) => mapId switch", adapter, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Emits_a_windowed_collection_instead_of_a_materializing_one()
+    {
+        var adapter = ViewModelSourceEmitter.EmitCSharp(ShapesIr())["ShapesViewModelAdapter.g.cs"];
+        var rust = ViewModelSourceEmitter.EmitRust(ShapesIr());
+
+        Assert.Contains("public RustWindowedCollection Rows { get; }", adapter, StringComparison.Ordinal);
+        Assert.Contains("new RustWindowedCollection(3, 32, 4,", adapter, StringComparison.Ordinal);
+        Assert.Contains("public int PublishRange(IAvnRustVmRangeBatch? batch) => _ranges.Publish(batch);", adapter, StringComparison.Ordinal);
+        // A window has no managed element list, so it must not appear in any
+        // materializing path: no batch collection, no Add/Insert/Replace.
+        Assert.DoesNotContain("RustVmBatchCollectionInfo(nameof(Rows)", adapter, StringComparison.Ordinal);
+        Assert.DoesNotContain("Rows.Add(", adapter, StringComparison.Ordinal);
+        Assert.DoesNotContain("pub fn add_rows(", rust, StringComparison.Ordinal);
+        Assert.Contains("fn request_rows_range(&mut self, request: crate::RangeRequest)", rust, StringComparison.Ordinal);
+        Assert.Contains("pub fn reset_rows(&self, generation: i64, total_count: i64)", rust, StringComparison.Ordinal);
+        Assert.Contains("pub fn publish_rows_page(&self, page: crate::RangeBatch)", rust, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Emits_progress_cancellation_and_structured_results()
+    {
+        var adapter = ViewModelSourceEmitter.EmitCSharp(ShapesIr())["ShapesViewModelAdapter.g.cs"];
+        var rust = ViewModelSourceEmitter.EmitRust(ShapesIr());
+
+        Assert.Contains("public DelegateCommand CancelRunCommand { get; }", adapter, StringComparison.Ordinal);
+        Assert.Contains("public double? RunProgress => _runProgress;", adapter, StringComparison.Ordinal);
+        Assert.Contains("public bool RunIsRunning => _runIsRunning;", adapter, StringComparison.Ordinal);
+        Assert.Contains("public global::Tests.ReportViewModelAdapter? RunResult => _runResult;", adapter, StringComparison.Ordinal);
+        Assert.Contains("RustAsyncCommands.Begin(_model, _tracked, 1, null)", adapter, StringComparison.Ordinal);
+        Assert.Contains("RustAsyncCommands.Cancel(_tracked, 1, _runOperation)", adapter, StringComparison.Ordinal);
+
+        Assert.Contains("fn run(&mut self, token: crate::CancellationToken) -> crate::Result<()>;", rust, StringComparison.Ordinal);
+        Assert.Contains("fn begin_async_tracked(&mut self, command_id: i32, parameter: Option<String>, token: crate::CancellationToken)", rust, StringComparison.Ordinal);
+        Assert.Contains("pub fn claim_run_completion(&self, token: &crate::CancellationToken) -> bool", rust, StringComparison.Ordinal);
+        Assert.Contains("pub fn set_run_result(&self, value: impl ReportViewModel)", rust, StringComparison.Ordinal);
+        Assert.Contains("pub fn clear_run_result(&self)", rust, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Emits_tree_metadata_without_a_self_referencing_descriptor_cycle()
+    {
+        var files = ViewModelSourceEmitter.EmitCSharp(ShapesIr());
+        var node = files["NodeViewModelMetadata.g.cs"];
+        var root = files["ShapesViewModelMetadata.g.cs"];
+
+        Assert.Contains("new(1, \"Children\", RustViewModelValueKind.Model, null, null, null, null, true)", node, StringComparison.Ordinal);
+        Assert.Contains("new(\"Children\", \"Label\", \"Expandable\")", root, StringComparison.Ordinal);
+        Assert.Contains("new(32, 4)", root, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Contract_reports_maps_windows_trees_and_command_shapes()
+    {
+        var contract = ViewModelSourceEmitter.EmitContract(ShapesIr());
+
+        Assert.Contains("| Map | 1 | `Counters` | `String` to `Integer` |", contract, StringComparison.Ordinal);
+        Assert.Contains("(windowed: page 32, 4 live pages)", contract, StringComparison.Ordinal);
+        Assert.Contains("### Tree `Nodes`", contract, StringComparison.Ordinal);
+        Assert.Contains("(result `ReportViewModel`, progress, cancellable)", contract, StringComparison.Ordinal);
+    }
+
+    private static ViewModelIr ShapesIr() => new()
+    {
+        Version = ViewModelIr.CurrentVersion,
+        Models =
+        [
+            new ViewModelDefinition
+            {
+                Id = 1,
+                Name = "ShapesViewModel",
+                ManagedNamespace = "Tests",
+                Collections =
+                [
+                    new ViewModelCollection
+                    {
+                        Id = 3,
+                        Name = "Rows",
+                        ElementKind = ViewModelValueKind.Model,
+                        ElementModelName = "RowViewModel",
+                        Window = new ViewModelCollectionWindow { PageSize = 32, MaxLivePages = 4 },
+                    },
+                    new ViewModelCollection
+                    {
+                        Id = 4,
+                        Name = "Nodes",
+                        ElementKind = ViewModelValueKind.Model,
+                        ElementModelName = "NodeViewModel",
+                        Tree = new ViewModelTree { ChildrenCollection = "Children", HeaderPath = "Label", HasChildrenProperty = "Expandable" },
+                    },
+                ],
+                Maps =
+                [
+                    new ViewModelMap { Id = 1, Name = "Counters", KeyKind = ViewModelValueKind.String, ValueKind = ViewModelValueKind.Integer },
+                    new ViewModelMap { Id = 2, Name = "Lookup", KeyKind = ViewModelValueKind.Integer, ValueKind = ViewModelValueKind.Model, ValueModelName = "RowViewModel" },
+                ],
+                Commands =
+                [
+                    new ViewModelCommand
+                    {
+                        Id = 1,
+                        Name = "Run",
+                        IsAsync = true,
+                        SupportsProgress = true,
+                        SupportsCancellation = true,
+                        ResultModelName = "ReportViewModel",
+                    },
+                ],
+            },
+            new ViewModelDefinition { Id = 2, Name = "RowViewModel", ManagedNamespace = "Tests" },
+            new ViewModelDefinition { Id = 3, Name = "ReportViewModel", ManagedNamespace = "Tests" },
+            new ViewModelDefinition
+            {
+                Id = 4,
+                Name = "NodeViewModel",
+                ManagedNamespace = "Tests",
+                Properties =
+                [
+                    new ViewModelProperty { Id = 1, Name = "Label", Kind = ViewModelValueKind.String },
+                    new ViewModelProperty { Id = 2, Name = "Expandable", Kind = ViewModelValueKind.Boolean },
+                ],
+                Collections =
+                [
+                    new ViewModelCollection { Id = 1, Name = "Children", ElementKind = ViewModelValueKind.Model, ElementModelName = "NodeViewModel", Recursive = true },
+                ],
+            },
+        ],
+    };
+
     private static ViewModelIr SampleIr() => SampleIr(SampleConverters());
 
     private static ViewModelIr SampleIr(ValueConverterDefinition[] converters) => new()
