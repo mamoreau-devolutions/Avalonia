@@ -23,7 +23,7 @@ to bootstrap a new application. `new-app.ps1` / `new-app.sh` do the copy and
 package rename:
 
 ```powershell
-.\rust\new-app.ps1 -Name my_app -Destination C:\src\my_app
+.\rust\new-app.ps1 -Name my_app -Destination .\my_app
 ```
 
 ```bash
@@ -31,11 +31,41 @@ package rename:
 ```
 
 The template is excluded from the `rust` Cargo workspace (see the `exclude`
-entry in `Cargo.toml`) so it always resolves and builds as a standalone
-crate, exactly as it will once copied elsewhere. `regenerate-and-build.ps1
--ValidateTemplate` / `AVN_VALIDATE_TEMPLATE=1 regenerate-and-build.sh`
-`cargo check` it in place as a compile-only smoke test, and it is covered by
-the packaging-readiness check below.
+entry in `Cargo.toml`) and declares an empty workspace of its own. The template is an external consumer, including a managed AXAML project,
+versioned view-model IR, and `avalonia-app.json`. `new-app` substitutes both
+the Cargo package name and the pinned producer-root placeholder. Commit the
+producer as a submodule (or pin a checkout to an immutable commit); do not
+point a release consumer at an unpinned branch.
+`regenerate-and-build.ps1 -ValidateTemplate` /
+`AVN_VALIDATE_TEMPLATE=1 regenerate-and-build.sh` copies it through `new-app`
+before running `cargo check`.
+
+## External consumer build and package
+
+`consumer-app-manifest.schema.json` defines manifest version 1. The required
+fields name the consumer presentation `.csproj`, IR, generated adapter,
+registry, Rust and contract outputs, Cargo manifest/package, RID,
+configuration, and output directory; `binary` optionally selects a normal
+Cargo binary and defaults to `packageName`.
+
+```powershell
+& .\producer\rust\build-app.ps1 -ProducerRoot .\producer `
+  -Manifest .\consumer\avalonia-app.json
+```
+
+The cross-platform `build-app.py` (with `.ps1`/`.sh` wrappers) validates the
+manifest and paths before it runs the producer's
+`Avalonia.ViewModelProjection.Tool` against consumer outputs. It then runs
+`cargo fmt`, builds consumer AXAML, builds the declared Cargo `--bin`, and
+publishes `Avalonia.Host` with
+`AvaloniaRustPresentationProjects` and `AvaloniaRustViewRegistryFile`.
+The external ProjectReference and linked generated registry are therefore
+compiled statically into NativeAOT; no application-specific ABI is introduced.
+Finally it writes the host, published native DLLs/shared libraries, consumer
+executable, `licence.md`, deterministic CycloneDX delivery SBOM, and SHA-256
+checksums to the manifest's adjacent output directory. A local
+`AVALONIA_RUST_SIGN_COMMAND` wrapper may sign final binaries before SBOM and
+checksums; it is never downloaded or shell-expanded.
 
 ## One-command developer workflow
 

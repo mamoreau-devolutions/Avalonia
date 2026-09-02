@@ -51,8 +51,12 @@ else
 fi
 
 if [[ -n "$validate_template" ]]; then
-    echo "==> [3/4] Validating the copyable application template compiles standalone"
-    cargo check --manifest-path "$script_dir/templates/avalonia-app/Cargo.toml"
+    echo "==> [3/4] Validating the external consumer template compiles standalone"
+    template_consumer="$script_dir/target/template-validation"
+    rm -rf "$template_consumer"
+    "$script_dir/new-app.sh" template_validation "$template_consumer" "$repository_root"
+    cargo check --manifest-path "$template_consumer/Cargo.toml"
+    rm -rf "$template_consumer"
 fi
 
 if [[ -n "$package_rid" ]]; then

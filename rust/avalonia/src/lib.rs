@@ -4,8 +4,8 @@ mod generated;
 mod generated_view_models;
 mod async_runtime;
 mod runtime;
-mod value_converter;
-mod view_model;
+pub mod value_converter;
+pub mod view_model;
 
 pub use async_runtime::{AsyncOperation, AsyncValue};
 pub use generated::*;

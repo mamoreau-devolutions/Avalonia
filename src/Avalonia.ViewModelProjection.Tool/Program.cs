@@ -3,10 +3,11 @@ using System.IO;
 using Avalonia.Projection.Generator;
 using Avalonia.Projection.Ir;
 
-if (args.Length != 5)
+var externalRust = args.Length == 6 && args[5] == "--external-rust";
+if (args.Length != 5 && !externalRust)
 {
     Console.Error.WriteLine(
-        "Usage: Avalonia.ViewModelProjection.Tool <view-model-ir> <adapter-output-directory> <registry-output-directory> <rust-output> <contract-output>");
+        "Usage: Avalonia.ViewModelProjection.Tool <view-model-ir> <adapter-output-directory> <registry-output-directory> <rust-output> <contract-output> [--external-rust]");
     return 2;
 }
 
@@ -31,7 +32,7 @@ foreach (var (name, source) in ViewModelSourceEmitter.EmitCSharp(ir))
         : adapterDirectory;
     File.WriteAllText(Path.Combine(directory, name), source);
 }
-File.WriteAllText(rustPath, ViewModelSourceEmitter.EmitRust(ir));
+File.WriteAllText(rustPath, ViewModelSourceEmitter.EmitRust(ir, externalRust));
 File.WriteAllText(contractPath, ViewModelSourceEmitter.EmitContract(ir));
 
 Console.WriteLine(

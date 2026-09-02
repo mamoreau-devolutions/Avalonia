@@ -3,7 +3,8 @@ param(
     [ValidatePattern('^[a-z][a-z0-9_]*$')]
     [string]$Name,
     [Parameter(Mandatory)]
-    [string]$Destination
+    [string]$Destination,
+    [string]$ProducerRoot = (Split-Path -Parent $PSScriptRoot)
 )
 
 $ErrorActionPreference = "Stop"
@@ -24,14 +25,14 @@ Get-ChildItem -Path $Destination -Recurse -Directory -Filter "target" |
 Remove-Item -Path (Join-Path $Destination "Cargo.lock") -ErrorAction SilentlyContinue
 
 $cargoToml = Join-Path $Destination "Cargo.toml"
-$content = Get-Content $cargoToml -Raw
-$content = $content.Replace("avalonia-app-template", $Name)
-Set-Content -Path $cargoToml -Value $content -NoNewline
+$producerPath = (Resolve-Path $ProducerRoot).Path.Replace('\', '/')
+Get-ChildItem -Path $Destination -Recurse -File | ForEach-Object {
+    $content = Get-Content $_.FullName -Raw
+    $content = $content.Replace("__AVALONIA_APP_NAME__", $Name).Replace("__AVALONIA_PRODUCER_ROOT__", $producerPath)
+    Set-Content -Path $_.FullName -Value $content -NoNewline
+}
 
 Write-Host "Created '$Name' at $Destination."
 Write-Host "Next steps:"
-Write-Host "  1. Update the 'avalonia' path dependency in $cargoToml to point at" `
-    "your Avalonia checkout (or vendor rust/avalonia + rust/avalonia-sys)."
-Write-Host "  2. cargo build --release --manifest-path `"$Destination\Cargo.toml`""
-Write-Host "  3. Publish/copy a matching Avalonia.Host next to the built binary --" `
-    "rust\package.ps1 produces that layout -- then run the binary directly."
+Write-Host "  1. Pin '$producerPath' to the compatible Avalonia producer commit/submodule."
+Write-Host ('  2. & "{0}\rust\build-app.ps1" -ProducerRoot "{0}" -Manifest "{1}\avalonia-app.json"' -f $producerPath, $Destination)

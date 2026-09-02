@@ -1,24 +1,32 @@
-//! Starting point for a new Avalonia Rust application.
-//!
-//! `avalonia::App::load_from_env()` locates the native `Avalonia.Host`
-//! library the same way every sample in this repository does:
-//! `AVN_HOST_NATIVE_LIB` is an explicit override, and otherwise it looks for
-//! the platform host library next to this executable (see
-//! `../../PRODUCTIZATION.md#host-discovery`). Copying the published host
-//! beside your built binary -- which `rust/package.ps1` / `rust/package.sh`
-//! do for you -- means no environment variable is required at run time.
+//! This crate owns Rust state; `generated/generated_view_models.rs` is emitted
+//! from `view-model.ir.json` by the repository-owned consumer build tool.
 
-use avalonia::{App, Button, Orientation, StackPanel, TextBlock, Window};
+pub use avalonia::{AppScope, ConversionDirection, Error, Result, ScalarKind, ScalarValue};
+pub mod view_model {
+    pub use avalonia::view_model::{DynamicViewModel, ViewModelSink};
+}
+pub mod value_converter {
+    pub use avalonia::value_converter::ValueConverterDispatch;
+}
+
+#[path = "../generated/generated_view_models.rs"]
+mod generated_view_models;
+
+use avalonia::App;
+use generated_view_models::{mount_main_window, MainViewModel, MainViewModelSink};
+
+struct Model;
+
+impl MainViewModel for Model {
+    fn attach(&mut self, sink: MainViewModelSink) -> Result<()> {
+        sink.set_title("Hello from an external Rust consumer")
+    }
+
+    fn detach(&mut self) -> Result<()> {
+        Ok(())
+    }
+}
 
 fn main() -> avalonia::Result<()> {
-    App::load_from_env()?.run(|scope| {
-        scope.mount(
-            Window::new()?.title("My Avalonia Rust App")?.content(
-                StackPanel::new()?
-                    .orientation(Orientation::Vertical)?
-                    .child(TextBlock::new()?.text("Replace this with your UI.")?)?
-                    .child(Button::new()?.content(TextBlock::new()?.text("Click me")?)?)?,
-            )?,
-        )
-    })
+    App::load_from_env()?.run(|scope| mount_main_window(scope, Model))
 }

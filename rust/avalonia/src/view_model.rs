@@ -104,7 +104,7 @@ impl fmt::Debug for NestedSlots {
 }
 
 #[derive(Clone, Debug)]
-pub(crate) struct ViewModelSink {
+pub struct ViewModelSink {
     raw: sys::ComPtr<sys::IAvnRustVmSink>,
     raw2: sys::ComPtr<sys::IAvnRustVmSink2>,
     nested: Arc<NestedSlots>,
@@ -299,7 +299,7 @@ impl ViewModelSink {
     }
 }
 
-pub(crate) trait DynamicViewModel: Send + 'static {
+pub trait DynamicViewModel: Send + 'static {
     fn attach(&mut self, sink: ViewModelSink) -> Result<()>;
     fn detach(&mut self) -> Result<()>;
     fn set_string(&mut self, property_id: i32, value: String) -> Result<()>;
@@ -397,7 +397,7 @@ impl ViewModelHandle {
 }
 
 impl AppScope {
-    pub(crate) fn mount_dynamic_view_model(
+    pub fn mount_dynamic_view_model(
         &self,
         view_id: i32,
         model: impl DynamicViewModel,

@@ -24,7 +24,7 @@ public static class ViewModelSourceEmitter
         return files;
     }
 
-    public static string EmitRust(ViewModelIr ir)
+    public static string EmitRust(ViewModelIr ir, bool externalConsumer = false)
     {
         ir.Validate();
         var sb = new StringBuilder(
@@ -32,8 +32,8 @@ public static class ViewModelSourceEmitter
         foreach (var enumDefinition in ir.Enums)
             EmitRustEnum(sb, enumDefinition);
         foreach (var model in ir.Models)
-            EmitRustModel(sb, ir, model, ir.Views.Where(view => view.Model == model.Name));
-        EmitRustConverters(sb, ir.Converters);
+            EmitRustModel(sb, ir, model, ir.Views.Where(view => view.Model == model.Name), externalConsumer);
+        EmitRustConverters(sb, ir.Converters, externalConsumer);
         return sb.ToString().TrimEnd() + "\n";
     }
 
@@ -609,7 +609,8 @@ public static class ViewModelSourceEmitter
         StringBuilder sb,
         ViewModelIr ir,
         ViewModelDefinition model,
-        IEnumerable<ViewDefinition> views)
+        IEnumerable<ViewDefinition> views,
+        bool externalConsumer)
     {
         var traitName = model.Name;
         var sinkName = $"{model.Name}Sink";
@@ -681,19 +682,34 @@ public static class ViewModelSourceEmitter
         sb.AppendLine();
         foreach (var view in views)
         {
-            sb.AppendLine($"impl crate::AppScope {{ pub fn mount_{Snake(view.Name)}(&self, model: impl {traitName}) -> crate::Result<()> {{ self.mount_dynamic_view_model({view.Id}, {traitName}Dispatch {{ model }}) }} }}");
+            if (externalConsumer)
+                sb.AppendLine($"pub fn mount_{Snake(view.Name)}(scope: &crate::AppScope, model: impl {traitName}) -> crate::Result<()> {{ scope.mount_dynamic_view_model({view.Id}, {traitName}Dispatch {{ model }}) }}");
+            else
+                sb.AppendLine($"impl crate::AppScope {{ pub fn mount_{Snake(view.Name)}(&self, model: impl {traitName}) -> crate::Result<()> {{ self.mount_dynamic_view_model({view.Id}, {traitName}Dispatch {{ model }}) }} }}");
             if (view.Converters.Count > 0)
             {
-                sb.AppendLine($"impl crate::AppScope {{");
-                sb.AppendLine($"    pub fn mount_{Snake(view.Name)}_with_converters<C: ValueConverters>(");
-                sb.AppendLine($"        &self,");
+                if (externalConsumer)
+                    sb.AppendLine($"pub fn mount_{Snake(view.Name)}_with_converters<C: ValueConverters>(");
+                else
+                {
+                    sb.AppendLine("impl crate::AppScope {");
+                    sb.AppendLine($"    pub fn mount_{Snake(view.Name)}_with_converters<C: ValueConverters>(");
+                    sb.AppendLine("        &self,");
+                }
+                if (externalConsumer)
+                    sb.AppendLine("    scope: &crate::AppScope,");
                 sb.AppendLine($"        model: impl {traitName},");
                 sb.AppendLine($"        converters: C,");
                 sb.AppendLine($"    ) -> crate::Result<()> {{");
-                sb.AppendLine($"        self.register_value_converters(converters)?;");
-                sb.AppendLine($"        self.mount_{Snake(view.Name)}(model)");
+                sb.AppendLine(externalConsumer
+                    ? "        register_value_converters(scope, converters)?;"
+                    : "        self.register_value_converters(converters)?;");
+                sb.AppendLine(externalConsumer
+                    ? $"        mount_{Snake(view.Name)}(scope, model)"
+                    : $"        self.mount_{Snake(view.Name)}(model)");
                 sb.AppendLine($"    }}");
-                sb.AppendLine($"}}");
+                if (!externalConsumer)
+                    sb.AppendLine("}");
             }
         }
         sb.AppendLine();
@@ -731,7 +747,7 @@ public static class ViewModelSourceEmitter
         _ => RustOwnedType(property.Kind),
     };
 
-    private static void EmitRustConverters(StringBuilder sb, IReadOnlyList<ValueConverterDefinition> converters)
+    private static void EmitRustConverters(StringBuilder sb, IReadOnlyList<ValueConverterDefinition> converters, bool externalConsumer)
     {
         if (converters.Count == 0)
             return;
@@ -799,11 +815,20 @@ public static class ViewModelSourceEmitter
         sb.AppendLine("    }");
         sb.AppendLine("}");
         sb.AppendLine();
-        sb.AppendLine("impl crate::AppScope {");
-        sb.AppendLine("    pub fn register_value_converters(&self, converters: impl ValueConverters) -> crate::Result<()> {");
-        sb.AppendLine("        self.register_value_converter_dispatch(ValueConvertersDispatch { converters })");
-        sb.AppendLine("    }");
-        sb.AppendLine("}");
+        if (externalConsumer)
+        {
+            sb.AppendLine("pub fn register_value_converters(scope: &crate::AppScope, converters: impl ValueConverters) -> crate::Result<()> {");
+            sb.AppendLine("    scope.register_value_converter_dispatch(ValueConvertersDispatch { converters })");
+            sb.AppendLine("}");
+        }
+        else
+        {
+            sb.AppendLine("impl crate::AppScope {");
+            sb.AppendLine("    pub fn register_value_converters(&self, converters: impl ValueConverters) -> crate::Result<()> {");
+            sb.AppendLine("        self.register_value_converter_dispatch(ValueConvertersDispatch { converters })");
+            sb.AppendLine("    }");
+            sb.AppendLine("}");
+        }
         sb.AppendLine();
     }
 

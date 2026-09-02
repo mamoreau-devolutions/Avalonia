@@ -91,12 +91,16 @@ if ($LASTEXITCODE -ne 0)
 
 if ($ValidateTemplate)
 {
-    Write-Host "==> [3/4] Validating the copyable application template compiles standalone"
-    cargo check --manifest-path "$repositoryRoot\rust\templates\avalonia-app\Cargo.toml"
+    Write-Host "==> [3/4] Validating the external consumer template compiles standalone"
+    $templateConsumer = "$repositoryRoot\rust\target\template-validation"
+    Remove-Item $templateConsumer -Recurse -Force -ErrorAction SilentlyContinue
+    & "$PSScriptRoot\new-app.ps1" -Name template_validation -Destination $templateConsumer -ProducerRoot $repositoryRoot
+    cargo check --manifest-path "$templateConsumer\Cargo.toml"
     if ($LASTEXITCODE -ne 0)
     {
         exit $LASTEXITCODE
     }
+    Remove-Item $templateConsumer -Recurse -Force
 }
 
 if ($PackageRid)

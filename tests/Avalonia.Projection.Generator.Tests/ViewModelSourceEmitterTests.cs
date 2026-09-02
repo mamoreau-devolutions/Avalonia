@@ -23,6 +23,9 @@ public class ViewModelSourceEmitterTests
         foreach (var key in csharpFirst.Keys)
             Assert.Equal(csharpFirst[key], csharpSecond[key]);
         Assert.Equal(rustFirst, rustSecond);
+        Assert.Equal(
+            ViewModelSourceEmitter.EmitRust(ir, externalConsumer: true),
+            ViewModelSourceEmitter.EmitRust(ir, externalConsumer: true));
         Assert.Equal(contractFirst, contractSecond);
     }
 
@@ -110,6 +113,22 @@ public class ViewModelSourceEmitterTests
             rust,
             StringComparison.Ordinal);
         Assert.Contains("pub fn mount_rust_vm_window_with_converters<C: ValueConverters>(", rust, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Emits_external_consumer_functions_without_inherent_foreign_type_implementations()
+    {
+        var rust = ViewModelSourceEmitter.EmitRust(SampleIr(), externalConsumer: true);
+
+        Assert.Contains(
+            "pub fn mount_rust_vm_window(scope: &crate::AppScope, model: impl SampleViewModel)",
+            rust,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "pub fn register_value_converters(scope: &crate::AppScope, converters: impl ValueConverters)",
+            rust,
+            StringComparison.Ordinal);
+        Assert.DoesNotContain("impl crate::AppScope { pub fn mount_rust_vm_window", rust, StringComparison.Ordinal);
     }
 
     [Fact]

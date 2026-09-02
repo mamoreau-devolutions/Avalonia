@@ -14,7 +14,7 @@ pub use sys::{ConversionDirection, ScalarKind, ScalarValue};
 /// pure (no `ViewModel` state access, no locking) because the resulting
 /// provider is invoked without any provider-level lock and may be called
 /// concurrently from any thread that evaluates a binding.
-pub(crate) trait ValueConverterDispatch: Send + Sync + 'static {
+pub trait ValueConverterDispatch: Send + Sync + 'static {
     #[allow(clippy::too_many_arguments)]
     fn convert(
         &self,
@@ -34,7 +34,7 @@ impl AppScope {
     /// it, and keeps the provider alive for the application's lifetime so it
     /// resolves for DataTemplate/ControlTemplate realization deferred past
     /// window construction.
-    pub(crate) fn register_value_converter_dispatch(
+    pub fn register_value_converter_dispatch(
         &self,
         dispatch: impl ValueConverterDispatch,
     ) -> Result<()> {

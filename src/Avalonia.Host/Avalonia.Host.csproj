@@ -15,6 +15,8 @@
     <EnableRuntimeMarshalling>true</EnableRuntimeMarshalling>
     <UseMicroCom>true</UseMicroCom>
     <UseMicroComGeneratorRoslyn>true</UseMicroComGeneratorRoslyn>
+    <!-- Consumers replace these two inputs when publishing a NativeAOT host. -->
+    <AvaloniaRustPresentationProjects Condition="'$(AvaloniaRustPresentationProjects)' == ''">..\..\samples\RustViewModelSample.Managed\RustViewModelSample.Managed.csproj</AvaloniaRustPresentationProjects>
     <AvaloniaRustHostPlatform Condition="'$(AvaloniaRustHostPlatform)' == '' and $([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-'))">Win32</AvaloniaRustHostPlatform>
     <AvaloniaRustHostPlatform Condition="'$(AvaloniaRustHostPlatform)' == '' and $([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('linux-'))">X11</AvaloniaRustHostPlatform>
     <AvaloniaRustHostPlatform Condition="'$(AvaloniaRustHostPlatform)' == '' and $([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('osx-'))">OSX</AvaloniaRustHostPlatform>
@@ -29,6 +31,14 @@
     <Error Condition="'$(AvaloniaRustHostPlatform)' != 'Win32' and '$(AvaloniaRustHostPlatform)' != 'X11' and '$(AvaloniaRustHostPlatform)' != 'OSX'"
            Text="AvaloniaRustHostPlatform must be Win32, X11, or OSX for runtime identifier '$(RuntimeIdentifier)'." />
   </Target>
+  <Target Name="ValidateAvaloniaRustConsumerInputs" BeforeTargets="PrepareForBuild">
+    <Error Condition="'@(AvaloniaRustPresentationProject)' == ''"
+           Text="AvaloniaRustPresentationProjects must contain at least one managed presentation project." />
+    <Error Condition="!Exists('%(AvaloniaRustPresentationProject.Identity)')"
+           Text="AvaloniaRustPresentationProjects contains a project that does not exist: '%(AvaloniaRustPresentationProject.Identity)'." />
+    <Error Condition="'$(AvaloniaRustViewRegistryFile)' != '' and !Exists('$(AvaloniaRustViewRegistryFile)')"
+           Text="AvaloniaRustViewRegistryFile does not exist: '$(AvaloniaRustViewRegistryFile)'." />
+  </Target>
   <ItemGroup>
     <InternalsVisibleTo Include="Avalonia.Host.Tests, PublicKey=$(AvaloniaPublicKey)" />
     <MicroComIdl Include="Ownership\microcom-ownership.idl" />
@@ -37,7 +47,12 @@
     <ProjectReference Include="..\Avalonia.Themes.Fluent\Avalonia.Themes.Fluent.csproj" />
     <ProjectReference Include="..\Avalonia.Rust\Avalonia.Rust.csproj" />
     <ProjectReference Include="..\Avalonia.Rust.Interop\Avalonia.Rust.Interop.csproj" />
-    <ProjectReference Include="..\..\samples\RustViewModelSample.Managed\RustViewModelSample.Managed.csproj" />
+    <AvaloniaRustPresentationProject Include="$(AvaloniaRustPresentationProjects)" />
+    <ProjectReference Include="@(AvaloniaRustPresentationProject)" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(AvaloniaRustViewRegistryFile)' != ''">
+    <Compile Remove="Generated\ViewModels\RustViewRegistry.g.cs" />
+    <Compile Include="$(AvaloniaRustViewRegistryFile)" Link="Generated\ViewModels\RustViewRegistry.g.cs" />
   </ItemGroup>
   <ItemGroup Condition="'$(AvaloniaRustHostPlatform)' == 'Win32'">
     <ProjectReference Include="..\Windows\Avalonia.Win32\Avalonia.Win32.csproj" />

@@ -14,6 +14,13 @@ version bump and readers that reject unsupported future versions clearly.
 Removing or changing the meaning, type, ordering, or requiredness of an
 existing field is breaking and requires a coordinated major release.
 
+Consumer application manifests are independently versioned by
+`consumer-app-manifest.schema.json`; version 1 is validated before any build
+command runs. A consumer must pin the producer checkout/submodule commit that
+provides its `avalonia` crate, projection tool, and `Avalonia.Host`. Do not mix
+consumer-generated registry/adapters or Rust API from one producer revision
+with a host from another.
+
 ## Native ABI
 
 Published interface IIDs, vtable slot order, method signatures, calling

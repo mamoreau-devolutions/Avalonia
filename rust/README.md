@@ -152,18 +152,27 @@ bootstrap a new Rust application against the same generated API these
 examples use:
 
 ```powershell
-.\rust\new-app.ps1 -Name my_app -Destination C:\src\my_app
+.\rust\new-app.ps1 -Name my_app -Destination .\my_app
 ```
 
 ```bash
 ./rust/new-app.sh my_app ~/src/my_app
 ```
 
-At run time the app finds a matching `Avalonia.Host` next to its own
-executable with no environment variable required; `package.ps1`/`package.sh`
-produce that deterministic, checksummed, per-runtime-identifier layout. See
-[PRODUCTIZATION.md](PRODUCTIZATION.md) for the template, host discovery,
-packaging, and SBOM-scope details.
+The scaffold is an external consumer with managed AXAML and view-model IR, not
+an in-repository sample. Pin the producer checkout (prefer a Git submodule) to
+the commit which supplies the Rust crates and host, then build it in one step:
+
+```powershell
+& .\producer\rust\build-app.ps1 -ProducerRoot .\producer `
+  -Manifest .\my_app\avalonia-app.json
+```
+
+The manifest selects the managed presentation project, IR, Cargo package and
+normal binary, RID, configuration, and adjacent output directory. The tool
+generates consumer adapters/registry/Rust API, then formats and builds Cargo,
+builds AXAML, publishes a NativeAOT host with those exact external inputs, and
+creates a checksummed CycloneDX bundle. See [PRODUCTIZATION.md](PRODUCTIZATION.md).
 
 `Avalonia.Host`, `Avalonia.Rust`, `Avalonia.Rust.Interop`, and the projection
 tool/generator projects are currently non-packable, and the `rust/*` crates
