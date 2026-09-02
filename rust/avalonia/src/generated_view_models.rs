@@ -70,24 +70,39 @@ pub struct SampleViewModelSinkBatch(crate::view_model::ViewModelBatch);
 impl SampleViewModelSinkBatch {
     pub fn set_name(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 1, 0, value); }
     pub fn set_name_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 1, 0, message); }
+    pub fn clear_name_error(&mut self) { self.0.push_clear_error(1); }
     pub fn set_count(&mut self, value: i64) { self.0.push_integer(2, value as i64); }
     pub fn set_count_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 2, 0, message); }
+    pub fn clear_count_error(&mut self) { self.0.push_clear_error(2); }
     pub fn set_new_item(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 3, 0, value); }
     pub fn set_new_item_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 3, 0, message); }
+    pub fn clear_new_item_error(&mut self) { self.0.push_clear_error(3); }
     pub fn set_status(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 4, 0, value); }
     pub fn set_status_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 4, 0, message); }
+    pub fn clear_status_error(&mut self) { self.0.push_clear_error(4); }
     pub fn set_nickname(&mut self, value: Option<impl AsRef<str>>) { match value { Some(value) => self.0.push_string(1, 5, 0, value), None => self.0.push_null(5) } }
     pub fn set_nickname_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 5, 0, message); }
+    pub fn clear_nickname_error(&mut self) { self.0.push_clear_error(5); }
     pub fn set_priority(&mut self, value: Priority) { self.0.push_integer(6, value as i64); }
     pub fn set_priority_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 6, 0, message); }
+    pub fn clear_priority_error(&mut self) { self.0.push_clear_error(6); }
     pub fn set_address(&mut self, value: impl AddressViewModel) { self.0.push_model(6, 7, 0, AddressViewModelDispatch { model: value }); }
+    pub fn clear_address(&mut self) { self.0.push_model_null(7); }
     pub fn set_address_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 7, 0, message); }
+    pub fn clear_address_error(&mut self) { self.0.push_clear_error(7); }
     pub fn set_new_task_title(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 8, 0, value); }
     pub fn set_new_task_title_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 8, 0, message); }
+    pub fn clear_new_task_title_error(&mut self) { self.0.push_clear_error(8); }
     pub fn add_items(&mut self, value: impl AsRef<str>) { self.0.push_string(7, 1, 0, value); }
+    pub fn insert_items(&mut self, index: i32, value: impl AsRef<str>) { self.0.push_string(9, 1, index, value); }
+    pub fn replace_items(&mut self, index: i32, value: impl AsRef<str>) { self.0.push_string(11, 1, index, value); }
     pub fn replace_items_snapshot<S: AsRef<str>>(&mut self, values: impl IntoIterator<Item = S>) { self.0.push_string_snapshot(1, values); }
     pub fn remove_items(&mut self, index: i32) { self.0.push_indices(13, 1, index, 0); }
+    pub fn move_items(&mut self, from_index: i32, to_index: i32) { self.0.push_indices(14, 1, from_index, to_index); }
+    pub fn clear_items(&mut self) { self.0.push_indices(19, 1, 0, 0); }
     pub fn add_tasks(&mut self, value: impl TaskItemViewModel) { self.0.push_model(8, 2, 0, TaskItemViewModelDispatch { model: value }); }
+    pub fn insert_tasks(&mut self, index: i32, value: impl TaskItemViewModel) { self.0.push_model(10, 2, index, TaskItemViewModelDispatch { model: value }); }
+    pub fn replace_tasks(&mut self, index: i32, value: impl TaskItemViewModel) { self.0.push_model(12, 2, index, TaskItemViewModelDispatch { model: value }); }
     pub fn replace_tasks_snapshot<M: TaskItemViewModel>(&mut self, values: impl IntoIterator<Item = M>) { self.0.push_model_snapshot(2, values.into_iter().map(|value| TaskItemViewModelDispatch { model: value })); }
     pub fn remove_tasks(&mut self, index: i32) { self.0.push_model_indices(13, 2, index, 0); }
     pub fn move_tasks(&mut self, from_index: i32, to_index: i32) { self.0.push_model_indices(14, 2, from_index, to_index); }
@@ -210,8 +225,10 @@ pub struct AddressViewModelSinkBatch(crate::view_model::ViewModelBatch);
 impl AddressViewModelSinkBatch {
     pub fn set_street(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 1, 0, value); }
     pub fn set_street_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 1, 0, message); }
+    pub fn clear_street_error(&mut self) { self.0.push_clear_error(1); }
     pub fn set_city(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 2, 0, value); }
     pub fn set_city_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 2, 0, message); }
+    pub fn clear_city_error(&mut self) { self.0.push_clear_error(2); }
 }
 
 pub trait AddressViewModel: Send + 'static {
@@ -273,8 +290,10 @@ pub struct TaskItemViewModelSinkBatch(crate::view_model::ViewModelBatch);
 impl TaskItemViewModelSinkBatch {
     pub fn set_title(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 1, 0, value); }
     pub fn set_title_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 1, 0, message); }
+    pub fn clear_title_error(&mut self) { self.0.push_clear_error(1); }
     pub fn set_done(&mut self, value: bool) { self.0.push_boolean(3, 2, value); }
     pub fn set_done_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 2, 0, message); }
+    pub fn clear_done_error(&mut self) { self.0.push_clear_error(2); }
 }
 
 pub trait TaskItemViewModel: Send + 'static {

@@ -312,3 +312,65 @@ panic boundary.
 commits it with one collection `Reset`; it is the required path for large
 snapshots (including 100K items). Batch validation reads every operation before
 mutation so malformed operations cannot partially update managed state.
+
+### The shared staged transactional engine
+
+Both adapter kinds - the IR-generated adapters and
+`ReflectableRustViewModelAdapter` - apply batches through one engine,
+`Avalonia.Rust.RustVmBatchCoordinator`. Adapters do not implement transactional
+logic; they implement `IRustVmBatchTarget`, which only describes their schema
+and performs notification-free stores. A batch runs in four ordered phases:
+
+1. **Decode.** Every operation is read and every getter HRESULT is checked. An
+   unknown tag, a negative count, a null operation or a failing getter fails the
+   batch before anything is inspected further.
+2. **Plan and validate.** Every target id, exact property wire kind, nullable
+   eligibility, enum domain, command id, collection element kind and ordered
+   index is validated. Collection indices are checked against a working copy
+   that replays the batch's own ordering, so `insert`, `replace`, `remove`,
+   `move`, `clear` and snapshot operations are validated against the state they
+   would really see. `ClearCollection` is a first-class operation for both
+   element kinds. Nothing on the target is mutated in this phase.
+3. **Stage.** Every nested adapter the plan installs is constructed and attached
+   off to the side. A nested attach failure disposes every adapter staged so
+   far and leaves target state and notifications completely untouched. Only
+   models that survive the folded plan are attached at all, so a model replaced
+   or removed later in the same batch is never attached.
+4. **Commit, then publish.** Fields, command `CanExecute` state, validation
+   errors and collection contents are stored with no externally observable
+   notification (collections go through `IRustVmBatchCollection.SetContents`).
+   Only then are coalesced `PropertyChanged`, `ErrorsChanged`,
+   `CanExecuteChanged` and at most one collection `Reset` per changed collection
+   published; each is isolated, so a throwing observer cannot suppress the
+   others. State is already fully committed at that point, so the batch still
+   completes as `Applied`: a notification failure is logged, never reported as a
+   rollback that did not happen.
+
+Nested adapters a batch displaces are disposed after publication, so ownership
+transfer is complete exactly once whether the batch replaced a model property,
+replaced or removed a collection element, cleared a collection or replaced a
+whole snapshot.
+
+### The non-reentrant batch lifecycle gate
+
+`RustVmBatchGate` replaces the previous reentrant lock. A batch takes exclusive
+ownership of the target for its whole commit and publication. If an observer
+disposes the adapter from a notification, disposal is marked pending and the
+detach plus nested cleanup run only after the batch leaves the gate, so the
+batch never publishes into a half-detached adapter and staged adapters are never
+installed after final disposal. Concurrent `Dispose` calls serialize on the same
+cleanup and detach exactly once. Batches queued before disposal, and any
+submitted afterwards, complete as `Cancelled`.
+
+### Rust-side ownership
+
+Each batch carries its managed-visible operations and a matching nested
+ownership delta. The delta is reconciled into `NestedSlots` exactly once, only
+on `Applied`; a `Stale`, `Cancelled` or `Error` outcome drops the batch's
+candidate handles without touching the slots that are still live. Slot updates
+are bounds-checked rather than panicking, and a model snapshot installs a real
+slot list, so synchronous v1/v2 `remove`/`move`/`replace`/`clear` keeps working
+after a batch snapshot has been applied. `IAvnRustVmSink3` is resolved lazily on
+first submission and cached: a host that only implements v1/v2 still attaches
+and publishes normally, and only `submit_batch` reports `E_NOINTERFACE`.
+

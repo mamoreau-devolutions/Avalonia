@@ -9,7 +9,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
-using System.Threading;
 using System.Windows.Input;
 using Avalonia.Rust.Interop;
 using Avalonia.Threading;
@@ -17,13 +16,13 @@ using Avalonia.Threading;
 namespace Avalonia.Rust.Sample.Generated;
 
 [GeneratedComClass]
-public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, IRustVmBatchSchema, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable
+public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, IRustVmBatchTarget, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable
 {
     private readonly IAvnRustViewModel _model;
     private readonly Action<Action> _dispatch;
+    private readonly Action<Action>? _post;
+    private readonly RustVmBatchCoordinator _batch;
     private readonly Dictionary<string, string> _errors = new(StringComparer.Ordinal);
-    private int _disposed;
-    private long _lastBatchGeneration = -1;
     private string _name = "Avalonia from Rust";
     private long _count = 0L;
     private string _newItem = "";
@@ -33,10 +32,12 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     private global::Avalonia.Rust.Sample.Generated.AddressViewModelAdapter? _address = null;
     private string _newTaskTitle = "";
 
-    public SampleViewModelAdapter(IAvnRustViewModel model, Action<Action>? dispatch = null)
+    public SampleViewModelAdapter(IAvnRustViewModel model, Action<Action>? dispatch = null, Action<Action>? post = null)
     {
         _model = model;
         _dispatch = dispatch ?? Dispatch;
+        _post = post;
+        _batch = new RustVmBatchCoordinator(this, post);
         IncrementCommand = new DelegateCommand(() => Check(_model.Execute(1, null)));
         AddCommand = new DelegateCommand(() => Check(_model.Execute(2, NewItem)));
         SaveCommand = new DelegateCommand(() => Check(_model.BeginAsync(3, null)));
@@ -190,7 +191,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         7 => Apply(() =>
         {
             var previous = _address;
-            _address = model is null ? null : new global::Avalonia.Rust.Sample.Generated.AddressViewModelAdapter(model, _dispatch);
+            _address = model is null ? null : new global::Avalonia.Rust.Sample.Generated.AddressViewModelAdapter(model, _dispatch, _post);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Address)));
             previous?.Dispose();
         }),
@@ -199,7 +200,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
 
     public int AddModel(int collectionId, IAvnRustViewModel? model) => collectionId switch
     {
-        2 => model is null ? unchecked((int)0x80070057) : Apply(() => Tasks.Add(new global::Avalonia.Rust.Sample.Generated.TaskItemViewModelAdapter(model, _dispatch))),
+        2 => model is null ? unchecked((int)0x80070057) : Apply(() => Tasks.Add(new global::Avalonia.Rust.Sample.Generated.TaskItemViewModelAdapter(model, _dispatch, _post))),
         _ => unchecked((int)0x80070057),
     };
 
@@ -211,7 +212,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
 
     public int InsertModel(int collectionId, int index, IAvnRustViewModel? model) => collectionId switch
     {
-        2 => model is null ? unchecked((int)0x80070057) : Apply(() => { if ((uint)index > (uint)Tasks.Count) return unchecked((int)0x80070057); Tasks.Insert(index, new global::Avalonia.Rust.Sample.Generated.TaskItemViewModelAdapter(model, _dispatch)); return 0; }),
+        2 => model is null ? unchecked((int)0x80070057) : Apply(() => { if ((uint)index > (uint)Tasks.Count) return unchecked((int)0x80070057); Tasks.Insert(index, new global::Avalonia.Rust.Sample.Generated.TaskItemViewModelAdapter(model, _dispatch, _post)); return 0; }),
         _ => unchecked((int)0x80070057),
     };
 
@@ -227,7 +228,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         {
             if ((uint)index >= (uint)Tasks.Count) return unchecked((int)0x80070057);
             var previous = Tasks[index];
-            Tasks[index] = new global::Avalonia.Rust.Sample.Generated.TaskItemViewModelAdapter(model, _dispatch);
+            Tasks[index] = new global::Avalonia.Rust.Sample.Generated.TaskItemViewModelAdapter(model, _dispatch, _post);
             previous.Dispose();
             return 0;
         }),
@@ -305,50 +306,12 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         _ => unchecked((int)0x80070057),
     };
 
-    public int PropertyKind(int propertyId) => propertyId switch
-    {
-        1 => 1,
-        2 => 2,
-        3 => 1,
-        4 => 1,
-        5 => 1,
-        6 => 2,
-        7 => 6,
-        8 => 1,
-        _ => 0,
-    };
-    public bool IsCommand(int commandId) => commandId switch
-    {
-        1 => true,
-        2 => true,
-        3 => true,
-        4 => true,
-        5 => true,
-        6 => true,
-        7 => true,
-        8 => true,
-        9 => true,
-        _ => false,
-    };
-    public int CollectionKind(int collectionId) => collectionId switch
-    {
-        1 => 1,
-        2 => 6,
-        _ => 0,
-    };
-    public int CollectionCount(int collectionId) => collectionId switch
-    {
-        1 => Items.Count,
-        2 => Tasks.Count,
-        _ => -1,
-    };
-
     public int ReplaceModelSnapshot(int collectionId, IReadOnlyList<IAvnRustViewModel> values) => collectionId switch
     {
         2 => Apply(() =>
         {
             var staged = new List<global::Avalonia.Rust.Sample.Generated.TaskItemViewModelAdapter>();
-            try { foreach (var value in values) staged.Add(new global::Avalonia.Rust.Sample.Generated.TaskItemViewModelAdapter(value, _dispatch)); }
+            try { foreach (var value in values) staged.Add(new global::Avalonia.Rust.Sample.Generated.TaskItemViewModelAdapter(value, _dispatch, _post)); }
             catch { foreach (var value in staged) TryDispose(value); throw; }
             var previous = Tasks.ToArray();
             Tasks.ReplaceSnapshot(staged);
@@ -357,24 +320,167 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         _ => unchecked((int)0x80070057),
     };
 
-    public int SubmitBatch(IAvnRustVmUpdateBatch? batch) =>
-        RustVmBatchSubmission.Submit(this, this, batch,
-            () => Volatile.Read(ref _lastBatchGeneration),
-            value => Volatile.Write(ref _lastBatchGeneration, value),
-            () => Volatile.Read(ref _disposed) == 0);
-
-    public void Dispose()
+    bool IRustVmBatchTarget.TryGetProperty(int propertyId, out RustVmBatchProperty property)
     {
-        if (Interlocked.Exchange(ref _disposed, 1) == 0)
+        property = propertyId switch
         {
-            try
+            1 => new RustVmBatchProperty(nameof(Name), RustVmValueWireKind.String, false, false),
+            2 => new RustVmBatchProperty(nameof(Count), RustVmValueWireKind.Integer, false, false),
+            3 => new RustVmBatchProperty(nameof(NewItem), RustVmValueWireKind.String, false, false),
+            4 => new RustVmBatchProperty(nameof(Status), RustVmValueWireKind.String, false, false),
+            5 => new RustVmBatchProperty(nameof(Nickname), RustVmValueWireKind.String, true, false),
+            6 => new RustVmBatchProperty(nameof(Priority), RustVmValueWireKind.Integer, false, true),
+            7 => new RustVmBatchProperty(nameof(Address), RustVmValueWireKind.Model, true, false),
+            8 => new RustVmBatchProperty(nameof(NewTaskTitle), RustVmValueWireKind.String, false, false),
+            _ => default,
+        };
+        return property.Name is not null;
+    }
+
+    bool IRustVmBatchTarget.TryGetCollection(int collectionId, out RustVmBatchCollectionInfo collection)
+    {
+        collection = collectionId switch
+        {
+            1 => new RustVmBatchCollectionInfo(nameof(Items), RustVmValueWireKind.String, Items),
+            2 => new RustVmBatchCollectionInfo(nameof(Tasks), RustVmValueWireKind.Model, Tasks),
+            _ => default,
+        };
+        return collection.Items is not null;
+    }
+
+    bool IRustVmBatchTarget.TryGetCommand(int commandId, out IRustVmBatchCommand command)
+    {
+        command = commandId switch
+        {
+            1 => IncrementCommand,
+            2 => AddCommand,
+            3 => SaveCommand,
+            4 => ClearNicknameCommand,
+            5 => ToggleAddressCommand,
+            6 => AddTaskCommand,
+            7 => RemoveFirstTaskCommand,
+            8 => ShuffleTasksCommand,
+            9 => ClearTasksCommand,
+            _ => null!,
+        };
+        return command is not null;
+    }
+
+    bool IRustVmBatchTarget.IsEnumValueDefined(int propertyId, long value) => propertyId switch
+    {
+        6 => global::System.Enum.IsDefined(typeof(global::Avalonia.Rust.Sample.Generated.Priority), value),
+        _ => false,
+    };
+
+    IDisposable IRustVmBatchTarget.CreateNestedProperty(int propertyId, IAvnRustViewModel model) => propertyId switch
+    {
+        7 => new global::Avalonia.Rust.Sample.Generated.AddressViewModelAdapter(model, _dispatch, _post),
+        _ => throw new ArgumentOutOfRangeException(nameof(propertyId)),
+    };
+
+    IDisposable IRustVmBatchTarget.CreateNestedElement(int collectionId, IAvnRustViewModel model) => collectionId switch
+    {
+        2 => new global::Avalonia.Rust.Sample.Generated.TaskItemViewModelAdapter(model, _dispatch, _post),
+        _ => throw new ArgumentOutOfRangeException(nameof(collectionId)),
+    };
+
+    bool IRustVmBatchTarget.CommitProperty(int propertyId, in RustVmBatchValue value, out IDisposable? replaced)
+    {
+        replaced = null;
+        switch (propertyId)
+        {
+            case 1:
             {
-                Check(_model.Detach());
+                var next = value.Text ?? "";
+                if (Equals(_name, next)) return false;
+                _name = next;
+                return true;
             }
-            finally
+            case 2:
             {
-                DisposeNestedAdapters();
+                var next = value.Integer;
+                if (Equals(_count, next)) return false;
+                _count = next;
+                return true;
             }
+            case 3:
+            {
+                var next = value.Text ?? "";
+                if (Equals(_newItem, next)) return false;
+                _newItem = next;
+                return true;
+            }
+            case 4:
+            {
+                var next = value.Text ?? "";
+                if (Equals(_status, next)) return false;
+                _status = next;
+                return true;
+            }
+            case 5:
+            {
+                var next = value.Text;
+                if (Equals(_nickname, next)) return false;
+                _nickname = next;
+                return true;
+            }
+            case 6:
+            {
+                var next = (global::Avalonia.Rust.Sample.Generated.Priority)value.Integer;
+                if (Equals(_priority, next)) return false;
+                _priority = next;
+                return true;
+            }
+            case 7:
+            {
+                var next = (global::Avalonia.Rust.Sample.Generated.AddressViewModelAdapter?)value.Model;
+                if (Equals(_address, next)) return false;
+                replaced = _address;
+                _address = next;
+                return true;
+            }
+            case 8:
+            {
+                var next = value.Text ?? "";
+                if (Equals(_newTaskTitle, next)) return false;
+                _newTaskTitle = next;
+                return true;
+            }
+            default: return false;
+        }
+    }
+
+    bool IRustVmBatchTarget.CommitError(string propertyName, string? message) =>
+        RustVmBatchErrors.Set(_errors, propertyName, message);
+
+    void IRustVmBatchTarget.RaisePropertyChanged(string propertyName) =>
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+    void IRustVmBatchTarget.RaiseErrorsChanged(string propertyName) =>
+        ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
+
+    /// <summary>
+    /// Enqueues one immutable batch. This call never reads the batch, applies it,
+    /// or completes it on the submitting (Rust worker) stack.
+    /// </summary>
+    public int SubmitBatch(IAvnRustVmUpdateBatch? batch) => _batch.Submit(batch);
+
+    /// <summary>
+    /// Detaches the model and disposes every nested adapter exactly once. When a
+    /// batch notification triggers this re-entrantly, the gate defers the cleanup
+    /// until the batch's commit and notifications have finished.
+    /// </summary>
+    public void Dispose() => _batch.Dispose(DisposeCore);
+
+    private void DisposeCore()
+    {
+        try
+        {
+            Check(_model.Detach());
+        }
+        finally
+        {
+            DisposeNestedAdapters();
         }
     }
 
@@ -398,11 +504,11 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
 
     private int Apply(Func<int> action)
     {
-        if (Volatile.Read(ref _disposed) != 0) return 0;
+        if (_batch.IsClosed) return 0;
         var hresult = 0;
         void ApplyIfAlive()
         {
-            if (Volatile.Read(ref _disposed) == 0)
+            if (!_batch.IsClosed)
             {
                 try { hresult = action(); }
                 catch { hresult = unchecked((int)0x80004005); }
@@ -433,19 +539,11 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
 
     private void SetError(string propertyName, string? message)
     {
-        if (message is null)
-        {
-            if (_errors.Remove(propertyName))
-                ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
-        }
-        else
-        {
-            _errors[propertyName] = message;
+        if (RustVmBatchErrors.Set(_errors, propertyName, message))
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
-        }
     }
 
-    public sealed class DelegateCommand(Action execute) : ICommand
+    public sealed class DelegateCommand(Action execute) : ICommand, IRustVmBatchCommand
     {
         private bool _canExecute = true;
 
@@ -455,9 +553,16 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
 
         public void SetEnabled(bool value)
         {
-            if (_canExecute == value) return;
-            _canExecute = value;
-            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+            if (SetEnabledCore(value)) RaiseCanExecuteChanged();
         }
+
+        public bool SetEnabledCore(bool enabled)
+        {
+            if (_canExecute == enabled) return false;
+            _canExecute = enabled;
+            return true;
+        }
+
+        public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
     }
 }

@@ -139,7 +139,6 @@ public static class ViewModelSourceEmitter
         sb.AppendLine("using System.Runtime.CompilerServices;");
         sb.AppendLine("using System.Runtime.InteropServices;");
         sb.AppendLine("using System.Runtime.InteropServices.Marshalling;");
-        sb.AppendLine("using System.Threading;");
         sb.AppendLine("using System.Windows.Input;");
         sb.AppendLine("using Avalonia.Rust.Interop;");
         sb.AppendLine("using Avalonia.Threading;");
@@ -147,20 +146,22 @@ public static class ViewModelSourceEmitter
         sb.AppendLine($"namespace {model.ManagedNamespace};");
         sb.AppendLine();
         sb.AppendLine("[GeneratedComClass]");
-        sb.AppendLine($"public sealed partial class {model.Name}Adapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, IRustVmBatchSchema, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable");
+        sb.AppendLine($"public sealed partial class {model.Name}Adapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, IRustVmBatchTarget, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable");
         sb.AppendLine("{");
         sb.AppendLine("    private readonly IAvnRustViewModel _model;");
         sb.AppendLine("    private readonly Action<Action> _dispatch;");
+        sb.AppendLine("    private readonly Action<Action>? _post;");
+        sb.AppendLine("    private readonly RustVmBatchCoordinator _batch;");
         sb.AppendLine("    private readonly Dictionary<string, string> _errors = new(StringComparer.Ordinal);");
-        sb.AppendLine("    private int _disposed;");
-        sb.AppendLine("    private long _lastBatchGeneration = -1;");
         foreach (var property in model.Properties)
             sb.AppendLine($"    private {CSharpType(ir, property)} _{Lower(property.Name)} = {CSharpInitial(ir, property)};");
         sb.AppendLine();
-        sb.AppendLine($"    public {model.Name}Adapter(IAvnRustViewModel model, Action<Action>? dispatch = null)");
+        sb.AppendLine($"    public {model.Name}Adapter(IAvnRustViewModel model, Action<Action>? dispatch = null, Action<Action>? post = null)");
         sb.AppendLine("    {");
         sb.AppendLine("        _model = model;");
         sb.AppendLine("        _dispatch = dispatch ?? Dispatch;");
+        sb.AppendLine("        _post = post;");
+        sb.AppendLine("        _batch = new RustVmBatchCoordinator(this, post);");
         foreach (var command in model.Commands)
         {
             var invocation = command.IsAsync ? "BeginAsync" : "Execute";
@@ -224,28 +225,6 @@ public static class ViewModelSourceEmitter
         sb.AppendLine("        _ => unchecked((int)0x80070057),");
         sb.AppendLine("    };");
         sb.AppendLine();
-        sb.AppendLine("    public int PropertyKind(int propertyId) => propertyId switch");
-        sb.AppendLine("    {");
-        foreach (var property in model.Properties)
-            sb.AppendLine($"        {property.Id} => {(property.Kind == ViewModelValueKind.Enum ? 2 : property.Kind == ViewModelValueKind.Model ? 6 : (int)property.Kind + 1)},");
-        sb.AppendLine("        _ => 0,");
-        sb.AppendLine("    };");
-        sb.AppendLine("    public bool IsCommand(int commandId) => commandId switch");
-        sb.AppendLine("    {");
-        foreach (var command in model.Commands) sb.AppendLine($"        {command.Id} => true,");
-        sb.AppendLine("        _ => false,");
-        sb.AppendLine("    };");
-        sb.AppendLine("    public int CollectionKind(int collectionId) => collectionId switch");
-        sb.AppendLine("    {");
-        foreach (var collection in model.Collections) sb.AppendLine($"        {collection.Id} => {(collection.ElementKind == ViewModelValueKind.Model ? 6 : (int)collection.ElementKind + 1)},");
-        sb.AppendLine("        _ => 0,");
-        sb.AppendLine("    };");
-        sb.AppendLine("    public int CollectionCount(int collectionId) => collectionId switch");
-        sb.AppendLine("    {");
-        foreach (var collection in model.Collections) sb.AppendLine($"        {collection.Id} => {collection.Name}.Count,");
-        sb.AppendLine("        _ => -1,");
-        sb.AppendLine("    };");
-        sb.AppendLine();
         sb.AppendLine("    public int ReplaceModelSnapshot(int collectionId, IReadOnlyList<IAvnRustViewModel> values) => collectionId switch");
         sb.AppendLine("    {");
         foreach (var collection in model.Collections.Where(collection => collection.ElementKind == ViewModelValueKind.Model))
@@ -254,7 +233,7 @@ public static class ViewModelSourceEmitter
             sb.AppendLine($"        {collection.Id} => Apply(() =>");
             sb.AppendLine("        {");
             sb.AppendLine($"            var staged = new List<{adapter}>();");
-            sb.AppendLine("            try { foreach (var value in values) staged.Add(new " + adapter + "(value, _dispatch)); }");
+            sb.AppendLine("            try { foreach (var value in values) staged.Add(new " + adapter + "(value, _dispatch, _post)); }");
             sb.AppendLine("            catch { foreach (var value in staged) TryDispose(value); throw; }");
             sb.AppendLine($"            var previous = {collection.Name}.ToArray();");
             sb.AppendLine($"            {collection.Name}.ReplaceSnapshot(staged);");
@@ -264,24 +243,29 @@ public static class ViewModelSourceEmitter
         sb.AppendLine("        _ => unchecked((int)0x80070057),");
         sb.AppendLine("    };");
         sb.AppendLine();
-        sb.AppendLine("    public int SubmitBatch(IAvnRustVmUpdateBatch? batch) =>");
-        sb.AppendLine("        RustVmBatchSubmission.Submit(this, this, batch,");
-        sb.AppendLine("            () => Volatile.Read(ref _lastBatchGeneration),");
-        sb.AppendLine("            value => Volatile.Write(ref _lastBatchGeneration, value),");
-        sb.AppendLine("            () => Volatile.Read(ref _disposed) == 0);");
+        EmitCSharpBatchTarget(sb, ir, model);
+        sb.AppendLine("    /// <summary>");
+        sb.AppendLine("    /// Enqueues one immutable batch. This call never reads the batch, applies it,");
+        sb.AppendLine("    /// or completes it on the submitting (Rust worker) stack.");
+        sb.AppendLine("    /// </summary>");
+        sb.AppendLine("    public int SubmitBatch(IAvnRustVmUpdateBatch? batch) => _batch.Submit(batch);");
         sb.AppendLine();
-        sb.AppendLine("    public void Dispose()");
+        sb.AppendLine("    /// <summary>");
+        sb.AppendLine("    /// Detaches the model and disposes every nested adapter exactly once. When a");
+        sb.AppendLine("    /// batch notification triggers this re-entrantly, the gate defers the cleanup");
+        sb.AppendLine("    /// until the batch's commit and notifications have finished.");
+        sb.AppendLine("    /// </summary>");
+        sb.AppendLine("    public void Dispose() => _batch.Dispose(DisposeCore);");
+        sb.AppendLine();
+        sb.AppendLine("    private void DisposeCore()");
         sb.AppendLine("    {");
-        sb.AppendLine("        if (Interlocked.Exchange(ref _disposed, 1) == 0)");
+        sb.AppendLine("        try");
         sb.AppendLine("        {");
-        sb.AppendLine("            try");
-        sb.AppendLine("            {");
-        sb.AppendLine("                Check(_model.Detach());");
-        sb.AppendLine("            }");
-        sb.AppendLine("            finally");
-        sb.AppendLine("            {");
-        sb.AppendLine("                DisposeNestedAdapters();");
-        sb.AppendLine("            }");
+        sb.AppendLine("            Check(_model.Detach());");
+        sb.AppendLine("        }");
+        sb.AppendLine("        finally");
+        sb.AppendLine("        {");
+        sb.AppendLine("            DisposeNestedAdapters();");
         sb.AppendLine("        }");
         sb.AppendLine("    }");
         sb.AppendLine();
@@ -307,11 +291,11 @@ public static class ViewModelSourceEmitter
         sb.AppendLine();
         sb.AppendLine("    private int Apply(Func<int> action)");
         sb.AppendLine("    {");
-        sb.AppendLine("        if (Volatile.Read(ref _disposed) != 0) return 0;");
+        sb.AppendLine("        if (_batch.IsClosed) return 0;");
         sb.AppendLine("        var hresult = 0;");
         sb.AppendLine("        void ApplyIfAlive()");
         sb.AppendLine("        {");
-        sb.AppendLine("            if (Volatile.Read(ref _disposed) == 0)");
+        sb.AppendLine("            if (!_batch.IsClosed)");
         sb.AppendLine("            {");
         sb.AppendLine("                try { hresult = action(); }");
         sb.AppendLine("                catch { hresult = unchecked((int)0x80004005); }");
@@ -342,19 +326,11 @@ public static class ViewModelSourceEmitter
         sb.AppendLine();
         sb.AppendLine("    private void SetError(string propertyName, string? message)");
         sb.AppendLine("    {");
-        sb.AppendLine("        if (message is null)");
-        sb.AppendLine("        {");
-        sb.AppendLine("            if (_errors.Remove(propertyName))");
-        sb.AppendLine("                ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));");
-        sb.AppendLine("        }");
-        sb.AppendLine("        else");
-        sb.AppendLine("        {");
-        sb.AppendLine("            _errors[propertyName] = message;");
+        sb.AppendLine("        if (RustVmBatchErrors.Set(_errors, propertyName, message))");
         sb.AppendLine("            ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));");
-        sb.AppendLine("        }");
         sb.AppendLine("    }");
         sb.AppendLine();
-        sb.AppendLine("    public sealed class DelegateCommand(Action execute) : ICommand");
+        sb.AppendLine("    public sealed class DelegateCommand(Action execute) : ICommand, IRustVmBatchCommand");
         sb.AppendLine("    {");
         sb.AppendLine("        private bool _canExecute = true;");
         sb.AppendLine();
@@ -364,14 +340,165 @@ public static class ViewModelSourceEmitter
         sb.AppendLine();
         sb.AppendLine("        public void SetEnabled(bool value)");
         sb.AppendLine("        {");
-        sb.AppendLine("            if (_canExecute == value) return;");
-        sb.AppendLine("            _canExecute = value;");
-        sb.AppendLine("            CanExecuteChanged?.Invoke(this, EventArgs.Empty);");
+        sb.AppendLine("            if (SetEnabledCore(value)) RaiseCanExecuteChanged();");
         sb.AppendLine("        }");
+        sb.AppendLine();
+        sb.AppendLine("        public bool SetEnabledCore(bool enabled)");
+        sb.AppendLine("        {");
+        sb.AppendLine("            if (_canExecute == enabled) return false;");
+        sb.AppendLine("            _canExecute = enabled;");
+        sb.AppendLine("            return true;");
+        sb.AppendLine("        }");
+        sb.AppendLine();
+        sb.AppendLine("        public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);");
         sb.AppendLine("    }");
         sb.AppendLine("}");
         return sb.ToString();
     }
+
+    /// <summary>
+    /// Emits the adapter's <c>IRustVmBatchTarget</c> implementation: the schema
+    /// the shared staged engine validates against, the nested-adapter factories
+    /// it stages with, and notification-free stores it commits through. The
+    /// engine owns all ordering, atomicity and notification coalescing, so the
+    /// generated code here is pure switch-over-id with no transactional logic.
+    /// </summary>
+    private static void EmitCSharpBatchTarget(StringBuilder sb, ViewModelIr ir, ViewModelDefinition model)
+    {
+        var modelProperties = model.Properties.Where(property => property.Kind == ViewModelValueKind.Model).ToArray();
+        var modelCollections = model.Collections.Where(collection => collection.ElementKind == ViewModelValueKind.Model).ToArray();
+
+        sb.AppendLine("    bool IRustVmBatchTarget.TryGetProperty(int propertyId, out RustVmBatchProperty property)");
+        sb.AppendLine("    {");
+        sb.AppendLine("        property = propertyId switch");
+        sb.AppendLine("        {");
+        foreach (var property in model.Properties)
+        {
+            // A nested model property is always clearable through SetNull.
+            var nullable = (property.Nullable || property.Kind == ViewModelValueKind.Model).ToString().ToLowerInvariant();
+            var isEnum = (property.Kind == ViewModelValueKind.Enum).ToString().ToLowerInvariant();
+            sb.AppendLine(
+                $"            {property.Id} => new RustVmBatchProperty(nameof({property.Name}), RustVmValueWireKind.{BatchWireKind(property.Kind)}, {nullable}, {isEnum}),");
+        }
+        sb.AppendLine("            _ => default,");
+        sb.AppendLine("        };");
+        sb.AppendLine("        return property.Name is not null;");
+        sb.AppendLine("    }");
+        sb.AppendLine();
+        sb.AppendLine("    bool IRustVmBatchTarget.TryGetCollection(int collectionId, out RustVmBatchCollectionInfo collection)");
+        sb.AppendLine("    {");
+        sb.AppendLine("        collection = collectionId switch");
+        sb.AppendLine("        {");
+        foreach (var collection in model.Collections)
+        {
+            sb.AppendLine(
+                $"            {collection.Id} => new RustVmBatchCollectionInfo(nameof({collection.Name}), RustVmValueWireKind.{BatchWireKind(collection.ElementKind)}, {collection.Name}),");
+        }
+        sb.AppendLine("            _ => default,");
+        sb.AppendLine("        };");
+        sb.AppendLine("        return collection.Items is not null;");
+        sb.AppendLine("    }");
+        sb.AppendLine();
+        sb.AppendLine("    bool IRustVmBatchTarget.TryGetCommand(int commandId, out IRustVmBatchCommand command)");
+        sb.AppendLine("    {");
+        sb.AppendLine("        command = commandId switch");
+        sb.AppendLine("        {");
+        foreach (var command in model.Commands)
+            sb.AppendLine($"            {command.Id} => {command.Name}Command,");
+        sb.AppendLine("            _ => null!,");
+        sb.AppendLine("        };");
+        sb.AppendLine("        return command is not null;");
+        sb.AppendLine("    }");
+        sb.AppendLine();
+        sb.AppendLine("    bool IRustVmBatchTarget.IsEnumValueDefined(int propertyId, long value) => propertyId switch");
+        sb.AppendLine("    {");
+        foreach (var property in model.Properties.Where(property => property.Kind == ViewModelValueKind.Enum))
+        {
+            sb.AppendLine(
+                $"        {property.Id} => global::System.Enum.IsDefined(typeof({CSharpEnumTypeName(ir, property.EnumName!)}), value),");
+        }
+        sb.AppendLine("        _ => false,");
+        sb.AppendLine("    };");
+        sb.AppendLine();
+        sb.AppendLine("    IDisposable IRustVmBatchTarget.CreateNestedProperty(int propertyId, IAvnRustViewModel model) => propertyId switch");
+        sb.AppendLine("    {");
+        foreach (var property in modelProperties)
+        {
+            sb.AppendLine(
+                $"        {property.Id} => new {CSharpModelAdapterTypeName(ir, property.ModelName!)}(model, _dispatch, _post),");
+        }
+        sb.AppendLine("        _ => throw new ArgumentOutOfRangeException(nameof(propertyId)),");
+        sb.AppendLine("    };");
+        sb.AppendLine();
+        sb.AppendLine("    IDisposable IRustVmBatchTarget.CreateNestedElement(int collectionId, IAvnRustViewModel model) => collectionId switch");
+        sb.AppendLine("    {");
+        foreach (var collection in modelCollections)
+        {
+            sb.AppendLine(
+                $"        {collection.Id} => new {CSharpModelAdapterTypeName(ir, collection.ElementModelName!)}(model, _dispatch, _post),");
+        }
+        sb.AppendLine("        _ => throw new ArgumentOutOfRangeException(nameof(collectionId)),");
+        sb.AppendLine("    };");
+        sb.AppendLine();
+        sb.AppendLine("    bool IRustVmBatchTarget.CommitProperty(int propertyId, in RustVmBatchValue value, out IDisposable? replaced)");
+        sb.AppendLine("    {");
+        sb.AppendLine("        replaced = null;");
+        sb.AppendLine("        switch (propertyId)");
+        sb.AppendLine("        {");
+        foreach (var property in model.Properties)
+        {
+            var field = $"_{Lower(property.Name)}";
+            sb.AppendLine($"            case {property.Id}:");
+            sb.AppendLine("            {");
+            sb.AppendLine($"                var next = {CSharpBatchValue(ir, property)};");
+            sb.AppendLine($"                if (Equals({field}, next)) return false;");
+            if (property.Kind == ViewModelValueKind.Model)
+                sb.AppendLine($"                replaced = {field};");
+            sb.AppendLine($"                {field} = next;");
+            sb.AppendLine("                return true;");
+            sb.AppendLine("            }");
+        }
+        sb.AppendLine("            default: return false;");
+        sb.AppendLine("        }");
+        sb.AppendLine("    }");
+        sb.AppendLine();
+        sb.AppendLine("    bool IRustVmBatchTarget.CommitError(string propertyName, string? message) =>");
+        sb.AppendLine("        RustVmBatchErrors.Set(_errors, propertyName, message);");
+        sb.AppendLine();
+        sb.AppendLine("    void IRustVmBatchTarget.RaisePropertyChanged(string propertyName) =>");
+        sb.AppendLine("        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));");
+        sb.AppendLine();
+        sb.AppendLine("    void IRustVmBatchTarget.RaiseErrorsChanged(string propertyName) =>");
+        sb.AppendLine("        ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));");
+        sb.AppendLine();
+    }
+
+    private static string BatchWireKind(ViewModelValueKind kind) => kind switch
+    {
+        ViewModelValueKind.String => "String",
+        ViewModelValueKind.Integer or ViewModelValueKind.Enum => "Integer",
+        ViewModelValueKind.Boolean => "Boolean",
+        ViewModelValueKind.Double => "Double",
+        ViewModelValueKind.Model => "Model",
+        _ => throw new ArgumentOutOfRangeException(nameof(kind)),
+    };
+
+    /// <summary>
+    /// Builds the expression that turns one already validated and staged
+    /// <c>RustVmBatchValue</c> into this property's strongly typed field value.
+    /// </summary>
+    private static string CSharpBatchValue(ViewModelIr ir, ViewModelProperty property) => property.Kind switch
+    {
+        // A nullable string reads null straight from the decoded value: only
+        // SetString carries text, so SetNull naturally lands on null.
+        ViewModelValueKind.String => property.Nullable ? "value.Text" : "value.Text ?? \"\"",
+        ViewModelValueKind.Integer => "value.Integer",
+        ViewModelValueKind.Boolean => "value.Boolean",
+        ViewModelValueKind.Double => "value.Double",
+        ViewModelValueKind.Enum => $"({CSharpEnumTypeName(ir, property.EnumName!)})value.Integer",
+        ViewModelValueKind.Model => $"({CSharpModelAdapterTypeName(ir, property.ModelName!)}?)value.Model",
+        _ => throw new ArgumentOutOfRangeException(nameof(property)),
+    };
 
     private static void EmitCSharpSinkMethods(StringBuilder sb, ViewModelIr ir, ViewModelDefinition model)
     {
@@ -416,7 +543,7 @@ public static class ViewModelSourceEmitter
             sb.AppendLine($"        {property.Id} => Apply(() =>");
             sb.AppendLine("        {");
             sb.AppendLine($"            var previous = _{Lower(property.Name)};");
-            sb.AppendLine($"            _{Lower(property.Name)} = model is null ? null : new {adapterType}(model, _dispatch);");
+            sb.AppendLine($"            _{Lower(property.Name)} = model is null ? null : new {adapterType}(model, _dispatch, _post);");
             sb.AppendLine($"            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof({property.Name})));");
             sb.AppendLine("            previous?.Dispose();");
             sb.AppendLine("        }),");
@@ -433,7 +560,7 @@ public static class ViewModelSourceEmitter
         foreach (var collection in modelCollections)
         {
             var adapterType = CSharpModelAdapterTypeName(ir, collection.ElementModelName!);
-            sb.AppendLine($"        {collection.Id} => model is null ? unchecked((int)0x80070057) : Apply(() => {collection.Name}.Add(new {adapterType}(model, _dispatch))),");
+            sb.AppendLine($"        {collection.Id} => model is null ? unchecked((int)0x80070057) : Apply(() => {collection.Name}.Add(new {adapterType}(model, _dispatch, _post))),");
         }
         sb.AppendLine("        _ => unchecked((int)0x80070057),");
         sb.AppendLine("    };");
@@ -452,7 +579,7 @@ public static class ViewModelSourceEmitter
         foreach (var collection in modelCollections)
         {
             var adapterType = CSharpModelAdapterTypeName(ir, collection.ElementModelName!);
-            sb.AppendLine($"        {collection.Id} => model is null ? unchecked((int)0x80070057) : Apply(() => {{ if ((uint)index > (uint){collection.Name}.Count) return unchecked((int)0x80070057); {collection.Name}.Insert(index, new {adapterType}(model, _dispatch)); return 0; }}),");
+            sb.AppendLine($"        {collection.Id} => model is null ? unchecked((int)0x80070057) : Apply(() => {{ if ((uint)index > (uint){collection.Name}.Count) return unchecked((int)0x80070057); {collection.Name}.Insert(index, new {adapterType}(model, _dispatch, _post)); return 0; }}),");
         }
         sb.AppendLine("        _ => unchecked((int)0x80070057),");
         sb.AppendLine("    };");
@@ -475,7 +602,7 @@ public static class ViewModelSourceEmitter
             sb.AppendLine("        {");
             sb.AppendLine($"            if ((uint)index >= (uint){collection.Name}.Count) return unchecked((int)0x80070057);");
             sb.AppendLine($"            var previous = {collection.Name}[index];");
-            sb.AppendLine($"            {collection.Name}[index] = new {adapterType}(model, _dispatch);");
+            sb.AppendLine($"            {collection.Name}[index] = new {adapterType}(model, _dispatch, _post);");
             sb.AppendLine("            previous.Dispose();");
             sb.AppendLine("            return 0;");
             sb.AppendLine("        }),");
@@ -810,21 +937,29 @@ public static class ViewModelSourceEmitter
                     break;
                 case ViewModelValueKind.Model:
                     sb.AppendLine($"    pub fn set_{name}(&mut self, value: impl {property.ModelName}) {{ self.0.push_model(6, {property.Id}, 0, {property.ModelName}Dispatch {{ model: value }}); }}");
+                    sb.AppendLine($"    pub fn clear_{name}(&mut self) {{ self.0.push_model_null({property.Id}); }}");
                     break;
             }
             sb.AppendLine($"    pub fn set_{name}_error(&mut self, message: impl AsRef<str>) {{ self.0.push_string(18, {property.Id}, 0, message); }}");
+            sb.AppendLine($"    pub fn clear_{name}_error(&mut self) {{ self.0.push_clear_error({property.Id}); }}");
         }
         foreach (var collection in stringCollections)
         {
             var name = Snake(collection.Name);
             sb.AppendLine($"    pub fn add_{name}(&mut self, value: impl AsRef<str>) {{ self.0.push_string(7, {collection.Id}, 0, value); }}");
+            sb.AppendLine($"    pub fn insert_{name}(&mut self, index: i32, value: impl AsRef<str>) {{ self.0.push_string(9, {collection.Id}, index, value); }}");
+            sb.AppendLine($"    pub fn replace_{name}(&mut self, index: i32, value: impl AsRef<str>) {{ self.0.push_string(11, {collection.Id}, index, value); }}");
             sb.AppendLine($"    pub fn replace_{name}_snapshot<S: AsRef<str>>(&mut self, values: impl IntoIterator<Item = S>) {{ self.0.push_string_snapshot({collection.Id}, values); }}");
             sb.AppendLine($"    pub fn remove_{name}(&mut self, index: i32) {{ self.0.push_indices(13, {collection.Id}, index, 0); }}");
+            sb.AppendLine($"    pub fn move_{name}(&mut self, from_index: i32, to_index: i32) {{ self.0.push_indices(14, {collection.Id}, from_index, to_index); }}");
+            sb.AppendLine($"    pub fn clear_{name}(&mut self) {{ self.0.push_indices(19, {collection.Id}, 0, 0); }}");
         }
         foreach (var collection in modelCollections)
         {
             var name = Snake(collection.Name);
             sb.AppendLine($"    pub fn add_{name}(&mut self, value: impl {collection.ElementModelName}) {{ self.0.push_model(8, {collection.Id}, 0, {collection.ElementModelName}Dispatch {{ model: value }}); }}");
+            sb.AppendLine($"    pub fn insert_{name}(&mut self, index: i32, value: impl {collection.ElementModelName}) {{ self.0.push_model(10, {collection.Id}, index, {collection.ElementModelName}Dispatch {{ model: value }}); }}");
+            sb.AppendLine($"    pub fn replace_{name}(&mut self, index: i32, value: impl {collection.ElementModelName}) {{ self.0.push_model(12, {collection.Id}, index, {collection.ElementModelName}Dispatch {{ model: value }}); }}");
             sb.AppendLine($"    pub fn replace_{name}_snapshot<M: {collection.ElementModelName}>(&mut self, values: impl IntoIterator<Item = M>) {{ self.0.push_model_snapshot({collection.Id}, values.into_iter().map(|value| {collection.ElementModelName}Dispatch {{ model: value }})); }}");
             sb.AppendLine($"    pub fn remove_{name}(&mut self, index: i32) {{ self.0.push_model_indices(13, {collection.Id}, index, 0); }}");
             sb.AppendLine($"    pub fn move_{name}(&mut self, from_index: i32, to_index: i32) {{ self.0.push_model_indices(14, {collection.Id}, from_index, to_index); }}");

@@ -5,11 +5,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
-using System.Threading;
 using System.Windows.Input;
 using Avalonia.Rust.Interop;
 using Avalonia.Threading;
@@ -104,6 +102,7 @@ public sealed partial class ReflectableRustViewModelAdapter :
     IAvnRustVmSink,
     IAvnRustVmSink2,
     IAvnRustVmSink3,
+    IRustVmBatchTarget,
     INotifyPropertyChanged,
     INotifyDataErrorInfo,
     IReflectableType,
@@ -119,18 +118,20 @@ public sealed partial class ReflectableRustViewModelAdapter :
     private readonly Dictionary<string, RuntimeMember> _membersByName =
         new(StringComparer.Ordinal);
     private readonly TypeInfo _typeInfo;
-    private readonly object _batchGate = new();
-    private int _disposed;
-    private long _lastBatchGeneration = -1;
+    private readonly RustVmBatchCoordinator _batch;
+    private readonly Action<Action>? _post;
 
     public ReflectableRustViewModelAdapter(
         IAvnRustViewModel model,
         RustViewModelDescriptor descriptor,
-        Action<Action>? dispatch = null)
+        Action<Action>? dispatch = null,
+        Action<Action>? post = null)
     {
         _model = model ?? throw new ArgumentNullException(nameof(model));
         ArgumentNullException.ThrowIfNull(descriptor);
         _dispatch = dispatch ?? Dispatch;
+        _post = post;
+        _batch = new RustVmBatchCoordinator(this, post);
 
         foreach (var property in descriptor.Properties)
         {
@@ -277,7 +278,7 @@ public sealed partial class ReflectableRustViewModelAdapter :
                 return InvalidArgument;
             var previous = collection.Items[index] as ReflectableRustViewModelAdapter;
             collection.Items[index] =
-                new ReflectableRustViewModelAdapter(model, collection.Descriptor.ElementDescriptor!, _dispatch);
+                new ReflectableRustViewModelAdapter(model, collection.Descriptor.ElementDescriptor!, _dispatch, _post);
             previous?.Dispose();
             return 0;
         });
@@ -348,7 +349,7 @@ public sealed partial class ReflectableRustViewModelAdapter :
             var previous = property.Value as ReflectableRustViewModelAdapter;
             property.Value = model is null
                 ? null
-                : new ReflectableRustViewModelAdapter(model, property.Descriptor.NestedDescriptor!, _dispatch);
+                : new ReflectableRustViewModelAdapter(model, property.Descriptor.NestedDescriptor!, _dispatch, _post);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property.Descriptor.Name));
             previous?.Dispose();
         });
@@ -369,43 +370,30 @@ public sealed partial class ReflectableRustViewModelAdapter :
     }
 
     /// <summary>
-    /// Posts exactly one UI work item and deliberately does not inspect <paramref name="batch"/>
-    /// on this COM call stack. This is the worker-safe publication path; the legacy sink
-    /// members above remain synchronous only for ABI compatibility.
+    /// Enqueues exactly one UI work item and deliberately does not inspect
+    /// <paramref name="batch"/> or complete it on this COM call stack. This is the
+    /// worker-safe publication path; the legacy sink members above remain
+    /// synchronous only for ABI compatibility.
     /// </summary>
-    public int SubmitBatch(IAvnRustVmUpdateBatch? batch)
-    {
-        if (batch is null)
-            return InvalidArgument;
+    public int SubmitBatch(IAvnRustVmUpdateBatch? batch) => _batch.Submit(batch);
 
+    /// <summary>
+    /// Detaches the model and disposes every nested adapter exactly once. When a
+    /// batch notification triggers this re-entrantly, the gate defers the
+    /// cleanup until the batch's commit and notifications have finished, so the
+    /// batch never publishes into a half-detached adapter.
+    /// </summary>
+    public void Dispose() => _batch.Dispose(DisposeCore);
+
+    private void DisposeCore()
+    {
         try
         {
-            Dispatcher.UIThread.Post(() => ApplyBatch(batch));
-            return 0;
+            Check(_model.Detach());
         }
-        catch
+        finally
         {
-            // Completion is posted as well: a Rust callback is never made on SubmitBatch's stack.
-            Dispatcher.UIThread.Post(() => RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, unchecked((int)0x80004005)));
-            return unchecked((int)0x80004005);
-        }
-    }
-
-    public void Dispose()
-    {
-        lock (_batchGate)
-        {
-            if (Interlocked.Exchange(ref _disposed, 1) == 0)
-            {
-                try
-                {
-                    Check(_model.Detach());
-                }
-                finally
-                {
-                    DisposeNestedAdapters();
-                }
-            }
+            DisposeNestedAdapters();
         }
     }
 
@@ -468,7 +456,7 @@ public sealed partial class ReflectableRustViewModelAdapter :
                 return InvalidArgument;
             collection.Items.Insert(
                 target,
-                new ReflectableRustViewModelAdapter(model, collection.Descriptor.ElementDescriptor!, _dispatch));
+                new ReflectableRustViewModelAdapter(model, collection.Descriptor.ElementDescriptor!, _dispatch, _post));
             return 0;
         });
     }
@@ -482,14 +470,14 @@ public sealed partial class ReflectableRustViewModelAdapter :
         }
 
         if (property.Descriptor.Kind == RustViewModelValueKind.Enum &&
-            !Enum.IsDefined(property.Value!.GetType(), rawValue!))
+            (property.EnumType is not { } enumType || !Enum.IsDefined(enumType, rawValue!)))
         {
             return InvalidArgument;
         }
 
         object? value = property.Descriptor.Kind switch
         {
-            RustViewModelValueKind.Enum => Enum.ToObject(property.Value!.GetType(), rawValue!),
+            RustViewModelValueKind.Enum => Enum.ToObject(property.EnumType!, rawValue!),
             RustViewModelValueKind.String when !property.Descriptor.Nullable => rawValue ?? "",
             _ => rawValue,
         };
@@ -514,13 +502,13 @@ public sealed partial class ReflectableRustViewModelAdapter :
 
     private int Apply(Func<int> action)
     {
-        if (Volatile.Read(ref _disposed) != 0)
+        if (_batch.IsClosed)
             return 0;
 
         var hresult = 0;
         void ApplyIfAlive()
         {
-            if (Volatile.Read(ref _disposed) == 0)
+            if (!_batch.IsClosed)
             {
                 try
                 {
@@ -547,343 +535,113 @@ public sealed partial class ReflectableRustViewModelAdapter :
 
     private void SetError(string propertyName, string? message)
     {
-        if (message is null)
-        {
-            if (_errors.Remove(propertyName))
-                ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
-        }
-        else
-        {
-            _errors[propertyName] = message;
+        if (RustVmBatchErrors.Set(_errors, propertyName, message))
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
-        }
     }
 
-    private void ApplyBatch(IAvnRustVmUpdateBatch batch)
+    bool IRustVmBatchTarget.TryGetProperty(int propertyId, out RustVmBatchProperty property)
     {
-        lock (_batchGate)
+        if (!_propertiesById.TryGetValue(propertyId, out var runtime))
         {
-            if (Volatile.Read(ref _disposed) != 0)
-            {
-                RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Cancelled);
-                return;
-            }
+            property = default;
+            return false;
+        }
 
-            try
-            {
-                var hr = batch.GetGeneration(out var generation);
-                if (hr < 0)
-                {
-                    RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr);
-                    return;
-                }
-                // Equal generations are stale too.  This gives duplicates a deterministic outcome
-                // and makes the highest generation win regardless of worker submission order.
-                if (generation <= Volatile.Read(ref _lastBatchGeneration))
-                {
-                    RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Stale);
-                    return;
-                }
-
-                hr = batch.GetOperationCount(out var count);
-                if (hr < 0 || count < 0)
-                {
-                    RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr < 0 ? hr : InvalidArgument);
-                    return;
-                }
-
-                var entries = new List<BatchEntry>(count);
-                for (var index = 0; index < count; index++)
-                {
-                    hr = batch.GetOperation(index, out var operation);
-                    if (hr < 0 || operation is null || !TryRead(operation, out var entry, out hr))
-                    {
-                        RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr < 0 ? hr : InvalidArgument);
-                        return;
-                    }
-                    if (entry.Kind is RustVmUpdateKind.ReplaceStringSnapshot or RustVmUpdateKind.ReplaceModelSnapshot)
-                    {
-                        if (!TryReadSnapshot(batch, index, entry, out hr))
-                        {
-                            RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr);
-                            return;
-                        }
-                    }
-                    entries.Add(entry);
-                }
-
-                if (!ValidateAndStage(entries, out hr))
-                {
-                    DisposeStaged(entries);
-                    RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr);
-                    return;
-                }
-
-                Commit(entries);
-                Volatile.Write(ref _lastBatchGeneration, generation);
-                RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Applied);
-            }
-            catch (BatchCancelledException)
-            {
-                RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Cancelled);
-            }
-            catch
-            {
-                RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, unchecked((int)0x80004005));
-            }
+        var kind = runtime.Descriptor.Kind;
+        property = new RustVmBatchProperty(
+            runtime.Descriptor.Name,
+            BatchWireKind(kind),
+            // Nested models are always clearable; the descriptor only tracks
+            // nullability for scalars.
+            runtime.Descriptor.Nullable || kind == RustViewModelValueKind.Model,
+            kind == RustViewModelValueKind.Enum);
+        return true;
     }
+
+    bool IRustVmBatchTarget.TryGetCollection(int collectionId, out RustVmBatchCollectionInfo collection)
+    {
+        if (!_collectionsById.TryGetValue(collectionId, out var runtime))
+        {
+            collection = default;
+            return false;
         }
 
-        private bool TryRead(IAvnRustVmUpdateOperation operation, out BatchEntry entry, out int hr)
-        {
-            entry = new BatchEntry();
-            hr = operation.GetKind(out var kind);
-            if (hr < 0 || !Enum.IsDefined(typeof(RustVmUpdateKind), kind))
-                return false;
-            entry.Kind = (RustVmUpdateKind)kind;
-            hr = operation.GetTargetId(out entry.Target);
-            if (hr < 0) return false;
-            hr = operation.GetIndex(out entry.Index);
-            if (hr < 0) return false;
-            hr = operation.GetIndex2(out entry.Index2);
-            if (hr < 0) return false;
-            hr = operation.GetInteger(out entry.Integer);
-            if (hr < 0) return false;
-            hr = operation.GetDouble(out entry.Double);
-            if (hr < 0) return false;
-            hr = operation.GetBoolean(out entry.Boolean);
-            if (hr < 0) return false;
-            hr = RustVmBatchReader.ReadText(operation, out entry.Text);
-            if (hr < 0) return false;
-            hr = operation.GetModel(out entry.Model);
-            return hr >= 0;
-        }
+        collection = new RustVmBatchCollectionInfo(
+            runtime.Descriptor.Name,
+            BatchWireKind(runtime.Descriptor.ElementKind),
+            runtime.Items);
+        return true;
+    }
 
-        private bool TryReadSnapshot(IAvnRustVmUpdateBatch batch, int operationIndex, BatchEntry entry, out int hr)
+    bool IRustVmBatchTarget.TryGetCommand(int commandId, out IRustVmBatchCommand command)
+    {
+        if (_commandsById.TryGetValue(commandId, out var runtime))
         {
-            hr = batch.GetSnapshotItemCount(operationIndex, out var count);
-            if (hr < 0 || count < 0)
-            {
-                hr = hr < 0 ? hr : InvalidArgument;
-                return false;
-            }
-            entry.Snapshot = new List<object?>(count);
-            for (var item = 0; item < count; item++)
-            {
-                if (entry.Kind == RustVmUpdateKind.ReplaceStringSnapshot)
-                {
-                    hr = RustVmBatchReader.ReadSnapshotText(batch, operationIndex, item, out var value);
-                    if (hr < 0) return false;
-                    entry.Snapshot.Add(value);
-                }
-                else
-                {
-                    hr = batch.GetSnapshotModel(operationIndex, item, out var model);
-                    if (hr < 0 || model is null)
-                    {
-                        hr = hr < 0 ? hr : InvalidArgument;
-                        return false;
-                    }
-                    entry.Snapshot.Add(model);
-                }
-            }
+            command = runtime;
             return true;
         }
 
-        private bool ValidateAndStage(List<BatchEntry> entries, out int hr)
-        {
-            hr = 0;
-            var counts = _collectionsById.ToDictionary(pair => pair.Key, pair => pair.Value.Items.Count);
-            foreach (var entry in entries)
-            {
-                if (Volatile.Read(ref _disposed) != 0)
-                    throw new BatchCancelledException();
-                if (!ValidateEntry(entry, counts))
-                {
-                    hr = InvalidArgument;
-                    return false;
-                }
-                try
-                {
-                    if (entry.Kind is RustVmUpdateKind.SetModel or RustVmUpdateKind.AddModel or RustVmUpdateKind.InsertModel or RustVmUpdateKind.ReplaceModel)
-                        entry.StagedModel = new ReflectableRustViewModelAdapter(entry.Model!, ModelDescriptor(entry), _dispatch);
-                    else if (entry.Kind == RustVmUpdateKind.ReplaceModelSnapshot)
-                    {
-                        var staged = new List<object?>();
-                        try
-                        {
-                            foreach (var model in entry.Snapshot!.Cast<IAvnRustViewModel>())
-                                staged.Add(new ReflectableRustViewModelAdapter(model, ModelDescriptor(entry), _dispatch));
-                            entry.StagedSnapshot = staged;
-                        }
-                        catch
-                        {
-                            foreach (var adapter in staged)
-                                TryDispose(adapter as IDisposable);
-                            throw;
-                        }
-                    }
-                }
-                catch
-                {
-                    hr = unchecked((int)0x80004005);
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        private bool ValidateEntry(BatchEntry entry, Dictionary<int, int> counts)
-        {
-            if (entry.Kind is RustVmUpdateKind.SetString or RustVmUpdateKind.SetInteger or RustVmUpdateKind.SetBoolean or RustVmUpdateKind.SetDouble or RustVmUpdateKind.SetNull or RustVmUpdateKind.SetModel or RustVmUpdateKind.SetPropertyError)
-            {
-                if (!_propertiesById.TryGetValue(entry.Target, out var property))
-                    return false;
-                return entry.Kind switch
-                {
-                    RustVmUpdateKind.SetString => WireKind(property.Descriptor.Kind) == RustViewModelValueKind.String,
-                    RustVmUpdateKind.SetInteger => WireKind(property.Descriptor.Kind) == RustViewModelValueKind.Integer &&
-                        (property.Descriptor.Kind != RustViewModelValueKind.Enum || Enum.IsDefined(property.Value!.GetType(), entry.Integer)),
-                    RustVmUpdateKind.SetBoolean => WireKind(property.Descriptor.Kind) == RustViewModelValueKind.Boolean,
-                    RustVmUpdateKind.SetDouble => WireKind(property.Descriptor.Kind) == RustViewModelValueKind.Double,
-                    RustVmUpdateKind.SetNull => property.Descriptor.Nullable,
-                    RustVmUpdateKind.SetModel => property.Descriptor.Kind == RustViewModelValueKind.Model && entry.Model is not null,
-                    _ => true,
-                };
-            }
-            if (entry.Kind == RustVmUpdateKind.SetCommandEnabled)
-                return _commandsById.ContainsKey(entry.Target);
-            if (!_collectionsById.TryGetValue(entry.Target, out var collection) || !counts.TryGetValue(entry.Target, out var count))
-                return false;
-            var models = collection.Descriptor.ElementKind == RustViewModelValueKind.Model;
-            var strings = collection.Descriptor.ElementKind == RustViewModelValueKind.String;
-            var validIndex = entry.Index >= 0 && entry.Index < count;
-            var insertIndex = entry.Index >= 0 && entry.Index <= count;
-            switch (entry.Kind)
-            {
-                case RustVmUpdateKind.AddString when strings: counts[entry.Target] = count + 1; return true;
-                case RustVmUpdateKind.AddModel when models && entry.Model is not null: counts[entry.Target] = count + 1; return true;
-                case RustVmUpdateKind.InsertString when strings && insertIndex: counts[entry.Target] = count + 1; return true;
-                case RustVmUpdateKind.InsertModel when models && insertIndex && entry.Model is not null: counts[entry.Target] = count + 1; return true;
-                case RustVmUpdateKind.ReplaceString when strings && validIndex: return true;
-                case RustVmUpdateKind.ReplaceModel when models && validIndex && entry.Model is not null: return true;
-                case RustVmUpdateKind.RemoveAt when validIndex: counts[entry.Target] = count - 1; return true;
-                case RustVmUpdateKind.MoveItem when validIndex && entry.Index2 >= 0 && entry.Index2 < count: return true;
-                case RustVmUpdateKind.ReplaceStringSnapshot when strings: counts[entry.Target] = entry.Snapshot!.Count; return true;
-                case RustVmUpdateKind.ReplaceModelSnapshot when models: counts[entry.Target] = entry.Snapshot!.Count; return true;
-                default: return false;
-            }
-        }
-
-        private RustViewModelDescriptor ModelDescriptor(BatchEntry entry) =>
-            entry.Kind == RustVmUpdateKind.SetModel
-                ? _propertiesById[entry.Target].Descriptor.NestedDescriptor!
-                : _collectionsById[entry.Target].Descriptor.ElementDescriptor!;
-
-        private void Commit(IEnumerable<BatchEntry> entries)
-        {
-            foreach (var entry in entries)
-            {
-                if ((entry.Kind is RustVmUpdateKind.SetString or RustVmUpdateKind.SetInteger or
-                    RustVmUpdateKind.SetBoolean or RustVmUpdateKind.SetDouble or RustVmUpdateKind.SetNull or
-                    RustVmUpdateKind.SetModel or RustVmUpdateKind.SetPropertyError) &&
-                    _propertiesById.TryGetValue(entry.Target, out var property))
-                {
-                    object? value = entry.Kind switch
-                    {
-                        RustVmUpdateKind.SetString => property.Descriptor.Nullable ? entry.Text : entry.Text ?? "",
-                        RustVmUpdateKind.SetInteger when property.Descriptor.Kind == RustViewModelValueKind.Enum => Enum.ToObject(property.Value!.GetType(), entry.Integer),
-                        RustVmUpdateKind.SetInteger => entry.Integer,
-                        RustVmUpdateKind.SetBoolean => entry.Boolean != 0,
-                        RustVmUpdateKind.SetDouble => entry.Double,
-                        RustVmUpdateKind.SetNull => null,
-                        RustVmUpdateKind.SetModel => entry.StagedModel,
-                        _ => property.Value,
-                    };
-                    if (entry.Kind == RustVmUpdateKind.SetPropertyError) { SetError(property.Descriptor.Name, entry.Text); continue; }
-                    if ((entry.Kind is RustVmUpdateKind.SetString or RustVmUpdateKind.SetInteger or
-                        RustVmUpdateKind.SetBoolean or RustVmUpdateKind.SetDouble or RustVmUpdateKind.SetNull or
-                        RustVmUpdateKind.SetModel) && !Equals(property.Value, value))
-                    {
-                        var previous = property.Value as ReflectableRustViewModelAdapter;
-                        property.Value = value;
-                        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property.Descriptor.Name));
-                        previous?.Dispose();
-                    }
-                    continue;
-                }
-                if (entry.Kind == RustVmUpdateKind.SetCommandEnabled) { _commandsById[entry.Target].SetEnabled(entry.Boolean != 0); continue; }
-                var collection = _collectionsById[entry.Target].Items;
-                switch (entry.Kind)
-                {
-                    case RustVmUpdateKind.AddString: collection.Add(entry.Text ?? ""); break;
-                    case RustVmUpdateKind.AddModel: collection.Add(entry.StagedModel); break;
-                    case RustVmUpdateKind.InsertString: collection.Insert(entry.Index, entry.Text ?? ""); break;
-                    case RustVmUpdateKind.InsertModel: collection.Insert(entry.Index, entry.StagedModel); break;
-                    case RustVmUpdateKind.ReplaceString: collection[entry.Index] = entry.Text ?? ""; break;
-                    case RustVmUpdateKind.ReplaceModel: ReplaceAndDispose(collection, entry.Index, entry.StagedModel); break;
-                    case RustVmUpdateKind.RemoveAt: RemoveAndDispose(collection, entry.Index); break;
-                    case RustVmUpdateKind.MoveItem: collection.Move(entry.Index, entry.Index2); break;
-                    case RustVmUpdateKind.ReplaceStringSnapshot: ReplaceSnapshot(collection, entry.Snapshot!); break;
-                    case RustVmUpdateKind.ReplaceModelSnapshot: ReplaceSnapshot(collection, entry.StagedSnapshot!); break;
-                }
-            }
-        }
-
-        private static void ReplaceAndDispose(ObservableCollection<object?> collection, int index, object? value)
-        {
-            var old = collection[index];
-            collection[index] = value;
-            (old as IDisposable)?.Dispose();
-        }
-
-        private static void RemoveAndDispose(ObservableCollection<object?> collection, int index)
-        {
-            var old = collection[index];
-            collection.RemoveAt(index);
-            (old as IDisposable)?.Dispose();
-        }
-
-        private static void ReplaceSnapshot(ObservableCollection<object?> collection, IReadOnlyList<object?> values)
-        {
-            var old = collection.ToArray();
-            if (collection is BatchObservableCollection<object?> batch)
-                batch.ReplaceSnapshot(values);
-            else
-            {
-                collection.Clear();
-                foreach (var value in values) collection.Add(value);
-            }
-            foreach (var item in old) (item as IDisposable)?.Dispose();
-        }
-
-        private static void DisposeStaged(IEnumerable<BatchEntry> entries)
-        {
-            foreach (var entry in entries)
-            {
-                TryDispose(entry.StagedModel);
-                if (entry.StagedSnapshot is not null)
-                    foreach (var item in entry.StagedSnapshot) TryDispose(item as IDisposable);
-            }
-        }
-
-    private sealed class BatchEntry
-        {
-            public RustVmUpdateKind Kind;
-            public int Target;
-            public int Index;
-            public int Index2;
-            public long Integer;
-            public double Double;
-            public int Boolean;
-            public string? Text;
-            public IAvnRustViewModel? Model;
-            public List<object?>? Snapshot;
-            public ReflectableRustViewModelAdapter? StagedModel;
-            public List<object?>? StagedSnapshot;
+        command = null!;
+        return false;
     }
 
-    private sealed class BatchCancelledException : Exception;
+    bool IRustVmBatchTarget.IsEnumValueDefined(int propertyId, long value) =>
+        _propertiesById.TryGetValue(propertyId, out var property) &&
+        property.EnumType is { } enumType &&
+        Enum.IsDefined(enumType, value);
+
+    IDisposable IRustVmBatchTarget.CreateNestedProperty(int propertyId, IAvnRustViewModel model) =>
+        new ReflectableRustViewModelAdapter(
+            model, _propertiesById[propertyId].Descriptor.NestedDescriptor!, _dispatch, _post);
+
+    IDisposable IRustVmBatchTarget.CreateNestedElement(int collectionId, IAvnRustViewModel model) =>
+        new ReflectableRustViewModelAdapter(
+            model, _collectionsById[collectionId].Descriptor.ElementDescriptor!, _dispatch, _post);
+
+    bool IRustVmBatchTarget.CommitProperty(int propertyId, in RustVmBatchValue value, out IDisposable? replaced)
+    {
+        replaced = null;
+        var property = _propertiesById[propertyId];
+        var next = value.Kind switch
+        {
+            RustVmUpdateKind.SetString => property.Descriptor.Nullable
+                ? value.Text
+                : value.Text ?? "",
+            RustVmUpdateKind.SetInteger => property.EnumType is { } enumType
+                ? Enum.ToObject(enumType, value.Integer)
+                : value.Integer,
+            RustVmUpdateKind.SetBoolean => value.Boolean,
+            RustVmUpdateKind.SetDouble => value.Double,
+            RustVmUpdateKind.SetNull => null,
+            RustVmUpdateKind.SetModel => value.Model,
+            _ => property.Value,
+        };
+
+        if (Equals(property.Value, next))
+            return false;
+        replaced = property.Value as ReflectableRustViewModelAdapter;
+        property.Value = next;
+        return true;
+    }
+
+    bool IRustVmBatchTarget.CommitError(string propertyName, string? message) =>
+        RustVmBatchErrors.Set(_errors, propertyName, message);
+
+    void IRustVmBatchTarget.RaisePropertyChanged(string propertyName) =>
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+    void IRustVmBatchTarget.RaiseErrorsChanged(string propertyName) =>
+        ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
+
+    private static RustVmValueWireKind BatchWireKind(RustViewModelValueKind kind) => kind switch
+    {
+        RustViewModelValueKind.String => RustVmValueWireKind.String,
+        RustViewModelValueKind.Integer or RustViewModelValueKind.Enum => RustVmValueWireKind.Integer,
+        RustViewModelValueKind.Boolean => RustVmValueWireKind.Boolean,
+        RustViewModelValueKind.Double => RustVmValueWireKind.Double,
+        RustViewModelValueKind.Model => RustVmValueWireKind.Model,
+        _ => RustVmValueWireKind.None,
+    };
 
     private void SetProperty(RuntimeProperty property, object? value)
     {
@@ -947,6 +705,17 @@ public sealed partial class ReflectableRustViewModelAdapter :
     private sealed class RuntimeProperty(RustViewModelPropertyDescriptor descriptor)
     {
         public RustViewModelPropertyDescriptor Descriptor { get; } = descriptor;
+
+        /// <summary>
+        /// The concrete generated enum type for an enum-backed property, captured
+        /// from the descriptor's initial value. It is resolved once here so enum
+        /// domain checks never depend on the property's current (possibly null)
+        /// value.
+        /// </summary>
+        public Type? EnumType { get; } = descriptor.Kind == RustViewModelValueKind.Enum
+            ? descriptor.InitialValue?.GetType()
+            : null;
+
         public object? Value { get; set; } = descriptor.InitialValue;
     }
 
@@ -1060,7 +829,7 @@ public sealed partial class ReflectableRustViewModelAdapter :
         }
     }
 
-    public sealed class DelegateCommand(Action execute) : ICommand
+    public sealed class DelegateCommand(Action execute) : ICommand, IRustVmBatchCommand
     {
         private bool _canExecute = true;
 
@@ -1070,10 +839,18 @@ public sealed partial class ReflectableRustViewModelAdapter :
 
         public void SetEnabled(bool value)
         {
-            if (_canExecute == value)
-                return;
-            _canExecute = value;
-            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+            if (SetEnabledCore(value))
+                RaiseCanExecuteChanged();
         }
+
+        public bool SetEnabledCore(bool enabled)
+        {
+            if (_canExecute == enabled)
+                return false;
+            _canExecute = enabled;
+            return true;
+        }
+
+        public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
     }
 }

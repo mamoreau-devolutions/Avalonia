@@ -9,7 +9,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
-using System.Threading;
 using System.Windows.Input;
 using Avalonia.Rust.Interop;
 using Avalonia.Threading;
@@ -17,20 +16,22 @@ using Avalonia.Threading;
 namespace Avalonia.Rust.Sample.Generated;
 
 [GeneratedComClass]
-public sealed partial class TaskItemViewModelAdapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, IRustVmBatchSchema, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable
+public sealed partial class TaskItemViewModelAdapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, IRustVmBatchTarget, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable
 {
     private readonly IAvnRustViewModel _model;
     private readonly Action<Action> _dispatch;
+    private readonly Action<Action>? _post;
+    private readonly RustVmBatchCoordinator _batch;
     private readonly Dictionary<string, string> _errors = new(StringComparer.Ordinal);
-    private int _disposed;
-    private long _lastBatchGeneration = -1;
     private string _title = "";
     private bool _done = false;
 
-    public TaskItemViewModelAdapter(IAvnRustViewModel model, Action<Action>? dispatch = null)
+    public TaskItemViewModelAdapter(IAvnRustViewModel model, Action<Action>? dispatch = null, Action<Action>? post = null)
     {
         _model = model;
         _dispatch = dispatch ?? Dispatch;
+        _post = post;
+        _batch = new RustVmBatchCoordinator(this, post);
         try
         {
             Check(_model.Attach(this));
@@ -165,48 +166,109 @@ public sealed partial class TaskItemViewModelAdapter : IAvnRustVmSink, IAvnRustV
         _ => unchecked((int)0x80070057),
     };
 
-    public int PropertyKind(int propertyId) => propertyId switch
-    {
-        1 => 1,
-        2 => 3,
-        _ => 0,
-    };
-    public bool IsCommand(int commandId) => commandId switch
-    {
-        _ => false,
-    };
-    public int CollectionKind(int collectionId) => collectionId switch
-    {
-        _ => 0,
-    };
-    public int CollectionCount(int collectionId) => collectionId switch
-    {
-        _ => -1,
-    };
-
     public int ReplaceModelSnapshot(int collectionId, IReadOnlyList<IAvnRustViewModel> values) => collectionId switch
     {
         _ => unchecked((int)0x80070057),
     };
 
-    public int SubmitBatch(IAvnRustVmUpdateBatch? batch) =>
-        RustVmBatchSubmission.Submit(this, this, batch,
-            () => Volatile.Read(ref _lastBatchGeneration),
-            value => Volatile.Write(ref _lastBatchGeneration, value),
-            () => Volatile.Read(ref _disposed) == 0);
-
-    public void Dispose()
+    bool IRustVmBatchTarget.TryGetProperty(int propertyId, out RustVmBatchProperty property)
     {
-        if (Interlocked.Exchange(ref _disposed, 1) == 0)
+        property = propertyId switch
         {
-            try
+            1 => new RustVmBatchProperty(nameof(Title), RustVmValueWireKind.String, false, false),
+            2 => new RustVmBatchProperty(nameof(Done), RustVmValueWireKind.Boolean, false, false),
+            _ => default,
+        };
+        return property.Name is not null;
+    }
+
+    bool IRustVmBatchTarget.TryGetCollection(int collectionId, out RustVmBatchCollectionInfo collection)
+    {
+        collection = collectionId switch
+        {
+            _ => default,
+        };
+        return collection.Items is not null;
+    }
+
+    bool IRustVmBatchTarget.TryGetCommand(int commandId, out IRustVmBatchCommand command)
+    {
+        command = commandId switch
+        {
+            _ => null!,
+        };
+        return command is not null;
+    }
+
+    bool IRustVmBatchTarget.IsEnumValueDefined(int propertyId, long value) => propertyId switch
+    {
+        _ => false,
+    };
+
+    IDisposable IRustVmBatchTarget.CreateNestedProperty(int propertyId, IAvnRustViewModel model) => propertyId switch
+    {
+        _ => throw new ArgumentOutOfRangeException(nameof(propertyId)),
+    };
+
+    IDisposable IRustVmBatchTarget.CreateNestedElement(int collectionId, IAvnRustViewModel model) => collectionId switch
+    {
+        _ => throw new ArgumentOutOfRangeException(nameof(collectionId)),
+    };
+
+    bool IRustVmBatchTarget.CommitProperty(int propertyId, in RustVmBatchValue value, out IDisposable? replaced)
+    {
+        replaced = null;
+        switch (propertyId)
+        {
+            case 1:
             {
-                Check(_model.Detach());
+                var next = value.Text ?? "";
+                if (Equals(_title, next)) return false;
+                _title = next;
+                return true;
             }
-            finally
+            case 2:
             {
-                DisposeNestedAdapters();
+                var next = value.Boolean;
+                if (Equals(_done, next)) return false;
+                _done = next;
+                return true;
             }
+            default: return false;
+        }
+    }
+
+    bool IRustVmBatchTarget.CommitError(string propertyName, string? message) =>
+        RustVmBatchErrors.Set(_errors, propertyName, message);
+
+    void IRustVmBatchTarget.RaisePropertyChanged(string propertyName) =>
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+    void IRustVmBatchTarget.RaiseErrorsChanged(string propertyName) =>
+        ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
+
+    /// <summary>
+    /// Enqueues one immutable batch. This call never reads the batch, applies it,
+    /// or completes it on the submitting (Rust worker) stack.
+    /// </summary>
+    public int SubmitBatch(IAvnRustVmUpdateBatch? batch) => _batch.Submit(batch);
+
+    /// <summary>
+    /// Detaches the model and disposes every nested adapter exactly once. When a
+    /// batch notification triggers this re-entrantly, the gate defers the cleanup
+    /// until the batch's commit and notifications have finished.
+    /// </summary>
+    public void Dispose() => _batch.Dispose(DisposeCore);
+
+    private void DisposeCore()
+    {
+        try
+        {
+            Check(_model.Detach());
+        }
+        finally
+        {
+            DisposeNestedAdapters();
         }
     }
 
@@ -228,11 +290,11 @@ public sealed partial class TaskItemViewModelAdapter : IAvnRustVmSink, IAvnRustV
 
     private int Apply(Func<int> action)
     {
-        if (Volatile.Read(ref _disposed) != 0) return 0;
+        if (_batch.IsClosed) return 0;
         var hresult = 0;
         void ApplyIfAlive()
         {
-            if (Volatile.Read(ref _disposed) == 0)
+            if (!_batch.IsClosed)
             {
                 try { hresult = action(); }
                 catch { hresult = unchecked((int)0x80004005); }
@@ -263,19 +325,11 @@ public sealed partial class TaskItemViewModelAdapter : IAvnRustVmSink, IAvnRustV
 
     private void SetError(string propertyName, string? message)
     {
-        if (message is null)
-        {
-            if (_errors.Remove(propertyName))
-                ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
-        }
-        else
-        {
-            _errors[propertyName] = message;
+        if (RustVmBatchErrors.Set(_errors, propertyName, message))
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
-        }
     }
 
-    public sealed class DelegateCommand(Action execute) : ICommand
+    public sealed class DelegateCommand(Action execute) : ICommand, IRustVmBatchCommand
     {
         private bool _canExecute = true;
 
@@ -285,9 +339,16 @@ public sealed partial class TaskItemViewModelAdapter : IAvnRustVmSink, IAvnRustV
 
         public void SetEnabled(bool value)
         {
-            if (_canExecute == value) return;
-            _canExecute = value;
-            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+            if (SetEnabledCore(value)) RaiseCanExecuteChanged();
         }
+
+        public bool SetEnabledCore(bool enabled)
+        {
+            if (_canExecute == enabled) return false;
+            _canExecute = enabled;
+            return true;
+        }
+
+        public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
     }
 }

@@ -4,10 +4,13 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using Avalonia.Rust.Interop;
-using Avalonia.Threading;
 
 namespace Avalonia.Rust;
 
+/// <summary>
+/// Wire tags for one immutable batch operation. The numeric values are ABI and
+/// match <c>avalonia::view_model::ViewModelBatch</c> on the Rust side.
+/// </summary>
 public enum RustVmUpdateKind
 {
     SetString = 1, SetInteger, SetBoolean, SetDouble, SetNull, SetModel,
@@ -16,16 +19,88 @@ public enum RustVmUpdateKind
     SetCommandEnabled, SetPropertyError, ClearCollection,
 }
 
+/// <summary>Terminal outcome reported back to Rust for a submitted batch.</summary>
 public enum RustVmBatchOutcome { Applied, Stale, Cancelled, Error }
 
-public sealed class BatchObservableCollection<T> : ObservableCollection<T>
+/// <summary>
+/// Wire tags for a property or collection-element value kind. A batch target
+/// reports these so the shared engine can validate an operation's kind exactly
+/// (not merely "some scalar") before any state is touched.
+/// </summary>
+public enum RustVmValueWireKind
 {
+    None = 0,
+    String = 1,
+    Integer = 2,
+    Boolean = 3,
+    Double = 4,
+    Model = 6,
+}
+
+/// <summary>
+/// The non-generic batch surface of a projected collection: the engine reads
+/// the current contents to simulate ordered indices, replaces the backing
+/// contents with no observable notification, and later raises exactly one
+/// <see cref="NotifyCollectionChangedAction.Reset"/>.
+/// </summary>
+public interface IRustVmBatchCollection
+{
+    int Count { get; }
+
+    object? GetAt(int index);
+
+    /// <summary>Replaces the backing store without raising any notification.</summary>
+    void SetContents(IReadOnlyList<object?> values);
+
+    /// <summary>Raises one coalesced <c>Count</c>/<c>Item[]</c>/Reset notification.</summary>
+    void RaiseReset();
+}
+
+/// <summary>
+/// The batch surface of a projected command: the engine changes
+/// <c>CanExecute</c> state during the notification-free commit and raises
+/// <c>CanExecuteChanged</c> once afterwards.
+/// </summary>
+public interface IRustVmBatchCommand
+{
+    /// <summary>Stores the new state without notifying. Returns true when it changed.</summary>
+    bool SetEnabledCore(bool enabled);
+
+    void RaiseCanExecuteChanged();
+}
+
+public sealed class BatchObservableCollection<T> : ObservableCollection<T>, IRustVmBatchCollection
+{
+    /// <summary>
+    /// Atomically replaces the contents and raises a single Reset. Retained for
+    /// the synchronous v1/v2 sink path; batches use
+    /// <see cref="IRustVmBatchCollection"/> so commit and notification stay separate.
+    /// </summary>
     public void ReplaceSnapshot(IReadOnlyList<T> values)
     {
         ArgumentNullException.ThrowIfNull(values);
         Items.Clear();
         foreach (var value in values)
             Items.Add(value);
+        Reset();
+    }
+
+    int IRustVmBatchCollection.Count => Items.Count;
+
+    object? IRustVmBatchCollection.GetAt(int index) => Items[index];
+
+    void IRustVmBatchCollection.SetContents(IReadOnlyList<object?> values)
+    {
+        ArgumentNullException.ThrowIfNull(values);
+        Items.Clear();
+        foreach (var value in values)
+            Items.Add((T)value!);
+    }
+
+    void IRustVmBatchCollection.RaiseReset() => Reset();
+
+    private void Reset()
+    {
         OnPropertyChanged(new PropertyChangedEventArgs(nameof(Count)));
         OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
         OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
@@ -44,22 +119,120 @@ public interface IRustVmModelSnapshotSink
     int ReplaceModelSnapshot(int collectionId, IReadOnlyList<IAvnRustViewModel> values);
 }
 
-public interface IRustVmBatchSchema
+/// <summary>Schema and storage description of one projected property.</summary>
+/// <param name="Name">The managed member name used for notifications.</param>
+/// <param name="WireKind">The exact wire kind an operation must carry to target this property.</param>
+/// <param name="Nullable">True when <see cref="RustVmUpdateKind.SetNull"/> may target this property.</param>
+/// <param name="IsEnum">True when an integer operation must also fall inside the enum's domain.</param>
+public readonly record struct RustVmBatchProperty(
+    string Name,
+    RustVmValueWireKind WireKind,
+    bool Nullable,
+    bool IsEnum);
+
+/// <summary>Schema and storage description of one projected collection.</summary>
+/// <param name="Name">The managed member name, used for diagnostics.</param>
+/// <param name="ElementKind">The exact wire kind a collection operation must carry.</param>
+/// <param name="Items">The batch surface of the projected collection.</param>
+public readonly record struct RustVmBatchCollectionInfo(
+    string Name,
+    RustVmValueWireKind ElementKind,
+    IRustVmBatchCollection Items);
+
+/// <summary>
+/// One fully validated and staged property value handed to
+/// <see cref="IRustVmBatchTarget.CommitProperty"/>. The target stores it in its
+/// own strongly typed field and must not raise any notification.
+/// </summary>
+/// <param name="Kind">The scalar, null or model operation that produced this value.</param>
+/// <param name="Text">The decoded text for <see cref="RustVmUpdateKind.SetString"/>.</param>
+/// <param name="Integer">The decoded integer or enum value.</param>
+/// <param name="Double">The decoded double value.</param>
+/// <param name="Boolean">The decoded boolean value.</param>
+/// <param name="Model">The staged nested adapter for <see cref="RustVmUpdateKind.SetModel"/>.</param>
+public readonly record struct RustVmBatchValue(
+    RustVmUpdateKind Kind,
+    string? Text,
+    long Integer,
+    double Double,
+    bool Boolean,
+    object? Model);
+
+/// <summary>
+/// The transactional contract both the IR-generated adapters and the
+/// reflectable adapter implement. <see cref="RustVmBatchCoordinator"/> owns
+/// decoding, validation, staging, commit ordering, notification coalescing and
+/// nested-adapter ownership; a target only exposes its schema and performs
+/// notification-free stores.
+/// </summary>
+public interface IRustVmBatchTarget
 {
-    int PropertyKind(int propertyId);
-    bool IsCommand(int commandId);
-    int CollectionKind(int collectionId);
-    int CollectionCount(int collectionId);
+    bool TryGetProperty(int propertyId, out RustVmBatchProperty property);
+
+    bool TryGetCollection(int collectionId, out RustVmBatchCollectionInfo collection);
+
+    bool TryGetCommand(int commandId, out IRustVmBatchCommand command);
+
+    /// <summary>Checks an integer against an enum-backed property's declared domain.</summary>
+    bool IsEnumValueDefined(int propertyId, long value);
+
+    /// <summary>
+    /// Creates and attaches a nested adapter for a model property without
+    /// publishing it. Throws when the nested attach fails; the engine then
+    /// disposes every staged adapter and leaves target state untouched.
+    /// </summary>
+    IDisposable CreateNestedProperty(int propertyId, IAvnRustViewModel model);
+
+    /// <summary>Creates and attaches an unpublished nested adapter for a collection element.</summary>
+    IDisposable CreateNestedElement(int collectionId, IAvnRustViewModel model);
+
+    /// <summary>
+    /// Stores a validated value with no notification. Returns true when the
+    /// stored value changed; <paramref name="replaced"/> receives a nested
+    /// adapter this store displaced, which the engine disposes after publishing.
+    /// </summary>
+    bool CommitProperty(int propertyId, in RustVmBatchValue value, out IDisposable? replaced);
+
+    /// <summary>Stores or clears a validation error with no notification. Returns true when it changed.</summary>
+    bool CommitError(string propertyName, string? message);
+
+    void RaisePropertyChanged(string propertyName);
+
+    void RaiseErrorsChanged(string propertyName);
+}
+
+/// <summary>Shared validation-error storage used by every batch target.</summary>
+public static class RustVmBatchErrors
+{
+    /// <summary>Applies an error change and reports whether anything actually changed.</summary>
+    public static bool Set(Dictionary<string, string> errors, string propertyName, string? message)
+    {
+        ArgumentNullException.ThrowIfNull(errors);
+        ArgumentNullException.ThrowIfNull(propertyName);
+        if (message is null)
+            return errors.Remove(propertyName);
+        if (errors.TryGetValue(propertyName, out var existing) &&
+            string.Equals(existing, message, StringComparison.Ordinal))
+        {
+            return false;
+        }
+        errors[propertyName] = message;
+        return true;
+    }
 }
 
 internal static unsafe class RustVmBatchReader
 {
-    internal static int ReadText(IAvnRustVmUpdateOperation operation, out string? value)
+    private const int InvalidArgument = unchecked((int)0x80070057);
+
+    internal static int ReadText(IAvnRustVmUpdateOperation operation, out string value)
     {
-        value = null;
+        value = string.Empty;
         var hr = operation.GetTextLength(out var length);
-        if (hr < 0 || length < 0)
-            return hr < 0 ? hr : unchecked((int)0x80070057);
+        if (hr < 0)
+            return hr;
+        if (length < 0)
+            return InvalidArgument;
         var buffer = new char[length + 1];
         fixed (char* pointer = buffer)
             hr = operation.CopyText(pointer, buffer.Length);
@@ -72,8 +245,10 @@ internal static unsafe class RustVmBatchReader
     {
         value = string.Empty;
         var hr = batch.GetSnapshotStringLength(operation, item, out var length);
-        if (hr < 0 || length < 0)
-            return hr < 0 ? hr : unchecked((int)0x80070057);
+        if (hr < 0)
+            return hr;
+        if (length < 0)
+            return InvalidArgument;
         var buffer = new char[length + 1];
         fixed (char* pointer = buffer)
             hr = batch.CopySnapshotString(operation, item, pointer, buffer.Length);
@@ -84,177 +259,14 @@ internal static unsafe class RustVmBatchReader
 
     internal static void Complete(IAvnRustVmUpdateBatch batch, RustVmBatchOutcome outcome, int error = 0)
     {
-        try { _ = batch.Complete((int)outcome, error); } catch { }
-    }
-}
-
-/// <summary>Shared nonblocking submission plumbing for IR-generated adapters.</summary>
-public static class RustVmBatchSubmission
-{
-    private const int InvalidArgument = unchecked((int)0x80070057);
-
-    public static int Submit(
-        IAvnRustVmSink sink,
-        IAvnRustVmSink2 sink2,
-        IAvnRustVmUpdateBatch? batch,
-        Func<long> getLastGeneration,
-        Action<long> setLastGeneration,
-        Func<bool> isAlive)
-    {
-        if (batch is null)
-            return InvalidArgument;
         try
         {
-            // Do not call into `batch` here. The foreign immutable object is
-            // read only from this queued UI callback.
-            Dispatcher.UIThread.Post(() => Apply(sink, sink2, batch, getLastGeneration, setLastGeneration, isAlive));
-            return 0;
+            _ = batch.Complete((int)outcome, error);
         }
-        catch { return unchecked((int)0x80004005); }
-    }
-
-    private static void Apply(
-        IAvnRustVmSink sink, IAvnRustVmSink2 sink2, IAvnRustVmUpdateBatch batch,
-        Func<long> getLastGeneration, Action<long> setLastGeneration, Func<bool> isAlive)
-    {
-        try
+        catch
         {
-            if (!isAlive()) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Cancelled); return; }
-            var hr = batch.GetGeneration(out var generation);
-            if (hr < 0) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr); return; }
-            if (generation <= getLastGeneration()) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Stale); return; }
-            hr = batch.GetOperationCount(out var count);
-            if (hr < 0 || count < 0) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, InvalidArgument); return; }
-            var entries = new List<(RustVmUpdateKind Kind, int Target, int Index, int Index2, long Integer, double Double, int Boolean, string? Text, IAvnRustViewModel? Model, List<string>? Strings, List<IAvnRustViewModel>? Models)>();
-            for (var i = 0; i < count; i++)
-            {
-                hr = batch.GetOperation(i, out var operation);
-                if (hr < 0 || operation is null) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, InvalidArgument); return; }
-                hr = operation.GetKind(out var kind);
-                if (hr < 0 || !Enum.IsDefined(typeof(RustVmUpdateKind), kind)) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, InvalidArgument); return; }
-                hr = operation.GetTargetId(out var target); if (hr < 0) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr); return; }
-                hr = operation.GetIndex(out var index); if (hr < 0) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr); return; }
-                hr = operation.GetIndex2(out var index2); if (hr < 0) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr); return; }
-                hr = operation.GetInteger(out var integer); if (hr < 0) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr); return; }
-                hr = operation.GetDouble(out var number); if (hr < 0) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr); return; }
-                hr = operation.GetBoolean(out var boolean); if (hr < 0) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr); return; }
-                hr = RustVmBatchReader.ReadText(operation, out var text); if (hr < 0) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr); return; }
-                hr = operation.GetModel(out var model); if (hr < 0) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr); return; }
-                List<string>? snapshot = null;
-                if ((RustVmUpdateKind)kind == RustVmUpdateKind.ReplaceStringSnapshot)
-                {
-                    hr = batch.GetSnapshotItemCount(i, out var itemCount);
-                    if (hr < 0 || itemCount < 0) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, InvalidArgument); return; }
-                    snapshot = new List<string>(itemCount);
-                    for (var item = 0; item < itemCount; item++)
-                    {
-                        hr = RustVmBatchReader.ReadSnapshotText(batch, i, item, out var value);
-                        if (hr < 0) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr); return; }
-                        snapshot.Add(value);
-                    }
-                }
-                List<IAvnRustViewModel>? models = null;
-                if ((RustVmUpdateKind)kind == RustVmUpdateKind.ReplaceModelSnapshot)
-                {
-                    hr = batch.GetSnapshotItemCount(i, out var itemCount);
-                    if (hr < 0 || itemCount < 0) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, InvalidArgument); return; }
-                    models = new List<IAvnRustViewModel>(itemCount);
-                    for (var item = 0; item < itemCount; item++)
-                    {
-                        hr = batch.GetSnapshotModel(i, item, out var nested);
-                        if (hr < 0 || nested is null) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, InvalidArgument); return; }
-                        models.Add(nested);
-                    }
-                }
-                entries.Add(((RustVmUpdateKind)kind, target, index, index2, integer, number, boolean, text, model, snapshot, models));
-            }
-            if (sink is not IRustVmBatchSchema schema || !Validate(entries, schema))
-            {
-                RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, InvalidArgument);
-                return;
-            }
-            foreach (var entry in entries)
-            {
-                hr = entry.Kind switch
-                {
-                    RustVmUpdateKind.SetString => sink.SetString(entry.Target, entry.Text),
-                    RustVmUpdateKind.SetInteger => sink.SetInteger(entry.Target, entry.Integer),
-                    RustVmUpdateKind.SetBoolean => sink.SetBoolean(entry.Target, entry.Boolean),
-                    RustVmUpdateKind.SetDouble => sink.SetDouble(entry.Target, entry.Double),
-                    RustVmUpdateKind.SetNull => sink2.SetNull(entry.Target),
-                    RustVmUpdateKind.SetModel => sink2.SetModel(entry.Target, entry.Model),
-                    RustVmUpdateKind.AddString => sink.AddString(entry.Target, entry.Text),
-                    RustVmUpdateKind.AddModel => sink2.AddModel(entry.Target, entry.Model),
-                    RustVmUpdateKind.InsertString => sink2.InsertString(entry.Target, entry.Index, entry.Text),
-                    RustVmUpdateKind.InsertModel => sink2.InsertModel(entry.Target, entry.Index, entry.Model),
-                    RustVmUpdateKind.ReplaceString => sink2.ReplaceString(entry.Target, entry.Index, entry.Text),
-                    RustVmUpdateKind.ReplaceModel => sink2.ReplaceModel(entry.Target, entry.Index, entry.Model),
-                    RustVmUpdateKind.RemoveAt => sink2.RemoveAt(entry.Target, entry.Index),
-                    RustVmUpdateKind.MoveItem => sink2.MoveItem(entry.Target, entry.Index, entry.Index2),
-                    RustVmUpdateKind.SetCommandEnabled => sink2.SetCommandEnabled(entry.Target, entry.Boolean),
-                    RustVmUpdateKind.SetPropertyError => sink2.SetPropertyError(entry.Target, entry.Text),
-                    RustVmUpdateKind.ClearCollection => sink2.ClearCollection(entry.Target),
-                    RustVmUpdateKind.ReplaceStringSnapshot when sink is IRustVmStringSnapshotSink snapshots =>
-                        snapshots.ReplaceStringSnapshot(entry.Target, entry.Strings!),
-                    RustVmUpdateKind.ReplaceModelSnapshot when sink is IRustVmModelSnapshotSink snapshots =>
-                        snapshots.ReplaceModelSnapshot(entry.Target, entry.Models!),
-                    _ => InvalidArgument,
-                };
-                if (hr < 0) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr); return; }
-            }
-            setLastGeneration(generation);
-            RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Applied);
+            // Rust owns the completion channel; a foreign failure here must not
+            // turn an already committed batch into a managed exception.
         }
-        catch { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, unchecked((int)0x80004005)); }
-    }
-
-    private static bool Validate(
-        List<(RustVmUpdateKind Kind, int Target, int Index, int Index2, long Integer, double Double, int Boolean, string? Text, IAvnRustViewModel? Model, List<string>? Strings, List<IAvnRustViewModel>? Models)> entries,
-        IRustVmBatchSchema schema)
-    {
-        var counts = new Dictionary<int, int>();
-        var modelMutationCount = 0;
-        foreach (var entry in entries)
-        {
-            var propertyKind = schema.PropertyKind(entry.Target);
-            if (entry.Kind is RustVmUpdateKind.SetString or RustVmUpdateKind.SetInteger or RustVmUpdateKind.SetBoolean or RustVmUpdateKind.SetDouble or RustVmUpdateKind.SetNull or RustVmUpdateKind.SetModel or RustVmUpdateKind.SetPropertyError)
-            {
-                if (propertyKind == 0) return false;
-                if (entry.Kind == RustVmUpdateKind.SetString && propertyKind != 1) return false;
-                if (entry.Kind == RustVmUpdateKind.SetInteger && propertyKind != 2) return false;
-                if (entry.Kind == RustVmUpdateKind.SetBoolean && propertyKind != 3) return false;
-                if (entry.Kind == RustVmUpdateKind.SetDouble && propertyKind != 4) return false;
-                if (entry.Kind == RustVmUpdateKind.SetModel && (propertyKind != 6 || entry.Model is null)) return false;
-                if (entry.Kind == RustVmUpdateKind.SetModel) modelMutationCount++;
-                continue;
-            }
-            if (entry.Kind == RustVmUpdateKind.SetCommandEnabled) { if (!schema.IsCommand(entry.Target)) return false; else continue; }
-            var kind = schema.CollectionKind(entry.Target);
-            if (kind == 0) return false;
-            if (!counts.TryGetValue(entry.Target, out var count)) counts[entry.Target] = count = schema.CollectionCount(entry.Target);
-            var valid = entry.Index >= 0 && entry.Index < count;
-            var insert = entry.Index >= 0 && entry.Index <= count;
-            switch (entry.Kind)
-            {
-                case RustVmUpdateKind.AddString when kind == 1: counts[entry.Target]++; break;
-                case RustVmUpdateKind.AddModel when kind == 6 && entry.Model is not null: modelMutationCount++; counts[entry.Target]++; break;
-                case RustVmUpdateKind.InsertString when kind == 1 && insert: counts[entry.Target]++; break;
-                case RustVmUpdateKind.InsertModel when kind == 6 && insert && entry.Model is not null: modelMutationCount++; counts[entry.Target]++; break;
-                case RustVmUpdateKind.ReplaceString when kind == 1 && valid: break;
-                case RustVmUpdateKind.ReplaceModel when kind == 6 && valid && entry.Model is not null: modelMutationCount++; break;
-                case RustVmUpdateKind.RemoveAt when valid: counts[entry.Target]--; break;
-                case RustVmUpdateKind.MoveItem when valid && entry.Index2 >= 0 && entry.Index2 < count: break;
-                case RustVmUpdateKind.ClearCollection: counts[entry.Target] = 0; break;
-                case RustVmUpdateKind.ReplaceStringSnapshot when kind == 1: counts[entry.Target] = entry.Strings!.Count; break;
-                case RustVmUpdateKind.ReplaceModelSnapshot when kind == 6: modelMutationCount++; counts[entry.Target] = entry.Models!.Count; break;
-                default: return false;
-            }
-        }
-        // Generated adapters construct nested adapters as part of their existing
-        // v2 sink methods. Until that ABI gains a staging callback, accepting a
-        // mixed batch would make a later attach failure observable after scalar
-        // mutation. Restrict such a batch to one model replacement, whose
-        // generated method stages before it installs, rather than violate atomicity.
-        return modelMutationCount == 0 || (modelMutationCount == 1 && entries.Count == 1);
     }
 }

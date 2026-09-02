@@ -91,6 +91,123 @@ public class ViewModelSourceEmitterTests
     }
 
     [Fact]
+    public void Emits_the_full_batch_operation_surface_for_both_collection_element_kinds()
+    {
+        var rust = ViewModelSourceEmitter.EmitRust(SampleIr());
+
+        // String collections: every managed-validated collection operation is
+        // reachable from a named builder, including clear.
+        Assert.Contains("pub fn insert_items(&mut self, index: i32, value: impl AsRef<str>) { self.0.push_string(9, 1, index, value); }", rust, StringComparison.Ordinal);
+        Assert.Contains("pub fn replace_items(&mut self, index: i32, value: impl AsRef<str>) { self.0.push_string(11, 1, index, value); }", rust, StringComparison.Ordinal);
+        Assert.Contains("pub fn remove_items(&mut self, index: i32) { self.0.push_indices(13, 1, index, 0); }", rust, StringComparison.Ordinal);
+        Assert.Contains("pub fn move_items(&mut self, from_index: i32, to_index: i32) { self.0.push_indices(14, 1, from_index, to_index); }", rust, StringComparison.Ordinal);
+        Assert.Contains("pub fn clear_items(&mut self) { self.0.push_indices(19, 1, 0, 0); }", rust, StringComparison.Ordinal);
+
+        // Nested-model collections additionally carry an ownership delta.
+        Assert.Contains("pub fn insert_tasks(&mut self, index: i32, value: impl TaskItemViewModel) { self.0.push_model(10, 2, index,", rust, StringComparison.Ordinal);
+        Assert.Contains("pub fn replace_tasks(&mut self, index: i32, value: impl TaskItemViewModel) { self.0.push_model(12, 2, index,", rust, StringComparison.Ordinal);
+        Assert.Contains("pub fn remove_tasks(&mut self, index: i32) { self.0.push_model_indices(13, 2, index, 0); }", rust, StringComparison.Ordinal);
+        Assert.Contains("pub fn clear_tasks(&mut self) { self.0.push_model_clear(2); }", rust, StringComparison.Ordinal);
+
+        // Clearing an error is a distinct wire shape from an empty message.
+        Assert.Contains("pub fn clear_count_error(&mut self) { self.0.push_clear_error(2); }", rust, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Emits_a_batch_target_implementation_instead_of_a_bespoke_adapter_engine()
+    {
+        var csharp = ViewModelSourceEmitter.EmitCSharp(SampleIr())["SampleViewModelAdapter.g.cs"];
+
+        // The adapter only describes itself and performs notification-free
+        // stores; the shared coordinator owns validation, staging and ordering.
+        Assert.Contains("IRustVmBatchTarget", csharp, StringComparison.Ordinal);
+        Assert.Contains("private readonly RustVmBatchCoordinator _batch;", csharp, StringComparison.Ordinal);
+        Assert.Contains("_batch = new RustVmBatchCoordinator(this, post);", csharp, StringComparison.Ordinal);
+        Assert.Contains("bool IRustVmBatchTarget.TryGetProperty(int propertyId, out RustVmBatchProperty property)", csharp, StringComparison.Ordinal);
+        Assert.Contains("bool IRustVmBatchTarget.TryGetCollection(int collectionId, out RustVmBatchCollectionInfo collection)", csharp, StringComparison.Ordinal);
+        Assert.Contains("bool IRustVmBatchTarget.TryGetCommand(int commandId, out IRustVmBatchCommand command)", csharp, StringComparison.Ordinal);
+        Assert.Contains("IDisposable IRustVmBatchTarget.CreateNestedElement(int collectionId, IAvnRustViewModel model)", csharp, StringComparison.Ordinal);
+        Assert.Contains("bool IRustVmBatchTarget.CommitProperty(int propertyId, in RustVmBatchValue value, out IDisposable? replaced)", csharp, StringComparison.Ordinal);
+        Assert.Contains("2 => new RustVmBatchCollectionInfo(nameof(Tasks), RustVmValueWireKind.Model, Tasks),", csharp, StringComparison.Ordinal);
+        Assert.Contains("public int SubmitBatch(IAvnRustVmUpdateBatch? batch) => _batch.Submit(batch);", csharp, StringComparison.Ordinal);
+
+        // Disposal goes through the non-reentrant gate rather than a raw flag.
+        Assert.Contains("public void Dispose() => _batch.Dispose(DisposeCore);", csharp, StringComparison.Ordinal);
+        Assert.Contains("if (_batch.IsClosed) return 0;", csharp, StringComparison.Ordinal);
+        Assert.DoesNotContain("private int _disposed;", csharp, StringComparison.Ordinal);
+        Assert.DoesNotContain("RustVmBatchSubmission", csharp, StringComparison.Ordinal);
+
+        // Commands expose the notification-free batch surface.
+        Assert.Contains("public sealed class DelegateCommand(Action execute) : ICommand, IRustVmBatchCommand", csharp, StringComparison.Ordinal);
+        Assert.Contains("public bool SetEnabledCore(bool enabled)", csharp, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Emits_exact_wire_kind_nullability_and_enum_domain_metadata_for_every_property()
+    {
+        var ir = new ViewModelIr
+        {
+            Models =
+            [
+                new ViewModelDefinition
+                {
+                    Id = 1,
+                    Name = "SampleViewModel",
+                    ManagedNamespace = "Avalonia.Rust.Sample.Generated",
+                    Properties =
+                    [
+                        new ViewModelProperty { Id = 1, Name = "Name", Kind = ViewModelValueKind.String },
+                        new ViewModelProperty { Id = 2, Name = "Nickname", Kind = ViewModelValueKind.String, Nullable = true },
+                        new ViewModelProperty { Id = 3, Name = "Priority", Kind = ViewModelValueKind.Enum, EnumName = "Priority", InitialInteger = 0L },
+                        new ViewModelProperty { Id = 4, Name = "Nested", Kind = ViewModelValueKind.Model, ModelName = "TaskItemViewModel", Nullable = true },
+                    ],
+                },
+                new ViewModelDefinition
+                {
+                    Id = 2,
+                    Name = "TaskItemViewModel",
+                    ManagedNamespace = "Avalonia.Rust.Sample.Generated",
+                },
+            ],
+            Views =
+            [
+                new ViewDefinition
+                {
+                    Id = 1,
+                    Name = "RustVmWindow",
+                    Model = "SampleViewModel",
+                    ManagedTypeName = "Avalonia.Rust.Sample.Views.RustVmWindow",
+                },
+            ],
+            Enums =
+            [
+                new ViewModelEnumDefinition
+                {
+                    Id = 1,
+                    Name = "Priority",
+                    ManagedNamespace = "Avalonia.Rust.Sample.Generated",
+                    Members = [new ViewModelEnumMember { Name = "Low", Value = 0 }],
+                },
+            ],
+        };
+
+        var csharp = ViewModelSourceEmitter.EmitCSharp(ir)["SampleViewModelAdapter.g.cs"];
+
+        Assert.Contains("1 => new RustVmBatchProperty(nameof(Name), RustVmValueWireKind.String, false, false),", csharp, StringComparison.Ordinal);
+        Assert.Contains("2 => new RustVmBatchProperty(nameof(Nickname), RustVmValueWireKind.String, true, false),", csharp, StringComparison.Ordinal);
+        Assert.Contains("3 => new RustVmBatchProperty(nameof(Priority), RustVmValueWireKind.Integer, false, true),", csharp, StringComparison.Ordinal);
+        // A nested model property is always clearable through SetNull.
+        Assert.Contains("4 => new RustVmBatchProperty(nameof(Nested), RustVmValueWireKind.Model, true, false),", csharp, StringComparison.Ordinal);
+        Assert.Contains(
+            "3 => global::System.Enum.IsDefined(typeof(global::Avalonia.Rust.Sample.Generated.Priority), value),",
+            csharp,
+            StringComparison.Ordinal);
+
+        // Rust gains a matching named clear for the nested-model property.
+        Assert.Contains("pub fn clear_nested(&mut self) { self.0.push_model_null(4); }", ViewModelSourceEmitter.EmitRust(ir), StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Emits_a_back_method_only_when_convert_back_is_declared()
     {
         var ir = SampleIr(
