@@ -941,6 +941,8 @@ public static class ViewModelSourceEmitter
                         sb.AppendLine($"    pub fn set_{name}(&mut self, value: impl AsRef<str>) {{ self.0.push_string(1, {property.Id}, 0, value); }}");
                     break;
                 case ViewModelValueKind.Integer:
+                    sb.AppendLine($"    pub fn set_{name}(&mut self, value: i64) {{ self.0.push_integer({property.Id}, value); }}");
+                    break;
                 case ViewModelValueKind.Enum:
                     sb.AppendLine($"    pub fn set_{name}(&mut self, value: {RustPropertyType(ir, property)}) {{ self.0.push_integer({property.Id}, value as i64); }}");
                     break;
@@ -1188,6 +1190,12 @@ public static class ViewModelSourceEmitter
             ? "parameter"
             : "_parameter";
         sb.AppendLine($"    fn {method}(&mut self, command_id: i32, {parameterName}: Option<String>) -> crate::Result<()> {{");
+        if (commands.Length == 0)
+        {
+            sb.AppendLine("        Err(crate::Error::InvalidViewModelMember { kind: \"command\", id: command_id })");
+            sb.AppendLine("    }");
+            return;
+        }
         sb.AppendLine("        match command_id {");
         foreach (var command in commands)
         {

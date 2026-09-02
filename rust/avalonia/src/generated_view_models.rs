@@ -71,7 +71,7 @@ impl SampleViewModelSinkBatch {
     pub fn set_name(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 1, 0, value); }
     pub fn set_name_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 1, 0, message); }
     pub fn clear_name_error(&mut self) { self.0.push_clear_error(1); }
-    pub fn set_count(&mut self, value: i64) { self.0.push_integer(2, value as i64); }
+    pub fn set_count(&mut self, value: i64) { self.0.push_integer(2, value); }
     pub fn set_count_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 2, 0, message); }
     pub fn clear_count_error(&mut self) { self.0.push_clear_error(2); }
     pub fn set_new_item(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 3, 0, value); }
@@ -260,14 +260,10 @@ impl<T: AddressViewModel> crate::view_model::DynamicViewModel for AddressViewMod
         Err(crate::Error::InvalidViewModelMember { kind: "property", id: property_id })
     }
     fn execute(&mut self, command_id: i32, _parameter: Option<String>) -> crate::Result<()> {
-        match command_id {
-            _ => Err(crate::Error::InvalidViewModelMember { kind: "command", id: command_id }),
-        }
+        Err(crate::Error::InvalidViewModelMember { kind: "command", id: command_id })
     }
     fn begin_async(&mut self, command_id: i32, _parameter: Option<String>) -> crate::Result<()> {
-        match command_id {
-            _ => Err(crate::Error::InvalidViewModelMember { kind: "command", id: command_id }),
-        }
+        Err(crate::Error::InvalidViewModelMember { kind: "command", id: command_id })
     }
 }
 
@@ -323,14 +319,10 @@ impl<T: TaskItemViewModel> crate::view_model::DynamicViewModel for TaskItemViewM
         Err(crate::Error::InvalidViewModelMember { kind: "property", id: property_id })
     }
     fn execute(&mut self, command_id: i32, _parameter: Option<String>) -> crate::Result<()> {
-        match command_id {
-            _ => Err(crate::Error::InvalidViewModelMember { kind: "command", id: command_id }),
-        }
+        Err(crate::Error::InvalidViewModelMember { kind: "command", id: command_id })
     }
     fn begin_async(&mut self, command_id: i32, _parameter: Option<String>) -> crate::Result<()> {
-        match command_id {
-            _ => Err(crate::Error::InvalidViewModelMember { kind: "command", id: command_id }),
-        }
+        Err(crate::Error::InvalidViewModelMember { kind: "command", id: command_id })
     }
 }
 

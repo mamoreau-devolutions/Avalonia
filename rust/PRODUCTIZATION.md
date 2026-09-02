@@ -70,6 +70,10 @@ publishes `Avalonia.Host` with
 `AvaloniaRustPresentationProjects` and `AvaloniaRustViewRegistryFile`.
 The external ProjectReference and linked generated registry are therefore
 compiled statically into NativeAOT; no application-specific ABI is introduced.
+External Rust output uses a crate-root compatibility bridge. Consumers must
+re-export `DynamicViewModel`, `ViewModelSink`, `ViewModelBatch`, and
+`BatchCompletion` from `avalonia::view_model`; the shipped template already
+does so.
 Finally it writes the host, published native DLLs/shared libraries, consumer
 executable, `licence.md`, deterministic CycloneDX delivery SBOM, and SHA-256
 checksums to the manifest's adjacent output directory. A local

@@ -283,6 +283,16 @@ public class ViewModelSourceEmitterTests
             rust,
             StringComparison.Ordinal);
         Assert.DoesNotContain("impl crate::AppScope { pub fn mount_rust_vm_window", rust, StringComparison.Ordinal);
+        Assert.Contains("push_integer(2, value)", rust, StringComparison.Ordinal);
+        Assert.DoesNotContain("push_integer(2, value as i64)", rust, StringComparison.Ordinal);
+        Assert.Contains(
+            "fn execute(&mut self, command_id: i32, _parameter: Option<String>) -> crate::Result<()>",
+            rust,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "Err(crate::Error::InvalidViewModelMember { kind: \"command\", id: command_id })",
+            rust,
+            StringComparison.Ordinal);
     }
 
     [Fact]

@@ -10,3 +10,7 @@ at `producer/` (or let `new-app` write its path), then run:
 `build-app` regenerates the managed adapters, NativeAOT registry, and Rust
 view-model API from `view-model.ir.json`, compiles this AXAML project and Rust
 binary, and writes the adjacent runnable bundle declared by the manifest.
+
+Generated external bindings use a crate-root compatibility bridge. Keep the
+`view_model` exports in `src/main.rs`, including `DynamicViewModel`,
+`ViewModelSink`, `ViewModelBatch`, and `BatchCompletion`.
