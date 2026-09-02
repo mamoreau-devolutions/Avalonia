@@ -17,7 +17,7 @@ using Avalonia.Threading;
 namespace Avalonia.Rust.Sample.Generated;
 
 [GeneratedComClass]
-public sealed partial class AddressViewModelAdapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable
+public sealed partial class AddressViewModelAdapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, IRustVmBatchSchema, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable
 {
     private readonly IAvnRustViewModel _model;
     private readonly Action<Action> _dispatch;
@@ -169,6 +169,25 @@ public sealed partial class AddressViewModelAdapter : IAvnRustVmSink, IAvnRustVm
     public int ReplaceStringSnapshot(int collectionId, IReadOnlyList<string> values) => collectionId switch
     {
         _ => unchecked((int)0x80070057),
+    };
+
+    public int PropertyKind(int propertyId) => propertyId switch
+    {
+        1 => 1,
+        2 => 1,
+        _ => 0,
+    };
+    public bool IsCommand(int commandId) => commandId switch
+    {
+        _ => false,
+    };
+    public int CollectionKind(int collectionId) => collectionId switch
+    {
+        _ => 0,
+    };
+    public int CollectionCount(int collectionId) => collectionId switch
+    {
+        _ => -1,
     };
 
     public int ReplaceModelSnapshot(int collectionId, IReadOnlyList<IAvnRustViewModel> values) => collectionId switch

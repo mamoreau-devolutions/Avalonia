@@ -89,6 +89,9 @@ impl SampleViewModelSinkBatch {
     pub fn remove_items(&mut self, index: i32) { self.0.push_indices(13, 1, index, 0); }
     pub fn add_tasks(&mut self, value: impl TaskItemViewModel) { self.0.push_model(8, 2, 0, TaskItemViewModelDispatch { model: value }); }
     pub fn replace_tasks_snapshot<M: TaskItemViewModel>(&mut self, values: impl IntoIterator<Item = M>) { self.0.push_model_snapshot(2, values.into_iter().map(|value| TaskItemViewModelDispatch { model: value })); }
+    pub fn remove_tasks(&mut self, index: i32) { self.0.push_model_indices(13, 2, index, 0); }
+    pub fn move_tasks(&mut self, from_index: i32, to_index: i32) { self.0.push_model_indices(14, 2, from_index, to_index); }
+    pub fn clear_tasks(&mut self) { self.0.push_model_clear(2); }
     pub fn set_increment_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 1, enabled); }
     pub fn set_add_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 2, enabled); }
     pub fn set_save_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 3, enabled); }

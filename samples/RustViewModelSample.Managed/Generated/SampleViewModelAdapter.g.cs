@@ -17,7 +17,7 @@ using Avalonia.Threading;
 namespace Avalonia.Rust.Sample.Generated;
 
 [GeneratedComClass]
-public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable
+public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, IRustVmBatchSchema, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable
 {
     private readonly IAvnRustViewModel _model;
     private readonly Action<Action> _dispatch;
@@ -303,6 +303,44 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     {
         1 => Apply(() => Items.ReplaceSnapshot(values)),
         _ => unchecked((int)0x80070057),
+    };
+
+    public int PropertyKind(int propertyId) => propertyId switch
+    {
+        1 => 1,
+        2 => 2,
+        3 => 1,
+        4 => 1,
+        5 => 1,
+        6 => 2,
+        7 => 6,
+        8 => 1,
+        _ => 0,
+    };
+    public bool IsCommand(int commandId) => commandId switch
+    {
+        1 => true,
+        2 => true,
+        3 => true,
+        4 => true,
+        5 => true,
+        6 => true,
+        7 => true,
+        8 => true,
+        9 => true,
+        _ => false,
+    };
+    public int CollectionKind(int collectionId) => collectionId switch
+    {
+        1 => 1,
+        2 => 6,
+        _ => 0,
+    };
+    public int CollectionCount(int collectionId) => collectionId switch
+    {
+        1 => Items.Count,
+        2 => Tasks.Count,
+        _ => -1,
     };
 
     public int ReplaceModelSnapshot(int collectionId, IReadOnlyList<IAvnRustViewModel> values) => collectionId switch

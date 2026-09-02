@@ -147,7 +147,7 @@ public static class ViewModelSourceEmitter
         sb.AppendLine($"namespace {model.ManagedNamespace};");
         sb.AppendLine();
         sb.AppendLine("[GeneratedComClass]");
-        sb.AppendLine($"public sealed partial class {model.Name}Adapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable");
+        sb.AppendLine($"public sealed partial class {model.Name}Adapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, IRustVmBatchSchema, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable");
         sb.AppendLine("{");
         sb.AppendLine("    private readonly IAvnRustViewModel _model;");
         sb.AppendLine("    private readonly Action<Action> _dispatch;");
@@ -222,6 +222,28 @@ public static class ViewModelSourceEmitter
         foreach (var collection in model.Collections.Where(collection => collection.ElementKind == ViewModelValueKind.String))
             sb.AppendLine($"        {collection.Id} => Apply(() => {collection.Name}.ReplaceSnapshot(values)),");
         sb.AppendLine("        _ => unchecked((int)0x80070057),");
+        sb.AppendLine("    };");
+        sb.AppendLine();
+        sb.AppendLine("    public int PropertyKind(int propertyId) => propertyId switch");
+        sb.AppendLine("    {");
+        foreach (var property in model.Properties)
+            sb.AppendLine($"        {property.Id} => {(property.Kind == ViewModelValueKind.Enum ? 2 : property.Kind == ViewModelValueKind.Model ? 6 : (int)property.Kind + 1)},");
+        sb.AppendLine("        _ => 0,");
+        sb.AppendLine("    };");
+        sb.AppendLine("    public bool IsCommand(int commandId) => commandId switch");
+        sb.AppendLine("    {");
+        foreach (var command in model.Commands) sb.AppendLine($"        {command.Id} => true,");
+        sb.AppendLine("        _ => false,");
+        sb.AppendLine("    };");
+        sb.AppendLine("    public int CollectionKind(int collectionId) => collectionId switch");
+        sb.AppendLine("    {");
+        foreach (var collection in model.Collections) sb.AppendLine($"        {collection.Id} => {(collection.ElementKind == ViewModelValueKind.Model ? 6 : (int)collection.ElementKind + 1)},");
+        sb.AppendLine("        _ => 0,");
+        sb.AppendLine("    };");
+        sb.AppendLine("    public int CollectionCount(int collectionId) => collectionId switch");
+        sb.AppendLine("    {");
+        foreach (var collection in model.Collections) sb.AppendLine($"        {collection.Id} => {collection.Name}.Count,");
+        sb.AppendLine("        _ => -1,");
         sb.AppendLine("    };");
         sb.AppendLine();
         sb.AppendLine("    public int ReplaceModelSnapshot(int collectionId, IReadOnlyList<IAvnRustViewModel> values) => collectionId switch");
@@ -804,6 +826,9 @@ public static class ViewModelSourceEmitter
             var name = Snake(collection.Name);
             sb.AppendLine($"    pub fn add_{name}(&mut self, value: impl {collection.ElementModelName}) {{ self.0.push_model(8, {collection.Id}, 0, {collection.ElementModelName}Dispatch {{ model: value }}); }}");
             sb.AppendLine($"    pub fn replace_{name}_snapshot<M: {collection.ElementModelName}>(&mut self, values: impl IntoIterator<Item = M>) {{ self.0.push_model_snapshot({collection.Id}, values.into_iter().map(|value| {collection.ElementModelName}Dispatch {{ model: value }})); }}");
+            sb.AppendLine($"    pub fn remove_{name}(&mut self, index: i32) {{ self.0.push_model_indices(13, {collection.Id}, index, 0); }}");
+            sb.AppendLine($"    pub fn move_{name}(&mut self, from_index: i32, to_index: i32) {{ self.0.push_model_indices(14, {collection.Id}, from_index, to_index); }}");
+            sb.AppendLine($"    pub fn clear_{name}(&mut self) {{ self.0.push_model_clear({collection.Id}); }}");
         }
         foreach (var command in model.Commands)
             sb.AppendLine($"    pub fn set_{Snake(command.Name)}_enabled(&mut self, enabled: bool) {{ self.0.push_boolean(17, {command.Id}, enabled); }}");

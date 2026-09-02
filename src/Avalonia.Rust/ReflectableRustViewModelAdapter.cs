@@ -119,6 +119,7 @@ public sealed partial class ReflectableRustViewModelAdapter :
     private readonly Dictionary<string, RuntimeMember> _membersByName =
         new(StringComparer.Ordinal);
     private readonly TypeInfo _typeInfo;
+    private readonly object _batchGate = new();
     private int _disposed;
     private long _lastBatchGeneration = -1;
 
@@ -392,15 +393,18 @@ public sealed partial class ReflectableRustViewModelAdapter :
 
     public void Dispose()
     {
-        if (Interlocked.Exchange(ref _disposed, 1) == 0)
+        lock (_batchGate)
         {
-            try
+            if (Interlocked.Exchange(ref _disposed, 1) == 0)
             {
-                Check(_model.Detach());
-            }
-            finally
-            {
-                DisposeNestedAdapters();
+                try
+                {
+                    Check(_model.Detach());
+                }
+                finally
+                {
+                    DisposeNestedAdapters();
+                }
             }
         }
     }
@@ -556,6 +560,8 @@ public sealed partial class ReflectableRustViewModelAdapter :
     }
 
     private void ApplyBatch(IAvnRustVmUpdateBatch batch)
+    {
+        lock (_batchGate)
         {
             if (Volatile.Read(ref _disposed) != 0)
             {
@@ -617,10 +623,15 @@ public sealed partial class ReflectableRustViewModelAdapter :
                 Volatile.Write(ref _lastBatchGeneration, generation);
                 RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Applied);
             }
+            catch (BatchCancelledException)
+            {
+                RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Cancelled);
+            }
             catch
             {
                 RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, unchecked((int)0x80004005));
             }
+    }
         }
 
         private bool TryRead(IAvnRustVmUpdateOperation operation, out BatchEntry entry, out int hr)
@@ -685,6 +696,8 @@ public sealed partial class ReflectableRustViewModelAdapter :
             var counts = _collectionsById.ToDictionary(pair => pair.Key, pair => pair.Value.Items.Count);
             foreach (var entry in entries)
             {
+                if (Volatile.Read(ref _disposed) != 0)
+                    throw new BatchCancelledException();
                 if (!ValidateEntry(entry, counts))
                 {
                     hr = InvalidArgument;
@@ -869,6 +882,8 @@ public sealed partial class ReflectableRustViewModelAdapter :
             public ReflectableRustViewModelAdapter? StagedModel;
             public List<object?>? StagedSnapshot;
     }
+
+    private sealed class BatchCancelledException : Exception;
 
     private void SetProperty(RuntimeProperty property, object? value)
     {

@@ -28,6 +28,7 @@ impl NestedSlots {
             Some(handle) => {
                 properties.insert(property_id, Box::new(handle));
             }
+
             None => {
                 properties.remove(&property_id);
             }
@@ -81,6 +82,41 @@ impl NestedSlots {
     }
 }
 
+enum NestedBatchDelta {
+    Set(i32, Option<ViewModelHandle>),
+    Add(i32, ViewModelHandle),
+    Insert(i32, usize, ViewModelHandle),
+    Replace(i32, usize, ViewModelHandle),
+    Remove(i32, usize),
+    Move(i32, usize, usize),
+    Clear(i32),
+    Snapshot(i32, Vec<ViewModelHandle>),
+}
+
+impl NestedBatchDelta {
+    fn apply(self, nested: &NestedSlots) {
+        match self {
+            Self::Set(id, handle) => nested.set_property(id, handle),
+            Self::Add(id, handle) => nested.push_collection_item(id, handle),
+            Self::Insert(id, index, handle) => nested.insert_collection_item(id, index, handle),
+            Self::Replace(id, index, handle) => nested.replace_collection_item(id, index, handle),
+            Self::Remove(id, index) => nested.remove_collection_item(id, index),
+            Self::Move(id, from, to) => nested.move_collection_item(id, from, to),
+            Self::Clear(id) => nested.clear_collection(id),
+            Self::Snapshot(id, handles) => {
+                let mut collections = nested.collections.lock_slots();
+                collections.insert(
+                    id,
+                    handles
+                        .into_iter()
+                        .map(|handle| Box::new(handle) as Box<dyn Any + Send>)
+                        .collect(),
+                );
+            }
+        }
+    }
+}
+
 /// Small helper so lock-poisoning has one documented, consistent message
 /// across every `NestedSlots` accessor (a poisoned lock here means an
 /// earlier panic happened while a nested handle was being installed or
@@ -108,7 +144,7 @@ impl fmt::Debug for NestedSlots {
 pub struct ViewModelSink {
     raw: sys::ComPtr<sys::IAvnRustVmSink>,
     raw2: sys::ComPtr<sys::IAvnRustVmSink2>,
-    raw3: sys::ComPtr<sys::IAvnRustVmSink3>,
+    raw3: Option<sys::ComPtr<sys::IAvnRustVmSink3>>,
     nested: Arc<NestedSlots>,
 }
 
@@ -121,7 +157,13 @@ impl ViewModelSink {
     /// collection/`CanExecute`/validation updates later.
     fn new(raw: sys::ComPtr<sys::IAvnRustVmSink>) -> Result<Self> {
         let raw2 = raw.query_interface::<sys::IAvnRustVmSink2>()?;
-        let raw3 = raw.query_interface::<sys::IAvnRustVmSink3>()?;
+        // v3 is an optional capability. A matching v1/v2 host remains usable
+        // for legacy publication; only batch submission reports E_NOINTERFACE.
+        let raw3 = match raw.query_interface::<sys::IAvnRustVmSink3>() {
+            Ok(value) => Some(value),
+            Err(error) if error.0 == sys::E_NOINTERFACE => None,
+            Err(error) => return Err(error.into()),
+        };
         Ok(Self {
             raw,
             raw2,
@@ -308,8 +350,28 @@ impl ViewModelSink {
     /// use generated named batch builders rather than per-item methods.
     pub fn submit_batch(&self, batch: ViewModelBatch) -> Result<BatchCompletion> {
         let (completion, callback) = BatchCompletion::channel();
-        let raw = sys::rust_vm_update_batch(batch.generation, batch.operations, Some(callback));
-        self.raw3.submit_batch(&raw)?;
+        let ViewModelBatch {
+            generation,
+            operations,
+            delta,
+        } = batch;
+        let nested = self.nested.clone();
+        let raw = sys::rust_vm_update_batch(
+            generation,
+            operations,
+            Some(Box::new(move |outcome, error| {
+                if outcome == 0 {
+                    for change in delta {
+                        change.apply(&nested);
+                    }
+                }
+                callback(outcome, error);
+            })),
+        );
+        self.raw3
+            .as_ref()
+            .ok_or(Error::Abi(sys::Error(sys::E_NOINTERFACE)))?
+            .submit_batch(&raw)?;
         Ok(completion)
     }
 
@@ -321,14 +383,28 @@ impl ViewModelSink {
         batch: ViewModelBatch,
         callback: impl FnOnce(BatchOutcome) + Send + 'static,
     ) -> Result<()> {
+        let ViewModelBatch {
+            generation,
+            operations,
+            delta,
+        } = batch;
+        let nested = self.nested.clone();
         let raw = sys::rust_vm_update_batch(
-            batch.generation,
-            batch.operations,
+            generation,
+            operations,
             Some(Box::new(move |outcome, error| {
+                if outcome == 0 {
+                    for change in delta {
+                        change.apply(&nested);
+                    }
+                }
                 callback(BatchOutcome::from_wire(outcome, error))
             })),
         );
-        self.raw3.submit_batch(&raw)?;
+        self.raw3
+            .as_ref()
+            .ok_or(Error::Abi(sys::Error(sys::E_NOINTERFACE)))?
+            .submit_batch(&raw)?;
         Ok(())
     }
 }
@@ -386,6 +462,7 @@ impl BatchCompletion {
 pub struct ViewModelBatch {
     generation: i64,
     operations: Vec<sys::RustVmUpdate>,
+    delta: Vec<NestedBatchDelta>,
 }
 
 impl ViewModelBatch {
@@ -394,6 +471,7 @@ impl ViewModelBatch {
         Self {
             generation,
             operations: Vec::new(),
+            delta: Vec::new(),
         }
     }
 
@@ -445,6 +523,22 @@ impl ViewModelBatch {
     }
 
     #[doc(hidden)]
+    pub fn push_model_indices(&mut self, kind: i32, target_id: i32, index: i32, index2: i32) {
+        self.push_indices(kind, target_id, index, index2);
+        self.delta.push(match kind {
+            13 => NestedBatchDelta::Remove(target_id, index as usize),
+            14 => NestedBatchDelta::Move(target_id, index as usize, index2 as usize),
+            _ => return,
+        });
+    }
+
+    #[doc(hidden)]
+    pub fn push_model_clear(&mut self, target_id: i32) {
+        self.push(sys::RustVmUpdate::new(19, target_id));
+        self.delta.push(NestedBatchDelta::Clear(target_id));
+    }
+
+    #[doc(hidden)]
     pub fn push_string_snapshot<S: AsRef<str>>(
         &mut self,
         target_id: i32,
@@ -470,7 +564,15 @@ impl ViewModelBatch {
     ) {
         let mut update = sys::RustVmUpdate::new(kind, target_id);
         update.index = index;
-        update.model = Some(ViewModelHandle::new(model).raw);
+        let handle = ViewModelHandle::new(model);
+        update.model = Some(handle.raw.clone());
+        self.delta.push(match kind {
+            6 => NestedBatchDelta::Set(target_id, Some(handle)),
+            8 => NestedBatchDelta::Add(target_id, handle),
+            10 => NestedBatchDelta::Insert(target_id, index as usize, handle),
+            12 => NestedBatchDelta::Replace(target_id, index as usize, handle),
+            _ => return,
+        });
         self.push(update);
     }
 
@@ -481,12 +583,10 @@ impl ViewModelBatch {
         models: impl IntoIterator<Item = M>,
     ) {
         let mut update = sys::RustVmUpdate::new(16, target_id);
-        update.snapshot_models = Some(
-            models
-                .into_iter()
-                .map(|model| ViewModelHandle::new(model).raw)
-                .collect(),
-        );
+        let handles: Vec<_> = models.into_iter().map(ViewModelHandle::new).collect();
+        update.snapshot_models = Some(handles.iter().map(|handle| handle.raw.clone()).collect());
+        self.delta
+            .push(NestedBatchDelta::Snapshot(target_id, handles));
         self.push(update);
     }
 }

@@ -13,7 +13,7 @@ public enum RustVmUpdateKind
     SetString = 1, SetInteger, SetBoolean, SetDouble, SetNull, SetModel,
     AddString, AddModel, InsertString, InsertModel, ReplaceString, ReplaceModel,
     RemoveAt, MoveItem, ReplaceStringSnapshot, ReplaceModelSnapshot,
-    SetCommandEnabled, SetPropertyError,
+    SetCommandEnabled, SetPropertyError, ClearCollection,
 }
 
 public enum RustVmBatchOutcome { Applied, Stale, Cancelled, Error }
@@ -42,6 +42,14 @@ public interface IRustVmStringSnapshotSink
 public interface IRustVmModelSnapshotSink
 {
     int ReplaceModelSnapshot(int collectionId, IReadOnlyList<IAvnRustViewModel> values);
+}
+
+public interface IRustVmBatchSchema
+{
+    int PropertyKind(int propertyId);
+    bool IsCommand(int commandId);
+    int CollectionKind(int collectionId);
+    int CollectionCount(int collectionId);
 }
 
 internal static unsafe class RustVmBatchReader
@@ -124,8 +132,12 @@ public static class RustVmBatchSubmission
                 if (hr < 0 || operation is null) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, InvalidArgument); return; }
                 hr = operation.GetKind(out var kind);
                 if (hr < 0 || !Enum.IsDefined(typeof(RustVmUpdateKind), kind)) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, InvalidArgument); return; }
-                operation.GetTargetId(out var target); operation.GetIndex(out var index); operation.GetIndex2(out var index2);
-                operation.GetInteger(out var integer); operation.GetDouble(out var number); operation.GetBoolean(out var boolean);
+                hr = operation.GetTargetId(out var target); if (hr < 0) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr); return; }
+                hr = operation.GetIndex(out var index); if (hr < 0) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr); return; }
+                hr = operation.GetIndex2(out var index2); if (hr < 0) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr); return; }
+                hr = operation.GetInteger(out var integer); if (hr < 0) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr); return; }
+                hr = operation.GetDouble(out var number); if (hr < 0) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr); return; }
+                hr = operation.GetBoolean(out var boolean); if (hr < 0) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr); return; }
                 hr = RustVmBatchReader.ReadText(operation, out var text); if (hr < 0) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr); return; }
                 hr = operation.GetModel(out var model); if (hr < 0) { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr); return; }
                 List<string>? snapshot = null;
@@ -156,6 +168,11 @@ public static class RustVmBatchSubmission
                 }
                 entries.Add(((RustVmUpdateKind)kind, target, index, index2, integer, number, boolean, text, model, snapshot, models));
             }
+            if (sink is not IRustVmBatchSchema schema || !Validate(entries, schema))
+            {
+                RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, InvalidArgument);
+                return;
+            }
             foreach (var entry in entries)
             {
                 hr = entry.Kind switch
@@ -176,6 +193,7 @@ public static class RustVmBatchSubmission
                     RustVmUpdateKind.MoveItem => sink2.MoveItem(entry.Target, entry.Index, entry.Index2),
                     RustVmUpdateKind.SetCommandEnabled => sink2.SetCommandEnabled(entry.Target, entry.Boolean),
                     RustVmUpdateKind.SetPropertyError => sink2.SetPropertyError(entry.Target, entry.Text),
+                    RustVmUpdateKind.ClearCollection => sink2.ClearCollection(entry.Target),
                     RustVmUpdateKind.ReplaceStringSnapshot when sink is IRustVmStringSnapshotSink snapshots =>
                         snapshots.ReplaceStringSnapshot(entry.Target, entry.Strings!),
                     RustVmUpdateKind.ReplaceModelSnapshot when sink is IRustVmModelSnapshotSink snapshots =>
@@ -188,5 +206,55 @@ public static class RustVmBatchSubmission
             RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Applied);
         }
         catch { RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, unchecked((int)0x80004005)); }
+    }
+
+    private static bool Validate(
+        List<(RustVmUpdateKind Kind, int Target, int Index, int Index2, long Integer, double Double, int Boolean, string? Text, IAvnRustViewModel? Model, List<string>? Strings, List<IAvnRustViewModel>? Models)> entries,
+        IRustVmBatchSchema schema)
+    {
+        var counts = new Dictionary<int, int>();
+        var modelMutationCount = 0;
+        foreach (var entry in entries)
+        {
+            var propertyKind = schema.PropertyKind(entry.Target);
+            if (entry.Kind is RustVmUpdateKind.SetString or RustVmUpdateKind.SetInteger or RustVmUpdateKind.SetBoolean or RustVmUpdateKind.SetDouble or RustVmUpdateKind.SetNull or RustVmUpdateKind.SetModel or RustVmUpdateKind.SetPropertyError)
+            {
+                if (propertyKind == 0) return false;
+                if (entry.Kind == RustVmUpdateKind.SetString && propertyKind != 1) return false;
+                if (entry.Kind == RustVmUpdateKind.SetInteger && propertyKind != 2) return false;
+                if (entry.Kind == RustVmUpdateKind.SetBoolean && propertyKind != 3) return false;
+                if (entry.Kind == RustVmUpdateKind.SetDouble && propertyKind != 4) return false;
+                if (entry.Kind == RustVmUpdateKind.SetModel && (propertyKind != 6 || entry.Model is null)) return false;
+                if (entry.Kind == RustVmUpdateKind.SetModel) modelMutationCount++;
+                continue;
+            }
+            if (entry.Kind == RustVmUpdateKind.SetCommandEnabled) { if (!schema.IsCommand(entry.Target)) return false; else continue; }
+            var kind = schema.CollectionKind(entry.Target);
+            if (kind == 0) return false;
+            if (!counts.TryGetValue(entry.Target, out var count)) counts[entry.Target] = count = schema.CollectionCount(entry.Target);
+            var valid = entry.Index >= 0 && entry.Index < count;
+            var insert = entry.Index >= 0 && entry.Index <= count;
+            switch (entry.Kind)
+            {
+                case RustVmUpdateKind.AddString when kind == 1: counts[entry.Target]++; break;
+                case RustVmUpdateKind.AddModel when kind == 6 && entry.Model is not null: modelMutationCount++; counts[entry.Target]++; break;
+                case RustVmUpdateKind.InsertString when kind == 1 && insert: counts[entry.Target]++; break;
+                case RustVmUpdateKind.InsertModel when kind == 6 && insert && entry.Model is not null: modelMutationCount++; counts[entry.Target]++; break;
+                case RustVmUpdateKind.ReplaceString when kind == 1 && valid: break;
+                case RustVmUpdateKind.ReplaceModel when kind == 6 && valid && entry.Model is not null: modelMutationCount++; break;
+                case RustVmUpdateKind.RemoveAt when valid: counts[entry.Target]--; break;
+                case RustVmUpdateKind.MoveItem when valid && entry.Index2 >= 0 && entry.Index2 < count: break;
+                case RustVmUpdateKind.ClearCollection: counts[entry.Target] = 0; break;
+                case RustVmUpdateKind.ReplaceStringSnapshot when kind == 1: counts[entry.Target] = entry.Strings!.Count; break;
+                case RustVmUpdateKind.ReplaceModelSnapshot when kind == 6: modelMutationCount++; counts[entry.Target] = entry.Models!.Count; break;
+                default: return false;
+            }
+        }
+        // Generated adapters construct nested adapters as part of their existing
+        // v2 sink methods. Until that ABI gains a staging callback, accepting a
+        // mixed batch would make a later attach failure observable after scalar
+        // mutation. Restrict such a batch to one model replacement, whose
+        // generated method stages before it installs, rather than violate atomicity.
+        return modelMutationCount == 0 || (modelMutationCount == 1 && entries.Count == 1);
     }
 }
