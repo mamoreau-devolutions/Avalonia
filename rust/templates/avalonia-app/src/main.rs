@@ -14,21 +14,61 @@ pub mod value_converter {
 #[path = "../generated/generated_view_models.rs"]
 mod generated_view_models;
 
-use avalonia::App;
+use avalonia::{ActivationEvent, App, StorageItem};
 use generated_view_models::{mount_main_window, MainViewModel, MainViewModelSink};
+use std::sync::{Arc, Mutex};
 
-struct Model;
+#[derive(Default)]
+struct Model {
+    sink: Arc<Mutex<Option<MainViewModelSink>>>,
+}
 
 impl MainViewModel for Model {
     fn attach(&mut self, sink: MainViewModelSink) -> Result<()> {
-        sink.set_title("Hello from an external Rust consumer")
+        sink.set_title("Hello from an external Rust consumer")?;
+        *self.sink.lock().expect("sink lock poisoned") = Some(sink);
+        Ok(())
     }
 
     fn detach(&mut self) -> Result<()> {
+        *self.sink.lock().expect("sink lock poisoned") = None;
         Ok(())
     }
 }
 
+/// Describes the documents the desktop shell launched this application with.
+///
+/// `App::run` forwards this process's arguments to the managed desktop
+/// lifetime, so a registered file association (see `file-associations/`)
+/// reaches Rust here with no extra wiring. `uri()` is always available;
+/// `local_path()` is `None` for non-local documents.
+fn describe(items: &[StorageItem]) -> String {
+    if items.is_empty() {
+        return "Hello from an external Rust consumer".to_string();
+    }
+    let names: Vec<&str> = items.iter().map(StorageItem::name).collect();
+    format!("Opened {}: {}", items.len(), names.join(", "))
+}
+
 fn main() -> avalonia::Result<()> {
-    App::load_from_env()?.run(|scope| mount_main_window(scope, Model))
+    App::load_from_env()?.run(|scope| {
+        let model = Model::default();
+        let sink = model.sink.clone();
+        mount_main_window(scope, model)?;
+
+        if let Some(sink) = sink.lock().expect("sink lock poisoned").as_ref() {
+            sink.set_title(describe(&scope.activation_items()?))?;
+        }
+
+        // Later "open with" activations, where the desktop lifetime supports
+        // them (macOS while the application is already running).
+        let activation_sink = sink.clone();
+        scope.on_activation(move |event| {
+            if let ActivationEvent::Files(items) = &event {
+                if let Some(sink) = activation_sink.lock().expect("sink lock poisoned").as_ref() {
+                    let _ = sink.set_title(describe(items));
+                }
+            }
+        })
+    })
 }

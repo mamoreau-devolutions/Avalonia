@@ -99,6 +99,7 @@ pub struct App {
     application: sys::ComPtr<sys::IAvnApplication>,
     controls: sys::ComPtr<sys::IAvnControlFactory>,
     dispatcher: sys::ComPtr<sys::IAvnDispatcher>,
+    startup_arguments: Option<Vec<String>>,
     _host: sys::Host,
 }
 
@@ -112,6 +113,7 @@ struct AppScopeState {
     subscriptions: Mutex<Vec<PersistentSubscription>>,
     objects: Mutex<Vec<Box<dyn Any + Send>>>,
     tasks: Mutex<Vec<Arc<ScopedTask>>>,
+    windows: Mutex<Vec<Window>>,
 }
 
 impl AppScope {
@@ -122,6 +124,7 @@ impl AppScope {
                 subscriptions: Mutex::new(Vec::new()),
                 objects: Mutex::new(Vec::new()),
                 tasks: Mutex::new(Vec::new()),
+                windows: Mutex::new(Vec::new()),
             }),
         }
     }
@@ -129,11 +132,34 @@ impl AppScope {
     pub fn mount(&self, window: Window) -> Result<()> {
         window.raw.show()?;
         self.state
-            .objects
+            .windows
             .lock()
-            .expect("application object scope lock poisoned")
-            .push(Box::new(window));
+            .expect("application window scope lock poisoned")
+            .push(window);
         Ok(())
+    }
+
+    /// Every window mounted through [`AppScope::mount`], in mount order.
+    ///
+    /// Desktop file pickers are tied to a window, so a Rust view model that owns
+    /// state but not presentation still needs a handle to the window the host
+    /// created for it.
+    pub fn windows(&self) -> Vec<Window> {
+        self.state
+            .windows
+            .lock()
+            .expect("application window scope lock poisoned")
+            .clone()
+    }
+
+    /// The first window mounted through [`AppScope::mount`].
+    pub fn main_window(&self) -> Option<Window> {
+        self.state
+            .windows
+            .lock()
+            .expect("application window scope lock poisoned")
+            .first()
+            .cloned()
     }
 
     pub fn delay(&self, duration: Duration) -> Result<AsyncOperation<()>> {
@@ -222,6 +248,11 @@ impl AppScope {
             .lock()
             .expect("application object scope lock poisoned")
             .clear();
+        self.state
+            .windows
+            .lock()
+            .expect("application window scope lock poisoned")
+            .clear();
         crate::value_converter::clear_value_converter_provider(&self.context.application);
     }
 }
@@ -249,6 +280,10 @@ pub struct AppContext {
 impl AppContext {
     pub fn check_access(&self) -> Result<bool> {
         Ok(self.dispatcher.check_access()?)
+    }
+
+    pub(crate) fn application(&self) -> &sys::ComPtr<sys::IAvnApplication> {
+        &self.application
     }
 
     pub fn post(&self, callback: impl FnOnce() + Send + 'static) -> Result<()> {
@@ -363,8 +398,30 @@ impl App {
             application,
             controls,
             dispatcher,
+            startup_arguments: None,
             _host: host,
         })
+    }
+
+    /// Overrides the startup/open-with arguments handed to the managed desktop
+    /// lifetime.
+    ///
+    /// A Rust executable owns `argv`, so the host cannot see it. By default
+    /// [`App::run`] forwards this process's own arguments, which is what makes
+    /// an "open with" launch work with no extra wiring; call this to supply a
+    /// different list (a single-instance relay, a test harness, an embedder).
+    pub fn with_startup_arguments(
+        mut self,
+        arguments: impl IntoIterator<Item = impl Into<String>>,
+    ) -> Self {
+        self.startup_arguments = Some(arguments.into_iter().map(Into::into).collect());
+        self
+    }
+
+    /// Starts with no startup arguments at all.
+    pub fn without_startup_arguments(mut self) -> Self {
+        self.startup_arguments = Some(Vec::new());
+        self
     }
 
     pub fn run(
@@ -379,6 +436,11 @@ impl App {
         let scope = AppScope::new(context);
         let cleanup_scope = scope.clone();
         let handler = sys::app_handler(move || callback(&scope).map_err(to_abi_error));
+        let arguments = self
+            .startup_arguments
+            .clone()
+            .unwrap_or_else(process_startup_arguments);
+        publish_startup_arguments(&self.application, &arguments)?;
         FACTORY.with(|current| {
             let previous = current.replace(Some(controls));
             let result = self.application.run(&handler);
@@ -387,6 +449,35 @@ impl App {
             Ok(result?)
         })
     }
+}
+
+/// This process's arguments, minus the executable name.
+///
+/// `std::env::args` panics on an argument that is not valid Unicode, and a
+/// document path is exactly where that happens: a Unix filename is an arbitrary
+/// byte sequence, so a shell "open with" can hand this process one. Losing the
+/// invalid part of a path is a far better outcome than panicking before the
+/// application has even started, so the bytes are converted lossily instead.
+fn process_startup_arguments() -> Vec<String> {
+    std::env::args_os()
+        .skip(1)
+        .map(|argument| argument.to_string_lossy().into_owned())
+        .collect()
+}
+
+/// Publishes the startup arguments through the separately versioned desktop
+/// file integration capability, before the managed lifetime starts.
+fn publish_startup_arguments(
+    application: &sys::ComPtr<sys::IAvnApplication>,
+    arguments: &[String],
+) -> Result<()> {
+    let desktop = application.desktop_files()?;
+    desktop.clear_startup_arguments()?;
+    for argument in arguments {
+        let encoded: Vec<u16> = argument.encode_utf16().chain(Some(0)).collect();
+        desktop.add_startup_argument(Some(&encoded))?;
+    }
+    Ok(())
 }
 
 pub(crate) fn with_factory<T>(

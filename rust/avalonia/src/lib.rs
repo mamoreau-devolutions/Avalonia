@@ -4,6 +4,7 @@ mod generated;
 mod generated_view_models;
 mod async_runtime;
 mod runtime;
+pub mod storage;
 pub mod value_converter;
 pub mod view_model;
 
@@ -13,6 +14,11 @@ pub use generated_view_models::*;
 pub use runtime::{
     discover_host_path, App, AppContext, AppScope, AsControl, EventSubscription, ResourceValue,
     ThemeVariant, HOST_NATIVE_LIB_ENV_VAR,
+};
+pub use storage::{
+    ActivationEvent, DragDropEffects, FileDropEvent, FileTypeFilter, FolderPickerOptions,
+    OpenFilePickerOptions, PickerOutcome, SaveFilePickerOptions, StorageCapabilities, StorageItem,
+    StorageItemKind, StorageLocation, StoragePickerOperation, WellKnownFolder,
 };
 pub use value_converter::{ConversionDirection, ScalarKind, ScalarValue};
 

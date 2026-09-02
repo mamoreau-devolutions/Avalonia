@@ -11,4 +11,14 @@ internal static class AvnGuids
     public const string IAvnAction = "6B2E8F10-4C91-4E3A-9A77-1F0C2B3A4D15";
     public const string IAvnResourceValue = "6B2E8F10-4C91-4E3A-9A77-1F0C2B3A4D16";
     public const string IAvnAsyncCompletion = "6B2E8F10-4C91-4E3A-9A77-1F0C2B3A4D17";
+
+    // Stage 29 desktop file integration. These are a separately versioned
+    // capability: nothing below is ever added to an already published vtable.
+    public const string IAvnApplication3 = "6B2E8F10-4C91-4E3A-9A77-1F0C2B3A4D50";
+    public const string IAvnFilePickerOptions = "6B2E8F10-4C91-4E3A-9A77-1F0C2B3A4D51";
+    public const string IAvnStorageItem = "6B2E8F10-4C91-4E3A-9A77-1F0C2B3A4D52";
+    public const string IAvnStorageItemList = "6B2E8F10-4C91-4E3A-9A77-1F0C2B3A4D53";
+    public const string IAvnStorageCompletion = "6B2E8F10-4C91-4E3A-9A77-1F0C2B3A4D54";
+    public const string IAvnFileDropHandler = "6B2E8F10-4C91-4E3A-9A77-1F0C2B3A4D55";
+    public const string IAvnActivationHandler = "6B2E8F10-4C91-4E3A-9A77-1F0C2B3A4D56";
 }

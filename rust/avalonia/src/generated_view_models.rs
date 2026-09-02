@@ -35,9 +35,15 @@ impl SampleViewModelSink {
     pub fn set_selected_trace_index(&self, value: i64) -> crate::Result<()> { self.0.set_integer(9, value) }
     pub fn set_selected_trace_key(&self, value: impl AsRef<str>) -> crate::Result<()> { self.0.set_string(10, value) }
     pub fn set_trace_sort_direction(&self, value: impl AsRef<str>) -> crate::Result<()> { self.0.set_string(11, value) }
+    pub fn set_file_status(&self, value: impl AsRef<str>) -> crate::Result<()> { self.0.set_string(12, value) }
+    pub fn set_drop_status(&self, value: impl AsRef<str>) -> crate::Result<()> { self.0.set_string(13, value) }
+    pub fn set_activation_status(&self, value: impl AsRef<str>) -> crate::Result<()> { self.0.set_string(14, value) }
     pub fn add_items(&self, value: impl AsRef<str>) -> crate::Result<()> { self.0.add_string(1, value) }
     pub fn insert_items(&self, index: i32, value: impl AsRef<str>) -> crate::Result<()> { self.0.insert_string(1, index, value) }
     pub fn replace_items(&self, index: i32, value: impl AsRef<str>) -> crate::Result<()> { self.0.replace_string(1, index, value) }
+    pub fn add_selected_files(&self, value: impl AsRef<str>) -> crate::Result<()> { self.0.add_string(4, value) }
+    pub fn insert_selected_files(&self, index: i32, value: impl AsRef<str>) -> crate::Result<()> { self.0.insert_string(4, index, value) }
+    pub fn replace_selected_files(&self, index: i32, value: impl AsRef<str>) -> crate::Result<()> { self.0.replace_string(4, index, value) }
     pub fn add_tasks(&self, value: impl TaskItemViewModel) -> crate::Result<()> { self.0.add_model(2, TaskItemViewModelDispatch { model: value }) }
     pub fn insert_tasks(&self, index: i32, value: impl TaskItemViewModel) -> crate::Result<()> { self.0.insert_model(2, index, TaskItemViewModelDispatch { model: value }) }
     pub fn replace_tasks(&self, index: i32, value: impl TaskItemViewModel) -> crate::Result<()> { self.0.replace_model(2, index, TaskItemViewModelDispatch { model: value }) }
@@ -47,6 +53,9 @@ impl SampleViewModelSink {
     pub fn remove_items(&self, index: i32) -> crate::Result<()> { self.0.remove_string_at(1, index) }
     pub fn move_items(&self, from_index: i32, to_index: i32) -> crate::Result<()> { self.0.move_string_item(1, from_index, to_index) }
     pub fn clear_items(&self) -> crate::Result<()> { self.0.clear_string_collection(1) }
+    pub fn remove_selected_files(&self, index: i32) -> crate::Result<()> { self.0.remove_string_at(4, index) }
+    pub fn move_selected_files(&self, from_index: i32, to_index: i32) -> crate::Result<()> { self.0.move_string_item(4, from_index, to_index) }
+    pub fn clear_selected_files(&self) -> crate::Result<()> { self.0.clear_string_collection(4) }
     pub fn remove_tasks(&self, index: i32) -> crate::Result<()> { self.0.remove_model_at(2, index) }
     pub fn move_tasks(&self, from_index: i32, to_index: i32) -> crate::Result<()> { self.0.move_model_item(2, from_index, to_index) }
     pub fn clear_tasks(&self) -> crate::Result<()> { self.0.clear_model_collection(2) }
@@ -63,6 +72,9 @@ impl SampleViewModelSink {
     pub fn set_shuffle_tasks_enabled(&self, enabled: bool) -> crate::Result<()> { self.0.set_command_enabled(8, enabled) }
     pub fn set_clear_tasks_enabled(&self, enabled: bool) -> crate::Result<()> { self.0.set_command_enabled(9, enabled) }
     pub fn set_sort_trace_rows_enabled(&self, enabled: bool) -> crate::Result<()> { self.0.set_command_enabled(10, enabled) }
+    pub fn set_open_files_enabled(&self, enabled: bool) -> crate::Result<()> { self.0.set_command_enabled(11, enabled) }
+    pub fn set_open_folder_enabled(&self, enabled: bool) -> crate::Result<()> { self.0.set_command_enabled(12, enabled) }
+    pub fn set_save_export_enabled(&self, enabled: bool) -> crate::Result<()> { self.0.set_command_enabled(13, enabled) }
     pub fn set_name_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(1, message) }
     pub fn set_count_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(2, message) }
     pub fn set_new_item_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(3, message) }
@@ -73,6 +85,9 @@ impl SampleViewModelSink {
     pub fn set_selected_trace_index_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(9, message) }
     pub fn set_selected_trace_key_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(10, message) }
     pub fn set_trace_sort_direction_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(11, message) }
+    pub fn set_file_status_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(12, message) }
+    pub fn set_drop_status_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(13, message) }
+    pub fn set_activation_status_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(14, message) }
     /// Creates a worker-safe immutable update batch with a monotonic generation.
     pub fn batch(&self, generation: i64) -> SampleViewModelSinkBatch { SampleViewModelSinkBatch(crate::view_model::ViewModelBatch::new(generation)) }
     pub fn submit_batch(&self, batch: SampleViewModelSinkBatch) -> crate::Result<crate::view_model::BatchCompletion> { self.0.submit_batch(batch.0) }
@@ -115,6 +130,15 @@ impl SampleViewModelSinkBatch {
     pub fn set_trace_sort_direction(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 11, 0, value); }
     pub fn set_trace_sort_direction_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 11, 0, message); }
     pub fn clear_trace_sort_direction_error(&mut self) { self.0.push_clear_error(11); }
+    pub fn set_file_status(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 12, 0, value); }
+    pub fn set_file_status_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 12, 0, message); }
+    pub fn clear_file_status_error(&mut self) { self.0.push_clear_error(12); }
+    pub fn set_drop_status(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 13, 0, value); }
+    pub fn set_drop_status_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 13, 0, message); }
+    pub fn clear_drop_status_error(&mut self) { self.0.push_clear_error(13); }
+    pub fn set_activation_status(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 14, 0, value); }
+    pub fn set_activation_status_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 14, 0, message); }
+    pub fn clear_activation_status_error(&mut self) { self.0.push_clear_error(14); }
     pub fn add_items(&mut self, value: impl AsRef<str>) { self.0.push_string(7, 1, 0, value); }
     pub fn insert_items(&mut self, index: i32, value: impl AsRef<str>) { self.0.push_string(9, 1, index, value); }
     pub fn replace_items(&mut self, index: i32, value: impl AsRef<str>) { self.0.push_string(11, 1, index, value); }
@@ -122,6 +146,13 @@ impl SampleViewModelSinkBatch {
     pub fn remove_items(&mut self, index: i32) { self.0.push_indices(13, 1, index, 0); }
     pub fn move_items(&mut self, from_index: i32, to_index: i32) { self.0.push_indices(14, 1, from_index, to_index); }
     pub fn clear_items(&mut self) { self.0.push_indices(19, 1, 0, 0); }
+    pub fn add_selected_files(&mut self, value: impl AsRef<str>) { self.0.push_string(7, 4, 0, value); }
+    pub fn insert_selected_files(&mut self, index: i32, value: impl AsRef<str>) { self.0.push_string(9, 4, index, value); }
+    pub fn replace_selected_files(&mut self, index: i32, value: impl AsRef<str>) { self.0.push_string(11, 4, index, value); }
+    pub fn replace_selected_files_snapshot<S: AsRef<str>>(&mut self, values: impl IntoIterator<Item = S>) { self.0.push_string_snapshot(4, values); }
+    pub fn remove_selected_files(&mut self, index: i32) { self.0.push_indices(13, 4, index, 0); }
+    pub fn move_selected_files(&mut self, from_index: i32, to_index: i32) { self.0.push_indices(14, 4, from_index, to_index); }
+    pub fn clear_selected_files(&mut self) { self.0.push_indices(19, 4, 0, 0); }
     pub fn add_tasks(&mut self, value: impl TaskItemViewModel) { self.0.push_model(8, 2, 0, TaskItemViewModelDispatch { model: value }); }
     pub fn insert_tasks(&mut self, index: i32, value: impl TaskItemViewModel) { self.0.push_model(10, 2, index, TaskItemViewModelDispatch { model: value }); }
     pub fn replace_tasks(&mut self, index: i32, value: impl TaskItemViewModel) { self.0.push_model(12, 2, index, TaskItemViewModelDispatch { model: value }); }
@@ -146,6 +177,9 @@ impl SampleViewModelSinkBatch {
     pub fn set_shuffle_tasks_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 8, enabled); }
     pub fn set_clear_tasks_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 9, enabled); }
     pub fn set_sort_trace_rows_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 10, enabled); }
+    pub fn set_open_files_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 11, enabled); }
+    pub fn set_open_folder_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 12, enabled); }
+    pub fn set_save_export_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 13, enabled); }
 }
 
 pub trait SampleViewModel: Send + 'static {
@@ -168,6 +202,9 @@ pub trait SampleViewModel: Send + 'static {
     fn shuffle_tasks(&mut self) -> crate::Result<()>;
     fn clear_tasks(&mut self) -> crate::Result<()>;
     fn sort_trace_rows(&mut self, value: String) -> crate::Result<()>;
+    fn open_files(&mut self) -> crate::Result<()>;
+    fn open_folder(&mut self) -> crate::Result<()>;
+    fn save_export(&mut self) -> crate::Result<()>;
 }
 
 struct SampleViewModelDispatch<T: SampleViewModel> { model: T }
@@ -215,6 +252,9 @@ impl<T: SampleViewModel> crate::view_model::DynamicViewModel for SampleViewModel
     fn begin_async(&mut self, command_id: i32, _parameter: Option<String>) -> crate::Result<()> {
         match command_id {
             3 => self.model.save(),
+            11 => self.model.open_files(),
+            12 => self.model.open_folder(),
+            13 => self.model.save_export(),
             _ => Err(crate::Error::InvalidViewModelMember { kind: "command", id: command_id }),
         }
     }

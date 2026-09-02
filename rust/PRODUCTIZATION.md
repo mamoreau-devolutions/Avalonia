@@ -9,10 +9,10 @@ SBOM scope decision for everything this workflow ships.
 
 Nothing here changes the generated ABI, the ownership contract, or the
 view-model transport; see [README.md](README.md), [OWNERSHIP.md](OWNERSHIP.md),
-[ASYNC.md](ASYNC.md), [VIEW_MODELS.md](VIEW_MODELS.md), and
-[PLATFORMS.md](PLATFORMS.md) for those. Release compatibility, RID artifact
-integrity, signing, and future SBOM requirements are defined in
-[COMPATIBILITY.md](COMPATIBILITY.md).
+[ASYNC.md](ASYNC.md), [VIEW_MODELS.md](VIEW_MODELS.md),
+[DESKTOP_FILES.md](DESKTOP_FILES.md), and [PLATFORMS.md](PLATFORMS.md) for
+those. Release compatibility, RID artifact integrity, signing, and future SBOM
+requirements are defined in [COMPATIBILITY.md](COMPATIBILITY.md).
 
 ## Application template
 
@@ -32,10 +32,15 @@ package rename:
 
 The template is excluded from the `rust` Cargo workspace (see the `exclude`
 entry in `Cargo.toml`) and declares an empty workspace of its own. The template is an external consumer, including a managed AXAML project,
-versioned view-model IR, and `avalonia-app.json`. `new-app` substitutes both
-the Cargo package name and the pinned producer-root placeholder. Commit the
-producer as a submodule (or pin a checkout to an immutable commit); do not
-point a release consumer at an unpinned branch.
+versioned view-model IR, and `avalonia-app.json`. It also carries copyable
+Windows/Linux/macOS file type association metadata in `file-associations/`, and
+a `main.rs` that already surfaces startup "open with" documents through
+`AppScope::activation_items()` (see
+[DESKTOP_FILES.md](DESKTOP_FILES.md#file-type-associations)). `new-app`
+substitutes both the Cargo package name and the pinned producer-root
+placeholder throughout, including those snippets. Commit the producer as a
+submodule (or pin a checkout to an immutable commit); do not point a release
+consumer at an unpinned branch.
 Initialize the pinned producer recursively before generation or publishing:
 
 ```bash
@@ -291,6 +296,12 @@ and the checks below are what keep that true instead of assumed:
   signing, and by `checksums.sha256`, which covers that SBOM too. This does
   not change the NuGet SBOM generator because no new packable NuGet project
   or package delivery dependency is introduced.
+- **Stage 29 desktop file integration** adds only source files to the existing
+  non-packable `Avalonia.Host` and to the source-only `rust/*` crates, plus
+  template metadata snippets that are never compiled or copied into a delivered
+  bundle. No new shipped package, bundled third-party binary, npm/JS content,
+  or Numerge merge group is introduced, so neither `nukebuild/SbomGenerator.cs`
+  nor `rust/generate-sbom.py`'s delivery inventory changes.
 
 ## Tests
 
@@ -311,3 +322,6 @@ and the checks below are what keep that true instead of assumed:
   `win-x64` while developing this stage, confirming the host, its native
   dependencies, the Rust binary, and a matching `checksums.sha256` land
   together in one deterministic directory.
+- Desktop file integration is covered end to end from the managed picker core
+  through the raw nano-COM vtables to the safe Rust API; the full table is in
+  [DESKTOP_FILES.md](DESKTOP_FILES.md#tests).

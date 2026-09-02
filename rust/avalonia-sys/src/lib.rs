@@ -16,6 +16,7 @@ mod generated;
 mod guid;
 mod hresult;
 mod rust_vm;
+mod storage;
 mod value_converter;
 
 pub use app_handler::{app_handler, IAvnAppHandler};
@@ -34,6 +35,12 @@ pub use rust_vm::{
     rust_view_model, rust_vm_update_batch, IAvnRustViewModel, IAvnRustVmSink, IAvnRustVmSink2,
     IAvnRustVmSink3, IAvnRustVmUpdateBatch, IAvnRustVmUpdateBatch2, IAvnRustVmUpdateOperation,
     RustViewModelCallbacks, RustVmBatchCompletion, RustVmBatchOwnershipCommit, RustVmUpdate,
+};
+pub use storage::{
+    activation_handler, file_drop_handler, storage_completion, ActivationArgs, FileDropArgs,
+    IAvnActivationHandler, IAvnApplication3, IAvnFileDropHandler, IAvnFilePickerOptions,
+    IAvnStorageCompletion, IAvnStorageItem, IAvnStorageItemList, StorageCompletionArgs,
+    StorageItemData,
 };
 pub use value_converter::{
     rust_value_converter_provider, ConversionDirection, ConvertFn, ConverterAbiError,

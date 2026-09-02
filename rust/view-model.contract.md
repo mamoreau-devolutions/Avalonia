@@ -23,9 +23,13 @@ Schema version: `3`
 | Property | 9 | `SelectedTraceIndex` | `Integer` | Rust and managed |
 | Property | 10 | `SelectedTraceKey` | `String` | Rust and managed |
 | Property | 11 | `TraceSortDirection` | `String` | Rust to managed |
+| Property | 12 | `FileStatus` | `String` | Rust to managed |
+| Property | 13 | `DropStatus` | `String` | Rust to managed |
+| Property | 14 | `ActivationStatus` | `String` | Rust to managed |
 | Collection | 1 | `Items` | `String` | Rust to managed |
 | Collection | 2 | `Tasks` | Model `TaskItemViewModel` | Rust to managed |
 | Collection | 3 | `TraceRows` | Model `TraceRowViewModel` | Rust to managed |
+| Collection | 4 | `SelectedFiles` | `String` | Rust to managed |
 | Command | 1 | `Increment` | None | Managed to Rust |
 | Command | 2 | `Add` | `NewItem` | Managed to Rust |
 | Async command | 3 | `Save` | None | Managed to Rust |
@@ -36,6 +40,9 @@ Schema version: `3`
 | Command | 8 | `ShuffleTasks` | None | Managed to Rust |
 | Command | 9 | `ClearTasks` | None | Managed to Rust |
 | Command | 10 | `SortTraceRows` | None | Managed to Rust |
+| Async command | 11 | `OpenFiles` | None | Managed to Rust |
+| Async command | 12 | `OpenFolder` | None | Managed to Rust |
+| Async command | 13 | `SaveExport` | None | Managed to Rust |
 
 ### Table `TraceRows`
 

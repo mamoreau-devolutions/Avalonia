@@ -24,11 +24,15 @@ public static class SampleViewModelMetadata
             new(9, "SelectedTraceIndex", RustViewModelValueKind.Integer, true, false, 0L, null),
             new(10, "SelectedTraceKey", RustViewModelValueKind.String, true, false, "trace-000000", null),
             new(11, "TraceSortDirection", RustViewModelValueKind.String, false, false, "Ascending", null),
+            new(12, "FileStatus", RustViewModelValueKind.String, false, false, "No file operation yet", null),
+            new(13, "DropStatus", RustViewModelValueKind.String, false, false, "Drop files or folders onto the panel below", null),
+            new(14, "ActivationStatus", RustViewModelValueKind.String, false, false, "No startup files", null),
         ],
         [
             new(1, "Items", RustViewModelValueKind.String, null, null),
             new(2, "Tasks", RustViewModelValueKind.Model, global::Avalonia.Rust.Sample.Generated.TaskItemViewModelMetadata.Descriptor, null),
             new(3, "TraceRows", RustViewModelValueKind.Model, global::Avalonia.Rust.Sample.Generated.TraceRowViewModelMetadata.Descriptor, CreateTraceRowsTable()),
+            new(4, "SelectedFiles", RustViewModelValueKind.String, null, null),
         ],
         [
             new(1, "IncrementCommand", false, null, false),
@@ -41,6 +45,9 @@ public static class SampleViewModelMetadata
             new(8, "ShuffleTasksCommand", false, null, false),
             new(9, "ClearTasksCommand", false, null, false),
             new(10, "SortTraceRowsCommand", false, null, true),
+            new(11, "OpenFilesCommand", true, null, false),
+            new(12, "OpenFolderCommand", true, null, false),
+            new(13, "SaveExportCommand", true, null, false),
         ]);
 
     public static RustTableDescriptor TraceRowsTable { get; } = CreateTraceRowsTable();

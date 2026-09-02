@@ -87,3 +87,35 @@ generates 216 lines of Rust model API, managed adapter, and host registry.
 recommended full-application architecture. The platform gate no longer blocks
 model work. Code-first control projection should still expand only when either
 application mode demonstrates a concrete missing capability.
+
+## Desktop file integration (stage 29)
+
+Pickers, incoming file drag-and-drop and "open with" activation are
+platform-neutral: they use `TopLevel.StorageProvider`, the `DragDrop` routed
+events and the desktop lifetime, so one Rust API covers all three hosts and no
+platform dialog code was added. Design and rules are in
+[DESKTOP_FILES.md](DESKTOP_FILES.md); what differs per host is only what the
+platform itself supports:
+
+| Capability | Windows (Win32) | Linux (X11) | macOS (Avalonia.Native) |
+| --- | --- | --- | --- |
+| Open / folder / save pickers | yes | yes | yes |
+| Folder multi-select | reported by `StorageCapabilities`; honoured where the platform picker supports it |||
+| File type filters | glob patterns | glob patterns and MIME types | uniform type identifiers |
+| Incoming file drop | yes | yes | yes |
+| Startup "open with" | command line | command line | command line |
+| Later activation (`on_activation`) | not raised | not raised | `Files`, `OpenUri`, `Reopen` |
+| Local path for every item | usually | usually | not guaranteed (security-scoped items) |
+
+Consumers always get a URI; `StorageItem::local_path()` is optional by design
+and must not be assumed. Where a host has no activation feature the
+subscription stays valid and never fires, so no consumer needs a platform
+branch.
+
+**Decision:** desktop file integration ships as one separately versioned
+capability interface rather than per-platform host methods. Drag-effect
+negotiation stays a conservative, subscription-time declaration instead of a
+synchronous Rust callback, because calling an external consumer from inside a
+platform drag loop is not safe. File type associations are packaging metadata
+(template snippets), not application code; MSIX and platform installers remain
+out of scope.

@@ -113,6 +113,30 @@
           "writable": false,
           "nullable": false,
           "initialString": "Ascending"
+        },
+        {
+          "id": 12,
+          "name": "FileStatus",
+          "kind": "String",
+          "writable": false,
+          "nullable": false,
+          "initialString": "No file operation yet"
+        },
+        {
+          "id": 13,
+          "name": "DropStatus",
+          "kind": "String",
+          "writable": false,
+          "nullable": false,
+          "initialString": "Drop files or folders onto the panel below"
+        },
+        {
+          "id": 14,
+          "name": "ActivationStatus",
+          "kind": "String",
+          "writable": false,
+          "nullable": false,
+          "initialString": "No startup files"
         }
       ],
       "collections": [
@@ -196,6 +220,11 @@
               "directionProperty": "TraceSortDirection"
             }
           }
+        },
+        {
+          "id": 4,
+          "name": "SelectedFiles",
+          "elementKind": "String"
         }
       ],
       "commands": [
@@ -250,6 +279,21 @@
           "id": 10,
           "name": "SortTraceRows",
           "isAsync": false
+        },
+        {
+          "id": 11,
+          "name": "OpenFiles",
+          "isAsync": true
+        },
+        {
+          "id": 12,
+          "name": "OpenFolder",
+          "isAsync": true
+        },
+        {
+          "id": 13,
+          "name": "SaveExport",
+          "isAsync": true
         }
       ]
     },

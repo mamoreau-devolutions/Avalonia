@@ -55,6 +55,37 @@
       <Button Content="Run Rust async save" Command="{Binding SaveCommand}" />
       <TextBlock Text="{Binding Status}" />
 
+      <TextBlock Text="Desktop files (Rust-owned, platform-neutral)" FontWeight="Bold" />
+      <!--
+        These three buttons are the only thing in the sample that opens a
+        platform dialog, so UI automation can drive everything else (including
+        the drop panel below) without a modal picker appearing. The picker flows
+        themselves are covered by managed fake-storage-provider tests.
+      -->
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button x:Name="OpenFilesButton" Content="Open files..." Command="{Binding OpenFilesCommand}" />
+        <Button x:Name="OpenFolderButton" Content="Open folder..." Command="{Binding OpenFolderCommand}" />
+        <Button x:Name="SaveExportButton" Content="Save/export..." Command="{Binding SaveExportCommand}" />
+      </StackPanel>
+      <TextBlock x:Name="FileStatusText" Text="{Binding FileStatus}" />
+      <TextBlock x:Name="ActivationStatusText" Text="{Binding ActivationStatus}" />
+      <!--
+        Drop status. Rust subscribes to the window, so a file dropped anywhere
+        in it is reported here; it declares its accepted effect once, and the
+        host answers the platform drag loop synchronously and delivers the file
+        list to Rust asynchronously.
+      -->
+      <Border x:Name="DropPanel"
+              BorderBrush="#3B82F6"
+              BorderThickness="1"
+              CornerRadius="4"
+              Padding="12"
+              MinHeight="60"
+              Background="#111D4ED8">
+        <TextBlock x:Name="DropStatusText" Text="{Binding DropStatus}" TextWrapping="Wrap" />
+      </Border>
+      <ListBox x:Name="SelectedFilesList" ItemsSource="{Binding SelectedFiles}" Height="90" />
+
       <TextBlock Text="Nullable value (Nickname)" FontWeight="Bold" />
       <StackPanel Orientation="Horizontal" Spacing="8">
         <TextBox Text="{Binding Nickname, Mode=TwoWay}" Width="200"

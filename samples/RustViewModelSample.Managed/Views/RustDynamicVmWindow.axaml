@@ -27,6 +27,25 @@
       <Button Content="Run Rust async save" Command="{rust:RustBinding SaveCommand}" />
       <TextBlock Text="{rust:RustBinding Status}" />
 
+      <TextBlock Text="Desktop files (Rust-owned, platform-neutral)" FontWeight="Bold" />
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button x:Name="OpenFilesButton" Content="Open files..." Command="{rust:RustBinding OpenFilesCommand}" />
+        <Button x:Name="OpenFolderButton" Content="Open folder..." Command="{rust:RustBinding OpenFolderCommand}" />
+        <Button x:Name="SaveExportButton" Content="Save/export..." Command="{rust:RustBinding SaveExportCommand}" />
+      </StackPanel>
+      <TextBlock x:Name="FileStatusText" Text="{rust:RustBinding FileStatus}" />
+      <TextBlock x:Name="ActivationStatusText" Text="{rust:RustBinding ActivationStatus}" />
+      <Border x:Name="DropPanel"
+              BorderBrush="#3B82F6"
+              BorderThickness="1"
+              CornerRadius="4"
+              Padding="12"
+              MinHeight="60"
+              Background="#111D4ED8">
+        <TextBlock x:Name="DropStatusText" Text="{rust:RustBinding DropStatus}" TextWrapping="Wrap" />
+      </Border>
+      <ListBox x:Name="SelectedFilesList" ItemsSource="{rust:RustBinding SelectedFiles}" Height="90" />
+
       <TextBlock Text="Nullable value (Nickname)" FontWeight="Bold" />
       <StackPanel Orientation="Horizontal" Spacing="8">
         <TextBox Text="{rust:RustBinding Nickname, Mode=TwoWay}" Width="200"

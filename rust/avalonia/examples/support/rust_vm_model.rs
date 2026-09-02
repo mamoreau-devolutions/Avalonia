@@ -1,9 +1,11 @@
+use crate::support::desktop_files::DesktopFiles;
 use avalonia::{
     AddressViewModel, AddressViewModelSink, Priority, SampleViewModel, SampleViewModelSink,
     TaskItemViewModel, TaskItemViewModelSink, TraceEventViewModel, TraceEventViewModelSink,
     TraceRowViewModel, TraceRowViewModelSink, ValueConverters,
 };
 use std::sync::atomic::{AtomicI64, Ordering};
+use std::sync::Arc;
 use std::time::Duration;
 
 static NEXT_GENERATION: AtomicI64 = AtomicI64::new(0);
@@ -32,6 +34,7 @@ pub struct Model {
     selected_trace_index: i64,
     selected_trace_key: String,
     trace_sort_direction: String,
+    desktop_files: Arc<DesktopFiles>,
 }
 
 /// Formats `Count` the way a real Rust application would: purely, with no
@@ -130,7 +133,10 @@ impl TaskItemViewModel for TaskModel {
 }
 
 impl Model {
-    pub fn new() -> Self {
+    /// Builds the model against a shared desktop file integration handle, so
+    /// the example can wire the mounted window and application scope into it
+    /// after the host creates them.
+    pub fn with_desktop_files(desktop_files: Arc<DesktopFiles>) -> Self {
         Self {
             sink: None,
             name: "Avalonia from Rust".to_string(),
@@ -159,6 +165,7 @@ impl Model {
             selected_trace_index: 0,
             selected_trace_key: "trace-000000".to_string(),
             trace_sort_direction: "Ascending".to_string(),
+            desktop_files,
         }
     }
 
@@ -173,6 +180,9 @@ impl Model {
         sink.set_nickname(self.nickname.as_deref())?;
         sink.set_priority(self.priority)?;
         sink.set_new_task_title(&self.new_task_title)?;
+        sink.set_file_status("No file operation yet")?;
+        sink.set_drop_status("Drop files or folders onto the panel below")?;
+        sink.set_activation_status("No startup files")?;
         sink.set_selected_trace_index(self.selected_trace_index)?;
         sink.set_selected_trace_key(&self.selected_trace_key)?;
         sink.set_trace_sort_direction(&self.trace_sort_direction)?;
@@ -244,11 +254,13 @@ impl TraceRowViewModel for TraceRowModel {
 impl SampleViewModel for Model {
     fn attach(&mut self, sink: SampleViewModelSink) -> avalonia::Result<()> {
         self.publish_initial_state(&sink)?;
+        self.desktop_files.set_sink(Some(sink.clone()));
         self.sink = Some(sink);
         Ok(())
     }
 
     fn detach(&mut self) -> avalonia::Result<()> {
+        self.desktop_files.set_sink(None);
         self.sink = None;
         Ok(())
     }
@@ -478,5 +490,21 @@ impl SampleViewModel for Model {
             self.publish_trace_snapshot(sink)?;
         }
         Ok(())
+    }
+
+    /// Desktop file integration commands. They only start the platform-neutral
+    /// picker; the completion is awaited on the application scope's executor
+    /// and published back through the same sink, so the UI thread is never
+    /// blocked while a dialog is open.
+    fn open_files(&mut self) -> avalonia::Result<()> {
+        self.desktop_files.open_files()
+    }
+
+    fn open_folder(&mut self) -> avalonia::Result<()> {
+        self.desktop_files.open_folder()
+    }
+
+    fn save_export(&mut self) -> avalonia::Result<()> {
+        self.desktop_files.save_export()
     }
 }

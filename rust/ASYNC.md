@@ -27,3 +27,12 @@ directly instead.
 Clipboard text read/write is the first real consumer. On Windows the host
 initializes OLE around the Avalonia application lifetime because a Rust
 executable has no managed `[STAThread]` entry point.
+
+Stage 29's storage pickers are the second. They reuse the same operation
+registry (so `CancelAsyncOperation` and shutdown cancellation behave
+identically) but complete through their own separately versioned
+`IAvnStorageCompletion` interface, because a picker result is a list of storage
+items rather than one tagged primitive. A dismissed dialog is reported as a
+successful completion with a `Cancelled` outcome tag, which keeps "the user
+said no" distinguishable from `E_ABORT` and from a real failure. See
+[DESKTOP_FILES.md](DESKTOP_FILES.md).

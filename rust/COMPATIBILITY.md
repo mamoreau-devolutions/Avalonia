@@ -30,7 +30,8 @@ Published interface IIDs, vtable slot order, method signatures, calling
 conventions, ownership rules, and error semantics are immutable. Never reuse an
 IID for a changed interface and never insert a slot into an existing vtable.
 Add a separately named, separately versioned interface with a new IID (for
-example `IAvnRustVmSink2`), then negotiate/query it as optional capability.
+example `IAvnRustVmSink2`, or stage 29's `IAvnApplication3` desktop file
+integration capability), then negotiate/query it as optional capability.
 Any unavoidable incompatible ABI change requires a new host ABI generation and
 a coordinated major release.
 
@@ -61,3 +62,13 @@ The Rust host and standalone Rust artifacts are not NuGet packages, so
 is instead represented by `rust/generate-sbom.py` in `sbom.cdx.json`, including
 the host, Rust executable, bundled native binaries, and licence with SHA-256
 hashes after signing.
+
+## File type associations
+
+Registering a document type is packaging metadata owned by whatever installer
+or store channel a consumer uses. The application template ships copyable
+Windows/Linux/macOS snippets (see
+[DESKTOP_FILES.md](DESKTOP_FILES.md#file-type-associations)); this workflow
+deliberately does not introduce MSIX packaging or platform installers, and the
+snippets add nothing to the delivered per-RID bundle, so the SBOM delivery
+scope is unchanged.

@@ -36,6 +36,9 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     private long _selectedTraceIndex = 0L;
     private string _selectedTraceKey = "trace-000000";
     private string _traceSortDirection = "Ascending";
+    private string _fileStatus = "No file operation yet";
+    private string _dropStatus = "Drop files or folders onto the panel below";
+    private string _activationStatus = "No startup files";
 
     /// <summary>Creates an adapter that dispatches and posts through <see cref="Dispatcher.UIThread"/>.</summary>
     public SampleViewModelAdapter(IAvnRustViewModel model) : this(model, null, null) { }
@@ -68,6 +71,9 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         ShuffleTasksCommand = new DelegateCommand(parameter => Check(_model.Execute(8, null)));
         ClearTasksCommand = new DelegateCommand(parameter => Check(_model.Execute(9, null)));
         SortTraceRowsCommand = new DelegateCommand(parameter => Check(_model.Execute(10, parameter as string)));
+        OpenFilesCommand = new DelegateCommand(parameter => Check(_model.BeginAsync(11, null)));
+        OpenFolderCommand = new DelegateCommand(parameter => Check(_model.BeginAsync(12, null)));
+        SaveExportCommand = new DelegateCommand(parameter => Check(_model.BeginAsync(13, null)));
         try
         {
             Check(_model.Attach(this));
@@ -328,9 +334,25 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         get => _traceSortDirection;
     }
 
+    public string FileStatus
+    {
+        get => _fileStatus;
+    }
+
+    public string DropStatus
+    {
+        get => _dropStatus;
+    }
+
+    public string ActivationStatus
+    {
+        get => _activationStatus;
+    }
+
     public BatchObservableCollection<string> Items { get; } = [];
     public BatchObservableCollection<global::Avalonia.Rust.Sample.Generated.TaskItemViewModelAdapter> Tasks { get; } = [];
     public BatchObservableCollection<global::Avalonia.Rust.Sample.Generated.TraceRowViewModelAdapter> TraceRows { get; } = [];
+    public BatchObservableCollection<string> SelectedFiles { get; } = [];
 
     public DelegateCommand IncrementCommand { get; }
     public DelegateCommand AddCommand { get; }
@@ -342,6 +364,9 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     public DelegateCommand ShuffleTasksCommand { get; }
     public DelegateCommand ClearTasksCommand { get; }
     public DelegateCommand SortTraceRowsCommand { get; }
+    public DelegateCommand OpenFilesCommand { get; }
+    public DelegateCommand OpenFolderCommand { get; }
+    public DelegateCommand SaveExportCommand { get; }
 
     public bool HasErrors => _errors.Count > 0;
 
@@ -362,6 +387,9 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
             8 => Apply(() => { var converted = value ?? ""; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_newTaskTitle, converted)) SetField(ref _newTaskTitle, converted, nameof(NewTaskTitle)); }),
             10 => Apply(() => { var converted = value ?? ""; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_selectedTraceKey, converted)) SetField(ref _selectedTraceKey, converted, nameof(SelectedTraceKey)); }),
             11 => Apply(() => { var converted = value ?? ""; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_traceSortDirection, converted)) SetField(ref _traceSortDirection, converted, nameof(TraceSortDirection)); }),
+            12 => Apply(() => { var converted = value ?? ""; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_fileStatus, converted)) SetField(ref _fileStatus, converted, nameof(FileStatus)); }),
+            13 => Apply(() => { var converted = value ?? ""; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_dropStatus, converted)) SetField(ref _dropStatus, converted, nameof(DropStatus)); }),
+            14 => Apply(() => { var converted = value ?? ""; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_activationStatus, converted)) SetField(ref _activationStatus, converted, nameof(ActivationStatus)); }),
             _ => unchecked((int)0x80070057),
         };
     }
@@ -428,6 +456,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     public int InsertString(int collectionId, int index, string? value) => collectionId switch
     {
         1 => Apply(() => { if ((uint)index > (uint)Items.Count) return unchecked((int)0x80070057); Items.Insert(index, value ?? ""); return 0; }),
+        4 => Apply(() => { if ((uint)index > (uint)SelectedFiles.Count) return unchecked((int)0x80070057); SelectedFiles.Insert(index, value ?? ""); return 0; }),
         _ => unchecked((int)0x80070057),
     };
 
@@ -441,6 +470,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     public int ReplaceString(int collectionId, int index, string? value) => collectionId switch
     {
         1 => Apply(() => { if ((uint)index >= (uint)Items.Count) return unchecked((int)0x80070057); Items[index] = value ?? ""; return 0; }),
+        4 => Apply(() => { if ((uint)index >= (uint)SelectedFiles.Count) return unchecked((int)0x80070057); SelectedFiles[index] = value ?? ""; return 0; }),
         _ => unchecked((int)0x80070057),
     };
 
@@ -468,6 +498,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     public int RemoveAt(int collectionId, int index) => collectionId switch
     {
         1 => Apply(() => { if ((uint)index >= (uint)Items.Count) return unchecked((int)0x80070057); Items.RemoveAt(index); return 0; }),
+        4 => Apply(() => { if ((uint)index >= (uint)SelectedFiles.Count) return unchecked((int)0x80070057); SelectedFiles.RemoveAt(index); return 0; }),
         2 => Apply(() =>
         {
             if ((uint)index >= (uint)Tasks.Count) return unchecked((int)0x80070057);
@@ -492,12 +523,14 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         1 => Apply(() => { if ((uint)fromIndex >= (uint)Items.Count || (uint)toIndex >= (uint)Items.Count) return unchecked((int)0x80070057); Items.Move(fromIndex, toIndex); return 0; }),
         2 => Apply(() => { if ((uint)fromIndex >= (uint)Tasks.Count || (uint)toIndex >= (uint)Tasks.Count) return unchecked((int)0x80070057); Tasks.Move(fromIndex, toIndex); return 0; }),
         3 => Apply(() => { if ((uint)fromIndex >= (uint)TraceRows.Count || (uint)toIndex >= (uint)TraceRows.Count) return unchecked((int)0x80070057); TraceRows.Move(fromIndex, toIndex); return 0; }),
+        4 => Apply(() => { if ((uint)fromIndex >= (uint)SelectedFiles.Count || (uint)toIndex >= (uint)SelectedFiles.Count) return unchecked((int)0x80070057); SelectedFiles.Move(fromIndex, toIndex); return 0; }),
         _ => unchecked((int)0x80070057),
     };
 
     public int ClearCollection(int collectionId) => collectionId switch
     {
         1 => Apply(Items.Clear),
+        4 => Apply(SelectedFiles.Clear),
         2 => Apply(() =>
         {
             foreach (var item in Tasks) item.Dispose();
@@ -523,6 +556,9 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         8 => Apply(() => ShuffleTasksCommand.SetEnabled(enabled != 0)),
         9 => Apply(() => ClearTasksCommand.SetEnabled(enabled != 0)),
         10 => Apply(() => SortTraceRowsCommand.SetEnabled(enabled != 0)),
+        11 => Apply(() => OpenFilesCommand.SetEnabled(enabled != 0)),
+        12 => Apply(() => OpenFolderCommand.SetEnabled(enabled != 0)),
+        13 => Apply(() => SaveExportCommand.SetEnabled(enabled != 0)),
         _ => unchecked((int)0x80070057),
     };
 
@@ -539,18 +575,23 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         9 => Apply(() => SetError(nameof(SelectedTraceIndex), message)),
         10 => Apply(() => SetError(nameof(SelectedTraceKey), message)),
         11 => Apply(() => SetError(nameof(TraceSortDirection), message)),
+        12 => Apply(() => SetError(nameof(FileStatus), message)),
+        13 => Apply(() => SetError(nameof(DropStatus), message)),
+        14 => Apply(() => SetError(nameof(ActivationStatus), message)),
         _ => unchecked((int)0x80070057),
     };
 
     public int AddString(int collectionId, string? value) => collectionId switch
     {
         1 => Apply(() => Items.Add(value ?? "")),
+        4 => Apply(() => SelectedFiles.Add(value ?? "")),
         _ => unchecked((int)0x80070057),
     };
 
     public int ReplaceStringSnapshot(int collectionId, IReadOnlyList<string> values) => collectionId switch
     {
         1 => Apply(() => Items.ReplaceSnapshot(values)),
+        4 => Apply(() => SelectedFiles.ReplaceSnapshot(values)),
         _ => unchecked((int)0x80070057),
     };
 
@@ -592,6 +633,9 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
             9 => new RustVmBatchProperty(nameof(SelectedTraceIndex), RustVmValueWireKind.Integer, false, false),
             10 => new RustVmBatchProperty(nameof(SelectedTraceKey), RustVmValueWireKind.String, false, false),
             11 => new RustVmBatchProperty(nameof(TraceSortDirection), RustVmValueWireKind.String, false, false),
+            12 => new RustVmBatchProperty(nameof(FileStatus), RustVmValueWireKind.String, false, false),
+            13 => new RustVmBatchProperty(nameof(DropStatus), RustVmValueWireKind.String, false, false),
+            14 => new RustVmBatchProperty(nameof(ActivationStatus), RustVmValueWireKind.String, false, false),
             _ => default,
         };
         return property.Name is not null;
@@ -604,6 +648,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
             1 => new RustVmBatchCollectionInfo(nameof(Items), RustVmValueWireKind.String, Items),
             2 => new RustVmBatchCollectionInfo(nameof(Tasks), RustVmValueWireKind.Model, Tasks),
             3 => new RustVmBatchCollectionInfo(nameof(TraceRows), RustVmValueWireKind.Model, TraceRows),
+            4 => new RustVmBatchCollectionInfo(nameof(SelectedFiles), RustVmValueWireKind.String, SelectedFiles),
             _ => default,
         };
         return collection.Items is not null;
@@ -623,6 +668,9 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
             8 => ShuffleTasksCommand,
             9 => ClearTasksCommand,
             10 => SortTraceRowsCommand,
+            11 => OpenFilesCommand,
+            12 => OpenFolderCommand,
+            13 => SaveExportCommand,
             _ => null!,
         };
         return command is not null;
@@ -728,6 +776,27 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
                 var next = value.Text ?? "";
                 if (Equals(_traceSortDirection, next)) return false;
                 _traceSortDirection = next;
+                return true;
+            }
+            case 12:
+            {
+                var next = value.Text ?? "";
+                if (Equals(_fileStatus, next)) return false;
+                _fileStatus = next;
+                return true;
+            }
+            case 13:
+            {
+                var next = value.Text ?? "";
+                if (Equals(_dropStatus, next)) return false;
+                _dropStatus = next;
+                return true;
+            }
+            case 14:
+            {
+                var next = value.Text ?? "";
+                if (Equals(_activationStatus, next)) return false;
+                _activationStatus = next;
                 return true;
             }
             default: return false;

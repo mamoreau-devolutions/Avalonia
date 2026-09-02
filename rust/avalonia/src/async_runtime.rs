@@ -17,22 +17,79 @@ pub enum AsyncValue {
 }
 
 #[derive(Debug)]
-struct AsyncFailure {
-    hresult: i32,
-    message: String,
+pub(crate) struct AsyncFailure {
+    pub(crate) hresult: i32,
+    pub(crate) message: String,
 }
 
-#[derive(Debug, Default)]
-struct AsyncState {
-    result: Option<std::result::Result<AsyncValue, AsyncFailure>>,
+/// The shared, executor-neutral half of every host-started operation: exactly
+/// one result, plus the waker registered by whichever executor is polling.
+#[derive(Debug)]
+pub(crate) struct CompletionSlot<T> {
+    result: Option<std::result::Result<T, AsyncFailure>>,
     waker: Option<Waker>,
+}
+
+impl<T> Default for CompletionSlot<T> {
+    fn default() -> Self {
+        Self {
+            result: None,
+            waker: None,
+        }
+    }
+}
+
+impl<T> CompletionSlot<T> {
+    /// Records the single completion. A second completion is rejected with
+    /// `E_FAIL` instead of overwriting the first, so a misbehaving host cannot
+    /// resolve the same operation twice.
+    pub(crate) fn publish(
+        state: &Arc<Mutex<Self>>,
+        result: std::result::Result<T, AsyncFailure>,
+    ) -> sys::Result<()> {
+        let waker = {
+            let mut state = state.lock().expect("async operation state lock poisoned");
+            if state.result.is_some() {
+                return Err(sys::Error(sys::E_FAIL));
+            }
+            state.result = Some(result);
+            state.waker.take()
+        };
+        if let Some(waker) = waker {
+            waker.wake();
+        }
+        Ok(())
+    }
+
+    pub(crate) fn poll(state: &Arc<Mutex<Self>>, context: &mut Context<'_>) -> Poll<Result<T>> {
+        let mut state = state.lock().expect("async operation state lock poisoned");
+        match state.result.take() {
+            Some(Ok(value)) => Poll::Ready(Ok(value)),
+            Some(Err(error)) => Poll::Ready(Err(Error::Async {
+                hresult: error.hresult,
+                message: error.message,
+            })),
+            None => {
+                state.waker = Some(context.waker().clone());
+                Poll::Pending
+            }
+        }
+    }
+
+    pub(crate) fn is_pending(state: &Arc<Mutex<Self>>) -> bool {
+        state
+            .lock()
+            .expect("async operation state lock poisoned")
+            .result
+            .is_none()
+    }
 }
 
 pub struct AsyncOperation<T> {
     application: sys::ComPtr<sys::IAvnApplication>,
     operation_id: i64,
     _completion: sys::ComPtr<sys::IAvnAsyncCompletion>,
-    state: Arc<Mutex<AsyncState>>,
+    state: Arc<Mutex<CompletionSlot<AsyncValue>>>,
     decode: fn(AsyncValue) -> Result<T>,
     _result: PhantomData<T>,
 }
@@ -43,24 +100,10 @@ impl<T> AsyncOperation<T> {
         start: impl FnOnce(&sys::ComPtr<sys::IAvnAsyncCompletion>) -> sys::Result<i64>,
         decode: fn(AsyncValue) -> Result<T>,
     ) -> Result<Self> {
-        let state = Arc::new(Mutex::new(AsyncState::default()));
+        let state = Arc::new(Mutex::new(CompletionSlot::default()));
         let completion_state = state.clone();
         let completion = sys::async_completion(move |arguments| {
-            let result = decode_completion(arguments);
-            let waker = {
-                let mut state = completion_state
-                    .lock()
-                    .expect("async operation state lock poisoned");
-                if state.result.is_some() {
-                    return Err(sys::Error(sys::E_FAIL));
-                }
-                state.result = Some(result);
-                state.waker.take()
-            };
-            if let Some(waker) = waker {
-                waker.wake();
-            }
-            Ok(())
+            CompletionSlot::publish(&completion_state, decode_completion(arguments))
         });
         let operation_id = start(&completion)?;
         Ok(Self {
@@ -78,33 +121,17 @@ impl<T> Future for AsyncOperation<T> {
     type Output = Result<T>;
 
     fn poll(self: Pin<&mut Self>, context: &mut Context<'_>) -> Poll<Self::Output> {
-        let mut state = self
-            .state
-            .lock()
-            .expect("async operation state lock poisoned");
-        match state.result.take() {
-            Some(Ok(value)) => Poll::Ready((self.decode)(value)),
-            Some(Err(error)) => Poll::Ready(Err(Error::Async {
-                hresult: error.hresult,
-                message: error.message,
-            })),
-            None => {
-                state.waker = Some(context.waker().clone());
-                Poll::Pending
-            }
+        match CompletionSlot::poll(&self.state, context) {
+            Poll::Ready(Ok(value)) => Poll::Ready((self.decode)(value)),
+            Poll::Ready(Err(error)) => Poll::Ready(Err(error)),
+            Poll::Pending => Poll::Pending,
         }
     }
 }
 
 impl<T> Drop for AsyncOperation<T> {
     fn drop(&mut self) {
-        let pending = self
-            .state
-            .lock()
-            .expect("async operation state lock poisoned")
-            .result
-            .is_none();
-        if pending {
+        if CompletionSlot::is_pending(&self.state) {
             let _ = self.application.cancel_async_operation(self.operation_id);
         }
     }

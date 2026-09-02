@@ -17,6 +17,9 @@ public static class Exports
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(AvnApplication))]
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(AvnDispatcher))]
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(AvnResourceValue))]
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(AvnFilePickerOptions))]
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(AvnStorageItem))]
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(AvnStorageItemList))]
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(HostApplication))]
     public static unsafe int GetActivationFactory(nint* factory)
     {

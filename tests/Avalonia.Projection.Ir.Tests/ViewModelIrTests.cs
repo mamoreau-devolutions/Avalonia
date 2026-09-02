@@ -18,9 +18,11 @@ public class ViewModelIrTests
         Assert.Equal(ViewModelIr.CurrentVersion, ir.Version);
         Assert.Equal(5, ir.Models.Count);
         var model = ir.Models.Single(candidate => candidate.Name == "SampleViewModel");
-        Assert.Equal(11, model.Properties.Count);
-        Assert.Equal(10, model.Commands.Count);
+        Assert.Equal(14, model.Properties.Count);
+        Assert.Equal(13, model.Commands.Count);
         Assert.True(model.Commands.Single(command => command.Name == "Save").IsAsync);
+        Assert.True(model.Commands.Single(command => command.Name == "OpenFiles").IsAsync);
+        Assert.Equal(4, model.Collections.Count);
         var enumDefinition = Assert.Single(ir.Enums);
         Assert.Equal("Priority", enumDefinition.Name);
         Assert.Equal(3, enumDefinition.Members.Count);

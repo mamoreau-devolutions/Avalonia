@@ -9,6 +9,8 @@ The native ownership contract and the MicroCom-versus-handle-table decision
 are documented in [OWNERSHIP.md](OWNERSHIP.md).
 The executor-neutral completion ABI and clipboard integration are documented
 in [ASYNC.md](ASYNC.md).
+Desktop file integration (pickers, drag/drop, "open with", file associations)
+is documented in [DESKTOP_FILES.md](DESKTOP_FILES.md).
 The Rust-state/managed-presentation application model is documented in
 [VIEW_MODELS.md](VIEW_MODELS.md).
 Platform host selection and the Windows/Linux/macOS validation are documented in
@@ -81,7 +83,10 @@ core of ControlCatalog's `ProgressBarPage`, and `scroll_viewer` ports its basic
 precompiled managed AXAML while state, edits, collection mutations, commands,
 and asynchronous work are owned by Rust. `rust_dynamic_vm_axaml` uses the same
 Rust model through generated runtime metadata and the AOT-safe `RustBinding`
-markup extension. The dynamic adapter also implements `IReflectableType` for
+markup extension. Both also demonstrate stage 29 desktop file integration:
+Rust-owned Open files / Open folder / Save-export commands, a drop panel, and
+the startup "open with" activation list. Launch either example with file paths
+to populate that list. The dynamic adapter also implements `IReflectableType` for
 JIT reflection bindings; NativeAOT applications use `RustBinding` because
 Avalonia's general reflection binding requires dynamic code. Both examples
 also register a Rust-authored `IValueConverter` (`CountToLabel`, formatting
@@ -160,6 +165,14 @@ current snapshot ABI still creates managed row adapters for every row. Lazy
 range data is intentionally deferred to stage 30. Batch publication raises a
 table collection Reset before its associated selection properties, preserving
 the Rust-owned row-key selection across a sort snapshot.
+Stage 29 adds platform-neutral desktop file integration through a third,
+separately versioned application capability (`IAvnApplication3`): multi-select
+open, folder and save/export pickers, incoming file drag-and-drop, and
+startup/"open with" activation. It reuses `TopLevel.StorageProvider`, the
+`DragDrop` routed events and the desktop lifetime rather than any platform
+dialog, keeps user cancellation distinct from failure, and never asks Rust to
+negotiate a drag effect inside the platform drag loop. See
+[DESKTOP_FILES.md](DESKTOP_FILES.md).
 
 ## Start a new application
 

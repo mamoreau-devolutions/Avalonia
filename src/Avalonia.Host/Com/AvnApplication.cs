@@ -28,9 +28,14 @@ public partial class AvnApplication : IAvnApplication, IAvnApplication2
         {
             using var platformThread = RustHostPlatform.EnterThread();
 
+            // Startup/open-with arguments are supplied by the Rust entry point
+            // through IAvnApplication3 before Run, because a Rust executable
+            // owns argv and the managed host never sees it.
+            var startupArguments = SnapshotStartupArguments();
             var lifetime = new ClassicDesktopStyleApplicationLifetime
             {
                 ShutdownMode = ShutdownMode.OnLastWindowClose,
+                Args = startupArguments,
             };
             _lifetime = lifetime;
 
@@ -44,12 +49,16 @@ public partial class AvnApplication : IAvnApplication, IAvnApplication2
                     Marshal.ThrowExceptionForHR(started);
             };
 
-            lifetime.Start(Array.Empty<string>());
+            lifetime.Start(startupArguments);
             return HResults.S_OK;
         }
         catch (Exception e)
         {
             return AbiError.Capture(e);
+        }
+        finally
+        {
+            ReleaseDesktopFileIntegration();
         }
     }
 
