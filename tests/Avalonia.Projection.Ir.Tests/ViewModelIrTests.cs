@@ -16,11 +16,14 @@ public class ViewModelIrTests
         var ir = ViewModelIr.FromJson(File.ReadAllText(path));
 
         Assert.Equal(ViewModelIr.CurrentVersion, ir.Version);
-        var model = Assert.Single(ir.Models);
-        Assert.Equal("SampleViewModel", model.Name);
-        Assert.Equal(4, model.Properties.Count);
-        Assert.Equal(3, model.Commands.Count);
+        Assert.Equal(3, ir.Models.Count);
+        var model = ir.Models.Single(candidate => candidate.Name == "SampleViewModel");
+        Assert.Equal(8, model.Properties.Count);
+        Assert.Equal(9, model.Commands.Count);
         Assert.True(model.Commands.Single(command => command.Name == "Save").IsAsync);
+        var enumDefinition = Assert.Single(ir.Enums);
+        Assert.Equal("Priority", enumDefinition.Name);
+        Assert.Equal(3, enumDefinition.Members.Count);
         Assert.Equal(
             Normalize(File.ReadAllText(path)),
             Normalize(ir.ToJson()));
@@ -75,6 +78,175 @@ public class ViewModelIrTests
     }
 
     [Fact]
+    public void Model_collections_are_accepted_when_the_element_model_exists()
+    {
+        var ir = new ViewModelIr
+        {
+            Models =
+            [
+                new()
+                {
+                    Id = 1,
+                    Name = "Parent",
+                    ManagedNamespace = "Tests",
+                    Collections = [new() { Id = 1, Name = "Children", ElementKind = ViewModelValueKind.Model, ElementModelName = "Child" }],
+                },
+                new() { Id = 2, Name = "Child", ManagedNamespace = "Tests" },
+            ],
+        };
+
+        ir.Validate(); // does not throw
+    }
+
+    [Fact]
+    public void Model_collections_referencing_unknown_models_are_rejected()
+    {
+        var ir = CreateModel(collections:
+        [
+            new() { Id = 1, Name = "Children", ElementKind = ViewModelValueKind.Model, ElementModelName = "DoesNotExist" },
+        ]);
+
+        Assert.Throws<InvalidOperationException>(() => ir.Validate());
+    }
+
+    [Fact]
+    public void Recursive_model_properties_are_rejected_before_descriptor_generation()
+    {
+        var ir = new ViewModelIr
+        {
+            Models =
+            [
+                new()
+                {
+                    Id = 1, Name = "Parent", ManagedNamespace = "Tests",
+                    Properties = [new() { Id = 1, Name = "Child", Kind = ViewModelValueKind.Model, ModelName = "Child", Nullable = true }],
+                },
+                new()
+                {
+                    Id = 2, Name = "Child", ManagedNamespace = "Tests",
+                    Properties = [new() { Id = 1, Name = "Parent", Kind = ViewModelValueKind.Model, ModelName = "Parent", Nullable = true }],
+                },
+            ],
+        };
+
+        var error = Assert.Throws<InvalidOperationException>(() => ir.Validate());
+        Assert.Contains("Recursive view-model schema graph", error.Message);
+        Assert.Contains("Parent -> Child -> Parent", error.Message);
+    }
+
+    [Fact]
+    public void Recursive_model_collections_are_rejected_before_descriptor_generation()
+    {
+        var ir = new ViewModelIr
+        {
+            Models =
+            [
+                new()
+                {
+                    Id = 1, Name = "Node", ManagedNamespace = "Tests",
+                    Collections = [new() { Id = 1, Name = "Children", ElementKind = ViewModelValueKind.Model, ElementModelName = "Node" }],
+                },
+            ],
+        };
+
+        Assert.Contains(
+            "Recursive view-model schema graph",
+            Assert.Throws<InvalidOperationException>(() => ir.Validate()).Message);
+    }
+
+    [Fact]
+    public void Enum_properties_require_a_declared_enum()
+    {
+        var ir = CreateModel(properties:
+        [
+            new() { Id = 1, Name = "Priority", Kind = ViewModelValueKind.Enum, Writable = true },
+        ]);
+
+        Assert.Throws<InvalidOperationException>(() => ir.Validate());
+    }
+
+    [Fact]
+    public void Enum_properties_reject_an_initial_value_outside_the_declared_members()
+    {
+        var ir = CreateModel(
+            properties:
+        [
+            new()
+            {
+                Id = 1,
+                Name = "Priority",
+                Kind = ViewModelValueKind.Enum,
+                EnumName = "Priority",
+                Writable = true,
+                InitialInteger = 99,
+            },
+        ],
+            enums:
+        [
+            new() { Id = 1, Name = "Priority", ManagedNamespace = "Tests", Members = [new() { Name = "Low", Value = 0 }] },
+        ]);
+
+        Assert.Throws<InvalidOperationException>(() => ir.Validate());
+    }
+
+    [Fact]
+    public void Enum_properties_round_trip_with_a_declared_enum()
+    {
+        var ir = CreateModel(
+            properties:
+        [
+            new()
+            {
+                Id = 1,
+                Name = "Priority",
+                Kind = ViewModelValueKind.Enum,
+                EnumName = "Priority",
+                Writable = true,
+                InitialInteger = 1,
+            },
+        ],
+            enums:
+        [
+            new()
+            {
+                Id = 1,
+                Name = "Priority",
+                ManagedNamespace = "Tests",
+                Members = [new() { Name = "Low", Value = 0 }, new() { Name = "High", Value = 1 }],
+            },
+        ]);
+
+        ir.Validate(); // does not throw
+    }
+
+    [Fact]
+    public void Model_properties_must_be_nullable_and_not_writable()
+    {
+        var writable = CreateModel(properties:
+        [
+            new() { Id = 1, Name = "Address", Kind = ViewModelValueKind.Model, ModelName = "Model", Writable = true, Nullable = true },
+        ]);
+        Assert.Throws<InvalidOperationException>(() => writable.Validate());
+
+        var notNullable = CreateModel(properties:
+        [
+            new() { Id = 1, Name = "Address", Kind = ViewModelValueKind.Model, ModelName = "Model", Writable = false, Nullable = false },
+        ]);
+        Assert.Throws<InvalidOperationException>(() => notNullable.Validate());
+    }
+
+    [Fact]
+    public void Nullable_is_only_supported_for_string_and_model_properties()
+    {
+        var ir = CreateModel(properties:
+        [
+            new() { Id = 1, Name = "Count", Kind = ViewModelValueKind.Integer, Nullable = true },
+        ]);
+
+        Assert.Throws<InvalidOperationException>(() => ir.Validate());
+    }
+
+    [Fact]
     public void Non_positive_member_ids_are_rejected()
     {
         var ir = CreateModel(properties:
@@ -105,9 +277,11 @@ public class ViewModelIrTests
     private static ViewModelIr CreateModel(
         IReadOnlyList<ViewModelProperty>? properties = null,
         IReadOnlyList<ViewModelCollection>? collections = null,
-        IReadOnlyList<ViewModelCommand>? commands = null) => new()
-    {
-        Models =
+        IReadOnlyList<ViewModelCommand>? commands = null,
+        IReadOnlyList<ViewModelEnumDefinition>? enums = null) => new()
+        {
+            Enums = enums ?? [],
+            Models =
         [
             new()
             {
@@ -119,7 +293,7 @@ public class ViewModelIrTests
                 Commands = commands ?? [],
             },
         ],
-    };
+        };
 
     private static string FindRepositoryRoot()
     {

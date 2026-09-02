@@ -16,6 +16,7 @@ mod generated;
 mod guid;
 mod hresult;
 mod rust_vm;
+mod value_converter;
 
 pub use app_handler::{app_handler, IAvnAppHandler};
 pub use application::{IAvnApplication, IAvnResourceValue};
@@ -29,18 +30,54 @@ pub use guid::Guid;
 pub use hresult::{
     Error, Result, AVN_E_FIXTURE, E_FAIL, E_INVALIDARG, E_NOINTERFACE, E_POINTER, S_OK,
 };
-pub use rust_vm::{rust_view_model, IAvnRustViewModel, IAvnRustVmSink, RustViewModelCallbacks};
+pub use rust_vm::{
+    rust_view_model, IAvnRustViewModel, IAvnRustVmSink, IAvnRustVmSink2, RustViewModelCallbacks,
+};
+pub use value_converter::{
+    rust_value_converter_provider, ConversionDirection, ConvertFn, ConverterAbiError,
+    IAvnRustValueConverterProvider, ScalarKind, ScalarValue,
+};
 
 use libloading::Library;
 use std::ffi::c_void;
 use std::mem::ManuallyDrop;
 use std::path::Path;
-use std::sync::OnceLock;
+use std::ptr;
+use std::sync::{Mutex, OnceLock};
 
 type GetActivationFactoryFn = unsafe extern "C" fn(*mut *mut c_void) -> i32;
 type FreeFn = unsafe extern "C" fn(*mut c_void);
+type AllocUtf16Fn = unsafe extern "C" fn(i32) -> *mut u16;
 type GetLastErrorFn = unsafe extern "C" fn(*mut *mut u16) -> i32;
 static FREE: OnceLock<FreeFn> = OnceLock::new();
+static ALLOC_UTF16: OnceLock<AllocUtf16Fn> = OnceLock::new();
+static HOST_EXPORTS: Mutex<()> = Mutex::new(());
+
+/// Failure while loading a native Avalonia host.
+#[derive(Debug)]
+pub enum HostLoadError {
+    Library(libloading::Error),
+    IncompatibleAllocator,
+}
+
+impl std::fmt::Display for HostLoadError {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Library(error) => error.fmt(formatter),
+            Self::IncompatibleAllocator => formatter.write_str(
+                "Avalonia Host exports a different UTF-16 allocator than the already loaded host",
+            ),
+        }
+    }
+}
+
+impl std::error::Error for HostLoadError {}
+
+impl From<libloading::Error> for HostLoadError {
+    fn from(error: libloading::Error) -> Self {
+        Self::Library(error)
+    }
+}
 
 /// Takes ownership of a host-allocated null-terminated UTF-16 string.
 ///
@@ -73,7 +110,36 @@ pub(crate) unsafe fn clone_utf16(ptr: *const u16) -> Option<String> {
     )))
 }
 
+/// Allocates a host-owned, null-terminated UTF-16 buffer (via
+/// `avn_alloc_utf16`, the same allocator `avn_free` releases) and copies
+/// `value` into it. Returns `None` if the host rejects the allocation.
+/// Rust code must use this — not its own allocator — whenever it hands an
+/// owned string back across the ABI, so the managed caller can free it
+/// without a cross-allocator mismatch.
+///
+/// # Panics
+/// Panics if called before a `Host` has been loaded.
+pub(crate) fn alloc_utf16(value: &str) -> Option<*mut u16> {
+    let alloc = ALLOC_UTF16
+        .get()
+        .expect("Avalonia Host must be loaded before allocating ABI strings");
+    let units: Vec<u16> = value.encode_utf16().collect();
+    let length = i32::try_from(units.len()).ok()?;
+    unsafe {
+        let buffer = alloc(length);
+        if buffer.is_null() {
+            return None;
+        }
+        ptr::copy_nonoverlapping(units.as_ptr(), buffer, units.len());
+        *buffer.add(units.len()) = 0;
+        Some(buffer)
+    }
+}
+
 pub struct Host {
+    // Successful hosts deliberately remain loaded for the process lifetime:
+    // FREE/ALLOC_UTF16 are process-wide ABI callbacks and may service strings
+    // retained by Rust after an individual Host value is dropped.
     _lib: ManuallyDrop<Library>,
     _dependencies: ManuallyDrop<Vec<Library>>,
     get_activation_factory: GetActivationFactoryFn,
@@ -82,7 +148,7 @@ pub struct Host {
 }
 
 impl Host {
-    pub fn load(path: impl AsRef<Path>) -> std::result::Result<Self, libloading::Error> {
+    pub fn load(path: impl AsRef<Path>) -> std::result::Result<Self, HostLoadError> {
         unsafe {
             let path = path.as_ref();
             #[cfg(any(target_os = "windows", target_os = "macos"))]
@@ -109,8 +175,29 @@ impl Host {
             let get_activation_factory =
                 *lib.get::<GetActivationFactoryFn>(b"avn_get_activation_factory\0")?;
             let free = *lib.get::<FreeFn>(b"avn_free\0")?;
-            let _ = FREE.set(free);
+            let alloc_utf16 = *lib.get::<AllocUtf16Fn>(b"avn_alloc_utf16\0")?;
             let get_last_error = *lib.get::<GetLastErrorFn>(b"avn_get_last_error\0")?;
+            let _exports = HOST_EXPORTS
+                .lock()
+                .unwrap_or_else(|poison| poison.into_inner());
+            if FREE
+                .get()
+                .is_some_and(|published| *published as usize != free as usize)
+                || ALLOC_UTF16
+                    .get()
+                    .is_some_and(|published| *published as usize != alloc_utf16 as usize)
+            {
+                return Err(HostLoadError::IncompatibleAllocator);
+            }
+            if FREE.get().is_none() {
+                FREE.set(free)
+                    .expect("host allocator publication must be serialized");
+            }
+            if ALLOC_UTF16.get().is_none() {
+                ALLOC_UTF16
+                    .set(alloc_utf16)
+                    .expect("host allocator publication must be serialized");
+            }
             Ok(Self {
                 _lib: ManuallyDrop::new(lib),
                 _dependencies: ManuallyDrop::new(dependencies),

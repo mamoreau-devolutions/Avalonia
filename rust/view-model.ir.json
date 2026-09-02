@@ -1,5 +1,26 @@
 {
-  "version": 1,
+  "version": 2,
+  "enums": [
+    {
+      "id": 1,
+      "name": "Priority",
+      "managedNamespace": "Avalonia.Rust.Sample.Generated",
+      "members": [
+        {
+          "name": "Low",
+          "value": 0
+        },
+        {
+          "name": "Normal",
+          "value": 1
+        },
+        {
+          "name": "High",
+          "value": 2
+        }
+      ]
+    }
+  ],
   "models": [
     {
       "id": 1,
@@ -11,19 +32,22 @@
           "name": "Name",
           "kind": "String",
           "writable": true,
+          "nullable": false,
           "initialString": "Avalonia from Rust"
         },
         {
           "id": 2,
           "name": "Count",
           "kind": "Integer",
-          "writable": false
+          "writable": false,
+          "nullable": false
         },
         {
           "id": 3,
           "name": "NewItem",
           "kind": "String",
           "writable": true,
+          "nullable": false,
           "initialString": ""
         },
         {
@@ -31,7 +55,40 @@
           "name": "Status",
           "kind": "String",
           "writable": false,
+          "nullable": false,
           "initialString": "Ready"
+        },
+        {
+          "id": 5,
+          "name": "Nickname",
+          "kind": "String",
+          "writable": true,
+          "nullable": true
+        },
+        {
+          "id": 6,
+          "name": "Priority",
+          "kind": "Enum",
+          "writable": true,
+          "nullable": false,
+          "enumName": "Priority",
+          "initialInteger": 1
+        },
+        {
+          "id": 7,
+          "name": "Address",
+          "kind": "Model",
+          "writable": false,
+          "nullable": true,
+          "modelName": "AddressViewModel"
+        },
+        {
+          "id": 8,
+          "name": "NewTaskTitle",
+          "kind": "String",
+          "writable": true,
+          "nullable": false,
+          "initialString": ""
         }
       ],
       "collections": [
@@ -39,6 +96,12 @@
           "id": 1,
           "name": "Items",
           "elementKind": "String"
+        },
+        {
+          "id": 2,
+          "name": "Tasks",
+          "elementKind": "Model",
+          "elementModelName": "TaskItemViewModel"
         }
       ],
       "commands": [
@@ -57,8 +120,88 @@
           "id": 3,
           "name": "Save",
           "isAsync": true
+        },
+        {
+          "id": 4,
+          "name": "ClearNickname",
+          "isAsync": false
+        },
+        {
+          "id": 5,
+          "name": "ToggleAddress",
+          "isAsync": false
+        },
+        {
+          "id": 6,
+          "name": "AddTask",
+          "isAsync": false,
+          "parameterProperty": "NewTaskTitle"
+        },
+        {
+          "id": 7,
+          "name": "RemoveFirstTask",
+          "isAsync": false
+        },
+        {
+          "id": 8,
+          "name": "ShuffleTasks",
+          "isAsync": false
+        },
+        {
+          "id": 9,
+          "name": "ClearTasks",
+          "isAsync": false
         }
       ]
+    },
+    {
+      "id": 2,
+      "name": "AddressViewModel",
+      "managedNamespace": "Avalonia.Rust.Sample.Generated",
+      "properties": [
+        {
+          "id": 1,
+          "name": "Street",
+          "kind": "String",
+          "writable": true,
+          "nullable": false,
+          "initialString": ""
+        },
+        {
+          "id": 2,
+          "name": "City",
+          "kind": "String",
+          "writable": true,
+          "nullable": false,
+          "initialString": ""
+        }
+      ],
+      "collections": [],
+      "commands": []
+    },
+    {
+      "id": 3,
+      "name": "TaskItemViewModel",
+      "managedNamespace": "Avalonia.Rust.Sample.Generated",
+      "properties": [
+        {
+          "id": 1,
+          "name": "Title",
+          "kind": "String",
+          "writable": false,
+          "nullable": false,
+          "initialString": ""
+        },
+        {
+          "id": 2,
+          "name": "Done",
+          "kind": "Boolean",
+          "writable": true,
+          "nullable": false
+        }
+      ],
+      "collections": [],
+      "commands": []
     }
   ],
   "views": [
@@ -66,7 +209,31 @@
       "id": 1,
       "name": "RustVmWindow",
       "model": "SampleViewModel",
-      "managedTypeName": "Avalonia.Rust.Sample.Views.RustVmWindow"
+      "managedTypeName": "Avalonia.Rust.Sample.Views.RustVmWindow",
+      "dynamicBindings": false,
+      "converters": [
+        "CountToLabel"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "RustDynamicVmWindow",
+      "model": "SampleViewModel",
+      "managedTypeName": "Avalonia.Rust.Sample.Views.RustDynamicVmWindow",
+      "dynamicBindings": true,
+      "converters": [
+        "CountToLabel"
+      ]
+    }
+  ],
+  "converters": [
+    {
+      "id": 1,
+      "name": "CountToLabel",
+      "managedNamespace": "Avalonia.Rust.Sample.Generated",
+      "valueKind": "Integer",
+      "resultKind": "String",
+      "supportsConvertBack": false
     }
   ]
 }

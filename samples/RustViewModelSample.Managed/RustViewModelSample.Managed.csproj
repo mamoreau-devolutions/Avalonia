@@ -9,6 +9,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\packages\Avalonia\Avalonia.csproj" />
+    <ProjectReference Include="..\..\src\Avalonia.Rust\Avalonia.Rust.csproj" />
     <ProjectReference Include="..\..\src\Avalonia.Rust.Interop\Avalonia.Rust.Interop.csproj" />
   </ItemGroup>
   <Import Project="..\..\build\NullableEnable.props" />

@@ -1,0 +1,9 @@
+[package]
+name = "avalonia-app-template"
+version = "0.1.0"
+edition = "2021"
+publish = false
+description = "Starting point for a new Avalonia Rust application"
+
+[dependencies]
+avalonia = { path = "../../avalonia" }

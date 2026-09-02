@@ -5,8 +5,16 @@ use crate::generated::IAvnWindow;
 use crate::guid::Guid;
 use crate::hresult::{self, Result};
 use crate::rust_vm::IAvnRustViewModel;
+use crate::value_converter::IAvnRustValueConverterProvider;
 use std::ffi::c_void;
 use std::ptr;
+
+const IAVN_APPLICATION2_IID: Guid = Guid {
+    data1: 0x6B2E8F10,
+    data2: 0x4C91,
+    data3: 0x4E3A,
+    data4: [0x9A, 0x77, 0x1F, 0x0C, 0x2B, 0x3A, 0x4D, 0x41],
+};
 
 const IAVN_RESOURCE_VALUE_IID: Guid = Guid {
     data1: 0x6B2E8F10,
@@ -146,6 +154,26 @@ pub struct IAvnApplication {
 
 unsafe impl ComInterface for IAvnApplication {
     const IID: Guid = Guid::IAVN_APPLICATION;
+}
+
+#[repr(C)]
+struct IAvnApplication2Vtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    set_value_converter_provider: unsafe extern "system" fn(
+        *mut IAvnApplication2,
+        *mut IAvnRustValueConverterProvider,
+    ) -> i32,
+}
+
+#[repr(C)]
+struct IAvnApplication2 {
+    vtbl: *const IAvnApplication2Vtbl,
+}
+
+unsafe impl ComInterface for IAvnApplication2 {
+    const IID: Guid = IAVN_APPLICATION2_IID;
 }
 
 impl ComPtr<IAvnApplication> {
@@ -316,6 +344,24 @@ impl ComPtr<IAvnApplication> {
             );
             hresult::check(hr)?;
             ComPtr::from_projected_raw(window)
+        }
+    }
+
+    /// Registers (or clears, when `provider` is `None`) the single
+    /// application-scoped Rust value-converter provider.
+    pub fn set_value_converter_provider(
+        &self,
+        provider: Option<&ComPtr<IAvnRustValueConverterProvider>>,
+    ) -> Result<()> {
+        unsafe {
+            let extension = self.query_interface::<IAvnApplication2>()?;
+            let raw = provider.map_or(ptr::null_mut(), ComPtr::as_raw);
+            let hr = ((*extension.as_raw())
+                .vtbl
+                .as_ref()
+                .unwrap()
+                .set_value_converter_provider)(extension.as_raw(), raw);
+            hresult::check(hr)
         }
     }
 }

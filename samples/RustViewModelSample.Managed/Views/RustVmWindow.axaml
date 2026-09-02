@@ -1,27 +1,90 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:Avalonia.Rust.Sample.Generated"
+        xmlns:sys="using:System"
+        xmlns:conv="using:Avalonia.Data.Converters"
         x:Class="Avalonia.Rust.Sample.Views.RustVmWindow"
         x:DataType="vm:SampleViewModelAdapter"
         Title="Rust VM + AXAML"
-        Width="520"
-        Height="480">
-  <StackPanel Margin="20" Spacing="10">
-    <TextBlock Text="Managed AXAML presentation, Rust-owned state" FontSize="20" />
-    <TextBlock Text="Name" />
-    <TextBox Text="{Binding Name, Mode=TwoWay}" />
-    <StackPanel Orientation="Horizontal" Spacing="8">
-      <Button Content="Increment" Command="{Binding IncrementCommand}" />
-      <TextBlock Text="{Binding Count, StringFormat='Count: {0}'}"
-                 VerticalAlignment="Center" />
+        Width="560"
+        Height="760">
+  <Window.Resources>
+    <!--
+      Deferred realization: this DataTemplate resource is only built by a
+      ContentPresenter when its content is actually displayed, proving the
+      Rust value-converter provider resolves after window construction, not
+      only while the window's own top-level bindings are wired up. Typed with
+      a real CLR x:DataType (not x:CompileBindings="False") so the template
+      stays on the compiled-binding, NativeAOT-safe path.
+    -->
+    <DataTemplate x:Key="CountTemplate" x:DataType="sys:Int64">
+      <TextBlock Text="{Binding Converter={x:Static vm:CountToLabelConverter.Instance}}" />
+    </DataTemplate>
+    <!--
+      Nested view-model item template: `Done` is two-way bound straight to
+      the item's own generated `TaskItemViewModelAdapter`, so toggling it
+      calls that specific nested Rust view model's sink, not the parent's.
+    -->
+    <DataTemplate x:Key="TaskTemplate" x:DataType="vm:TaskItemViewModelAdapter">
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <CheckBox IsChecked="{Binding Done, Mode=TwoWay}" />
+        <TextBlock Text="{Binding Title}" VerticalAlignment="Center" />
+      </StackPanel>
+    </DataTemplate>
+  </Window.Resources>
+  <ScrollViewer>
+    <StackPanel Margin="20" Spacing="10">
+      <TextBlock Text="Managed AXAML presentation, Rust-owned state" FontSize="20" />
+      <TextBlock Text="Name (validated by Rust: cannot be empty)" />
+      <TextBox Text="{Binding Name, Mode=TwoWay}" />
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Content="Increment" Command="{Binding IncrementCommand}" />
+        <TextBlock Text="{Binding Count, Converter={x:Static vm:CountToLabelConverter.Instance}}"
+                   VerticalAlignment="Center" />
+        <ContentControl Content="{Binding Count}" ContentTemplate="{StaticResource CountTemplate}" />
+      </StackPanel>
+      <TextBlock Text="New item" />
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <TextBox Text="{Binding NewItem, Mode=TwoWay}" Width="300" />
+        <Button Content="Add" Command="{Binding AddCommand}" />
+      </StackPanel>
+      <ListBox ItemsSource="{Binding Items}" Height="100" />
+      <!-- CanExecute: Save disables itself while the Rust worker runs. -->
+      <Button Content="Run Rust async save" Command="{Binding SaveCommand}" />
+      <TextBlock Text="{Binding Status}" />
+
+      <TextBlock Text="Nullable value (Nickname)" FontWeight="Bold" />
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <TextBox Text="{Binding Nickname, Mode=TwoWay}" Width="200"
+                 PlaceholderText="(no nickname set)" />
+        <Button Content="Clear nickname" Command="{Binding ClearNicknameCommand}" />
+      </StackPanel>
+
+      <TextBlock Text="Enum value (Priority)" FontWeight="Bold" />
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <TextBlock Text="{Binding Priority}" VerticalAlignment="Center" />
+        <Button Content="Cycle priority" Click="OnCyclePriorityClick" />
+      </StackPanel>
+
+      <TextBlock Text="Nested view model (Address, nullable)" FontWeight="Bold" />
+      <Button Content="Toggle address" Command="{Binding ToggleAddressCommand}" />
+      <StackPanel Orientation="Horizontal" Spacing="8"
+                  IsVisible="{Binding Address, Converter={x:Static conv:ObjectConverters.IsNotNull}}">
+        <TextBox Text="{Binding Address.Street, Mode=TwoWay}" Width="150" PlaceholderText="Street" />
+        <TextBox Text="{Binding Address.City, Mode=TwoWay}" Width="150" PlaceholderText="City" />
+      </StackPanel>
+
+      <TextBlock Text="Nested collection (Tasks)" FontWeight="Bold" />
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <TextBox Text="{Binding NewTaskTitle, Mode=TwoWay}" Width="200" />
+        <Button Content="Add task" Command="{Binding AddTaskCommand}" />
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Content="Remove first" Command="{Binding RemoveFirstTaskCommand}" />
+        <Button Content="Shuffle" Command="{Binding ShuffleTasksCommand}" />
+        <Button Content="Clear" Command="{Binding ClearTasksCommand}" />
+      </StackPanel>
+      <ListBox ItemsSource="{Binding Tasks}" ItemTemplate="{StaticResource TaskTemplate}" Height="120" />
     </StackPanel>
-    <TextBlock Text="New item" />
-    <StackPanel Orientation="Horizontal" Spacing="8">
-      <TextBox Text="{Binding NewItem, Mode=TwoWay}" Width="300" />
-      <Button Content="Add" Command="{Binding AddCommand}" />
-    </StackPanel>
-    <ListBox ItemsSource="{Binding Items}" Height="180" />
-    <Button Content="Run Rust async save" Command="{Binding SaveCommand}" />
-    <TextBlock Text="{Binding Status}" />
-  </StackPanel>
+  </ScrollViewer>
 </Window>

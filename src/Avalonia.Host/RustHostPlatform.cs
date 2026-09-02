@@ -5,6 +5,8 @@ using System.Runtime.InteropServices;
 using Avalonia.Win32;
 #elif AVN_HOST_X11
 using Avalonia.X11;
+#elif AVN_HOST_OSX
+using Avalonia.Native;
 #else
 #error A supported Avalonia Rust host platform must be selected.
 #endif
@@ -19,6 +21,8 @@ internal static partial class RustHostPlatform
         builder.UseWin32();
 #elif AVN_HOST_X11
         builder.UseX11();
+#elif AVN_HOST_OSX
+        builder.UseAvaloniaNative();
 #endif
         return builder
             .UseSkia()

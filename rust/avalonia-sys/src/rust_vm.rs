@@ -21,6 +21,20 @@ const IAVN_RUST_VM_SINK_IID: Guid = Guid {
     data4: [0x9A, 0x77, 0x1F, 0x0C, 0x2B, 0x3A, 0x4D, 0x25],
 };
 
+/// A second, independently versioned sink interface carrying the transport
+/// added for nested view models, nullable values, collection insert/remove/
+/// replace/move/clear, command `CanExecute` state, and validation-error
+/// projection. Kept separate from `IAvnRustVmSink` (rather than extending its
+/// vtable) so an older generated adapter that only implements v1 fails a
+/// `QueryInterface` for this IID with a normal, explicit ABI error instead of
+/// corrupting an existing call site.
+const IAVN_RUST_VM_SINK2_IID: Guid = Guid {
+    data1: 0x6B2E8F10,
+    data2: 0x4C91,
+    data3: 0x4E3A,
+    data4: [0x9A, 0x77, 0x1F, 0x0C, 0x2B, 0x3A, 0x4D, 0x26],
+};
+
 #[repr(C)]
 struct IAvnRustVmSinkVtbl {
     query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
@@ -90,6 +104,181 @@ impl ComPtr<IAvnRustVmSink> {
                 collection_id,
                 value.as_ptr(),
             ))
+        }
+    }
+}
+
+#[repr(C)]
+struct IAvnRustVmSink2Vtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    set_null: unsafe extern "system" fn(*mut IAvnRustVmSink2, i32) -> i32,
+    set_model: unsafe extern "system" fn(*mut IAvnRustVmSink2, i32, *mut IAvnRustViewModel) -> i32,
+    add_model: unsafe extern "system" fn(*mut IAvnRustVmSink2, i32, *mut IAvnRustViewModel) -> i32,
+    insert_string: unsafe extern "system" fn(*mut IAvnRustVmSink2, i32, i32, *const u16) -> i32,
+    insert_model:
+        unsafe extern "system" fn(*mut IAvnRustVmSink2, i32, i32, *mut IAvnRustViewModel) -> i32,
+    replace_string: unsafe extern "system" fn(*mut IAvnRustVmSink2, i32, i32, *const u16) -> i32,
+    replace_model:
+        unsafe extern "system" fn(*mut IAvnRustVmSink2, i32, i32, *mut IAvnRustViewModel) -> i32,
+    remove_at: unsafe extern "system" fn(*mut IAvnRustVmSink2, i32, i32) -> i32,
+    move_item: unsafe extern "system" fn(*mut IAvnRustVmSink2, i32, i32, i32) -> i32,
+    clear_collection: unsafe extern "system" fn(*mut IAvnRustVmSink2, i32) -> i32,
+    set_command_enabled: unsafe extern "system" fn(*mut IAvnRustVmSink2, i32, i32) -> i32,
+    set_property_error: unsafe extern "system" fn(*mut IAvnRustVmSink2, i32, *const u16) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnRustVmSink2 {
+    vtbl: *const IAvnRustVmSink2Vtbl,
+}
+
+unsafe impl ComInterface for IAvnRustVmSink2 {
+    const IID: Guid = IAVN_RUST_VM_SINK2_IID;
+}
+
+impl ComPtr<IAvnRustVmSink2> {
+    pub fn set_null(&self, property_id: i32) -> Result<()> {
+        unsafe {
+            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().set_null)(
+                self.as_raw(),
+                property_id,
+            ))
+        }
+    }
+
+    pub fn set_model(
+        &self,
+        property_id: i32,
+        model: Option<&ComPtr<IAvnRustViewModel>>,
+    ) -> Result<()> {
+        unsafe {
+            let raw = model.map_or(ptr::null_mut(), ComPtr::as_raw);
+            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().set_model)(
+                self.as_raw(),
+                property_id,
+                raw,
+            ))
+        }
+    }
+
+    pub fn add_model(&self, collection_id: i32, model: &ComPtr<IAvnRustViewModel>) -> Result<()> {
+        unsafe {
+            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().add_model)(
+                self.as_raw(),
+                collection_id,
+                model.as_raw(),
+            ))
+        }
+    }
+
+    pub fn insert_string(&self, collection_id: i32, index: i32, value: &[u16]) -> Result<()> {
+        unsafe {
+            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().insert_string)(
+                self.as_raw(),
+                collection_id,
+                index,
+                value.as_ptr(),
+            ))
+        }
+    }
+
+    pub fn insert_model(
+        &self,
+        collection_id: i32,
+        index: i32,
+        model: &ComPtr<IAvnRustViewModel>,
+    ) -> Result<()> {
+        unsafe {
+            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().insert_model)(
+                self.as_raw(),
+                collection_id,
+                index,
+                model.as_raw(),
+            ))
+        }
+    }
+
+    pub fn replace_string(&self, collection_id: i32, index: i32, value: &[u16]) -> Result<()> {
+        unsafe {
+            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().replace_string)(
+                self.as_raw(),
+                collection_id,
+                index,
+                value.as_ptr(),
+            ))
+        }
+    }
+
+    pub fn replace_model(
+        &self,
+        collection_id: i32,
+        index: i32,
+        model: &ComPtr<IAvnRustViewModel>,
+    ) -> Result<()> {
+        unsafe {
+            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().replace_model)(
+                self.as_raw(),
+                collection_id,
+                index,
+                model.as_raw(),
+            ))
+        }
+    }
+
+    pub fn remove_at(&self, collection_id: i32, index: i32) -> Result<()> {
+        unsafe {
+            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().remove_at)(
+                self.as_raw(),
+                collection_id,
+                index,
+            ))
+        }
+    }
+
+    pub fn move_item(&self, collection_id: i32, from_index: i32, to_index: i32) -> Result<()> {
+        unsafe {
+            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().move_item)(
+                self.as_raw(),
+                collection_id,
+                from_index,
+                to_index,
+            ))
+        }
+    }
+
+    pub fn clear_collection(&self, collection_id: i32) -> Result<()> {
+        unsafe {
+            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().clear_collection)(
+                self.as_raw(),
+                collection_id,
+            ))
+        }
+    }
+
+    pub fn set_command_enabled(&self, command_id: i32, enabled: bool) -> Result<()> {
+        unsafe {
+            hresult::check(((*self.as_raw())
+                .vtbl
+                .as_ref()
+                .unwrap()
+                .set_command_enabled)(
+                self.as_raw(), command_id, i32::from(enabled)
+            ))
+        }
+    }
+
+    pub fn set_property_error(&self, property_id: i32, message: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let raw = message.map_or(ptr::null(), <[u16]>::as_ptr);
+            hresult::check(
+                ((*self.as_raw()).vtbl.as_ref().unwrap().set_property_error)(
+                    self.as_raw(),
+                    property_id,
+                    raw,
+                ),
+            )
         }
     }
 }

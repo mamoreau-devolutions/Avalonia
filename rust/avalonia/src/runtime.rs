@@ -7,7 +7,7 @@ use std::fmt;
 use std::future::Future;
 use std::marker::PhantomData;
 use std::ops::Deref;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::rc::Rc;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
@@ -222,6 +222,7 @@ impl AppScope {
             .lock()
             .expect("application object scope lock poisoned")
             .clear();
+        crate::value_converter::clear_value_converter_provider(&self.context.application);
     }
 }
 
@@ -287,11 +288,69 @@ impl AppContext {
     }
 }
 
+/// Environment variable that explicitly overrides native host discovery.
+/// Set by `rust/build.ps1`/`rust/build.sh` for the workspace test suite, and
+/// always takes priority over the adjacent-executable lookup performed by
+/// [`discover_host_path`].
+pub const HOST_NATIVE_LIB_ENV_VAR: &str = "AVN_HOST_NATIVE_LIB";
+
+#[cfg(target_os = "windows")]
+const HOST_FILE_NAME: &str = "Avalonia.Host.dll";
+#[cfg(target_os = "linux")]
+const HOST_FILE_NAME: &str = "Avalonia.Host.so";
+#[cfg(target_os = "macos")]
+const HOST_FILE_NAME: &str = "Avalonia.Host.dylib";
+#[cfg(not(any(target_os = "windows", target_os = "linux", target_os = "macos")))]
+const HOST_FILE_NAME: &str = "Avalonia.Host";
+
+fn adjacent_host_path(directory: &Path) -> Option<PathBuf> {
+    let candidate = directory.join(HOST_FILE_NAME);
+    candidate.exists().then_some(candidate)
+}
+
+/// Locates the native Avalonia host library the same way [`App::load_from_env`]
+/// does, without loading it.
+///
+/// `AVN_HOST_NATIVE_LIB` ([`HOST_NATIVE_LIB_ENV_VAR`]) is an explicit override
+/// and always wins when set -- even to a path that does not exist yet, so
+/// [`sys::Host::load`] can surface a precise loader error instead of this
+/// function silently falling back. Otherwise this looks for the platform host
+/// library (`Avalonia.Host.dll` / `.so` / `.dylib`) next to the running
+/// executable, matching the deterministic per-RID layout `rust/package.ps1`
+/// and `rust/package.sh` produce (see `rust/PRODUCTIZATION.md#host-discovery`).
+pub fn discover_host_path() -> Result<PathBuf> {
+    if let Some(value) = std::env::var_os(HOST_NATIVE_LIB_ENV_VAR) {
+        return Ok(PathBuf::from(value));
+    }
+    let exe = std::env::current_exe().map_err(|error| {
+        Error::Load(format!(
+            "{HOST_NATIVE_LIB_ENV_VAR} is not set and the current executable could not be \
+             resolved to search for an adjacent {HOST_FILE_NAME}: {error}"
+        ))
+    })?;
+    let directory = exe.parent().ok_or_else(|| {
+        Error::Load(format!(
+            "{HOST_NATIVE_LIB_ENV_VAR} is not set and executable '{}' has no parent directory \
+             to search for {HOST_FILE_NAME}",
+            exe.display()
+        ))
+    })?;
+    adjacent_host_path(directory).ok_or_else(|| {
+        Error::Load(format!(
+            "{HOST_NATIVE_LIB_ENV_VAR} is not set and no {HOST_FILE_NAME} was found next to \
+             '{}'; set {HOST_NATIVE_LIB_ENV_VAR} to override, or copy the published \
+             Avalonia.Host beside this executable (see rust/PRODUCTIZATION.md#host-discovery)",
+            directory.display()
+        ))
+    })
+}
+
 impl App {
+    /// Loads the native Avalonia host discovered by [`discover_host_path`]:
+    /// `AVN_HOST_NATIVE_LIB` if set, otherwise the platform host library next
+    /// to this executable.
     pub fn load_from_env() -> Result<Self> {
-        let path = std::env::var_os("AVN_HOST_NATIVE_LIB")
-            .ok_or_else(|| Error::Load("AVN_HOST_NATIVE_LIB is not set".to_string()))?;
-        Self::load(path)
+        Self::load(discover_host_path()?)
     }
 
     pub fn load(path: impl AsRef<Path>) -> Result<Self> {
@@ -373,4 +432,102 @@ fn resource_value(value: sys::ComPtr<sys::IAvnResourceValue>) -> Result<Resource
         5 => ResourceValue::Color(value.color()?),
         kind => return Err(Error::InvalidEnumValue(kind)),
     })
+}
+
+#[cfg(test)]
+mod host_discovery_tests {
+    use super::*;
+    use std::sync::Mutex;
+
+    // `discover_host_path` reads/writes process-wide environment state, and
+    // Rust tests in one binary run on multiple threads by default, so every
+    // test that touches `HOST_NATIVE_LIB_ENV_VAR` must hold this lock for its
+    // whole duration.
+    static ENV_LOCK: Mutex<()> = Mutex::new(());
+
+    struct EnvVarGuard {
+        previous: Option<std::ffi::OsString>,
+    }
+
+    impl EnvVarGuard {
+        fn set(value: &str) -> Self {
+            let previous = std::env::var_os(HOST_NATIVE_LIB_ENV_VAR);
+            std::env::set_var(HOST_NATIVE_LIB_ENV_VAR, value);
+            Self { previous }
+        }
+
+        fn unset() -> Self {
+            let previous = std::env::var_os(HOST_NATIVE_LIB_ENV_VAR);
+            std::env::remove_var(HOST_NATIVE_LIB_ENV_VAR);
+            Self { previous }
+        }
+    }
+
+    impl Drop for EnvVarGuard {
+        fn drop(&mut self) {
+            match self.previous.take() {
+                Some(value) => std::env::set_var(HOST_NATIVE_LIB_ENV_VAR, value),
+                None => std::env::remove_var(HOST_NATIVE_LIB_ENV_VAR),
+            }
+        }
+    }
+
+    #[test]
+    fn env_override_wins_even_when_the_path_does_not_exist() {
+        let _lock = ENV_LOCK.lock().unwrap_or_else(|error| error.into_inner());
+        let _guard = EnvVarGuard::set("/definitely/not/a/real/avalonia/host");
+        let resolved = discover_host_path().expect("explicit override must always resolve");
+        assert_eq!(
+            resolved,
+            PathBuf::from("/definitely/not/a/real/avalonia/host")
+        );
+    }
+
+    #[test]
+    fn adjacent_lookup_finds_the_host_file_beside_a_directory() {
+        let _lock = ENV_LOCK.lock().unwrap_or_else(|error| error.into_inner());
+        let _guard = EnvVarGuard::unset();
+        let directory = std::env::temp_dir().join(format!(
+            "avalonia-host-discovery-present-{}-{}",
+            std::process::id(),
+            line!()
+        ));
+        std::fs::create_dir_all(&directory).expect("create scratch directory");
+        let host_path = directory.join(HOST_FILE_NAME);
+        std::fs::write(&host_path, b"stub").expect("write stub host file");
+
+        let found = adjacent_host_path(&directory);
+
+        std::fs::remove_dir_all(&directory).ok();
+        assert_eq!(found, Some(host_path));
+    }
+
+    #[test]
+    fn adjacent_lookup_returns_none_when_the_host_file_is_missing() {
+        let _lock = ENV_LOCK.lock().unwrap_or_else(|error| error.into_inner());
+        let directory = std::env::temp_dir().join(format!(
+            "avalonia-host-discovery-missing-{}-{}",
+            std::process::id(),
+            line!()
+        ));
+        std::fs::create_dir_all(&directory).expect("create scratch directory");
+
+        let found = adjacent_host_path(&directory);
+
+        std::fs::remove_dir_all(&directory).ok();
+        assert_eq!(found, None);
+    }
+
+    #[test]
+    fn missing_env_and_missing_adjacent_host_reports_both_mechanisms() {
+        let _lock = ENV_LOCK.lock().unwrap_or_else(|error| error.into_inner());
+        let _guard = EnvVarGuard::unset();
+        // The test binary's own directory legitimately has no Avalonia.Host
+        // next to it, so this exercises the real "nothing found" error path
+        // end to end (through `std::env::current_exe`).
+        let error = discover_host_path().expect_err("neither mechanism should resolve");
+        let message = error.to_string();
+        assert!(message.contains(HOST_NATIVE_LIB_ENV_VAR));
+        assert!(message.contains(HOST_FILE_NAME));
+    }
 }

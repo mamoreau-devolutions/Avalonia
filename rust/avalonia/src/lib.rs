@@ -4,14 +4,17 @@ mod generated;
 mod generated_view_models;
 mod async_runtime;
 mod runtime;
+mod value_converter;
 mod view_model;
 
 pub use async_runtime::{AsyncOperation, AsyncValue};
 pub use generated::*;
 pub use generated_view_models::*;
 pub use runtime::{
-    App, AppContext, AppScope, AsControl, EventSubscription, ResourceValue, ThemeVariant,
+    discover_host_path, App, AppContext, AppScope, AsControl, EventSubscription, ResourceValue,
+    ThemeVariant, HOST_NATIVE_LIB_ENV_VAR,
 };
+pub use value_converter::{ConversionDirection, ScalarKind, ScalarValue};
 
 #[derive(Debug)]
 pub enum Error {

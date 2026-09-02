@@ -1,20 +1,20 @@
 using System;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.Marshalling;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Input;
 using Avalonia.Host.Generated.ViewModels;
+using Avalonia.Input;
 using Avalonia.Rust.Interop;
 using Avalonia.Styling;
 using Avalonia.Threading;
-using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.Marshalling;
 
 namespace Avalonia.Host.Com;
 
 [GeneratedComClass]
-public partial class AvnApplication : IAvnApplication
+public partial class AvnApplication : IAvnApplication, IAvnApplication2
 {
     private ClassicDesktopStyleApplicationLifetime? _lifetime;
     private readonly AvnAsyncOperations _asyncOperations = new();
@@ -71,87 +71,87 @@ public partial class AvnApplication : IAvnApplication
             int milliseconds,
             IAvnAsyncCompletion? completion,
             out long operationId)
-        {
-            operationId = 0;
-            if (milliseconds < 0)
-                return HResults.E_INVALIDARG;
-            return _asyncOperations.Start(
-                completion,
-                async cancellation =>
-                {
-                    await Task.Delay(milliseconds, cancellation);
-                    return AvnAsyncValue.None;
-                },
-                out operationId);
-        }
+    {
+        operationId = 0;
+        if (milliseconds < 0)
+            return HResults.E_INVALIDARG;
+        return _asyncOperations.Start(
+            completion,
+            async cancellation =>
+            {
+                await Task.Delay(milliseconds, cancellation);
+                return AvnAsyncValue.None;
+            },
+            out operationId);
+    }
 
     public int StartClipboardSetText(
             IAvnWindow? window,
             string? text,
             IAvnAsyncCompletion? completion,
             out long operationId)
+    {
+        operationId = 0;
+        if (window is null || text is null)
+            return HResults.E_POINTER;
+        try
         {
-            operationId = 0;
-            if (window is null || text is null)
-                return HResults.E_POINTER;
-            try
-            {
-                Dispatcher.UIThread.VerifyAccess();
-                var managedWindow = (Window?)ProjectionRuntime.Unwrap(window)
-                    ?? throw new ObjectDisposedException(nameof(window));
-                var clipboard = managedWindow.Clipboard
-                    ?? throw new NotSupportedException("The top-level has no clipboard.");
-                return _asyncOperations.Start(
-                    completion,
-                    async cancellation =>
-                    {
-                        cancellation.ThrowIfCancellationRequested();
-                        var data = new DataTransfer();
-                        data.Add(DataTransferItem.CreateText(text));
-                        await clipboard.SetDataAsync(data);
-                        cancellation.ThrowIfCancellationRequested();
-                        return AvnAsyncValue.None;
-                    },
-                    out operationId);
-            }
-            catch (Exception e)
-            {
-                return AbiError.Capture(e);
-            }
+            Dispatcher.UIThread.VerifyAccess();
+            var managedWindow = (Window?)ProjectionRuntime.Unwrap(window)
+                ?? throw new ObjectDisposedException(nameof(window));
+            var clipboard = managedWindow.Clipboard
+                ?? throw new NotSupportedException("The top-level has no clipboard.");
+            return _asyncOperations.Start(
+                completion,
+                async cancellation =>
+                {
+                    cancellation.ThrowIfCancellationRequested();
+                    var data = new DataTransfer();
+                    data.Add(DataTransferItem.CreateText(text));
+                    await clipboard.SetDataAsync(data);
+                    cancellation.ThrowIfCancellationRequested();
+                    return AvnAsyncValue.None;
+                },
+                out operationId);
         }
+        catch (Exception e)
+        {
+            return AbiError.Capture(e);
+        }
+    }
 
     public int StartClipboardGetText(
             IAvnWindow? window,
             IAvnAsyncCompletion? completion,
             out long operationId)
+    {
+        operationId = 0;
+        if (window is null)
+            return HResults.E_POINTER;
+        try
         {
-            operationId = 0;
-            if (window is null)
-                return HResults.E_POINTER;
-            try
-            {
-                Dispatcher.UIThread.VerifyAccess();
-                var managedWindow = (Window?)ProjectionRuntime.Unwrap(window)
-                    ?? throw new ObjectDisposedException(nameof(window));
-                var clipboard = managedWindow.Clipboard
-                    ?? throw new NotSupportedException("The top-level has no clipboard.");
-                return _asyncOperations.Start(
-                    completion,
-                    async cancellation =>
-                    {
-                        cancellation.ThrowIfCancellationRequested();
-                        using var data = await clipboard.TryGetDataAsync();
-                        var text = data is null ? null : await data.TryGetTextAsync();
-                        cancellation.ThrowIfCancellationRequested();
-                        return AvnAsyncValue.FromString(text);
-                    },
-                    out operationId);
-            }
-            catch (Exception e)
-            {
-                return AbiError.Capture(e);
-            }
+            Dispatcher.UIThread.VerifyAccess();
+            var managedWindow = (Window?)ProjectionRuntime.Unwrap(window)
+                ?? throw new ObjectDisposedException(nameof(window));
+            var clipboard = managedWindow.Clipboard
+                ?? throw new NotSupportedException("The top-level has no clipboard.");
+            return _asyncOperations.Start(
+                completion,
+                async cancellation =>
+                {
+                    cancellation.ThrowIfCancellationRequested();
+                    using var data = await clipboard.TryGetDataAsync();
+                    var text = data is null ? null : await data.TryGetTextAsync();
+                    cancellation.ThrowIfCancellationRequested();
+                    return AvnAsyncValue.FromString(text);
+                },
+                out operationId);
         }
+        catch (Exception e)
+        {
+            return AbiError.Capture(e);
+        }
+    }
 
     public int CancelAsyncOperation(long operationId) =>
         _asyncOperations.Cancel(operationId);
@@ -177,86 +177,99 @@ public partial class AvnApplication : IAvnApplication
         }
     }
 
+    public int SetValueConverterProvider(IAvnRustValueConverterProvider? provider)
+    {
+        try
+        {
+            Rust.RustValueConverterRuntime.Register(provider);
+            return HResults.S_OK;
+        }
+        catch (Exception e)
+        {
+            return AbiError.Capture(e);
+        }
+    }
+
     public int GetRequestedThemeVariant(out int value)
+    {
+        value = 0;
+        try
         {
-            value = 0;
-            try
-            {
-                Dispatcher.UIThread.VerifyAccess();
-                value = ToAbiTheme(Application.Current?.RequestedThemeVariant);
-                return HResults.S_OK;
-            }
-            catch (Exception e)
-            {
-                return AbiError.Capture(e);
-            }
+            Dispatcher.UIThread.VerifyAccess();
+            value = ToAbiTheme(Application.Current?.RequestedThemeVariant);
+            return HResults.S_OK;
         }
-
-        public int SetRequestedThemeVariant(int value)
+        catch (Exception e)
         {
-            try
-            {
-                Dispatcher.UIThread.VerifyAccess();
-                var application = Application.Current
-                    ?? throw new InvalidOperationException("Avalonia application is not running.");
-                application.RequestedThemeVariant = FromAbiTheme(value);
-                return HResults.S_OK;
-            }
-            catch (Exception e)
-            {
-                return AbiError.Capture(e);
-            }
+            return AbiError.Capture(e);
         }
+    }
 
-        public int GetActualThemeVariant(out int value)
+    public int SetRequestedThemeVariant(int value)
+    {
+        try
         {
-            value = 0;
-            try
-            {
-                Dispatcher.UIThread.VerifyAccess();
-                value = ToAbiTheme(Application.Current?.ActualThemeVariant);
-                return HResults.S_OK;
-            }
-            catch (Exception e)
-            {
-                return AbiError.Capture(e);
-            }
+            Dispatcher.UIThread.VerifyAccess();
+            var application = Application.Current
+                ?? throw new InvalidOperationException("Avalonia application is not running.");
+            application.RequestedThemeVariant = FromAbiTheme(value);
+            return HResults.S_OK;
         }
-
-        public int TryGetResource(
-            string? key,
-            int themeVariant,
-            out int found,
-            out IAvnResourceValue? value)
+        catch (Exception e)
         {
-            found = 0;
-            value = null;
-            if (key is null)
-                return HResults.E_POINTER;
-            try
-            {
-                Dispatcher.UIThread.VerifyAccess();
-                var application = Application.Current
-                    ?? throw new InvalidOperationException("Avalonia application is not running.");
-                if (!application.TryGetResource(key, FromAbiTheme(themeVariant), out var resource))
-                    return HResults.S_OK;
-                value = new AvnResourceValue(resource);
-                found = 1;
-                return HResults.S_OK;
-            }
-            catch (Exception e)
-            {
-                return AbiError.Capture(e);
-            }
+            return AbiError.Capture(e);
         }
+    }
 
-        private static ThemeVariant FromAbiTheme(int value) => value switch
+    public int GetActualThemeVariant(out int value)
+    {
+        value = 0;
+        try
         {
-            0 => ThemeVariant.Default,
-            1 => ThemeVariant.Light,
-            2 => ThemeVariant.Dark,
-            _ => throw new ArgumentOutOfRangeException(nameof(value)),
-        };
+            Dispatcher.UIThread.VerifyAccess();
+            value = ToAbiTheme(Application.Current?.ActualThemeVariant);
+            return HResults.S_OK;
+        }
+        catch (Exception e)
+        {
+            return AbiError.Capture(e);
+        }
+    }
+
+    public int TryGetResource(
+        string? key,
+        int themeVariant,
+        out int found,
+        out IAvnResourceValue? value)
+    {
+        found = 0;
+        value = null;
+        if (key is null)
+            return HResults.E_POINTER;
+        try
+        {
+            Dispatcher.UIThread.VerifyAccess();
+            var application = Application.Current
+                ?? throw new InvalidOperationException("Avalonia application is not running.");
+            if (!application.TryGetResource(key, FromAbiTheme(themeVariant), out var resource))
+                return HResults.S_OK;
+            value = new AvnResourceValue(resource);
+            found = 1;
+            return HResults.S_OK;
+        }
+        catch (Exception e)
+        {
+            return AbiError.Capture(e);
+        }
+    }
+
+    private static ThemeVariant FromAbiTheme(int value) => value switch
+    {
+        0 => ThemeVariant.Default,
+        1 => ThemeVariant.Light,
+        2 => ThemeVariant.Dark,
+        _ => throw new ArgumentOutOfRangeException(nameof(value)),
+    };
 
     private static int ToAbiTheme(ThemeVariant? value)
     {

@@ -78,6 +78,30 @@ public static class Exports
             Marshal.FreeCoTaskMem((nint)ptr);
     }
 
+    /// <summary>
+    /// Allocates a zeroed UTF-16 buffer (<paramref name="length"/> code units
+    /// plus a null terminator) using the same allocator as <see cref="Free"/>
+    /// (<see cref="Marshal.AllocCoTaskMem"/>). Rust uses this so it can return
+    /// owned ABI strings (for example Rust value-converter results) without
+    /// risking a cross-allocator mismatch between Rust's own allocator and
+    /// the host's <see cref="Marshal.FreeCoTaskMem"/>.
+    /// </summary>
+    [UnmanagedCallersOnly(EntryPoint = "avn_alloc_utf16")]
+    public static unsafe char* AllocUtf16(int length)
+    {
+        if (length < 0)
+            return null;
+        try
+        {
+            var bytes = checked((length + 1) * sizeof(char));
+            return (char*)Marshal.AllocCoTaskMem(bytes);
+        }
+        catch (Exception e) when (e is OverflowException or OutOfMemoryException)
+        {
+            return null;
+        }
+    }
+
     [UnmanagedCallersOnly(EntryPoint = "avn_get_last_error")]
     public static unsafe int GetLastError(nint* message)
     {

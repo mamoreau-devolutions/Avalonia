@@ -6,6 +6,16 @@ param(
 
 $ErrorActionPreference = "Stop"
 $repositoryRoot = Split-Path -Parent $PSScriptRoot
+$nativeArchitecture = switch ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)
+{
+    "X64" { "x64"; break }
+    "Arm64" { "arm64"; break }
+    default { throw "Unsupported Windows CPU architecture: $([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)" }
+}
+if ($Architecture -ne $nativeArchitecture)
+{
+    throw "win-$Architecture requires a Windows runner with a matching $Architecture CPU because cargo tests execute native binaries."
+}
 $rid = "win-$Architecture"
 
 dotnet publish "$repositoryRoot\src\Avalonia.Host\Avalonia.Host.csproj" `

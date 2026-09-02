@@ -1,0 +1,207 @@
+name: Avalonia Rust
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/avalonia-rust.yml'
+      - 'rust/**'
+      - 'src/Avalonia.Host/**'
+      - 'src/Avalonia.Native/**'
+      - 'native/Avalonia.Native/**'
+      - 'src/Avalonia.Rust/**'
+      - 'src/Avalonia.Rust.Interop/**'
+      - 'src/Avalonia.Projection.*/**'
+      - 'src/Avalonia.ViewModelProjection.Tool/**'
+      - 'samples/RustViewModelSample.Managed/**'
+      - 'tests/Avalonia.Host.Tests/**'
+      - 'tests/Avalonia.Projection.Generator.Tests/**'
+      - 'tests/Avalonia.Projection.Ir.Tests/**'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/avalonia-rust.yml'
+      - 'rust/**'
+      - 'src/Avalonia.Host/**'
+      - 'src/Avalonia.Native/**'
+      - 'native/Avalonia.Native/**'
+      - 'src/Avalonia.Rust/**'
+      - 'src/Avalonia.Rust.Interop/**'
+      - 'src/Avalonia.Projection.*/**'
+      - 'src/Avalonia.ViewModelProjection.Tool/**'
+      - 'samples/RustViewModelSample.Managed/**'
+      - 'tests/Avalonia.Host.Tests/**'
+      - 'tests/Avalonia.Projection.Generator.Tests/**'
+      - 'tests/Avalonia.Projection.Ir.Tests/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release-gate:
+    name: ${{ matrix.rid }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            rid: win-x64
+            platform: Win32
+            architecture: x64
+          - os: ubuntu-latest
+            rid: linux-x64
+            platform: X11
+            architecture: x64
+          - os: macos-15-intel
+            rid: osx-x64
+            platform: OSX
+            architecture: x64
+          - os: macos-14
+            rid: osx-arm64
+            platform: OSX
+            architecture: arm64
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.201
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Linux smoke-test display
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install --yes xvfb
+
+      - name: Check generator determinism
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          ./rust/regenerate-and-build.ps1 -Configuration Release -SkipManagedBuild
+          git diff --check
+          git diff --exit-code
+          if (git status --porcelain) { throw "Generation changed the checkout." }
+
+      - name: Check generator determinism
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          AVN_SKIP_MANAGED_BUILD=1 ./rust/regenerate-and-build.sh Release
+          git diff --check
+          git diff --exit-code
+          test -z "$(git status --porcelain)"
+
+      - name: Build Avalonia.Native for managed tests
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          xcodebuild \
+            -project native/Avalonia.Native/src/OSX/Avalonia.Native.OSX.xcodeproj/ \
+            -configuration Release \
+            ARCHS="${{ runner.arch == 'ARM64' && 'arm64' || 'x86_64' }}" \
+            "CONFIGURATION_BUILD_DIR=$GITHUB_WORKSPACE/Build/Products/Release"
+
+      - name: Run managed host and generator tests
+        shell: pwsh
+        run: |
+          dotnet test tests/Avalonia.Host.Tests/Avalonia.Host.Tests.csproj -c Release
+          dotnet test tests/Avalonia.Projection.Generator.Tests/Avalonia.Projection.Generator.Tests.csproj -c Release
+          dotnet test tests/Avalonia.Projection.Ir.Tests/Avalonia.Projection.Ir.Tests.csproj -c Release
+
+      - name: Publish NativeAOT host and run cargo workspace tests
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./rust/build.ps1 -Architecture x64
+
+      - name: Publish NativeAOT host and run cargo workspace tests
+        if: runner.os != 'Windows'
+        shell: bash
+        run: ./rust/build.sh ${{ matrix.architecture }}
+
+      - name: Build flagship Rust view-model samples
+        shell: pwsh
+        run: |
+          cargo build --manifest-path rust/Cargo.toml -p avalonia --example rust_vm_axaml --release
+          cargo build --manifest-path rust/Cargo.toml -p avalonia --example rust_dynamic_vm_axaml --release
+
+      - name: Package NativeAOT sample artifacts
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./rust/package.ps1 -Rid ${{ matrix.rid }} -Configuration Release -Example rust_vm_axaml
+
+      - name: Package NativeAOT sample artifacts
+        if: runner.os != 'Windows'
+        shell: bash
+        run: ./rust/package.sh ${{ matrix.rid }} Release rust_vm_axaml
+
+      - name: Verify package checksums
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $package = "rust/artifacts/${{ matrix.rid }}"
+          Get-Content "$package/checksums.sha256" | ForEach-Object {
+            $expected, $file = $_ -split '\s+\*', 2
+            if ((Get-FileHash (Join-Path $package $file) -Algorithm SHA256).Hash.ToLowerInvariant() -ne $expected) {
+              throw "Checksum mismatch for $file"
+            }
+          }
+
+      - name: Verify package checksums
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          cd rust/artifacts/${{ matrix.rid }}
+          while read -r expected file; do
+            file="${file#\*}"
+            if command -v sha256sum >/dev/null; then
+              actual="$(sha256sum -- "$file" | awk '{print $1}')"
+            else
+              actual="$(shasum -a 256 -- "$file" | awk '{print $1}')"
+            fi
+            [[ "$actual" == "$expected" ]] || { echo "Checksum mismatch for $file" >&2; exit 1; }
+          done < checksums.sha256
+
+      - name: Launch packaged sample smoke test
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $process = Start-Process "./rust/artifacts/${{ matrix.rid }}/rust_vm_axaml.exe" -PassThru
+          Start-Sleep -Seconds 5
+          if ($process.HasExited) { throw "Packaged sample exited during startup." }
+          Stop-Process -Id $process.Id
+
+      - name: Launch packaged sample smoke test
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          xvfb-run -a ./rust/artifacts/${{ matrix.rid }}/rust_vm_axaml &
+          process=$!
+          sleep 5
+          kill -0 "$process"
+          kill "$process"
+          wait "$process" || true
+
+      - name: Launch packaged sample process smoke test
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          ./rust/artifacts/${{ matrix.rid }}/rust_vm_axaml &
+          process=$!
+          sleep 5
+          kill -0 "$process"
+          kill "$process"
+          wait "$process" || true
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: avalonia-rust-${{ matrix.rid }}
+          path: rust/artifacts/${{ matrix.rid }}
+          if-no-files-found: error

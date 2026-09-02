@@ -1,5 +1,5 @@
-using System.Threading;
 using System.Runtime.InteropServices;
+using System.Threading;
 using Avalonia.Host.Com;
 
 namespace Avalonia.Host;

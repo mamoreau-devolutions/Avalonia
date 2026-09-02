@@ -780,7 +780,7 @@ public static class ComSourceEmitter
             MarshallingKind.NullableBool =>
                 $"!_value.{property.Name}.HasValue ? -1 : _value.{property.Name}.Value ? 1 : 0",
             MarshallingKind.ComInterface =>
-                $"({SimpleName(property.InterfaceName!) }?)ProjectionRuntime.Wrap(_value.{property.Name} as global::Avalonia.AvaloniaObject)",
+                $"({SimpleName(property.InterfaceName!)}?)ProjectionRuntime.Wrap(_value.{property.Name} as global::Avalonia.AvaloniaObject)",
             MarshallingKind.ComCollection =>
                 $"new {SimpleName(property.InterfaceName!)[1..]}(_value.{property.Name})",
             _ => $"_value.{property.Name}",

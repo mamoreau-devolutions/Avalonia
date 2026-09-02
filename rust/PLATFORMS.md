@@ -7,6 +7,7 @@ NativeAOT host selects one Avalonia windowing backend at publish time:
 | --- | --- | --- | --- |
 | Windows | `win-x64`, `win-arm64` | Win32 | `build.ps1` |
 | Linux | `linux-x64`, `linux-arm64` | X11 | `build.sh` |
+| macOS | `osx-x64`, `osx-arm64` | Avalonia.Native | `build.sh` |
 
 `AvaloniaRustHostPlatform` controls the compile-time selection. The shared
 host contains the nano-COM ABI, ownership runtime, generated control
@@ -16,6 +17,22 @@ backend setup and the Win32 OLE thread scope.
 Linux publishes the host with a `$ORIGIN` runpath. Consequently
 `libSkiaSharp.so` and `libHarfBuzzSharp.so` are resolved beside
 `Avalonia.Host.so` without requiring a process-wide `LD_LIBRARY_PATH`.
+
+macOS publishes against `Avalonia.Native` and loads
+`libAvaloniaNative.dylib` from `@loader_path`. `build.sh` and `package.sh`
+first invoke the repository's `xcodebuild` project with
+`CONFIGURATION_BUILD_DIR=Build/Products/Release`, so the generated
+`libAvalonia.Native.OSX.dylib` is included by `Avalonia.Native` as
+`libAvaloniaNative.dylib` in the NativeAOT publish output. The scripts must
+run on a Mac whose CPU architecture matches the requested `osx-*` RID; they
+reject cross-architecture macOS packaging so Xcode cannot produce a dylib that
+does not match the host RID.
+
+All build entry points run `cargo test --workspace` against the published host,
+so the requested RID architecture must match the native runner CPU. `build.sh`
+validates this for both Linux and macOS; `build.ps1` uses
+`RuntimeInformation.OSArchitecture`, rather than the potentially emulated
+process architecture, to enforce it on Windows.
 
 ## Linux build
 
