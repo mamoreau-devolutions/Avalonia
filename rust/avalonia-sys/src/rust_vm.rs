@@ -5,6 +5,7 @@ use std::ffi::c_void;
 use std::panic::{catch_unwind, AssertUnwindSafe};
 use std::ptr;
 use std::sync::atomic::{fence, AtomicU32, Ordering};
+use std::sync::Arc;
 use std::sync::Mutex;
 
 const IAVN_RUST_VIEW_MODEL_IID: Guid = Guid {
@@ -33,6 +34,27 @@ const IAVN_RUST_VM_SINK2_IID: Guid = Guid {
     data2: 0x4C91,
     data3: 0x4E3A,
     data4: [0x9A, 0x77, 0x1F, 0x0C, 0x2B, 0x3A, 0x4D, 0x26],
+};
+
+const IAVN_RUST_VM_SINK3_IID: Guid = Guid {
+    data1: 0x6B2E8F10,
+    data2: 0x4C91,
+    data3: 0x4E3A,
+    data4: [0x9A, 0x77, 0x1F, 0x0C, 0x2B, 0x3A, 0x4D, 0x27],
+};
+
+const IAVN_RUST_VM_UPDATE_BATCH_IID: Guid = Guid {
+    data1: 0x6B2E8F10,
+    data2: 0x4C91,
+    data3: 0x4E3A,
+    data4: [0x9A, 0x77, 0x1F, 0x0C, 0x2B, 0x3A, 0x4D, 0x28],
+};
+
+const IAVN_RUST_VM_UPDATE_OPERATION_IID: Guid = Guid {
+    data1: 0x6B2E8F10,
+    data2: 0x4C91,
+    data3: 0x4E3A,
+    data4: [0x9A, 0x77, 0x1F, 0x0C, 0x2B, 0x3A, 0x4D, 0x29],
 };
 
 #[repr(C)]
@@ -147,7 +169,103 @@ impl ComPtr<IAvnRustVmSink2> {
             ))
         }
     }
+}
 
+#[repr(C)]
+struct IAvnRustVmSink3Vtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    submit_batch:
+        unsafe extern "system" fn(*mut IAvnRustVmSink3, *mut IAvnRustVmUpdateBatch) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnRustVmSink3 {
+    vtbl: *const IAvnRustVmSink3Vtbl,
+}
+
+unsafe impl ComInterface for IAvnRustVmSink3 {
+    const IID: Guid = IAVN_RUST_VM_SINK3_IID;
+}
+
+impl ComPtr<IAvnRustVmSink3> {
+    pub fn submit_batch(&self, batch: &ComPtr<IAvnRustVmUpdateBatch>) -> Result<()> {
+        unsafe {
+            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().submit_batch)(
+                self.as_raw(),
+                batch.as_raw(),
+            ))
+        }
+    }
+}
+
+#[repr(C)]
+pub struct IAvnRustVmUpdateBatch {
+    vtbl: *const IAvnRustVmUpdateBatchVtbl,
+}
+
+unsafe impl ComInterface for IAvnRustVmUpdateBatch {
+    const IID: Guid = IAVN_RUST_VM_UPDATE_BATCH_IID;
+}
+
+#[repr(C)]
+pub struct IAvnRustVmUpdateOperation {
+    vtbl: *const IAvnRustVmUpdateOperationVtbl,
+}
+
+unsafe impl ComInterface for IAvnRustVmUpdateOperation {
+    const IID: Guid = IAVN_RUST_VM_UPDATE_OPERATION_IID;
+}
+
+#[repr(C)]
+struct IAvnRustVmUpdateBatchVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_generation: unsafe extern "system" fn(*mut IAvnRustVmUpdateBatch, *mut i64) -> i32,
+    get_operation_count: unsafe extern "system" fn(*mut IAvnRustVmUpdateBatch, *mut i32) -> i32,
+    get_operation: unsafe extern "system" fn(
+        *mut IAvnRustVmUpdateBatch,
+        i32,
+        *mut *mut IAvnRustVmUpdateOperation,
+    ) -> i32,
+    get_snapshot_item_count:
+        unsafe extern "system" fn(*mut IAvnRustVmUpdateBatch, i32, *mut i32) -> i32,
+    get_snapshot_string_length:
+        unsafe extern "system" fn(*mut IAvnRustVmUpdateBatch, i32, i32, *mut i32) -> i32,
+    copy_snapshot_string:
+        unsafe extern "system" fn(*mut IAvnRustVmUpdateBatch, i32, i32, *mut u16, i32) -> i32,
+    get_snapshot_model: unsafe extern "system" fn(
+        *mut IAvnRustVmUpdateBatch,
+        i32,
+        i32,
+        *mut *mut IAvnRustViewModel,
+    ) -> i32,
+    complete: unsafe extern "system" fn(*mut IAvnRustVmUpdateBatch, i32, i32) -> i32,
+}
+
+#[repr(C)]
+struct IAvnRustVmUpdateOperationVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_kind: unsafe extern "system" fn(*mut IAvnRustVmUpdateOperation, *mut i32) -> i32,
+    get_target_id: unsafe extern "system" fn(*mut IAvnRustVmUpdateOperation, *mut i32) -> i32,
+    get_index: unsafe extern "system" fn(*mut IAvnRustVmUpdateOperation, *mut i32) -> i32,
+    get_index2: unsafe extern "system" fn(*mut IAvnRustVmUpdateOperation, *mut i32) -> i32,
+    get_integer: unsafe extern "system" fn(*mut IAvnRustVmUpdateOperation, *mut i64) -> i32,
+    get_double: unsafe extern "system" fn(*mut IAvnRustVmUpdateOperation, *mut f64) -> i32,
+    get_boolean: unsafe extern "system" fn(*mut IAvnRustVmUpdateOperation, *mut i32) -> i32,
+    get_text_length: unsafe extern "system" fn(*mut IAvnRustVmUpdateOperation, *mut i32) -> i32,
+    copy_text: unsafe extern "system" fn(*mut IAvnRustVmUpdateOperation, *mut u16, i32) -> i32,
+    get_model: unsafe extern "system" fn(
+        *mut IAvnRustVmUpdateOperation,
+        *mut *mut IAvnRustViewModel,
+    ) -> i32,
+}
+
+impl ComPtr<IAvnRustVmSink2> {
     pub fn set_model(
         &self,
         property_id: i32,
@@ -466,6 +584,481 @@ unsafe fn invoke(
         callback(&mut callbacks)
     }));
     match result {
+        Ok(Ok(())) => hresult::S_OK,
+        Ok(Err(error)) => error.0,
+        Err(_) => hresult::E_FAIL,
+    }
+}
+
+/// Immutable update operation used by the v3 batch transport. The numeric tags
+/// intentionally match `Avalonia.Rust.RustVmUpdateKind`; unknown tags are
+/// rejected by managed code before it mutates presentation state.
+#[derive(Clone)]
+pub struct RustVmUpdate {
+    pub kind: i32,
+    pub target_id: i32,
+    pub index: i32,
+    pub index2: i32,
+    pub integer: i64,
+    pub double: f64,
+    pub boolean: i32,
+    pub text: Option<String>,
+    pub model: Option<ComPtr<IAvnRustViewModel>>,
+    pub snapshot_strings: Option<Vec<String>>,
+    pub snapshot_models: Option<Vec<ComPtr<IAvnRustViewModel>>>,
+}
+
+impl RustVmUpdate {
+    pub fn new(kind: i32, target_id: i32) -> Self {
+        Self {
+            kind,
+            target_id,
+            index: 0,
+            index2: 0,
+            integer: 0,
+            double: 0.0,
+            boolean: 0,
+            text: None,
+            model: None,
+            snapshot_strings: None,
+            snapshot_models: None,
+        }
+    }
+}
+
+pub type RustVmBatchCompletion = Box<dyn FnOnce(i32, i32) + Send>;
+
+struct RustVmBatchState {
+    generation: i64,
+    operations: Vec<RustVmUpdate>,
+    completion: Mutex<Option<RustVmBatchCompletion>>,
+}
+
+#[repr(C)]
+struct RustVmBatchObject {
+    interface: IAvnRustVmUpdateBatch,
+    references: AtomicU32,
+    state: Arc<RustVmBatchState>,
+}
+
+#[repr(C)]
+struct RustVmBatchOperationObject {
+    interface: IAvnRustVmUpdateOperation,
+    references: AtomicU32,
+    state: Arc<RustVmBatchState>,
+    index: usize,
+}
+
+static RUST_VM_BATCH_VTBL: IAvnRustVmUpdateBatchVtbl = IAvnRustVmUpdateBatchVtbl {
+    query_interface: batch_query_interface,
+    add_ref: batch_add_ref,
+    release: batch_release,
+    get_generation: batch_get_generation,
+    get_operation_count: batch_get_operation_count,
+    get_operation: batch_get_operation,
+    get_snapshot_item_count: batch_get_snapshot_item_count,
+    get_snapshot_string_length: batch_get_snapshot_string_length,
+    copy_snapshot_string: batch_copy_snapshot_string,
+    get_snapshot_model: batch_get_snapshot_model,
+    complete: batch_complete,
+};
+
+static RUST_VM_BATCH_OPERATION_VTBL: IAvnRustVmUpdateOperationVtbl =
+    IAvnRustVmUpdateOperationVtbl {
+        query_interface: operation_query_interface,
+        add_ref: operation_add_ref,
+        release: operation_release,
+        get_kind: operation_get_kind,
+        get_target_id: operation_get_target_id,
+        get_index: operation_get_index,
+        get_index2: operation_get_index2,
+        get_integer: operation_get_integer,
+        get_double: operation_get_double,
+        get_boolean: operation_get_boolean,
+        get_text_length: operation_get_text_length,
+        copy_text: operation_copy_text,
+        get_model: operation_get_model,
+    };
+
+/// Creates an immutable nano-COM batch. The completion is taken exactly once on
+/// the UI dispatcher after apply/stale/cancel/error, never by SubmitBatch.
+pub fn rust_vm_update_batch(
+    generation: i64,
+    operations: Vec<RustVmUpdate>,
+    completion: Option<RustVmBatchCompletion>,
+) -> ComPtr<IAvnRustVmUpdateBatch> {
+    let object = Box::new(RustVmBatchObject {
+        interface: IAvnRustVmUpdateBatch {
+            vtbl: &RUST_VM_BATCH_VTBL,
+        },
+        references: AtomicU32::new(1),
+        state: Arc::new(RustVmBatchState {
+            generation,
+            operations,
+            completion: Mutex::new(completion),
+        }),
+    });
+    unsafe {
+        ComPtr::from_raw(Box::into_raw(object).cast())
+            .expect("Box allocation cannot produce a null pointer")
+    }
+}
+
+unsafe extern "system" fn batch_query_interface(
+    this: *mut IUnknown,
+    iid: *const Guid,
+    result: *mut *mut c_void,
+) -> i32 {
+    if this.is_null() || iid.is_null() || result.is_null() {
+        return hresult::E_POINTER;
+    }
+    *result = ptr::null_mut();
+    if *iid != Guid::IUNKNOWN && *iid != IAVN_RUST_VM_UPDATE_BATCH_IID {
+        return hresult::E_NOINTERFACE;
+    }
+    batch_add_ref(this);
+    *result = this.cast();
+    hresult::S_OK
+}
+
+unsafe extern "system" fn batch_add_ref(this: *mut IUnknown) -> u32 {
+    (*this.cast::<RustVmBatchObject>())
+        .references
+        .fetch_add(1, Ordering::Relaxed)
+        + 1
+}
+
+unsafe extern "system" fn batch_release(this: *mut IUnknown) -> u32 {
+    let object = this.cast::<RustVmBatchObject>();
+    let remaining = (*object).references.fetch_sub(1, Ordering::Release) - 1;
+    if remaining == 0 {
+        fence(Ordering::Acquire);
+        drop(Box::from_raw(object));
+    }
+    remaining
+}
+
+unsafe fn batch_state(this: *mut IAvnRustVmUpdateBatch) -> Result<Arc<RustVmBatchState>> {
+    if this.is_null() {
+        return Err(hresult::Error(hresult::E_POINTER));
+    }
+    Ok((*this.cast::<RustVmBatchObject>()).state.clone())
+}
+
+unsafe extern "system" fn batch_get_generation(
+    this: *mut IAvnRustVmUpdateBatch,
+    result: *mut i64,
+) -> i32 {
+    ffi(|| {
+        if result.is_null() {
+            return Err(hresult::Error(hresult::E_POINTER));
+        }
+        *result = batch_state(this)?.generation;
+        Ok(())
+    })
+}
+
+unsafe extern "system" fn batch_get_operation_count(
+    this: *mut IAvnRustVmUpdateBatch,
+    result: *mut i32,
+) -> i32 {
+    ffi(|| {
+        if result.is_null() {
+            return Err(hresult::Error(hresult::E_POINTER));
+        }
+        *result = i32::try_from(batch_state(this)?.operations.len())
+            .map_err(|_| hresult::Error(hresult::E_INVALIDARG))?;
+        Ok(())
+    })
+}
+
+unsafe extern "system" fn batch_get_operation(
+    this: *mut IAvnRustVmUpdateBatch,
+    index: i32,
+    result: *mut *mut IAvnRustVmUpdateOperation,
+) -> i32 {
+    ffi(|| {
+        if result.is_null() {
+            return Err(hresult::Error(hresult::E_POINTER));
+        }
+        *result = ptr::null_mut();
+        let state = batch_state(this)?;
+        let index = usize::try_from(index).map_err(|_| hresult::Error(hresult::E_INVALIDARG))?;
+        if index >= state.operations.len() {
+            return Err(hresult::Error(hresult::E_INVALIDARG));
+        }
+        let operation = Box::new(RustVmBatchOperationObject {
+            interface: IAvnRustVmUpdateOperation {
+                vtbl: &RUST_VM_BATCH_OPERATION_VTBL,
+            },
+            references: AtomicU32::new(1),
+            state,
+            index,
+        });
+        *result = Box::into_raw(operation).cast();
+        Ok(())
+    })
+}
+
+unsafe fn snapshot_operation(
+    this: *mut IAvnRustVmUpdateBatch,
+    operation: i32,
+) -> Result<(Arc<RustVmBatchState>, usize)> {
+    let state = batch_state(this)?;
+    let index = usize::try_from(operation).map_err(|_| hresult::Error(hresult::E_INVALIDARG))?;
+    if index >= state.operations.len() {
+        return Err(hresult::Error(hresult::E_INVALIDARG));
+    }
+    Ok((state, index))
+}
+
+unsafe extern "system" fn batch_get_snapshot_item_count(
+    this: *mut IAvnRustVmUpdateBatch,
+    operation: i32,
+    result: *mut i32,
+) -> i32 {
+    ffi(|| {
+        if result.is_null() {
+            return Err(hresult::Error(hresult::E_POINTER));
+        }
+        let (state, index) = snapshot_operation(this, operation)?;
+        let update = &state.operations[index];
+        let length = update
+            .snapshot_strings
+            .as_ref()
+            .map(Vec::len)
+            .or_else(|| update.snapshot_models.as_ref().map(Vec::len))
+            .ok_or(hresult::Error(hresult::E_INVALIDARG))?;
+        *result = i32::try_from(length).map_err(|_| hresult::Error(hresult::E_INVALIDARG))?;
+        Ok(())
+    })
+}
+
+unsafe extern "system" fn batch_get_snapshot_string_length(
+    this: *mut IAvnRustVmUpdateBatch,
+    operation: i32,
+    item: i32,
+    result: *mut i32,
+) -> i32 {
+    ffi(|| {
+        if result.is_null() {
+            return Err(hresult::Error(hresult::E_POINTER));
+        }
+        let (state, index) = snapshot_operation(this, operation)?;
+        let item = usize::try_from(item).map_err(|_| hresult::Error(hresult::E_INVALIDARG))?;
+        let value = state.operations[index]
+            .snapshot_strings
+            .as_ref()
+            .and_then(|items| items.get(item))
+            .ok_or(hresult::Error(hresult::E_INVALIDARG))?;
+        *result = i32::try_from(value.encode_utf16().count())
+            .map_err(|_| hresult::Error(hresult::E_INVALIDARG))?;
+        Ok(())
+    })
+}
+
+unsafe extern "system" fn batch_copy_snapshot_string(
+    this: *mut IAvnRustVmUpdateBatch,
+    operation: i32,
+    item: i32,
+    destination: *mut u16,
+    capacity: i32,
+) -> i32 {
+    ffi(|| {
+        let (state, index) = snapshot_operation(this, operation)?;
+        let item = usize::try_from(item).map_err(|_| hresult::Error(hresult::E_INVALIDARG))?;
+        let value = state.operations[index]
+            .snapshot_strings
+            .as_ref()
+            .and_then(|items| items.get(item))
+            .ok_or(hresult::Error(hresult::E_INVALIDARG))?;
+        copy_utf16(value, destination, capacity)
+    })
+}
+
+unsafe extern "system" fn batch_get_snapshot_model(
+    this: *mut IAvnRustVmUpdateBatch,
+    operation: i32,
+    item: i32,
+    result: *mut *mut IAvnRustViewModel,
+) -> i32 {
+    ffi(|| {
+        if result.is_null() {
+            return Err(hresult::Error(hresult::E_POINTER));
+        }
+        *result = ptr::null_mut();
+        let (state, index) = snapshot_operation(this, operation)?;
+        let item = usize::try_from(item).map_err(|_| hresult::Error(hresult::E_INVALIDARG))?;
+        let model = state.operations[index]
+            .snapshot_models
+            .as_ref()
+            .and_then(|items| items.get(item))
+            .ok_or(hresult::Error(hresult::E_INVALIDARG))?;
+        add_ref(model.as_raw().cast());
+        *result = model.as_raw();
+        Ok(())
+    })
+}
+
+unsafe extern "system" fn batch_complete(
+    this: *mut IAvnRustVmUpdateBatch,
+    outcome: i32,
+    error: i32,
+) -> i32 {
+    ffi(|| {
+        let state = batch_state(this)?;
+        let completion = state
+            .completion
+            .lock()
+            .map_err(|_| hresult::Error(hresult::E_FAIL))?
+            .take();
+        if let Some(completion) = completion {
+            completion(outcome, error);
+        }
+        Ok(())
+    })
+}
+
+unsafe extern "system" fn operation_query_interface(
+    this: *mut IUnknown,
+    iid: *const Guid,
+    result: *mut *mut c_void,
+) -> i32 {
+    if this.is_null() || iid.is_null() || result.is_null() {
+        return hresult::E_POINTER;
+    }
+    *result = ptr::null_mut();
+    if *iid != Guid::IUNKNOWN && *iid != IAVN_RUST_VM_UPDATE_OPERATION_IID {
+        return hresult::E_NOINTERFACE;
+    }
+    operation_add_ref(this);
+    *result = this.cast();
+    hresult::S_OK
+}
+
+unsafe extern "system" fn operation_add_ref(this: *mut IUnknown) -> u32 {
+    (*this.cast::<RustVmBatchOperationObject>())
+        .references
+        .fetch_add(1, Ordering::Relaxed)
+        + 1
+}
+
+unsafe extern "system" fn operation_release(this: *mut IUnknown) -> u32 {
+    let object = this.cast::<RustVmBatchOperationObject>();
+    let remaining = (*object).references.fetch_sub(1, Ordering::Release) - 1;
+    if remaining == 0 {
+        fence(Ordering::Acquire);
+        drop(Box::from_raw(object));
+    }
+    remaining
+}
+
+unsafe fn operation(this: *mut IAvnRustVmUpdateOperation) -> Result<Arc<RustVmBatchState>> {
+    if this.is_null() {
+        return Err(hresult::Error(hresult::E_POINTER));
+    }
+    Ok((*this.cast::<RustVmBatchOperationObject>()).state.clone())
+}
+unsafe fn operation_value(
+    this: *mut IAvnRustVmUpdateOperation,
+) -> Result<(Arc<RustVmBatchState>, usize)> {
+    let object = this.cast::<RustVmBatchOperationObject>();
+    let state = operation(this)?;
+    Ok((state, (*object).index))
+}
+macro_rules! operation_get {
+    ($name:ident, $type:ty, $field:ident) => {
+        unsafe extern "system" fn $name(
+            this: *mut IAvnRustVmUpdateOperation,
+            result: *mut $type,
+        ) -> i32 {
+            ffi(|| {
+                if result.is_null() {
+                    return Err(hresult::Error(hresult::E_POINTER));
+                }
+                let (state, index) = operation_value(this)?;
+                *result = state.operations[index].$field;
+                Ok(())
+            })
+        }
+    };
+}
+operation_get!(operation_get_kind, i32, kind);
+operation_get!(operation_get_target_id, i32, target_id);
+operation_get!(operation_get_index, i32, index);
+operation_get!(operation_get_index2, i32, index2);
+operation_get!(operation_get_integer, i64, integer);
+operation_get!(operation_get_double, f64, double);
+operation_get!(operation_get_boolean, i32, boolean);
+
+unsafe extern "system" fn operation_get_text_length(
+    this: *mut IAvnRustVmUpdateOperation,
+    result: *mut i32,
+) -> i32 {
+    ffi(|| {
+        if result.is_null() {
+            return Err(hresult::Error(hresult::E_POINTER));
+        }
+        let (state, index) = operation_value(this)?;
+        *result = match &state.operations[index].text {
+            Some(value) => i32::try_from(value.encode_utf16().count())
+                .map_err(|_| hresult::Error(hresult::E_INVALIDARG))?,
+            None => 0,
+        };
+        Ok(())
+    })
+}
+
+unsafe fn copy_utf16(value: &str, destination: *mut u16, capacity: i32) -> Result<()> {
+    if destination.is_null() || capacity < 0 {
+        return Err(hresult::Error(hresult::E_POINTER));
+    }
+    let units: Vec<u16> = value.encode_utf16().collect();
+    if usize::try_from(capacity).map_err(|_| hresult::Error(hresult::E_INVALIDARG))?
+        < units.len() + 1
+    {
+        return Err(hresult::Error(hresult::E_INVALIDARG));
+    }
+    ptr::copy_nonoverlapping(units.as_ptr(), destination, units.len());
+    *destination.add(units.len()) = 0;
+    Ok(())
+}
+
+unsafe extern "system" fn operation_copy_text(
+    this: *mut IAvnRustVmUpdateOperation,
+    destination: *mut u16,
+    capacity: i32,
+) -> i32 {
+    ffi(|| {
+        let (state, index) = operation_value(this)?;
+        copy_utf16(
+            state.operations[index].text.as_deref().unwrap_or(""),
+            destination,
+            capacity,
+        )
+    })
+}
+
+unsafe extern "system" fn operation_get_model(
+    this: *mut IAvnRustVmUpdateOperation,
+    result: *mut *mut IAvnRustViewModel,
+) -> i32 {
+    ffi(|| {
+        if result.is_null() {
+            return Err(hresult::Error(hresult::E_POINTER));
+        }
+        *result = ptr::null_mut();
+        let (state, index) = operation_value(this)?;
+        if let Some(model) = &state.operations[index].model {
+            add_ref(model.as_raw().cast());
+            *result = model.as_raw();
+        }
+        Ok(())
+    })
+}
+
+unsafe fn ffi(action: impl FnOnce() -> Result<()>) -> i32 {
+    match catch_unwind(AssertUnwindSafe(action)) {
         Ok(Ok(())) => hresult::S_OK,
         Ok(Err(error)) => error.0,
         Err(_) => hresult::E_FAIL,

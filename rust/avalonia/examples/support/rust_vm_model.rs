@@ -2,7 +2,10 @@ use avalonia::{
     AddressViewModel, AddressViewModelSink, Priority, SampleViewModel, SampleViewModelSink,
     TaskItemViewModel, TaskItemViewModelSink, ValueConverters,
 };
+use std::sync::atomic::{AtomicI64, Ordering};
 use std::time::Duration;
+
+static SAVE_GENERATION: AtomicI64 = AtomicI64::new(0);
 
 pub struct Model {
     sink: Option<SampleViewModelSink>,
@@ -231,10 +234,15 @@ impl SampleViewModel for Model {
         sink.set_save_enabled(false)?;
         std::thread::spawn(move || {
             std::thread::sleep(Duration::from_millis(250));
-            sink.set_status("Saved by Rust async worker")
-                .expect("failed to publish Rust save completion");
-            sink.set_save_enabled(true)
-                .expect("failed to re-enable the Save command");
+            // The two UI changes publish together. Repeated clicks/workers can
+            // overlap safely: the newest generation wins and completion occurs
+            // only after UI application, never on this worker's call stack.
+            let mut batch = sink.batch(SAVE_GENERATION.fetch_add(1, Ordering::Relaxed) + 1);
+            batch.set_status("Saved by Rust async worker");
+            batch.set_save_enabled(true);
+            let _completion = sink
+                .submit_batch(batch)
+                .expect("failed to submit Rust save batch");
         });
         Ok(())
     }

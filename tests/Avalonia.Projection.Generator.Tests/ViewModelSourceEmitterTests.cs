@@ -77,6 +77,20 @@ public class ViewModelSourceEmitterTests
     }
 
     [Fact]
+    public void Emits_named_immutable_batch_builders_without_application_raw_ids()
+    {
+        var rust = ViewModelSourceEmitter.EmitRust(SampleIr());
+        var csharp = ViewModelSourceEmitter.EmitCSharp(SampleIr())["SampleViewModelAdapter.g.cs"];
+
+        Assert.Contains("pub fn batch(&self, generation: i64) -> SampleViewModelSinkBatch", rust, StringComparison.Ordinal);
+        Assert.Contains("pub fn replace_items_snapshot", rust, StringComparison.Ordinal);
+        Assert.Contains("pub fn submit_batch(&self, batch: SampleViewModelSinkBatch)", rust, StringComparison.Ordinal);
+        Assert.Contains("IAvnRustVmSink3", csharp, StringComparison.Ordinal);
+        Assert.Contains("IRustVmStringSnapshotSink", csharp, StringComparison.Ordinal);
+        Assert.Contains("ReplaceStringSnapshot", csharp, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Emits_a_back_method_only_when_convert_back_is_declared()
     {
         var ir = SampleIr(

@@ -107,3 +107,90 @@ public partial interface IAvnRustVmSink2
     [PreserveSig]
     int SetPropertyError(int propertyId, string? message);
 }
+
+/// <summary>
+/// Immutable, versioned update-batch capability.  This interface is deliberately
+/// separate from the v1 and v2 sink vtables: applications that publish from a
+/// worker must use this capability rather than the synchronous per-member calls.
+/// </summary>
+[GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
+[Guid("6B2E8F10-4C91-4E3A-9A77-1F0C2B3A4D27")]
+public partial interface IAvnRustVmSink3
+{
+    /// <summary>
+    /// Enqueues an immutable batch. This call never applies the batch or invokes
+    /// the batch object; the adapter reads it later from one UI dispatcher item.
+    /// </summary>
+    [PreserveSig]
+    int SubmitBatch(IAvnRustVmUpdateBatch? batch);
+}
+
+/// <summary>
+/// Read-only nano-COM representation of a Rust-authored update batch.
+/// Implementations must be immutable for their complete COM lifetime.
+/// </summary>
+[GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
+[Guid("6B2E8F10-4C91-4E3A-9A77-1F0C2B3A4D28")]
+public partial interface IAvnRustVmUpdateBatch
+{
+    [PreserveSig]
+    int GetGeneration(out long generation);
+
+    [PreserveSig]
+    int GetOperationCount(out int count);
+
+    [PreserveSig]
+    int GetOperation(int index, out IAvnRustVmUpdateOperation? operation);
+
+    [PreserveSig]
+    int GetSnapshotItemCount(int operationIndex, out int count);
+
+    [PreserveSig]
+    int GetSnapshotStringLength(int operationIndex, int itemIndex, out int length);
+
+    [PreserveSig]
+    unsafe int CopySnapshotString(int operationIndex, int itemIndex, char* destination, int capacity);
+
+    [PreserveSig]
+    int GetSnapshotModel(int operationIndex, int itemIndex, out IAvnRustViewModel? model);
+
+    /// <summary>Completes a queued batch after its UI-thread outcome is known.</summary>
+    [PreserveSig]
+    int Complete(int outcome, int error);
+}
+
+/// <summary>One immutable operation in an <see cref="IAvnRustVmUpdateBatch"/>.</summary>
+[GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
+[Guid("6B2E8F10-4C91-4E3A-9A77-1F0C2B3A4D29")]
+public partial interface IAvnRustVmUpdateOperation
+{
+    [PreserveSig]
+    int GetKind(out int kind);
+
+    [PreserveSig]
+    int GetTargetId(out int targetId);
+
+    [PreserveSig]
+    int GetIndex(out int index);
+
+    [PreserveSig]
+    int GetIndex2(out int index);
+
+    [PreserveSig]
+    int GetInteger(out long value);
+
+    [PreserveSig]
+    int GetDouble(out double value);
+
+    [PreserveSig]
+    int GetBoolean(out int value);
+
+    [PreserveSig]
+    int GetTextLength(out int length);
+
+    [PreserveSig]
+    unsafe int CopyText(char* destination, int capacity);
+
+    [PreserveSig]
+    int GetModel(out IAvnRustViewModel? model);
+}

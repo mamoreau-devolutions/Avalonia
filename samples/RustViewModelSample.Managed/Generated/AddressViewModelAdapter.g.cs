@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
@@ -16,12 +17,13 @@ using Avalonia.Threading;
 namespace Avalonia.Rust.Sample.Generated;
 
 [GeneratedComClass]
-public sealed partial class AddressViewModelAdapter : IAvnRustVmSink, IAvnRustVmSink2, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable
+public sealed partial class AddressViewModelAdapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable
 {
     private readonly IAvnRustViewModel _model;
     private readonly Action<Action> _dispatch;
     private readonly Dictionary<string, string> _errors = new(StringComparer.Ordinal);
     private int _disposed;
+    private long _lastBatchGeneration = -1;
     private string _street = "";
     private string _city = "";
 
@@ -163,6 +165,22 @@ public sealed partial class AddressViewModelAdapter : IAvnRustVmSink, IAvnRustVm
     {
         _ => unchecked((int)0x80070057),
     };
+
+    public int ReplaceStringSnapshot(int collectionId, IReadOnlyList<string> values) => collectionId switch
+    {
+        _ => unchecked((int)0x80070057),
+    };
+
+    public int ReplaceModelSnapshot(int collectionId, IReadOnlyList<IAvnRustViewModel> values) => collectionId switch
+    {
+        _ => unchecked((int)0x80070057),
+    };
+
+    public int SubmitBatch(IAvnRustVmUpdateBatch? batch) =>
+        RustVmBatchSubmission.Submit(this, this, batch,
+            () => Volatile.Read(ref _lastBatchGeneration),
+            value => Volatile.Write(ref _lastBatchGeneration, value),
+            () => Volatile.Read(ref _disposed) == 0);
 
     public void Dispose()
     {

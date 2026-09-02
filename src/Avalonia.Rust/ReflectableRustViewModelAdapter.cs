@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
@@ -102,6 +103,7 @@ public sealed class RustViewModelDescriptor(
 public sealed partial class ReflectableRustViewModelAdapter :
     IAvnRustVmSink,
     IAvnRustVmSink2,
+    IAvnRustVmSink3,
     INotifyPropertyChanged,
     INotifyDataErrorInfo,
     IReflectableType,
@@ -118,6 +120,7 @@ public sealed partial class ReflectableRustViewModelAdapter :
         new(StringComparer.Ordinal);
     private readonly TypeInfo _typeInfo;
     private int _disposed;
+    private long _lastBatchGeneration = -1;
 
     public ReflectableRustViewModelAdapter(
         IAvnRustViewModel model,
@@ -364,6 +367,29 @@ public sealed partial class ReflectableRustViewModelAdapter :
         return Apply(() => SetError(property.Descriptor.Name, message));
     }
 
+    /// <summary>
+    /// Posts exactly one UI work item and deliberately does not inspect <paramref name="batch"/>
+    /// on this COM call stack. This is the worker-safe publication path; the legacy sink
+    /// members above remain synchronous only for ABI compatibility.
+    /// </summary>
+    public int SubmitBatch(IAvnRustVmUpdateBatch? batch)
+    {
+        if (batch is null)
+            return InvalidArgument;
+
+        try
+        {
+            Dispatcher.UIThread.Post(() => ApplyBatch(batch));
+            return 0;
+        }
+        catch
+        {
+            // Completion is posted as well: a Rust callback is never made on SubmitBatch's stack.
+            Dispatcher.UIThread.Post(() => RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, unchecked((int)0x80004005)));
+            return unchecked((int)0x80004005);
+        }
+    }
+
     public void Dispose()
     {
         if (Interlocked.Exchange(ref _disposed, 1) == 0)
@@ -529,6 +555,321 @@ public sealed partial class ReflectableRustViewModelAdapter :
         }
     }
 
+    private void ApplyBatch(IAvnRustVmUpdateBatch batch)
+        {
+            if (Volatile.Read(ref _disposed) != 0)
+            {
+                RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Cancelled);
+                return;
+            }
+
+            try
+            {
+                var hr = batch.GetGeneration(out var generation);
+                if (hr < 0)
+                {
+                    RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr);
+                    return;
+                }
+                // Equal generations are stale too.  This gives duplicates a deterministic outcome
+                // and makes the highest generation win regardless of worker submission order.
+                if (generation <= Volatile.Read(ref _lastBatchGeneration))
+                {
+                    RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Stale);
+                    return;
+                }
+
+                hr = batch.GetOperationCount(out var count);
+                if (hr < 0 || count < 0)
+                {
+                    RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr < 0 ? hr : InvalidArgument);
+                    return;
+                }
+
+                var entries = new List<BatchEntry>(count);
+                for (var index = 0; index < count; index++)
+                {
+                    hr = batch.GetOperation(index, out var operation);
+                    if (hr < 0 || operation is null || !TryRead(operation, out var entry, out hr))
+                    {
+                        RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr < 0 ? hr : InvalidArgument);
+                        return;
+                    }
+                    if (entry.Kind is RustVmUpdateKind.ReplaceStringSnapshot or RustVmUpdateKind.ReplaceModelSnapshot)
+                    {
+                        if (!TryReadSnapshot(batch, index, entry, out hr))
+                        {
+                            RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr);
+                            return;
+                        }
+                    }
+                    entries.Add(entry);
+                }
+
+                if (!ValidateAndStage(entries, out hr))
+                {
+                    DisposeStaged(entries);
+                    RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, hr);
+                    return;
+                }
+
+                Commit(entries);
+                Volatile.Write(ref _lastBatchGeneration, generation);
+                RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Applied);
+            }
+            catch
+            {
+                RustVmBatchReader.Complete(batch, RustVmBatchOutcome.Error, unchecked((int)0x80004005));
+            }
+        }
+
+        private bool TryRead(IAvnRustVmUpdateOperation operation, out BatchEntry entry, out int hr)
+        {
+            entry = new BatchEntry();
+            hr = operation.GetKind(out var kind);
+            if (hr < 0 || !Enum.IsDefined(typeof(RustVmUpdateKind), kind))
+                return false;
+            entry.Kind = (RustVmUpdateKind)kind;
+            hr = operation.GetTargetId(out entry.Target);
+            if (hr < 0) return false;
+            hr = operation.GetIndex(out entry.Index);
+            if (hr < 0) return false;
+            hr = operation.GetIndex2(out entry.Index2);
+            if (hr < 0) return false;
+            hr = operation.GetInteger(out entry.Integer);
+            if (hr < 0) return false;
+            hr = operation.GetDouble(out entry.Double);
+            if (hr < 0) return false;
+            hr = operation.GetBoolean(out entry.Boolean);
+            if (hr < 0) return false;
+            hr = RustVmBatchReader.ReadText(operation, out entry.Text);
+            if (hr < 0) return false;
+            hr = operation.GetModel(out entry.Model);
+            return hr >= 0;
+        }
+
+        private bool TryReadSnapshot(IAvnRustVmUpdateBatch batch, int operationIndex, BatchEntry entry, out int hr)
+        {
+            hr = batch.GetSnapshotItemCount(operationIndex, out var count);
+            if (hr < 0 || count < 0)
+            {
+                hr = hr < 0 ? hr : InvalidArgument;
+                return false;
+            }
+            entry.Snapshot = new List<object?>(count);
+            for (var item = 0; item < count; item++)
+            {
+                if (entry.Kind == RustVmUpdateKind.ReplaceStringSnapshot)
+                {
+                    hr = RustVmBatchReader.ReadSnapshotText(batch, operationIndex, item, out var value);
+                    if (hr < 0) return false;
+                    entry.Snapshot.Add(value);
+                }
+                else
+                {
+                    hr = batch.GetSnapshotModel(operationIndex, item, out var model);
+                    if (hr < 0 || model is null)
+                    {
+                        hr = hr < 0 ? hr : InvalidArgument;
+                        return false;
+                    }
+                    entry.Snapshot.Add(model);
+                }
+            }
+            return true;
+        }
+
+        private bool ValidateAndStage(List<BatchEntry> entries, out int hr)
+        {
+            hr = 0;
+            var counts = _collectionsById.ToDictionary(pair => pair.Key, pair => pair.Value.Items.Count);
+            foreach (var entry in entries)
+            {
+                if (!ValidateEntry(entry, counts))
+                {
+                    hr = InvalidArgument;
+                    return false;
+                }
+                try
+                {
+                    if (entry.Kind is RustVmUpdateKind.SetModel or RustVmUpdateKind.AddModel or RustVmUpdateKind.InsertModel or RustVmUpdateKind.ReplaceModel)
+                        entry.StagedModel = new ReflectableRustViewModelAdapter(entry.Model!, ModelDescriptor(entry), _dispatch);
+                    else if (entry.Kind == RustVmUpdateKind.ReplaceModelSnapshot)
+                    {
+                        var staged = new List<object?>();
+                        try
+                        {
+                            foreach (var model in entry.Snapshot!.Cast<IAvnRustViewModel>())
+                                staged.Add(new ReflectableRustViewModelAdapter(model, ModelDescriptor(entry), _dispatch));
+                            entry.StagedSnapshot = staged;
+                        }
+                        catch
+                        {
+                            foreach (var adapter in staged)
+                                TryDispose(adapter as IDisposable);
+                            throw;
+                        }
+                    }
+                }
+                catch
+                {
+                    hr = unchecked((int)0x80004005);
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private bool ValidateEntry(BatchEntry entry, Dictionary<int, int> counts)
+        {
+            if (entry.Kind is RustVmUpdateKind.SetString or RustVmUpdateKind.SetInteger or RustVmUpdateKind.SetBoolean or RustVmUpdateKind.SetDouble or RustVmUpdateKind.SetNull or RustVmUpdateKind.SetModel or RustVmUpdateKind.SetPropertyError)
+            {
+                if (!_propertiesById.TryGetValue(entry.Target, out var property))
+                    return false;
+                return entry.Kind switch
+                {
+                    RustVmUpdateKind.SetString => WireKind(property.Descriptor.Kind) == RustViewModelValueKind.String,
+                    RustVmUpdateKind.SetInteger => WireKind(property.Descriptor.Kind) == RustViewModelValueKind.Integer &&
+                        (property.Descriptor.Kind != RustViewModelValueKind.Enum || Enum.IsDefined(property.Value!.GetType(), entry.Integer)),
+                    RustVmUpdateKind.SetBoolean => WireKind(property.Descriptor.Kind) == RustViewModelValueKind.Boolean,
+                    RustVmUpdateKind.SetDouble => WireKind(property.Descriptor.Kind) == RustViewModelValueKind.Double,
+                    RustVmUpdateKind.SetNull => property.Descriptor.Nullable,
+                    RustVmUpdateKind.SetModel => property.Descriptor.Kind == RustViewModelValueKind.Model && entry.Model is not null,
+                    _ => true,
+                };
+            }
+            if (entry.Kind == RustVmUpdateKind.SetCommandEnabled)
+                return _commandsById.ContainsKey(entry.Target);
+            if (!_collectionsById.TryGetValue(entry.Target, out var collection) || !counts.TryGetValue(entry.Target, out var count))
+                return false;
+            var models = collection.Descriptor.ElementKind == RustViewModelValueKind.Model;
+            var strings = collection.Descriptor.ElementKind == RustViewModelValueKind.String;
+            var validIndex = entry.Index >= 0 && entry.Index < count;
+            var insertIndex = entry.Index >= 0 && entry.Index <= count;
+            switch (entry.Kind)
+            {
+                case RustVmUpdateKind.AddString when strings: counts[entry.Target] = count + 1; return true;
+                case RustVmUpdateKind.AddModel when models && entry.Model is not null: counts[entry.Target] = count + 1; return true;
+                case RustVmUpdateKind.InsertString when strings && insertIndex: counts[entry.Target] = count + 1; return true;
+                case RustVmUpdateKind.InsertModel when models && insertIndex && entry.Model is not null: counts[entry.Target] = count + 1; return true;
+                case RustVmUpdateKind.ReplaceString when strings && validIndex: return true;
+                case RustVmUpdateKind.ReplaceModel when models && validIndex && entry.Model is not null: return true;
+                case RustVmUpdateKind.RemoveAt when validIndex: counts[entry.Target] = count - 1; return true;
+                case RustVmUpdateKind.MoveItem when validIndex && entry.Index2 >= 0 && entry.Index2 < count: return true;
+                case RustVmUpdateKind.ReplaceStringSnapshot when strings: counts[entry.Target] = entry.Snapshot!.Count; return true;
+                case RustVmUpdateKind.ReplaceModelSnapshot when models: counts[entry.Target] = entry.Snapshot!.Count; return true;
+                default: return false;
+            }
+        }
+
+        private RustViewModelDescriptor ModelDescriptor(BatchEntry entry) =>
+            entry.Kind == RustVmUpdateKind.SetModel
+                ? _propertiesById[entry.Target].Descriptor.NestedDescriptor!
+                : _collectionsById[entry.Target].Descriptor.ElementDescriptor!;
+
+        private void Commit(IEnumerable<BatchEntry> entries)
+        {
+            foreach (var entry in entries)
+            {
+                if ((entry.Kind is RustVmUpdateKind.SetString or RustVmUpdateKind.SetInteger or
+                    RustVmUpdateKind.SetBoolean or RustVmUpdateKind.SetDouble or RustVmUpdateKind.SetNull or
+                    RustVmUpdateKind.SetModel or RustVmUpdateKind.SetPropertyError) &&
+                    _propertiesById.TryGetValue(entry.Target, out var property))
+                {
+                    object? value = entry.Kind switch
+                    {
+                        RustVmUpdateKind.SetString => property.Descriptor.Nullable ? entry.Text : entry.Text ?? "",
+                        RustVmUpdateKind.SetInteger when property.Descriptor.Kind == RustViewModelValueKind.Enum => Enum.ToObject(property.Value!.GetType(), entry.Integer),
+                        RustVmUpdateKind.SetInteger => entry.Integer,
+                        RustVmUpdateKind.SetBoolean => entry.Boolean != 0,
+                        RustVmUpdateKind.SetDouble => entry.Double,
+                        RustVmUpdateKind.SetNull => null,
+                        RustVmUpdateKind.SetModel => entry.StagedModel,
+                        _ => property.Value,
+                    };
+                    if (entry.Kind == RustVmUpdateKind.SetPropertyError) { SetError(property.Descriptor.Name, entry.Text); continue; }
+                    if ((entry.Kind is RustVmUpdateKind.SetString or RustVmUpdateKind.SetInteger or
+                        RustVmUpdateKind.SetBoolean or RustVmUpdateKind.SetDouble or RustVmUpdateKind.SetNull or
+                        RustVmUpdateKind.SetModel) && !Equals(property.Value, value))
+                    {
+                        var previous = property.Value as ReflectableRustViewModelAdapter;
+                        property.Value = value;
+                        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property.Descriptor.Name));
+                        previous?.Dispose();
+                    }
+                    continue;
+                }
+                if (entry.Kind == RustVmUpdateKind.SetCommandEnabled) { _commandsById[entry.Target].SetEnabled(entry.Boolean != 0); continue; }
+                var collection = _collectionsById[entry.Target].Items;
+                switch (entry.Kind)
+                {
+                    case RustVmUpdateKind.AddString: collection.Add(entry.Text ?? ""); break;
+                    case RustVmUpdateKind.AddModel: collection.Add(entry.StagedModel); break;
+                    case RustVmUpdateKind.InsertString: collection.Insert(entry.Index, entry.Text ?? ""); break;
+                    case RustVmUpdateKind.InsertModel: collection.Insert(entry.Index, entry.StagedModel); break;
+                    case RustVmUpdateKind.ReplaceString: collection[entry.Index] = entry.Text ?? ""; break;
+                    case RustVmUpdateKind.ReplaceModel: ReplaceAndDispose(collection, entry.Index, entry.StagedModel); break;
+                    case RustVmUpdateKind.RemoveAt: RemoveAndDispose(collection, entry.Index); break;
+                    case RustVmUpdateKind.MoveItem: collection.Move(entry.Index, entry.Index2); break;
+                    case RustVmUpdateKind.ReplaceStringSnapshot: ReplaceSnapshot(collection, entry.Snapshot!); break;
+                    case RustVmUpdateKind.ReplaceModelSnapshot: ReplaceSnapshot(collection, entry.StagedSnapshot!); break;
+                }
+            }
+        }
+
+        private static void ReplaceAndDispose(ObservableCollection<object?> collection, int index, object? value)
+        {
+            var old = collection[index];
+            collection[index] = value;
+            (old as IDisposable)?.Dispose();
+        }
+
+        private static void RemoveAndDispose(ObservableCollection<object?> collection, int index)
+        {
+            var old = collection[index];
+            collection.RemoveAt(index);
+            (old as IDisposable)?.Dispose();
+        }
+
+        private static void ReplaceSnapshot(ObservableCollection<object?> collection, IReadOnlyList<object?> values)
+        {
+            var old = collection.ToArray();
+            if (collection is BatchObservableCollection<object?> batch)
+                batch.ReplaceSnapshot(values);
+            else
+            {
+                collection.Clear();
+                foreach (var value in values) collection.Add(value);
+            }
+            foreach (var item in old) (item as IDisposable)?.Dispose();
+        }
+
+        private static void DisposeStaged(IEnumerable<BatchEntry> entries)
+        {
+            foreach (var entry in entries)
+            {
+                TryDispose(entry.StagedModel);
+                if (entry.StagedSnapshot is not null)
+                    foreach (var item in entry.StagedSnapshot) TryDispose(item as IDisposable);
+            }
+        }
+
+    private sealed class BatchEntry
+        {
+            public RustVmUpdateKind Kind;
+            public int Target;
+            public int Index;
+            public int Index2;
+            public long Integer;
+            public double Double;
+            public int Boolean;
+            public string? Text;
+            public IAvnRustViewModel? Model;
+            public List<object?>? Snapshot;
+            public ReflectableRustViewModelAdapter? StagedModel;
+            public List<object?>? StagedSnapshot;
+    }
+
     private void SetProperty(RuntimeProperty property, object? value)
     {
         if (!property.Descriptor.Writable)
@@ -597,7 +938,7 @@ public sealed partial class ReflectableRustViewModelAdapter :
     private sealed class RuntimeCollection(RustViewModelCollectionDescriptor descriptor)
     {
         public RustViewModelCollectionDescriptor Descriptor { get; } = descriptor;
-        public ObservableCollection<object?> Items { get; } = [];
+        public BatchObservableCollection<object?> Items { get; } = [];
     }
 
     private sealed class RuntimeMember(

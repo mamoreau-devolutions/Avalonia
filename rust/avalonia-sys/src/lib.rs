@@ -31,7 +31,9 @@ pub use hresult::{
     Error, Result, AVN_E_FIXTURE, E_FAIL, E_INVALIDARG, E_NOINTERFACE, E_POINTER, S_OK,
 };
 pub use rust_vm::{
-    rust_view_model, IAvnRustViewModel, IAvnRustVmSink, IAvnRustVmSink2, RustViewModelCallbacks,
+    rust_view_model, rust_vm_update_batch, IAvnRustViewModel, IAvnRustVmSink, IAvnRustVmSink2,
+    IAvnRustVmSink3, IAvnRustVmUpdateBatch, IAvnRustVmUpdateOperation, RustViewModelCallbacks,
+    RustVmBatchCompletion, RustVmUpdate,
 };
 pub use value_converter::{
     rust_value_converter_provider, ConversionDirection, ConvertFn, ConverterAbiError,

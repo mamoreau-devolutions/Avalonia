@@ -289,3 +289,26 @@ existing state untouched, on every new v2 method), and leak-shaped behavior
 exactly once). `rust/avalonia/src/view_model.rs` covers the same
 nested-handle lifetime guarantees at the Rust `NestedSlots` level, including a
 200-iteration create/drop cycle with an instrumented `Drop` counter.
+
+## Stage 27: immutable worker batches
+
+`IAvnRustVmSink3` is a separately versioned capability; v1 and v2 vtables are
+unchanged. It accepts an immutable `IAvnRustVmUpdateBatch`, which is retained
+and inspected only by one `Dispatcher.UIThread.Post` callback. Submission never
+uses `Invoke`, never waits, and never calls back into Rust on the submitting
+stack. Keep v1/v2 calls only for UI-thread compatibility; worker and
+high-volume publishers must use the generated `sink.batch(generation)` builder
+and `sink.submit_batch(batch)`.
+
+Generations strictly increase per model. The adapter applies a generation only
+when it is greater than the last applied value; equal and lower generations
+complete as `Stale`. `BatchCompletion` (or `submit_batch_with_callback`) reports
+`Applied`, `Stale`, `Cancelled` after disposal, or `Error` after UI processing.
+The batch owns strings and retained nested model COM references until that
+outcome, and the FFI accessors validate pointers, indices, and tags under a
+panic boundary.
+
+`replace_*_snapshot` stages a complete string or nested-model collection then
+commits it with one collection `Reset`; it is the required path for large
+snapshots (including 100K items). Batch validation reads every operation before
+mutation so malformed operations cannot partially update managed state.

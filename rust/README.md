@@ -142,8 +142,12 @@ and the managed presentation project; the interop transport and handwritten
 Rust runtime remain model-independent. The schema now also declares
 schema-wide enums and nested-model/nullable/collection-element-kind
 properties (see [VIEW_MODELS.md](VIEW_MODELS.md#real-application-data-model-support));
-these ride the existing versioned `IAvnRustVmSink`/new `IAvnRustVmSink2`
-transport rather than a per-application ABI.
+these ride the existing versioned `IAvnRustVmSink`/`IAvnRustVmSink2`
+transport rather than a per-application ABI. Stage 27 additionally introduces
+the independently versioned `IAvnRustVmSink3` immutable batch capability.
+Worker and high-volume publishers must use generated named batch builders:
+submission is one nonblocking dispatcher post, stale/equal generations are
+rejected deterministically, and completion is asynchronous.
 
 ## Start a new application
 

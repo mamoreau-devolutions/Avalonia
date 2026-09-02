@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
@@ -16,12 +17,13 @@ using Avalonia.Threading;
 namespace Avalonia.Rust.Sample.Generated;
 
 [GeneratedComClass]
-public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmSink2, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable
+public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable
 {
     private readonly IAvnRustViewModel _model;
     private readonly Action<Action> _dispatch;
     private readonly Dictionary<string, string> _errors = new(StringComparer.Ordinal);
     private int _disposed;
+    private long _lastBatchGeneration = -1;
     private string _name = "Avalonia from Rust";
     private long _count = 0L;
     private string _newItem = "";
@@ -130,8 +132,8 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         }
     }
 
-    public ObservableCollection<string> Items { get; } = [];
-    public ObservableCollection<global::Avalonia.Rust.Sample.Generated.TaskItemViewModelAdapter> Tasks { get; } = [];
+    public BatchObservableCollection<string> Items { get; } = [];
+    public BatchObservableCollection<global::Avalonia.Rust.Sample.Generated.TaskItemViewModelAdapter> Tasks { get; } = [];
 
     public DelegateCommand IncrementCommand { get; }
     public DelegateCommand AddCommand { get; }
@@ -296,6 +298,32 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         1 => Apply(() => Items.Add(value ?? "")),
         _ => unchecked((int)0x80070057),
     };
+
+    public int ReplaceStringSnapshot(int collectionId, IReadOnlyList<string> values) => collectionId switch
+    {
+        1 => Apply(() => Items.ReplaceSnapshot(values)),
+        _ => unchecked((int)0x80070057),
+    };
+
+    public int ReplaceModelSnapshot(int collectionId, IReadOnlyList<IAvnRustViewModel> values) => collectionId switch
+    {
+        2 => Apply(() =>
+        {
+            var staged = new List<global::Avalonia.Rust.Sample.Generated.TaskItemViewModelAdapter>();
+            try { foreach (var value in values) staged.Add(new global::Avalonia.Rust.Sample.Generated.TaskItemViewModelAdapter(value, _dispatch)); }
+            catch { foreach (var value in staged) TryDispose(value); throw; }
+            var previous = Tasks.ToArray();
+            Tasks.ReplaceSnapshot(staged);
+            foreach (var value in previous) TryDispose(value);
+        }),
+        _ => unchecked((int)0x80070057),
+    };
+
+    public int SubmitBatch(IAvnRustVmUpdateBatch? batch) =>
+        RustVmBatchSubmission.Submit(this, this, batch,
+            () => Volatile.Read(ref _lastBatchGeneration),
+            value => Volatile.Write(ref _lastBatchGeneration, value),
+            () => Volatile.Read(ref _disposed) == 0);
 
     public void Dispose()
     {

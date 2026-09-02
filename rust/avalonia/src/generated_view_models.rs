@@ -60,6 +60,44 @@ impl SampleViewModelSink {
     pub fn set_nickname_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(5, message) }
     pub fn set_priority_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(6, message) }
     pub fn set_new_task_title_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(8, message) }
+    /// Creates a worker-safe immutable update batch with a monotonic generation.
+    pub fn batch(&self, generation: i64) -> SampleViewModelSinkBatch { SampleViewModelSinkBatch(crate::view_model::ViewModelBatch::new(generation)) }
+    pub fn submit_batch(&self, batch: SampleViewModelSinkBatch) -> crate::Result<crate::view_model::BatchCompletion> { self.0.submit_batch(batch.0) }
+}
+
+pub struct SampleViewModelSinkBatch(crate::view_model::ViewModelBatch);
+
+impl SampleViewModelSinkBatch {
+    pub fn set_name(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 1, 0, value); }
+    pub fn set_name_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 1, 0, message); }
+    pub fn set_count(&mut self, value: i64) { self.0.push_integer(2, value as i64); }
+    pub fn set_count_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 2, 0, message); }
+    pub fn set_new_item(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 3, 0, value); }
+    pub fn set_new_item_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 3, 0, message); }
+    pub fn set_status(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 4, 0, value); }
+    pub fn set_status_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 4, 0, message); }
+    pub fn set_nickname(&mut self, value: Option<impl AsRef<str>>) { match value { Some(value) => self.0.push_string(1, 5, 0, value), None => self.0.push_null(5) } }
+    pub fn set_nickname_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 5, 0, message); }
+    pub fn set_priority(&mut self, value: Priority) { self.0.push_integer(6, value as i64); }
+    pub fn set_priority_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 6, 0, message); }
+    pub fn set_address(&mut self, value: impl AddressViewModel) { self.0.push_model(6, 7, 0, AddressViewModelDispatch { model: value }); }
+    pub fn set_address_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 7, 0, message); }
+    pub fn set_new_task_title(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 8, 0, value); }
+    pub fn set_new_task_title_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 8, 0, message); }
+    pub fn add_items(&mut self, value: impl AsRef<str>) { self.0.push_string(7, 1, 0, value); }
+    pub fn replace_items_snapshot<S: AsRef<str>>(&mut self, values: impl IntoIterator<Item = S>) { self.0.push_string_snapshot(1, values); }
+    pub fn remove_items(&mut self, index: i32) { self.0.push_indices(13, 1, index, 0); }
+    pub fn add_tasks(&mut self, value: impl TaskItemViewModel) { self.0.push_model(8, 2, 0, TaskItemViewModelDispatch { model: value }); }
+    pub fn replace_tasks_snapshot<M: TaskItemViewModel>(&mut self, values: impl IntoIterator<Item = M>) { self.0.push_model_snapshot(2, values.into_iter().map(|value| TaskItemViewModelDispatch { model: value })); }
+    pub fn set_increment_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 1, enabled); }
+    pub fn set_add_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 2, enabled); }
+    pub fn set_save_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 3, enabled); }
+    pub fn set_clear_nickname_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 4, enabled); }
+    pub fn set_toggle_address_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 5, enabled); }
+    pub fn set_add_task_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 6, enabled); }
+    pub fn set_remove_first_task_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 7, enabled); }
+    pub fn set_shuffle_tasks_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 8, enabled); }
+    pub fn set_clear_tasks_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 9, enabled); }
 }
 
 pub trait SampleViewModel: Send + 'static {
@@ -159,6 +197,18 @@ impl AddressViewModelSink {
     pub fn set_city(&self, value: impl AsRef<str>) -> crate::Result<()> { self.0.set_string(2, value) }
     pub fn set_street_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(1, message) }
     pub fn set_city_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(2, message) }
+    /// Creates a worker-safe immutable update batch with a monotonic generation.
+    pub fn batch(&self, generation: i64) -> AddressViewModelSinkBatch { AddressViewModelSinkBatch(crate::view_model::ViewModelBatch::new(generation)) }
+    pub fn submit_batch(&self, batch: AddressViewModelSinkBatch) -> crate::Result<crate::view_model::BatchCompletion> { self.0.submit_batch(batch.0) }
+}
+
+pub struct AddressViewModelSinkBatch(crate::view_model::ViewModelBatch);
+
+impl AddressViewModelSinkBatch {
+    pub fn set_street(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 1, 0, value); }
+    pub fn set_street_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 1, 0, message); }
+    pub fn set_city(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 2, 0, value); }
+    pub fn set_city_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 2, 0, message); }
 }
 
 pub trait AddressViewModel: Send + 'static {
@@ -210,6 +260,18 @@ impl TaskItemViewModelSink {
     pub fn set_done(&self, value: bool) -> crate::Result<()> { self.0.set_boolean(2, value) }
     pub fn set_title_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(1, message) }
     pub fn set_done_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(2, message) }
+    /// Creates a worker-safe immutable update batch with a monotonic generation.
+    pub fn batch(&self, generation: i64) -> TaskItemViewModelSinkBatch { TaskItemViewModelSinkBatch(crate::view_model::ViewModelBatch::new(generation)) }
+    pub fn submit_batch(&self, batch: TaskItemViewModelSinkBatch) -> crate::Result<crate::view_model::BatchCompletion> { self.0.submit_batch(batch.0) }
+}
+
+pub struct TaskItemViewModelSinkBatch(crate::view_model::ViewModelBatch);
+
+impl TaskItemViewModelSinkBatch {
+    pub fn set_title(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 1, 0, value); }
+    pub fn set_title_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 1, 0, message); }
+    pub fn set_done(&mut self, value: bool) { self.0.push_boolean(3, 2, value); }
+    pub fn set_done_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 2, 0, message); }
 }
 
 pub trait TaskItemViewModel: Send + 'static {

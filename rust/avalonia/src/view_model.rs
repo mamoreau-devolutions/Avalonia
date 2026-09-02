@@ -3,6 +3,7 @@ use avalonia_sys as sys;
 use std::any::Any;
 use std::collections::HashMap;
 use std::fmt;
+use std::sync::mpsc::{self, Receiver, TryRecvError};
 use std::sync::{Arc, Mutex};
 
 /// Rust-side bookkeeping for nested view-model handles a sink has published:
@@ -107,6 +108,7 @@ impl fmt::Debug for NestedSlots {
 pub struct ViewModelSink {
     raw: sys::ComPtr<sys::IAvnRustVmSink>,
     raw2: sys::ComPtr<sys::IAvnRustVmSink2>,
+    raw3: sys::ComPtr<sys::IAvnRustVmSink3>,
     nested: Arc<NestedSlots>,
 }
 
@@ -119,9 +121,11 @@ impl ViewModelSink {
     /// collection/`CanExecute`/validation updates later.
     fn new(raw: sys::ComPtr<sys::IAvnRustVmSink>) -> Result<Self> {
         let raw2 = raw.query_interface::<sys::IAvnRustVmSink2>()?;
+        let raw3 = raw.query_interface::<sys::IAvnRustVmSink3>()?;
         Ok(Self {
             raw,
             raw2,
+            raw3,
             nested: Arc::new(NestedSlots::default()),
         })
     }
@@ -296,6 +300,194 @@ impl ViewModelSink {
             None => self.raw2.set_property_error(property_id, None)?,
         }
         Ok(())
+    }
+
+    /// Submits one immutable worker-safe update batch. Unlike the legacy sink
+    /// methods, this does not synchronously enter managed code beyond enqueueing
+    /// its dispatcher callback. Applications publishing off the UI thread should
+    /// use generated named batch builders rather than per-item methods.
+    pub fn submit_batch(&self, batch: ViewModelBatch) -> Result<BatchCompletion> {
+        let (completion, callback) = BatchCompletion::channel();
+        let raw = sys::rust_vm_update_batch(batch.generation, batch.operations, Some(callback));
+        self.raw3.submit_batch(&raw)?;
+        Ok(completion)
+    }
+
+    /// Same as <see cref="submit_batch"/>, with a callback invoked after the UI
+    /// dispatcher applies/rejects the batch. The callback is never invoked on
+    /// the submitting stack and no view-model lock is held while it runs.
+    pub fn submit_batch_with_callback(
+        &self,
+        batch: ViewModelBatch,
+        callback: impl FnOnce(BatchOutcome) + Send + 'static,
+    ) -> Result<()> {
+        let raw = sys::rust_vm_update_batch(
+            batch.generation,
+            batch.operations,
+            Some(Box::new(move |outcome, error| {
+                callback(BatchOutcome::from_wire(outcome, error))
+            })),
+        );
+        self.raw3.submit_batch(&raw)?;
+        Ok(())
+    }
+}
+
+/// Result delivered asynchronously for a batch submission.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum BatchOutcome {
+    Applied,
+    Stale,
+    Cancelled,
+    Error(i32),
+}
+
+impl BatchOutcome {
+    fn from_wire(outcome: i32, error: i32) -> Self {
+        match outcome {
+            0 => Self::Applied,
+            1 => Self::Stale,
+            2 => Self::Cancelled,
+            _ => Self::Error(error),
+        }
+    }
+}
+
+/// A handle to an asynchronous batch completion. Dropping it is safe; Rust's
+/// batch object still owns the sender until managed code reaches a terminal
+/// outcome. `try_take` is useful in executor-neutral applications.
+pub struct BatchCompletion(Receiver<BatchOutcome>);
+
+impl BatchCompletion {
+    fn channel() -> (Self, sys::RustVmBatchCompletion) {
+        let (sender, receiver) = mpsc::channel();
+        (
+            Self(receiver),
+            Box::new(move |outcome, error| {
+                let _ = sender.send(BatchOutcome::from_wire(outcome, error));
+            }),
+        )
+    }
+
+    pub fn wait(self) -> std::result::Result<BatchOutcome, mpsc::RecvError> {
+        self.0.recv()
+    }
+
+    pub fn try_take(&self) -> std::result::Result<BatchOutcome, TryRecvError> {
+        self.0.try_recv()
+    }
+}
+
+/// Immutable IR-independent batch payload. Its builders own all strings and
+/// COM references, so after `submit_batch` starts it is read-only and needs no
+/// Rust locks. Generated model-specific wrappers expose named methods over this
+/// type; application code should not use the numeric constructor directly.
+#[derive(Default)]
+pub struct ViewModelBatch {
+    generation: i64,
+    operations: Vec<sys::RustVmUpdate>,
+}
+
+impl ViewModelBatch {
+    #[doc(hidden)]
+    pub fn new(generation: i64) -> Self {
+        Self {
+            generation,
+            operations: Vec::new(),
+        }
+    }
+
+    #[doc(hidden)]
+    pub fn push(&mut self, update: sys::RustVmUpdate) {
+        self.operations.push(update);
+    }
+
+    #[doc(hidden)]
+    pub fn push_string(&mut self, kind: i32, target_id: i32, index: i32, value: impl AsRef<str>) {
+        let mut update = sys::RustVmUpdate::new(kind, target_id);
+        update.index = index;
+        update.text = Some(value.as_ref().to_owned());
+        self.push(update);
+    }
+
+    #[doc(hidden)]
+    pub fn push_integer(&mut self, target_id: i32, value: i64) {
+        let mut update = sys::RustVmUpdate::new(2, target_id);
+        update.integer = value;
+        self.push(update);
+    }
+
+    #[doc(hidden)]
+    pub fn push_null(&mut self, target_id: i32) {
+        self.push(sys::RustVmUpdate::new(5, target_id));
+    }
+
+    #[doc(hidden)]
+    pub fn push_boolean(&mut self, kind: i32, target_id: i32, value: bool) {
+        let mut update = sys::RustVmUpdate::new(kind, target_id);
+        update.boolean = i32::from(value);
+        self.push(update);
+    }
+
+    #[doc(hidden)]
+    pub fn push_double(&mut self, target_id: i32, value: f64) {
+        let mut update = sys::RustVmUpdate::new(4, target_id);
+        update.double = value;
+        self.push(update);
+    }
+
+    #[doc(hidden)]
+    pub fn push_indices(&mut self, kind: i32, target_id: i32, index: i32, index2: i32) {
+        let mut update = sys::RustVmUpdate::new(kind, target_id);
+        update.index = index;
+        update.index2 = index2;
+        self.push(update);
+    }
+
+    #[doc(hidden)]
+    pub fn push_string_snapshot<S: AsRef<str>>(
+        &mut self,
+        target_id: i32,
+        values: impl IntoIterator<Item = S>,
+    ) {
+        let mut update = sys::RustVmUpdate::new(15, target_id);
+        update.snapshot_strings = Some(
+            values
+                .into_iter()
+                .map(|value| value.as_ref().to_owned())
+                .collect(),
+        );
+        self.push(update);
+    }
+
+    #[doc(hidden)]
+    pub fn push_model(
+        &mut self,
+        kind: i32,
+        target_id: i32,
+        index: i32,
+        model: impl DynamicViewModel,
+    ) {
+        let mut update = sys::RustVmUpdate::new(kind, target_id);
+        update.index = index;
+        update.model = Some(ViewModelHandle::new(model).raw);
+        self.push(update);
+    }
+
+    #[doc(hidden)]
+    pub fn push_model_snapshot<M: DynamicViewModel>(
+        &mut self,
+        target_id: i32,
+        models: impl IntoIterator<Item = M>,
+    ) {
+        let mut update = sys::RustVmUpdate::new(16, target_id);
+        update.snapshot_models = Some(
+            models
+                .into_iter()
+                .map(|model| ViewModelHandle::new(model).raw)
+                .collect(),
+        );
+        self.push(update);
     }
 }
 
