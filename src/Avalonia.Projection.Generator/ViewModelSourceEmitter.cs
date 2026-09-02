@@ -29,6 +29,8 @@ public static class ViewModelSourceEmitter
         ir.Validate();
         var sb = new StringBuilder(
             "//! Generated from view-model.ir.json. Do not edit.\n\n");
+        if (externalConsumer)
+            sb.AppendLine("#![allow(dead_code)]\n");
         foreach (var enumDefinition in ir.Enums)
             EmitRustEnum(sb, enumDefinition);
         foreach (var model in ir.Models)
@@ -1076,7 +1078,7 @@ public static class ViewModelSourceEmitter
         sb.AppendLine();
         sb.AppendLine($"impl std::convert::TryFrom<i64> for {enumDefinition.Name} {{");
         sb.AppendLine("    type Error = ();");
-        sb.AppendLine("    fn try_from(value: i64) -> std::result::Result<Self, Self::Error> {");
+        sb.AppendLine("    fn try_from(value: i64) -> std::result::Result<Self, ()> {");
         sb.AppendLine("        match value {");
         foreach (var member in enumDefinition.Members)
             sb.AppendLine($"            {member.Value} => Ok(Self::{member.Name}),");

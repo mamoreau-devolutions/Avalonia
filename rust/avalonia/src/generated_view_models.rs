@@ -10,7 +10,7 @@ pub enum Priority {
 
 impl std::convert::TryFrom<i64> for Priority {
     type Error = ();
-    fn try_from(value: i64) -> std::result::Result<Self, Self::Error> {
+    fn try_from(value: i64) -> std::result::Result<Self, ()> {
         match value {
             0 => Ok(Self::Low),
             1 => Ok(Self::Normal),

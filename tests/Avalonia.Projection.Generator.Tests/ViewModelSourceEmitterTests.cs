@@ -124,6 +124,7 @@ public class ViewModelSourceEmitterTests
             "pub fn mount_rust_vm_window(scope: &crate::AppScope, model: impl SampleViewModel)",
             rust,
             StringComparison.Ordinal);
+        Assert.Contains("#![allow(dead_code)]", rust, StringComparison.Ordinal);
         Assert.Contains(
             "pub fn register_value_converters(scope: &crate::AppScope, converters: impl ValueConverters)",
             rust,
@@ -210,6 +211,38 @@ public class ViewModelSourceEmitterTests
         };
 
         Assert.Throws<InvalidOperationException>(badView.Validate);
+    }
+
+    [Fact]
+    public void Enum_member_named_error_does_not_ambiguate_try_from_error_type()
+    {
+        var ir = new ViewModelIr
+        {
+            Models = SampleModels(),
+            Views = SampleViews(),
+            Converters = SampleConverters(),
+            Enums =
+            [
+                new ViewModelEnumDefinition
+                {
+                    Id = 1,
+                    Name = "Severity",
+                    ManagedNamespace = "Avalonia.Rust.Sample.Generated",
+                    Members =
+                    [
+                        new ViewModelEnumMember { Name = "Info", Value = 0 },
+                        new ViewModelEnumMember { Name = "Error", Value = 1 },
+                    ],
+                },
+            ],
+        };
+
+        var rust = ViewModelSourceEmitter.EmitRust(ir, externalConsumer: true);
+
+        Assert.Contains(
+            "fn try_from(value: i64) -> std::result::Result<Self, ()>",
+            rust,
+            StringComparison.Ordinal);
     }
 
     private static ViewModelIr SampleIr() => SampleIr(SampleConverters());
