@@ -36,6 +36,15 @@ versioned view-model IR, and `avalonia-app.json`. `new-app` substitutes both
 the Cargo package name and the pinned producer-root placeholder. Commit the
 producer as a submodule (or pin a checkout to an immutable commit); do not
 point a release consumer at an unpinned branch.
+Initialize the pinned producer recursively before generation or publishing:
+
+```bash
+git submodule update --init --recursive
+```
+
+This is required because the producer build consumes its XamlX and platform
+submodules. The vendored template declares an empty `[workspace]`, so it does
+not become an accidental member of an enclosing consumer Cargo workspace.
 `regenerate-and-build.ps1 -ValidateTemplate` /
 `AVN_VALIDATE_TEMPLATE=1 regenerate-and-build.sh` copies it through `new-app`
 before running `cargo check`.
