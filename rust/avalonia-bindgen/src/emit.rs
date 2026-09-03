@@ -658,30 +658,36 @@ fn emit_attached_statics(properties: &[&ProjectedAttachedProperty]) -> String {
     for property in properties {
         let snake = to_snake(&property.name);
         let abi_type = rust_abi_type(&property.kind, None);
-        let result = if property.kind == "Bool" {
-            "value != 0"
-        } else {
-            "value"
+        let result = match property.kind.as_str() {
+            "Bool" => "value != 0",
+            _ => "value",
         };
-        let input = if property.kind == "Bool" {
-            "i32::from(value)"
-        } else {
-            "value"
+        let input = match property.kind.as_str() {
+            "Bool" => "i32::from(value)".to_string(),
+            "StringUtf16" => "value.as_ptr().cast_mut()".to_string(),
+            _ => "value".to_string(),
         };
-        let rust_type = if property.kind == "Bool" {
-            "bool".to_string()
-        } else {
-            rust_abi_type(&property.kind, None)
+        // A string attached property reads back as the raw pointer the caller owns and writes
+        // from a borrowed UTF-16 buffer, exactly like an ordinary string property; every other
+        // kind is a scalar that crosses by value.
+        let get_type = match property.kind.as_str() {
+            "Bool" => "bool".to_string(),
+            _ => rust_abi_type(&property.kind, None),
+        };
+        let set_type = match property.kind.as_str() {
+            "Bool" => "bool".to_string(),
+            "StringUtf16" => "&[u16]".to_string(),
+            _ => rust_abi_type(&property.kind, None),
         };
         out.push_str(&format!(
-            "    pub fn get_{snake}(&self, target: &ComPtr<IAvnControl>) -> Result<{rust_type}> {{\n\
+            "    pub fn get_{snake}(&self, target: &ComPtr<IAvnControl>) -> Result<{get_type}> {{\n\
              \x20       unsafe {{\n\
              \x20           let mut value: {abi_type} = {};\n\
              \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_{snake})(self.as_raw(), target.as_raw(), &mut value);\n\
              \x20           hresult::check(hr).map(|_| {result})\n\
              \x20       }}\n\
              \x20   }}\n\
-             \x20   pub fn set_{snake}(&self, target: &ComPtr<IAvnControl>, value: {rust_type}) -> Result<()> {{\n\
+             \x20   pub fn set_{snake}(&self, target: &ComPtr<IAvnControl>, value: {set_type}) -> Result<()> {{\n\
              \x20       unsafe {{\n\
              \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_{snake})(self.as_raw(), target.as_raw(), {input});\n\
              \x20           hresult::check(hr)\n\

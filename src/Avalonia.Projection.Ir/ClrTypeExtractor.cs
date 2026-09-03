@@ -113,6 +113,9 @@ public static class ClrTypeExtractor
                 ElementKind = policy.TryGetOverride(type, property, out memberOverride)
                     ? memberOverride.ElementKind
                     : null,
+                StringConverterTypeName = policy.TryGetOverride(type, property, out memberOverride)
+                    ? memberOverride.StringConverterTypeName
+                    : null,
                 ManagedTypeName = property.PropertyType.FullName,
                 IsNullable = isNullable,
                 CanRead = property.GetMethod?.IsPublic == true,
@@ -359,10 +362,12 @@ public static class ClrTypeExtractor
             }
             if (kind == MarshallingKind.StringUtf16 &&
                 type != typeof(string) &&
+                value.StringConverterTypeName is null &&
                 !HasStringRoundTrip(type))
             {
-                reason = "String override on a non-string member requires a public static Parse(string) " +
-                    "returning the member type and an overridden ToString()";
+                reason = "String override on a non-string member requires either a public static " +
+                    "Parse(string) returning the member type with an overridden ToString(), or a " +
+                    "StringConverterTypeName naming a host-side converter";
                 return false;
             }
             return true;
@@ -501,7 +506,8 @@ public static class ClrTypeExtractor
                 .Select(property => Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType))
             .Concat(selectedTypes.SelectMany(type =>
                 policy.AttachedProperties.TryGetValue(type.FullName ?? type.Name, out var names)
-                    ? names.Select(name => type.GetMethod(
+                    ? names.Where(name => !policy.TryGetAttachedOverride(type, name, out _))
+                        .Select(name => type.GetMethod(
                             $"Get{name}",
                             BindingFlags.Public | BindingFlags.Static)?.ReturnType)
                         .Where(attachedType => attachedType is not null)
@@ -580,12 +586,15 @@ public static class ClrTypeExtractor
                     continue;
                 }
 
-                if (!TryMapType(
+                if (!TryMapAttachedType(
+                        owner,
+                        name,
                         getter.ReturnType,
                         projectedNames,
                         policy,
                         out var kind,
-                        out _,
+                        out var isNullable,
+                        out var converterTypeName,
                         out var reason))
                 {
                     Skip(skipped, owner, name, reason!);
@@ -604,10 +613,51 @@ public static class ClrTypeExtractor
                     Name = name,
                     Kind = kind,
                     ManagedTypeName = getter.ReturnType.FullName!,
+                    IsNullable = isNullable,
+                    StringConverterTypeName = converterTypeName,
                 });
             }
         }
         return result;
+    }
+
+    private static bool TryMapAttachedType(
+        Type owner,
+        string name,
+        Type returnType,
+        IReadOnlyDictionary<Type, string> projectedNames,
+        ProjectionPolicy policy,
+        out MarshallingKind kind,
+        out bool isNullable,
+        out string? stringConverterTypeName,
+        out string? reason)
+    {
+        if (policy.TryGetAttachedOverride(owner, name, out var value))
+        {
+            kind = value.Kind;
+            isNullable = value.IsNullable ?? false;
+            stringConverterTypeName = value.StringConverterTypeName;
+            reason = null;
+            if (kind != MarshallingKind.StringUtf16)
+            {
+                reason = $"Attached property override for '{owner.FullName}.{name}' must marshal as a string";
+                return false;
+            }
+            if (returnType != typeof(string) &&
+                stringConverterTypeName is null &&
+                !HasStringRoundTrip(returnType))
+            {
+                reason = "String override on a non-string attached property requires either a public " +
+                    "static Parse(string) returning the property type with an overridden ToString(), " +
+                    "or a StringConverterTypeName naming a host-side converter";
+                return false;
+            }
+            return true;
+        }
+
+        isNullable = false;
+        stringConverterTypeName = null;
+        return TryMapType(returnType, projectedNames, policy, out kind, out _, out reason);
     }
 
     private static string ManagedTypeName(Type type)

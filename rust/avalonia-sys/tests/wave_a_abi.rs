@@ -1,0 +1,174 @@
+//! ABI guarantees for the wave A controls: `Image`, the tab pair, the tree pair,
+//! `HeaderedItemsControl` and the `ToolTip` attached properties.
+//!
+//! Wave A only *adds* interfaces. Nothing above or beside the new types gained a slot, so every
+//! interface that shipped before keeps the exact IID it last published and the seven new ones
+//! publish at version 1. The one thing that does move is the factory, which gains a creator per
+//! new control plus `get_tool_tip_statics`.
+
+use avalonia_sys::{
+    I_AVN_AVALONIA_OBJECT_IID, I_AVN_CONTENT_CONTROL_IID, I_AVN_CONTROL_IID,
+    I_AVN_HEADERED_CONTENT_CONTROL_IID, I_AVN_HEADERED_ITEMS_CONTROL_IID, I_AVN_IMAGE_IID,
+    I_AVN_ITEMS_CONTROL_IID, I_AVN_SELECTING_ITEMS_CONTROL_IID, I_AVN_TAB_CONTROL_IID,
+    I_AVN_TAB_ITEM_IID, I_AVN_TOOL_TIP_IID, I_AVN_TOOL_TIP_STATICS_IID, I_AVN_TREE_VIEW_IID,
+    I_AVN_TREE_VIEW_ITEM_IID,
+};
+
+const HEADER: &str = include_str!("../include/avalonia-rust-abi.h");
+
+#[test]
+fn image_source_is_published_as_a_utf16_string_slot() {
+    // Source crosses as the source string the host resolves into a bitmap, so it occupies an
+    // ordinary string pair rather than a projected image interface.
+    for expected in [
+        "*get_source)(IAvnImage* self, uint16_t** value)",
+        "*set_source)(IAvnImage* self, const uint16_t* value)",
+        "*set_stretch)(IAvnImage* self, int32_t value)",
+        "*set_stretch_direction)(IAvnImage* self, int32_t value)",
+        "*set_blend_mode)(IAvnImage* self, int32_t value)",
+        "#define I_AVN_IMAGE_ABI_VERSION 1",
+    ] {
+        assert!(HEADER.contains(expected), "header is missing `{expected}`");
+    }
+
+    // No image object is minted, so nothing here carries IBrush-level reference-graph
+    // complexity.
+    for forbidden in ["IAvnImageSource", "IAvnBitmap", "IAvnImageList"] {
+        assert!(
+            !HEADER.contains(forbidden),
+            "header must not declare `{forbidden}`"
+        );
+    }
+}
+
+#[test]
+fn tool_tip_tip_is_a_string_attached_property_beside_the_scalar_ones() {
+    for expected in [
+        "*get_tip)(IAvnToolTipStatics* self, IAvnControl* target, uint16_t** value)",
+        "*set_tip)(IAvnToolTipStatics* self, IAvnControl* target, const uint16_t* value)",
+        "*set_show_delay)(IAvnToolTipStatics* self, IAvnControl* target, int32_t value)",
+        "*set_placement)(IAvnToolTipStatics* self, IAvnControl* target, int32_t value)",
+        "*set_horizontal_offset)(IAvnToolTipStatics* self, IAvnControl* target, double value)",
+        "#define I_AVN_TOOL_TIP_STATICS_ABI_VERSION 1",
+        // The factory hands the statics object out beside the ones it already published.
+        "*get_tool_tip_statics)(IAvnControlFactory* self, IAvnToolTipStatics** value)",
+        "*create_image)(IAvnControlFactory* self, IAvnImage** value)",
+        "*create_tab_control)(IAvnControlFactory* self, IAvnTabControl** value)",
+        "*create_tree_view_item)(IAvnControlFactory* self, IAvnTreeViewItem** value)",
+    ] {
+        assert!(HEADER.contains(expected), "header is missing `{expected}`");
+    }
+}
+
+#[test]
+fn wave_a_interfaces_publish_abi_version_one_and_nothing_else_moved() {
+    for expected in [
+        "#define I_AVN_IMAGE_ABI_VERSION 1",
+        "#define I_AVN_HEADERED_ITEMS_CONTROL_ABI_VERSION 1",
+        "#define I_AVN_TAB_CONTROL_ABI_VERSION 1",
+        "#define I_AVN_TAB_ITEM_ABI_VERSION 1",
+        "#define I_AVN_TREE_VIEW_ABI_VERSION 1",
+        "#define I_AVN_TREE_VIEW_ITEM_ABI_VERSION 1",
+        "#define I_AVN_TOOL_TIP_ABI_VERSION 1",
+        // Every base the new interfaces sit on kept the version whose flattened vtable it
+        // still matches, so no shipped consumer has to requery anything but the factory.
+        "#define I_AVN_AVALONIA_OBJECT_ABI_VERSION 2",
+        "#define I_AVN_CONTROL_ABI_VERSION 3",
+        "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 4",
+        "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 4",
+        "#define I_AVN_CONTENT_CONTROL_ABI_VERSION 5",
+        "#define I_AVN_HEADERED_CONTENT_CONTROL_ABI_VERSION 5",
+        // Only the factory grew slots.
+        "#define I_AVN_CONTROL_FACTORY_ABI_VERSION 3",
+    ] {
+        assert!(HEADER.contains(expected), "header is missing `{expected}`");
+    }
+}
+
+#[test]
+fn wave_a_iids_are_fresh_and_distinct_from_every_shipped_one() {
+    // The interfaces the new types derive from must be byte-identical to what shipped, or a
+    // consumer holding one would be calling through a contract that quietly changed.
+    for (name, expected, current) in [
+        (
+            "IAvnAvaloniaObject",
+            "FA7F2E03-0BFA-5422-840B-18AE1D9695C0",
+            I_AVN_AVALONIA_OBJECT_IID,
+        ),
+        (
+            "IAvnControl",
+            "7CF51B18-C500-5D06-8FFA-D97EF7BC6487",
+            I_AVN_CONTROL_IID,
+        ),
+        (
+            "IAvnItemsControl",
+            "95D1FA77-96F7-5F24-BE8A-362E530CCBD9",
+            I_AVN_ITEMS_CONTROL_IID,
+        ),
+        (
+            "IAvnSelectingItemsControl",
+            "4D40F605-0330-573F-9C4E-06B1CC3CF5A3",
+            I_AVN_SELECTING_ITEMS_CONTROL_IID,
+        ),
+        (
+            "IAvnContentControl",
+            "2C4557A2-537C-5683-9E30-C3AE87D7614C",
+            I_AVN_CONTENT_CONTROL_IID,
+        ),
+        (
+            "IAvnHeaderedContentControl",
+            "EF77B5CB-D25B-5F21-99AB-C345E7CE2C30",
+            I_AVN_HEADERED_CONTENT_CONTROL_IID,
+        ),
+    ] {
+        assert_eq!(format_iid(&current), expected, "{name} changed its IID");
+    }
+
+    let wave_a = [
+        I_AVN_IMAGE_IID,
+        I_AVN_HEADERED_ITEMS_CONTROL_IID,
+        I_AVN_TAB_CONTROL_IID,
+        I_AVN_TAB_ITEM_IID,
+        I_AVN_TREE_VIEW_IID,
+        I_AVN_TREE_VIEW_ITEM_IID,
+        I_AVN_TOOL_TIP_IID,
+        I_AVN_TOOL_TIP_STATICS_IID,
+    ];
+    let shipped = [
+        I_AVN_AVALONIA_OBJECT_IID,
+        I_AVN_CONTROL_IID,
+        I_AVN_ITEMS_CONTROL_IID,
+        I_AVN_SELECTING_ITEMS_CONTROL_IID,
+        I_AVN_CONTENT_CONTROL_IID,
+        I_AVN_HEADERED_CONTENT_CONTROL_IID,
+    ];
+    for new in wave_a {
+        for old in shipped {
+            assert_ne!(
+                format_iid(&new),
+                format_iid(&old),
+                "a wave A interface reused a shipped IID"
+            );
+        }
+    }
+    for (index, left) in wave_a.iter().enumerate() {
+        for right in &wave_a[index + 1..] {
+            assert_ne!(
+                format_iid(left),
+                format_iid(right),
+                "two wave A interfaces share an IID"
+            );
+        }
+    }
+}
+
+fn format_iid(iid: &avalonia_sys::Guid) -> String {
+    let mut out = format!("{:08X}-{:04X}-{:04X}-", iid.data1, iid.data2, iid.data3);
+    for (index, byte) in iid.data4.iter().enumerate() {
+        if index == 2 {
+            out.push('-');
+        }
+        out.push_str(&format!("{byte:02X}"));
+    }
+    out
+}

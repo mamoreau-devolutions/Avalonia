@@ -28,6 +28,8 @@ pub struct ProjectedAttachedProperty {
     pub name: String,
     pub kind: String,
     pub managed_type_name: String,
+    #[serde(default)]
+    pub is_nullable: bool,
 }
 
 #[derive(Debug, Deserialize)]

@@ -21,6 +21,14 @@ documented in [MARSHALLING.md](MARSHALLING.md). `Grid.ColumnDefinitions` and
 `grid.set_column_definitions("*,Auto,120")?` — which is normalising rather than
 byte-preserving and carries only each track's length; see
 [Grid track definitions](MARSHALLING.md#grid-track-definitions).
+`Image`, `TabControl`/`TabItem`, `TreeView`/`TreeViewItem` and the `ToolTip`
+attached properties are projected too. `Image.Source` crosses as the **source
+string** the host resolves into a bitmap — `image.set_source("assets/logo.png")?`
+takes a file path, a `file://` URI, or an `avares://`/`resm:` URI — and reads
+back the string the ABI set, or `null` for an image the ABI never set; see
+[Image sources](MARSHALLING.md#image-sources). `ToolTip::set_tip` carries text
+only; a control-valued tip reads back as `null`. See
+[ToolTip](MARSHALLING.md#tooltip) and [Tabs and trees](MARSHALLING.md#tabs-and-trees).
 The executor-neutral completion ABI and clipboard integration are documented
 in [ASYNC.md](ASYNC.md).
 Desktop file integration (pickers, drag/drop, "open with", file associations)

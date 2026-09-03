@@ -4,11 +4,12 @@ public static class AvaloniaProjectionProfiles
 {
     public static ProjectionPolicy ObjectModelKernel { get; } = new()
     {
-        // The definitions wave widens the flattened vtable of Avalonia.Controls.Grid only. Every
-        // interface whose flattened vtable did not move is pinned below and keeps the IID it last
-        // published; Grid itself falls through to the default and republishes at version 5, which
-        // it has never published before.
-        DefaultProjectedTypeAbiVersion = 5,
+        // Wave A adds seven brand-new interfaces (Image, the tab pair, the tree pair,
+        // HeaderedItemsControl and ToolTip) and widens no existing one, so every previously
+        // published interface keeps the IID it last shipped and the new ones publish at
+        // version 1. The default is therefore 1 and every older interface is pinned to the
+        // version whose flattened vtable it still matches.
+        DefaultProjectedTypeAbiVersion = 1,
         AbiVersions = new Dictionary<string, int>(StringComparer.Ordinal)
         {
             // AvaloniaObject projects no members, so its vtable is byte-identical to
@@ -20,9 +21,9 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnStyledElement"] = 3,
             ["Avalonia.Host.Com.IAvnControl"] = 3,
             ["Avalonia.Host.Com.IAvnDecorator"] = 3,
-            // Everything the completeness wave left alone that the definitions wave also leaves
-            // alone. None of these sits below ContentControl, Button, ToggleButton, ListBox,
-            // ComboBox or Grid, so their flattened vtables are byte-identical to version 4.
+            // Everything the completeness wave left alone. None of these sits below
+            // ContentControl, Button, ToggleButton, ListBox, ComboBox or Grid, so their
+            // flattened vtables are byte-identical to version 4.
             ["Avalonia.Host.Com.IAvnBorder"] = 4,
             ["Avalonia.Host.Com.IAvnPanel"] = 4,
             ["Avalonia.Host.Com.IAvnCanvas"] = 4,
@@ -36,8 +37,26 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnRangeBase"] = 4,
             ["Avalonia.Host.Com.IAvnSlider"] = 4,
             ["Avalonia.Host.Com.IAvnProgressBar"] = 4,
-            // The factory gained CreateSolidColorBrush at version 2 and gains no slot here.
-            ["Avalonia.Host.Com.IAvnControlFactory"] = 2,
+            // The completeness and definitions waves widened these and nothing has moved them
+            // since, so they stay on the version 5 IIDs they published there.
+            ["Avalonia.Host.Com.IAvnContentControl"] = 5,
+            ["Avalonia.Host.Com.IAvnHeaderedContentControl"] = 5,
+            ["Avalonia.Host.Com.IAvnExpander"] = 5,
+            ["Avalonia.Host.Com.IAvnButton"] = 5,
+            ["Avalonia.Host.Com.IAvnToggleButton"] = 5,
+            ["Avalonia.Host.Com.IAvnCheckBox"] = 5,
+            ["Avalonia.Host.Com.IAvnRadioButton"] = 5,
+            ["Avalonia.Host.Com.IAvnToggleSwitch"] = 5,
+            ["Avalonia.Host.Com.IAvnListBox"] = 5,
+            ["Avalonia.Host.Com.IAvnComboBox"] = 5,
+            ["Avalonia.Host.Com.IAvnListBoxItem"] = 5,
+            ["Avalonia.Host.Com.IAvnComboBoxItem"] = 5,
+            ["Avalonia.Host.Com.IAvnScrollViewer"] = 5,
+            ["Avalonia.Host.Com.IAvnWindow"] = 5,
+            ["Avalonia.Host.Com.IAvnGrid"] = 5,
+            // The factory grew a creator per new control plus GetToolTipStatics, so its vtable
+            // moved and it republishes at version 3.
+            ["Avalonia.Host.Com.IAvnControlFactory"] = 3,
         },
         IncludeTypeNames =
         [
@@ -47,6 +66,7 @@ public static class AvaloniaProjectionProfiles
             "Avalonia.Controls.ContentControl",
             "Avalonia.Controls.Primitives.HeaderedContentControl",
             "Avalonia.Controls.ItemsControl",
+            "Avalonia.Controls.Primitives.HeaderedItemsControl",
             "Avalonia.Controls.Primitives.SelectingItemsControl",
             "Avalonia.Controls.Decorator",
             "Avalonia.Controls.Border",
@@ -57,6 +77,7 @@ public static class AvaloniaProjectionProfiles
             "Avalonia.Controls.Window",
             "Avalonia.Controls.StackPanel",
             "Avalonia.Controls.TextBlock",
+            "Avalonia.Controls.Image",
             "Avalonia.Controls.Primitives.TemplatedControl",
             "Avalonia.Controls.Button",
             "Avalonia.Controls.Primitives.ToggleButton",
@@ -68,6 +89,11 @@ public static class AvaloniaProjectionProfiles
             "Avalonia.Controls.ComboBox",
             "Avalonia.Controls.ListBoxItem",
             "Avalonia.Controls.ComboBoxItem",
+            "Avalonia.Controls.TabControl",
+            "Avalonia.Controls.TabItem",
+            "Avalonia.Controls.TreeView",
+            "Avalonia.Controls.TreeViewItem",
+            "Avalonia.Controls.ToolTip",
             "Avalonia.Controls.TextBox",
             "Avalonia.Controls.ScrollViewer",
             "Avalonia.Controls.Primitives.RangeBase",
@@ -88,6 +114,7 @@ public static class AvaloniaProjectionProfiles
                 ["Content", "HorizontalContentAlignment", "VerticalContentAlignment"],
             ["Avalonia.Controls.Primitives.HeaderedContentControl"] = ["Header"],
             ["Avalonia.Controls.ItemsControl"] = ["Items"],
+            ["Avalonia.Controls.Primitives.HeaderedItemsControl"] = ["Header"],
             ["Avalonia.Controls.Primitives.SelectingItemsControl"] =
                 ["SelectedIndex", "SelectionChanged"],
             ["Avalonia.Controls.Decorator"] = ["Child", "Padding"],
@@ -102,6 +129,8 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.StackPanel"] = ["Orientation", "Spacing"],
             ["Avalonia.Controls.TextBlock"] =
                 ["Text", "FontSize", "FontWeight", "Foreground", "Padding", "TextAlignment"],
+            ["Avalonia.Controls.Image"] =
+                ["Source", "Stretch", "StretchDirection", "BlendMode"],
             ["Avalonia.Controls.Button"] =
                 ["ClickMode", "IsDefault", "IsCancel", "IsPressed", "Click"],
             ["Avalonia.Controls.Primitives.ToggleButton"] =
@@ -116,6 +145,26 @@ public static class AvaloniaProjectionProfiles
                 ["PlaceholderText", "IsDropDownOpen", "IsEditable", "MaxDropDownHeight"],
             ["Avalonia.Controls.ListBoxItem"] = ["IsSelected"],
             ["Avalonia.Controls.ComboBoxItem"] = [],
+            // TabControl inherits Items and SelectedIndex from SelectingItemsControl, so it only
+            // publishes what it declares itself.
+            ["Avalonia.Controls.TabControl"] =
+                ["TabStripPlacement", "HorizontalContentAlignment", "VerticalContentAlignment"],
+            // TabItem.TabStripPlacement is a Dock? that the TabControl writes; a nullable enum
+            // has no ABI shape of its own, so only IsSelected crosses.
+            ["Avalonia.Controls.TabItem"] = ["IsSelected"],
+            // TreeView derives from ItemsControl rather than SelectingItemsControl, so it carries
+            // Items but no SelectedIndex. SelectedItem/SelectedItems are object/IList and stay in
+            // the gap report.
+            ["Avalonia.Controls.TreeView"] =
+            [
+                "AutoScrollToSelectedItem", "SelectionMode", "SelectAll", "UnselectAll",
+                "ExpandSubTree", "CollapseSubTree", "SelectionChanged",
+            ],
+            ["Avalonia.Controls.TreeViewItem"] =
+                ["IsExpanded", "IsSelected", "Level", "Expanded", "Collapsed"],
+            // ToolTip is projected for its attached properties; as a control it adds nothing
+            // over ContentControl.
+            ["Avalonia.Controls.ToolTip"] = [],
             ["Avalonia.Controls.Primitives.TemplatedControl"] =
             [
                 "Background", "BorderBrush", "BorderThickness", "CornerRadius", "FontSize",
@@ -201,6 +250,23 @@ public static class AvaloniaProjectionProfiles
                 InterfaceName = "Avalonia.Host.Com.IAvnControl",
                 IsNullable = true,
             },
+            ["Avalonia.Controls.Primitives.HeaderedItemsControl.Header"] = new()
+            {
+                Kind = MarshallingKind.ComInterface,
+                InterfaceName = "Avalonia.Host.Com.IAvnControl",
+                IsNullable = true,
+            },
+            // Image.Source is an IImage, which is a managed interface with no ABI shape. It
+            // crosses as the *source string* the host resolves into a bitmap: an absolute or
+            // relative file path, or a file://, avares:// or resm: URI. The host remembers which
+            // string produced which bitmap, so a read returns the string the ABI set; an image
+            // that came from XAML or from managed code reads back as null.
+            ["Avalonia.Controls.Image.Source"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                StringConverterTypeName = "Avalonia.Host.Com.AvnImageSource",
+                IsNullable = true,
+            },
             ["Avalonia.Controls.ToggleSwitch.OnContent"] = new()
             {
                 Kind = MarshallingKind.ComInterface,
@@ -248,6 +314,20 @@ public static class AvaloniaProjectionProfiles
             {
                 PayloadKind = EventPayloadKind.None,
             },
+            // TreeView derives from ItemsControl, so its SelectionChanged is its own event
+            // rather than the SelectingItemsControl one.
+            ["Avalonia.Controls.TreeView.SelectionChanged"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.TreeViewItem.Expanded"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.TreeViewItem.Collapsed"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
             ["Avalonia.Controls.Control.KeyDown"] = new()
             {
                 PayloadKind = EventPayloadKind.Fields,
@@ -275,6 +355,24 @@ public static class AvaloniaProjectionProfiles
                 ["Column", "Row", "ColumnSpan", "RowSpan", "IsSharedSizeScope"],
             ["Avalonia.Controls.Canvas"] = ["Left", "Top", "Right", "Bottom"],
             ["Avalonia.Controls.DockPanel"] = ["Dock"],
+            ["Avalonia.Controls.ToolTip"] =
+            [
+                "Tip", "IsOpen", "Placement", "HorizontalOffset", "VerticalOffset",
+                "ShowDelay", "BetweenShowDelay", "ShowOnDisabled", "ServiceEnabled",
+            ],
+        },
+        AttachedPropertyOverrides = new Dictionary<string, MarshallingOverride>(StringComparer.Ordinal)
+        {
+            // ToolTip.Tip is an object so that XAML can hang an arbitrary control off it. Over
+            // the ABI it is a string and nothing else: setting one stores the string, and
+            // reading one returns null when the tip is a control rather than text. Projecting a
+            // control as a tip is a later wave.
+            ["Avalonia.Controls.ToolTip.Tip"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                StringConverterTypeName = "Avalonia.Host.Com.AvnToolTipTip",
+                IsNullable = true,
+            },
         },
     };
 }

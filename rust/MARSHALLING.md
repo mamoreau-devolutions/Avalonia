@@ -270,6 +270,115 @@ A malformed entry fails the call — `Parse` throws and the `HRESULT` carries it
 back — rather than being silently dropped or rounded to a nearest length, and the
 previous definitions stay in place.
 
+## Image sources
+
+`Image.Source` is an `IImage`, which is a managed *interface*: it has no fields,
+no canonical text form and no ABI shape. Wave A projects it as the **source
+string** the host resolves into a bitmap rather than as a projected image object:
+
+| Projected interface | Members |
+| ------------------- | ------- |
+| `IAvnImage`         | `Source` (nullable UTF-16 string), `Stretch`, `StretchDirection`, `BlendMode` |
+
+```c
+AvnHResult (AVN_CALL *get_source)(IAvnImage* self, uint16_t** value);
+AvnHResult (AVN_CALL *set_source)(IAvnImage* self, const uint16_t* value);
+```
+
+```rust
+let image = Image::new()?
+    .source(r"C:\assets\logo.png")?
+    .stretch(Stretch::UniformToFill)?;
+assert_eq!(image.get_source()?.as_deref(), Some(r"C:\assets\logo.png"));
+```
+
+Four spellings resolve: an absolute filesystem path, a path relative to the
+process working directory, a `file://` URI, and an `avares://` or `resm:` URI
+resolved through Avalonia's asset loader. Any other scheme — `http` included —
+fails the call with `NotSupportedException` rather than silently doing nothing;
+fetching over the network is the caller's job, and a byte-buffer entry point is
+left to a later wave. An unreadable or undecodable file fails the call too, and
+the previous source stays in place.
+
+### What the string does and does not carry
+
+Reading is narrower than writing, and this is the honest boundary of the v1
+shape. A `Bitmap` does not remember where it came from, so the host remembers
+instead: `AvnImageSource` keeps the string that produced an image in a weak table
+and hands it back on read. Consequences:
+
+* An image the ABI set reads back as **the exact string that was written** — not
+  a normalised path, and not the bitmap's type name.
+* An image the ABI never set reads back as **`null`**, even though the control is
+  drawing it. An `Image` whose `Source` came from AXAML, from a style or from
+  managed code has no source string to report.
+* Writing an empty string or a null **clears** the source; there is no
+  "empty path" state.
+* Nothing is cached or deduplicated. Setting the same path twice decodes twice.
+
+No `IAvnBitmap`, `IAvnImageSource` or image-list interface is minted, so this
+costs `IAvnImage` two slots plus the three enums and nothing else. Projecting a
+real image object — with pixel size, DPI, and construction from a byte buffer —
+needs its own separately named, separately versioned interface and is left to a
+later wave.
+
+## ToolTip
+
+`ToolTip` is projected for its **attached** properties, the same pipeline
+`Canvas.Left` and `Grid.Row` use. The statics interface hangs off the factory:
+
+| Statics interface     | Members |
+| --------------------- | ------- |
+| `IAvnToolTipStatics`  | `Tip` (nullable UTF-16 string), `IsOpen`, `Placement`, `HorizontalOffset`, `VerticalOffset`, `ShowDelay`, `BetweenShowDelay`, `ShowOnDisabled`, `ServiceEnabled` |
+
+```c
+AvnHResult (AVN_CALL *get_tip)(IAvnToolTipStatics* self, IAvnControl* target, uint16_t** value);
+AvnHResult (AVN_CALL *set_tip)(IAvnToolTipStatics* self, IAvnControl* target, const uint16_t* value);
+```
+
+```rust
+ToolTip::set_tip(&button, "Save the document")?;
+ToolTip::set_show_delay(&button, 250)?;
+assert_eq!(ToolTip::get_tip(&button)?.as_deref(), Some("Save the document"));
+```
+
+`ToolTip.Tip` is an `object` managed-side so that AXAML can hang a whole control
+off it. Over the ABI it carries **text and nothing else**: a tip that is a control
+reads back as `null` rather than as its type name, and an empty string clears the
+tip rather than storing an empty tooltip. Control-as-tip is a later wave.
+
+`ToolTip` itself is also projected as a control (`IAvnToolTip`, a
+`ContentControl`) because the attached-property pipeline requires the owner type
+to be in the projection; it adds no members of its own.
+
+## Tabs and trees
+
+| Projected interface | Base | Members it declares |
+| ------------------- | ---- | ------------------- |
+| `IAvnTabControl`    | `IAvnSelectingItemsControl` | `TabStripPlacement`, `HorizontalContentAlignment`, `VerticalContentAlignment` |
+| `IAvnTabItem`       | `IAvnHeaderedContentControl` | `IsSelected` |
+| `IAvnHeaderedItemsControl` | `IAvnItemsControl` | `Header` (as `IAvnControl`) |
+| `IAvnTreeView`      | `IAvnItemsControl` | `AutoScrollToSelectedItem`, `SelectionMode`, `SelectAll`, `UnselectAll`, `ExpandSubTree`, `CollapseSubTree`, `SelectionChanged` |
+| `IAvnTreeViewItem`  | `IAvnHeaderedItemsControl` | `IsExpanded`, `IsSelected`, `Level` (read-only), `Expanded`, `Collapsed` |
+
+`Items` and `SelectedIndex` are **inherited**, not redeclared: `TabControl`
+derives from `SelectingItemsControl` so it gets both, and `TreeView` derives from
+`ItemsControl` so it gets `Items` but has **no** `SelectedIndex`. `TreeView`'s
+own `SelectedItem`/`SelectedItems` are `object`/`IList` and stay in the gap
+report; selecting a tree node from Rust is a later wave.
+
+`TabItem.TabStripPlacement` is a `Dock?`. A nullable enum has no ABI shape — the
+projection has `NullableBool` but no nullable-enum kind — so it is a gap rather
+than a non-nullable `Dock` that silently loses the null. The `TabControl` writes
+it anyway, so nothing is lost in practice.
+
+`ExpandSubTree`/`CollapseSubTree` take a projected `IAvnTreeViewItem` and unwrap
+it back to the Avalonia object, so a tree node crosses as a real control rather
+than an opaque handle. `TreeView.SelectionChanged` is `TreeView`'s own event
+rather than the `SelectingItemsControl` one, and like `TreeViewItem.Expanded`
+and `TreeViewItem.Collapsed` it carries no payload: the handler is a bare
+notification and the consumer reads back whatever it needs.
+
 ## Versioning of the widened vtables
 
 Nano-COM vtables are flattened, so widening a base type moves every slot of every
@@ -285,16 +394,25 @@ compiled against.
 | Chrome   | `IAvnBorder`, `IAvnPanel`, `IAvnTemplatedControl`, `IAvnTextBlock` and everything below them | 3 → 4 | `IAvnAvaloniaObject` (2), `IAvnStyledElement`, `IAvnControl`, `IAvnDecorator` (3) |
 | Completeness | `IAvnContentControl`, `IAvnButton`, `IAvnToggleButton`, `IAvnListBox`, `IAvnComboBox` and everything below them | 4 → 5 | `IAvnAvaloniaObject` (2), `IAvnStyledElement`, `IAvnControl`, `IAvnDecorator` (3), `IAvnBorder`, `IAvnPanel`, `IAvnGrid`, `IAvnCanvas`, `IAvnDockPanel`, `IAvnStackPanel`, `IAvnTextBlock`, `IAvnTemplatedControl`, `IAvnItemsControl`, `IAvnSelectingItemsControl`, `IAvnTextBox`, `IAvnRangeBase`, `IAvnSlider`, `IAvnProgressBar` (4) |
 | Definitions | `IAvnGrid` alone | 4 → 5 | everything else, including `IAvnPanel`, `IAvnCanvas`, `IAvnDockPanel`, `IAvnStackPanel` (4) |
+| New controls A | nothing — seven brand-new interfaces | — | every interface that shipped before, at the version it last published |
 
 Nothing in the object model derives from `Grid`, so the definitions wave moves
 exactly one interface. `IAvnGrid` has published versions 1–4 and now publishes 5;
 all four earlier IIDs are retired for good.
 
+Wave A is the first wave that widens **nothing**. `IAvnImage`,
+`IAvnHeaderedItemsControl`, `IAvnTabControl`, `IAvnTabItem`, `IAvnTreeView`,
+`IAvnTreeViewItem`, `IAvnToolTip` and `IAvnToolTipStatics` are all new, so they
+publish at version 1, and every interface they derive from keeps the IID it last
+shipped. A consumer compiled against the definitions wave can keep every
+interface pointer it already holds.
+
 `IAvnControlFactory` grew `create_solid_color_brush` and moved from version 1 to
 2. Neither the completeness nor the definitions wave adds a factory slot, so it
-stays at 2. `IAvnBrush` is brand new, so it starts at version 1. The collection
-interfaces and the event handler interfaces are unchanged, because they carry
-interface pointers rather than the widened layouts.
+stayed at 2; wave A gives it a creator per new control plus
+`get_tool_tip_statics`, so it moves to 3. `IAvnBrush` is brand new, so it starts
+at version 1. The collection interfaces and the event handler interfaces are
+unchanged, because they carry interface pointers rather than the widened layouts.
 
 `Decorator` sits between `Control` and `Border`. The chrome wave added members to
 `Border`, not to `Decorator`, and nothing was added to `Decorator`'s bases either,

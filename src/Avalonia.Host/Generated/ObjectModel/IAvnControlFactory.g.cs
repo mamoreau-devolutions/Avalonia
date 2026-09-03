@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("D4F85479-DCD6-5E2E-B8AB-0693A8C0D6D6")]
+[Guid("A28E1449-7303-5686-B851-01FE0860B5B2")]
 public partial interface IAvnControlFactory
 {
     [PreserveSig]
@@ -52,6 +52,12 @@ public partial interface IAvnControlFactory
     int CreateHeaderedContentControl(out IAvnHeaderedContentControl? value);
 
     [PreserveSig]
+    int CreateHeaderedItemsControl(out IAvnHeaderedItemsControl? value);
+
+    [PreserveSig]
+    int CreateImage(out IAvnImage? value);
+
+    [PreserveSig]
     int CreateItemsControl(out IAvnItemsControl? value);
 
     [PreserveSig]
@@ -85,6 +91,12 @@ public partial interface IAvnControlFactory
     int CreateStyledElement(out IAvnStyledElement? value);
 
     [PreserveSig]
+    int CreateTabControl(out IAvnTabControl? value);
+
+    [PreserveSig]
+    int CreateTabItem(out IAvnTabItem? value);
+
+    [PreserveSig]
     int CreateTemplatedControl(out IAvnTemplatedControl? value);
 
     [PreserveSig]
@@ -100,6 +112,15 @@ public partial interface IAvnControlFactory
     int CreateToggleSwitch(out IAvnToggleSwitch? value);
 
     [PreserveSig]
+    int CreateToolTip(out IAvnToolTip? value);
+
+    [PreserveSig]
+    int CreateTreeView(out IAvnTreeView? value);
+
+    [PreserveSig]
+    int CreateTreeViewItem(out IAvnTreeViewItem? value);
+
+    [PreserveSig]
     int CreateWindow(out IAvnWindow? value);
 
     [PreserveSig]
@@ -110,6 +131,9 @@ public partial interface IAvnControlFactory
 
     [PreserveSig]
     int GetGridStatics(out IAvnGridStatics? value);
+
+    [PreserveSig]
+    int GetToolTipStatics(out IAvnToolTipStatics? value);
 
     [PreserveSig]
     int CreateSolidColorBrush(AvnColor color, double opacity, out IAvnBrush? value);
@@ -329,6 +353,36 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         }
     }
 
+    public int CreateHeaderedItemsControl(out IAvnHeaderedItemsControl? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnHeaderedItemsControl)ProjectionRuntime.Wrap(new global::Avalonia.Controls.Primitives.HeaderedItemsControl())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateImage(out IAvnImage? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnImage)ProjectionRuntime.Wrap(new global::Avalonia.Controls.Image())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int CreateItemsControl(out IAvnItemsControl? value)
     {
         value = null;
@@ -494,6 +548,36 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         }
     }
 
+    public int CreateTabControl(out IAvnTabControl? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnTabControl)ProjectionRuntime.Wrap(new global::Avalonia.Controls.TabControl())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateTabItem(out IAvnTabItem? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnTabItem)ProjectionRuntime.Wrap(new global::Avalonia.Controls.TabItem())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int CreateTemplatedControl(out IAvnTemplatedControl? value)
     {
         value = null;
@@ -569,6 +653,51 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         }
     }
 
+    public int CreateToolTip(out IAvnToolTip? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnToolTip)ProjectionRuntime.Wrap(new global::Avalonia.Controls.ToolTip())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateTreeView(out IAvnTreeView? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnTreeView)ProjectionRuntime.Wrap(new global::Avalonia.Controls.TreeView())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateTreeViewItem(out IAvnTreeViewItem? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnTreeViewItem)ProjectionRuntime.Wrap(new global::Avalonia.Controls.TreeViewItem())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int CreateWindow(out IAvnWindow? value)
     {
         value = null;
@@ -599,6 +728,12 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
     public int GetGridStatics(out IAvnGridStatics? value)
     {
         value = new AvnGridStatics();
+        return global::Avalonia.Host.HResults.S_OK;
+    }
+
+    public int GetToolTipStatics(out IAvnToolTipStatics? value)
+    {
+        value = new AvnToolTipStatics();
         return global::Avalonia.Host.HResults.S_OK;
     }
 

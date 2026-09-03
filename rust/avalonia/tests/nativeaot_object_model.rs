@@ -1,8 +1,9 @@
 use avalonia::{
     App, Border, Brush, Button, ClickMode, Color, ComboBox, ComboBoxItem, CornerRadius, Dock,
-    DockPanel, ExpandDirection, Expander, FontWeight, Grid, HorizontalAlignment, ListBox,
-    ListBoxItem, Orientation, ProgressBar, RadioButton, ScrollViewer, SelectionMode, StackPanel,
-    TextAlignment, TextBlock, TextBox, ThemeVariant, Thickness, ToggleSwitch, VerticalAlignment,
+    DockPanel, ExpandDirection, Expander, FontWeight, Grid, HorizontalAlignment, Image, ListBox,
+    ListBoxItem, Orientation, PlacementMode, ProgressBar, RadioButton, ScrollViewer, SelectionMode,
+    StackPanel, Stretch, StretchDirection, TabControl, TabItem, TextAlignment, TextBlock, TextBox,
+    ThemeVariant, Thickness, ToggleSwitch, ToolTip, TreeView, TreeViewItem, VerticalAlignment,
     Window, WindowState,
 };
 use std::future::Future;
@@ -12,6 +13,21 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::task::{Context, Poll, Wake, Waker};
 use std::time::Duration;
+
+/// A 1x1 transparent PNG, written to disk so `Image::set_source` has a real file to decode.
+const ONE_PIXEL_PNG: [u8; 70] = [
+    0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
+    0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4,
+    0x89, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x44, 0x41, 0x54, 0x78, 0xDA, 0x63, 0xFC, 0xCF, 0xC0, 0x50,
+    0x0F, 0x00, 0x04, 0x85, 0x01, 0x80, 0x84, 0xA9, 0x8C, 0x21, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45,
+    0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82,
+];
+
+fn one_pixel_png_path() -> PathBuf {
+    let path = std::env::temp_dir().join("avalonia_rust_wave_a_pixel.png");
+    std::fs::write(&path, ONE_PIXEL_PNG).expect("write the test image");
+    path
+}
 
 fn host_path() -> PathBuf {
     if let Ok(path) = std::env::var("AVN_HOST_NATIVE_LIB") {
@@ -80,6 +96,8 @@ fn builders_create_a_real_window_through_nativeaot() {
     let combo_changed_from_handler = combo_changed.clone();
     let list_changed = Arc::new(AtomicBool::new(false));
     let list_changed_from_handler = list_changed.clone();
+    let tree_collapsed = Arc::new(AtomicBool::new(false));
+    let tree_collapsed_from_handler = tree_collapsed.clone();
     let app = App::load(host_path()).unwrap();
 
     app.run(move |scope| {
@@ -310,6 +328,78 @@ fn builders_create_a_real_window_through_nativeaot() {
         assert_eq!(Grid::get_column(&cell)?, 1);
         let tracks = tracks.child(cell)?;
 
+        // Image.Source crosses as the source string the host resolves into a bitmap, so the
+        // getter hands back the exact path that was set rather than the bitmap's type name.
+        let image_path = one_pixel_png_path();
+        let image_path_text = image_path.to_string_lossy().into_owned();
+        let image = Image::new()?
+            .source(&image_path_text)?
+            .stretch(Stretch::UniformToFill)?
+            .stretch_direction(StretchDirection::DownOnly)?;
+        assert_eq!(
+            image.get_source()?.as_deref(),
+            Some(image_path_text.as_str())
+        );
+        assert_eq!(image.get_stretch()?, Stretch::UniformToFill);
+        assert_eq!(image.get_stretch_direction()?, StretchDirection::DownOnly);
+        // Clearing the source is a first-class state, not an empty path.
+        image.set_source("")?;
+        assert_eq!(image.get_source()?, None);
+        image.set_source(&image_path_text)?;
+
+        // ToolTip.Tip is an attached property that carries text and nothing else.
+        ToolTip::set_tip(&image, "One pixel, loaded from Rust")?;
+        ToolTip::set_show_delay(&image, 250)?;
+        ToolTip::set_placement(&image, PlacementMode::Top)?;
+        assert_eq!(
+            ToolTip::get_tip(&image)?.as_deref(),
+            Some("One pixel, loaded from Rust")
+        );
+        assert_eq!(ToolTip::get_show_delay(&image)?, 250);
+        assert_eq!(ToolTip::get_placement(&image)?, PlacementMode::Top);
+
+        let tabs = TabControl::new()?
+            .tab_strip_placement(Dock::Top)?
+            .item(
+                TabItem::new()?
+                    .header(TextBlock::new()?.text("First")?)?
+                    .content(TextBlock::new()?.text("First page")?)?,
+            )?
+            .item(
+                TabItem::new()?
+                    .header(TextBlock::new()?.text("Second")?)?
+                    .content(TextBlock::new()?.text("Second page")?)?,
+            )?
+            .selected_index(1)?;
+        assert_eq!(tabs.items()?.len()?, 2);
+        assert_eq!(tabs.get_tab_strip_placement()?, Dock::Top);
+        assert_eq!(tabs.get_selected_index()?, 1);
+
+        // A TreeViewItem is an ItemsControl, so children go into the inherited Items slot and
+        // Level is maintained by the control rather than written from Rust.
+        let leaf = TreeViewItem::new()?.header(TextBlock::new()?.text("Leaf")?)?;
+        let branch = TreeViewItem::new()?
+            .header(TextBlock::new()?.text("Branch")?)?
+            .item(leaf)?
+            .expanded(true)?;
+        assert!(branch.get_is_expanded()?);
+        assert_eq!(branch.level()?, 0);
+        branch.subscribe_expanded(|_| {})?.unsubscribe()?;
+        let branch = branch.on_collapsed(scope, move |_| {
+            tree_collapsed_from_handler.store(true, Ordering::SeqCst);
+        })?;
+        let tree = TreeView::new()?
+            .selection_mode(SelectionMode::Single)?
+            .auto_scroll_to_selected_item(false)?
+            .item(branch.clone())?;
+        assert_eq!(tree.items()?.len()?, 1);
+        assert_eq!(tree.get_selection_mode()?, SelectionMode::Single);
+        assert!(!tree.get_auto_scroll_to_selected_item()?);
+        tree.subscribe_selection_changed(|_| {})?.unsubscribe()?;
+        tree.collapse_sub_tree_with_tree_view_item(&branch)?;
+        assert!(!branch.get_is_expanded()?);
+        tree.unselect_all()?;
+
         let panel = StackPanel::new()?
             .orientation(Orientation::Vertical)?
             .spacing(8.0)?
@@ -325,8 +415,11 @@ fn builders_create_a_real_window_through_nativeaot() {
             .child(progress)?
             .child(laid_out)?
             .child(tracks)?
+            .child(image)?
+            .child(tabs)?
+            .child(tree)?
             .child(button)?;
-        assert_eq!(panel.children()?.len()?, 12);
+        assert_eq!(panel.children()?.len()?, 15);
         assert_eq!(panel.get_orientation()?, Orientation::Vertical);
         assert_eq!(panel.get_spacing()?, 8.0);
         assert_eq!(
@@ -389,4 +482,5 @@ fn builders_create_a_real_window_through_nativeaot() {
     assert!(toggle_changed.load(Ordering::SeqCst));
     assert!(combo_changed.load(Ordering::SeqCst));
     assert!(list_changed.load(Ordering::SeqCst));
+    assert!(tree_collapsed.load(Ordering::SeqCst));
 }

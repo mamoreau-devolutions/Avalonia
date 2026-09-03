@@ -70,8 +70,9 @@ fn widened_interfaces_publish_abi_version_five() {
         "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 4",
         "#define I_AVN_CONTROL_ABI_VERSION 3",
         "#define I_AVN_AVALONIA_OBJECT_ABI_VERSION 2",
-        // The factory gained no slot, so it stays on the version it published the brush at.
-        "#define I_AVN_CONTROL_FACTORY_ABI_VERSION 2",
+        // The factory gained a creator per wave A control plus get_tool_tip_statics, so it
+        // republishes at version 3.
+        "#define I_AVN_CONTROL_FACTORY_ABI_VERSION 3",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
     }

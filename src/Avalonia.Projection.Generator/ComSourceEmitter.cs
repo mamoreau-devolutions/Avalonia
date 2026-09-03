@@ -663,7 +663,7 @@ public static class ComSourceEmitter
         sb.AppendLine("{");
         foreach (var property in properties)
         {
-            var type = CSharpType(property.Kind, null, false);
+            var type = AttachedCSharpType(property);
             sb.AppendLine("    [PreserveSig]");
             sb.AppendLine($"    int Get{property.Name}(IAvnControl? target, out {type} value);");
             sb.AppendLine();
@@ -678,12 +678,16 @@ public static class ComSourceEmitter
         sb.AppendLine("{");
         foreach (var property in properties)
         {
-            var type = CSharpType(property.Kind, null, false);
+            var type = AttachedCSharpType(property);
             var managedValue = property.Kind switch
             {
                 MarshallingKind.I32 when property.ManagedTypeName != "System.Int32" =>
                     $"(global::{property.ManagedTypeName})value",
                 MarshallingKind.Bool => "value != 0",
+                MarshallingKind.StringUtf16 when property.StringConverterTypeName is { } converter =>
+                    $"global::{converter}.FromAbi(value)",
+                MarshallingKind.StringUtf16 when property.ManagedTypeName != "System.String" =>
+                    $"global::{property.ManagedTypeName}.Parse(value)",
                 _ when GeometryMarshalling.IsGeometry(property.Kind) => "value.ToAvalonia()",
                 _ => "value",
             };
@@ -691,13 +695,19 @@ public static class ComSourceEmitter
             {
                 MarshallingKind.I32 when property.ManagedTypeName != "System.Int32" => "(int)result",
                 MarshallingKind.Bool => "result ? 1 : 0",
+                MarshallingKind.StringUtf16 when property.StringConverterTypeName is { } converter =>
+                    $"global::{converter}.ToAbi(result)",
+                MarshallingKind.StringUtf16 when property.ManagedTypeName != "System.String" =>
+                    property.IsNullable ? "result?.ToString()" : "result.ToString()",
                 _ when GeometryMarshalling.TryGet(property.Kind, out var geometry) =>
                     $"{geometry.AbiName}.FromAvalonia(result)",
                 _ => "result",
             };
             sb.AppendLine($"    public int Get{property.Name}(IAvnControl? target, out {type} value)");
             sb.AppendLine("    {");
-            sb.AppendLine("        value = default;");
+            sb.AppendLine(property.Kind == MarshallingKind.StringUtf16
+                ? "        value = default!;"
+                : "        value = default;");
             sb.AppendLine("        if (target is null)");
             sb.AppendLine("            return global::Avalonia.Host.HResults.E_POINTER;");
             sb.AppendLine("        try");
@@ -936,6 +946,8 @@ public static class ComSourceEmitter
         {
             MarshallingKind.I32 when property.ManagedTypeName is not "System.Int32" =>
                 $"(int)_value.{property.Name}",
+            MarshallingKind.StringUtf16 when property.StringConverterTypeName is { } converter =>
+                $"global::{converter}.ToAbi(_value.{property.Name})",
             MarshallingKind.StringUtf16 when property.ManagedTypeName is not "System.String" =>
                 property.IsNullable
                     ? $"_value.{property.Name}?.ToString()"
@@ -984,6 +996,8 @@ public static class ComSourceEmitter
         {
             MarshallingKind.I32 when property.ManagedTypeName is not "System.Int32" =>
                 $"(global::{property.ManagedTypeName})value",
+            MarshallingKind.StringUtf16 when property.StringConverterTypeName is { } converter =>
+                $"global::{converter}.FromAbi(value)",
             MarshallingKind.StringUtf16 when property.ManagedTypeName is not "System.String" =>
                 $"global::{property.ManagedTypeName}.Parse(value)",
             MarshallingKind.Bool => "value != 0",
@@ -1048,6 +1062,13 @@ public static class ComSourceEmitter
             ty += "?";
         return $"{prefix}{ty} {p.Name}";
     }
+
+    /// <summary>
+    /// The ABI type of an attached property. Attached properties are always non-generic scalars
+    /// or strings; a nullable one is a string that may be absent.
+    /// </summary>
+    private static string AttachedCSharpType(ProjectedAttachedProperty property) =>
+        CSharpType(property.Kind, null, property.IsNullable);
 
     private static string CSharpType(MarshallingKind kind, string? interfaceName, bool nullable) =>
         kind switch

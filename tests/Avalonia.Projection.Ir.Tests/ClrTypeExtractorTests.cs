@@ -18,6 +18,7 @@ public class ClrTypeExtractorTests
         typeof(ContentControl),
         typeof(HeaderedContentControl),
         typeof(ItemsControl),
+        typeof(HeaderedItemsControl),
         typeof(SelectingItemsControl),
         typeof(Decorator),
         typeof(Border),
@@ -28,6 +29,7 @@ public class ClrTypeExtractorTests
         typeof(Window),
         typeof(StackPanel),
         typeof(TextBlock),
+        typeof(Image),
         typeof(TemplatedControl),
         typeof(Button),
         typeof(ToggleButton),
@@ -39,6 +41,11 @@ public class ClrTypeExtractorTests
         typeof(ComboBox),
         typeof(ListBoxItem),
         typeof(ComboBoxItem),
+        typeof(TabControl),
+        typeof(TabItem),
+        typeof(TreeView),
+        typeof(TreeViewItem),
+        typeof(ToolTip),
         typeof(TextBox),
         typeof(ScrollViewer),
         typeof(RangeBase),
@@ -226,22 +233,23 @@ public class ClrTypeExtractorTests
                     type.Iid);
             });
 
-        // The factory grew CreateSolidColorBrush at version 2 and gains no slot here.
-        Assert.Equal(2, ir.FactoryAbiVersion);
+        // The factory grew a creator per wave A control plus GetToolTipStatics, so it moved off
+        // the version 2 IID it published for CreateSolidColorBrush.
+        Assert.Equal(3, ir.FactoryAbiVersion);
         Assert.Equal(
-            ClrTypeExtractor.CreateDeterministicIid("Avalonia.Host.Com.IAvnControlFactory", 2),
+            ClrTypeExtractor.CreateDeterministicIid("Avalonia.Host.Com.IAvnControlFactory", 3),
             ir.FactoryIid);
     }
 
     [Fact]
-    public void Completeness_members_bump_the_abi_version_of_every_widened_interface()
+    public void Completeness_members_keep_the_abi_version_of_every_widened_interface()
     {
         var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
 
-        // ContentControl, Button, ToggleButton, ListBox and ComboBox all grew slots, so they
-        // and every interface below them republish under a version 5 IID. Grid joined them at
-        // version 5 for the definitions wave.
-        string[] moved =
+        // ContentControl, Button, ToggleButton, ListBox and ComboBox all grew slots in the
+        // completeness wave and Grid joined them in the definitions wave. Wave A adds only new
+        // interfaces below them, so their flattened vtables still match version 5.
+        string[] pinnedAtFive =
         [
             "IAvnContentControl", "IAvnHeaderedContentControl", "IAvnExpander", "IAvnButton",
             "IAvnToggleButton", "IAvnCheckBox", "IAvnRadioButton", "IAvnToggleSwitch",
@@ -250,7 +258,7 @@ public class ClrTypeExtractorTests
         ];
 
         Assert.All(
-            moved,
+            pinnedAtFive,
             name =>
             {
                 var type = Type(ir, name);
@@ -258,16 +266,174 @@ public class ClrTypeExtractorTests
                 Assert.Equal(
                     ClrTypeExtractor.CreateDeterministicIid(type.FullName, 5),
                     type.Iid);
-                Assert.NotEqual(
-                    ClrTypeExtractor.CreateDeterministicIid(type.FullName, 4),
+            });
+
+        Assert.All(
+            ir.Types.Where(type => !pinnedAtFive.Contains(type.Name)),
+            type => Assert.NotEqual(5, type.AbiVersion));
+    }
+
+    [Fact]
+    public void Wave_a_controls_publish_new_interfaces_at_version_one()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+
+        // Every wave A interface is brand new, so it publishes at version 1 rather than
+        // inheriting the version its neighbours happen to sit on.
+        Assert.All(
+            new[]
+            {
+                "IAvnImage", "IAvnHeaderedItemsControl", "IAvnTabControl", "IAvnTabItem",
+                "IAvnTreeView", "IAvnTreeViewItem", "IAvnToolTip",
+            },
+            name =>
+            {
+                var type = Type(ir, name);
+                Assert.Equal(1, type.AbiVersion);
+                Assert.Equal(
+                    ClrTypeExtractor.CreateDeterministicIid(type.FullName, 1),
                     type.Iid);
             });
 
-        // Nothing else moved: every projected interface is either widened here or pinned to the
-        // version whose flattened vtable it still matches.
+        // Wave A widens no existing interface, so nothing below the new types moved: every
+        // interface that shipped before keeps the exact IID it last published.
+        var pinned = new Dictionary<string, int>(StringComparer.Ordinal)
+        {
+            ["IAvnAvaloniaObject"] = 2,
+            ["IAvnStyledElement"] = 3,
+            ["IAvnControl"] = 3,
+            ["IAvnDecorator"] = 3,
+            ["IAvnItemsControl"] = 4,
+            ["IAvnSelectingItemsControl"] = 4,
+            ["IAvnContentControl"] = 5,
+            ["IAvnHeaderedContentControl"] = 5,
+        };
+        Assert.All(pinned, entry =>
+        {
+            var type = Type(ir, entry.Key);
+            Assert.Equal(entry.Value, type.AbiVersion);
+            Assert.Equal(
+                ClrTypeExtractor.CreateDeterministicIid(type.FullName, entry.Value),
+                type.Iid);
+        });
+    }
+
+    [Fact]
+    public void Projects_the_wave_a_controls_onto_the_types_that_declare_them()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+
+        // Image.Source is an IImage, which has no ABI shape, so it crosses as the source string
+        // the host resolves into a bitmap. The converter, not the CLR type, owns the conversion.
+        var image = Type(ir, "IAvnImage");
+        Assert.Equal("Avalonia.Host.Com.IAvnControl", image.BaseFullName);
+        var source = image.Properties.Single(property => property.Name == nameof(Image.Source));
+        Assert.Equal(MarshallingKind.StringUtf16, source.Kind);
+        Assert.Equal("Avalonia.Media.IImage", source.ManagedTypeName);
+        Assert.Equal("Avalonia.Host.Com.AvnImageSource", source.StringConverterTypeName);
+        Assert.True(source.IsNullable);
+        Assert.True(source.CanRead && source.CanWrite);
         Assert.All(
-            ir.Types.Where(type => !moved.Contains(type.Name)),
-            type => Assert.NotEqual(5, type.AbiVersion));
+            new[] { nameof(Image.Stretch), nameof(Image.StretchDirection), nameof(Image.BlendMode) },
+            name => Assert.Equal(
+                MarshallingKind.I32,
+                image.Properties.Single(property => property.Name == name).Kind));
+
+        // TabControl derives from SelectingItemsControl, so Items and SelectedIndex are
+        // inherited rather than redeclared.
+        var tabControl = Type(ir, "IAvnTabControl");
+        Assert.Equal("Avalonia.Host.Com.IAvnSelectingItemsControl", tabControl.BaseFullName);
+        Assert.Equal(
+            [nameof(TabControl.HorizontalContentAlignment), nameof(TabControl.TabStripPlacement),
+                nameof(TabControl.VerticalContentAlignment)],
+            tabControl.Properties.Select(property => property.Name).OrderBy(n => n, StringComparer.Ordinal));
+
+        var tabItem = Type(ir, "IAvnTabItem");
+        Assert.Equal("Avalonia.Host.Com.IAvnHeaderedContentControl", tabItem.BaseFullName);
+        Assert.Equal(
+            MarshallingKind.Bool,
+            tabItem.Properties.Single(property => property.Name == nameof(TabItem.IsSelected)).Kind);
+        // TabItem.TabStripPlacement is a Dock?, and a nullable enum has no ABI shape, so it is
+        // reported as a gap rather than silently flattened to a non-nullable enum.
+        Assert.DoesNotContain(
+            tabItem.Properties,
+            property => property.Name == nameof(TabItem.TabStripPlacement));
+
+        // TreeView is an ItemsControl, not a SelectingItemsControl, so it carries Items but no
+        // SelectedIndex; the object-valued selection members stay in the gap report.
+        var treeView = Type(ir, "IAvnTreeView");
+        Assert.Equal("Avalonia.Host.Com.IAvnItemsControl", treeView.BaseFullName);
+        Assert.DoesNotContain(treeView.Properties, property => property.Name == "SelectedIndex");
+        Assert.Contains(ir.Skipped, skipped =>
+            skipped.Owner == typeof(TreeView).FullName && skipped.Member == nameof(TreeView.SelectedItem));
+        var expand = treeView.Methods.Single(method => method.ManagedName == nameof(TreeView.ExpandSubTree));
+        Assert.Equal("Avalonia.Host.Com.IAvnTreeViewItem", expand.Parameters.Single().InterfaceName);
+        Assert.Contains(treeView.Methods, method => method.Name == nameof(TreeView.UnselectAll));
+        // TreeView declares its own SelectionChanged because it is not a SelectingItemsControl.
+        var treeSelectionChanged = treeView.Events.Single();
+        Assert.Equal("Avalonia.Host.Com.IAvnTreeViewSelectionChangedHandler", treeSelectionChanged.HandlerInterfaceName);
+        Assert.Equal(EventPayloadKind.None, treeSelectionChanged.PayloadKind);
+
+        // TreeViewItem's Header comes from HeaderedItemsControl and crosses as a control, the
+        // same shape HeaderedContentControl.Header already uses.
+        var treeViewItem = Type(ir, "IAvnTreeViewItem");
+        Assert.Equal("Avalonia.Host.Com.IAvnHeaderedItemsControl", treeViewItem.BaseFullName);
+        var header = Type(ir, "IAvnHeaderedItemsControl").Properties.Single();
+        Assert.Equal(nameof(HeaderedItemsControl.Header), header.Name);
+        Assert.Equal(MarshallingKind.ComInterface, header.Kind);
+        Assert.Equal("Avalonia.Host.Com.IAvnControl", header.InterfaceName);
+        Assert.All(
+            new[] { nameof(TreeViewItem.IsExpanded), nameof(TreeViewItem.IsSelected) },
+            name => Assert.Equal(
+                MarshallingKind.Bool,
+                treeViewItem.Properties.Single(property => property.Name == name).Kind));
+        var level = treeViewItem.Properties.Single(property => property.Name == nameof(TreeViewItem.Level));
+        Assert.True(level.CanRead);
+        Assert.False(level.CanWrite);
+        Assert.Equal(
+            ["Collapsed", "Expanded"],
+            treeViewItem.Events.Select(@event => @event.Name).OrderBy(n => n, StringComparer.Ordinal));
+        Assert.All(treeViewItem.Events, @event => Assert.Equal(EventPayloadKind.None, @event.PayloadKind));
+    }
+
+    [Fact]
+    public void Projects_tool_tip_attached_properties_with_a_string_tip()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+
+        var tip = ir.AttachedProperties.Single(property =>
+            property.OwnerName == nameof(ToolTip) && property.Name == "Tip");
+        Assert.Equal("Avalonia.Host.Com.IAvnToolTipStatics", tip.StaticsInterfaceName);
+        Assert.Equal(1, tip.StaticsInterfaceAbiVersion);
+        // The managed property is an object; the ABI carries text and only text.
+        Assert.Equal("System.Object", tip.ManagedTypeName);
+        Assert.Equal(MarshallingKind.StringUtf16, tip.Kind);
+        Assert.Equal("Avalonia.Host.Com.AvnToolTipTip", tip.StringConverterTypeName);
+        Assert.True(tip.IsNullable);
+
+        // The scalar tooltip members come through unchanged, and none of them is nullable.
+        var scalars = ir.AttachedProperties
+            .Where(property => property.OwnerName == nameof(ToolTip) && property.Name != "Tip")
+            .ToArray();
+        Assert.Equal(
+            ["BetweenShowDelay", "HorizontalOffset", "IsOpen", "Placement", "ServiceEnabled",
+                "ShowDelay", "ShowOnDisabled", "VerticalOffset"],
+            scalars.Select(property => property.Name).OrderBy(n => n, StringComparer.Ordinal));
+        Assert.All(scalars, property => Assert.False(property.IsNullable));
+        Assert.All(scalars, property => Assert.Null(property.StringConverterTypeName));
+        Assert.Equal(
+            MarshallingKind.I32,
+            scalars.Single(property => property.Name == "Placement").Kind);
+        Assert.Contains(ir.Enums, projected => projected.FullName == "Avalonia.Controls.PlacementMode");
+
+        // Every previously published attached-property group keeps its own statics interface.
+        Assert.Equal(
+            ["Avalonia.Host.Com.IAvnCanvasStatics", "Avalonia.Host.Com.IAvnDockPanelStatics",
+                "Avalonia.Host.Com.IAvnGridStatics", "Avalonia.Host.Com.IAvnToolTipStatics"],
+            ir.AttachedProperties
+                .Select(property => property.StaticsInterfaceName)
+                .Distinct(StringComparer.Ordinal)
+                .OrderBy(name => name, StringComparer.Ordinal));
     }
 
     [Fact]
@@ -491,6 +657,64 @@ public class ClrTypeExtractorTests
         Assert.Contains(refused.Skipped, skipped =>
             skipped.Member == nameof(Panel.Children) &&
             skipped.Reason.Contains("Parse(string)", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void A_string_override_may_delegate_the_round_trip_to_a_host_side_converter()
+    {
+        // Image.Source is the reason this exists: IImage is an interface, so it can own neither
+        // half of the round trip and the host converter owns both instead.
+        var policy = new ProjectionPolicy
+        {
+            IncludeTypeNames = [typeof(Panel).FullName!],
+            IncludeMembers = new Dictionary<string, IReadOnlyList<string>>(StringComparer.Ordinal)
+            {
+                [typeof(Panel).FullName!] = [nameof(Panel.Children)],
+            },
+            MemberOverrides = new Dictionary<string, MarshallingOverride>(StringComparer.Ordinal)
+            {
+                [$"{typeof(Panel).FullName}.{nameof(Panel.Children)}"] = new()
+                {
+                    Kind = MarshallingKind.StringUtf16,
+                    StringConverterTypeName = "Some.Host.Converter",
+                    IsNullable = true,
+                },
+            },
+        };
+
+        var ir = ClrTypeExtractor.Extract([typeof(Panel)], policy);
+        var property = ir.Types.Single().Properties.Single();
+        Assert.Equal(MarshallingKind.StringUtf16, property.Kind);
+        Assert.Equal("Some.Host.Converter", property.StringConverterTypeName);
+        Assert.True(property.IsNullable);
+        Assert.DoesNotContain(ir.Skipped, skipped => skipped.Member == nameof(Panel.Children));
+    }
+
+    [Fact]
+    public void An_attached_property_override_must_marshal_as_a_string()
+    {
+        var policy = new ProjectionPolicy
+        {
+            IncludeTypeNames = [typeof(Control).FullName!, typeof(ToolTip).FullName!],
+            IncludeMembers = new Dictionary<string, IReadOnlyList<string>>(StringComparer.Ordinal)
+            {
+                [typeof(Control).FullName!] = [],
+                [typeof(ToolTip).FullName!] = [],
+            },
+            AttachedProperties = new Dictionary<string, IReadOnlyList<string>>(StringComparer.Ordinal)
+            {
+                [typeof(ToolTip).FullName!] = ["Tip"],
+            },
+            AttachedPropertyOverrides = new Dictionary<string, MarshallingOverride>(StringComparer.Ordinal)
+            {
+                [$"{typeof(ToolTip).FullName}.Tip"] = new() { Kind = MarshallingKind.ComInterface },
+            },
+        };
+
+        var ir = ClrTypeExtractor.Extract([typeof(Control), typeof(ToolTip)], policy);
+        Assert.Empty(ir.AttachedProperties);
+        Assert.Contains(ir.Skipped, skipped =>
+            skipped.Member == "Tip" && skipped.Reason.Contains("string", StringComparison.Ordinal));
     }
 
     [Fact]

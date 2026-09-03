@@ -28,4 +28,13 @@ public sealed class ProjectedProperty
     public MarshallingKind? ElementKind { get; init; }
     public string? ManagedTypeName { get; init; }
     public bool IsNullable { get; init; }
+
+    /// <summary>
+    /// The host-side static class that converts this member between its CLR type and the
+    /// string that crosses the ABI. Set only when <see cref="Kind"/> is
+    /// <see cref="MarshallingKind.StringUtf16"/> and the CLR type owns no string round trip
+    /// of its own. Purely a host-side detail: the ABI slot is an ordinary UTF-16 string, so
+    /// neither the native header nor the Rust bindings look at it.
+    /// </summary>
+    public string? StringConverterTypeName { get; init; }
 }

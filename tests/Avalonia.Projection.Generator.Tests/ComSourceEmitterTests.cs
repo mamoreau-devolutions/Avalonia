@@ -12,6 +12,50 @@ namespace Avalonia.Projection.Generator.Tests;
 
 public class ComSourceEmitterTests
 {
+    /// <summary>Every type the object-model kernel projects, in the order the profile lists them.</summary>
+    private static readonly Type[] KernelTypes =
+    [
+        typeof(AvaloniaObject),
+        typeof(StyledElement),
+        typeof(Control),
+        typeof(ContentControl),
+        typeof(HeaderedContentControl),
+        typeof(ItemsControl),
+        typeof(HeaderedItemsControl),
+        typeof(SelectingItemsControl),
+        typeof(Decorator),
+        typeof(Border),
+        typeof(Panel),
+        typeof(Grid),
+        typeof(Canvas),
+        typeof(DockPanel),
+        typeof(Window),
+        typeof(StackPanel),
+        typeof(TextBlock),
+        typeof(Image),
+        typeof(TemplatedControl),
+        typeof(Button),
+        typeof(ToggleButton),
+        typeof(CheckBox),
+        typeof(RadioButton),
+        typeof(ToggleSwitch),
+        typeof(Expander),
+        typeof(ListBox),
+        typeof(ComboBox),
+        typeof(ListBoxItem),
+        typeof(ComboBoxItem),
+        typeof(TabControl),
+        typeof(TabItem),
+        typeof(TreeView),
+        typeof(TreeViewItem),
+        typeof(ToolTip),
+        typeof(TextBox),
+        typeof(ScrollViewer),
+        typeof(RangeBase),
+        typeof(Slider),
+        typeof(ProgressBar),
+    ];
+
     [Fact]
     public void Emits_fixture_interfaces_with_stable_guids_and_preserve_sig()
     {
@@ -40,42 +84,7 @@ public class ComSourceEmitterTests
     [Fact]
     public void Emits_generalized_kernel_interfaces_wrappers_runtime_and_factory()
     {
-        Type[] types =
-        [
-            typeof(AvaloniaObject),
-            typeof(StyledElement),
-            typeof(Control),
-            typeof(ContentControl),
-            typeof(HeaderedContentControl),
-            typeof(ItemsControl),
-            typeof(SelectingItemsControl),
-            typeof(Decorator),
-            typeof(Border),
-            typeof(Panel),
-            typeof(Grid),
-            typeof(Canvas),
-            typeof(DockPanel),
-            typeof(Window),
-            typeof(StackPanel),
-            typeof(TextBlock),
-            typeof(TemplatedControl),
-            typeof(Button),
-            typeof(ToggleButton),
-            typeof(CheckBox),
-            typeof(RadioButton),
-            typeof(ToggleSwitch),
-            typeof(Expander),
-            typeof(ListBox),
-            typeof(ComboBox),
-            typeof(ListBoxItem),
-            typeof(ComboBoxItem),
-            typeof(TextBox),
-            typeof(ScrollViewer),
-            typeof(RangeBase),
-            typeof(Slider),
-            typeof(ProgressBar),
-        ];
-        var ir = ClrTypeExtractor.Extract(types, AvaloniaProjectionProfiles.ObjectModelKernel);
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
 
         var files = ComSourceEmitter.Emit(ir);
 
@@ -199,44 +208,132 @@ public class ComSourceEmitterTests
     }
 
     [Fact]
+    public void Emits_image_source_as_a_string_converted_by_the_host_side_converter()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+        var image = ComSourceEmitter.Emit(ir)["IAvnImage.g.cs"];
+
+        Assert.Contains("public partial interface IAvnImage : IAvnControl", image, StringComparison.Ordinal);
+        // The slot is a nullable string, because an image with no source is not an empty path.
+        Assert.Contains("int GetSource(out string? value);", image, StringComparison.Ordinal);
+        Assert.Contains("int SetSource(string? value);", image, StringComparison.Ordinal);
+        // Neither half touches IImage: the host converter owns the whole conversion.
+        Assert.Contains(
+            "value = global::Avalonia.Host.Com.AvnImageSource.ToAbi(_value.Source);",
+            image,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "_value.Source = global::Avalonia.Host.Com.AvnImageSource.FromAbi(value);",
+            image,
+            StringComparison.Ordinal);
+        Assert.DoesNotContain("_value.Source.ToString()", image, StringComparison.Ordinal);
+        Assert.DoesNotContain("global::Avalonia.Media.IImage.Parse", image, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Emits_tool_tip_statics_with_a_nullable_string_tip()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+        var files = ComSourceEmitter.Emit(ir);
+        var statics = files["IAvnToolTipStatics.g.cs"];
+
+        Assert.Contains(
+            "int GetTip(IAvnControl? target, out string? value);",
+            statics,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "int SetTip(IAvnControl? target, string? value);",
+            statics,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "value = global::Avalonia.Host.Com.AvnToolTipTip.ToAbi(result);",
+            statics,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "global::Avalonia.Controls.ToolTip.SetTip(control, global::Avalonia.Host.Com.AvnToolTipTip.FromAbi(value));",
+            statics,
+            StringComparison.Ordinal);
+        // The scalar members are untouched by the string plumbing.
+        Assert.Contains("int SetShowDelay(IAvnControl? target, int value);", statics, StringComparison.Ordinal);
+        Assert.Contains("int GetPlacement(IAvnControl? target, out int value);", statics, StringComparison.Ordinal);
+        // A scalar getter still zero-initialises without a null-forgiving operator.
+        Assert.Contains("public int GetIsOpen(IAvnControl? target, out int value)", statics, StringComparison.Ordinal);
+        Assert.Contains("        value = default;", statics, StringComparison.Ordinal);
+
+        // The factory hands out the new statics object alongside the existing ones.
+        var factory = files["IAvnControlFactory.g.cs"];
+        Assert.Contains("int GetToolTipStatics(out IAvnToolTipStatics? value);", factory, StringComparison.Ordinal);
+        Assert.Contains("int CreateImage(out IAvnImage? value);", factory, StringComparison.Ordinal);
+        Assert.Contains("int CreateTabControl(out IAvnTabControl? value);", factory, StringComparison.Ordinal);
+        Assert.Contains("int CreateTreeViewItem(out IAvnTreeViewItem? value);", factory, StringComparison.Ordinal);
+        Assert.Contains("typeof(AvnToolTipStatics)", files["ProjectionAotRoots.g.cs"], StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Emits_the_wave_a_tab_and_tree_controls_over_their_real_bases()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+        var files = ComSourceEmitter.Emit(ir);
+
+        var tabControl = files["IAvnTabControl.g.cs"];
+        Assert.Contains(
+            "public partial interface IAvnTabControl : IAvnSelectingItemsControl",
+            tabControl,
+            StringComparison.Ordinal);
+        Assert.Contains("int SetTabStripPlacement(int value);", tabControl, StringComparison.Ordinal);
+
+        var tabItem = files["IAvnTabItem.g.cs"];
+        Assert.Contains(
+            "public partial interface IAvnTabItem : IAvnHeaderedContentControl",
+            tabItem,
+            StringComparison.Ordinal);
+        Assert.Contains("int SetIsSelected(int value);", tabItem, StringComparison.Ordinal);
+
+        // TreeView's subtree commands take a projected TreeViewItem and unwrap it back to the
+        // Avalonia object rather than crossing an opaque handle.
+        var treeView = files["IAvnTreeView.g.cs"];
+        Assert.Contains(
+            "public partial interface IAvnTreeView : IAvnItemsControl",
+            treeView,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "int ExpandSubTreeWithTreeViewItem(IAvnTreeViewItem item);",
+            treeView,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "_value.ExpandSubTree((global::Avalonia.Controls.TreeViewItem)ProjectionRuntime.Unwrap(item)!);",
+            treeView,
+            StringComparison.Ordinal);
+
+        var treeViewItem = files["IAvnTreeViewItem.g.cs"];
+        Assert.Contains(
+            "public partial interface IAvnTreeViewItem : IAvnHeaderedItemsControl",
+            treeViewItem,
+            StringComparison.Ordinal);
+        // Level is computed by the control, so the ABI publishes a getter and no setter.
+        Assert.Contains("int GetLevel(out int value);", treeViewItem, StringComparison.Ordinal);
+        Assert.DoesNotContain("int SetLevel(int value);", treeViewItem, StringComparison.Ordinal);
+        Assert.Contains(
+            "int AdviseExpanded(IAvnTreeViewItemExpandedHandler? handler",
+            treeViewItem,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "int AdviseCollapsed(IAvnTreeViewItemCollapsedHandler? handler",
+            treeViewItem,
+            StringComparison.Ordinal);
+
+        var headered = files["IAvnHeaderedItemsControl.g.cs"];
+        Assert.Contains(
+            "public partial interface IAvnHeaderedItemsControl : IAvnItemsControl",
+            headered,
+            StringComparison.Ordinal);
+        Assert.Contains("int SetHeader(IAvnControl? value);", headered, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Checked_in_ir_and_host_sources_match_generator()
     {
-        Type[] types =
-        [
-            typeof(AvaloniaObject),
-            typeof(StyledElement),
-            typeof(Control),
-            typeof(ContentControl),
-            typeof(HeaderedContentControl),
-            typeof(ItemsControl),
-            typeof(SelectingItemsControl),
-            typeof(Decorator),
-            typeof(Border),
-            typeof(Panel),
-            typeof(Grid),
-            typeof(Canvas),
-            typeof(DockPanel),
-            typeof(Window),
-            typeof(StackPanel),
-            typeof(TextBlock),
-            typeof(TemplatedControl),
-            typeof(Button),
-            typeof(ToggleButton),
-            typeof(CheckBox),
-            typeof(RadioButton),
-            typeof(ToggleSwitch),
-            typeof(Expander),
-            typeof(ListBox),
-            typeof(ComboBox),
-            typeof(ListBoxItem),
-            typeof(ComboBoxItem),
-            typeof(TextBox),
-            typeof(ScrollViewer),
-            typeof(RangeBase),
-            typeof(Slider),
-            typeof(ProgressBar),
-        ];
-        var ir = ClrTypeExtractor.Extract(types, AvaloniaProjectionProfiles.ObjectModelKernel);
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
         var root = FindRepositoryRoot();
 
         Assert.Equal(

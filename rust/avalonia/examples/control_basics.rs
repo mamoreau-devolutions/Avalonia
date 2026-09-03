@@ -1,8 +1,9 @@
 use avalonia::{
-    App, Border, Brush, Button, ClickMode, Color, ComboBox, ComboBoxItem, CornerRadius,
-    ExpandDirection, Expander, FontWeight, Grid, HorizontalAlignment, ListBox, ListBoxItem,
-    Orientation, RadioButton, SelectionMode, Slider, StackPanel, TextAlignment, TextBlock, TextBox,
-    Thickness, ToggleSwitch, VerticalAlignment, Window,
+    App, Border, Brush, Button, ClickMode, Color, ComboBox, ComboBoxItem, CornerRadius, Dock,
+    ExpandDirection, Expander, FontWeight, Grid, HorizontalAlignment, Image, ListBox, ListBoxItem,
+    Orientation, PlacementMode, RadioButton, SelectionMode, Slider, StackPanel, Stretch,
+    StretchDirection, TabControl, TabItem, TextAlignment, TextBlock, TextBox, Thickness,
+    ToggleSwitch, ToolTip, TreeView, TreeViewItem, VerticalAlignment, Window,
 };
 
 fn main() -> avalonia::Result<()> {
@@ -331,6 +332,53 @@ fn main() -> avalonia::Result<()> {
             .child(grid_fixed)?
             .child(grid_readout)?;
 
+        // Image.Source is the *source string* the host resolves into a bitmap: a file path, a
+        // file:// URI, or an avares://-style asset URI. Point AVN_IMAGE_SOURCE at any image on
+        // disk to see it; the label reports whatever the getter hands back, which is the string
+        // that was set rather than the bitmap's identity.
+        let image_source = std::env::var("AVN_IMAGE_SOURCE").unwrap_or_default();
+        let image = Image::new()?
+            .stretch(Stretch::Uniform)?
+            .stretch_direction(StretchDirection::DownOnly)?
+            .max_height(96.0)?;
+        if !image_source.is_empty() {
+            image.set_source(&image_source)?;
+        }
+        let image_readout = TextBlock::new()?.text(match image.get_source()? {
+            Some(source) => format!("Image source = {source}"),
+            None => "Image source = none (set AVN_IMAGE_SOURCE to a file path)".to_string(),
+        })?;
+        // A tooltip is an attached property, and over the ABI it carries text only.
+        ToolTip::set_tip(&image, "Loaded from Rust through Image.Source")?;
+        ToolTip::set_placement(&image, PlacementMode::Top)?;
+        ToolTip::set_show_delay(&image, 250)?;
+
+        let tabs = TabControl::new()?
+            .tab_strip_placement(Dock::Top)?
+            .item(
+                TabItem::new()?
+                    .header(TextBlock::new()?.text("Overview")?)?
+                    .content(TextBlock::new()?.text("Tabs inherit Items and SelectedIndex.")?)?,
+            )?
+            .item(
+                TabItem::new()?
+                    .header(TextBlock::new()?.text("Details")?)?
+                    .content(TextBlock::new()?.text("TabItem adds only IsSelected.")?)?,
+            )?
+            .selected_index(0)?;
+
+        // A TreeViewItem is an ItemsControl, so its children go into the inherited Items slot.
+        let tree = TreeView::new()?
+            .selection_mode(SelectionMode::Single)?
+            .item(
+                TreeViewItem::new()?
+                    .header(TextBlock::new()?.text("Projected controls")?)?
+                    .item(TreeViewItem::new()?.header(TextBlock::new()?.text("Image")?)?)?
+                    .item(TreeViewItem::new()?.header(TextBlock::new()?.text("TabControl")?)?)?
+                    .item(TreeViewItem::new()?.header(TextBlock::new()?.text("TreeView")?)?)?
+                    .expanded(true)?,
+            )?;
+
         window.set_content(
             StackPanel::new()?
                 .orientation(Orientation::Vertical)?
@@ -351,6 +399,11 @@ fn main() -> avalonia::Result<()> {
                 .child(chrome_demo)?
                 .child(TextBlock::new()?.text("Grid tracks")?)?
                 .child(grid_demo)?
+                .child(TextBlock::new()?.text("Image, tabs and trees")?)?
+                .child(image)?
+                .child(image_readout)?
+                .child(tabs)?
+                .child(tree)?
                 .child(TextBlock::new()?.text("Selection & expand patterns")?)?
                 .child(combo_box)?
                 .child(combo_status)?

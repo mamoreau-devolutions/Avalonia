@@ -34,6 +34,13 @@ member marshals as `Brush`. `MarshallingKind.Brush` was appended after the
 geometry kinds rather than grouped with the interface kinds, so every previously
 published ordinal is unmoved.
 
+Version 13 adds two optional members, both host-side only. A projected property
+and an attached property may carry `stringConverterTypeName`, naming the host
+type that converts the member between its CLR type and the UTF-16 string in its
+ABI slot, and an attached property may carry `isNullable`. Neither changes an ABI
+slot: a reader that ignores both sees the same vtable it always did, and no
+previously published ordinal moves.
+
 Consumer application manifests are independently versioned by
 `consumer-app-manifest.schema.json`; version 1 is validated before any build
 command runs. A consumer must pin the producer checkout/submodule commit that
@@ -86,12 +93,26 @@ in the object model derives from `Grid`, the definitions cross as ordinary UTF-1
 strings rather than as a new interface, and `IAvnControlFactory` again gained no
 slot. All four IIDs `IAvnGrid` published at versions 1–4 are retired.
 
+The new-controls wave A is the first that widens nothing: `IAvnImage`,
+`IAvnHeaderedItemsControl`, `IAvnTabControl`, `IAvnTabItem`, `IAvnTreeView`,
+`IAvnTreeViewItem`, `IAvnToolTip` and `IAvnToolTipStatics` are all brand new and
+publish at version 1, and every interface that shipped before keeps the exact IID
+it last published. The one thing that moves is `IAvnControlFactory`, which gains
+a creator per new control plus `get_tool_tip_statics` and goes from 2 to 3. A
+consumer compiled against the definitions wave therefore only has to requery the
+factory; every control interface pointer it already holds stays valid.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A
-`StringUtf16` override on a non-string member is only accepted when the managed
-type declares `static T Parse(string)` and overrides `ToString()`, so the
-conversion belongs to the type rather than to the generator.
+`StringUtf16` override on a non-string member is accepted when the managed type
+declares `static T Parse(string)` and overrides `ToString()`, so the conversion
+belongs to the type rather than to the generator — or, when the CLR type cannot
+own either half (`Image.Source` is an `IImage`, `ToolTip.Tip` is an `object`),
+when the profile names a host-side converter in `stringConverterTypeName`. That
+field is a host-side detail only: the ABI slot is an ordinary UTF-16 string, so
+neither the native header nor the Rust bindings read it, and a consumer that
+ignores it sees no difference.
 
 ## RID artifacts
 

@@ -259,6 +259,34 @@ fn emit_type(ir: &ProjectionIr, ty: &ProjectedType) -> String {
     ) -> String {
         let owner = to_snake(&property.owner_name);
         let name = to_snake(&property.name);
+        if property.kind == "StringUtf16" {
+            // A string attached property is owned by the caller after the get, so it is taken
+            // rather than borrowed. A nullable one reports an absent value as None instead of
+            // an empty string, because "no tip" and "empty tip" are different states.
+            let (get_type, get_body) = if property.is_nullable {
+                (
+                    "Option<String>",
+                    "        unsafe { Ok(sys::take_utf16(value)) }",
+                )
+            } else {
+                (
+                    "String",
+                    "        unsafe { sys::take_utf16(value).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }",
+                )
+            };
+            return format!(
+                "    pub fn get_{name}(target: &impl AsControl) -> Result<{get_type}> {{\n\
+                 \x20       let target = target.as_control()?;\n\
+                 \x20       let value = with_factory(|factory| factory.get_{owner}_statics()?.get_{name}(&target))?;\n\
+                 {get_body}\n\
+                 \x20   }}\n\
+                 \x20   pub fn set_{name}(target: &impl AsControl, value: impl AsRef<str>) -> Result<()> {{\n\
+                 \x20       let target = target.as_control()?;\n\
+                 \x20       let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();\n\
+                 \x20       with_factory(|factory| factory.get_{owner}_statics()?.set_{name}(&target, &value))\n\
+                 \x20   }}\n"
+            );
+        }
         let enum_name = simple_name(&property.managed_type_name);
         let is_enum = ir
             .enums
