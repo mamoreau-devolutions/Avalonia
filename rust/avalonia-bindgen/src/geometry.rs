@@ -32,6 +32,16 @@ pub struct Field {
     pub kind: FieldKind,
 }
 
+/// Extra constructors emitted onto a safe geometry struct so callers can write
+/// `Thickness::uniform(8.0)` instead of repeating the same scalar four times.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Helper {
+    /// `uniform(value)`: every field takes the same scalar.
+    Uniform,
+    /// `symmetric(horizontal, vertical)`: the listed fields take `horizontal`, the rest `vertical`.
+    Symmetric(&'static [&'static str]),
+}
+
 #[derive(Clone, Copy, Debug)]
 pub struct GeometryStruct {
     /// The `MarshallingKind` name used by the projection IR.
@@ -43,6 +53,8 @@ pub struct GeometryStruct {
     pub managed_type_name: &'static str,
     pub conversion: Conversion,
     pub fields: &'static [Field],
+    /// Ergonomic constructors emitted in addition to `new`.
+    pub helpers: &'static [Helper],
 }
 
 const fn f64_field(name: &'static str) -> Field {
@@ -65,6 +77,7 @@ pub const GEOMETRY: &[GeometryStruct] = &[
             f64_field("right"),
             f64_field("bottom"),
         ],
+        helpers: &[Helper::Uniform, Helper::Symmetric(&["left", "right"])],
     },
     GeometryStruct {
         kind: "CornerRadius",
@@ -78,6 +91,7 @@ pub const GEOMETRY: &[GeometryStruct] = &[
             f64_field("bottom_right"),
             f64_field("bottom_left"),
         ],
+        helpers: &[Helper::Uniform],
     },
     GeometryStruct {
         kind: "Size",
@@ -86,6 +100,7 @@ pub const GEOMETRY: &[GeometryStruct] = &[
         managed_type_name: "Avalonia.Size",
         conversion: Conversion::Components,
         fields: &[f64_field("width"), f64_field("height")],
+        helpers: &[],
     },
     GeometryStruct {
         kind: "Point",
@@ -94,6 +109,7 @@ pub const GEOMETRY: &[GeometryStruct] = &[
         managed_type_name: "Avalonia.Point",
         conversion: Conversion::Components,
         fields: &[f64_field("x"), f64_field("y")],
+        helpers: &[],
     },
     GeometryStruct {
         kind: "Rect",
@@ -107,6 +123,7 @@ pub const GEOMETRY: &[GeometryStruct] = &[
             f64_field("width"),
             f64_field("height"),
         ],
+        helpers: &[],
     },
     GeometryStruct {
         kind: "Color",
@@ -118,6 +135,7 @@ pub const GEOMETRY: &[GeometryStruct] = &[
             name: "argb",
             kind: FieldKind::U32,
         }],
+        helpers: &[],
     },
 ];
 
@@ -187,12 +205,65 @@ pub fn emit_safe_structs() -> String {
             .map(|(name, _)| (*name).to_string())
             .collect::<Vec<_>>()
             .join(", ");
+        let mut helpers = String::new();
+        for helper in geometry.helpers {
+            assert_eq!(
+                geometry.conversion,
+                Conversion::Components,
+                "{safe}: helpers assume the safe fields mirror the ABI fields"
+            );
+            assert!(
+                geometry
+                    .fields
+                    .iter()
+                    .all(|field| field.kind == FieldKind::F64),
+                "{safe}: helpers assume every field is an f64"
+            );
+            match helper {
+                Helper::Uniform => {
+                    let assignments = geometry
+                        .fields
+                        .iter()
+                        .map(|field| format!("{}: value", field.name))
+                        .collect::<Vec<_>>()
+                        .join(", ");
+                    helpers.push_str(&format!(
+                        "    /// Every component takes the same value.\n\
+                         \x20   pub const fn uniform(value: f64) -> Self {{\n\
+                         \x20       Self {{ {assignments} }}\n\
+                         \x20   }}\n"
+                    ));
+                }
+                Helper::Symmetric(horizontal_fields) => {
+                    let assignments = geometry
+                        .fields
+                        .iter()
+                        .map(|field| {
+                            let source = if horizontal_fields.contains(&field.name) {
+                                "horizontal"
+                            } else {
+                                "vertical"
+                            };
+                            format!("{}: {source}", field.name)
+                        })
+                        .collect::<Vec<_>>()
+                        .join(", ");
+                    helpers.push_str(&format!(
+                        "    /// Applies `horizontal` to {} and `vertical` to the rest.\n\
+                         \x20   pub const fn symmetric(horizontal: f64, vertical: f64) -> Self {{\n\
+                         \x20       Self {{ {assignments} }}\n\
+                         \x20   }}\n",
+                        horizontal_fields.join("/")
+                    ));
+                }
+            }
+        }
         out.push_str(&format!(
             "impl {safe} {{\n\
              \x20   pub const fn new({parameters}) -> Self {{\n\
              \x20       Self {{ {initializers} }}\n\
              \x20   }}\n\
-             }}\n\n"
+             {helpers}}}\n\n"
         ));
 
         match geometry.conversion {

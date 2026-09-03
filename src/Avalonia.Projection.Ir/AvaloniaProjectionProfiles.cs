@@ -4,7 +4,16 @@ public static class AvaloniaProjectionProfiles
 {
     public static ProjectionPolicy ObjectModelKernel { get; } = new()
     {
-        DefaultProjectedTypeAbiVersion = 2,
+        // Layout members widen the flattened vtable of Avalonia.StyledElement and
+        // Avalonia.Controls.Control, so every projected interface that inherits from them
+        // gets a new IID at version 3. IAvnAvaloniaObject is deliberately pinned below.
+        DefaultProjectedTypeAbiVersion = 3,
+        AbiVersions = new Dictionary<string, int>(StringComparer.Ordinal)
+        {
+            // AvaloniaObject projects no members, so its vtable is byte-identical to
+            // version 2. Republishing it under a new IID would be a gratuitous break.
+            ["Avalonia.Host.Com.IAvnAvaloniaObject"] = 2,
+        },
         IncludeTypeNames =
         [
             "Avalonia.AvaloniaObject",
@@ -43,21 +52,25 @@ public static class AvaloniaProjectionProfiles
         IncludeMembers = new Dictionary<string, IReadOnlyList<string>>(StringComparer.Ordinal)
         {
             ["Avalonia.AvaloniaObject"] = [],
-            ["Avalonia.StyledElement"] = ["Classes"],
+            ["Avalonia.StyledElement"] = ["Classes", "Name"],
             ["Avalonia.Controls.Control"] =
-                ["Width", "Height", "IsEnabled", "KeyDown", "PointerEntered", "PointerExited"],
+            [
+                "Width", "Height", "MinWidth", "MinHeight", "MaxWidth", "MaxHeight",
+                "Margin", "HorizontalAlignment", "VerticalAlignment", "IsVisible",
+                "Opacity", "IsEnabled", "KeyDown", "PointerEntered", "PointerExited",
+            ],
             ["Avalonia.Controls.ContentControl"] = ["Content"],
             ["Avalonia.Controls.Primitives.HeaderedContentControl"] = ["Header"],
             ["Avalonia.Controls.ItemsControl"] = ["Items"],
             ["Avalonia.Controls.Primitives.SelectingItemsControl"] =
                 ["SelectedIndex", "SelectionChanged"],
-            ["Avalonia.Controls.Decorator"] = ["Child"],
+            ["Avalonia.Controls.Decorator"] = ["Child", "Padding"],
             ["Avalonia.Controls.Border"] = ["BackgroundSizing"],
             ["Avalonia.Controls.Panel"] = ["Children"],
             ["Avalonia.Controls.Grid"] = ["ShowGridLines", "RowSpacing", "ColumnSpacing"],
             ["Avalonia.Controls.Canvas"] = [],
             ["Avalonia.Controls.DockPanel"] = ["LastChildFill", "HorizontalSpacing", "VerticalSpacing"],
-            ["Avalonia.Controls.Window"] = ["Title", "Show", "Close"],
+            ["Avalonia.Controls.Window"] = ["Title", "CanResize", "WindowState", "Show", "Close"],
             ["Avalonia.Controls.StackPanel"] = ["Orientation", "Spacing"],
             ["Avalonia.Controls.TextBlock"] = ["Text"],
             ["Avalonia.Controls.Button"] = ["Click"],

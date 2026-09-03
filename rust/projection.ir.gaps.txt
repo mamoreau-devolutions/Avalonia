@@ -71,7 +71,6 @@ Avalonia.Controls.Control.Tag: Not included by projection policy
 Avalonia.Controls.Control.Loaded: Not included by projection policy
 Avalonia.Controls.Control.Unloaded: Not included by projection policy
 Avalonia.Controls.Control.SizeChanged: Not included by projection policy
-Avalonia.Controls.Decorator.Padding: Not included by projection policy
 Avalonia.Controls.Expander.ContentTransition: Not included by projection policy
 Avalonia.Controls.Expander.Collapsing: Not included by projection policy
 Avalonia.Controls.Expander.Expanding: Not included by projection policy
@@ -224,8 +223,6 @@ Avalonia.Controls.Window.SystemDecorations: Not included by projection policy
 Avalonia.Controls.Window.ShowActivated: Not included by projection policy
 Avalonia.Controls.Window.ShowInTaskbar: Not included by projection policy
 Avalonia.Controls.Window.ClosingBehavior: Not included by projection policy
-Avalonia.Controls.Window.WindowState: Not included by projection policy
-Avalonia.Controls.Window.CanResize: Not included by projection policy
 Avalonia.Controls.Window.CanMinimize: Not included by projection policy
 Avalonia.Controls.Window.CanMaximize: Not included by projection policy
 Avalonia.Controls.Window.Icon: Not included by projection policy
@@ -239,7 +236,6 @@ Avalonia.Controls.Window.Close(Object): Parameter 'dialogResult': Type 'System.O
 Avalonia.Controls.Window.Hide(): Not included by projection policy
 Avalonia.Controls.Window.ShowDialog(Window): Not included by projection policy
 Avalonia.Controls.Window.ShowDialog(Window): Not included by projection policy
-Avalonia.StyledElement.Name: Not included by projection policy
 Avalonia.StyledElement.DataContext: Not included by projection policy
 Avalonia.StyledElement.IsInitialized: Not included by projection policy
 Avalonia.StyledElement.Styles: Not included by projection policy

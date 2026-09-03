@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("AF4C6114-15C4-5073-8098-D13E46674D54")]
+[Guid("67A164B2-FB4F-5E5B-9F80-873AEF3D872C")]
 public partial interface IAvnRadioButton : IAvnToggleButton
 {
     [PreserveSig]
@@ -70,6 +70,37 @@ public sealed partial class AvnRadioButton : IAvnRadioButton
         }
     }
 
+    public int GetName(out string? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.Name;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetName(string? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Name = value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetClasses(out IAvnStringList value)
     {
         value = default!;
@@ -78,6 +109,68 @@ public sealed partial class AvnRadioButton : IAvnRadioButton
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = new AvnStringList(_value.Classes);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetIsVisible(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.IsVisible ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetIsVisible(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.IsVisible = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetOpacity(out double value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.Opacity;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetOpacity(double value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Opacity = value;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -140,6 +233,223 @@ public sealed partial class AvnRadioButton : IAvnRadioButton
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Height = value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetMinWidth(out double value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.MinWidth;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetMinWidth(double value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.MinWidth = value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetMaxWidth(out double value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.MaxWidth;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetMaxWidth(double value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.MaxWidth = value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetMinHeight(out double value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.MinHeight;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetMinHeight(double value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.MinHeight = value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetMaxHeight(out double value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.MaxHeight;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetMaxHeight(double value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.MaxHeight = value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetMargin(out AvnThickness value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnThickness.FromAvalonia(_value.Margin);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetMargin(AvnThickness value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Margin = value.ToAvalonia();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetHorizontalAlignment(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.HorizontalAlignment;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetHorizontalAlignment(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.HorizontalAlignment = (global::Avalonia.Layout.HorizontalAlignment)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetVerticalAlignment(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.VerticalAlignment;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetVerticalAlignment(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.VerticalAlignment = (global::Avalonia.Layout.VerticalAlignment)value;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

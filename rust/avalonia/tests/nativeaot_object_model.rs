@@ -1,7 +1,8 @@
 use avalonia::{
     App, Border, Button, ComboBox, ComboBoxItem, Dock, DockPanel, ExpandDirection, Expander, Grid,
-    ListBox, ListBoxItem, Orientation, ProgressBar, RadioButton, ScrollViewer, StackPanel,
-    TextBlock, TextBox, ThemeVariant, ToggleSwitch, Window,
+    HorizontalAlignment, ListBox, ListBoxItem, Orientation, ProgressBar, RadioButton, ScrollViewer,
+    StackPanel, TextBlock, TextBox, ThemeVariant, Thickness, ToggleSwitch, VerticalAlignment,
+    Window, WindowState,
 };
 use std::future::Future;
 use std::path::PathBuf;
@@ -174,6 +175,36 @@ fn builders_create_a_real_window_through_nativeaot() {
         assert_eq!(progress.get_value()?, 40.0);
         assert!(progress.get_show_progress_text()?);
 
+        let laid_out = Border::new()?.padding(Thickness::uniform(6.0))?.child(
+            TextBlock::new()?
+                .text("Laid out from Rust")?
+                .name("layout_readout")?
+                .margin(Thickness::symmetric(12.0, 4.0))?
+                .horizontal_alignment(HorizontalAlignment::Right)?
+                .vertical_alignment(VerticalAlignment::Bottom)?
+                .min_width(64.0)?
+                .min_height(16.0)?
+                .max_width(320.0)?
+                .max_height(96.0)?
+                .opacity(0.75)?,
+        )?;
+        assert_eq!(laid_out.get_padding()?, Thickness::uniform(6.0));
+        let readout = laid_out.get_child()?.expect("border child");
+        assert_eq!(readout.get_margin()?, Thickness::new(12.0, 4.0, 12.0, 4.0));
+        assert_eq!(
+            readout.get_horizontal_alignment()?,
+            HorizontalAlignment::Right
+        );
+        assert_eq!(readout.get_vertical_alignment()?, VerticalAlignment::Bottom);
+        assert_eq!(readout.get_min_width()?, 64.0);
+        assert_eq!(readout.get_max_height()?, 96.0);
+        assert_eq!(readout.get_opacity()?, 0.75);
+        assert_eq!(readout.get_name()?.as_deref(), Some("layout_readout"));
+        assert!(readout.get_is_visible()?);
+        readout.set_visible(false)?;
+        assert!(!readout.get_is_visible()?);
+        readout.set_visible(true)?;
+
         let panel = StackPanel::new()?
             .orientation(Orientation::Vertical)?
             .spacing(8.0)?
@@ -186,12 +217,21 @@ fn builders_create_a_real_window_through_nativeaot() {
             .child(expander)?
             .child(hover_panel)?
             .child(progress)?
+            .child(laid_out)?
             .child(button)?;
-        assert_eq!(panel.children()?.len()?, 10);
+        assert_eq!(panel.children()?.len()?, 11);
         assert_eq!(panel.get_orientation()?, Orientation::Vertical);
         assert_eq!(panel.get_spacing()?, 8.0);
 
-        let window = Window::new()?.title("Avalonia Rust")?.content(panel)?;
+        let window = Window::new()?
+            .title("Avalonia Rust")?
+            .can_resize(false)?
+            .margin(Thickness::uniform(0.0))?
+            .content(panel)?;
+        assert!(!window.get_can_resize()?);
+        assert_eq!(window.get_window_state()?, WindowState::Normal);
+        window.set_can_resize(true)?;
+        assert!(window.get_can_resize()?);
         scope.mount(window.clone())?;
         called_from_handler.store(true, Ordering::SeqCst);
 

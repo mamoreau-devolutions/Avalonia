@@ -51,9 +51,52 @@ AvnHResult (AVN_CALL *get_margin)(IAvnControl* self, AvnThickness* value);
 AvnHResult (AVN_CALL *set_margin)(IAvnControl* self, AvnThickness value);
 ```
 
-No existing vtable was widened when the structs were introduced; the typedefs
-are additive, and the first live property will bump that interface's
-`abiVersion` (and therefore its IID) in the wave that allowlists it.
+## Layout members
+
+The layout wave allowlists the first live geometry-carrying members, alongside
+the scalar and enum layout members that belong with them:
+
+| Projected interface | Members |
+| ------------------- | ------- |
+| `IAvnStyledElement` | `Name` (`string?`) |
+| `IAvnControl`       | `Margin` (`Thickness`), `HorizontalAlignment`, `VerticalAlignment`, `MinWidth`, `MinHeight`, `MaxWidth`, `MaxHeight`, `IsVisible`, `Opacity` |
+| `IAvnDecorator`     | `Padding` (`Thickness`) |
+| `IAvnWindow`        | `CanResize`, `WindowState` |
+
+`Avalonia.Controls.Control` has no `Padding`, so `Padding` sits on `Decorator`
+(and therefore on `Border`), matching Avalonia's own hierarchy. Width and Height
+were already on `Control`, so `Window` inherits them.
+
+`HorizontalAlignment`, `VerticalAlignment` and `WindowState` are carried as
+`int32_t` and projected into the safe crate as Rust enums with `TryFrom<i32>`.
+
+In safe Rust each member is a `set_*`/`get_*` pair plus a chaining builder, and
+`Thickness` gains `const` helpers so a caller never repeats a scalar:
+
+```rust
+let readout = TextBlock::new()?
+    .text("Laid out from Rust")?
+    .margin(Thickness::symmetric(12.0, 4.0))?
+    .horizontal_alignment(HorizontalAlignment::Right)?
+    .max_width(320.0)?;
+readout.set_margin(Thickness::uniform(8.0))?;
+```
+
+`Thickness::uniform`, `Thickness::symmetric` and `CornerRadius::uniform` are
+emitted from the `helpers` column of `avalonia-bindgen`'s geometry table, so a
+new geometry struct opts into them declaratively.
+
+## Versioning of the widened vtables
+
+Nano-COM vtables are flattened, so widening `IAvnStyledElement` and
+`IAvnControl` moves every slot of every interface that inherits from them. All
+of those interfaces therefore republish at `abiVersion` 3 under a fresh IID; the
+version 2 IIDs are retired rather than reused. `IAvnAvaloniaObject` projects no
+members, its vtable is byte-identical, and it deliberately keeps its version 2
+IID — a stale consumer that queries for it still gets exactly the contract it
+was compiled against. `IAvnControlFactory`, the collection interfaces, and the
+event handler interfaces are unchanged, because they carry interface pointers
+rather than the widened layouts.
 
 ## Host constraint: same-assembly structs
 

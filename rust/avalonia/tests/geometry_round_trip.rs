@@ -76,3 +76,20 @@ fn defaults_are_zeroed() {
     assert_eq!(Color::default(), Color::new(0, 0, 0, 0));
     assert_eq!(sys::AvnRect::default().width, 0.0);
 }
+
+#[test]
+fn thickness_helpers_match_the_explicit_constructor() {
+    assert_eq!(Thickness::uniform(8.0), Thickness::new(8.0, 8.0, 8.0, 8.0));
+    assert_eq!(
+        Thickness::symmetric(12.0, 4.0),
+        Thickness::new(12.0, 4.0, 12.0, 4.0)
+    );
+    assert_eq!(
+        CornerRadius::uniform(6.0),
+        CornerRadius::new(6.0, 6.0, 6.0, 6.0)
+    );
+
+    // The helpers are const, so they can seed constants in a consumer's layout tables.
+    const PADDING: Thickness = Thickness::uniform(2.0);
+    assert_eq!(sys::AvnThickness::from(PADDING).bottom, 2.0);
+}

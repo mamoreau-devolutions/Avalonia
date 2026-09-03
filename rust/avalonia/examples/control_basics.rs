@@ -1,11 +1,12 @@
 use avalonia::{
-    App, Border, Button, ComboBox, ComboBoxItem, ExpandDirection, Expander, ListBox, ListBoxItem,
-    Orientation, RadioButton, Slider, StackPanel, TextBlock, TextBox, ToggleSwitch, Window,
+    App, Border, Button, ComboBox, ComboBoxItem, ExpandDirection, Expander, HorizontalAlignment,
+    ListBox, ListBoxItem, Orientation, RadioButton, Slider, StackPanel, TextBlock, TextBox,
+    Thickness, ToggleSwitch, VerticalAlignment, Window,
 };
 
 fn main() -> avalonia::Result<()> {
     App::load_from_env()?.run(|scope| {
-        let window = Window::new()?.title("Control basics")?;
+        let window = Window::new()?.title("Control basics")?.can_resize(true)?;
         let click_count = TextBlock::new()?.text("Clicked 0 times")?;
         let click_count_for_handler = click_count.clone();
         let mut clicks = 0;
@@ -242,10 +243,27 @@ fn main() -> avalonia::Result<()> {
                 }
             })?;
 
+        let layout_demo = Border::new()?.padding(Thickness::uniform(8.0))?.child(
+            StackPanel::new()?
+                .orientation(Orientation::Horizontal)?
+                .spacing(8.0)?
+                .child(
+                    TextBlock::new()?
+                        .text("Right aligned, inset")?
+                        .name("layout_readout")?
+                        .margin(Thickness::symmetric(16.0, 4.0))?
+                        .horizontal_alignment(HorizontalAlignment::Right)?
+                        .vertical_alignment(VerticalAlignment::Center)?
+                        .min_width(160.0)?
+                        .opacity(0.7)?,
+                )?,
+        )?;
+
         window.set_content(
             StackPanel::new()?
                 .orientation(Orientation::Vertical)?
                 .spacing(8.0)?
+                .margin(Thickness::uniform(12.0))?
                 .child(button)?
                 .child(click_count)?
                 .child(slider)?
@@ -255,6 +273,8 @@ fn main() -> avalonia::Result<()> {
                 .child(key_readout)?
                 .child(toggle)?
                 .child(toggle_value)?
+                .child(TextBlock::new()?.text("Layout")?)?
+                .child(layout_demo)?
                 .child(TextBlock::new()?.text("Selection & expand patterns")?)?
                 .child(combo_box)?
                 .child(combo_status)?

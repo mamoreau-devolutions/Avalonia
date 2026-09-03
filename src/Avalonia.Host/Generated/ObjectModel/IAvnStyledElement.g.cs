@@ -6,9 +6,15 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("FFC4634F-D15C-5549-B81E-4A6385E18383")]
+[Guid("52B157BF-839E-5307-9CE0-491FD61FF603")]
 public partial interface IAvnStyledElement : IAvnAvaloniaObject
 {
+    [PreserveSig]
+    int GetName(out string? value);
+
+    [PreserveSig]
+    int SetName(string? value);
+
     [PreserveSig]
     int GetClasses(out IAvnStringList value);
 
@@ -52,6 +58,37 @@ public sealed partial class AvnStyledElement : IAvnStyledElement
         catch (global::System.Exception e)
         {
             value = 0;
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetName(out string? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.Name;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetName(string? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Name = value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
             return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
         }
     }

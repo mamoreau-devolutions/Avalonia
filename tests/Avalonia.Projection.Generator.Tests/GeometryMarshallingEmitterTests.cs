@@ -130,7 +130,7 @@ public class GeometryMarshallingEmitterTests
     }
 
     [Fact]
-    public void Kernel_header_publishes_the_geometry_structs_without_touching_existing_vtables()
+    public void Kernel_header_publishes_the_geometry_structs_and_live_by_value_slots()
     {
         var header = NativeHeaderEmitter.Emit(KernelIr.Value);
 
@@ -142,7 +142,28 @@ public class GeometryMarshallingEmitterTests
             Assert.Contains($"typedef struct {name} {{", header, StringComparison.Ordinal);
         }
 
-        Assert.Contains("#define I_AVN_CONTROL_ABI_VERSION 2", header, StringComparison.Ordinal);
+        // The layout wave allowlisted Control.Margin and Decorator.Padding, so the structs
+        // are now carried by real vtable slots rather than only by the echo fixture.
+        Assert.Contains(
+            "*get_margin)(IAvnControl* self, AvnThickness* value)",
+            header,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "*set_margin)(IAvnControl* self, AvnThickness value)",
+            header,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "*set_padding)(IAvnDecorator* self, AvnThickness value)",
+            header,
+            StringComparison.Ordinal);
+
+        // Widening IAvnControl republishes it at version 3; IAvnAvaloniaObject projects no
+        // members, so its vtable and version are untouched.
+        Assert.Contains("#define I_AVN_CONTROL_ABI_VERSION 3", header, StringComparison.Ordinal);
+        Assert.Contains(
+            "#define I_AVN_AVALONIA_OBJECT_ABI_VERSION 2",
+            header,
+            StringComparison.Ordinal);
     }
 
     [Theory]
@@ -218,6 +239,7 @@ public class GeometryMarshallingEmitterTests
             typeof(AvaloniaObject),
             typeof(StyledElement),
             typeof(Control),
+            typeof(Decorator),
         ],
         AvaloniaProjectionProfiles.ObjectModelKernel));
 }

@@ -54,6 +54,17 @@ acceptable degradation.
 Any unavoidable incompatible ABI change requires a new host ABI generation and
 a coordinated major release.
 
+The generated object model (`IAvnControl` and friends) is versioned by the
+`abiVersion` recorded per interface in `projection.ir.json`, which is hashed
+into the IID. Nano-COM vtables are flattened, so allowlisting a member on a base
+type moves every derived interface's slots; every affected interface bumps its
+`abiVersion` together and republishes under a fresh IID, and the previous IIDs
+are retired rather than reused. An interface whose flattened vtable is
+byte-identical keeps its IID, so a stale consumer that queries for it still
+receives exactly the contract it compiled against. The layout wave took
+`IAvnStyledElement`, `IAvnControl` and everything below them to version 3 while
+`IAvnAvaloniaObject` stayed at version 2.
+
 ## RID artifacts
 
 Release artifacts are per RID and retain their exact names:

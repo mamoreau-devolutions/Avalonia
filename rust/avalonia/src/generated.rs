@@ -17,6 +17,14 @@ impl Thickness {
     pub const fn new(left: f64, top: f64, right: f64, bottom: f64) -> Self {
         Self { left, top, right, bottom }
     }
+    /// Every component takes the same value.
+    pub const fn uniform(value: f64) -> Self {
+        Self { left: value, top: value, right: value, bottom: value }
+    }
+    /// Applies `horizontal` to left/right and `vertical` to the rest.
+    pub const fn symmetric(horizontal: f64, vertical: f64) -> Self {
+        Self { left: horizontal, top: vertical, right: horizontal, bottom: vertical }
+    }
 }
 
 impl From<sys::AvnThickness> for Thickness {
@@ -53,6 +61,10 @@ pub struct CornerRadius {
 impl CornerRadius {
     pub const fn new(top_left: f64, top_right: f64, bottom_right: f64, bottom_left: f64) -> Self {
         Self { top_left, top_right, bottom_right, bottom_left }
+    }
+    /// Every component takes the same value.
+    pub const fn uniform(value: f64) -> Self {
+        Self { top_left: value, top_right: value, bottom_right: value, bottom_left: value }
     }
 }
 
@@ -297,6 +309,28 @@ impl TryFrom<i32> for TickPlacement {
             1 => Ok(Self::TopLeft),
             2 => Ok(Self::BottomRight),
             3 => Ok(Self::Outside),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum WindowState {
+    Normal = 0,
+    Minimized = 1,
+    Maximized = 2,
+    FullScreen = 3,
+}
+
+impl TryFrom<i32> for WindowState {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::Normal),
+            1 => Ok(Self::Minimized),
+            2 => Ok(Self::Maximized),
+            3 => Ok(Self::FullScreen),
             _ => Err(crate::Error::InvalidEnumValue(value)),
         }
     }
@@ -1074,6 +1108,28 @@ impl TryFrom<i32> for PhysicalKey {
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum HorizontalAlignment {
+    Stretch = 0,
+    Left = 1,
+    Center = 2,
+    Right = 3,
+}
+
+impl TryFrom<i32> for HorizontalAlignment {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::Stretch),
+            1 => Ok(Self::Left),
+            2 => Ok(Self::Center),
+            3 => Ok(Self::Right),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Orientation {
     Horizontal = 0,
     Vertical = 1,
@@ -1085,6 +1141,28 @@ impl TryFrom<i32> for Orientation {
         match value {
             0 => Ok(Self::Horizontal),
             1 => Ok(Self::Vertical),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum VerticalAlignment {
+    Stretch = 0,
+    Top = 1,
+    Center = 2,
+    Bottom = 3,
+}
+
+impl TryFrom<i32> for VerticalAlignment {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::Stretch),
+            1 => Ok(Self::Top),
+            2 => Ok(Self::Center),
+            3 => Ok(Self::Bottom),
             _ => Err(crate::Error::InvalidEnumValue(value)),
         }
     }
@@ -1225,8 +1303,35 @@ impl Border {
         with_factory(|factory| factory.create_border())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -1242,6 +1347,70 @@ impl Border {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -1300,6 +1469,16 @@ impl Border {
         self.set_child(value)?;
         Ok(self)
     }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
+        Ok(self)
+    }
     pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
         let value = self.raw.get_background_sizing()?;
         BackgroundSizing::try_from(value)
@@ -1329,8 +1508,35 @@ impl Button {
         with_factory(|factory| factory.create_button())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -1346,6 +1552,70 @@ impl Button {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -1435,8 +1705,35 @@ impl Canvas {
         with_factory(|factory| factory.create_canvas())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -1452,6 +1749,70 @@ impl Canvas {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -1560,8 +1921,35 @@ impl CheckBox {
         with_factory(|factory| factory.create_check_box())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -1577,6 +1965,70 @@ impl CheckBox {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -1687,8 +2139,35 @@ impl ComboBox {
         with_factory(|factory| factory.create_combo_box())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -1704,6 +2183,70 @@ impl ComboBox {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -1808,8 +2351,35 @@ impl ComboBoxItem {
         with_factory(|factory| factory.create_combo_box_item())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -1825,6 +2395,70 @@ impl ComboBoxItem {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -1909,8 +2543,35 @@ impl ContentControl {
         with_factory(|factory| factory.create_content_control())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -1926,6 +2587,70 @@ impl ContentControl {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -2002,8 +2727,35 @@ impl Control {
         with_factory(|factory| factory.create_control())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -2019,6 +2771,70 @@ impl Control {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -2084,8 +2900,35 @@ impl Decorator {
         with_factory(|factory| factory.create_decorator())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -2101,6 +2944,70 @@ impl Decorator {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -2159,6 +3066,16 @@ impl Decorator {
         self.set_child(value)?;
         Ok(self)
     }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
+        Ok(self)
+    }
 }
 
 impl AsControl for Decorator {
@@ -2177,8 +3094,35 @@ impl DockPanel {
         with_factory(|factory| factory.create_dock_panel())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -2194,6 +3138,70 @@ impl DockPanel {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -2299,8 +3307,35 @@ impl Expander {
         with_factory(|factory| factory.create_expander())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -2316,6 +3351,70 @@ impl Expander {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -2448,8 +3547,35 @@ impl Grid {
         with_factory(|factory| factory.create_grid())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -2465,6 +3591,70 @@ impl Grid {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -2606,8 +3796,35 @@ impl ItemsControl {
         with_factory(|factory| factory.create_items_control())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -2623,6 +3840,70 @@ impl ItemsControl {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -2695,8 +3976,35 @@ impl ListBox {
         with_factory(|factory| factory.create_list_box())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -2712,6 +4020,70 @@ impl ListBox {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -2805,8 +4177,35 @@ impl ListBoxItem {
         with_factory(|factory| factory.create_list_box_item())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -2822,6 +4221,70 @@ impl ListBoxItem {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -2906,8 +4369,35 @@ impl Panel {
         with_factory(|factory| factory.create_panel())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -2923,6 +4413,70 @@ impl Panel {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -2995,8 +4549,35 @@ impl HeaderedContentControl {
         with_factory(|factory| factory.create_headered_content_control())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -3012,6 +4593,70 @@ impl HeaderedContentControl {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -3095,8 +4740,35 @@ pub struct RangeBase {
 }
 
 impl RangeBase {
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -3112,6 +4784,70 @@ impl RangeBase {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -3230,8 +4966,35 @@ impl SelectingItemsControl {
         with_factory(|factory| factory.create_selecting_items_control())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -3247,6 +5010,70 @@ impl SelectingItemsControl {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -3340,8 +5167,35 @@ impl TemplatedControl {
         with_factory(|factory| factory.create_templated_control())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -3357,6 +5211,70 @@ impl TemplatedControl {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -3422,8 +5340,35 @@ impl ToggleButton {
         with_factory(|factory| factory.create_toggle_button())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -3439,6 +5384,70 @@ impl ToggleButton {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -3549,8 +5558,35 @@ impl ProgressBar {
         with_factory(|factory| factory.create_progress_bar())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -3566,6 +5602,70 @@ impl ProgressBar {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -3722,8 +5822,35 @@ impl RadioButton {
         with_factory(|factory| factory.create_radio_button())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -3739,6 +5866,70 @@ impl RadioButton {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -3860,8 +6051,35 @@ impl ScrollViewer {
         with_factory(|factory| factory.create_scroll_viewer())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -3877,6 +6095,70 @@ impl ScrollViewer {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -4039,8 +6321,35 @@ impl Slider {
         with_factory(|factory| factory.create_slider())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -4056,6 +6365,70 @@ impl Slider {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -4220,8 +6593,35 @@ impl StackPanel {
         with_factory(|factory| factory.create_stack_panel())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -4237,6 +6637,70 @@ impl StackPanel {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -4328,8 +6792,35 @@ impl TextBlock {
         with_factory(|factory| factory.create_text_block())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -4345,6 +6836,70 @@ impl TextBlock {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -4421,8 +6976,35 @@ impl TextBox {
         with_factory(|factory| factory.create_text_box())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -4438,6 +7020,70 @@ impl TextBox {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -4675,8 +7321,35 @@ impl ToggleSwitch {
         with_factory(|factory| factory.create_toggle_switch())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -4692,6 +7365,70 @@ impl ToggleSwitch {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -4824,8 +7561,35 @@ impl Window {
         with_factory(|factory| factory.create_window())
             .map(|raw| Self { raw })
     }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
     }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
@@ -4841,6 +7605,70 @@ impl Window {
     }
     pub fn height(self, value: f64) -> Result<Self> {
         self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
@@ -4910,6 +7738,25 @@ impl Window {
         self.set_title(value)?;
         Ok(self)
     }
+    pub fn get_window_state(&self) -> Result<WindowState> {
+        let value = self.raw.get_window_state()?;
+        WindowState::try_from(value)
+    }
+    pub fn set_window_state(&self, value: WindowState) -> Result<()> {
+        Ok(self.raw.set_window_state(value as i32)?)
+    }
+    pub fn window_state(self, value: WindowState) -> Result<Self> {
+        self.set_window_state(value)?;
+        Ok(self)
+    }
+    pub fn get_can_resize(&self) -> Result<bool> { Ok(self.raw.get_can_resize()?) }
+    pub fn set_can_resize(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_can_resize(value)?)
+    }
+    pub fn can_resize(self, value: bool) -> Result<Self> {
+        self.set_can_resize(value)?;
+        Ok(self)
+    }
     pub fn close(&self) -> Result<()> { Ok(self.raw.close()?) }
     pub fn show_with_window(&self, owner: &Window) -> Result<()> { Ok(self.raw.show_with_window(&owner.raw)?) }
 }
@@ -4929,6 +7776,17 @@ impl StyledElement {
     pub fn new() -> Result<Self> {
         with_factory(|factory| factory.create_styled_element())
             .map(|raw| Self { raw })
+    }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
     }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })

@@ -118,10 +118,86 @@ public class ClrTypeExtractorTests
         Assert.Equal("Avalonia.Host.Com.IAvnItemList", items.InterfaceName);
         Assert.Equal(MarshallingKind.ComInterface, items.ElementKind);
 
-        var classes = Type(ir, "IAvnStyledElement").Properties.Single();
+        var styledElement = Type(ir, "IAvnStyledElement");
+        var classes = styledElement.Properties.Single(property => property.Name == "Classes");
         Assert.Equal(MarshallingKind.StringUtf16, classes.ElementKind);
+        var name = styledElement.Properties.Single(property => property.Name == nameof(StyledElement.Name));
+        Assert.Equal(MarshallingKind.StringUtf16, name.Kind);
+        Assert.True(name.IsNullable);
         Assert.Contains(ir.AttachedProperties, property =>
             property.OwnerName == nameof(Grid) && property.Name == "Row");
+    }
+
+    [Fact]
+    public void Projects_layout_members_onto_control_decorator_and_window()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+
+        var control = Type(ir, "IAvnControl");
+        Assert.Equal(
+            MarshallingKind.Thickness,
+            control.Properties.Single(property => property.Name == nameof(Control.Margin)).Kind);
+        Assert.All(
+            control.Properties.Where(property => property.Name is
+                nameof(Control.MinWidth) or nameof(Control.MinHeight) or
+                nameof(Control.MaxWidth) or nameof(Control.MaxHeight) or nameof(Control.Opacity)),
+            property => Assert.Equal(MarshallingKind.F64, property.Kind));
+        Assert.Equal(
+            MarshallingKind.Bool,
+            control.Properties.Single(property => property.Name == nameof(Control.IsVisible)).Kind);
+        Assert.All(
+            control.Properties.Where(property => property.Name is
+                nameof(Control.HorizontalAlignment) or nameof(Control.VerticalAlignment)),
+            property =>
+            {
+                Assert.Equal(MarshallingKind.I32, property.Kind);
+                Assert.True(property.CanRead && property.CanWrite);
+            });
+        Assert.All(
+            new[] { "HorizontalAlignment", "VerticalAlignment", "WindowState" },
+            enumName => Assert.Contains(ir.Enums, projected => projected.Name == enumName));
+
+        Assert.Equal(
+            MarshallingKind.Thickness,
+            Type(ir, "IAvnDecorator").Properties
+                .Single(property => property.Name == nameof(Decorator.Padding)).Kind);
+
+        var window = Type(ir, "IAvnWindow");
+        Assert.Equal(
+            MarshallingKind.Bool,
+            window.Properties.Single(property => property.Name == nameof(Window.CanResize)).Kind);
+        Assert.Equal(
+            MarshallingKind.I32,
+            window.Properties.Single(property => property.Name == nameof(Window.WindowState)).Kind);
+    }
+
+    [Fact]
+    public void Layout_members_bump_the_abi_version_of_every_widened_interface()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+
+        // AvaloniaObject projects no members, so its flattened vtable is unchanged and it
+        // must keep the IID it published at version 2.
+        var avaloniaObject = Type(ir, "IAvnAvaloniaObject");
+        Assert.Equal(2, avaloniaObject.AbiVersion);
+        Assert.Equal(
+            ClrTypeExtractor.CreateDeterministicIid(avaloniaObject.FullName, 2),
+            avaloniaObject.Iid);
+
+        // Everything below StyledElement inherits the widened slots, so every one of them
+        // republishes under a version 3 IID.
+        Assert.All(
+            ir.Types.Where(type => type.Name != "IAvnAvaloniaObject"),
+            type =>
+            {
+                Assert.Equal(3, type.AbiVersion);
+                Assert.Equal(
+                    ClrTypeExtractor.CreateDeterministicIid(type.FullName, 3),
+                    type.Iid);
+                Assert.NotEqual(
+                    ClrTypeExtractor.CreateDeterministicIid(type.FullName, 2),
+                    type.Iid);
+            });
     }
 
     [Fact]
