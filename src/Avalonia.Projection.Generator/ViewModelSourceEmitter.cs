@@ -2366,6 +2366,8 @@ public static class ViewModelSourceEmitter
                 sb.AppendLine($"    pub fn push_{name}_row(&self, page: &mut crate::RangeBatch, value: impl AsRef<str>) {{ let _ = self; page.push_text(value); }}");
             }
             sb.AppendLine($"    pub fn publish_{name}_page(&self, page: crate::RangeBatch) -> crate::Result<crate::view_model::BatchCompletion> {{ self.0.publish_range(page) }}");
+            sb.AppendLine($"    /// Re-requests realized `{collection.Name}` pages at the current generation (live values, no adapter churn).");
+            sb.AppendLine($"    pub fn refresh_{name}(&self) -> crate::Result<()> {{ self.0.publish_range_invalidate({collection.Id}) }}");
         }
     }
 

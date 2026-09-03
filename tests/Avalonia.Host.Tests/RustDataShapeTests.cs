@@ -300,6 +300,59 @@ public class RustDataShapeTests
     }
 
     [Fact]
+    public void Refreshing_realized_pages_reissues_range_requests_without_dropping_identity()
+    {
+        var source = new FakeRangeSource(generation: 4, totalCount: 16);
+        using var window = new RustWindowedCollection(5, 4, 2, (_, text) => new TrackedRow(text ?? ""));
+        window.SetSource(source);
+        window.ResetTo(4, 16);
+
+        Assert.Null(window[0]);
+        Assert.True(source.TryAnswer(window));
+        Assert.Equal(4, window.LiveElementCount);
+        Assert.Equal("row-0", ((TrackedRow)window[0]!).Text);
+
+        var requests = source.Requests.Count;
+        var detached = window.DetachedElementCount;
+        window.RefreshRealized();
+        Assert.Equal(requests + 1, source.Requests.Count);
+        Assert.True(source.TryAnswer(window));
+        Assert.Equal(4, window.Generation);
+        Assert.Equal(16, window.Count);
+        Assert.Equal(detached + 4, window.DetachedElementCount);
+        Assert.Equal(4, window.LiveElementCount);
+        Assert.Equal("row-0", ((TrackedRow)window[0]!).Text);
+    }
+
+    [Fact]
+    public void A_range_invalidate_batch_refreshes_realized_pages_and_rejects_stale_generations()
+    {
+        var pending = new List<Action>();
+        var source = new FakeRangeSource(generation: 2, totalCount: 8);
+        using var window = new RustWindowedCollection(5, 4, 2, (_, text) => new TrackedRow(text ?? ""));
+        window.SetSource(source);
+        window.ResetTo(2, 8);
+        var coordinator = new RustRangeCoordinator(id => id == 5 ? window : null, pending.Add);
+
+        Assert.Null(window[0]);
+        Assert.True(source.TryAnswer(window));
+        source.Requests.Clear();
+
+        var stale = new FakeRangeBatch(5, generation: 1, total: 8, offset: 0, [], kind: RustRangeCoordinator.RangeInvalidate);
+        coordinator.Publish(stale);
+        pending[^1]();
+        Assert.Equal(RustVmBatchOutcome.Stale, stale.Outcome);
+        Assert.Empty(source.Requests);
+
+        var fresh = new FakeRangeBatch(5, generation: 2, total: 8, offset: 0, [], kind: RustRangeCoordinator.RangeInvalidate);
+        coordinator.Publish(fresh);
+        pending[^1]();
+        Assert.Equal(RustVmBatchOutcome.Applied, fresh.Outcome);
+        Assert.Single(source.Requests);
+        Assert.Equal(0L, source.Requests[0].Offset);
+    }
+
+    [Fact]
     public void A_shared_queue_eviction_unpends_the_victim_collection()
     {
         var source = new FakeRangeSource(generation: 1, totalCount: 16);

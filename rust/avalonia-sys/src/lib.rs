@@ -40,7 +40,7 @@ pub use rust_vm::{
     IAvnRustVmUpdateBatch2, IAvnRustVmUpdateOperation, MapKey, RustViewModelBeginTracked,
     RustViewModelCallbacks, RustViewModelControlCallbacks, RustVmBatchCompletion,
     RustVmBatchOwnershipCommit, RustVmDroppedRange, RustVmRangeItem, RustVmUpdate,
-    RUST_VM_RANGE_FILL, RUST_VM_RANGE_RESET,
+    RUST_VM_RANGE_FILL, RUST_VM_RANGE_INVALIDATE, RUST_VM_RANGE_RESET,
 };
 pub use storage::{
     activation_handler, file_drop_handler, storage_completion, ActivationArgs, FileDropArgs,

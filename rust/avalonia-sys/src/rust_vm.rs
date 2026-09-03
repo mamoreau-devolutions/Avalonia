@@ -1850,6 +1850,7 @@ unsafe fn ffi(action: impl FnOnce() -> Result<()>) -> i32 {
 /// legitimately empty page can never be mistaken for a reset.
 pub const RUST_VM_RANGE_RESET: i32 = 0;
 pub const RUST_VM_RANGE_FILL: i32 = 1;
+pub const RUST_VM_RANGE_INVALIDATE: i32 = 2;
 
 /// One element of a realized range. Exactly one of the two is set: a string
 /// window carries text, a nested-model window carries the element's model.

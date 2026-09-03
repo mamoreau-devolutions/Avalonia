@@ -148,6 +148,8 @@ impl SampleViewModelSink {
     pub fn log_window_page(&self, offset: i64) -> Option<crate::RangeBatch> { self.0.range_batch(5, offset) }
     pub fn push_log_window_row(&self, page: &mut crate::RangeBatch, value: impl TraceRowViewModel) { self.0.push_range_model(page, TraceRowViewModelDispatch { model: value }); }
     pub fn publish_log_window_page(&self, page: crate::RangeBatch) -> crate::Result<crate::view_model::BatchCompletion> { self.0.publish_range(page) }
+    /// Re-requests realized `LogWindow` pages at the current generation (live values, no adapter churn).
+    pub fn refresh_log_window(&self) -> crate::Result<()> { self.0.publish_range_invalidate(5) }
     /// Creates a worker-safe immutable update batch with a monotonic generation.
     pub fn batch(&self, generation: i64) -> SampleViewModelSinkBatch { SampleViewModelSinkBatch(crate::view_model::ViewModelBatch::new(generation)) }
     pub fn submit_batch(&self, batch: SampleViewModelSinkBatch) -> crate::Result<crate::view_model::BatchCompletion> { self.0.submit_batch(batch.0) }

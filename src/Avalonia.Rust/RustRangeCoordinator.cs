@@ -26,6 +26,12 @@ public sealed class RustRangeCoordinator
     /// <summary>Wire tag for a batch that realizes one page.</summary>
     public const int RangeFill = 1;
 
+    /// <summary>
+    /// Wire tag for a batch that re-requests realized pages at the current
+    /// generation without dropping dataset identity.
+    /// </summary>
+    public const int RangeInvalidate = 2;
+
     private readonly Func<int, RustWindowedCollection?> _resolve;
     private readonly Action<Action> _post;
     private volatile bool _closed;
@@ -143,6 +149,13 @@ public sealed class RustRangeCoordinator
             // Rust is the authority on dataset identity, so a reset is always
             // accepted; it invalidates every realized page.
             window.ResetTo(generation, totalCount);
+            return (RustVmBatchOutcome.Applied, 0);
+        }
+        if (kind == RangeInvalidate)
+        {
+            if (generation != window.Generation)
+                return (RustVmBatchOutcome.Stale, 0);
+            window.RefreshRealized();
             return (RustVmBatchOutcome.Applied, 0);
         }
         if (kind != RangeFill)

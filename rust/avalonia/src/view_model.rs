@@ -612,6 +612,31 @@ impl ViewModelSink {
         Ok(())
     }
 
+    /// Asks the host to re-request every realized page at the current
+    /// generation. Live values (CPU%, counters) update in place; adapters,
+    /// scroll and selection stay. No-ops as `InvalidViewModelMember` when this
+    /// collection has never been reset.
+    pub fn publish_range_invalidate(&self, collection_id: i32) -> Result<()> {
+        let (generation, total_count) =
+            self.ranges
+                .get(collection_id)
+                .ok_or(Error::InvalidViewModelMember {
+                    kind: "window",
+                    id: collection_id,
+                })?;
+        let batch = sys::rust_vm_range_batch(
+            sys::RUST_VM_RANGE_INVALIDATE,
+            collection_id,
+            generation,
+            total_count,
+            0,
+            Vec::new(),
+            None,
+        );
+        self.shapes_sink()?.publish_range(&batch)?;
+        Ok(())
+    }
+
     /// Publishes one realized page.
     ///
     /// Ownership of every element model transfers to the batch: Rust keeps no

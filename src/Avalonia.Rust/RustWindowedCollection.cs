@@ -216,6 +216,25 @@ public sealed class RustWindowedCollection : IList, IReadOnlyList<object?>, INot
     }
 
     /// <summary>
+    /// Re-requests every currently realized page at the current generation.
+    /// Used by a live dataset (process CPU%, log tail of unchanged identity)
+    /// so values update in place without <see cref="ResetTo"/> churning
+    /// adapters, scroll, or selection. Unrealized pages are left alone.
+    /// </summary>
+    public void RefreshRealized()
+    {
+        if (_disposed || _source is null)
+            return;
+        var pages = new int[_pages.Count];
+        _pages.Keys.CopyTo(pages, 0);
+        foreach (var page in pages)
+        {
+            _pending.Remove(page);
+            RequestPage(page);
+        }
+    }
+
+    /// <summary>
     /// Marks a page as no longer outstanding without realizing it. Called for
     /// every terminal outcome that is not an applied fill (a decode failure, a
     /// stale generation, or a request Rust's bounded queue evicted), so a page
