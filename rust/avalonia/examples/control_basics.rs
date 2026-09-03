@@ -1,9 +1,11 @@
 use avalonia::{
-    App, Border, Brush, Button, ClickMode, Color, ComboBox, ComboBoxItem, CornerRadius, Dock,
-    ExpandDirection, Expander, FontWeight, Grid, HorizontalAlignment, Image, ListBox, ListBoxItem,
-    Orientation, PlacementMode, RadioButton, SelectionMode, Slider, StackPanel, Stretch,
-    StretchDirection, TabControl, TabItem, TextAlignment, TextBlock, TextBox, Thickness,
-    ToggleSwitch, ToolTip, TreeView, TreeViewItem, VerticalAlignment, Window,
+    App, Border, Brush, Button, ClickMode, Color, ComboBox, ComboBoxItem, CornerRadius, DatePicker,
+    Dock, ExpandDirection, Expander, Flyout, FlyoutShowMode, FontWeight, Grid, HorizontalAlignment,
+    Image, ListBox, ListBoxItem, Menu, MenuItem, MenuItemToggleType, Orientation, PlacementMode,
+    RadioButton, SelectionMode, Slider, SplitView, SplitViewDisplayMode, SplitViewPanePlacement,
+    StackPanel, Stretch, StretchDirection, TabControl, TabItem, TextAlignment, TextBlock, TextBox,
+    Thickness, TimePicker, ToggleSwitch, ToolTip, TreeView, TreeViewItem, VerticalAlignment,
+    Window,
 };
 
 fn main() -> avalonia::Result<()> {
@@ -379,6 +381,67 @@ fn main() -> avalonia::Result<()> {
                     .expanded(true)?,
             )?;
 
+        // A Menu here is the imperative ItemsControl, not the view-model NativeMenu: its items
+        // are real projected controls and Click replaces ICommand, which has no ABI shape.
+        let menu_status = TextBlock::new()?.text("No menu item clicked yet")?;
+        let menu_status_for_click = menu_status.clone();
+        let menu = Menu::new()?.item(
+            MenuItem::new()?
+                .header(TextBlock::new()?.text("_File")?)?
+                .item(
+                    MenuItem::new()?
+                        .header(TextBlock::new()?.text("Save")?)?
+                        .on_click(scope, move |_| {
+                            menu_status_for_click.set_text("Save clicked").unwrap();
+                        })?,
+                )?
+                .item(
+                    MenuItem::new()?
+                        .header(TextBlock::new()?.text("Word wrap")?)?
+                        .toggle_type(MenuItemToggleType::CheckBox)?
+                        .checked(true)?,
+                )?,
+        )?;
+
+        // A flyout is an AvaloniaObject, not a Control, so it is not a child of the panel. It
+        // reaches a control through show_at rather than through an attached property.
+        let flyout = Flyout::new()?
+            .content(TextBlock::new()?.text("Shown with flyout.show_at_with_control")?)?
+            .placement(PlacementMode::BottomEdgeAlignedLeft)?
+            .show_mode(FlyoutShowMode::Transient)?;
+        let flyout_button = Button::new()?.content(TextBlock::new()?.text("Show flyout")?)?;
+        let flyout_target = flyout_button.clone();
+        let flyout_button = flyout_button.on_click(scope, move |_| {
+            flyout.show_at_with_control(&flyout_target).unwrap();
+        })?;
+
+        let split_view = SplitView::new()?
+            .display_mode(SplitViewDisplayMode::CompactInline)?
+            .pane_placement(SplitViewPanePlacement::Left)?
+            .open_pane_length(160.0)?
+            .compact_pane_length(40.0)?
+            .pane_open(true)?
+            .height(120.0)?
+            .pane(
+                StackPanel::new()?
+                    .orientation(Orientation::Vertical)?
+                    .spacing(4.0)?
+                    .child(TextBlock::new()?.text("Pane")?)?,
+            )?
+            .content(TextBlock::new()?.text("SplitView content")?)?;
+
+        // Dates and times cross as ISO-8601 text. Writing takes a bare yyyy-MM-dd or HH:mm;
+        // reading normalises to the round-trip form, so the readout is not what was written.
+        let date_picker = DatePicker::new()?.selected_date("2027-01-15")?;
+        let time_picker = TimePicker::new()?
+            .minute_increment(15)?
+            .selected_time("17:04")?;
+        let picker_readout = TextBlock::new()?.text(format!(
+            "SelectedDate = {:?}, SelectedTime = {:?}",
+            date_picker.get_selected_date()?,
+            time_picker.get_selected_time()?
+        ))?;
+
         window.set_content(
             StackPanel::new()?
                 .orientation(Orientation::Vertical)?
@@ -404,6 +467,14 @@ fn main() -> avalonia::Result<()> {
                 .child(image_readout)?
                 .child(tabs)?
                 .child(tree)?
+                .child(TextBlock::new()?.text("Menus, flyouts, panes and pickers")?)?
+                .child(menu)?
+                .child(menu_status)?
+                .child(flyout_button)?
+                .child(split_view)?
+                .child(date_picker)?
+                .child(time_picker)?
+                .child(picker_readout)?
                 .child(TextBlock::new()?.text("Selection & expand patterns")?)?
                 .child(combo_box)?
                 .child(combo_status)?

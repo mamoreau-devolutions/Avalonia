@@ -379,8 +379,195 @@ rather than the `SelectingItemsControl` one, and like `TreeViewItem.Expanded`
 and `TreeViewItem.Collapsed` it carries no payload: the handler is a bare
 notification and the consumer reads back whatever it needs.
 
-## Versioning of the widened vtables
+## Flyouts
 
+A `Flyout` is not a `Control`. `FlyoutBase` derives from `AvaloniaObject`, so
+`IAvnFlyoutBase` hangs directly off `IAvnAvaloniaObject`, implements no
+`AsControl`, and is never a child of a panel:
+
+| Projected interface   | Base                  | Members it declares |
+| --------------------- | --------------------- | ------------------- |
+| `IAvnFlyoutBase`      | `IAvnAvaloniaObject`  | `IsOpen`, `Target` (read-only, as `IAvnControl`), `ShowAt`, `Hide`, `Opened`, `Closed` |
+| `IAvnPopupFlyoutBase` | `IAvnFlyoutBase`      | `Placement`, `ShowMode`, `HorizontalOffset`, `VerticalOffset`, `OverlayDismissEventPassThrough`, `Opening`, `Closing` |
+| `IAvnFlyout`          | `IAvnPopupFlyoutBase` | `Content` (as `IAvnControl`) |
+
+```c
+AvnHResult (AVN_CALL *show_at_with_control)(IAvnFlyoutBase* self, IAvnControl* placement_target);
+AvnHResult (AVN_CALL *hide)(IAvnFlyoutBase* self);
+```
+
+```rust
+let flyout = Flyout::new()?
+    .content(TextBlock::new()?.text("Pick one")?)?
+    .placement(PlacementMode::BottomEdgeAlignedLeft)?
+    .show_mode(FlyoutShowMode::Transient)?;
+flyout.show_at_with_control(&button)?;
+assert!(flyout.get_is_open()?);
+flyout.hide()?;
+```
+
+### Why there is no attached flyout
+
+`FlyoutBase.AttachedFlyout` and `Button.Flyout` are both **gaps**, and this is the
+honest boundary of the wave rather than an oversight. The attached-property
+pipeline carries scalars and strings only: a COM-valued attached property has no
+ABI shape here, and `IAvnControlFactory` mints no `IAvnFlyoutBaseStatics`. What
+crosses instead is `ShowAt`, which takes any projected control and unwraps it back
+to the Avalonia object, so a flyout still reaches a button — imperatively, which is
+what a Rust host is doing anyway. Attaching a flyout declaratively is a later wave.
+
+`ShowAt(Control, bool)` — the show-at-pointer overload — does not cross either;
+only the single-argument form does. `Target` is read-only because Avalonia sets it
+from `ShowAt`, and a flyout that has never been shown reports `None` rather than a
+placeholder.
+
+`PlacementAnchor`, `PlacementGravity` and `PlacementConstraintAdjustment` are
+`[Flags]` enums. A combined value has no name, and the projection's enum shape is a
+closed set of named values that fails a `try_from` on anything else, so all three
+stay in the gap report rather than crossing as an enum that cannot round trip.
+`CustomPopupPlacementCallback` and `OverlayInputPassThroughElement` are a delegate
+and an `IInputElement`, and neither has an ABI shape.
+
+`Closing` is the only wave B event with a payload. `Cancel` is an in/out field,
+exactly like `Control.KeyDown`'s `Handled`: a handler vetoes the close by writing
+it back rather than by returning a magic HRESULT.
+
+```rust
+flyout.subscribe_closing(|arguments| arguments.cancel = !ready_to_close())?;
+```
+
+## Menus as controls
+
+This is the **imperative** menu, distinct from the view-model `NativeMenu` in
+[MENUS.md](MENUS.md). A `Menu` is an `ItemsControl` whose items are real projected
+controls, built and driven from Rust:
+
+| Projected interface                 | Base                                | Members it declares |
+| ----------------------------------- | ----------------------------------- | ------------------- |
+| `IAvnMenuBase`                      | `IAvnSelectingItemsControl`         | `IsOpen` (read-only), `Open`, `Close`, `Opened`, `Closed` |
+| `IAvnMenu`                          | `IAvnMenuBase`                      | nothing — it inherits all of it |
+| `IAvnHeaderedSelectingItemsControl` | `IAvnSelectingItemsControl`         | `Header` (as `IAvnControl`) |
+| `IAvnMenuItem`                      | `IAvnHeaderedSelectingItemsControl` | `Icon` (as `IAvnControl`), `IsSelected`, `IsSubMenuOpen`, `StaysOpenOnClick`, `ToggleType`, `IsChecked`, `GroupName`, `Click`, `SubmenuOpened` |
+
+```rust
+let menu = Menu::new()?.item(
+    MenuItem::new()?
+        .header(TextBlock::new()?.text("File")?)?
+        .item(
+            MenuItem::new()?
+                .header(TextBlock::new()?.text("Save")?)?
+                .toggle_type(MenuItemToggleType::CheckBox)?
+                .checked(true)?,
+        )?,
+)?;
+menu.open()?;
+assert!(menu.is_open()?);
+menu.close()?;
+```
+
+`Items` and `SelectedIndex` are **inherited** from `ItemsControl` and
+`SelectingItemsControl`; `IsEnabled` is inherited from `Control`. `MenuBase.IsOpen`
+has a protected setter managed-side, so the ABI publishes a getter and no setter:
+opening a menu goes through `Open`, not through assigning a flag.
+
+`Menu` overrides `Open`/`Close` but declares nothing new, so the flattened vtable
+publishes each exactly once, from `IAvnMenuBase`.
+
+What does **not** cross: `MenuItem.Command` is an `ICommand`,
+`MenuItem.CommandParameter` is an `object`, and `HotKey`/`InputGesture` are
+`KeyGesture`s. All four are gaps. `Click` is the equivalent that does cross, and it
+carries no payload — the handler is a bare notification and the consumer reads back
+whatever it needs.
+
+## SplitView
+
+| Projected interface | Base                | Members it declares |
+| ------------------- | ------------------- | ------------------- |
+| `IAvnSplitView`     | `IAvnContentControl` | `IsPaneOpen`, `DisplayMode`, `PanePlacement`, `OpenPaneLength`, `CompactPaneLength`, `Pane` (as `IAvnControl`), `PaneBackground` (as `IAvnBrush`), `UseLightDismissOverlayMode`, `PaneOpened`, `PaneClosed` |
+
+```rust
+let split_view = SplitView::new()?
+    .display_mode(SplitViewDisplayMode::CompactOverlay)?
+    .pane_placement(SplitViewPanePlacement::Left)?
+    .open_pane_length(220.0)?
+    .pane(StackPanel::new()?.child(TextBlock::new()?.text("Pane")?)?)?
+    .content(TextBlock::new()?.text("Body")?)?;
+split_view.set_pane_open(true)?;
+```
+
+`Pane` is an `object` managed-side and crosses as a control, the same shape
+`ContentControl.Content` already uses; `Content` itself is inherited from
+`IAvnContentControl`. `PaneOpening`/`PaneClosing` carry a cancellable
+`CancelRoutedEventArgs`; they are gaps in this wave, so a pane opens and closes
+without a veto point. `PaneTemplate` is an `IDataTemplate` and `TemplateSettings` is
+a template-only object; neither crosses.
+
+## Dates and times
+
+`DateTimeOffset` and `TimeSpan` have **no ABI shape** in this projection: there is
+no date struct, no epoch integer and no tick count. A date crosses as an ISO-8601
+string through the same host-side converter mechanism `Image.Source` uses, and the
+parse rules are part of the contract rather than whatever the ambient culture does.
+
+| Projected interface | Base                  | Members it declares |
+| ------------------- | --------------------- | ------------------- |
+| `IAvnDatePicker`    | `IAvnTemplatedControl` | `SelectedDate` (nullable), `MinYear`, `MaxYear`, `DayVisible`, `MonthVisible`, `YearVisible`, `DayFormat`, `MonthFormat`, `YearFormat`, `Clear` |
+| `IAvnTimePicker`    | `IAvnTemplatedControl` | `SelectedTime` (nullable), `MinuteIncrement`, `SecondIncrement`, `ClockIdentifier`, `UseSeconds`, `Clear` |
+
+```rust
+let date_picker = DatePicker::new()?.selected_date("2027-01-15")?;
+// Reading is normalising: the round-trip "o" form, not the string that was written.
+assert_eq!(
+    date_picker.get_selected_date()?.as_deref(),
+    Some("2027-01-15T00:00:00.0000000-05:00")
+);
+
+let time_picker = TimePicker::new()?.selected_time("17:04")?;
+assert_eq!(time_picker.get_selected_time()?.as_deref(), Some("17:04:00"));
+```
+
+### What the string does and does not carry
+
+**Dates** (`AvnDateTimeOffset`, `AvnDateTimeOffsetValue`):
+
+* Reading always produces the invariant round-trip `"o"` form,
+  `yyyy-MM-ddTHH:mm:ss.fffffffK`. It is **normalising, not byte-preserving**: what
+  is read back is rarely the exact string that was written.
+* Writing accepts exactly these ISO-8601 spellings: `yyyy-MM-dd`, plus optional
+  `THH:mm`, `THH:mm:ss` or `THH:mm:ss.fffffff`, plus an optional `Z` or `+hh:mm`
+  offset. **Nothing else.** A locale spelling such as `03/09/2026` is ambiguous
+  between March 9th and the 3rd of September, so it fails the call rather than
+  being resolved by whichever culture happens to be installed.
+* A date written without an offset is read as a **local-time** date, which is what
+  a `DatePicker` means by "the selected day". `Z` is honoured and read back as
+  `+00:00`.
+* `SelectedDate` is nullable: a null or empty string **clears** it, and no selection
+  reads back as `null` rather than as a default date. `MinYear`/`MaxYear` have no
+  absent state, so clearing one fails with `ArgumentNullException` instead of
+  quietly meaning "today".
+
+**Times** (`AvnTimeSpan`):
+
+* The wire form is `HH:mm:ss`, 24-hour and invariant — ISO-8601's extended
+  *time-of-day* spelling, **not** an ISO-8601 `PnDTnHnMnS` duration. `PT8H15M` fails
+  the call.
+* Writing also accepts `HH:mm`; reading always produces `HH:mm:ss`. Sub-second
+  precision is not part of the wire form and is rejected rather than truncated.
+* The value must be within `[00:00:00, 24:00:00)`. Managed code may store any
+  `TimeSpan`, so a span outside a day — set from AXAML or from C# — **fails the
+  read** instead of being wrapped into a plausible-looking time.
+
+`SelectedDateChanged` and `SelectedTimeChanged` carry `DateTimeOffset?` and
+`TimeSpan?` fields. An event payload has no converter hook — field payloads are
+scalars and strings the emitter converts itself — so both events are gaps rather
+than a payload that silently loses the date. A consumer that needs to observe a
+selection polls the property; wiring a converter through event payloads is a later
+wave.
+
+`ClockIdentifier` is a plain string that Avalonia validates as `"12HourClock"` or
+`"24HourClock"`; an unknown value fails the call because the managed setter throws.
+
+## Versioning of the widened vtables
 Nano-COM vtables are flattened, so widening a base type moves every slot of every
 interface that inherits from it. Each wave therefore republishes the affected
 interfaces at a new `abiVersion` under a fresh IID; the retired IIDs are never
@@ -395,6 +582,7 @@ compiled against.
 | Completeness | `IAvnContentControl`, `IAvnButton`, `IAvnToggleButton`, `IAvnListBox`, `IAvnComboBox` and everything below them | 4 → 5 | `IAvnAvaloniaObject` (2), `IAvnStyledElement`, `IAvnControl`, `IAvnDecorator` (3), `IAvnBorder`, `IAvnPanel`, `IAvnGrid`, `IAvnCanvas`, `IAvnDockPanel`, `IAvnStackPanel`, `IAvnTextBlock`, `IAvnTemplatedControl`, `IAvnItemsControl`, `IAvnSelectingItemsControl`, `IAvnTextBox`, `IAvnRangeBase`, `IAvnSlider`, `IAvnProgressBar` (4) |
 | Definitions | `IAvnGrid` alone | 4 → 5 | everything else, including `IAvnPanel`, `IAvnCanvas`, `IAvnDockPanel`, `IAvnStackPanel` (4) |
 | New controls A | nothing — seven brand-new interfaces | — | every interface that shipped before, at the version it last published |
+| New controls B | nothing — ten brand-new interfaces | — | every interface that shipped before, at the version it last published |
 
 Nothing in the object model derives from `Grid`, so the definitions wave moves
 exactly one interface. `IAvnGrid` has published versions 1–4 and now publishes 5;
@@ -407,12 +595,26 @@ publish at version 1, and every interface they derive from keeps the IID it last
 shipped. A consumer compiled against the definitions wave can keep every
 interface pointer it already holds.
 
+Wave B widens nothing either. `IAvnFlyoutBase`, `IAvnPopupFlyoutBase`,
+`IAvnFlyout`, `IAvnMenuBase`, `IAvnMenu`, `IAvnHeaderedSelectingItemsControl`,
+`IAvnMenuItem`, `IAvnSplitView`, `IAvnDatePicker` and `IAvnTimePicker` are all new
+and publish at version 1. The flyout trio hangs off `IAvnAvaloniaObject` rather
+than off `IAvnControl`, so it cannot move a control interface even in principle;
+`IAvnHeaderedSelectingItemsControl` is inserted below `IAvnSelectingItemsControl`
+and nothing that shipped derives from it. Even the wave A interfaces are unmoved,
+so a consumer compiled against wave A keeps every control pointer it holds.
+
 `IAvnControlFactory` grew `create_solid_color_brush` and moved from version 1 to
 2. Neither the completeness nor the definitions wave adds a factory slot, so it
 stayed at 2; wave A gives it a creator per new control plus
-`get_tool_tip_statics`, so it moves to 3. `IAvnBrush` is brand new, so it starts
-at version 1. The collection interfaces and the event handler interfaces are
-unchanged, because they carry interface pointers rather than the widened layouts.
+`get_tool_tip_statics`, so it moves to 3; wave B gives it a creator per
+constructible new type — `Flyout`, `Menu`, `MenuItem`,
+`HeaderedSelectingItemsControl`, `SplitView`, `DatePicker` and `TimePicker` — so it
+moves to 4. The abstract bases (`FlyoutBase`, `PopupFlyoutBase`, `MenuBase`) get no
+creator; they are reachable by `query_interface` only. `IAvnBrush` is brand new, so
+it starts at version 1. The collection interfaces and the event handler interfaces
+are unchanged, because they carry interface pointers rather than the widened
+layouts.
 
 `Decorator` sits between `Control` and `Border`. The chrome wave added members to
 `Border`, not to `Decorator`, and nothing was added to `Decorator`'s bases either,

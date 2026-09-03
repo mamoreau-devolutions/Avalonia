@@ -102,17 +102,29 @@ a creator per new control plus `get_tool_tip_statics` and goes from 2 to 3. A
 consumer compiled against the definitions wave therefore only has to requery the
 factory; every control interface pointer it already holds stays valid.
 
+Wave B is the same shape. `IAvnFlyoutBase`, `IAvnPopupFlyoutBase`, `IAvnFlyout`,
+`IAvnMenuBase`, `IAvnMenu`, `IAvnHeaderedSelectingItemsControl`, `IAvnMenuItem`,
+`IAvnSplitView`, `IAvnDatePicker` and `IAvnTimePicker` are all brand new and
+publish at version 1; a flyout is an `AvaloniaObject` rather than a `Control`, so
+`IAvnFlyoutBase` sits directly under `IAvnAvaloniaObject` and cannot move a control
+interface. `IAvnControlFactory` gains a creator per constructible wave B type and
+goes from 3 to 4; the abstract bases get no creator and are reachable by
+`query_interface` only. Again, only the factory has to be requeried.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A
 `StringUtf16` override on a non-string member is accepted when the managed type
 declares `static T Parse(string)` and overrides `ToString()`, so the conversion
 belongs to the type rather than to the generator — or, when the CLR type cannot
-own either half (`Image.Source` is an `IImage`, `ToolTip.Tip` is an `object`),
-when the profile names a host-side converter in `stringConverterTypeName`. That
-field is a host-side detail only: the ABI slot is an ordinary UTF-16 string, so
-neither the native header nor the Rust bindings read it, and a consumer that
-ignores it sees no difference.
+own either half (`Image.Source` is an `IImage`, `ToolTip.Tip` is an `object`) or
+when the type's own parser is looser than the published contract
+(`DatePicker.SelectedDate` and `TimePicker.SelectedTime` publish a strict ISO-8601
+grammar rather than whatever `DateTimeOffset.Parse` happens to accept), when the
+profile names a host-side converter in `stringConverterTypeName`. That field is a
+host-side detail only: the ABI slot is an ordinary UTF-16 string, so neither the
+native header nor the Rust bindings read it, and a consumer that ignores it sees
+no difference.
 
 ## RID artifacts
 

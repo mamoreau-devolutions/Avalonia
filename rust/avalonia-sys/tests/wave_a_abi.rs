@@ -78,8 +78,9 @@ fn wave_a_interfaces_publish_abi_version_one_and_nothing_else_moved() {
         "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 4",
         "#define I_AVN_CONTENT_CONTROL_ABI_VERSION 5",
         "#define I_AVN_HEADERED_CONTENT_CONTROL_ABI_VERSION 5",
-        // Only the factory grew slots.
-        "#define I_AVN_CONTROL_FACTORY_ABI_VERSION 3",
+        // Only the factory grew slots. Wave B moved it again, from 3 to 4, for its own
+        // creators; every wave A interface still publishes at version 1.
+        "#define I_AVN_CONTROL_FACTORY_ABI_VERSION 4",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
     }

@@ -46,6 +46,16 @@ public class ClrTypeExtractorTests
         typeof(TreeView),
         typeof(TreeViewItem),
         typeof(ToolTip),
+        typeof(FlyoutBase),
+        typeof(PopupFlyoutBase),
+        typeof(Flyout),
+        typeof(MenuBase),
+        typeof(Menu),
+        typeof(HeaderedSelectingItemsControl),
+        typeof(MenuItem),
+        typeof(SplitView),
+        typeof(DatePicker),
+        typeof(TimePicker),
         typeof(TextBox),
         typeof(ScrollViewer),
         typeof(RangeBase),
@@ -233,11 +243,12 @@ public class ClrTypeExtractorTests
                     type.Iid);
             });
 
-        // The factory grew a creator per wave A control plus GetToolTipStatics, so it moved off
-        // the version 2 IID it published for CreateSolidColorBrush.
-        Assert.Equal(3, ir.FactoryAbiVersion);
+        // The factory grew a creator per wave A control plus GetToolTipStatics, and then one per
+        // constructible wave B type, so it has moved twice off the version 2 IID it published
+        // for CreateSolidColorBrush.
+        Assert.Equal(4, ir.FactoryAbiVersion);
         Assert.Equal(
-            ClrTypeExtractor.CreateDeterministicIid("Avalonia.Host.Com.IAvnControlFactory", 3),
+            ClrTypeExtractor.CreateDeterministicIid("Avalonia.Host.Com.IAvnControlFactory", 4),
             ir.FactoryIid);
     }
 
@@ -394,6 +405,263 @@ public class ClrTypeExtractorTests
             ["Collapsed", "Expanded"],
             treeViewItem.Events.Select(@event => @event.Name).OrderBy(n => n, StringComparer.Ordinal));
         Assert.All(treeViewItem.Events, @event => Assert.Equal(EventPayloadKind.None, @event.PayloadKind));
+    }
+
+    [Fact]
+    public void Wave_b_controls_publish_new_interfaces_at_version_one()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+
+        Assert.All(
+            new[]
+            {
+                "IAvnFlyoutBase", "IAvnPopupFlyoutBase", "IAvnFlyout", "IAvnMenuBase", "IAvnMenu",
+                "IAvnHeaderedSelectingItemsControl", "IAvnMenuItem", "IAvnSplitView",
+                "IAvnDatePicker", "IAvnTimePicker",
+            },
+            name =>
+            {
+                var type = Type(ir, name);
+                Assert.Equal(1, type.AbiVersion);
+                Assert.Equal(
+                    ClrTypeExtractor.CreateDeterministicIid(type.FullName, 1),
+                    type.Iid);
+            });
+
+        // A flyout is an AvaloniaObject rather than a Control, so nothing existing sits above
+        // the new interfaces and nothing existing moved.
+        var pinned = new Dictionary<string, int>(StringComparer.Ordinal)
+        {
+            ["IAvnAvaloniaObject"] = 2,
+            ["IAvnControl"] = 3,
+            ["IAvnItemsControl"] = 4,
+            ["IAvnSelectingItemsControl"] = 4,
+            ["IAvnTemplatedControl"] = 4,
+            ["IAvnContentControl"] = 5,
+        };
+        Assert.All(pinned, entry =>
+        {
+            var type = Type(ir, entry.Key);
+            Assert.Equal(entry.Value, type.AbiVersion);
+            Assert.Equal(
+                ClrTypeExtractor.CreateDeterministicIid(type.FullName, entry.Value),
+                type.Iid);
+        });
+
+        // Reusing a retired IID would silently hand a stale consumer a changed contract, so no
+        // two projected interfaces may ever share one.
+        Assert.Equal(
+            ir.Types.Count,
+            ir.Types.Select(type => type.Iid).Distinct(StringComparer.Ordinal).Count());
+    }
+
+    [Fact]
+    public void Projects_the_flyout_trio_with_an_imperative_show_rather_than_an_attached_property()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+
+        // FlyoutBase derives from AvaloniaObject, not Control, so the projected interface hangs
+        // straight off IAvnAvaloniaObject and inserts no slot into anything that shipped.
+        var flyoutBase = Type(ir, "IAvnFlyoutBase");
+        Assert.Equal("Avalonia.Host.Com.IAvnAvaloniaObject", flyoutBase.BaseFullName);
+        Assert.False(flyoutBase.IsConstructible);
+
+        // ShowAt is how a flyout reaches a control: the attached-property pipeline carries
+        // scalars and strings only, so there is no COM-valued AttachedFlyout in this wave.
+        var showAt = flyoutBase.Methods.Single(method => method.ManagedName == "ShowAt");
+        var placementTarget = showAt.Parameters.Single();
+        Assert.Equal(MarshallingKind.ComInterface, placementTarget.Kind);
+        Assert.Equal("Avalonia.Host.Com.IAvnControl", placementTarget.InterfaceName);
+        Assert.Contains(flyoutBase.Methods, method => method.Name == "Hide");
+        Assert.DoesNotContain(
+            ir.AttachedProperties,
+            property => property.Name is "AttachedFlyout" or "Flyout");
+        Assert.Contains(ir.Skipped, skipped =>
+            skipped.Owner == typeof(Button).FullName && skipped.Member == nameof(Button.Flyout));
+
+        var target = flyoutBase.Properties.Single(property => property.Name == "Target");
+        Assert.Equal(MarshallingKind.ComInterface, target.Kind);
+        Assert.True(target.CanRead);
+        Assert.False(target.CanWrite);
+
+        // PopupFlyoutBase re-declares ShowAt/Hide as sealed overrides; the flattened vtable
+        // publishes each exactly once, from the base that declares it.
+        var popupFlyoutBase = Type(ir, "IAvnPopupFlyoutBase");
+        Assert.Equal("Avalonia.Host.Com.IAvnFlyoutBase", popupFlyoutBase.BaseFullName);
+        Assert.Empty(popupFlyoutBase.Methods);
+        Assert.All(
+            new[] { "Placement", "ShowMode" },
+            name => Assert.Equal(
+                MarshallingKind.I32,
+                popupFlyoutBase.Properties.Single(property => property.Name == name).Kind));
+
+        // The [Flags] placement members have no single-value name for a combined value, so they
+        // stay in the gap report rather than crossing as an enum that cannot round trip.
+        Assert.All(
+            new[] { "PlacementAnchor", "PlacementGravity", "PlacementConstraintAdjustment" },
+            name => Assert.DoesNotContain(
+                popupFlyoutBase.Properties,
+                property => property.Name == name));
+
+        // Closing is the one wave B event with a payload, and Cancel is written back.
+        var closing = popupFlyoutBase.Events.Single(@event => @event.Name == "Closing");
+        Assert.Equal(EventPayloadKind.Fields, closing.PayloadKind);
+        var cancel = closing.Parameters.Single();
+        Assert.Equal("Cancel", cancel.Name);
+        Assert.Equal(MarshallingKind.Bool, cancel.Kind);
+        Assert.Equal(ParameterDirection.InOut, cancel.Direction);
+
+        var flyout = Type(ir, "IAvnFlyout");
+        Assert.Equal("Avalonia.Host.Com.IAvnPopupFlyoutBase", flyout.BaseFullName);
+        Assert.True(flyout.IsConstructible);
+        var content = flyout.Properties.Single(property => property.Name == "Content");
+        Assert.Equal(MarshallingKind.ComInterface, content.Kind);
+        Assert.Equal("Avalonia.Host.Com.IAvnControl", content.InterfaceName);
+        Assert.Equal("System.Object", content.ManagedTypeName);
+    }
+
+    [Fact]
+    public void Projects_the_imperative_menu_pair_without_an_icommand()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+
+        // MenuBase owns the open state and the commands; Menu inherits all of it and declares
+        // nothing, so Open/Close occupy one slot each rather than two.
+        var menuBase = Type(ir, "IAvnMenuBase");
+        Assert.Equal("Avalonia.Host.Com.IAvnSelectingItemsControl", menuBase.BaseFullName);
+        Assert.Equal(
+            ["Close", "Open"],
+            menuBase.Methods.Select(method => method.Name).OrderBy(n => n, StringComparer.Ordinal));
+        var isOpen = menuBase.Properties.Single();
+        Assert.Equal("IsOpen", isOpen.Name);
+        // The managed setter is protected, so the ABI publishes a getter only rather than
+        // inventing a writable open state the control does not have.
+        Assert.True(isOpen.CanRead);
+        Assert.False(isOpen.CanWrite);
+
+        var menu = Type(ir, "IAvnMenu");
+        Assert.Equal("Avalonia.Host.Com.IAvnMenuBase", menu.BaseFullName);
+        Assert.True(menu.IsConstructible);
+        Assert.Empty(menu.Properties);
+        Assert.Empty(menu.Methods);
+
+        // MenuItem's Header comes from the newly projected HeaderedSelectingItemsControl, and
+        // Items is inherited all the way from ItemsControl.
+        var headered = Type(ir, "IAvnHeaderedSelectingItemsControl");
+        Assert.Equal("Avalonia.Host.Com.IAvnSelectingItemsControl", headered.BaseFullName);
+        var header = headered.Properties.Single();
+        Assert.Equal(nameof(HeaderedSelectingItemsControl.Header), header.Name);
+        Assert.Equal(MarshallingKind.ComInterface, header.Kind);
+        Assert.Equal("Avalonia.Host.Com.IAvnControl", header.InterfaceName);
+
+        var menuItem = Type(ir, "IAvnMenuItem");
+        Assert.Equal("Avalonia.Host.Com.IAvnHeaderedSelectingItemsControl", menuItem.BaseFullName);
+        var icon = menuItem.Properties.Single(property => property.Name == nameof(MenuItem.Icon));
+        Assert.Equal(MarshallingKind.ComInterface, icon.Kind);
+        Assert.Equal(
+            MarshallingKind.Bool,
+            menuItem.Properties.Single(property => property.Name == nameof(MenuItem.IsChecked)).Kind);
+        Assert.Equal(
+            MarshallingKind.I32,
+            menuItem.Properties.Single(property => property.Name == nameof(MenuItem.ToggleType)).Kind);
+
+        // Click replaces the command members: ICommand, object parameters and KeyGestures all
+        // stay in the gap report rather than being approximated.
+        Assert.Contains(menuItem.Events, @event =>
+            @event.Name == nameof(MenuItem.Click) && @event.PayloadKind == EventPayloadKind.None);
+        Assert.All(
+            new[]
+            {
+                nameof(MenuItem.Command), nameof(MenuItem.CommandParameter),
+                nameof(MenuItem.HotKey), nameof(MenuItem.InputGesture),
+            },
+            name =>
+            {
+                Assert.DoesNotContain(menuItem.Properties, property => property.Name == name);
+                Assert.Contains(ir.Skipped, skipped =>
+                    skipped.Owner == typeof(MenuItem).FullName && skipped.Member == name);
+            });
+    }
+
+    [Fact]
+    public void Projects_split_view_panes_as_controls_and_brushes()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+
+        var splitView = Type(ir, "IAvnSplitView");
+        Assert.Equal("Avalonia.Host.Com.IAvnContentControl", splitView.BaseFullName);
+
+        var pane = splitView.Properties.Single(property => property.Name == nameof(SplitView.Pane));
+        Assert.Equal(MarshallingKind.ComInterface, pane.Kind);
+        Assert.Equal("Avalonia.Host.Com.IAvnControl", pane.InterfaceName);
+        Assert.True(pane.IsNullable);
+
+        var background = splitView.Properties
+            .Single(property => property.Name == nameof(SplitView.PaneBackground));
+        Assert.Equal(MarshallingKind.Brush, background.Kind);
+
+        Assert.All(
+            new[] { nameof(SplitView.DisplayMode), nameof(SplitView.PanePlacement) },
+            name => Assert.Equal(
+                MarshallingKind.I32,
+                splitView.Properties.Single(property => property.Name == name).Kind));
+        Assert.All(
+            new[] { nameof(SplitView.OpenPaneLength), nameof(SplitView.CompactPaneLength) },
+            name => Assert.Equal(
+                MarshallingKind.F64,
+                splitView.Properties.Single(property => property.Name == name).Kind));
+        Assert.Equal(
+            ["PaneClosed", "PaneOpened"],
+            splitView.Events.Select(@event => @event.Name).OrderBy(n => n, StringComparer.Ordinal));
+    }
+
+    [Fact]
+    public void Projects_picker_dates_and_times_as_converted_strings()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+
+        // DateTimeOffset and TimeSpan have no ABI shape here, so they ride the same host-side
+        // converter mechanism Image.Source uses rather than a minted date struct.
+        var datePicker = Type(ir, "IAvnDatePicker");
+        Assert.Equal("Avalonia.Host.Com.IAvnTemplatedControl", datePicker.BaseFullName);
+
+        var selectedDate = datePicker.Properties
+            .Single(property => property.Name == nameof(DatePicker.SelectedDate));
+        Assert.Equal(MarshallingKind.StringUtf16, selectedDate.Kind);
+        Assert.Equal("Avalonia.Host.Com.AvnDateTimeOffset", selectedDate.StringConverterTypeName);
+        Assert.True(selectedDate.IsNullable);
+
+        // MinYear/MaxYear have no absent state, so they take the non-nullable converter.
+        Assert.All(
+            new[] { nameof(DatePicker.MinYear), nameof(DatePicker.MaxYear) },
+            name =>
+            {
+                var property = datePicker.Properties.Single(p => p.Name == name);
+                Assert.Equal(MarshallingKind.StringUtf16, property.Kind);
+                Assert.Equal(
+                    "Avalonia.Host.Com.AvnDateTimeOffsetValue",
+                    property.StringConverterTypeName);
+                Assert.False(property.IsNullable);
+            });
+        Assert.Contains(datePicker.Methods, method => method.Name == nameof(DatePicker.Clear));
+
+        // The change events carry DateTimeOffset? fields and an event payload has no converter
+        // hook, so they are gaps rather than a silently lossy payload.
+        Assert.Empty(datePicker.Events);
+        Assert.Contains(ir.Skipped, skipped =>
+            skipped.Owner == typeof(DatePicker).FullName &&
+            skipped.Member == nameof(DatePicker.SelectedDateChanged));
+
+        var timePicker = Type(ir, "IAvnTimePicker");
+        var selectedTime = timePicker.Properties
+            .Single(property => property.Name == nameof(TimePicker.SelectedTime));
+        Assert.Equal(MarshallingKind.StringUtf16, selectedTime.Kind);
+        Assert.Equal("Avalonia.Host.Com.AvnTimeSpan", selectedTime.StringConverterTypeName);
+        Assert.True(selectedTime.IsNullable);
+        Assert.Equal(
+            MarshallingKind.I32,
+            timePicker.Properties.Single(p => p.Name == nameof(TimePicker.MinuteIncrement)).Kind);
+        Assert.Empty(timePicker.Events);
     }
 
     [Fact]

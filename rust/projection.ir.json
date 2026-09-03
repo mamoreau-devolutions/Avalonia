@@ -1,8 +1,8 @@
 {
   "version": 13,
   "sourceAssembly": "Avalonia.Base,Avalonia.Controls",
-  "factoryIid": "A28E1449-7303-5686-B851-01FE0860B5B2",
-  "factoryAbiVersion": 3,
+  "factoryIid": "F53646E4-81D1-57C4-A264-E94E4FE83DCD",
+  "factoryAbiVersion": 4,
   "brushInterfaceName": "Avalonia.Host.Com.IAvnBrush",
   "brushInterfaceIid": "FC7CCBAE-ED75-5C6D-8516-DF706E137ED3",
   "brushAbiVersion": 1,
@@ -460,6 +460,112 @@
       ]
     },
     {
+      "name": "IAvnDatePicker",
+      "fullName": "Avalonia.Host.Com.IAvnDatePicker",
+      "kind": "Class",
+      "iid": "DE3C2BEE-70B4-538A-847A-A2A236108382",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
+      "managedFullName": "Avalonia.Controls.DatePicker",
+      "isConstructible": true,
+      "methods": [
+        {
+          "name": "Clear",
+          "managedName": "Clear",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": []
+        }
+      ],
+      "properties": [
+        {
+          "name": "DayFormat",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.String",
+          "isNullable": false
+        },
+        {
+          "name": "DayVisible",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "MaxYear",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.DateTimeOffset",
+          "isNullable": false,
+          "stringConverterTypeName": "Avalonia.Host.Com.AvnDateTimeOffsetValue"
+        },
+        {
+          "name": "MinYear",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.DateTimeOffset",
+          "isNullable": false,
+          "stringConverterTypeName": "Avalonia.Host.Com.AvnDateTimeOffsetValue"
+        },
+        {
+          "name": "MonthFormat",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.String",
+          "isNullable": false
+        },
+        {
+          "name": "MonthVisible",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "YearFormat",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.String",
+          "isNullable": false
+        },
+        {
+          "name": "YearVisible",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "SelectedDate",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Nullable\u00601[[System.DateTimeOffset, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "isNullable": true,
+          "stringConverterTypeName": "Avalonia.Host.Com.AvnDateTimeOffset"
+        }
+      ],
+      "events": []
+    },
+    {
       "name": "IAvnDecorator",
       "fullName": "Avalonia.Host.Com.IAvnDecorator",
       "kind": "Class",
@@ -583,6 +689,30 @@
           "parameters": []
         }
       ]
+    },
+    {
+      "name": "IAvnFlyout",
+      "fullName": "Avalonia.Host.Com.IAvnFlyout",
+      "kind": "Class",
+      "iid": "5F337C86-BAC8-5A8D-B472-B7A39EE3DEC5",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnPopupFlyoutBase",
+      "managedFullName": "Avalonia.Controls.Flyout",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "Content",
+          "kind": "ComInterface",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnControl",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Object",
+          "isNullable": true
+        }
+      ],
+      "events": []
     },
     {
       "name": "IAvnGrid",
@@ -783,6 +913,173 @@
       "events": []
     },
     {
+      "name": "IAvnMenu",
+      "fullName": "Avalonia.Host.Com.IAvnMenu",
+      "kind": "Class",
+      "iid": "B2CF8283-5F6E-5D4C-B7EB-BB4D28E52E30",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnMenuBase",
+      "managedFullName": "Avalonia.Controls.Menu",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [],
+      "events": []
+    },
+    {
+      "name": "IAvnMenuBase",
+      "fullName": "Avalonia.Host.Com.IAvnMenuBase",
+      "kind": "Class",
+      "iid": "5A2E6E87-55E0-5AA8-B7DF-B733CD7AF79B",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnSelectingItemsControl",
+      "managedFullName": "Avalonia.Controls.MenuBase",
+      "isConstructible": false,
+      "methods": [
+        {
+          "name": "Close",
+          "managedName": "Close",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": []
+        },
+        {
+          "name": "Open",
+          "managedName": "Open",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": []
+        }
+      ],
+      "properties": [
+        {
+          "name": "IsOpen",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": false,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        }
+      ],
+      "events": [
+        {
+          "name": "Opened",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnMenuBaseOpenedHandler",
+          "handlerInterfaceIid": "EA4E9CCD-FC83-5BE9-ADDF-B2A4E492AD8A",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E",
+          "parameters": []
+        },
+        {
+          "name": "Closed",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnMenuBaseClosedHandler",
+          "handlerInterfaceIid": "29D81495-8F6E-5F65-8B74-AB3E668077AF",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E",
+          "parameters": []
+        }
+      ]
+    },
+    {
+      "name": "IAvnMenuItem",
+      "fullName": "Avalonia.Host.Com.IAvnMenuItem",
+      "kind": "Class",
+      "iid": "C606F3BD-EB1F-5510-8252-29C56284AEDB",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnHeaderedSelectingItemsControl",
+      "managedFullName": "Avalonia.Controls.MenuItem",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "Icon",
+          "kind": "ComInterface",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnControl",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Object",
+          "isNullable": true
+        },
+        {
+          "name": "IsSelected",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "IsSubMenuOpen",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "StaysOpenOnClick",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "ToggleType",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.MenuItemToggleType",
+          "isNullable": false
+        },
+        {
+          "name": "IsChecked",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "GroupName",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.String",
+          "isNullable": true
+        }
+      ],
+      "events": [
+        {
+          "name": "Click",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnMenuItemClickHandler",
+          "handlerInterfaceIid": "D5A42FDA-88B2-53D0-948C-F3C916CFF8AA",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E",
+          "parameters": []
+        },
+        {
+          "name": "SubmenuOpened",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnMenuItemSubmenuOpenedHandler",
+          "handlerInterfaceIid": "2F6D5C20-67E2-5411-B07C-46EBA3D3D650",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E",
+          "parameters": []
+        }
+      ]
+    },
+    {
       "name": "IAvnPanel",
       "fullName": "Avalonia.Host.Com.IAvnPanel",
       "kind": "Class",
@@ -819,6 +1116,82 @@
         }
       ],
       "events": []
+    },
+    {
+      "name": "IAvnFlyoutBase",
+      "fullName": "Avalonia.Host.Com.IAvnFlyoutBase",
+      "kind": "Class",
+      "iid": "101A7B60-DED9-560F-AA4D-8DBB5E126763",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnAvaloniaObject",
+      "managedFullName": "Avalonia.Controls.Primitives.FlyoutBase",
+      "isConstructible": false,
+      "methods": [
+        {
+          "name": "ShowAtWithControl",
+          "managedName": "ShowAt",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": [
+            {
+              "name": "placementTarget",
+              "kind": "ComInterface",
+              "direction": "In",
+              "interfaceName": "Avalonia.Host.Com.IAvnControl",
+              "managedTypeName": "Avalonia.Controls.Control",
+              "isNullable": false
+            }
+          ]
+        },
+        {
+          "name": "Hide",
+          "managedName": "Hide",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": []
+        }
+      ],
+      "properties": [
+        {
+          "name": "IsOpen",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "Target",
+          "kind": "ComInterface",
+          "canRead": true,
+          "canWrite": false,
+          "interfaceName": "Avalonia.Host.Com.IAvnControl",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Control",
+          "isNullable": true
+        }
+      ],
+      "events": [
+        {
+          "name": "Opened",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnFlyoutBaseOpenedHandler",
+          "handlerInterfaceIid": "41A6074D-DE1C-5B5E-8BE6-50326CB7EA31",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler",
+          "parameters": []
+        },
+        {
+          "name": "Closed",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnFlyoutBaseClosedHandler",
+          "handlerInterfaceIid": "FD318133-16F5-5136-BA55-DC7B1FCA6E6B",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler",
+          "parameters": []
+        }
+      ]
     },
     {
       "name": "IAvnHeaderedContentControl",
@@ -867,6 +1240,116 @@
         }
       ],
       "events": []
+    },
+    {
+      "name": "IAvnHeaderedSelectingItemsControl",
+      "fullName": "Avalonia.Host.Com.IAvnHeaderedSelectingItemsControl",
+      "kind": "Class",
+      "iid": "EE59D7FB-CB0F-5A76-8549-D6C6D6ED139C",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnSelectingItemsControl",
+      "managedFullName": "Avalonia.Controls.Primitives.HeaderedSelectingItemsControl",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "Header",
+          "kind": "ComInterface",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnControl",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Object",
+          "isNullable": true
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IAvnPopupFlyoutBase",
+      "fullName": "Avalonia.Host.Com.IAvnPopupFlyoutBase",
+      "kind": "Class",
+      "iid": "3E7168D2-CA62-5030-B9CF-85F108354777",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnFlyoutBase",
+      "managedFullName": "Avalonia.Controls.Primitives.PopupFlyoutBase",
+      "isConstructible": false,
+      "methods": [],
+      "properties": [
+        {
+          "name": "Placement",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.PlacementMode",
+          "isNullable": false
+        },
+        {
+          "name": "HorizontalOffset",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "VerticalOffset",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "ShowMode",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.FlyoutShowMode",
+          "isNullable": false
+        },
+        {
+          "name": "OverlayDismissEventPassThrough",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        }
+      ],
+      "events": [
+        {
+          "name": "Closing",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnPopupFlyoutBaseClosingHandler",
+          "handlerInterfaceIid": "EAE8EE53-8398-5DF1-AC68-38F30C7FC848",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "Fields",
+          "managedHandlerTypeName": "System.EventHandler\u003CSystem.ComponentModel.CancelEventArgs\u003E",
+          "parameters": [
+            {
+              "name": "Cancel",
+              "kind": "Bool",
+              "direction": "InOut",
+              "managedTypeName": "System.Boolean",
+              "isNullable": false
+            }
+          ]
+        },
+        {
+          "name": "Opening",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnPopupFlyoutBaseOpeningHandler",
+          "handlerInterfaceIid": "1F90823E-2D18-59F2-BDE7-BDA58E80DBF5",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler",
+          "parameters": []
+        }
+      ]
     },
     {
       "name": "IAvnRangeBase",
@@ -1386,6 +1869,114 @@
       "events": []
     },
     {
+      "name": "IAvnSplitView",
+      "fullName": "Avalonia.Host.Com.IAvnSplitView",
+      "kind": "Class",
+      "iid": "5F8E0A9A-314E-53F9-80BD-C9C012F21C00",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
+      "managedFullName": "Avalonia.Controls.SplitView",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "CompactPaneLength",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "DisplayMode",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.SplitViewDisplayMode",
+          "isNullable": false
+        },
+        {
+          "name": "IsPaneOpen",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "OpenPaneLength",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "PaneBackground",
+          "kind": "Brush",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnBrush",
+          "interfaceIid": "FC7CCBAE-ED75-5C6D-8516-DF706E137ED3",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.IBrush",
+          "isNullable": true
+        },
+        {
+          "name": "PanePlacement",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.SplitViewPanePlacement",
+          "isNullable": false
+        },
+        {
+          "name": "Pane",
+          "kind": "ComInterface",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnControl",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Object",
+          "isNullable": true
+        },
+        {
+          "name": "UseLightDismissOverlayMode",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        }
+      ],
+      "events": [
+        {
+          "name": "PaneClosed",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnSplitViewPaneClosedHandler",
+          "handlerInterfaceIid": "82202021-D4D8-5789-8544-E00406066EC0",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E",
+          "parameters": []
+        },
+        {
+          "name": "PaneOpened",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnSplitViewPaneOpenedHandler",
+          "handlerInterfaceIid": "3D24DB63-45CC-581B-8734-EFECDC25A681",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E",
+          "parameters": []
+        }
+      ]
+    },
+    {
       "name": "IAvnStackPanel",
       "fullName": "Avalonia.Host.Com.IAvnStackPanel",
       "kind": "Class",
@@ -1817,6 +2408,74 @@
       ]
     },
     {
+      "name": "IAvnTimePicker",
+      "fullName": "Avalonia.Host.Com.IAvnTimePicker",
+      "kind": "Class",
+      "iid": "39FD4FB4-9DD2-5779-9028-157B85B84E5C",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
+      "managedFullName": "Avalonia.Controls.TimePicker",
+      "isConstructible": true,
+      "methods": [
+        {
+          "name": "Clear",
+          "managedName": "Clear",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": []
+        }
+      ],
+      "properties": [
+        {
+          "name": "MinuteIncrement",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Int32",
+          "isNullable": false
+        },
+        {
+          "name": "SecondIncrement",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Int32",
+          "isNullable": false
+        },
+        {
+          "name": "ClockIdentifier",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.String",
+          "isNullable": false
+        },
+        {
+          "name": "UseSeconds",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "SelectedTime",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Nullable\u00601[[System.TimeSpan, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "isNullable": true,
+          "stringConverterTypeName": "Avalonia.Host.Com.AvnTimeSpan"
+        }
+      ],
+      "events": []
+    },
+    {
       "name": "IAvnToggleSwitch",
       "fullName": "Avalonia.Host.Com.IAvnToggleSwitch",
       "kind": "Class",
@@ -2180,6 +2839,42 @@
       ]
     },
     {
+      "name": "FlyoutShowMode",
+      "fullName": "Avalonia.Controls.FlyoutShowMode",
+      "values": [
+        {
+          "name": "Standard",
+          "value": 0
+        },
+        {
+          "name": "Transient",
+          "value": 1
+        },
+        {
+          "name": "TransientWithDismissOnPointerMoveAway",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "name": "MenuItemToggleType",
+      "fullName": "Avalonia.Controls.MenuItemToggleType",
+      "values": [
+        {
+          "name": "None",
+          "value": 0
+        },
+        {
+          "name": "CheckBox",
+          "value": 1
+        },
+        {
+          "name": "Radio",
+          "value": 2
+        }
+      ]
+    },
+    {
       "name": "PlacementMode",
       "fullName": "Avalonia.Controls.PlacementMode",
       "values": [
@@ -2290,6 +2985,50 @@
         {
           "name": "AlwaysSelected",
           "value": 4
+        }
+      ]
+    },
+    {
+      "name": "SplitViewDisplayMode",
+      "fullName": "Avalonia.Controls.SplitViewDisplayMode",
+      "values": [
+        {
+          "name": "Inline",
+          "value": 0
+        },
+        {
+          "name": "CompactInline",
+          "value": 1
+        },
+        {
+          "name": "Overlay",
+          "value": 2
+        },
+        {
+          "name": "CompactOverlay",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "name": "SplitViewPanePlacement",
+      "fullName": "Avalonia.Controls.SplitViewPanePlacement",
+      "values": [
+        {
+          "name": "Left",
+          "value": 0
+        },
+        {
+          "name": "Right",
+          "value": 1
+        },
+        {
+          "name": "Top",
+          "value": 2
+        },
+        {
+          "name": "Bottom",
+          "value": 3
         }
       ]
     },
@@ -4806,6 +5545,16 @@
       "reason": "Not included by projection policy"
     },
     {
+      "owner": "Avalonia.Controls.DatePicker",
+      "member": "VerticalContentAlignment",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.DatePicker",
+      "member": "SelectedDateChanged",
+      "reason": "Not included by projection policy"
+    },
+    {
       "owner": "Avalonia.Controls.Expander",
       "member": "ContentTransition",
       "reason": "Not included by projection policy"
@@ -4818,6 +5567,21 @@
     {
       "owner": "Avalonia.Controls.Expander",
       "member": "Expanding",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Flyout",
+      "member": "FlyoutPresenterClasses",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Flyout",
+      "member": "FlyoutPresenterTheme",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Flyout",
+      "member": "ContentTemplate",
       "reason": "Not included by projection policy"
     },
     {
@@ -4946,6 +5710,66 @@
       "reason": "Not included by projection policy"
     },
     {
+      "owner": "Avalonia.Controls.Menu",
+      "member": "Close()",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Menu",
+      "member": "Open()",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.MenuItem",
+      "member": "Command",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.MenuItem",
+      "member": "HotKey",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.MenuItem",
+      "member": "CommandParameter",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.MenuItem",
+      "member": "InputGesture",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.MenuItem",
+      "member": "HasSubMenu",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.MenuItem",
+      "member": "IsTopLevel",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.MenuItem",
+      "member": "PointerEnteredItem",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.MenuItem",
+      "member": "PointerExitedItem",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.MenuItem",
+      "member": "Open()",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.MenuItem",
+      "member": "Close()",
+      "reason": "Not included by projection policy"
+    },
+    {
       "owner": "Avalonia.Controls.Panel",
       "member": "IsItemsHost",
       "reason": "Not included by projection policy"
@@ -4973,6 +5797,61 @@
     {
       "owner": "Avalonia.Controls.Primitives.HeaderedItemsControl",
       "member": "HeaderPresenter",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.HeaderedSelectingItemsControl",
+      "member": "HeaderTemplate",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.HeaderedSelectingItemsControl",
+      "member": "HeaderPresenter",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.PopupFlyoutBase",
+      "member": "Popup",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.PopupFlyoutBase",
+      "member": "PlacementGravity",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.PopupFlyoutBase",
+      "member": "PlacementAnchor",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.PopupFlyoutBase",
+      "member": "CustomPopupPlacementCallback",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.PopupFlyoutBase",
+      "member": "OverlayInputPassThroughElement",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.PopupFlyoutBase",
+      "member": "PlacementConstraintAdjustment",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.PopupFlyoutBase",
+      "member": "ShowAt(Control)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.PopupFlyoutBase",
+      "member": "ShowAt(Control, Boolean)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.PopupFlyoutBase",
+      "member": "Hide()",
       "reason": "Not included by projection policy"
     },
     {
@@ -5153,6 +6032,26 @@
     {
       "owner": "Avalonia.Controls.Slider",
       "member": "Ticks",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.SplitView",
+      "member": "PaneTemplate",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.SplitView",
+      "member": "TemplateSettings",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.SplitView",
+      "member": "PaneClosing",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.SplitView",
+      "member": "PaneOpening",
       "reason": "Not included by projection policy"
     },
     {
@@ -5443,6 +6342,16 @@
     {
       "owner": "Avalonia.Controls.TextBox",
       "member": "SelectAll()",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TimePicker",
+      "member": "VerticalContentAlignment",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TimePicker",
+      "member": "SelectedTimeChanged",
       "reason": "Not included by projection policy"
     },
     {

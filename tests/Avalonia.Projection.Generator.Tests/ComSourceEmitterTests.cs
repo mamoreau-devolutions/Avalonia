@@ -49,6 +49,16 @@ public class ComSourceEmitterTests
         typeof(TreeView),
         typeof(TreeViewItem),
         typeof(ToolTip),
+        typeof(FlyoutBase),
+        typeof(PopupFlyoutBase),
+        typeof(Flyout),
+        typeof(MenuBase),
+        typeof(Menu),
+        typeof(HeaderedSelectingItemsControl),
+        typeof(MenuItem),
+        typeof(SplitView),
+        typeof(DatePicker),
+        typeof(TimePicker),
         typeof(TextBox),
         typeof(ScrollViewer),
         typeof(RangeBase),
@@ -328,6 +338,155 @@ public class ComSourceEmitterTests
             headered,
             StringComparison.Ordinal);
         Assert.Contains("int SetHeader(IAvnControl? value);", headered, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Emits_the_wave_b_flyout_trio_over_avalonia_object_rather_than_control()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+        var files = ComSourceEmitter.Emit(ir);
+
+        // A flyout is not a control, so the projected interface sits directly on
+        // IAvnAvaloniaObject and adds no slot to anything that already shipped.
+        var flyoutBase = files["IAvnFlyoutBase.g.cs"];
+        Assert.Contains(
+            "public partial interface IAvnFlyoutBase : IAvnAvaloniaObject",
+            flyoutBase,
+            StringComparison.Ordinal);
+        // ShowAt takes a control and unwraps it back to the Avalonia object; that method, not an
+        // attached property, is how a flyout reaches a control in this wave.
+        Assert.Contains(
+            "int ShowAtWithControl(IAvnControl placementTarget);",
+            flyoutBase,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "_value.ShowAt((global::Avalonia.Controls.Control)ProjectionRuntime.Unwrap(placementTarget)!);",
+            flyoutBase,
+            StringComparison.Ordinal);
+        Assert.Contains("int GetTarget(out IAvnControl? value);", flyoutBase, StringComparison.Ordinal);
+        Assert.DoesNotContain("int SetTarget(", flyoutBase, StringComparison.Ordinal);
+
+        // The sealed overrides on PopupFlyoutBase are inherited, not republished.
+        var popupFlyoutBase = files["IAvnPopupFlyoutBase.g.cs"];
+        Assert.Contains(
+            "public partial interface IAvnPopupFlyoutBase : IAvnFlyoutBase",
+            popupFlyoutBase,
+            StringComparison.Ordinal);
+        Assert.DoesNotContain(
+            "int ShowAtWithControl(IAvnControl placementTarget);",
+            popupFlyoutBase,
+            StringComparison.Ordinal);
+        Assert.Contains("int SetPlacement(int value);", popupFlyoutBase, StringComparison.Ordinal);
+
+        // Cancel is written back into the event args after the handler returns, exactly as
+        // Control.KeyDown writes Handled back.
+        var closingHandler = files["IAvnPopupFlyoutBaseClosingHandler.g.cs"];
+        Assert.Contains("int Invoke(ref int Cancel);", closingHandler, StringComparison.Ordinal);
+        Assert.Contains("eventArgs.Cancel = cancel != 0;", popupFlyoutBase, StringComparison.Ordinal);
+
+        var flyout = files["IAvnFlyout.g.cs"];
+        Assert.Contains(
+            "public partial interface IAvnFlyout : IAvnPopupFlyoutBase",
+            flyout,
+            StringComparison.Ordinal);
+        Assert.Contains("int SetContent(IAvnControl? value);", flyout, StringComparison.Ordinal);
+
+        // No statics interface is minted for a flyout: the attached-property pipeline carries
+        // scalars and strings only.
+        Assert.False(files.ContainsKey("IAvnFlyoutBaseStatics.g.cs"));
+        Assert.DoesNotContain("SetAttachedFlyout", files["IAvnControlFactory.g.cs"], StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Emits_the_wave_b_menu_pair_split_view_and_pickers()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+        var files = ComSourceEmitter.Emit(ir);
+
+        var menuBase = files["IAvnMenuBase.g.cs"];
+        Assert.Contains(
+            "public partial interface IAvnMenuBase : IAvnSelectingItemsControl",
+            menuBase,
+            StringComparison.Ordinal);
+        Assert.Contains("int Open();", menuBase, StringComparison.Ordinal);
+        Assert.Contains("int Close();", menuBase, StringComparison.Ordinal);
+        // The managed setter is protected, so the ABI publishes a getter only.
+        Assert.Contains("int GetIsOpen(out int value);", menuBase, StringComparison.Ordinal);
+        Assert.DoesNotContain("int SetIsOpen(int value);", menuBase, StringComparison.Ordinal);
+
+        // Menu inherits everything and declares nothing, so Open/Close occupy one slot each.
+        var menu = files["IAvnMenu.g.cs"];
+        Assert.Contains(
+            "public partial interface IAvnMenu : IAvnMenuBase\n{\n}",
+            menu.Replace("\r\n", "\n"),
+            StringComparison.Ordinal);
+
+        var menuItem = files["IAvnMenuItem.g.cs"];
+        Assert.Contains(
+            "public partial interface IAvnMenuItem : IAvnHeaderedSelectingItemsControl",
+            menuItem,
+            StringComparison.Ordinal);
+        Assert.Contains("int SetIcon(IAvnControl? value);", menuItem, StringComparison.Ordinal);
+        Assert.Contains("int SetToggleType(int value);", menuItem, StringComparison.Ordinal);
+        Assert.Contains(
+            "int AdviseClick(IAvnMenuItemClickHandler? handler",
+            menuItem,
+            StringComparison.Ordinal);
+        // An ICommand has no ABI shape, so no slot pretends to carry one.
+        Assert.DoesNotContain("SetCommand", menuItem, StringComparison.Ordinal);
+
+        var splitView = files["IAvnSplitView.g.cs"];
+        Assert.Contains(
+            "public partial interface IAvnSplitView : IAvnContentControl",
+            splitView,
+            StringComparison.Ordinal);
+        Assert.Contains("int SetPane(IAvnControl? value);", splitView, StringComparison.Ordinal);
+        Assert.Contains("int SetPaneBackground(IAvnBrush? value);", splitView, StringComparison.Ordinal);
+        Assert.Contains("int SetOpenPaneLength(double value);", splitView, StringComparison.Ordinal);
+
+        // A date crosses as an ISO-8601 string through a host-side converter; neither half of
+        // the conversion is left to the generator, and no date struct is minted.
+        var datePicker = files["IAvnDatePicker.g.cs"];
+        Assert.Contains("int GetSelectedDate(out string? value);", datePicker, StringComparison.Ordinal);
+        Assert.Contains(
+            "value = global::Avalonia.Host.Com.AvnDateTimeOffset.ToAbi(_value.SelectedDate);",
+            datePicker,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "_value.SelectedDate = global::Avalonia.Host.Com.AvnDateTimeOffset.FromAbi(value);",
+            datePicker,
+            StringComparison.Ordinal);
+        // MinYear has no absent state, so its slot is a non-nullable string on the other converter.
+        Assert.Contains("int SetMinYear(string value);", datePicker, StringComparison.Ordinal);
+        Assert.Contains(
+            "_value.MinYear = global::Avalonia.Host.Com.AvnDateTimeOffsetValue.FromAbi(value);",
+            datePicker,
+            StringComparison.Ordinal);
+        Assert.DoesNotContain("System.DateTimeOffset.Parse", datePicker, StringComparison.Ordinal);
+        Assert.False(files.ContainsKey("IAvnDateTimeOffset.g.cs"));
+
+        var timePicker = files["IAvnTimePicker.g.cs"];
+        Assert.Contains("int SetSelectedTime(string? value);", timePicker, StringComparison.Ordinal);
+        Assert.Contains(
+            "value = global::Avalonia.Host.Com.AvnTimeSpan.ToAbi(_value.SelectedTime);",
+            timePicker,
+            StringComparison.Ordinal);
+
+        var factory = files["IAvnControlFactory.g.cs"];
+        Assert.All(
+            new[]
+            {
+                "int CreateFlyout(out IAvnFlyout? value);",
+                "int CreateMenu(out IAvnMenu? value);",
+                "int CreateMenuItem(out IAvnMenuItem? value);",
+                "int CreateSplitView(out IAvnSplitView? value);",
+                "int CreateDatePicker(out IAvnDatePicker? value);",
+                "int CreateTimePicker(out IAvnTimePicker? value);",
+            },
+            expected => Assert.Contains(expected, factory, StringComparison.Ordinal));
+        // The abstract bases are reachable by query_interface only.
+        Assert.DoesNotContain("CreateFlyoutBase", factory, StringComparison.Ordinal);
+        Assert.DoesNotContain("CreateMenuBase", factory, StringComparison.Ordinal);
     }
 
     [Fact]

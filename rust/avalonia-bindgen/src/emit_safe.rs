@@ -494,12 +494,26 @@ fn emit_method(ty: &ProjectedType, method: &crate::ir::ProjectedMethod) -> Strin
     if ty.name == "IAvnWindow" && method.name == "Show" {
         return String::new();
     }
+    // A parameter typed as the root control interface accepts any projected control, the same
+    // way a control-valued property setter does. Anything more specific stays concrete, so
+    // `TreeView::expand_sub_tree` still demands a `TreeViewItem` rather than any control.
+    let is_any_control = |parameter: &crate::ir::ProjectedParameter| {
+        parameter.kind == "ComInterface"
+            && parameter
+                .interface_name
+                .as_deref()
+                .map(simple_name)
+                .map(interface_suffix)
+                == Some("Control")
+    };
     let arguments = method
         .parameters
         .iter()
         .map(|parameter| {
             let parameter_name = to_snake(&parameter.name);
-            if parameter.kind == "ComInterface" {
+            if is_any_control(parameter) {
+                format!("{parameter_name}: &impl AsControl")
+            } else if parameter.kind == "ComInterface" {
                 let safe = interface_suffix(simple_name(
                     parameter.interface_name.as_deref().expect("interfaceName"),
                 ));
@@ -512,12 +526,23 @@ fn emit_method(ty: &ProjectedType, method: &crate::ir::ProjectedMethod) -> Strin
         })
         .collect::<Vec<_>>()
         .join(", ");
+    let setup = method
+        .parameters
+        .iter()
+        .filter(|parameter| is_any_control(parameter))
+        .map(|parameter| {
+            let parameter_name = to_snake(&parameter.name);
+            format!("        let {parameter_name} = {parameter_name}.as_control()?;\n")
+        })
+        .collect::<String>();
     let call_arguments = method
         .parameters
         .iter()
         .map(|parameter| {
             let parameter_name = to_snake(&parameter.name);
-            if parameter.kind == "ComInterface" {
+            if is_any_control(parameter) {
+                format!("&{parameter_name}")
+            } else if parameter.kind == "ComInterface" {
                 format!("&{parameter_name}.raw")
             } else if geometry::is_geometry(&parameter.kind) {
                 format!("{parameter_name}.into()")
@@ -528,8 +553,15 @@ fn emit_method(ty: &ProjectedType, method: &crate::ir::ProjectedMethod) -> Strin
         .collect::<Vec<_>>()
         .join(", ");
     let separator = if arguments.is_empty() { "" } else { ", " };
+    if setup.is_empty() {
+        return format!(
+            "    pub fn {name}(&self{separator}{arguments}) -> Result<()> {{ Ok(self.raw.{name}({call_arguments})?) }}\n"
+        );
+    }
     format!(
-        "    pub fn {name}(&self{separator}{arguments}) -> Result<()> {{ Ok(self.raw.{name}({call_arguments})?) }}\n"
+        "    pub fn {name}(&self{separator}{arguments}) -> Result<()> {{\n\
+         {setup}        Ok(self.raw.{name}({call_arguments})?)\n\
+         \x20   }}\n"
     )
 }
 

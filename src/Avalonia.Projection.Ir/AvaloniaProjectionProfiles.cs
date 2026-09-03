@@ -4,10 +4,9 @@ public static class AvaloniaProjectionProfiles
 {
     public static ProjectionPolicy ObjectModelKernel { get; } = new()
     {
-        // Wave A adds seven brand-new interfaces (Image, the tab pair, the tree pair,
-        // HeaderedItemsControl and ToolTip) and widens no existing one, so every previously
-        // published interface keeps the IID it last shipped and the new ones publish at
-        // version 1. The default is therefore 1 and every older interface is pinned to the
+        // Waves A and B both add brand-new interfaces and widen no existing one, so every
+        // previously published interface keeps the IID it last shipped and the new ones publish
+        // at version 1. The default is therefore 1 and every older interface is pinned to the
         // version whose flattened vtable it still matches.
         DefaultProjectedTypeAbiVersion = 1,
         AbiVersions = new Dictionary<string, int>(StringComparer.Ordinal)
@@ -54,9 +53,12 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnScrollViewer"] = 5,
             ["Avalonia.Host.Com.IAvnWindow"] = 5,
             ["Avalonia.Host.Com.IAvnGrid"] = 5,
-            // The factory grew a creator per new control plus GetToolTipStatics, so its vtable
-            // moved and it republishes at version 3.
-            ["Avalonia.Host.Com.IAvnControlFactory"] = 3,
+            // Wave A's seven new interfaces publish at the default version 1 and nothing they
+            // sit under moved, so they need no entry here. Wave B's ten do the same.
+            // The factory is the only interface either wave moves: wave A gave it a creator per
+            // new control plus GetToolTipStatics (2 → 3) and wave B gives it seven more, one
+            // per constructible wave B type, so it republishes at version 4.
+            ["Avalonia.Host.Com.IAvnControlFactory"] = 4,
         },
         IncludeTypeNames =
         [
@@ -68,6 +70,7 @@ public static class AvaloniaProjectionProfiles
             "Avalonia.Controls.ItemsControl",
             "Avalonia.Controls.Primitives.HeaderedItemsControl",
             "Avalonia.Controls.Primitives.SelectingItemsControl",
+            "Avalonia.Controls.Primitives.HeaderedSelectingItemsControl",
             "Avalonia.Controls.Decorator",
             "Avalonia.Controls.Border",
             "Avalonia.Controls.Panel",
@@ -94,6 +97,17 @@ public static class AvaloniaProjectionProfiles
             "Avalonia.Controls.TreeView",
             "Avalonia.Controls.TreeViewItem",
             "Avalonia.Controls.ToolTip",
+            // Wave B. A flyout is an AvaloniaObject rather than a Control, so IAvnFlyoutBase
+            // hangs directly off IAvnAvaloniaObject and nothing existing moves.
+            "Avalonia.Controls.Primitives.FlyoutBase",
+            "Avalonia.Controls.Primitives.PopupFlyoutBase",
+            "Avalonia.Controls.Flyout",
+            "Avalonia.Controls.MenuBase",
+            "Avalonia.Controls.Menu",
+            "Avalonia.Controls.MenuItem",
+            "Avalonia.Controls.SplitView",
+            "Avalonia.Controls.DatePicker",
+            "Avalonia.Controls.TimePicker",
             "Avalonia.Controls.TextBox",
             "Avalonia.Controls.ScrollViewer",
             "Avalonia.Controls.Primitives.RangeBase",
@@ -117,6 +131,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.Primitives.HeaderedItemsControl"] = ["Header"],
             ["Avalonia.Controls.Primitives.SelectingItemsControl"] =
                 ["SelectedIndex", "SelectionChanged"],
+            ["Avalonia.Controls.Primitives.HeaderedSelectingItemsControl"] = ["Header"],
             ["Avalonia.Controls.Decorator"] = ["Child", "Padding"],
             ["Avalonia.Controls.Border"] =
                 ["Background", "BorderBrush", "BorderThickness", "CornerRadius", "BackgroundSizing"],
@@ -165,6 +180,50 @@ public static class AvaloniaProjectionProfiles
             // ToolTip is projected for its attached properties; as a control it adds nothing
             // over ContentControl.
             ["Avalonia.Controls.ToolTip"] = [],
+            // A flyout is shown imperatively: there is no attached-property pipeline for a
+            // COM-valued property, so ShowAt/Hide are how a flyout reaches a control.
+            ["Avalonia.Controls.Primitives.FlyoutBase"] =
+                ["IsOpen", "Target", "ShowAt", "Hide", "Opened", "Closed"],
+            // PopupFlyoutBase re-declares ShowAt/Hide as sealed overrides; they are inherited
+            // from IAvnFlyoutBase rather than published twice. PlacementAnchor,
+            // PlacementGravity and PlacementConstraintAdjustment are [Flags] enums whose
+            // combined values have no name, so they stay out.
+            ["Avalonia.Controls.Primitives.PopupFlyoutBase"] =
+            [
+                "Placement", "ShowMode", "HorizontalOffset", "VerticalOffset",
+                "OverlayDismissEventPassThrough", "Opening", "Closing",
+            ],
+            ["Avalonia.Controls.Flyout"] = ["Content"],
+            // Menu is imperative, unlike the view-model NativeMenu: MenuBase owns the open
+            // state and Menu inherits it, declaring nothing of its own.
+            ["Avalonia.Controls.MenuBase"] = ["IsOpen", "Open", "Close", "Opened", "Closed"],
+            ["Avalonia.Controls.Menu"] = [],
+            // Command and CommandParameter are an ICommand and an object; HotKey and
+            // InputGesture are KeyGestures. All four stay in the gap report. Click is the
+            // imperative equivalent and it does cross.
+            ["Avalonia.Controls.MenuItem"] =
+            [
+                "Icon", "IsSelected", "IsSubMenuOpen", "StaysOpenOnClick", "ToggleType",
+                "IsChecked", "GroupName", "Click", "SubmenuOpened",
+            ],
+            ["Avalonia.Controls.SplitView"] =
+            [
+                "IsPaneOpen", "DisplayMode", "PanePlacement", "OpenPaneLength",
+                "CompactPaneLength", "Pane", "PaneBackground", "UseLightDismissOverlayMode",
+                "PaneOpened", "PaneClosed",
+            ],
+            // SelectedDateChanged carries DateTimeOffset? fields and event payloads have no
+            // converter hook, so it is a gap; the date properties themselves do cross.
+            ["Avalonia.Controls.DatePicker"] =
+            [
+                "SelectedDate", "MinYear", "MaxYear", "DayVisible", "MonthVisible",
+                "YearVisible", "DayFormat", "MonthFormat", "YearFormat", "Clear",
+            ],
+            ["Avalonia.Controls.TimePicker"] =
+            [
+                "SelectedTime", "MinuteIncrement", "SecondIncrement", "ClockIdentifier",
+                "UseSeconds", "Clear",
+            ],
             ["Avalonia.Controls.Primitives.TemplatedControl"] =
             [
                 "Background", "BorderBrush", "BorderThickness", "CornerRadius", "FontSize",
@@ -256,6 +315,63 @@ public static class AvaloniaProjectionProfiles
                 InterfaceName = "Avalonia.Host.Com.IAvnControl",
                 IsNullable = true,
             },
+            ["Avalonia.Controls.Primitives.HeaderedSelectingItemsControl.Header"] = new()
+            {
+                Kind = MarshallingKind.ComInterface,
+                InterfaceName = "Avalonia.Host.Com.IAvnControl",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.Flyout.Content"] = new()
+            {
+                Kind = MarshallingKind.ComInterface,
+                InterfaceName = "Avalonia.Host.Com.IAvnControl",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.MenuItem.Icon"] = new()
+            {
+                Kind = MarshallingKind.ComInterface,
+                InterfaceName = "Avalonia.Host.Com.IAvnControl",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.SplitView.Pane"] = new()
+            {
+                Kind = MarshallingKind.ComInterface,
+                InterfaceName = "Avalonia.Host.Com.IAvnControl",
+                IsNullable = true,
+            },
+            // The projection has no date/time ABI shape, so a date crosses as an ISO-8601
+            // string through a host-side converter, the same mechanism Image.Source uses. The
+            // wire form is the invariant round-trip "o" format; reading always produces it and
+            // writing accepts any spelling the invariant parser takes, including a bare
+            // yyyy-MM-dd. A null or empty string clears SelectedDate.
+            ["Avalonia.Controls.DatePicker.SelectedDate"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                StringConverterTypeName = "Avalonia.Host.Com.AvnDateTimeOffset",
+                IsNullable = true,
+            },
+            // MinYear/MaxYear have no absent state, so they take the non-nullable converter:
+            // clearing one fails the call rather than silently meaning "today".
+            ["Avalonia.Controls.DatePicker.MinYear"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                StringConverterTypeName = "Avalonia.Host.Com.AvnDateTimeOffsetValue",
+                IsNullable = false,
+            },
+            ["Avalonia.Controls.DatePicker.MaxYear"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                StringConverterTypeName = "Avalonia.Host.Com.AvnDateTimeOffsetValue",
+                IsNullable = false,
+            },
+            // A TimePicker selection is a time of day, not a duration, so it crosses as
+            // ISO-8601 HH:mm:ss rather than as an ISO-8601 PnDTnHnMnS duration.
+            ["Avalonia.Controls.TimePicker.SelectedTime"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                StringConverterTypeName = "Avalonia.Host.Com.AvnTimeSpan",
+                IsNullable = true,
+            },
             // Image.Source is an IImage, which is a managed interface with no ABI shape. It
             // crosses as the *source string* the host resolves into a bitmap: an absolute or
             // relative file path, or a file://, avares:// or resm: URI. The host remembers which
@@ -325,6 +441,49 @@ public static class AvaloniaProjectionProfiles
                 PayloadKind = EventPayloadKind.None,
             },
             ["Avalonia.Controls.TreeViewItem.Collapsed"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.Primitives.FlyoutBase.Opened"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.Primitives.FlyoutBase.Closed"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.Primitives.PopupFlyoutBase.Opening"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            // Closing is the one wave B event with a payload: the handler may veto the close
+            // by writing back Cancel, exactly as Control.KeyDown writes back Handled.
+            ["Avalonia.Controls.Primitives.PopupFlyoutBase.Closing"] = new()
+            {
+                PayloadKind = EventPayloadKind.Fields,
+                Parameters = [new() { Name = "Cancel", Direction = ParameterDirection.InOut }],
+            },
+            ["Avalonia.Controls.MenuBase.Opened"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.MenuBase.Closed"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.MenuItem.Click"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.MenuItem.SubmenuOpened"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.SplitView.PaneOpened"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.SplitView.PaneClosed"] = new()
             {
                 PayloadKind = EventPayloadKind.None,
             },

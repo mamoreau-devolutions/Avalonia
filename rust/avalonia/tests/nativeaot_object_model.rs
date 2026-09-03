@@ -1,10 +1,11 @@
 use avalonia::{
-    App, Border, Brush, Button, ClickMode, Color, ComboBox, ComboBoxItem, CornerRadius, Dock,
-    DockPanel, ExpandDirection, Expander, FontWeight, Grid, HorizontalAlignment, Image, ListBox,
-    ListBoxItem, Orientation, PlacementMode, ProgressBar, RadioButton, ScrollViewer, SelectionMode,
-    StackPanel, Stretch, StretchDirection, TabControl, TabItem, TextAlignment, TextBlock, TextBox,
-    ThemeVariant, Thickness, ToggleSwitch, ToolTip, TreeView, TreeViewItem, VerticalAlignment,
-    Window, WindowState,
+    App, Border, Brush, Button, ClickMode, Color, ComboBox, ComboBoxItem, CornerRadius, DatePicker,
+    Dock, DockPanel, ExpandDirection, Expander, Flyout, FlyoutShowMode, FontWeight, Grid,
+    HorizontalAlignment, Image, ListBox, ListBoxItem, Menu, MenuItem, MenuItemToggleType,
+    Orientation, PlacementMode, ProgressBar, RadioButton, ScrollViewer, SelectionMode, SplitView,
+    SplitViewDisplayMode, SplitViewPanePlacement, StackPanel, Stretch, StretchDirection,
+    TabControl, TabItem, TextAlignment, TextBlock, TextBox, ThemeVariant, Thickness, TimePicker,
+    ToggleSwitch, ToolTip, TreeView, TreeViewItem, VerticalAlignment, Window, WindowState,
 };
 use std::future::Future;
 use std::path::PathBuf;
@@ -98,6 +99,8 @@ fn builders_create_a_real_window_through_nativeaot() {
     let list_changed_from_handler = list_changed.clone();
     let tree_collapsed = Arc::new(AtomicBool::new(false));
     let tree_collapsed_from_handler = tree_collapsed.clone();
+    let menu_opened = Arc::new(AtomicBool::new(false));
+    let menu_opened_from_handler = menu_opened.clone();
     let app = App::load(host_path()).unwrap();
 
     app.run(move |scope| {
@@ -400,6 +403,116 @@ fn builders_create_a_real_window_through_nativeaot() {
         assert!(!branch.get_is_expanded()?);
         tree.unselect_all()?;
 
+        // Wave B. A Menu is an imperative ItemsControl, not the view-model NativeMenu: it opens
+        // and closes through methods and its items are real controls.
+        let save_item = MenuItem::new()?
+            .header(TextBlock::new()?.text("Save")?)?
+            .icon(Image::new()?)?
+            .toggle_type(MenuItemToggleType::CheckBox)?
+            .checked(true)?
+            .group_name("edits")?;
+        assert!(save_item.get_is_checked()?);
+        assert_eq!(save_item.get_toggle_type()?, MenuItemToggleType::CheckBox);
+        assert_eq!(save_item.get_group_name()?.as_deref(), Some("edits"));
+        save_item.subscribe_click(|_| {})?.unsubscribe()?;
+        let file_menu_item = MenuItem::new()?
+            .header(TextBlock::new()?.text("File")?)?
+            .item(save_item)?;
+        assert_eq!(file_menu_item.items()?.len()?, 1);
+
+        let menu = Menu::new()?.item(file_menu_item)?;
+        assert!(!menu.is_open()?);
+        let menu = menu.on_opened(scope, move |_| {
+            menu_opened_from_handler.store(true, Ordering::SeqCst);
+        })?;
+        menu.subscribe_closed(|_| {})?.unsubscribe()?;
+        menu.open()?;
+        assert!(menu.is_open()?);
+        menu.close()?;
+        assert!(!menu.is_open()?);
+
+        // A flyout is an AvaloniaObject rather than a Control, so it is not a child of anything;
+        // it reaches a control through show_at instead of through an attached property.
+        let flyout = Flyout::new()?
+            .content(TextBlock::new()?.text("Flyout body")?)?
+            .placement(PlacementMode::BottomEdgeAlignedLeft)?
+            .show_mode(FlyoutShowMode::Transient)?
+            .horizontal_offset(6.0)?;
+        assert_eq!(
+            flyout.get_placement()?,
+            PlacementMode::BottomEdgeAlignedLeft
+        );
+        assert_eq!(flyout.get_show_mode()?, FlyoutShowMode::Transient);
+        assert!(!flyout.get_is_open()?);
+        assert!(flyout.target()?.is_none());
+        flyout.subscribe_opened(|_| {})?.unsubscribe()?;
+        flyout
+            .subscribe_closing(|arguments| arguments.cancel = false)?
+            .unsubscribe()?;
+        // Hiding a flyout that was never shown is a no-op rather than an error.
+        flyout.hide()?;
+
+        let split_view = SplitView::new()?
+            .display_mode(SplitViewDisplayMode::CompactOverlay)?
+            .pane_placement(SplitViewPanePlacement::Left)?
+            .open_pane_length(220.0)?
+            .compact_pane_length(48.0)?
+            .pane(StackPanel::new()?.child(TextBlock::new()?.text("Pane")?)?)?
+            .pane_background(Brush::solid(Color::rgb(0x22, 0x22, 0x22)))?
+            .content(TextBlock::new()?.text("Body")?)?;
+        split_view.subscribe_pane_opened(|_| {})?.unsubscribe()?;
+        split_view.set_pane_open(true)?;
+        assert!(split_view.get_is_pane_open()?);
+        assert_eq!(
+            split_view.get_display_mode()?,
+            SplitViewDisplayMode::CompactOverlay
+        );
+        assert_eq!(split_view.get_open_pane_length()?, 220.0);
+        assert!(split_view.get_pane()?.is_some());
+        assert_eq!(
+            split_view.get_pane_background()?,
+            Some(Brush::solid(Color::rgb(0x22, 0x22, 0x22)))
+        );
+
+        // A DateTimeOffset has no ABI shape here, so a date crosses as ISO-8601 text. Writing
+        // accepts a bare yyyy-MM-dd; reading always produces the round-trip "o" form, so the
+        // getter is not the string that was written.
+        let date_picker = DatePicker::new()?
+            .min_year("2000-01-01T00:00:00.0000000+00:00")?
+            .max_year("2100-12-31T00:00:00.0000000+00:00")?
+            .selected_date("2027-01-15T08:30:00.0000000+02:00")?
+            .month_format("MMMM")?;
+        assert_eq!(
+            date_picker.get_selected_date()?.as_deref(),
+            Some("2027-01-15T08:30:00.0000000+02:00")
+        );
+        assert_eq!(
+            date_picker.get_min_year()?,
+            "2000-01-01T00:00:00.0000000+00:00"
+        );
+        // A locale spelling is ambiguous, so it fails the call rather than being guessed at.
+        assert!(date_picker.set_selected_date("03/09/2026").is_err());
+        // Clearing the selection is a first-class state; MinYear has no such state.
+        date_picker.set_selected_date("")?;
+        assert_eq!(date_picker.get_selected_date()?, None);
+        assert!(date_picker.set_min_year("").is_err());
+        date_picker.clear()?;
+
+        // A TimePicker selection is a time of day, so it crosses as ISO-8601 HH:mm:ss rather
+        // than as an ISO-8601 duration.
+        let time_picker = TimePicker::new()?
+            .minute_increment(15)?
+            .clock_identifier("24HourClock")?
+            .selected_time("17:04")?;
+        assert_eq!(
+            time_picker.get_selected_time()?.as_deref(),
+            Some("17:04:00")
+        );
+        assert!(time_picker.set_selected_time("PT8H15M").is_err());
+        time_picker.set_selected_time("")?;
+        assert_eq!(time_picker.get_selected_time()?, None);
+        time_picker.clear()?;
+
         let panel = StackPanel::new()?
             .orientation(Orientation::Vertical)?
             .spacing(8.0)?
@@ -418,8 +531,12 @@ fn builders_create_a_real_window_through_nativeaot() {
             .child(image)?
             .child(tabs)?
             .child(tree)?
+            .child(menu)?
+            .child(split_view)?
+            .child(date_picker)?
+            .child(time_picker)?
             .child(button)?;
-        assert_eq!(panel.children()?.len()?, 15);
+        assert_eq!(panel.children()?.len()?, 19);
         assert_eq!(panel.get_orientation()?, Orientation::Vertical);
         assert_eq!(panel.get_spacing()?, 8.0);
         assert_eq!(
@@ -483,4 +600,5 @@ fn builders_create_a_real_window_through_nativeaot() {
     assert!(combo_changed.load(Ordering::SeqCst));
     assert!(list_changed.load(Ordering::SeqCst));
     assert!(tree_collapsed.load(Ordering::SeqCst));
+    assert!(menu_opened.load(Ordering::SeqCst));
 }

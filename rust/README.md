@@ -29,6 +29,14 @@ back the string the ABI set, or `null` for an image the ABI never set; see
 [Image sources](MARSHALLING.md#image-sources). `ToolTip::set_tip` carries text
 only; a control-valued tip reads back as `null`. See
 [ToolTip](MARSHALLING.md#tooltip) and [Tabs and trees](MARSHALLING.md#tabs-and-trees).
+`Flyout`, the imperative `Menu`/`MenuItem` pair, `SplitView`, `DatePicker` and
+`TimePicker` are projected too. A flyout is an `AvaloniaObject` rather than a
+`Control`, and it reaches a control through `flyout.show_at_with_control(&button)?`
+rather than through an attached property — a COM-valued attached property has no
+ABI shape yet. `SelectedDate` and `SelectedTime` cross as **ISO-8601 strings**;
+`MenuItem.Command`, `HotKey` and `InputGesture` do not cross at all. See
+[Flyouts](MARSHALLING.md#flyouts), [Menus as controls](MARSHALLING.md#menus-as-controls),
+[SplitView](MARSHALLING.md#splitview) and [Dates and times](MARSHALLING.md#dates-and-times).
 The executor-neutral completion ABI and clipboard integration are documented
 in [ASYNC.md](ASYNC.md).
 Desktop file integration (pickers, drag/drop, "open with", file associations)

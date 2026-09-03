@@ -56,8 +56,9 @@ fn only_grid_moved_to_abi_version_five_for_the_definitions() {
         "#define I_AVN_CONTROL_ABI_VERSION 3",
         "#define I_AVN_AVALONIA_OBJECT_ABI_VERSION 2",
         // The factory mints no definition object, but wave A gave it a creator per new control
-        // and get_tool_tip_statics, so it now publishes at version 3.
-        "#define I_AVN_CONTROL_FACTORY_ABI_VERSION 3",
+        // and get_tool_tip_statics and wave B gave it seven more, so it now publishes at
+        // version 4.
+        "#define I_AVN_CONTROL_FACTORY_ABI_VERSION 4",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
     }
