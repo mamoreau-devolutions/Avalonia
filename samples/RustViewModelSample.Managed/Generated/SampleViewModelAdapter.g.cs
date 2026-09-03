@@ -79,13 +79,13 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         LogWindow.SetSource(rangeSource);
         LogWindow.SetPeerResolver(ResolveWindow);
         IncrementCommand = new DelegateCommand(parameter => Check(_model.Execute(1, null)));
-        AddCommand = new DelegateCommand(parameter => Check(_model.Execute(2, NewItem)));
+        AddCommand = new DelegateCommand(parameter => Check(_model.Execute(2, CommandArgumentOrFallback(parameter, NewItem))));
         SaveCommand = new DelegateCommand(parameter => _saveOperation = RustAsyncCommands.Begin(_model, _tracked, 3, null));
         CancelSaveCommand = new DelegateCommand(_ => RustAsyncCommands.Cancel(_tracked, 3, _saveOperation));
         CancelSaveCommand.SetEnabledCore(false);
         ClearNicknameCommand = new DelegateCommand(parameter => Check(_model.Execute(4, null)));
         ToggleAddressCommand = new DelegateCommand(parameter => Check(_model.Execute(5, null)));
-        AddTaskCommand = new DelegateCommand(parameter => Check(_model.Execute(6, NewTaskTitle)));
+        AddTaskCommand = new DelegateCommand(parameter => Check(_model.Execute(6, CommandArgumentOrFallback(parameter, NewTaskTitle))));
         RemoveFirstTaskCommand = new DelegateCommand(parameter => Check(_model.Execute(7, null)));
         ShuffleTasksCommand = new DelegateCommand(parameter => Check(_model.Execute(8, null)));
         ClearTasksCommand = new DelegateCommand(parameter => Check(_model.Execute(9, null)));
@@ -1166,6 +1166,19 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     /// batch notification triggers this re-entrantly, the gate defers the cleanup
     /// until the batch's commit and notifications have finished.
     /// </summary>
+    private static string CommandArgumentOrFallback(object? parameter, string fallback)
+    {
+        if (parameter is null)
+            return fallback;
+        return parameter switch
+        {
+            string text => text,
+            bool flag => flag ? "true" : "false",
+            IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture) ?? fallback,
+            _ => parameter.ToString() ?? fallback,
+        };
+    }
+
     public void Dispose() => _batch.Dispose(DisposeCore);
 
     private void DisposeCore()

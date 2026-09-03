@@ -498,6 +498,22 @@ public static class ViewModelSourceEmitter
         sb.AppendLine("    /// batch notification triggers this re-entrantly, the gate defers the cleanup");
         sb.AppendLine("    /// until the batch's commit and notifications have finished.");
         sb.AppendLine("    /// </summary>");
+        if (model.Commands.Any(command => command.ParameterProperty is not null))
+        {
+            sb.AppendLine("    private static string CommandArgumentOrFallback(object? parameter, string fallback)");
+            sb.AppendLine("    {");
+            sb.AppendLine("        if (parameter is null)");
+            sb.AppendLine("            return fallback;");
+            sb.AppendLine("        return parameter switch");
+            sb.AppendLine("        {");
+            sb.AppendLine("            string text => text,");
+            sb.AppendLine("            bool flag => flag ? \"true\" : \"false\",");
+            sb.AppendLine("            IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture) ?? fallback,");
+            sb.AppendLine("            _ => parameter.ToString() ?? fallback,");
+            sb.AppendLine("        };");
+            sb.AppendLine("    }");
+            sb.AppendLine();
+        }
         sb.AppendLine("    public void Dispose() => _batch.Dispose(DisposeCore);");
         sb.AppendLine();
         if (model.ThemeVariantProperty is { } themeName)
@@ -2561,7 +2577,7 @@ public static class ViewModelSourceEmitter
         if (command.ParameterProperty is { } name)
         {
             var kind = model.Properties.Single(property => property.Name == name).Kind;
-            return kind switch
+            var fallback = kind switch
             {
                 ViewModelValueKind.String => name,
                 ViewModelValueKind.Integer => $"{name}.ToString(CultureInfo.InvariantCulture)",
@@ -2569,6 +2585,10 @@ public static class ViewModelSourceEmitter
                 ViewModelValueKind.Boolean => $"{name} ? \"true\" : \"false\"",
                 _ => throw new InvalidOperationException($"Command '{model.Name}.{command.Name}' has an unsupported parameter kind '{kind}'."),
             };
+            // A non-null CommandParameter (row button, menu item) wins over the
+            // model property so Pin/Kill on a row bind {Binding Pid} instead of
+            // the selected row. The Execute vtable is still one UTF-16 string.
+            return $"CommandArgumentOrFallback(parameter, {fallback})";
         }
 
         return AcceptsCommandParameter(model, command) ? "parameter as string" : "null";
