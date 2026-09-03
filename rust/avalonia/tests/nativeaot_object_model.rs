@@ -1,8 +1,9 @@
 use avalonia::{
-    App, Border, Brush, Button, Color, ComboBox, ComboBoxItem, CornerRadius, Dock, DockPanel,
-    ExpandDirection, Expander, FontWeight, Grid, HorizontalAlignment, ListBox, ListBoxItem,
-    Orientation, ProgressBar, RadioButton, ScrollViewer, StackPanel, TextAlignment, TextBlock,
-    TextBox, ThemeVariant, Thickness, ToggleSwitch, VerticalAlignment, Window, WindowState,
+    App, Border, Brush, Button, ClickMode, Color, ComboBox, ComboBoxItem, CornerRadius, Dock,
+    DockPanel, ExpandDirection, Expander, FontWeight, Grid, HorizontalAlignment, ListBox,
+    ListBoxItem, Orientation, ProgressBar, RadioButton, ScrollViewer, SelectionMode, StackPanel,
+    TextAlignment, TextBlock, TextBox, ThemeVariant, Thickness, ToggleSwitch, VerticalAlignment,
+    Window, WindowState,
 };
 use std::future::Future;
 use std::path::PathBuf;
@@ -103,8 +104,26 @@ fn builders_create_a_real_window_through_nativeaot() {
             .foreground(Brush::solid(Color::rgb(0xFF, 0xFF, 0xFF)))?
             .border_thickness(Thickness::uniform(1.0))?
             .corner_radius(CornerRadius::uniform(3.0))?
-            .font_size(14.0)?;
+            .font_size(14.0)?
+            .click_mode(ClickMode::Press)?
+            .default(true)?
+            .cancel(false)?
+            .horizontal_content_alignment(HorizontalAlignment::Center)?
+            .vertical_content_alignment(VerticalAlignment::Center)?;
         assert_eq!(button.get_font_size()?, 14.0);
+        assert_eq!(button.get_click_mode()?, ClickMode::Press);
+        assert!(button.get_is_default()?);
+        assert!(!button.get_is_cancel()?);
+        // IsPressed is raised by Avalonia's input handling, so it reads back but never sets.
+        assert!(!button.is_pressed()?);
+        assert_eq!(
+            button.get_horizontal_content_alignment()?,
+            HorizontalAlignment::Center
+        );
+        assert_eq!(
+            button.get_vertical_content_alignment()?,
+            VerticalAlignment::Center
+        );
         assert_eq!(
             button.get_background()?,
             Some(Brush::solid(Color::rgb(0x00, 0x7A, 0xCC)))
@@ -130,9 +149,11 @@ fn builders_create_a_real_window_through_nativeaot() {
             .on_content(TextBlock::new()?.text("On")?)?
             .off_content(TextBlock::new()?.text("Off")?)?
             .checked(Some(true))?
+            .three_state(true)?
             .on_is_checked_changed(scope, move |_| {
                 toggle_changed_from_handler.store(true, Ordering::SeqCst);
             })?;
+        assert!(toggle.get_is_three_state()?);
         let toggle_for_post = toggle.clone();
 
         let radio_one = RadioButton::new()?
@@ -157,21 +178,27 @@ fn builders_create_a_real_window_through_nativeaot() {
 
         let combo_box = ComboBox::new()?
             .placeholder_text("Pick")?
+            .max_drop_down_height(240.0)?
             .item(ComboBoxItem::new()?.content(TextBlock::new()?.text("First")?)?)?
             .item(ComboBoxItem::new()?.content(TextBlock::new()?.text("Second")?)?)?
             .on_selection_changed(scope, move |_| {
                 combo_changed_from_handler.store(true, Ordering::SeqCst);
             })?;
         assert_eq!(combo_box.items()?.len()?, 2);
+        assert!(!combo_box.get_is_editable()?);
+        assert!(!combo_box.get_is_drop_down_open()?);
+        assert_eq!(combo_box.get_max_drop_down_height()?, 240.0);
         let combo_box_for_post = combo_box.clone();
 
         let list_box = ListBox::new()?
+            .selection_mode(SelectionMode::Multiple)?
             .item(ListBoxItem::new()?.content(TextBlock::new()?.text("First")?)?)?
             .item(ListBoxItem::new()?.content(TextBlock::new()?.text("Second")?)?)?
             .on_selection_changed(scope, move |_| {
                 list_changed_from_handler.store(true, Ordering::SeqCst);
             })?;
         assert_eq!(list_box.items()?.len()?, 2);
+        assert_eq!(list_box.get_selection_mode()?, SelectionMode::Multiple);
         let list_box_for_post = list_box.clone();
 
         let hover_panel = Border::new()?.child(TextBlock::new()?.text("Hover")?)?;
@@ -313,8 +340,14 @@ fn builders_create_a_real_window_through_nativeaot() {
                     assert_eq!(radio_two_for_post.get_is_checked().unwrap(), Some(true));
                     combo_box_for_post.set_selected_index(1).unwrap();
                     assert_eq!(combo_box_for_post.get_selected_index().unwrap(), 1);
+                    // An editable ComboBox rewrites its text from the selection, so flip it
+                    // after the selection assertions rather than in the builder chain.
+                    combo_box_for_post.set_editable(true).unwrap();
+                    assert!(combo_box_for_post.get_is_editable().unwrap());
                     list_box_for_post.set_selected_index(1).unwrap();
                     assert_eq!(list_box_for_post.get_selected_index().unwrap(), 1);
+                    list_box_for_post.select_all().unwrap();
+                    list_box_for_post.unselect_all().unwrap();
                     posted_from_handler.store(true, Ordering::SeqCst);
                     window.close().unwrap();
                 })

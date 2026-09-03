@@ -55,7 +55,7 @@ public class ClrTypeExtractorTests
 
         var contentControl = Type(ir, "IAvnContentControl");
         Assert.Equal("Avalonia.Host.Com.IAvnTemplatedControl", contentControl.BaseFullName);
-        var content = Assert.Single(contentControl.Properties);
+        var content = contentControl.Properties.Single(p => p.Name == nameof(ContentControl.Content));
         Assert.Equal(MarshallingKind.ComInterface, content.Kind);
         Assert.Equal("Avalonia.Host.Com.IAvnControl", content.InterfaceName);
         Assert.True(content.IsNullable);
@@ -86,7 +86,8 @@ public class ClrTypeExtractorTests
         Assert.Equal(EventPayloadKind.None, click.PayloadKind);
         Assert.False(string.IsNullOrWhiteSpace(click.HandlerInterfaceIid));
 
-        var isChecked = Type(ir, "IAvnToggleButton").Properties.Single();
+        var isChecked = Type(ir, "IAvnToggleButton").Properties
+            .Single(property => property.Name == nameof(ToggleButton.IsChecked));
         Assert.Equal(MarshallingKind.NullableBool, isChecked.Kind);
 
         var controlEvents = Type(ir, "IAvnControl").Events;
@@ -184,8 +185,9 @@ public class ClrTypeExtractorTests
             ClrTypeExtractor.CreateDeterministicIid(avaloniaObject.FullName, 2),
             avaloniaObject.Iid);
 
-        // StyledElement, Control and Decorator gained nothing in the chrome wave and neither
-        // did any of their bases, so their flattened vtables still match version 3 exactly.
+        // StyledElement, Control and Decorator have gained nothing since the layout wave and
+        // neither has any of their bases, so their flattened vtables still match version 3
+        // exactly.
         Assert.All(
             new[] { "IAvnStyledElement", "IAvnControl", "IAvnDecorator" },
             name =>
@@ -199,32 +201,71 @@ public class ClrTypeExtractorTests
     }
 
     [Fact]
-    public void Chrome_members_bump_the_abi_version_of_every_widened_interface()
+    public void Chrome_members_keep_the_abi_version_of_the_interfaces_they_widened()
     {
         var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
-        string[] unmoved =
-            ["IAvnAvaloniaObject", "IAvnStyledElement", "IAvnControl", "IAvnDecorator"];
 
-        // Border, Panel, TemplatedControl and TextBlock all grew slots, so they and every
-        // interface below them republish under a version 4 IID.
+        // Border, Panel, TemplatedControl and TextBlock grew slots in the chrome wave and
+        // nothing since has moved them or anything above them, so they and the interfaces that
+        // derive from them without gaining anything stay on their version 4 IIDs.
         Assert.All(
-            ir.Types.Where(type => !unmoved.Contains(type.Name)),
-            type =>
+            new[]
             {
+                "IAvnBorder", "IAvnPanel", "IAvnCanvas", "IAvnDockPanel", "IAvnGrid",
+                "IAvnStackPanel", "IAvnTextBlock", "IAvnTemplatedControl", "IAvnItemsControl",
+                "IAvnSelectingItemsControl", "IAvnTextBox", "IAvnRangeBase", "IAvnSlider",
+                "IAvnProgressBar",
+            },
+            name =>
+            {
+                var type = Type(ir, name);
                 Assert.Equal(4, type.AbiVersion);
                 Assert.Equal(
                     ClrTypeExtractor.CreateDeterministicIid(type.FullName, 4),
                     type.Iid);
-                Assert.NotEqual(
-                    ClrTypeExtractor.CreateDeterministicIid(type.FullName, 3),
-                    type.Iid);
             });
 
-        // The factory grew CreateSolidColorBrush, so it republishes too.
+        // The factory grew CreateSolidColorBrush at version 2 and gains no slot here.
         Assert.Equal(2, ir.FactoryAbiVersion);
         Assert.Equal(
             ClrTypeExtractor.CreateDeterministicIid("Avalonia.Host.Com.IAvnControlFactory", 2),
             ir.FactoryIid);
+    }
+
+    [Fact]
+    public void Completeness_members_bump_the_abi_version_of_every_widened_interface()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+
+        // ContentControl, Button, ToggleButton, ListBox and ComboBox all grew slots, so they
+        // and every interface below them republish under a version 5 IID.
+        string[] moved =
+        [
+            "IAvnContentControl", "IAvnHeaderedContentControl", "IAvnExpander", "IAvnButton",
+            "IAvnToggleButton", "IAvnCheckBox", "IAvnRadioButton", "IAvnToggleSwitch",
+            "IAvnListBox", "IAvnComboBox", "IAvnListBoxItem", "IAvnComboBoxItem",
+            "IAvnScrollViewer", "IAvnWindow",
+        ];
+
+        Assert.All(
+            moved,
+            name =>
+            {
+                var type = Type(ir, name);
+                Assert.Equal(5, type.AbiVersion);
+                Assert.Equal(
+                    ClrTypeExtractor.CreateDeterministicIid(type.FullName, 5),
+                    type.Iid);
+                Assert.NotEqual(
+                    ClrTypeExtractor.CreateDeterministicIid(type.FullName, 4),
+                    type.Iid);
+            });
+
+        // Nothing else moved: every projected interface is either widened here or pinned to the
+        // version whose flattened vtable it still matches.
+        Assert.All(
+            ir.Types.Where(type => !moved.Contains(type.Name)),
+            type => Assert.NotEqual(5, type.AbiVersion));
     }
 
     [Fact]
@@ -312,6 +353,76 @@ public class ClrTypeExtractorTests
                 Type(ir, name).Properties,
                 property => property.Name is nameof(TemplatedControl.Background)
                     or nameof(TemplatedControl.Foreground)));
+
+        // ComboBox re-declares HorizontalContentAlignment and VerticalContentAlignment with
+        // `new`, so the allowlist keeps them on ContentControl alone.
+        Assert.All(
+            new[] { "IAvnComboBox", "IAvnButton", "IAvnWindow" },
+            name => Assert.DoesNotContain(
+                Type(ir, name).Properties,
+                property => property.Name is nameof(ContentControl.HorizontalContentAlignment)
+                    or nameof(ContentControl.VerticalContentAlignment)));
+    }
+
+    [Fact]
+    public void Projects_the_completeness_members_onto_the_types_that_declare_them()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+
+        var contentControl = Type(ir, "IAvnContentControl");
+        Assert.All(
+            contentControl.Properties.Where(property => property.Name is
+                nameof(ContentControl.HorizontalContentAlignment) or
+                nameof(ContentControl.VerticalContentAlignment)),
+            property =>
+            {
+                Assert.Equal(MarshallingKind.I32, property.Kind);
+                Assert.True(property.CanRead && property.CanWrite);
+            });
+
+        var button = Type(ir, "IAvnButton");
+        var clickMode = button.Properties.Single(p => p.Name == nameof(Button.ClickMode));
+        Assert.Equal(MarshallingKind.I32, clickMode.Kind);
+        Assert.Contains(ir.Enums, projected => projected.Name == nameof(ClickMode));
+        Assert.All(
+            button.Properties.Where(property => property.Name is
+                nameof(Button.IsDefault) or nameof(Button.IsCancel)),
+            property =>
+            {
+                Assert.Equal(MarshallingKind.Bool, property.Kind);
+                Assert.True(property.CanRead && property.CanWrite);
+            });
+
+        // IsPressed is a read-only direct property: Avalonia raises it from input handling, so
+        // it projects a getter and no setter.
+        var isPressed = button.Properties.Single(p => p.Name == nameof(Button.IsPressed));
+        Assert.Equal(MarshallingKind.Bool, isPressed.Kind);
+        Assert.True(isPressed.CanRead);
+        Assert.False(isPressed.CanWrite);
+
+        var isThreeState = Type(ir, "IAvnToggleButton").Properties
+            .Single(p => p.Name == nameof(ToggleButton.IsThreeState));
+        Assert.Equal(MarshallingKind.Bool, isThreeState.Kind);
+
+        var listBox = Type(ir, "IAvnListBox");
+        Assert.Equal(
+            MarshallingKind.I32,
+            listBox.Properties.Single(p => p.Name == nameof(ListBox.SelectionMode)).Kind);
+        Assert.Contains(ir.Enums, projected => projected.Name == nameof(SelectionMode));
+        Assert.All(
+            new[] { nameof(ListBox.SelectAll), nameof(ListBox.UnselectAll) },
+            name => Assert.Contains(
+                listBox.Methods,
+                method => method.Name == name && method.Parameters.Count == 0));
+
+        var comboBox = Type(ir, "IAvnComboBox");
+        Assert.All(
+            comboBox.Properties.Where(property => property.Name is
+                nameof(ComboBox.IsDropDownOpen) or nameof(ComboBox.IsEditable)),
+            property => Assert.Equal(MarshallingKind.Bool, property.Kind));
+        Assert.Equal(
+            MarshallingKind.F64,
+            comboBox.Properties.Single(p => p.Name == nameof(ComboBox.MaxDropDownHeight)).Kind);
     }
 
     [Fact]
@@ -326,7 +437,7 @@ public class ClrTypeExtractorTests
         Assert.Equal(first.Types.Count, first.Types.Select(t => t.Iid).Distinct().Count());
         Assert.Contains(first.Skipped, s =>
             s.Owner == typeof(Button).FullName &&
-            s.Member == nameof(Button.IsDefault) &&
+            s.Member == nameof(Button.Flyout) &&
             s.Reason == "Not included by projection policy");
     }
 

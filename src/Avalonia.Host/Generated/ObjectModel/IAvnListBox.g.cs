@@ -6,9 +6,21 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("97204BC7-2150-5475-B853-9241B9B03781")]
+[Guid("EAD15413-53EB-5159-BE99-7BED7BF25651")]
 public partial interface IAvnListBox : IAvnSelectingItemsControl
 {
+    [PreserveSig]
+    int GetSelectionMode(out int value);
+
+    [PreserveSig]
+    int SetSelectionMode(int value);
+
+    [PreserveSig]
+    int SelectAll();
+
+    [PreserveSig]
+    int UnselectAll();
+
 }
 
 [GeneratedComClass]
@@ -892,6 +904,67 @@ public sealed partial class AvnListBox : IAvnListBox
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
             subscription.Unsubscribe();
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetSelectionMode(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.SelectionMode;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetSelectionMode(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.SelectionMode = (global::Avalonia.Controls.SelectionMode)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SelectAll()
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.SelectAll();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnselectAll()
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.UnselectAll();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

@@ -1,8 +1,8 @@
 use avalonia::{
-    App, Border, Brush, Button, Color, ComboBox, ComboBoxItem, CornerRadius, ExpandDirection,
-    Expander, FontWeight, HorizontalAlignment, ListBox, ListBoxItem, Orientation, RadioButton,
-    Slider, StackPanel, TextAlignment, TextBlock, TextBox, Thickness, ToggleSwitch,
-    VerticalAlignment, Window,
+    App, Border, Brush, Button, ClickMode, Color, ComboBox, ComboBoxItem, CornerRadius,
+    ExpandDirection, Expander, FontWeight, HorizontalAlignment, ListBox, ListBoxItem, Orientation,
+    RadioButton, SelectionMode, Slider, StackPanel, TextAlignment, TextBlock, TextBox, Thickness,
+    ToggleSwitch, VerticalAlignment, Window,
 };
 
 fn main() -> avalonia::Result<()> {
@@ -13,6 +13,10 @@ fn main() -> avalonia::Result<()> {
         let mut clicks = 0;
         let button = Button::new()?
             .content(TextBlock::new()?.text("Click me")?)?
+            // ClickMode::Press fires on button-down; `default` makes Enter activate it.
+            .click_mode(ClickMode::Press)?
+            .default(true)?
+            .horizontal_content_alignment(HorizontalAlignment::Center)?
             .on_click(scope, move |_| {
                 clicks += 1;
                 click_count_for_handler
@@ -122,6 +126,7 @@ fn main() -> avalonia::Result<()> {
         let combo_status_for_handler = combo_status.clone();
         let combo_box = ComboBox::new()?
             .placeholder_text("Pick a color")?
+            .max_drop_down_height(220.0)?
             .item(ComboBoxItem::new()?.content(TextBlock::new()?.text("Red")?)?)?
             .item(ComboBoxItem::new()?.content(TextBlock::new()?.text("Green")?)?)?
             .item(ComboBoxItem::new()?.content(TextBlock::new()?.text("Blue")?)?)?
@@ -139,6 +144,7 @@ fn main() -> avalonia::Result<()> {
         let list_status = TextBlock::new()?.text("ListBox: Item 2")?;
         let list_status_for_handler = list_status.clone();
         let list_box = ListBox::new()?
+            .selection_mode(SelectionMode::Multiple)?
             .item(ListBoxItem::new()?.content(TextBlock::new()?.text("Item 1")?)?)?
             .item(ListBoxItem::new()?.content(TextBlock::new()?.text("Item 2")?)?)?
             .item(ListBoxItem::new()?.content(TextBlock::new()?.text("Item 3")?)?)?
@@ -153,6 +159,30 @@ fn main() -> avalonia::Result<()> {
                 .set_text(format!("ListBox index: {index}"))
                 .expect("failed to update ListBox readout");
         })?;
+
+        let select_all_target = list_box.clone();
+        let unselect_all_target = list_box.clone();
+        let list_commands = StackPanel::new()?
+            .orientation(Orientation::Horizontal)?
+            .spacing(8.0)?
+            .child(
+                Button::new()?
+                    .content(TextBlock::new()?.text("Select all")?)?
+                    .on_click(scope, move |_| {
+                        select_all_target
+                            .select_all()
+                            .expect("failed to select every item");
+                    })?,
+            )?
+            .child(
+                Button::new()?
+                    .content(TextBlock::new()?.text("Clear selection")?)?
+                    .on_click(scope, move |_| {
+                        unselect_all_target
+                            .unselect_all()
+                            .expect("failed to clear the selection");
+                    })?,
+            )?;
 
         let hover_state = TextBlock::new()?.text("out")?;
         let entered_state = hover_state.clone();
@@ -298,6 +328,7 @@ fn main() -> avalonia::Result<()> {
                 .child(combo_box)?
                 .child(combo_status)?
                 .child(list_box)?
+                .child(list_commands)?
                 .child(list_status)?
                 .child(radio_buttons)?
                 .child(expander)?

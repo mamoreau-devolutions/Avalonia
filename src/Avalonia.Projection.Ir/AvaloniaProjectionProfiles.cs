@@ -4,23 +4,40 @@ public static class AvaloniaProjectionProfiles
 {
     public static ProjectionPolicy ObjectModelKernel { get; } = new()
     {
-        // Chrome members (solid brushes, border geometry and text metrics) widen the flattened
-        // vtables of Avalonia.Controls.Border, Panel, TemplatedControl and TextBlock, so every
-        // projected interface at or below one of them gets a new IID at version 4. The
-        // interfaces whose flattened vtable did not move are pinned below.
-        DefaultProjectedTypeAbiVersion = 4,
+        // The completeness wave widens the flattened vtables of Avalonia.Controls.ContentControl,
+        // Button, Primitives.ToggleButton, ListBox and ComboBox, so every projected interface at
+        // or below one of them gets a new IID at version 5. The interfaces whose flattened vtable
+        // did not move are pinned below and keep the IID they last published.
+        DefaultProjectedTypeAbiVersion = 5,
         AbiVersions = new Dictionary<string, int>(StringComparer.Ordinal)
         {
             // AvaloniaObject projects no members, so its vtable is byte-identical to
             // version 2. Republishing it under a new IID would be a gratuitous break.
             ["Avalonia.Host.Com.IAvnAvaloniaObject"] = 2,
-            // StyledElement, Control and Decorator gained nothing in the chrome wave and none
-            // of their bases did either, so their flattened vtables are byte-identical to
+            // StyledElement, Control and Decorator have gained nothing since version 3 and none
+            // of their bases have either, so their flattened vtables are byte-identical to
             // version 3 and they keep the IIDs they published there.
             ["Avalonia.Host.Com.IAvnStyledElement"] = 3,
             ["Avalonia.Host.Com.IAvnControl"] = 3,
             ["Avalonia.Host.Com.IAvnDecorator"] = 3,
-            // The factory gained CreateSolidColorBrush, which appends a slot to its vtable.
+            // Everything the completeness wave left alone. None of these sits below
+            // ContentControl, Button, ToggleButton, ListBox or ComboBox, so their flattened
+            // vtables are byte-identical to version 4.
+            ["Avalonia.Host.Com.IAvnBorder"] = 4,
+            ["Avalonia.Host.Com.IAvnPanel"] = 4,
+            ["Avalonia.Host.Com.IAvnCanvas"] = 4,
+            ["Avalonia.Host.Com.IAvnDockPanel"] = 4,
+            ["Avalonia.Host.Com.IAvnGrid"] = 4,
+            ["Avalonia.Host.Com.IAvnStackPanel"] = 4,
+            ["Avalonia.Host.Com.IAvnTextBlock"] = 4,
+            ["Avalonia.Host.Com.IAvnTemplatedControl"] = 4,
+            ["Avalonia.Host.Com.IAvnItemsControl"] = 4,
+            ["Avalonia.Host.Com.IAvnSelectingItemsControl"] = 4,
+            ["Avalonia.Host.Com.IAvnTextBox"] = 4,
+            ["Avalonia.Host.Com.IAvnRangeBase"] = 4,
+            ["Avalonia.Host.Com.IAvnSlider"] = 4,
+            ["Avalonia.Host.Com.IAvnProgressBar"] = 4,
+            // The factory gained CreateSolidColorBrush at version 2 and gains no slot here.
             ["Avalonia.Host.Com.IAvnControlFactory"] = 2,
         },
         IncludeTypeNames =
@@ -68,7 +85,8 @@ public static class AvaloniaProjectionProfiles
                 "Margin", "HorizontalAlignment", "VerticalAlignment", "IsVisible",
                 "Opacity", "IsEnabled", "KeyDown", "PointerEntered", "PointerExited",
             ],
-            ["Avalonia.Controls.ContentControl"] = ["Content"],
+            ["Avalonia.Controls.ContentControl"] =
+                ["Content", "HorizontalContentAlignment", "VerticalContentAlignment"],
             ["Avalonia.Controls.Primitives.HeaderedContentControl"] = ["Header"],
             ["Avalonia.Controls.ItemsControl"] = ["Items"],
             ["Avalonia.Controls.Primitives.SelectingItemsControl"] =
@@ -84,15 +102,18 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.StackPanel"] = ["Orientation", "Spacing"],
             ["Avalonia.Controls.TextBlock"] =
                 ["Text", "FontSize", "FontWeight", "Foreground", "Padding", "TextAlignment"],
-            ["Avalonia.Controls.Button"] = ["Click"],
-            ["Avalonia.Controls.Primitives.ToggleButton"] = ["IsChecked", "IsCheckedChanged"],
+            ["Avalonia.Controls.Button"] =
+                ["ClickMode", "IsDefault", "IsCancel", "IsPressed", "Click"],
+            ["Avalonia.Controls.Primitives.ToggleButton"] =
+                ["IsChecked", "IsThreeState", "IsCheckedChanged"],
             ["Avalonia.Controls.CheckBox"] = [],
             ["Avalonia.Controls.RadioButton"] = ["GroupName"],
             ["Avalonia.Controls.ToggleSwitch"] = ["OnContent", "OffContent"],
             ["Avalonia.Controls.Expander"] =
                 ["ExpandDirection", "IsExpanded", "Expanded", "Collapsed"],
-            ["Avalonia.Controls.ListBox"] = [],
-            ["Avalonia.Controls.ComboBox"] = ["PlaceholderText"],
+            ["Avalonia.Controls.ListBox"] = ["SelectionMode", "SelectAll", "UnselectAll"],
+            ["Avalonia.Controls.ComboBox"] =
+                ["PlaceholderText", "IsDropDownOpen", "IsEditable", "MaxDropDownHeight"],
             ["Avalonia.Controls.ListBoxItem"] = ["IsSelected"],
             ["Avalonia.Controls.ComboBoxItem"] = [],
             ["Avalonia.Controls.Primitives.TemplatedControl"] =

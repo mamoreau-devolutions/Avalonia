@@ -33,17 +33,10 @@ Avalonia.AvaloniaObject.CoerceValue(AvaloniaProperty): Not included by projectio
 Avalonia.Controls.Border.BoxShadow: Not included by projection policy
 Avalonia.Controls.Border.ClipToBoundsRadius: Not included by projection policy
 Avalonia.Controls.Border.Render(DrawingContext): Not included by projection policy
-Avalonia.Controls.Button.ClickMode: Not included by projection policy
 Avalonia.Controls.Button.Command: Not included by projection policy
 Avalonia.Controls.Button.HotKey: Not included by projection policy
 Avalonia.Controls.Button.CommandParameter: Not included by projection policy
-Avalonia.Controls.Button.IsDefault: Not included by projection policy
-Avalonia.Controls.Button.IsCancel: Not included by projection policy
-Avalonia.Controls.Button.IsPressed: Not included by projection policy
 Avalonia.Controls.Button.Flyout: Not included by projection policy
-Avalonia.Controls.ComboBox.IsDropDownOpen: Not included by projection policy
-Avalonia.Controls.ComboBox.IsEditable: Not included by projection policy
-Avalonia.Controls.ComboBox.MaxDropDownHeight: Not included by projection policy
 Avalonia.Controls.ComboBox.SelectionBoxItem: Not included by projection policy
 Avalonia.Controls.ComboBox.PlaceholderForeground: Not included by projection policy
 Avalonia.Controls.ComboBox.HorizontalContentAlignment: Not included by projection policy
@@ -56,8 +49,6 @@ Avalonia.Controls.ComboBox.UpdateSelectionFromEvent(Control, RoutedEventArgs): N
 Avalonia.Controls.ComboBox.Clear(): Not included by projection policy
 Avalonia.Controls.ContentControl.ContentTemplate: Not included by projection policy
 Avalonia.Controls.ContentControl.Presenter: Not included by projection policy
-Avalonia.Controls.ContentControl.HorizontalContentAlignment: Not included by projection policy
-Avalonia.Controls.ContentControl.VerticalContentAlignment: Not included by projection policy
 Avalonia.Controls.Control.FocusAdorner: Not included by projection policy
 Avalonia.Controls.Control.DataTemplates: Not included by projection policy
 Avalonia.Controls.Control.ContextMenu: Not included by projection policy
@@ -96,9 +87,6 @@ Avalonia.Controls.ItemsControl.ScrollIntoView(Object): Not included by projectio
 Avalonia.Controls.ListBox.Scroll: Not included by projection policy
 Avalonia.Controls.ListBox.SelectedItems: Not included by projection policy
 Avalonia.Controls.ListBox.Selection: Not included by projection policy
-Avalonia.Controls.ListBox.SelectionMode: Not included by projection policy
-Avalonia.Controls.ListBox.SelectAll(): Not included by projection policy
-Avalonia.Controls.ListBox.UnselectAll(): Not included by projection policy
 Avalonia.Controls.Panel.IsItemsHost: Not included by projection policy
 Avalonia.Controls.Panel.Render(DrawingContext): Not included by projection policy
 Avalonia.Controls.Primitives.HeaderedContentControl.HeaderPresenter: Not included by projection policy
@@ -123,7 +111,6 @@ Avalonia.Controls.Primitives.TemplatedControl.Padding: Not included by projectio
 Avalonia.Controls.Primitives.TemplatedControl.Template: Not included by projection policy
 Avalonia.Controls.Primitives.TemplatedControl.TemplateApplied: Not included by projection policy
 Avalonia.Controls.Primitives.TemplatedControl.ApplyTemplate(): Not included by projection policy
-Avalonia.Controls.Primitives.ToggleButton.IsThreeState: Not included by projection policy
 Avalonia.Controls.ProgressBar.Percentage: Not included by projection policy
 Avalonia.Controls.ProgressBar.TemplateSettings: Not included by projection policy
 Avalonia.Controls.ScrollViewer.Extent: Not included by projection policy

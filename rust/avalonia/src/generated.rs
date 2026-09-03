@@ -280,6 +280,24 @@ impl From<Color> for Brush {
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ClickMode {
+    Release = 0,
+    Press = 1,
+}
+
+impl TryFrom<i32> for ClickMode {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::Release),
+            1 => Ok(Self::Press),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Dock {
     Left = 0,
     Bottom = 1,
@@ -339,6 +357,28 @@ impl TryFrom<i32> for ScrollBarVisibility {
             1 => Ok(Self::Auto),
             2 => Ok(Self::Hidden),
             3 => Ok(Self::Visible),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum SelectionMode {
+    Single = 0,
+    Multiple = 1,
+    Toggle = 2,
+    AlwaysSelected = 4,
+}
+
+impl TryFrom<i32> for SelectionMode {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::Single),
+            1 => Ok(Self::Multiple),
+            2 => Ok(Self::Toggle),
+            4 => Ok(Self::AlwaysSelected),
             _ => Err(crate::Error::InvalidEnumValue(value)),
         }
     }
@@ -1893,6 +1933,56 @@ impl Button {
         self.set_content(value)?;
         Ok(self)
     }
+    pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_content_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_content_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_content_alignment(value as i32)?)
+    }
+    pub fn horizontal_content_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_content_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_content_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_content_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_content_alignment(value as i32)?)
+    }
+    pub fn vertical_content_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_content_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_click_mode(&self) -> Result<ClickMode> {
+        let value = self.raw.get_click_mode()?;
+        ClickMode::try_from(value)
+    }
+    pub fn set_click_mode(&self, value: ClickMode) -> Result<()> {
+        Ok(self.raw.set_click_mode(value as i32)?)
+    }
+    pub fn click_mode(self, value: ClickMode) -> Result<Self> {
+        self.set_click_mode(value)?;
+        Ok(self)
+    }
+    pub fn get_is_default(&self) -> Result<bool> { Ok(self.raw.get_is_default()?) }
+    pub fn set_default(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_default(value)?)
+    }
+    pub fn default(self, value: bool) -> Result<Self> {
+        self.set_default(value)?;
+        Ok(self)
+    }
+    pub fn get_is_cancel(&self) -> Result<bool> { Ok(self.raw.get_is_cancel()?) }
+    pub fn set_cancel(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_cancel(value)?)
+    }
+    pub fn cancel(self, value: bool) -> Result<Self> {
+        self.set_cancel(value)?;
+        Ok(self)
+    }
+    pub fn is_pressed(&self) -> Result<bool> { Ok(self.raw.get_is_pressed()?) }
     pub fn subscribe_click(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::button_click_handler(move || {
             callback(());
@@ -2378,6 +2468,56 @@ impl CheckBox {
         self.set_content(value)?;
         Ok(self)
     }
+    pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_content_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_content_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_content_alignment(value as i32)?)
+    }
+    pub fn horizontal_content_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_content_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_content_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_content_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_content_alignment(value as i32)?)
+    }
+    pub fn vertical_content_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_content_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_click_mode(&self) -> Result<ClickMode> {
+        let value = self.raw.get_click_mode()?;
+        ClickMode::try_from(value)
+    }
+    pub fn set_click_mode(&self, value: ClickMode) -> Result<()> {
+        Ok(self.raw.set_click_mode(value as i32)?)
+    }
+    pub fn click_mode(self, value: ClickMode) -> Result<Self> {
+        self.set_click_mode(value)?;
+        Ok(self)
+    }
+    pub fn get_is_default(&self) -> Result<bool> { Ok(self.raw.get_is_default()?) }
+    pub fn set_default(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_default(value)?)
+    }
+    pub fn default(self, value: bool) -> Result<Self> {
+        self.set_default(value)?;
+        Ok(self)
+    }
+    pub fn get_is_cancel(&self) -> Result<bool> { Ok(self.raw.get_is_cancel()?) }
+    pub fn set_cancel(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_cancel(value)?)
+    }
+    pub fn cancel(self, value: bool) -> Result<Self> {
+        self.set_cancel(value)?;
+        Ok(self)
+    }
+    pub fn is_pressed(&self) -> Result<bool> { Ok(self.raw.get_is_pressed()?) }
     pub fn subscribe_click(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::button_click_handler(move || {
             callback(());
@@ -2397,6 +2537,14 @@ impl CheckBox {
     }
     pub fn checked(self, value: Option<bool>) -> Result<Self> {
         self.set_checked(value)?;
+        Ok(self)
+    }
+    pub fn get_is_three_state(&self) -> Result<bool> { Ok(self.raw.get_is_three_state()?) }
+    pub fn set_three_state(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_three_state(value)?)
+    }
+    pub fn three_state(self, value: bool) -> Result<Self> {
+        self.set_three_state(value)?;
         Ok(self)
     }
     pub fn subscribe_is_checked_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -2674,6 +2822,30 @@ impl ComboBox {
         scope.retain_subscription(self.subscribe_selection_changed(callback)?);
         Ok(self)
     }
+    pub fn get_is_drop_down_open(&self) -> Result<bool> { Ok(self.raw.get_is_drop_down_open()?) }
+    pub fn set_drop_down_open(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_drop_down_open(value)?)
+    }
+    pub fn drop_down_open(self, value: bool) -> Result<Self> {
+        self.set_drop_down_open(value)?;
+        Ok(self)
+    }
+    pub fn get_is_editable(&self) -> Result<bool> { Ok(self.raw.get_is_editable()?) }
+    pub fn set_editable(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_editable(value)?)
+    }
+    pub fn editable(self, value: bool) -> Result<Self> {
+        self.set_editable(value)?;
+        Ok(self)
+    }
+    pub fn get_max_drop_down_height(&self) -> Result<f64> { Ok(self.raw.get_max_drop_down_height()?) }
+    pub fn set_max_drop_down_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_drop_down_height(value)?)
+    }
+    pub fn max_drop_down_height(self, value: f64) -> Result<Self> {
+        self.set_max_drop_down_height(value)?;
+        Ok(self)
+    }
     pub fn get_placeholder_text(&self) -> Result<Option<String>> {
         unsafe { Ok(sys::take_utf16(self.raw.get_placeholder_text()?)) }
     }
@@ -2930,6 +3102,28 @@ impl ComboBoxItem {
         self.set_content(value)?;
         Ok(self)
     }
+    pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_content_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_content_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_content_alignment(value as i32)?)
+    }
+    pub fn horizontal_content_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_content_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_content_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_content_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_content_alignment(value as i32)?)
+    }
+    pub fn vertical_content_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_content_alignment(value)?;
+        Ok(self)
+    }
     pub fn get_is_selected(&self) -> Result<bool> { Ok(self.raw.get_is_selected()?) }
     pub fn set_selected(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_selected(value)?)
@@ -3181,6 +3375,28 @@ impl ContentControl {
     }
     pub fn content(self, value: impl AsControl) -> Result<Self> {
         self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_content_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_content_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_content_alignment(value as i32)?)
+    }
+    pub fn horizontal_content_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_content_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_content_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_content_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_content_alignment(value as i32)?)
+    }
+    pub fn vertical_content_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_content_alignment(value)?;
         Ok(self)
     }
 }
@@ -4019,6 +4235,28 @@ impl Expander {
         self.set_content(value)?;
         Ok(self)
     }
+    pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_content_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_content_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_content_alignment(value as i32)?)
+    }
+    pub fn horizontal_content_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_content_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_content_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_content_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_content_alignment(value as i32)?)
+    }
+    pub fn vertical_content_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_content_alignment(value)?;
+        Ok(self)
+    }
     pub fn get_header(&self) -> Result<Option<Control>> {
         Ok(self.raw.get_header()?.map(|raw| Control { raw }))
     }
@@ -4838,6 +5076,19 @@ impl ListBox {
         scope.retain_subscription(self.subscribe_selection_changed(callback)?);
         Ok(self)
     }
+    pub fn get_selection_mode(&self) -> Result<SelectionMode> {
+        let value = self.raw.get_selection_mode()?;
+        SelectionMode::try_from(value)
+    }
+    pub fn set_selection_mode(&self, value: SelectionMode) -> Result<()> {
+        Ok(self.raw.set_selection_mode(value as i32)?)
+    }
+    pub fn selection_mode(self, value: SelectionMode) -> Result<Self> {
+        self.set_selection_mode(value)?;
+        Ok(self)
+    }
+    pub fn select_all(&self) -> Result<()> { Ok(self.raw.select_all()?) }
+    pub fn unselect_all(&self) -> Result<()> { Ok(self.raw.unselect_all()?) }
 }
 
 impl AsControl for ListBox {
@@ -5081,6 +5332,28 @@ impl ListBoxItem {
     }
     pub fn content(self, value: impl AsControl) -> Result<Self> {
         self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_content_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_content_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_content_alignment(value as i32)?)
+    }
+    pub fn horizontal_content_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_content_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_content_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_content_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_content_alignment(value as i32)?)
+    }
+    pub fn vertical_content_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_content_alignment(value)?;
         Ok(self)
     }
     pub fn get_is_selected(&self) -> Result<bool> { Ok(self.raw.get_is_selected()?) }
@@ -5525,6 +5798,28 @@ impl HeaderedContentControl {
     }
     pub fn content(self, value: impl AsControl) -> Result<Self> {
         self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_content_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_content_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_content_alignment(value as i32)?)
+    }
+    pub fn horizontal_content_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_content_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_content_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_content_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_content_alignment(value as i32)?)
+    }
+    pub fn vertical_content_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_content_alignment(value)?;
         Ok(self)
     }
     pub fn get_header(&self) -> Result<Option<Control>> {
@@ -6562,6 +6857,56 @@ impl ToggleButton {
         self.set_content(value)?;
         Ok(self)
     }
+    pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_content_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_content_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_content_alignment(value as i32)?)
+    }
+    pub fn horizontal_content_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_content_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_content_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_content_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_content_alignment(value as i32)?)
+    }
+    pub fn vertical_content_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_content_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_click_mode(&self) -> Result<ClickMode> {
+        let value = self.raw.get_click_mode()?;
+        ClickMode::try_from(value)
+    }
+    pub fn set_click_mode(&self, value: ClickMode) -> Result<()> {
+        Ok(self.raw.set_click_mode(value as i32)?)
+    }
+    pub fn click_mode(self, value: ClickMode) -> Result<Self> {
+        self.set_click_mode(value)?;
+        Ok(self)
+    }
+    pub fn get_is_default(&self) -> Result<bool> { Ok(self.raw.get_is_default()?) }
+    pub fn set_default(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_default(value)?)
+    }
+    pub fn default(self, value: bool) -> Result<Self> {
+        self.set_default(value)?;
+        Ok(self)
+    }
+    pub fn get_is_cancel(&self) -> Result<bool> { Ok(self.raw.get_is_cancel()?) }
+    pub fn set_cancel(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_cancel(value)?)
+    }
+    pub fn cancel(self, value: bool) -> Result<Self> {
+        self.set_cancel(value)?;
+        Ok(self)
+    }
+    pub fn is_pressed(&self) -> Result<bool> { Ok(self.raw.get_is_pressed()?) }
     pub fn subscribe_click(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::button_click_handler(move || {
             callback(());
@@ -6581,6 +6926,14 @@ impl ToggleButton {
     }
     pub fn checked(self, value: Option<bool>) -> Result<Self> {
         self.set_checked(value)?;
+        Ok(self)
+    }
+    pub fn get_is_three_state(&self) -> Result<bool> { Ok(self.raw.get_is_three_state()?) }
+    pub fn set_three_state(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_three_state(value)?)
+    }
+    pub fn three_state(self, value: bool) -> Result<Self> {
+        self.set_three_state(value)?;
         Ok(self)
     }
     pub fn subscribe_is_checked_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -7166,6 +7519,56 @@ impl RadioButton {
         self.set_content(value)?;
         Ok(self)
     }
+    pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_content_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_content_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_content_alignment(value as i32)?)
+    }
+    pub fn horizontal_content_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_content_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_content_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_content_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_content_alignment(value as i32)?)
+    }
+    pub fn vertical_content_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_content_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_click_mode(&self) -> Result<ClickMode> {
+        let value = self.raw.get_click_mode()?;
+        ClickMode::try_from(value)
+    }
+    pub fn set_click_mode(&self, value: ClickMode) -> Result<()> {
+        Ok(self.raw.set_click_mode(value as i32)?)
+    }
+    pub fn click_mode(self, value: ClickMode) -> Result<Self> {
+        self.set_click_mode(value)?;
+        Ok(self)
+    }
+    pub fn get_is_default(&self) -> Result<bool> { Ok(self.raw.get_is_default()?) }
+    pub fn set_default(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_default(value)?)
+    }
+    pub fn default(self, value: bool) -> Result<Self> {
+        self.set_default(value)?;
+        Ok(self)
+    }
+    pub fn get_is_cancel(&self) -> Result<bool> { Ok(self.raw.get_is_cancel()?) }
+    pub fn set_cancel(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_cancel(value)?)
+    }
+    pub fn cancel(self, value: bool) -> Result<Self> {
+        self.set_cancel(value)?;
+        Ok(self)
+    }
+    pub fn is_pressed(&self) -> Result<bool> { Ok(self.raw.get_is_pressed()?) }
     pub fn subscribe_click(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::button_click_handler(move || {
             callback(());
@@ -7185,6 +7588,14 @@ impl RadioButton {
     }
     pub fn checked(self, value: Option<bool>) -> Result<Self> {
         self.set_checked(value)?;
+        Ok(self)
+    }
+    pub fn get_is_three_state(&self) -> Result<bool> { Ok(self.raw.get_is_three_state()?) }
+    pub fn set_three_state(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_three_state(value)?)
+    }
+    pub fn three_state(self, value: bool) -> Result<Self> {
+        self.set_three_state(value)?;
         Ok(self)
     }
     pub fn subscribe_is_checked_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -7454,6 +7865,28 @@ impl ScrollViewer {
     }
     pub fn content(self, value: impl AsControl) -> Result<Self> {
         self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_content_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_content_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_content_alignment(value as i32)?)
+    }
+    pub fn horizontal_content_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_content_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_content_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_content_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_content_alignment(value as i32)?)
+    }
+    pub fn vertical_content_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_content_alignment(value)?;
         Ok(self)
     }
     pub fn get_bring_into_view_on_focus_change(&self) -> Result<bool> { Ok(self.raw.get_bring_into_view_on_focus_change()?) }
@@ -8971,6 +9404,56 @@ impl ToggleSwitch {
         self.set_content(value)?;
         Ok(self)
     }
+    pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_content_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_content_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_content_alignment(value as i32)?)
+    }
+    pub fn horizontal_content_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_content_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_content_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_content_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_content_alignment(value as i32)?)
+    }
+    pub fn vertical_content_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_content_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_click_mode(&self) -> Result<ClickMode> {
+        let value = self.raw.get_click_mode()?;
+        ClickMode::try_from(value)
+    }
+    pub fn set_click_mode(&self, value: ClickMode) -> Result<()> {
+        Ok(self.raw.set_click_mode(value as i32)?)
+    }
+    pub fn click_mode(self, value: ClickMode) -> Result<Self> {
+        self.set_click_mode(value)?;
+        Ok(self)
+    }
+    pub fn get_is_default(&self) -> Result<bool> { Ok(self.raw.get_is_default()?) }
+    pub fn set_default(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_default(value)?)
+    }
+    pub fn default(self, value: bool) -> Result<Self> {
+        self.set_default(value)?;
+        Ok(self)
+    }
+    pub fn get_is_cancel(&self) -> Result<bool> { Ok(self.raw.get_is_cancel()?) }
+    pub fn set_cancel(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_cancel(value)?)
+    }
+    pub fn cancel(self, value: bool) -> Result<Self> {
+        self.set_cancel(value)?;
+        Ok(self)
+    }
+    pub fn is_pressed(&self) -> Result<bool> { Ok(self.raw.get_is_pressed()?) }
     pub fn subscribe_click(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::button_click_handler(move || {
             callback(());
@@ -8990,6 +9473,14 @@ impl ToggleSwitch {
     }
     pub fn checked(self, value: Option<bool>) -> Result<Self> {
         self.set_checked(value)?;
+        Ok(self)
+    }
+    pub fn get_is_three_state(&self) -> Result<bool> { Ok(self.raw.get_is_three_state()?) }
+    pub fn set_three_state(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_three_state(value)?)
+    }
+    pub fn three_state(self, value: bool) -> Result<Self> {
+        self.set_three_state(value)?;
         Ok(self)
     }
     pub fn subscribe_is_checked_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -9270,6 +9761,28 @@ impl Window {
     }
     pub fn content(self, value: impl AsControl) -> Result<Self> {
         self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_content_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_content_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_content_alignment(value as i32)?)
+    }
+    pub fn horizontal_content_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_content_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_content_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_content_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_content_alignment(value as i32)?)
+    }
+    pub fn vertical_content_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_content_alignment(value)?;
         Ok(self)
     }
     pub fn get_title(&self) -> Result<Option<String>> {

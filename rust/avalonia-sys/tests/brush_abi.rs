@@ -71,14 +71,12 @@ fn chrome_members_publish_brush_pointers_and_geometry_by_value() {
 }
 
 #[test]
-fn widened_interfaces_publish_abi_version_four() {
+fn chrome_wave_interfaces_publish_abi_version_four() {
     for expected in [
         "#define I_AVN_BORDER_ABI_VERSION 4",
         "#define I_AVN_PANEL_ABI_VERSION 4",
         "#define I_AVN_TEMPLATED_CONTROL_ABI_VERSION 4",
         "#define I_AVN_TEXT_BLOCK_ABI_VERSION 4",
-        "#define I_AVN_BUTTON_ABI_VERSION 4",
-        "#define I_AVN_WINDOW_ABI_VERSION 4",
         "#define I_AVN_GRID_ABI_VERSION 4",
         // The factory grew create_solid_color_brush.
         "#define I_AVN_CONTROL_FACTORY_ABI_VERSION 2",

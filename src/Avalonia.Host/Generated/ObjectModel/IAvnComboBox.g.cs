@@ -6,9 +6,27 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("4EEFC042-03EE-5E79-AF4B-3A53F50C63B4")]
+[Guid("7334041F-D155-548C-BF70-4CFFB4F44021")]
 public partial interface IAvnComboBox : IAvnSelectingItemsControl
 {
+    [PreserveSig]
+    int GetIsDropDownOpen(out int value);
+
+    [PreserveSig]
+    int SetIsDropDownOpen(int value);
+
+    [PreserveSig]
+    int GetIsEditable(out int value);
+
+    [PreserveSig]
+    int SetIsEditable(int value);
+
+    [PreserveSig]
+    int GetMaxDropDownHeight(out double value);
+
+    [PreserveSig]
+    int SetMaxDropDownHeight(double value);
+
     [PreserveSig]
     int GetPlaceholderText(out string? value);
 
@@ -898,6 +916,99 @@ public sealed partial class AvnComboBox : IAvnComboBox
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
             subscription.Unsubscribe();
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetIsDropDownOpen(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.IsDropDownOpen ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetIsDropDownOpen(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.IsDropDownOpen = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetIsEditable(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.IsEditable ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetIsEditable(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.IsEditable = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetMaxDropDownHeight(out double value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.MaxDropDownHeight;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetMaxDropDownHeight(double value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.MaxDropDownHeight = value;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

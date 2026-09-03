@@ -1345,7 +1345,7 @@ impl ComPtr<IAvnBorder> {
     }
 }
 
-pub const I_AVN_BUTTON_IID: Guid = Guid { data1: 0x9DE6B725, data2: 0x9BF0, data3: 0x5DEE, data4: [0xA9, 0x47, 0xDD, 0x87, 0x70, 0x9D, 0xD5, 0x2E] };
+pub const I_AVN_BUTTON_IID: Guid = Guid { data1: 0x6D86D2DB, data2: 0x4473, data3: 0x576B, data4: [0x87, 0x78, 0x47, 0xC7, 0x4A, 0xAF, 0x18, 0x2D] };
 
 #[repr(C)]
 struct IAvnButtonVtbl {
@@ -1401,6 +1401,17 @@ struct IAvnButtonVtbl {
     set_foreground: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnBrush) -> i32,
     get_content: unsafe extern "system" fn(*mut IAvnButton, *mut *mut IAvnControl) -> i32,
     set_content: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnControl) -> i32,
+    get_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnButton, *mut i32) -> i32,
+    set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnButton, i32) -> i32,
+    get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnButton, *mut i32) -> i32,
+    set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnButton, i32) -> i32,
+    get_click_mode: unsafe extern "system" fn(*mut IAvnButton, *mut i32) -> i32,
+    set_click_mode: unsafe extern "system" fn(*mut IAvnButton, i32) -> i32,
+    get_is_default: unsafe extern "system" fn(*mut IAvnButton, *mut i32) -> i32,
+    set_is_default: unsafe extern "system" fn(*mut IAvnButton, i32) -> i32,
+    get_is_cancel: unsafe extern "system" fn(*mut IAvnButton, *mut i32) -> i32,
+    set_is_cancel: unsafe extern "system" fn(*mut IAvnButton, i32) -> i32,
+    get_is_pressed: unsafe extern "system" fn(*mut IAvnButton, *mut i32) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnButtonClickHandler, *mut i64) -> i32,
     unadvise_click: unsafe extern "system" fn(*mut IAvnButton, i64) -> i32,
 }
@@ -1756,6 +1767,84 @@ impl ComPtr<IAvnButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_horizontal_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_click_mode(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_click_mode)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_click_mode(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_click_mode)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_default(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_default)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_default(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_default)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_cancel(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_cancel)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_cancel(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_cancel)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_pressed(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_pressed)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn advise_click(&self, handler: &ComPtr<IAvnButtonClickHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -2095,7 +2184,7 @@ impl ComPtr<IAvnCanvas> {
     }
 }
 
-pub const I_AVN_CHECK_BOX_IID: Guid = Guid { data1: 0x2060E415, data2: 0xB704, data3: 0x5B6D, data4: [0xAB, 0x59, 0x9C, 0x3E, 0x10, 0x50, 0xCA, 0xEC] };
+pub const I_AVN_CHECK_BOX_IID: Guid = Guid { data1: 0x56332928, data2: 0x3A00, data3: 0x552F, data4: [0xAC, 0x0F, 0x33, 0xE4, 0xC4, 0x6A, 0x93, 0x3D] };
 
 #[repr(C)]
 struct IAvnCheckBoxVtbl {
@@ -2151,10 +2240,23 @@ struct IAvnCheckBoxVtbl {
     set_foreground: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnBrush) -> i32,
     get_content: unsafe extern "system" fn(*mut IAvnCheckBox, *mut *mut IAvnControl) -> i32,
     set_content: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnControl) -> i32,
+    get_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnCheckBox, *mut i32) -> i32,
+    set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnCheckBox, i32) -> i32,
+    get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnCheckBox, *mut i32) -> i32,
+    set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnCheckBox, i32) -> i32,
+    get_click_mode: unsafe extern "system" fn(*mut IAvnCheckBox, *mut i32) -> i32,
+    set_click_mode: unsafe extern "system" fn(*mut IAvnCheckBox, i32) -> i32,
+    get_is_default: unsafe extern "system" fn(*mut IAvnCheckBox, *mut i32) -> i32,
+    set_is_default: unsafe extern "system" fn(*mut IAvnCheckBox, i32) -> i32,
+    get_is_cancel: unsafe extern "system" fn(*mut IAvnCheckBox, *mut i32) -> i32,
+    set_is_cancel: unsafe extern "system" fn(*mut IAvnCheckBox, i32) -> i32,
+    get_is_pressed: unsafe extern "system" fn(*mut IAvnCheckBox, *mut i32) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnButtonClickHandler, *mut i64) -> i32,
     unadvise_click: unsafe extern "system" fn(*mut IAvnCheckBox, i64) -> i32,
     get_is_checked: unsafe extern "system" fn(*mut IAvnCheckBox, *mut i32) -> i32,
     set_is_checked: unsafe extern "system" fn(*mut IAvnCheckBox, i32) -> i32,
+    get_is_three_state: unsafe extern "system" fn(*mut IAvnCheckBox, *mut i32) -> i32,
+    set_is_three_state: unsafe extern "system" fn(*mut IAvnCheckBox, i32) -> i32,
     advise_is_checked_changed: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnToggleButtonIsCheckedChangedHandler, *mut i64) -> i32,
     unadvise_is_checked_changed: unsafe extern "system" fn(*mut IAvnCheckBox, i64) -> i32,
 }
@@ -2510,6 +2612,84 @@ impl ComPtr<IAvnCheckBox> {
             hresult::check(hr)
         }
     }
+    pub fn get_horizontal_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_click_mode(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_click_mode)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_click_mode(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_click_mode)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_default(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_default)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_default(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_default)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_cancel(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_cancel)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_cancel(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_cancel)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_pressed(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_pressed)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn advise_click(&self, handler: &ComPtr<IAvnButtonClickHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -2537,6 +2717,20 @@ impl ComPtr<IAvnCheckBox> {
             hresult::check(hr)
         }
     }
+    pub fn get_is_three_state(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_three_state)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_three_state(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_three_state)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
     pub fn advise_is_checked_changed(&self, handler: &ComPtr<IAvnToggleButtonIsCheckedChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -2552,7 +2746,7 @@ impl ComPtr<IAvnCheckBox> {
     }
 }
 
-pub const I_AVN_COMBO_BOX_IID: Guid = Guid { data1: 0x4EEFC042, data2: 0x03EE, data3: 0x5E79, data4: [0xAF, 0x4B, 0x3A, 0x53, 0xF5, 0x0C, 0x63, 0xB4] };
+pub const I_AVN_COMBO_BOX_IID: Guid = Guid { data1: 0x7334041F, data2: 0xD155, data3: 0x548C, data4: [0xBF, 0x70, 0x4C, 0xFF, 0xB4, 0xF4, 0x40, 0x21] };
 
 #[repr(C)]
 struct IAvnComboBoxVtbl {
@@ -2611,6 +2805,12 @@ struct IAvnComboBoxVtbl {
     set_selected_index: unsafe extern "system" fn(*mut IAvnComboBox, i32) -> i32,
     advise_selection_changed: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnSelectingItemsControlSelectionChangedHandler, *mut i64) -> i32,
     unadvise_selection_changed: unsafe extern "system" fn(*mut IAvnComboBox, i64) -> i32,
+    get_is_drop_down_open: unsafe extern "system" fn(*mut IAvnComboBox, *mut i32) -> i32,
+    set_is_drop_down_open: unsafe extern "system" fn(*mut IAvnComboBox, i32) -> i32,
+    get_is_editable: unsafe extern "system" fn(*mut IAvnComboBox, *mut i32) -> i32,
+    set_is_editable: unsafe extern "system" fn(*mut IAvnComboBox, i32) -> i32,
+    get_max_drop_down_height: unsafe extern "system" fn(*mut IAvnComboBox, *mut f64) -> i32,
+    set_max_drop_down_height: unsafe extern "system" fn(*mut IAvnComboBox, f64) -> i32,
     get_placeholder_text: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut u16) -> i32,
     set_placeholder_text: unsafe extern "system" fn(*mut IAvnComboBox, *mut u16) -> i32,
 }
@@ -2987,6 +3187,48 @@ impl ComPtr<IAvnComboBox> {
             hresult::check(hr)
         }
     }
+    pub fn get_is_drop_down_open(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_drop_down_open)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_drop_down_open(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_drop_down_open)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_editable(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_editable)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_editable(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_editable)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_drop_down_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_drop_down_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_drop_down_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_drop_down_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
     pub fn get_placeholder_text(&self) -> Result<*mut u16> {
         unsafe {
             let mut value: *mut u16 = ptr::null_mut();
@@ -3003,7 +3245,7 @@ impl ComPtr<IAvnComboBox> {
     }
 }
 
-pub const I_AVN_COMBO_BOX_ITEM_IID: Guid = Guid { data1: 0x7C00A8FF, data2: 0x649A, data3: 0x59BD, data4: [0xBF, 0x88, 0xFA, 0xB8, 0x6B, 0x9C, 0xB0, 0x23] };
+pub const I_AVN_COMBO_BOX_ITEM_IID: Guid = Guid { data1: 0x2502558C, data2: 0x2FB5, data3: 0x5DE4, data4: [0x83, 0x84, 0xF4, 0x9D, 0x0D, 0x72, 0x93, 0x2B] };
 
 #[repr(C)]
 struct IAvnComboBoxItemVtbl {
@@ -3059,6 +3301,10 @@ struct IAvnComboBoxItemVtbl {
     set_foreground: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut IAvnBrush) -> i32,
     get_content: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut *mut IAvnControl) -> i32,
     set_content: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut IAvnControl) -> i32,
+    get_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut i32) -> i32,
+    set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnComboBoxItem, i32) -> i32,
+    get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut i32) -> i32,
+    set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnComboBoxItem, i32) -> i32,
     get_is_selected: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut i32) -> i32,
     set_is_selected: unsafe extern "system" fn(*mut IAvnComboBoxItem, i32) -> i32,
 }
@@ -3414,6 +3660,34 @@ impl ComPtr<IAvnComboBoxItem> {
             hresult::check(hr)
         }
     }
+    pub fn get_horizontal_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
     pub fn get_is_selected(&self) -> Result<bool> {
         unsafe {
             let mut value: i32 = 0;
@@ -3430,7 +3704,7 @@ impl ComPtr<IAvnComboBoxItem> {
     }
 }
 
-pub const I_AVN_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x341FD6C2, data2: 0x31EA, data3: 0x572B, data4: [0xB5, 0x3F, 0xA8, 0xCF, 0xB5, 0x7B, 0x3B, 0xF0] };
+pub const I_AVN_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x2C4557A2, data2: 0x537C, data3: 0x5683, data4: [0x9E, 0x30, 0xC3, 0xAE, 0x87, 0xD7, 0x61, 0x4C] };
 
 #[repr(C)]
 struct IAvnContentControlVtbl {
@@ -3486,6 +3760,10 @@ struct IAvnContentControlVtbl {
     set_foreground: unsafe extern "system" fn(*mut IAvnContentControl, *mut IAvnBrush) -> i32,
     get_content: unsafe extern "system" fn(*mut IAvnContentControl, *mut *mut IAvnControl) -> i32,
     set_content: unsafe extern "system" fn(*mut IAvnContentControl, *mut IAvnControl) -> i32,
+    get_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnContentControl, *mut i32) -> i32,
+    set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnContentControl, i32) -> i32,
+    get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnContentControl, *mut i32) -> i32,
+    set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnContentControl, i32) -> i32,
 }
 
 #[repr(C)]
@@ -3836,6 +4114,34 @@ impl ComPtr<IAvnContentControl> {
     pub fn set_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_content)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_content_alignment)(self.as_raw(), value);
             hresult::check(hr)
         }
     }
@@ -4843,7 +5149,7 @@ impl ComPtr<IAvnDockPanel> {
     }
 }
 
-pub const I_AVN_EXPANDER_IID: Guid = Guid { data1: 0x86F7AA23, data2: 0xB8A4, data3: 0x5E94, data4: [0xA8, 0x8E, 0xBA, 0x48, 0xB7, 0xD3, 0x15, 0x47] };
+pub const I_AVN_EXPANDER_IID: Guid = Guid { data1: 0x332ED548, data2: 0x2796, data3: 0x596D, data4: [0xA9, 0xD0, 0x47, 0xC9, 0x07, 0x28, 0x36, 0x3B] };
 
 #[repr(C)]
 struct IAvnExpanderVtbl {
@@ -4899,6 +5205,10 @@ struct IAvnExpanderVtbl {
     set_foreground: unsafe extern "system" fn(*mut IAvnExpander, *mut IAvnBrush) -> i32,
     get_content: unsafe extern "system" fn(*mut IAvnExpander, *mut *mut IAvnControl) -> i32,
     set_content: unsafe extern "system" fn(*mut IAvnExpander, *mut IAvnControl) -> i32,
+    get_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnExpander, *mut i32) -> i32,
+    set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnExpander, i32) -> i32,
+    get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnExpander, *mut i32) -> i32,
+    set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnExpander, i32) -> i32,
     get_header: unsafe extern "system" fn(*mut IAvnExpander, *mut *mut IAvnControl) -> i32,
     set_header: unsafe extern "system" fn(*mut IAvnExpander, *mut IAvnControl) -> i32,
     get_expand_direction: unsafe extern "system" fn(*mut IAvnExpander, *mut i32) -> i32,
@@ -5259,6 +5569,34 @@ impl ComPtr<IAvnExpander> {
     pub fn set_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_content)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_content_alignment)(self.as_raw(), value);
             hresult::check(hr)
         }
     }
@@ -6108,7 +6446,7 @@ impl ComPtr<IAvnItemsControl> {
     }
 }
 
-pub const I_AVN_LIST_BOX_IID: Guid = Guid { data1: 0x97204BC7, data2: 0x2150, data3: 0x5475, data4: [0xB8, 0x53, 0x92, 0x41, 0xB9, 0xB0, 0x37, 0x81] };
+pub const I_AVN_LIST_BOX_IID: Guid = Guid { data1: 0xEAD15413, data2: 0x53EB, data3: 0x5159, data4: [0xBE, 0x99, 0x7B, 0xED, 0x7B, 0xF2, 0x56, 0x51] };
 
 #[repr(C)]
 struct IAvnListBoxVtbl {
@@ -6167,6 +6505,10 @@ struct IAvnListBoxVtbl {
     set_selected_index: unsafe extern "system" fn(*mut IAvnListBox, i32) -> i32,
     advise_selection_changed: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnSelectingItemsControlSelectionChangedHandler, *mut i64) -> i32,
     unadvise_selection_changed: unsafe extern "system" fn(*mut IAvnListBox, i64) -> i32,
+    get_selection_mode: unsafe extern "system" fn(*mut IAvnListBox, *mut i32) -> i32,
+    set_selection_mode: unsafe extern "system" fn(*mut IAvnListBox, i32) -> i32,
+    select_all: unsafe extern "system" fn(*mut IAvnListBox) -> i32,
+    unselect_all: unsafe extern "system" fn(*mut IAvnListBox) -> i32,
 }
 
 #[repr(C)]
@@ -6541,9 +6883,35 @@ impl ComPtr<IAvnListBox> {
             hresult::check(hr)
         }
     }
+    pub fn get_selection_mode(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selection_mode)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selection_mode(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selection_mode)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn select_all(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().select_all)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn unselect_all(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unselect_all)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
 }
 
-pub const I_AVN_LIST_BOX_ITEM_IID: Guid = Guid { data1: 0xAC5C9E20, data2: 0x676E, data3: 0x589E, data4: [0x80, 0xEB, 0xBB, 0x04, 0xDF, 0x80, 0x19, 0xDB] };
+pub const I_AVN_LIST_BOX_ITEM_IID: Guid = Guid { data1: 0xF10EB1EB, data2: 0x9F6C, data3: 0x580E, data4: [0x92, 0x0B, 0x8E, 0xF9, 0x36, 0x4E, 0x48, 0x7D] };
 
 #[repr(C)]
 struct IAvnListBoxItemVtbl {
@@ -6599,6 +6967,10 @@ struct IAvnListBoxItemVtbl {
     set_foreground: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut IAvnBrush) -> i32,
     get_content: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut *mut IAvnControl) -> i32,
     set_content: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut IAvnControl) -> i32,
+    get_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut i32) -> i32,
+    set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnListBoxItem, i32) -> i32,
+    get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut i32) -> i32,
+    set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnListBoxItem, i32) -> i32,
     get_is_selected: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut i32) -> i32,
     set_is_selected: unsafe extern "system" fn(*mut IAvnListBoxItem, i32) -> i32,
 }
@@ -6954,6 +7326,34 @@ impl ComPtr<IAvnListBoxItem> {
             hresult::check(hr)
         }
     }
+    pub fn get_horizontal_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
     pub fn get_is_selected(&self) -> Result<bool> {
         unsafe {
             let mut value: i32 = 0;
@@ -7294,7 +7694,7 @@ impl ComPtr<IAvnPanel> {
     }
 }
 
-pub const I_AVN_HEADERED_CONTENT_CONTROL_IID: Guid = Guid { data1: 0xC1129113, data2: 0xFE08, data3: 0x5174, data4: [0x93, 0xCE, 0x48, 0xFC, 0x7E, 0x3E, 0x5B, 0x86] };
+pub const I_AVN_HEADERED_CONTENT_CONTROL_IID: Guid = Guid { data1: 0xEF77B5CB, data2: 0xD25B, data3: 0x5F21, data4: [0x99, 0xAB, 0xC3, 0x45, 0xE7, 0xCE, 0x2C, 0x30] };
 
 #[repr(C)]
 struct IAvnHeaderedContentControlVtbl {
@@ -7350,6 +7750,10 @@ struct IAvnHeaderedContentControlVtbl {
     set_foreground: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut IAvnBrush) -> i32,
     get_content: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut *mut IAvnControl) -> i32,
     set_content: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut IAvnControl) -> i32,
+    get_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut i32) -> i32,
+    set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, i32) -> i32,
+    get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut i32) -> i32,
+    set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, i32) -> i32,
     get_header: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut *mut IAvnControl) -> i32,
     set_header: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut IAvnControl) -> i32,
 }
@@ -7702,6 +8106,34 @@ impl ComPtr<IAvnHeaderedContentControl> {
     pub fn set_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_content)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_content_alignment)(self.as_raw(), value);
             hresult::check(hr)
         }
     }
@@ -9041,7 +9473,7 @@ impl ComPtr<IAvnTemplatedControl> {
     }
 }
 
-pub const I_AVN_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0xA68058CE, data2: 0x1067, data3: 0x5C24, data4: [0xA3, 0xC4, 0x47, 0x01, 0x05, 0xEB, 0xF4, 0x33] };
+pub const I_AVN_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0x587791B4, data2: 0x65DA, data3: 0x5D37, data4: [0x9E, 0x5B, 0xC0, 0x3B, 0x93, 0x11, 0x56, 0x83] };
 
 #[repr(C)]
 struct IAvnToggleButtonVtbl {
@@ -9097,10 +9529,23 @@ struct IAvnToggleButtonVtbl {
     set_foreground: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnBrush) -> i32,
     get_content: unsafe extern "system" fn(*mut IAvnToggleButton, *mut *mut IAvnControl) -> i32,
     set_content: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnControl) -> i32,
+    get_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnToggleButton, *mut i32) -> i32,
+    set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnToggleButton, i32) -> i32,
+    get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnToggleButton, *mut i32) -> i32,
+    set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnToggleButton, i32) -> i32,
+    get_click_mode: unsafe extern "system" fn(*mut IAvnToggleButton, *mut i32) -> i32,
+    set_click_mode: unsafe extern "system" fn(*mut IAvnToggleButton, i32) -> i32,
+    get_is_default: unsafe extern "system" fn(*mut IAvnToggleButton, *mut i32) -> i32,
+    set_is_default: unsafe extern "system" fn(*mut IAvnToggleButton, i32) -> i32,
+    get_is_cancel: unsafe extern "system" fn(*mut IAvnToggleButton, *mut i32) -> i32,
+    set_is_cancel: unsafe extern "system" fn(*mut IAvnToggleButton, i32) -> i32,
+    get_is_pressed: unsafe extern "system" fn(*mut IAvnToggleButton, *mut i32) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnButtonClickHandler, *mut i64) -> i32,
     unadvise_click: unsafe extern "system" fn(*mut IAvnToggleButton, i64) -> i32,
     get_is_checked: unsafe extern "system" fn(*mut IAvnToggleButton, *mut i32) -> i32,
     set_is_checked: unsafe extern "system" fn(*mut IAvnToggleButton, i32) -> i32,
+    get_is_three_state: unsafe extern "system" fn(*mut IAvnToggleButton, *mut i32) -> i32,
+    set_is_three_state: unsafe extern "system" fn(*mut IAvnToggleButton, i32) -> i32,
     advise_is_checked_changed: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnToggleButtonIsCheckedChangedHandler, *mut i64) -> i32,
     unadvise_is_checked_changed: unsafe extern "system" fn(*mut IAvnToggleButton, i64) -> i32,
 }
@@ -9456,6 +9901,84 @@ impl ComPtr<IAvnToggleButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_horizontal_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_click_mode(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_click_mode)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_click_mode(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_click_mode)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_default(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_default)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_default(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_default)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_cancel(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_cancel)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_cancel(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_cancel)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_pressed(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_pressed)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn advise_click(&self, handler: &ComPtr<IAvnButtonClickHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -9480,6 +10003,20 @@ impl ComPtr<IAvnToggleButton> {
     pub fn set_is_checked(&self, value: Option<bool>) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_checked)(self.as_raw(), value.map_or(-1, i32::from));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_three_state(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_three_state)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_three_state(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_three_state)(self.as_raw(), i32::from(value));
             hresult::check(hr)
         }
     }
@@ -10052,7 +10589,7 @@ impl ComPtr<IAvnProgressBar> {
     }
 }
 
-pub const I_AVN_RADIO_BUTTON_IID: Guid = Guid { data1: 0xB52EDC82, data2: 0xF96D, data3: 0x5D26, data4: [0xB9, 0xC6, 0xDA, 0x9C, 0xCC, 0xD4, 0xAF, 0xC0] };
+pub const I_AVN_RADIO_BUTTON_IID: Guid = Guid { data1: 0x05867789, data2: 0x0F58, data3: 0x5C1E, data4: [0xA3, 0xE5, 0x54, 0x84, 0x1D, 0x87, 0x24, 0x2E] };
 
 #[repr(C)]
 struct IAvnRadioButtonVtbl {
@@ -10108,10 +10645,23 @@ struct IAvnRadioButtonVtbl {
     set_foreground: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnBrush) -> i32,
     get_content: unsafe extern "system" fn(*mut IAvnRadioButton, *mut *mut IAvnControl) -> i32,
     set_content: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnControl) -> i32,
+    get_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnRadioButton, *mut i32) -> i32,
+    set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnRadioButton, i32) -> i32,
+    get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnRadioButton, *mut i32) -> i32,
+    set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnRadioButton, i32) -> i32,
+    get_click_mode: unsafe extern "system" fn(*mut IAvnRadioButton, *mut i32) -> i32,
+    set_click_mode: unsafe extern "system" fn(*mut IAvnRadioButton, i32) -> i32,
+    get_is_default: unsafe extern "system" fn(*mut IAvnRadioButton, *mut i32) -> i32,
+    set_is_default: unsafe extern "system" fn(*mut IAvnRadioButton, i32) -> i32,
+    get_is_cancel: unsafe extern "system" fn(*mut IAvnRadioButton, *mut i32) -> i32,
+    set_is_cancel: unsafe extern "system" fn(*mut IAvnRadioButton, i32) -> i32,
+    get_is_pressed: unsafe extern "system" fn(*mut IAvnRadioButton, *mut i32) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnButtonClickHandler, *mut i64) -> i32,
     unadvise_click: unsafe extern "system" fn(*mut IAvnRadioButton, i64) -> i32,
     get_is_checked: unsafe extern "system" fn(*mut IAvnRadioButton, *mut i32) -> i32,
     set_is_checked: unsafe extern "system" fn(*mut IAvnRadioButton, i32) -> i32,
+    get_is_three_state: unsafe extern "system" fn(*mut IAvnRadioButton, *mut i32) -> i32,
+    set_is_three_state: unsafe extern "system" fn(*mut IAvnRadioButton, i32) -> i32,
     advise_is_checked_changed: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnToggleButtonIsCheckedChangedHandler, *mut i64) -> i32,
     unadvise_is_checked_changed: unsafe extern "system" fn(*mut IAvnRadioButton, i64) -> i32,
     get_group_name: unsafe extern "system" fn(*mut IAvnRadioButton, *mut *mut u16) -> i32,
@@ -10469,6 +11019,84 @@ impl ComPtr<IAvnRadioButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_horizontal_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_click_mode(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_click_mode)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_click_mode(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_click_mode)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_default(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_default)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_default(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_default)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_cancel(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_cancel)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_cancel(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_cancel)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_pressed(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_pressed)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn advise_click(&self, handler: &ComPtr<IAvnButtonClickHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -10493,6 +11121,20 @@ impl ComPtr<IAvnRadioButton> {
     pub fn set_is_checked(&self, value: Option<bool>) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_checked)(self.as_raw(), value.map_or(-1, i32::from));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_three_state(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_three_state)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_three_state(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_three_state)(self.as_raw(), i32::from(value));
             hresult::check(hr)
         }
     }
@@ -10525,7 +11167,7 @@ impl ComPtr<IAvnRadioButton> {
     }
 }
 
-pub const I_AVN_SCROLL_VIEWER_IID: Guid = Guid { data1: 0xE364CED5, data2: 0x4E6D, data3: 0x5C47, data4: [0xA7, 0x5F, 0x70, 0x3B, 0xD0, 0xE7, 0x4F, 0xCD] };
+pub const I_AVN_SCROLL_VIEWER_IID: Guid = Guid { data1: 0xAFC6EC9E, data2: 0xD300, data3: 0x5DE5, data4: [0xAA, 0x51, 0xFA, 0xCB, 0x2C, 0x8F, 0x29, 0x9C] };
 
 #[repr(C)]
 struct IAvnScrollViewerVtbl {
@@ -10581,6 +11223,10 @@ struct IAvnScrollViewerVtbl {
     set_foreground: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnBrush) -> i32,
     get_content: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut *mut IAvnControl) -> i32,
     set_content: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnControl) -> i32,
+    get_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i32) -> i32,
+    set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnScrollViewer, i32) -> i32,
+    get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i32) -> i32,
+    set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnScrollViewer, i32) -> i32,
     get_bring_into_view_on_focus_change: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i32) -> i32,
     set_bring_into_view_on_focus_change: unsafe extern "system" fn(*mut IAvnScrollViewer, i32) -> i32,
     get_horizontal_scroll_bar_visibility: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i32) -> i32,
@@ -10958,6 +11604,34 @@ impl ComPtr<IAvnScrollViewer> {
     pub fn set_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_content)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_content_alignment)(self.as_raw(), value);
             hresult::check(hr)
         }
     }
@@ -13232,7 +13906,7 @@ impl ComPtr<IAvnTextBox> {
     }
 }
 
-pub const I_AVN_TOGGLE_SWITCH_IID: Guid = Guid { data1: 0x71C2C0C4, data2: 0x39F6, data3: 0x5282, data4: [0x9B, 0x6E, 0x72, 0xD6, 0xF4, 0x3E, 0x76, 0xD9] };
+pub const I_AVN_TOGGLE_SWITCH_IID: Guid = Guid { data1: 0xECCA05F2, data2: 0x9F5B, data3: 0x51A9, data4: [0xA2, 0x74, 0x02, 0x70, 0x59, 0x9E, 0x61, 0xC7] };
 
 #[repr(C)]
 struct IAvnToggleSwitchVtbl {
@@ -13288,10 +13962,23 @@ struct IAvnToggleSwitchVtbl {
     set_foreground: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnBrush) -> i32,
     get_content: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut *mut IAvnControl) -> i32,
     set_content: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnControl) -> i32,
+    get_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut i32) -> i32,
+    set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnToggleSwitch, i32) -> i32,
+    get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut i32) -> i32,
+    set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnToggleSwitch, i32) -> i32,
+    get_click_mode: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut i32) -> i32,
+    set_click_mode: unsafe extern "system" fn(*mut IAvnToggleSwitch, i32) -> i32,
+    get_is_default: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut i32) -> i32,
+    set_is_default: unsafe extern "system" fn(*mut IAvnToggleSwitch, i32) -> i32,
+    get_is_cancel: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut i32) -> i32,
+    set_is_cancel: unsafe extern "system" fn(*mut IAvnToggleSwitch, i32) -> i32,
+    get_is_pressed: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut i32) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnButtonClickHandler, *mut i64) -> i32,
     unadvise_click: unsafe extern "system" fn(*mut IAvnToggleSwitch, i64) -> i32,
     get_is_checked: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut i32) -> i32,
     set_is_checked: unsafe extern "system" fn(*mut IAvnToggleSwitch, i32) -> i32,
+    get_is_three_state: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut i32) -> i32,
+    set_is_three_state: unsafe extern "system" fn(*mut IAvnToggleSwitch, i32) -> i32,
     advise_is_checked_changed: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnToggleButtonIsCheckedChangedHandler, *mut i64) -> i32,
     unadvise_is_checked_changed: unsafe extern "system" fn(*mut IAvnToggleSwitch, i64) -> i32,
     get_on_content: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut *mut IAvnControl) -> i32,
@@ -13651,6 +14338,84 @@ impl ComPtr<IAvnToggleSwitch> {
             hresult::check(hr)
         }
     }
+    pub fn get_horizontal_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_click_mode(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_click_mode)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_click_mode(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_click_mode)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_default(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_default)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_default(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_default)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_cancel(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_cancel)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_cancel(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_cancel)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_pressed(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_pressed)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn advise_click(&self, handler: &ComPtr<IAvnButtonClickHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -13675,6 +14440,20 @@ impl ComPtr<IAvnToggleSwitch> {
     pub fn set_is_checked(&self, value: Option<bool>) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_checked)(self.as_raw(), value.map_or(-1, i32::from));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_three_state(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_three_state)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_three_state(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_three_state)(self.as_raw(), i32::from(value));
             hresult::check(hr)
         }
     }
@@ -13721,7 +14500,7 @@ impl ComPtr<IAvnToggleSwitch> {
     }
 }
 
-pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0x0A480A4D, data2: 0x6DF1, data3: 0x5762, data4: [0x86, 0x61, 0xF8, 0x35, 0x19, 0xB0, 0xCC, 0x38] };
+pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0x965CC1CE, data2: 0xDA6F, data3: 0x5CCB, data4: [0x90, 0x0F, 0x31, 0x50, 0xCA, 0x8D, 0xB6, 0x05] };
 
 #[repr(C)]
 struct IAvnWindowVtbl {
@@ -13777,6 +14556,10 @@ struct IAvnWindowVtbl {
     set_foreground: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnBrush) -> i32,
     get_content: unsafe extern "system" fn(*mut IAvnWindow, *mut *mut IAvnControl) -> i32,
     set_content: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnControl) -> i32,
+    get_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
+    set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
+    get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
+    set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
     get_title: unsafe extern "system" fn(*mut IAvnWindow, *mut *mut u16) -> i32,
     set_title: unsafe extern "system" fn(*mut IAvnWindow, *mut u16) -> i32,
     get_window_state: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
@@ -14136,6 +14919,34 @@ impl ComPtr<IAvnWindow> {
     pub fn set_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_content)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_content_alignment)(self.as_raw(), value);
             hresult::check(hr)
         }
     }

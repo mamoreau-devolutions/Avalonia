@@ -180,6 +180,40 @@ Avalonia's weight aliases collapse onto the first declared name: write
 `FontWeight::DemiBold` rather than `SemiBold`, and `FontWeight::Black` rather
 than `Heavy`.
 
+## Control completeness members
+
+The completeness wave allowlists the remaining scalar and enum members that a
+consumer needs before it has to reach for XAML, on types the object model already
+projects:
+
+| Projected interface   | Members |
+| --------------------- | ------- |
+| `IAvnContentControl`  | `HorizontalContentAlignment`, `VerticalContentAlignment` |
+| `IAvnButton`          | `ClickMode`, `IsDefault`, `IsCancel`, `IsPressed` (read-only) |
+| `IAvnToggleButton`    | `IsThreeState` |
+| `IAvnListBox`         | `SelectionMode`, `SelectAll()`, `UnselectAll()` |
+| `IAvnComboBox`        | `IsDropDownOpen`, `IsEditable`, `MaxDropDownHeight` |
+
+As with every other wave, each member sits on the type that declares it in
+Avalonia. `ComboBox` re-declares `HorizontalContentAlignment` and
+`VerticalContentAlignment` with `new`, so they stay published once on
+`ContentControl` rather than costing a second pair of slots.
+
+`IsPressed` is a read-only direct property that Avalonia raises from its own
+input handling, so the ABI publishes `get_is_pressed` and no setter. In safe Rust
+a read-only member drops the `get_` prefix and has no builder: `button.is_pressed()?`.
+
+`ClickMode` and `SelectionMode` join the IR enums. `SelectionMode` is a `[Flags]`
+enum, and — like `KeyModifiers` — it projects as a plain Rust enum carrying only
+the declared modes. A combined value such as `Multiple | Toggle` therefore cannot
+be written from Rust, and reading one that XAML set reports
+`Error::InvalidEnumValue`. Bitmask-shaped enums need their own representation and
+are deliberately left to a later wave.
+
+`Command`, `Flyout`, `ISelectionModel` and `PasswordChar` remain out of scope:
+the first three need reference graphs the ABI does not marshal, and `char` is not
+a marshalling kind.
+
 ## Versioning of the widened vtables
 
 Nano-COM vtables are flattened, so widening a base type moves every slot of every
@@ -193,16 +227,20 @@ compiled against.
 | -------- | ----------------------------------------------------------- | ------- | --------- |
 | Layout   | `IAvnStyledElement`, `IAvnControl` and everything below them | 2 → 3   | `IAvnAvaloniaObject` (2) |
 | Chrome   | `IAvnBorder`, `IAvnPanel`, `IAvnTemplatedControl`, `IAvnTextBlock` and everything below them | 3 → 4 | `IAvnAvaloniaObject` (2), `IAvnStyledElement`, `IAvnControl`, `IAvnDecorator` (3) |
+| Completeness | `IAvnContentControl`, `IAvnButton`, `IAvnToggleButton`, `IAvnListBox`, `IAvnComboBox` and everything below them | 4 → 5 | `IAvnAvaloniaObject` (2), `IAvnStyledElement`, `IAvnControl`, `IAvnDecorator` (3), `IAvnBorder`, `IAvnPanel`, `IAvnGrid`, `IAvnCanvas`, `IAvnDockPanel`, `IAvnStackPanel`, `IAvnTextBlock`, `IAvnTemplatedControl`, `IAvnItemsControl`, `IAvnSelectingItemsControl`, `IAvnTextBox`, `IAvnRangeBase`, `IAvnSlider`, `IAvnProgressBar` (4) |
 
 `IAvnControlFactory` grew `create_solid_color_brush` and moved from version 1 to
-2. `IAvnBrush` is brand new, so it starts at version 1. The collection interfaces
-and the event handler interfaces are unchanged, because they carry interface
-pointers rather than the widened layouts.
+2. The completeness wave adds no factory slot, so it stays at 2. `IAvnBrush` is
+brand new, so it starts at version 1. The collection interfaces and the event
+handler interfaces are unchanged, because they carry interface pointers rather
+than the widened layouts.
 
 `Decorator` sits between `Control` and `Border`. The chrome wave added members to
 `Border`, not to `Decorator`, and nothing was added to `Decorator`'s bases either,
 so `IAvnDecorator` keeps the version 3 IID it published with the layout wave even
-though `IAvnBorder` moved to 4.
+though `IAvnBorder` moved to 4. `ListBox` and `ComboBox` derive from
+`SelectingItemsControl`, not from `ContentControl`, so they moved to 5 for their
+own members while `IAvnItemsControl` and `IAvnSelectingItemsControl` stayed at 4.
 
 ## Host constraint: same-assembly structs
 

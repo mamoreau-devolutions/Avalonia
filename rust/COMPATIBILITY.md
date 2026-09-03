@@ -75,7 +75,12 @@ below them to version 4, while `IAvnAvaloniaObject` stayed at 2 and
 `IAvnStyledElement`, `IAvnControl` and `IAvnDecorator` stayed at 3 because their
 own flattened vtables did not move. `IAvnControlFactory` gained
 `create_solid_color_brush` and moved from version 1 to 2, and the new read-only
-`IAvnBrush` starts at version 1.
+`IAvnBrush` starts at version 1. The completeness wave then took
+`IAvnContentControl`, `IAvnButton`, `IAvnToggleButton`, `IAvnListBox`,
+`IAvnComboBox` and everything below them to version 5; `IAvnControlFactory`
+gained no slot and stays at 2, and every interface outside those subtrees —
+including `IAvnItemsControl` and `IAvnSelectingItemsControl` — keeps the version
+whose flattened vtable it still matches.
 
 ## RID artifacts
 

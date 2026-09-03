@@ -86,13 +86,50 @@
       "name": "IAvnButton",
       "fullName": "Avalonia.Host.Com.IAvnButton",
       "kind": "Class",
-      "iid": "9DE6B725-9BF0-5DEE-A947-DD87709DD52E",
-      "abiVersion": 4,
+      "iid": "6D86D2DB-4473-576B-8778-47C74AAF182D",
+      "abiVersion": 5,
       "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
       "managedFullName": "Avalonia.Controls.Button",
       "isConstructible": true,
       "methods": [],
-      "properties": [],
+      "properties": [
+        {
+          "name": "ClickMode",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.ClickMode",
+          "isNullable": false
+        },
+        {
+          "name": "IsDefault",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "IsCancel",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "IsPressed",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": false,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        }
+      ],
       "events": [
         {
           "name": "Click",
@@ -122,8 +159,8 @@
       "name": "IAvnCheckBox",
       "fullName": "Avalonia.Host.Com.IAvnCheckBox",
       "kind": "Class",
-      "iid": "2060E415-B704-5B6D-AB59-9C3E1050CAEC",
-      "abiVersion": 4,
+      "iid": "56332928-3A00-552F-AC0F-33E4C46A933D",
+      "abiVersion": 5,
       "baseFullName": "Avalonia.Host.Com.IAvnToggleButton",
       "managedFullName": "Avalonia.Controls.CheckBox",
       "isConstructible": true,
@@ -135,13 +172,40 @@
       "name": "IAvnComboBox",
       "fullName": "Avalonia.Host.Com.IAvnComboBox",
       "kind": "Class",
-      "iid": "4EEFC042-03EE-5E79-AF4B-3A53F50C63B4",
-      "abiVersion": 4,
+      "iid": "7334041F-D155-548C-BF70-4CFFB4F44021",
+      "abiVersion": 5,
       "baseFullName": "Avalonia.Host.Com.IAvnSelectingItemsControl",
       "managedFullName": "Avalonia.Controls.ComboBox",
       "isConstructible": true,
       "methods": [],
       "properties": [
+        {
+          "name": "IsDropDownOpen",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "IsEditable",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "MaxDropDownHeight",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
         {
           "name": "PlaceholderText",
           "kind": "StringUtf16",
@@ -158,8 +222,8 @@
       "name": "IAvnComboBoxItem",
       "fullName": "Avalonia.Host.Com.IAvnComboBoxItem",
       "kind": "Class",
-      "iid": "7C00A8FF-649A-59BD-BF88-FAB86B9CB023",
-      "abiVersion": 4,
+      "iid": "2502558C-2FB5-5DE4-8384-F49D0D72932B",
+      "abiVersion": 5,
       "baseFullName": "Avalonia.Host.Com.IAvnListBoxItem",
       "managedFullName": "Avalonia.Controls.ComboBoxItem",
       "isConstructible": true,
@@ -171,8 +235,8 @@
       "name": "IAvnContentControl",
       "fullName": "Avalonia.Host.Com.IAvnContentControl",
       "kind": "Class",
-      "iid": "341FD6C2-31EA-572B-B53F-A8CFB57B3BF0",
-      "abiVersion": 4,
+      "iid": "2C4557A2-537C-5683-9E30-C3AE87D7614C",
+      "abiVersion": 5,
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.ContentControl",
       "isConstructible": true,
@@ -187,6 +251,24 @@
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.Object",
           "isNullable": true
+        },
+        {
+          "name": "HorizontalContentAlignment",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Layout.HorizontalAlignment",
+          "isNullable": false
+        },
+        {
+          "name": "VerticalContentAlignment",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Layout.VerticalAlignment",
+          "isNullable": false
         }
       ],
       "events": []
@@ -455,8 +537,8 @@
       "name": "IAvnExpander",
       "fullName": "Avalonia.Host.Com.IAvnExpander",
       "kind": "Class",
-      "iid": "86F7AA23-B8A4-5E94-A88E-BA48B7D31547",
-      "abiVersion": 4,
+      "iid": "332ED548-2796-596D-A9D0-47C90728363B",
+      "abiVersion": 5,
       "baseFullName": "Avalonia.Host.Com.IAvnHeaderedContentControl",
       "managedFullName": "Avalonia.Controls.Expander",
       "isConstructible": true,
@@ -574,21 +656,46 @@
       "name": "IAvnListBox",
       "fullName": "Avalonia.Host.Com.IAvnListBox",
       "kind": "Class",
-      "iid": "97204BC7-2150-5475-B853-9241B9B03781",
-      "abiVersion": 4,
+      "iid": "EAD15413-53EB-5159-BE99-7BED7BF25651",
+      "abiVersion": 5,
       "baseFullName": "Avalonia.Host.Com.IAvnSelectingItemsControl",
       "managedFullName": "Avalonia.Controls.ListBox",
       "isConstructible": true,
-      "methods": [],
-      "properties": [],
+      "methods": [
+        {
+          "name": "SelectAll",
+          "managedName": "SelectAll",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": []
+        },
+        {
+          "name": "UnselectAll",
+          "managedName": "UnselectAll",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": []
+        }
+      ],
+      "properties": [
+        {
+          "name": "SelectionMode",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.SelectionMode",
+          "isNullable": false
+        }
+      ],
       "events": []
     },
     {
       "name": "IAvnListBoxItem",
       "fullName": "Avalonia.Host.Com.IAvnListBoxItem",
       "kind": "Class",
-      "iid": "AC5C9E20-676E-589E-80EB-BB04DF8019DB",
-      "abiVersion": 4,
+      "iid": "F10EB1EB-9F6C-580E-920B-8EF9364E487D",
+      "abiVersion": 5,
       "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
       "managedFullName": "Avalonia.Controls.ListBoxItem",
       "isConstructible": true,
@@ -648,8 +755,8 @@
       "name": "IAvnHeaderedContentControl",
       "fullName": "Avalonia.Host.Com.IAvnHeaderedContentControl",
       "kind": "Class",
-      "iid": "C1129113-FE08-5174-93CE-48FC7E3E5B86",
-      "abiVersion": 4,
+      "iid": "EF77B5CB-D25B-5F21-99AB-C345E7CE2C30",
+      "abiVersion": 5,
       "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
       "managedFullName": "Avalonia.Controls.Primitives.HeaderedContentControl",
       "isConstructible": true,
@@ -848,8 +955,8 @@
       "name": "IAvnToggleButton",
       "fullName": "Avalonia.Host.Com.IAvnToggleButton",
       "kind": "Class",
-      "iid": "A68058CE-1067-5C24-A3C4-470105EBF433",
-      "abiVersion": 4,
+      "iid": "587791B4-65DA-5D37-9E5B-C03B93115683",
+      "abiVersion": 5,
       "baseFullName": "Avalonia.Host.Com.IAvnButton",
       "managedFullName": "Avalonia.Controls.Primitives.ToggleButton",
       "isConstructible": true,
@@ -863,6 +970,15 @@
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.Nullable\u00601[[System.Boolean, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
           "isNullable": true
+        },
+        {
+          "name": "IsThreeState",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
         }
       ],
       "events": [
@@ -931,8 +1047,8 @@
       "name": "IAvnRadioButton",
       "fullName": "Avalonia.Host.Com.IAvnRadioButton",
       "kind": "Class",
-      "iid": "B52EDC82-F96D-5D26-B9C6-DA9CCCD4AFC0",
-      "abiVersion": 4,
+      "iid": "05867789-0F58-5C1E-A3E5-54841D87242E",
+      "abiVersion": 5,
       "baseFullName": "Avalonia.Host.Com.IAvnToggleButton",
       "managedFullName": "Avalonia.Controls.RadioButton",
       "isConstructible": true,
@@ -954,8 +1070,8 @@
       "name": "IAvnScrollViewer",
       "fullName": "Avalonia.Host.Com.IAvnScrollViewer",
       "kind": "Class",
-      "iid": "E364CED5-4E6D-5C47-A75F-703BD0E74FCD",
-      "abiVersion": 4,
+      "iid": "AFC6EC9E-D300-5DE5-AA51-FACB2C8F299C",
+      "abiVersion": 5,
       "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
       "managedFullName": "Avalonia.Controls.ScrollViewer",
       "isConstructible": true,
@@ -1547,8 +1663,8 @@
       "name": "IAvnToggleSwitch",
       "fullName": "Avalonia.Host.Com.IAvnToggleSwitch",
       "kind": "Class",
-      "iid": "71C2C0C4-39F6-5282-9B6E-72D6F43E76D9",
-      "abiVersion": 4,
+      "iid": "ECCA05F2-9F5B-51A9-A274-0270599E61C7",
+      "abiVersion": 5,
       "baseFullName": "Avalonia.Host.Com.IAvnToggleButton",
       "managedFullName": "Avalonia.Controls.ToggleSwitch",
       "isConstructible": true,
@@ -1581,8 +1697,8 @@
       "name": "IAvnWindow",
       "fullName": "Avalonia.Host.Com.IAvnWindow",
       "kind": "Class",
-      "iid": "0A480A4D-6DF1-5762-8661-F83519B0CC38",
-      "abiVersion": 4,
+      "iid": "965CC1CE-DA6F-5CCB-900F-3150CA8DB605",
+      "abiVersion": 5,
       "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
       "managedFullName": "Avalonia.Controls.Window",
       "isConstructible": true,
@@ -1687,6 +1803,20 @@
   ],
   "enums": [
     {
+      "name": "ClickMode",
+      "fullName": "Avalonia.Controls.ClickMode",
+      "values": [
+        {
+          "name": "Release",
+          "value": 0
+        },
+        {
+          "name": "Press",
+          "value": 1
+        }
+      ]
+    },
+    {
       "name": "Dock",
       "fullName": "Avalonia.Controls.Dock",
       "values": [
@@ -1749,6 +1879,28 @@
         {
           "name": "Visible",
           "value": 3
+        }
+      ]
+    },
+    {
+      "name": "SelectionMode",
+      "fullName": "Avalonia.Controls.SelectionMode",
+      "values": [
+        {
+          "name": "Single",
+          "value": 0
+        },
+        {
+          "name": "Multiple",
+          "value": 1
+        },
+        {
+          "name": "Toggle",
+          "value": 2
+        },
+        {
+          "name": "AlwaysSelected",
+          "value": 4
         }
       ]
     },
@@ -3873,11 +4025,6 @@
     },
     {
       "owner": "Avalonia.Controls.Button",
-      "member": "ClickMode",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Button",
       "member": "Command",
       "reason": "Not included by projection policy"
     },
@@ -3893,37 +4040,7 @@
     },
     {
       "owner": "Avalonia.Controls.Button",
-      "member": "IsDefault",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Button",
-      "member": "IsCancel",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Button",
-      "member": "IsPressed",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Button",
       "member": "Flyout",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ComboBox",
-      "member": "IsDropDownOpen",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ComboBox",
-      "member": "IsEditable",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ComboBox",
-      "member": "MaxDropDownHeight",
       "reason": "Not included by projection policy"
     },
     {
@@ -3984,16 +4101,6 @@
     {
       "owner": "Avalonia.Controls.ContentControl",
       "member": "Presenter",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ContentControl",
-      "member": "HorizontalContentAlignment",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ContentControl",
-      "member": "VerticalContentAlignment",
       "reason": "Not included by projection policy"
     },
     {
@@ -4187,21 +4294,6 @@
       "reason": "Not included by projection policy"
     },
     {
-      "owner": "Avalonia.Controls.ListBox",
-      "member": "SelectionMode",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ListBox",
-      "member": "SelectAll()",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ListBox",
-      "member": "UnselectAll()",
-      "reason": "Not included by projection policy"
-    },
-    {
       "owner": "Avalonia.Controls.Panel",
       "member": "IsItemsHost",
       "reason": "Not included by projection policy"
@@ -4319,11 +4411,6 @@
     {
       "owner": "Avalonia.Controls.Primitives.TemplatedControl",
       "member": "ApplyTemplate()",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Primitives.ToggleButton",
-      "member": "IsThreeState",
       "reason": "Not included by projection policy"
     },
     {

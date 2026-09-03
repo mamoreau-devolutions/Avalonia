@@ -11,9 +11,12 @@ Geometry value types (`Thickness`, `CornerRadius`, `Size`, `Point`, `Rect`,
 `Color`) cross the ABI as blittable structs, an `IBrush` crosses as a read-only
 solid-colour `IAvnBrush`, and the projected layout members (`Margin`, `Padding`,
 alignments, min/max sizes, `IsVisible`, `Opacity`, `Name`, `CanResize`,
-`WindowState`) and chrome members (`Background`, `BorderBrush`,
+`WindowState`), chrome members (`Background`, `BorderBrush`,
 `BorderThickness`, `CornerRadius`, `Foreground`, `FontSize`, `FontWeight`,
-`TextAlignment`) are documented in [MARSHALLING.md](MARSHALLING.md).
+`TextAlignment`) and control members (`ClickMode`, `IsDefault`, `IsCancel`,
+`IsPressed`, `IsThreeState`, content alignments, `SelectionMode`, `SelectAll`,
+`UnselectAll`, `IsDropDownOpen`, `IsEditable`, `MaxDropDownHeight`) are
+documented in [MARSHALLING.md](MARSHALLING.md).
 The executor-neutral completion ABI and clipboard integration are documented
 in [ASYNC.md](ASYNC.md).
 Desktop file integration (pickers, drag/drop, "open with", file associations)
