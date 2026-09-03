@@ -206,9 +206,10 @@ public sealed class ViewModelIr
                 if (!property.Writable)
                     throw new InvalidOperationException(
                         $"Command parameter property '{model.Name}.{property.Name}' must be writable.");
-                if (property.Kind != ViewModelValueKind.String)
+                if (property.Kind is not (ViewModelValueKind.String or ViewModelValueKind.Integer
+                    or ViewModelValueKind.Boolean or ViewModelValueKind.Double))
                     throw new InvalidOperationException(
-                        $"Command parameter property '{model.Name}.{property.Name}' must be a string.");
+                        $"Command parameter property '{model.Name}.{property.Name}' must be a string, integer, boolean, or double.");
                 if (property.Nullable)
                     throw new InvalidOperationException(
                         $"Command parameter property '{model.Name}.{property.Name}' must not be nullable.");

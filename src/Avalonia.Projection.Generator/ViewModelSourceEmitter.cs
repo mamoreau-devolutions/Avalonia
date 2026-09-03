@@ -228,6 +228,7 @@ public static class ViewModelSourceEmitter
         sb.AppendLine("using System.Collections.Generic;");
         sb.AppendLine("using System.Collections.ObjectModel;");
         sb.AppendLine("using System.ComponentModel;");
+        sb.AppendLine("using System.Globalization;");
         sb.AppendLine("using System.Linq;");
         sb.AppendLine("using System.Runtime.CompilerServices;");
         sb.AppendLine("using System.Runtime.InteropServices;");
@@ -320,8 +321,7 @@ public static class ViewModelSourceEmitter
         foreach (var command in model.Commands)
         {
             var invocation = command.IsAsync ? "BeginAsync" : "Execute";
-            var acceptsParameter = AcceptsCommandParameter(model, command);
-            var parameter = command.ParameterProperty ?? (acceptsParameter ? "parameter as string" : "null");
+            var parameter = CSharpCommandWireArgument(model, command);
             if (command.IsAsync && (command.SupportsCancellation || command.SupportsProgress))
             {
                 sb.AppendLine(
@@ -2227,9 +2227,7 @@ public static class ViewModelSourceEmitter
         sb.AppendLine("        match command_id {");
         foreach (var command in commands)
         {
-            var argument = command.ParameterProperty is null && !AcceptsCommandParameter(model, command)
-                ? ""
-                : "parameter.unwrap_or_default()";
+            var argument = RustCommandWireArgument(model, command, "command_id");
             var token = command.SupportsCancellation
                 ? (argument.Length == 0 ? "crate::CancellationToken::none()" : ", crate::CancellationToken::none()")
                 : "";
@@ -2254,10 +2252,9 @@ public static class ViewModelSourceEmitter
         sb.AppendLine("        match command_id {");
         foreach (var command in cancellable)
         {
-            var argument = command.ParameterProperty is null && !AcceptsCommandParameter(model, command)
-                ? "token"
-                : "parameter.unwrap_or_default(), token";
-            sb.AppendLine($"            {command.Id} => self.model.{Snake(command.Name)}({argument}),");
+            var argument = RustCommandWireArgument(model, command, "command_id");
+            var call = argument.Length == 0 ? "token" : $"{argument}, token";
+            sb.AppendLine($"            {command.Id} => self.model.{Snake(command.Name)}({call}),");
         }
         sb.AppendLine("            _ => self.begin_async(command_id, parameter),");
         sb.AppendLine("        }");
@@ -2436,6 +2433,47 @@ public static class ViewModelSourceEmitter
     /// the second, because the chosen URI is a property of the clicked menu
     /// item, not of the model.
     /// </summary>
+    /// <summary>
+    /// Formats the UTF-16 command argument the nano-COM <c>Execute</c>/<c>BeginAsync</c>
+    /// vtable carries. Declared parameter properties may be any scalar; they
+    /// ride the existing string slot with invariant formatting.
+    /// </summary>
+    private static string CSharpCommandWireArgument(ViewModelDefinition model, ViewModelCommand command)
+    {
+        if (command.ParameterProperty is { } name)
+        {
+            var kind = model.Properties.Single(property => property.Name == name).Kind;
+            return kind switch
+            {
+                ViewModelValueKind.String => name,
+                ViewModelValueKind.Integer => $"{name}.ToString(CultureInfo.InvariantCulture)",
+                ViewModelValueKind.Double => $"{name}.ToString(\"R\", CultureInfo.InvariantCulture)",
+                ViewModelValueKind.Boolean => $"{name} ? \"true\" : \"false\"",
+                _ => throw new InvalidOperationException($"Command '{model.Name}.{command.Name}' has an unsupported parameter kind '{kind}'."),
+            };
+        }
+
+        return AcceptsCommandParameter(model, command) ? "parameter as string" : "null";
+    }
+
+    /// <summary>
+    /// Parses the UTF-16 command argument into the generated Rust trait's
+    /// owned parameter type. Empty when the command takes no value.
+    /// </summary>
+    private static string RustCommandWireArgument(ViewModelDefinition model, ViewModelCommand command, string commandIdExpr)
+    {
+        if (command.ParameterProperty is { } name)
+        {
+            var kind = model.Properties.Single(property => property.Name == name).Kind;
+            if (kind == ViewModelValueKind.String)
+                return "parameter.unwrap_or_default()";
+            var rustType = RustOwnedType(kind);
+            return $"parameter.as_deref().unwrap_or(\"\").parse::<{rustType}>().map_err(|_| crate::Error::InvalidViewModelMember {{ kind: \"command\", id: {commandIdExpr} }})?";
+        }
+
+        return AcceptsCommandParameter(model, command) ? "parameter.unwrap_or_default()" : "";
+    }
+
     private static bool AcceptsCommandParameter(ViewModelDefinition model, ViewModelCommand command) =>
         IsTableSortCommand(model, command) ||
         string.Equals(model.RecentFiles?.ActivateCommand, command.Name, StringComparison.Ordinal);

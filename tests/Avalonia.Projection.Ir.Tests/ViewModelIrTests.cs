@@ -300,7 +300,7 @@ public class ViewModelIrTests
     }
 
     [Fact]
-    public void Non_string_command_parameters_are_rejected()
+    public void Scalar_command_parameters_are_accepted()
     {
         var ir = CreateModel(
             properties:
@@ -317,6 +317,38 @@ public class ViewModelIrTests
         [
             new() { Id = 1, Name = "SetCount", ParameterProperty = "Count" },
         ]);
+
+        ir.Validate();
+    }
+
+    [Fact]
+    public void Model_command_parameters_are_rejected()
+    {
+        var ir = new ViewModelIr
+        {
+            Models =
+            [
+                new()
+                {
+                    Id = 1,
+                    Name = "Parent",
+                    ManagedNamespace = "Tests",
+                    Properties =
+                    [
+                        new()
+                        {
+                            Id = 1,
+                            Name = "Child",
+                            Kind = ViewModelValueKind.Model,
+                            ModelName = "Child",
+                            Writable = true,
+                        },
+                    ],
+                    Commands = [new() { Id = 1, Name = "UseChild", ParameterProperty = "Child" }],
+                },
+                new() { Id = 2, Name = "Child", ManagedNamespace = "Tests" },
+            ],
+        };
 
         Assert.Throws<InvalidOperationException>(() => ir.Validate());
     }
