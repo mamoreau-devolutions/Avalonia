@@ -187,11 +187,96 @@ public class RustDataShapeTests
         Assert.Equal(10, typeof(IAvnRustVmRangeBatch).GetMethods().Length);
         Assert.Equal(2, typeof(IAvnRustRangeSource).GetMethods().Length);
         Assert.Equal(2, typeof(IAvnRustViewModel2).GetMethods().Length);
+        Assert.Equal(6, typeof(IAvnRustVmSink5).GetMethods().Length);
 
         // Slot order is ABI: GetKind must stay first on the range batch, as it
         // is on IAvnRustVmUpdateOperation.
         Assert.Equal("GetKind", typeof(IAvnRustVmRangeBatch).GetMethods()[0].Name);
         Assert.Equal("Complete", typeof(IAvnRustVmRangeBatch).GetMethods()[^1].Name);
+        Assert.Equal("AddInteger", typeof(IAvnRustVmSink5).GetMethods()[0].Name);
+        Assert.Equal("ReplaceDouble", typeof(IAvnRustVmSink5).GetMethods()[^1].Name);
+    }
+
+    [Fact]
+    public void Generated_adapter_projects_a_double_collection_through_the_number_sink()
+    {
+        var model = new ShapeModel();
+        using var adapter = new SampleViewModelAdapter(model, action => action(), action => action());
+        var changed = new List<NotifyCollectionChangedAction>();
+        adapter.CoreLoads.CollectionChanged += (_, e) => changed.Add(e.Action);
+
+        var sink = model.Sink5;
+        Assert.Equal(0, sink.AddDouble(8, 0.25));
+        Assert.Equal(0, sink.AddDouble(8, 0.75));
+        Assert.Equal(0, sink.InsertDouble(8, 1, 0.5));
+        Assert.Equal([0.25, 0.5, 0.75], adapter.CoreLoads.ToArray());
+
+        Assert.Equal(0, sink.ReplaceDouble(8, 0, 1.5));
+        Assert.Equal([1.5, 0.5, 0.75], adapter.CoreLoads.ToArray());
+
+        // Out-of-range indices and mismatched element kinds are explicit ABI
+        // errors, never a silent coercion or a partially applied edit.
+        Assert.Equal(InvalidArgument, sink.InsertDouble(8, 9, 1.0));
+        Assert.Equal(InvalidArgument, sink.ReplaceDouble(8, 3, 1.0));
+        Assert.Equal(InvalidArgument, sink.AddInteger(8, 1));
+        Assert.Equal(InvalidArgument, sink.AddDouble(1, 1.0));
+        Assert.Equal([1.5, 0.5, 0.75], adapter.CoreLoads.ToArray());
+
+        // Removal, movement and clearing carry no element value, so they ride
+        // the already-published v2 sink.
+        var v2 = model.Sink2;
+        Assert.Equal(0, v2.MoveItem(8, 0, 2));
+        Assert.Equal([0.5, 0.75, 1.5], adapter.CoreLoads.ToArray());
+        Assert.Equal(0, v2.RemoveAt(8, 1));
+        Assert.Equal([0.5, 1.5], adapter.CoreLoads.ToArray());
+        Assert.Equal(InvalidArgument, v2.RemoveAt(8, 5));
+        Assert.Equal(0, v2.ClearCollection(8));
+        Assert.Empty(adapter.CoreLoads);
+        Assert.Equal(NotifyCollectionChangedAction.Reset, changed[^1]);
+    }
+
+    [Fact]
+    public void Generated_adapter_projects_an_integer_collection_through_the_number_sink()
+    {
+        var model = new ShapeModel();
+        using var adapter = new SampleViewModelAdapter(model, action => action(), action => action());
+        var sink = model.Sink5;
+
+        Assert.Equal(0, sink.AddInteger(9, 10));
+        Assert.Equal(0, sink.AddInteger(9, 30));
+        Assert.Equal(0, sink.InsertInteger(9, 1, 20));
+        Assert.Equal([10L, 20L, 30L], adapter.CoreTicks.ToArray());
+
+        Assert.Equal(0, sink.ReplaceInteger(9, 2, 99));
+        Assert.Equal([10L, 20L, 99L], adapter.CoreTicks.ToArray());
+
+        Assert.Equal(InvalidArgument, sink.InsertInteger(9, 4, 1));
+        Assert.Equal(InvalidArgument, sink.ReplaceInteger(9, 3, 1));
+        // The integer and double collections are distinct schema IDs, so a
+        // call must never land on the other one's list.
+        Assert.Equal(InvalidArgument, sink.AddDouble(9, 1.0));
+        Assert.Equal(InvalidArgument, sink.AddInteger(8, 1));
+        Assert.Equal([10L, 20L, 99L], adapter.CoreTicks.ToArray());
+        Assert.Empty(adapter.CoreLoads);
+
+        Assert.Equal(0, model.Sink2.ClearCollection(9));
+        Assert.Empty(adapter.CoreTicks);
+    }
+
+    [Fact]
+    public void A_string_collection_rejects_the_number_sink_and_keeps_its_own_transport()
+    {
+        var model = new ShapeModel();
+        using var adapter = new SampleViewModelAdapter(model, action => action(), action => action());
+
+        var numbers = model.Sink5;
+        var v1 = model.Sink;
+
+        Assert.Equal(InvalidArgument, numbers.AddDouble(1, 1.0));
+        Assert.Equal(InvalidArgument, numbers.AddInteger(1, 1));
+        Assert.Equal(0, v1.AddString(1, "kept"));
+        Assert.Equal(["kept"], adapter.Items.ToArray());
+        Assert.Empty(adapter.CoreLoads);
     }
 
     [Fact]
@@ -721,6 +806,14 @@ public class RustDataShapeTests
 
         public IAvnRustVmSink4 Sink4 { get; private set; } = null!;
 
+        /// <summary>The same adapter, queried for the scalar-number capability.</summary>
+        public IAvnRustVmSink5 Sink5 { get; private set; } = null!;
+
+        /// <summary>The same adapter, on its already-published v1/v2 vtables.</summary>
+        public IAvnRustVmSink Sink { get; private set; } = null!;
+
+        public IAvnRustVmSink2 Sink2 { get; private set; } = null!;
+
         public int Sink4Queries { get; private set; }
 
         public int TrackedStarts { get; private set; }
@@ -730,7 +823,10 @@ public class RustDataShapeTests
         public int Attach(IAvnRustVmSink? sink)
         {
             Sink4Queries++;
+            Sink = sink!;
+            Sink2 = (IAvnRustVmSink2)sink!;
             Sink4 = (IAvnRustVmSink4)sink!;
+            Sink5 = (IAvnRustVmSink5)sink!;
             sink!.SetString(15, "Generation 4");
             return 0;
         }

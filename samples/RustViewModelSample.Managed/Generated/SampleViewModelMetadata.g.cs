@@ -39,6 +39,8 @@ public static class SampleViewModelMetadata
             new(5, "LogWindow", RustViewModelValueKind.Model, global::Avalonia.Rust.Sample.Generated.TraceRowViewModelMetadata.Descriptor, null, new(64, 8), null, false),
             new(6, "LogTree", RustViewModelValueKind.Model, global::Avalonia.Rust.Sample.Generated.LogNodeViewModelMetadata.Descriptor, null, null, new("Children", "Label", "HasChildren"), false),
             new(7, "RecentFiles", RustViewModelValueKind.String, null, null, null, null, false),
+            new(8, "CoreLoads", RustViewModelValueKind.Double, null, null, null, null, false),
+            new(9, "CoreTicks", RustViewModelValueKind.Integer, null, null, null, null, false),
         ],
         [
             new(1, "IncrementCommand", false, null, false, null, false, false),

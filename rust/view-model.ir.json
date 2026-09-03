@@ -282,6 +282,18 @@
           "name": "RecentFiles",
           "elementKind": "String",
           "recursive": false
+        },
+        {
+          "id": 8,
+          "name": "CoreLoads",
+          "elementKind": "Double",
+          "recursive": false
+        },
+        {
+          "id": 9,
+          "name": "CoreTicks",
+          "elementKind": "Integer",
+          "recursive": false
         }
       ],
       "maps": [

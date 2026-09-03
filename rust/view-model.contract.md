@@ -36,6 +36,8 @@ Schema version: `5`
 | Collection | 5 | `LogWindow` | Model `TraceRowViewModel` (windowed: page 64, 8 live pages) | Rust to managed |
 | Collection | 6 | `LogTree` | Model `LogNodeViewModel` (tree root) | Rust to managed |
 | Collection | 7 | `RecentFiles` | `String` | Rust to managed |
+| Collection | 8 | `CoreLoads` | `Double` | Rust to managed |
+| Collection | 9 | `CoreTicks` | `Integer` | Rust to managed |
 | Map | 1 | `SeverityCounts` | `String` to `Integer` | Rust to managed |
 | Map | 2 | `SourceDetails` | `String` to Model `TraceEventViewModel` | Rust to managed |
 | Command | 1 | `Increment` | None | Managed to Rust |

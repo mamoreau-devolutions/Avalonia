@@ -295,6 +295,49 @@ public partial interface IAvnRustVmSink4
 }
 
 /// <summary>
+/// Scalar-number collection capability: appending, inserting and replacing
+/// <c>long</c>/<c>double</c> elements of an <c>ObservableCollection&lt;long&gt;</c>
+/// or <c>ObservableCollection&lt;double&gt;</c> projection.
+///
+/// It is a new IID and vtable rather than an extension of
+/// <see cref="IAvnRustVmSink"/>/<see cref="IAvnRustVmSink2"/>, so every
+/// already-published sink contract is untouched and a host that has not been
+/// regenerated simply fails <c>QueryInterface</c> for this IID instead of
+/// silently dropping updates.
+///
+/// Removal, movement and clearing are deliberately absent: they carry no
+/// element value, so the already-published
+/// <see cref="IAvnRustVmSink2.RemoveAt"/>,
+/// <see cref="IAvnRustVmSink2.MoveItem"/> and
+/// <see cref="IAvnRustVmSink2.ClearCollection"/> apply to a scalar-number
+/// collection exactly as they do to a string or model one.
+/// </summary>
+[GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
+[Guid("6B2E8F10-4C91-4E3A-9A77-1F0C2B3A4D2F")]
+public partial interface IAvnRustVmSink5
+{
+    /// <summary>Appends one element to an integer-kind collection.</summary>
+    [PreserveSig]
+    int AddInteger(int collectionId, long value);
+
+    [PreserveSig]
+    int InsertInteger(int collectionId, int index, long value);
+
+    [PreserveSig]
+    int ReplaceInteger(int collectionId, int index, long value);
+
+    /// <summary>Appends one element to a double-kind collection.</summary>
+    [PreserveSig]
+    int AddDouble(int collectionId, double value);
+
+    [PreserveSig]
+    int InsertDouble(int collectionId, int index, double value);
+
+    [PreserveSig]
+    int ReplaceDouble(int collectionId, int index, double value);
+}
+
+/// <summary>
 /// Read-only nano-COM representation of one realized range of a windowed
 /// collection. Implementations must be immutable for their complete COM
 /// lifetime, exactly like <see cref="IAvnRustVmUpdateBatch"/>.

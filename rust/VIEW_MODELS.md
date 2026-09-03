@@ -599,3 +599,52 @@ back as immutable storage snapshots. The frozen text methods on
 
 See [MENUS.md](MENUS.md) for the full design, the enabled-state rule and the
 honest platform limits.
+
+## Scalar-number collections
+
+A collection's `elementKind` may be `Integer` or `Double` in addition to
+`String` and `Model`, projecting an `ObservableCollection<long>` or
+`ObservableCollection<double>` (a `BatchObservableCollection<T>`, exactly like a
+string collection). A scalar-number collection must not declare
+`elementModelName`, and it cannot back a table, tree or window: those are
+nested-model shapes and a range batch has no scalar-number wire form.
+
+The three value-carrying operations ride a fifth, separately versioned sink,
+**`IAvnRustVmSink5`** (IID `6B2E8F10-4C91-4E3A-9A77-1F0C2B3A4D2F`):
+
+```
+AddInteger(collectionId, long)                 AddDouble(collectionId, double)
+InsertInteger(collectionId, index, long)       InsertDouble(collectionId, index, double)
+ReplaceInteger(collectionId, index, long)      ReplaceDouble(collectionId, index, double)
+```
+
+No published vtable is widened. A generated adapter implements the interface
+only when the model declares at least one scalar-number collection, Rust queries
+it once and caches the result, and a host that has not been regenerated fails
+`QueryInterface` and reports an explicit `E_NOINTERFACE` from every element call
+instead of silently dropping the update — the same discipline as
+`IAvnRustVmSink3`/`IAvnRustVmSink4`. Managed dispatch rejects an ID whose
+declared element kind does not match the call (`AddInteger` on a `Double`
+collection is `E_INVALIDARG`, never a coercion) and rejects out-of-range
+indices.
+
+`RemoveAt`, `MoveItem` and `ClearCollection` carry no element value, so they are
+deliberately *not* duplicated here: the already-published `IAvnRustVmSink2`
+operations apply to a scalar-number collection exactly as they do to a string or
+model one.
+
+Generated Rust names never expose the transport or the schema ID:
+
+```rust
+sink.add_core_loads(0.75)?;          // ObservableCollection<double>
+sink.insert_core_loads(0, 0.25)?;
+sink.replace_core_ticks(2, 99)?;     // ObservableCollection<long>
+sink.clear_core_ticks()?;
+```
+
+Worker batches (`IAvnRustVmSink3`) still carry only string and model elements,
+so a scalar-number collection has no `add_*` batch method; its removal, move and
+clear operations do work inside a batch. The dynamic (reflectable) adapter does
+not implement `IAvnRustVmSink5`, so a model shared by both mounts can check
+`supports_number_collections()` once rather than treating `E_NOINTERFACE` as a
+failure.

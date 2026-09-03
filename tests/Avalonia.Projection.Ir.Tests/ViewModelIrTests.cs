@@ -22,7 +22,13 @@ public class ViewModelIrTests
         Assert.Equal(20, model.Commands.Count);
         Assert.True(model.Commands.Single(command => command.Name == "Save").IsAsync);
         Assert.True(model.Commands.Single(command => command.Name == "OpenFiles").IsAsync);
-        Assert.Equal(7, model.Collections.Count);
+        Assert.Equal(9, model.Collections.Count);
+        Assert.Equal(
+            ViewModelValueKind.Double,
+            model.Collections.Single(collection => collection.Name == "CoreLoads").ElementKind);
+        Assert.Equal(
+            ViewModelValueKind.Integer,
+            model.Collections.Single(collection => collection.Name == "CoreTicks").ElementKind);
         var enumDefinition = Assert.Single(ir.Enums);
         Assert.Equal("Priority", enumDefinition.Name);
         Assert.Equal(3, enumDefinition.Members.Count);
@@ -289,11 +295,57 @@ public class ViewModelIrTests
     }
 
     [Fact]
-    public void Non_string_collections_are_rejected()
+    public void Scalar_number_collections_are_accepted()
     {
         var ir = CreateModel(collections:
         [
             new() { Id = 1, Name = "Values", ElementKind = ViewModelValueKind.Integer },
+            new() { Id = 2, Name = "Loads", ElementKind = ViewModelValueKind.Double },
+        ]);
+
+        ir.Validate();
+    }
+
+    [Fact]
+    public void Scalar_number_collections_that_declare_an_element_model_are_rejected()
+    {
+        var ir = CreateModel(collections:
+        [
+            new()
+            {
+                Id = 1,
+                Name = "Values",
+                ElementKind = ViewModelValueKind.Integer,
+                ElementModelName = "Model",
+            },
+        ]);
+
+        Assert.Throws<InvalidOperationException>(() => ir.Validate());
+    }
+
+    [Fact]
+    public void Boolean_element_collections_are_rejected()
+    {
+        var ir = CreateModel(collections:
+        [
+            new() { Id = 1, Name = "Flags", ElementKind = ViewModelValueKind.Boolean },
+        ]);
+
+        Assert.Throws<InvalidOperationException>(() => ir.Validate());
+    }
+
+    [Fact]
+    public void Windowed_scalar_number_collections_are_rejected()
+    {
+        var ir = CreateModel(collections:
+        [
+            new()
+            {
+                Id = 1,
+                Name = "Loads",
+                ElementKind = ViewModelValueKind.Double,
+                Window = new() { PageSize = 4, MaxLivePages = 2 },
+            },
         ]);
 
         Assert.Throws<InvalidOperationException>(() => ir.Validate());

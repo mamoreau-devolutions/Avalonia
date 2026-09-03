@@ -254,9 +254,14 @@ public static class ViewModelSourceEmitter
         var trackedCommands = model.Commands.Where(command => command.SupportsCancellation || command.SupportsProgress).ToArray();
         var shapes = maps.Count > 0 || windowedCollections.Length > 0 ||
             resultCommands.Length > 0 || progressCommands.Length > 0 || cancellableCommands.Length > 0;
+        // A scalar-number collection is the only shape that needs the v5 sink,
+        // so a model without one keeps exactly the interface set it already
+        // published.
+        var numberCollections = materializedCollections.Where(IsNumberCollection).ToArray();
         sb.AppendLine("[GeneratedComClass]");
         var interfaces = "IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, " +
             (shapes ? "IAvnRustVmSink4, " : "") +
+            (numberCollections.Length > 0 ? "IAvnRustVmSink5, " : "") +
             "IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, IRustVmBatchTarget, IRustVmTableSelectionBatchTarget, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable";
         sb.AppendLine($"public sealed partial class {model.Name}Adapter : {interfaces}");
         sb.AppendLine("{");
@@ -454,6 +459,8 @@ public static class ViewModelSourceEmitter
         EmitCSharpSinkMethods(sb, ir, model);
         if (shapes)
             EmitCSharpShapeSinkMethods(sb, ir, model, maps, windowedCollections, resultCommands, progressCommands, trackedCommands);
+        if (numberCollections.Length > 0)
+            EmitCSharpNumberSinkMethods(sb, numberCollections);
         sb.AppendLine("    public int ReplaceStringSnapshot(int collectionId, IReadOnlyList<string> values) => collectionId switch");
         sb.AppendLine("    {");
         foreach (var collection in materializedCollections.Where(collection => collection.ElementKind == ViewModelValueKind.String))
@@ -772,6 +779,53 @@ public static class ViewModelSourceEmitter
     }
 
     /// <summary>
+    /// Emits the adapter's <c>IAvnRustVmSink5</c> implementation: appending,
+    /// inserting and replacing elements of a scalar-number collection. Each
+    /// entry point is a pure switch over a schema ID that dispatches onto the
+    /// UI thread through the same <c>Apply</c> the v1/v2 sinks use, and an ID
+    /// whose declared element kind does not match the call is rejected rather
+    /// than coerced.
+    /// </summary>
+    private static void EmitCSharpNumberSinkMethods(
+        StringBuilder sb,
+        IReadOnlyList<ViewModelCollection> numberCollections)
+    {
+        foreach (var (suffix, transport, kind) in NumberElementKinds)
+        {
+            var matching = numberCollections.Where(collection => collection.ElementKind == kind).ToArray();
+            sb.AppendLine($"    public int Add{suffix}(int collectionId, {transport} value) => collectionId switch");
+            sb.AppendLine("    {");
+            foreach (var collection in matching)
+                sb.AppendLine($"        {collection.Id} => Apply(() => {collection.Name}.Add(value)),");
+            sb.AppendLine("        _ => unchecked((int)0x80070057),");
+            sb.AppendLine("    };");
+            sb.AppendLine();
+
+            sb.AppendLine($"    public int Insert{suffix}(int collectionId, int index, {transport} value) => collectionId switch");
+            sb.AppendLine("    {");
+            foreach (var collection in matching)
+                sb.AppendLine($"        {collection.Id} => Apply(() => {{ if ((uint)index > (uint){collection.Name}.Count) return unchecked((int)0x80070057); {collection.Name}.Insert(index, value); return 0; }}),");
+            sb.AppendLine("        _ => unchecked((int)0x80070057),");
+            sb.AppendLine("    };");
+            sb.AppendLine();
+
+            sb.AppendLine($"    public int Replace{suffix}(int collectionId, int index, {transport} value) => collectionId switch");
+            sb.AppendLine("    {");
+            foreach (var collection in matching)
+                sb.AppendLine($"        {collection.Id} => Apply(() => {{ if ((uint)index >= (uint){collection.Name}.Count) return unchecked((int)0x80070057); {collection.Name}[index] = value; return 0; }}),");
+            sb.AppendLine("        _ => unchecked((int)0x80070057),");
+            sb.AppendLine("    };");
+            sb.AppendLine();
+        }
+    }
+
+    private static readonly (string Suffix, string Transport, ViewModelValueKind Kind)[] NumberElementKinds =
+    [
+        ("Integer", "long", ViewModelValueKind.Integer),
+        ("Double", "double", ViewModelValueKind.Double),
+    ];
+
+    /// <summary>
     /// Emits the adapter's <c>IAvnRustVmSink4</c> implementation: observable
     /// keyed maps, structured command results, async progress and windowed
     /// range publication. Every entry point is a pure switch over a schema ID
@@ -1061,6 +1115,10 @@ public static class ViewModelSourceEmitter
         var materialized = model.Collections.Where(collection => collection.Window is null).ToArray();
         var modelCollections = materialized.Where(collection => collection.ElementKind == ViewModelValueKind.Model).ToArray();
         var stringCollections = materialized.Where(collection => collection.ElementKind == ViewModelValueKind.String).ToArray();
+        // Removal, movement and clearing carry no element value, so a
+        // scalar-number collection rides the same already-published v2 calls
+        // as a string one instead of duplicating them on the v5 sink.
+        var numberCollections = materialized.Where(IsNumberCollection).ToArray();
 
         sb.AppendLine("    public int AddModel(int collectionId, IAvnRustViewModel? model) => collectionId switch");
         sb.AppendLine("    {");
@@ -1122,6 +1180,8 @@ public static class ViewModelSourceEmitter
         sb.AppendLine("    {");
         foreach (var collection in stringCollections)
             sb.AppendLine($"        {collection.Id} => Apply(() => {{ if ((uint)index >= (uint){collection.Name}.Count) return unchecked((int)0x80070057); {collection.Name}.RemoveAt(index); return 0; }}),");
+        foreach (var collection in numberCollections)
+            sb.AppendLine($"        {collection.Id} => Apply(() => {{ if ((uint)index >= (uint){collection.Name}.Count) return unchecked((int)0x80070057); {collection.Name}.RemoveAt(index); return 0; }}),");
         foreach (var collection in modelCollections)
         {
             sb.AppendLine($"        {collection.Id} => Apply(() =>");
@@ -1148,6 +1208,8 @@ public static class ViewModelSourceEmitter
         sb.AppendLine("    public int ClearCollection(int collectionId) => collectionId switch");
         sb.AppendLine("    {");
         foreach (var collection in stringCollections)
+            sb.AppendLine($"        {collection.Id} => Apply({collection.Name}.Clear),");
+        foreach (var collection in numberCollections)
             sb.AppendLine($"        {collection.Id} => Apply({collection.Name}.Clear),");
         foreach (var collection in modelCollections)
         {
@@ -1824,6 +1886,7 @@ public static class ViewModelSourceEmitter
         var windowedCollections = model.Collections.Where(collection => collection.Window is not null).ToArray();
         var stringCollections = materialized.Where(collection => collection.ElementKind == ViewModelValueKind.String).ToArray();
         var modelCollections = materialized.Where(collection => collection.ElementKind == ViewModelValueKind.Model).ToArray();
+        var numberCollections = materialized.Where(IsNumberCollection).ToArray();
         var trackedCommands = model.Commands.Where(command => command.SupportsCancellation || command.SupportsProgress).ToArray();
         sb.AppendLine("#[derive(Clone, Debug)]");
         sb.AppendLine($"pub struct {sinkName}(crate::view_model::ViewModelSink);");
@@ -1850,6 +1913,20 @@ public static class ViewModelSourceEmitter
             sb.AppendLine($"    pub fn insert_{Snake(collection.Name)}(&self, index: i32, value: impl {elementTrait}) -> crate::Result<()> {{ self.0.insert_model({collection.Id}, index, {elementTrait}Dispatch {{ model: value }}) }}");
             sb.AppendLine($"    pub fn replace_{Snake(collection.Name)}(&self, index: i32, value: impl {elementTrait}) -> crate::Result<()> {{ self.0.replace_model({collection.Id}, index, {elementTrait}Dispatch {{ model: value }}) }}");
         }
+        foreach (var collection in numberCollections)
+        {
+            var suffix = RustNumberSuffix(collection.ElementKind);
+            var rustType = RustNumberType(collection.ElementKind);
+            sb.AppendLine($"    pub fn add_{Snake(collection.Name)}(&self, value: {rustType}) -> crate::Result<()> {{ self.0.add_{suffix}({collection.Id}, value) }}");
+            sb.AppendLine($"    pub fn insert_{Snake(collection.Name)}(&self, index: i32, value: {rustType}) -> crate::Result<()> {{ self.0.insert_{suffix}({collection.Id}, index, value) }}");
+            sb.AppendLine($"    pub fn replace_{Snake(collection.Name)}(&self, index: i32, value: {rustType}) -> crate::Result<()> {{ self.0.replace_{suffix}({collection.Id}, index, value) }}");
+        }
+        if (numberCollections.Length > 0)
+        {
+            sb.AppendLine("    /// True when the attached host implements the scalar-number sink capability.");
+            sb.AppendLine("    /// The reflectable (dynamic-binding) adapter deliberately does not.");
+            sb.AppendLine("    pub fn supports_number_collections(&self) -> bool { self.0.supports_number_collections() }");
+        }
         foreach (var collection in stringCollections)
         {
             sb.AppendLine($"    pub fn remove_{Snake(collection.Name)}(&self, index: i32) -> crate::Result<()> {{ self.0.remove_string_at({collection.Id}, index) }}");
@@ -1861,6 +1938,12 @@ public static class ViewModelSourceEmitter
             sb.AppendLine($"    pub fn remove_{Snake(collection.Name)}(&self, index: i32) -> crate::Result<()> {{ self.0.remove_model_at({collection.Id}, index) }}");
             sb.AppendLine($"    pub fn move_{Snake(collection.Name)}(&self, from_index: i32, to_index: i32) -> crate::Result<()> {{ self.0.move_model_item({collection.Id}, from_index, to_index) }}");
             sb.AppendLine($"    pub fn clear_{Snake(collection.Name)}(&self) -> crate::Result<()> {{ self.0.clear_model_collection({collection.Id}) }}");
+        }
+        foreach (var collection in numberCollections)
+        {
+            sb.AppendLine($"    pub fn remove_{Snake(collection.Name)}(&self, index: i32) -> crate::Result<()> {{ self.0.remove_number_at({collection.Id}, index) }}");
+            sb.AppendLine($"    pub fn move_{Snake(collection.Name)}(&self, from_index: i32, to_index: i32) -> crate::Result<()> {{ self.0.move_number_item({collection.Id}, from_index, to_index) }}");
+            sb.AppendLine($"    pub fn clear_{Snake(collection.Name)}(&self) -> crate::Result<()> {{ self.0.clear_number_collection({collection.Id}) }}");
         }
         foreach (var command in model.Commands)
             sb.AppendLine($"    pub fn set_{Snake(command.Name)}_enabled(&self, enabled: bool) -> crate::Result<()> {{ self.0.set_command_enabled({command.Id}, enabled) }}");
@@ -2390,6 +2473,12 @@ public static class ViewModelSourceEmitter
     private static string RustMapKeyType(ViewModelMap map) =>
         map.KeyKind == ViewModelValueKind.String ? "impl Into<crate::MapKey>" : "i64";
 
+    private static string RustNumberSuffix(ViewModelValueKind elementKind) =>
+        elementKind == ViewModelValueKind.Integer ? "integer" : "double";
+
+    private static string RustNumberType(ViewModelValueKind elementKind) =>
+        elementKind == ViewModelValueKind.Integer ? "i64" : "f64";
+
     private static readonly ViewModelValueKind[] ScalarWireKinds =
     [
         ViewModelValueKind.String,
@@ -2426,9 +2515,19 @@ public static class ViewModelSourceEmitter
     private static string CSharpElementType(ViewModelIr ir, ViewModelValueKind elementKind, string? elementModelName) => elementKind switch
     {
         ViewModelValueKind.String => "string",
+        ViewModelValueKind.Integer => "long",
+        ViewModelValueKind.Double => "double",
         ViewModelValueKind.Model => CSharpModelAdapterTypeName(ir, elementModelName!),
         _ => throw new ArgumentOutOfRangeException(nameof(elementKind)),
     };
+
+    /// <summary>
+    /// Whether a collection projects a scalar number list, which is the shape
+    /// carried by <c>IAvnRustVmSink5</c>. Strings keep riding the already
+    /// published v1/v2 transport and nested models the v2 model transport.
+    /// </summary>
+    private static bool IsNumberCollection(ViewModelCollection collection) =>
+        collection.ElementKind is ViewModelValueKind.Integer or ViewModelValueKind.Double;
 
     private static string CSharpScalarType(ViewModelValueKind wireKind) => wireKind switch
     {

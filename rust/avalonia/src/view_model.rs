@@ -219,6 +219,7 @@ pub struct ViewModelSink {
     raw2: sys::ComPtr<sys::IAvnRustVmSink2>,
     raw3: Arc<OnceLock<BatchCapability>>,
     raw4: Arc<OnceLock<ShapesCapability>>,
+    raw5: Arc<OnceLock<NumbersCapability>>,
     nested: Arc<NestedSlots>,
     ranges: Arc<RangeStates>,
     completions: Arc<CompletionSlots>,
@@ -235,6 +236,12 @@ type BatchCapability = std::result::Result<Option<sys::ComPtr<sys::IAvnRustVmSin
 /// stage 30 reports `E_NOINTERFACE` from every map/progress/result/range call
 /// instead of silently dropping the update.
 type ShapesCapability = std::result::Result<Option<sys::ComPtr<sys::IAvnRustVmSink4>>, sys::Error>;
+
+/// The cached result of the one-time `IAvnRustVmSink5` query, resolved with
+/// exactly the same discipline as the batch and shapes capabilities. A host
+/// whose adapter declares no scalar-number collection reports `E_NOINTERFACE`
+/// from every integer/double element call instead of silently dropping it.
+type NumbersCapability = std::result::Result<Option<sys::ComPtr<sys::IAvnRustVmSink5>>, sys::Error>;
 
 impl ViewModelSink {
     /// Wraps a freshly attached v1 sink and eagerly resolves the v2
@@ -259,6 +266,7 @@ impl ViewModelSink {
             raw2,
             raw3: Arc::new(OnceLock::new()),
             raw4: Arc::new(OnceLock::new()),
+            raw5: Arc::new(OnceLock::new()),
             nested: Arc::new(NestedSlots::default()),
             ranges,
             completions,
@@ -269,6 +277,21 @@ impl ViewModelSink {
     fn shapes_sink(&self) -> Result<&sys::ComPtr<sys::IAvnRustVmSink4>> {
         match self.raw4.get_or_init(
             || match self.raw.query_interface::<sys::IAvnRustVmSink4>() {
+                Ok(value) => Ok(Some(value)),
+                Err(error) if error.0 == sys::E_NOINTERFACE => Ok(None),
+                Err(error) => Err(error),
+            },
+        ) {
+            Ok(Some(sink)) => Ok(sink),
+            Ok(None) => Err(Error::Abi(sys::Error(sys::E_NOINTERFACE))),
+            Err(error) => Err(Error::Abi(*error)),
+        }
+    }
+
+    /// Resolves (once) the optional scalar-number collection capability.
+    fn numbers_sink(&self) -> Result<&sys::ComPtr<sys::IAvnRustVmSink5>> {
+        match self.raw5.get_or_init(
+            || match self.raw.query_interface::<sys::IAvnRustVmSink5>() {
                 Ok(value) => Ok(Some(value)),
                 Err(error) if error.0 == sys::E_NOINTERFACE => Ok(None),
                 Err(error) => Err(error),
@@ -447,6 +470,75 @@ impl ViewModelSink {
         self.raw2.clear_collection(collection_id)?;
         self.nested.clear_collection(collection_id);
         Ok(())
+    }
+
+    // ---- Scalar-number collections (IAvnRustVmSink5) --------------------
+    //
+    // Only the value-carrying calls need the v5 capability. Removal, movement
+    // and clearing carry no element value, so they ride the v2 sink exactly
+    // like a string collection does and keep working against a host that
+    // never had to grow a new vtable.
+
+    pub fn add_integer(&self, collection_id: i32, value: i64) -> Result<()> {
+        self.numbers_sink()?.add_integer(collection_id, value)?;
+        Ok(())
+    }
+
+    pub fn insert_integer(&self, collection_id: i32, index: i32, value: i64) -> Result<()> {
+        self.numbers_sink()?
+            .insert_integer(collection_id, index, value)?;
+        Ok(())
+    }
+
+    pub fn replace_integer(&self, collection_id: i32, index: i32, value: i64) -> Result<()> {
+        self.numbers_sink()?
+            .replace_integer(collection_id, index, value)?;
+        Ok(())
+    }
+
+    pub fn add_double(&self, collection_id: i32, value: f64) -> Result<()> {
+        self.numbers_sink()?.add_double(collection_id, value)?;
+        Ok(())
+    }
+
+    pub fn insert_double(&self, collection_id: i32, index: i32, value: f64) -> Result<()> {
+        self.numbers_sink()?
+            .insert_double(collection_id, index, value)?;
+        Ok(())
+    }
+
+    pub fn replace_double(&self, collection_id: i32, index: i32, value: f64) -> Result<()> {
+        self.numbers_sink()?
+            .replace_double(collection_id, index, value)?;
+        Ok(())
+    }
+
+    pub fn remove_number_at(&self, collection_id: i32, index: i32) -> Result<()> {
+        self.raw2.remove_at(collection_id, index)?;
+        Ok(())
+    }
+
+    pub fn move_number_item(
+        &self,
+        collection_id: i32,
+        from_index: i32,
+        to_index: i32,
+    ) -> Result<()> {
+        self.raw2.move_item(collection_id, from_index, to_index)?;
+        Ok(())
+    }
+
+    pub fn clear_number_collection(&self, collection_id: i32) -> Result<()> {
+        self.raw2.clear_collection(collection_id)?;
+        Ok(())
+    }
+
+    /// True when the attached host implements the scalar-number collection
+    /// capability. A model shared by a generated adapter and the reflectable
+    /// (dynamic-binding) adapter checks this once instead of treating an
+    /// explicit `E_NOINTERFACE` as a failure.
+    pub fn supports_number_collections(&self) -> bool {
+        self.numbers_sink().is_ok()
     }
 
     /// Publishes a command's current `ICommand.CanExecute` state.
@@ -1587,8 +1679,10 @@ mod tests {
         references: AtomicU32,
         sink3_result: i32,
         sink4_result: i32,
+        sink5_result: i32,
         queries: Arc<AtomicUsize>,
         shape_queries: Arc<AtomicUsize>,
+        number_queries: Arc<AtomicUsize>,
     }
 
     #[repr(C)]
@@ -1623,6 +1717,10 @@ mod tests {
             (*this).shape_queries.fetch_add(1, Ordering::SeqCst);
             return (*this).sink4_result;
         }
+        if *iid == <sys::IAvnRustVmSink5 as sys::ComInterface>::IID {
+            (*this).number_queries.fetch_add(1, Ordering::SeqCst);
+            return (*this).sink5_result;
+        }
         // Everything else (IUnknown, v1 and v2) resolves to the same object;
         // only the header layout matters for these tests.
         fake_add_ref(this);
@@ -1651,15 +1749,33 @@ mod tests {
         sink3_result: i32,
         sink4_result: i32,
     ) -> (ViewModelSink, Arc<AtomicUsize>, Arc<AtomicUsize>) {
+        let (sink, queries, shape_queries, _) =
+            fake_sink_with_capabilities(sink3_result, sink4_result, sys::E_NOINTERFACE);
+        (sink, queries, shape_queries)
+    }
+
+    fn fake_sink_with_capabilities(
+        sink3_result: i32,
+        sink4_result: i32,
+        sink5_result: i32,
+    ) -> (
+        ViewModelSink,
+        Arc<AtomicUsize>,
+        Arc<AtomicUsize>,
+        Arc<AtomicUsize>,
+    ) {
         let queries = Arc::new(AtomicUsize::new(0));
         let shape_queries = Arc::new(AtomicUsize::new(0));
+        let number_queries = Arc::new(AtomicUsize::new(0));
         let object = Box::new(FakeSink {
             vtbl: &FAKE_SINK_VTBL,
             references: AtomicU32::new(1),
             sink3_result,
             sink4_result,
+            sink5_result,
             queries: queries.clone(),
             shape_queries: shape_queries.clone(),
+            number_queries: number_queries.clone(),
         });
         let raw = unsafe {
             sys::ComPtr::<sys::IAvnRustVmSink>::from_raw(Box::into_raw(object).cast())
@@ -1674,7 +1790,45 @@ mod tests {
             .expect("v2 must resolve"),
             queries,
             shape_queries,
+            number_queries,
         )
+    }
+
+    /// An absent v5 capability must be an explicit, cached ABI error on every
+    /// value-carrying call rather than a silently dropped element.
+    #[test]
+    fn an_absent_number_capability_is_cached_as_e_nointerface() {
+        let (sink, _, _, number_queries) =
+            fake_sink_with_capabilities(sys::E_NOINTERFACE, sys::E_NOINTERFACE, sys::E_NOINTERFACE);
+
+        for _ in 0..3 {
+            match sink.add_double(8, 1.0) {
+                Err(Error::Abi(error)) => assert_eq!(sys::E_NOINTERFACE, error.0),
+                other => panic!("expected E_NOINTERFACE, got {other:?}"),
+            }
+        }
+        match sink.add_integer(9, 1) {
+            Err(Error::Abi(error)) => assert_eq!(sys::E_NOINTERFACE, error.0),
+            other => panic!("expected E_NOINTERFACE, got {other:?}"),
+        }
+        assert!(!sink.supports_number_collections());
+        assert_eq!(
+            1,
+            number_queries.load(Ordering::SeqCst),
+            "the query is cached"
+        );
+    }
+
+    #[test]
+    fn a_failed_number_capability_query_is_reported_verbatim_not_as_absence() {
+        let (sink, _, _, _) =
+            fake_sink_with_capabilities(sys::E_NOINTERFACE, sys::E_NOINTERFACE, sys::E_FAIL);
+
+        match sink.replace_integer(9, 0, 1) {
+            Err(Error::Abi(error)) => assert_eq!(sys::E_FAIL, error.0),
+            other => panic!("expected E_FAIL, got {other:?}"),
+        }
+        assert!(!sink.supports_number_collections());
     }
 
     #[test]

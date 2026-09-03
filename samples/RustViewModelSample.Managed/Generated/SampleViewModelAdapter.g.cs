@@ -18,7 +18,7 @@ using Avalonia.Threading;
 namespace Avalonia.Rust.Sample.Generated;
 
 [GeneratedComClass]
-public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IAvnRustVmSink4, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, IRustVmBatchTarget, IRustVmTableSelectionBatchTarget, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable
+public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IAvnRustVmSink4, IAvnRustVmSink5, IRustVmStringSnapshotSink, IRustVmModelSnapshotSink, IRustVmBatchTarget, IRustVmTableSelectionBatchTarget, INotifyPropertyChanged, INotifyDataErrorInfo, IDisposable
 {
     private readonly IAvnRustViewModel _model;
     private readonly Action<Action> _dispatch;
@@ -426,6 +426,8 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     public BatchObservableCollection<string> SelectedFiles { get; } = [];
     public BatchObservableCollection<global::Avalonia.Rust.Sample.Generated.LogNodeViewModelAdapter> LogTree { get; } = [];
     public BatchObservableCollection<string> RecentFiles { get; } = [];
+    public BatchObservableCollection<double> CoreLoads { get; } = [];
+    public BatchObservableCollection<long> CoreTicks { get; } = [];
     /// <summary>
     /// Range-backed projection: <c>Count</c> is the Rust dataset's total size while at
     /// most 64 x 8 element objects are live.
@@ -610,6 +612,8 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         1 => Apply(() => { if ((uint)index >= (uint)Items.Count) return unchecked((int)0x80070057); Items.RemoveAt(index); return 0; }),
         4 => Apply(() => { if ((uint)index >= (uint)SelectedFiles.Count) return unchecked((int)0x80070057); SelectedFiles.RemoveAt(index); return 0; }),
         7 => Apply(() => { if ((uint)index >= (uint)RecentFiles.Count) return unchecked((int)0x80070057); RecentFiles.RemoveAt(index); return 0; }),
+        8 => Apply(() => { if ((uint)index >= (uint)CoreLoads.Count) return unchecked((int)0x80070057); CoreLoads.RemoveAt(index); return 0; }),
+        9 => Apply(() => { if ((uint)index >= (uint)CoreTicks.Count) return unchecked((int)0x80070057); CoreTicks.RemoveAt(index); return 0; }),
         2 => Apply(() =>
         {
             if ((uint)index >= (uint)Tasks.Count) return unchecked((int)0x80070057);
@@ -645,6 +649,8 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         4 => Apply(() => { if ((uint)fromIndex >= (uint)SelectedFiles.Count || (uint)toIndex >= (uint)SelectedFiles.Count) return unchecked((int)0x80070057); SelectedFiles.Move(fromIndex, toIndex); return 0; }),
         6 => Apply(() => { if ((uint)fromIndex >= (uint)LogTree.Count || (uint)toIndex >= (uint)LogTree.Count) return unchecked((int)0x80070057); LogTree.Move(fromIndex, toIndex); return 0; }),
         7 => Apply(() => { if ((uint)fromIndex >= (uint)RecentFiles.Count || (uint)toIndex >= (uint)RecentFiles.Count) return unchecked((int)0x80070057); RecentFiles.Move(fromIndex, toIndex); return 0; }),
+        8 => Apply(() => { if ((uint)fromIndex >= (uint)CoreLoads.Count || (uint)toIndex >= (uint)CoreLoads.Count) return unchecked((int)0x80070057); CoreLoads.Move(fromIndex, toIndex); return 0; }),
+        9 => Apply(() => { if ((uint)fromIndex >= (uint)CoreTicks.Count || (uint)toIndex >= (uint)CoreTicks.Count) return unchecked((int)0x80070057); CoreTicks.Move(fromIndex, toIndex); return 0; }),
         _ => unchecked((int)0x80070057),
     };
 
@@ -653,6 +659,8 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         1 => Apply(Items.Clear),
         4 => Apply(SelectedFiles.Clear),
         7 => Apply(RecentFiles.Clear),
+        8 => Apply(CoreLoads.Clear),
+        9 => Apply(CoreTicks.Clear),
         2 => Apply(() =>
         {
             foreach (var item in Tasks) item.Dispose();
@@ -834,6 +842,42 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         if (map.Set(key, value, out _)) RaiseMapChanged(name);
     }
 
+    public int AddInteger(int collectionId, long value) => collectionId switch
+    {
+        9 => Apply(() => CoreTicks.Add(value)),
+        _ => unchecked((int)0x80070057),
+    };
+
+    public int InsertInteger(int collectionId, int index, long value) => collectionId switch
+    {
+        9 => Apply(() => { if ((uint)index > (uint)CoreTicks.Count) return unchecked((int)0x80070057); CoreTicks.Insert(index, value); return 0; }),
+        _ => unchecked((int)0x80070057),
+    };
+
+    public int ReplaceInteger(int collectionId, int index, long value) => collectionId switch
+    {
+        9 => Apply(() => { if ((uint)index >= (uint)CoreTicks.Count) return unchecked((int)0x80070057); CoreTicks[index] = value; return 0; }),
+        _ => unchecked((int)0x80070057),
+    };
+
+    public int AddDouble(int collectionId, double value) => collectionId switch
+    {
+        8 => Apply(() => CoreLoads.Add(value)),
+        _ => unchecked((int)0x80070057),
+    };
+
+    public int InsertDouble(int collectionId, int index, double value) => collectionId switch
+    {
+        8 => Apply(() => { if ((uint)index > (uint)CoreLoads.Count) return unchecked((int)0x80070057); CoreLoads.Insert(index, value); return 0; }),
+        _ => unchecked((int)0x80070057),
+    };
+
+    public int ReplaceDouble(int collectionId, int index, double value) => collectionId switch
+    {
+        8 => Apply(() => { if ((uint)index >= (uint)CoreLoads.Count) return unchecked((int)0x80070057); CoreLoads[index] = value; return 0; }),
+        _ => unchecked((int)0x80070057),
+    };
+
     public int ReplaceStringSnapshot(int collectionId, IReadOnlyList<string> values) => collectionId switch
     {
         1 => Apply(() => Items.ReplaceSnapshot(values)),
@@ -910,6 +954,8 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
             4 => new RustVmBatchCollectionInfo(nameof(SelectedFiles), RustVmValueWireKind.String, SelectedFiles),
             6 => new RustVmBatchCollectionInfo(nameof(LogTree), RustVmValueWireKind.Model, LogTree),
             7 => new RustVmBatchCollectionInfo(nameof(RecentFiles), RustVmValueWireKind.String, RecentFiles),
+            8 => new RustVmBatchCollectionInfo(nameof(CoreLoads), RustVmValueWireKind.Double, CoreLoads),
+            9 => new RustVmBatchCollectionInfo(nameof(CoreTicks), RustVmValueWireKind.Integer, CoreTicks),
             _ => default,
         };
         return collection.Items is not null;

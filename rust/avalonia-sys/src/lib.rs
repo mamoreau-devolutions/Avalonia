@@ -36,11 +36,11 @@ pub use hresult::{
 pub use rust_vm::{
     rust_view_model, rust_view_model_with_control, rust_vm_range_batch, rust_vm_update_batch,
     IAvnRustRangeSource, IAvnRustViewModel, IAvnRustViewModel2, IAvnRustVmRangeBatch,
-    IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IAvnRustVmSink4, IAvnRustVmUpdateBatch,
-    IAvnRustVmUpdateBatch2, IAvnRustVmUpdateOperation, MapKey, RustViewModelBeginTracked,
-    RustViewModelCallbacks, RustViewModelControlCallbacks, RustVmBatchCompletion,
-    RustVmBatchOwnershipCommit, RustVmDroppedRange, RustVmRangeItem, RustVmUpdate,
-    RUST_VM_RANGE_FILL, RUST_VM_RANGE_INVALIDATE, RUST_VM_RANGE_RESET,
+    IAvnRustVmSink, IAvnRustVmSink2, IAvnRustVmSink3, IAvnRustVmSink4, IAvnRustVmSink5,
+    IAvnRustVmUpdateBatch, IAvnRustVmUpdateBatch2, IAvnRustVmUpdateOperation, MapKey,
+    RustViewModelBeginTracked, RustViewModelCallbacks, RustViewModelControlCallbacks,
+    RustVmBatchCompletion, RustVmBatchOwnershipCommit, RustVmDroppedRange, RustVmRangeItem,
+    RustVmUpdate, RUST_VM_RANGE_FILL, RUST_VM_RANGE_INVALIDATE, RUST_VM_RANGE_RESET,
 };
 pub use storage::{
     activation_handler, file_drop_handler, storage_completion, ActivationArgs, FileDropArgs,

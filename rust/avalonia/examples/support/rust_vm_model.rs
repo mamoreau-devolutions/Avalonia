@@ -200,7 +200,25 @@ impl Model {
         sink.set_show_trace_details(self.show_trace_details)?;
         sink.set_clipboard_status("Clipboard idle")?;
         self.publish_richer_shapes(sink)?;
+        self.publish_number_collections(sink)?;
         self.publish_trace_snapshot(sink)
+    }
+
+    /// Publishes the scalar-number collections. Like the stage 30 shapes these
+    /// ride a separately versioned capability, so the model asks once instead
+    /// of treating an explicit `E_NOINTERFACE` from the reflectable
+    /// (dynamic-binding) adapter as a failure.
+    fn publish_number_collections(&self, sink: &SampleViewModelSink) -> avalonia::Result<()> {
+        if !sink.supports_number_collections() {
+            return Ok(());
+        }
+        sink.clear_core_loads()?;
+        sink.clear_core_ticks()?;
+        for (core, load) in [0.12_f64, 0.47, 0.93, 0.05].into_iter().enumerate() {
+            sink.add_core_loads(load)?;
+            sink.add_core_ticks(core as i64 * 1000)?;
+        }
+        Ok(())
     }
 
     /// Publishes the stage 30 shapes: an observable keyed map, a hierarchical

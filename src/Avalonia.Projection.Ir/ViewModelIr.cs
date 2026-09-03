@@ -148,6 +148,11 @@ public sealed class ViewModelIr
                 switch (collection.ElementKind)
                 {
                     case ViewModelValueKind.String:
+                    case ViewModelValueKind.Integer:
+                    case ViewModelValueKind.Double:
+                        if (collection.ElementModelName is not null)
+                            throw new InvalidOperationException(
+                                $"Collection '{model.Name}.{collection.Name}' declares 'elementModelName' but is not a nested view-model collection.");
                         break;
                     case ViewModelValueKind.Model:
                         if (collection.ElementModelName is null)
@@ -159,7 +164,7 @@ public sealed class ViewModelIr
                         break;
                     default:
                         throw new InvalidOperationException(
-                            $"Collection '{model.Name}.{collection.Name}' must contain strings or nested view models.");
+                            $"Collection '{model.Name}.{collection.Name}' must contain strings, integers, doubles or nested view models.");
                 }
                 ValidateTable(model, collection, properties, Models);
                 ValidateWindow(model, collection);
@@ -304,6 +309,11 @@ public sealed class ViewModelIr
             throw new InvalidOperationException($"Windowed collection '{owner.Name}.{collection.Name}' pageSize must be positive.");
         if (window.MaxLivePages <= 0)
             throw new InvalidOperationException($"Windowed collection '{owner.Name}.{collection.Name}' maxLivePages must be positive.");
+        // A range batch transports either a nested model or text, so a
+        // scalar-number element has no windowed wire form.
+        if (collection.ElementKind is ViewModelValueKind.Integer or ViewModelValueKind.Double)
+            throw new InvalidOperationException(
+                $"Windowed collection '{owner.Name}.{collection.Name}' must contain strings or nested view models.");
         if (collection.Tree is not null)
             throw new InvalidOperationException($"Collection '{owner.Name}.{collection.Name}' cannot be both windowed and a tree root.");
         if (collection.Recursive)
@@ -1114,9 +1124,17 @@ public sealed class ViewModelCollection
 {
     public required int Id { get; init; }
     public required string Name { get; init; }
+
+    /// <summary>
+    /// What each element is. <see cref="ViewModelValueKind.String"/>,
+    /// <see cref="ViewModelValueKind.Integer"/> and
+    /// <see cref="ViewModelValueKind.Double"/> project a scalar list;
+    /// <see cref="ViewModelValueKind.Model"/> projects nested view models and
+    /// is the only kind a table, tree or window may use.
+    /// </summary>
     public required ViewModelValueKind ElementKind { get; init; }
 
-    /// <summary>Name of the nested model each element is. Required when <see cref="ElementKind"/> is <see cref="ViewModelValueKind.Model"/>.</summary>
+    /// <summary>Name of the nested model each element is. Required when <see cref="ElementKind"/> is <see cref="ViewModelValueKind.Model"/>, and rejected otherwise.</summary>
     public string? ElementModelName { get; init; }
 
     /// <summary>Optional first-class presentation metadata for a virtualized table over this collection.</summary>

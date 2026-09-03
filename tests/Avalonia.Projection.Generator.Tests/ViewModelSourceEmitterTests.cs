@@ -559,6 +559,88 @@ public class ViewModelSourceEmitterTests
         Assert.Contains("(result `ReportViewModel`, progress, cancellable)", contract, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void Emits_scalar_number_collections_on_both_sides()
+    {
+        var ir = NumbersIr();
+        var adapter = ViewModelSourceEmitter.EmitCSharp(ir)["NumbersViewModelAdapter.g.cs"];
+        var rust = ViewModelSourceEmitter.EmitRust(ir);
+
+        Assert.Contains("IAvnRustVmSink5", adapter, StringComparison.Ordinal);
+        Assert.Contains("public BatchObservableCollection<long> Counts { get; } = [];", adapter, StringComparison.Ordinal);
+        Assert.Contains("public BatchObservableCollection<double> CoreLoads { get; } = [];", adapter, StringComparison.Ordinal);
+        Assert.Contains("public int AddInteger(int collectionId, long value) => collectionId switch", adapter, StringComparison.Ordinal);
+        Assert.Contains("1 => Apply(() => Counts.Add(value)),", adapter, StringComparison.Ordinal);
+        Assert.Contains("public int AddDouble(int collectionId, double value) => collectionId switch", adapter, StringComparison.Ordinal);
+        Assert.Contains("2 => Apply(() => CoreLoads.Add(value)),", adapter, StringComparison.Ordinal);
+        Assert.Contains("public int InsertInteger(int collectionId, int index, long value) => collectionId switch", adapter, StringComparison.Ordinal);
+        Assert.Contains("public int ReplaceDouble(int collectionId, int index, double value) => collectionId switch", adapter, StringComparison.Ordinal);
+
+        // Remove/move/clear carry no element value, so they stay on the
+        // already-published v2 sink instead of being duplicated on v5.
+        Assert.Contains("1 => Apply(() => { if ((uint)index >= (uint)Counts.Count) return unchecked((int)0x80070057); Counts.RemoveAt(index); return 0; }),", adapter, StringComparison.Ordinal);
+        Assert.Contains("2 => Apply(CoreLoads.Clear),", adapter, StringComparison.Ordinal);
+        Assert.Contains("1 => Apply(() => { if ((uint)fromIndex >= (uint)Counts.Count || (uint)toIndex >= (uint)Counts.Count) return unchecked((int)0x80070057); Counts.Move(fromIndex, toIndex); return 0; }),", adapter, StringComparison.Ordinal);
+
+        Assert.Contains("pub fn add_counts(&self, value: i64) -> crate::Result<()> { self.0.add_integer(1, value) }", rust, StringComparison.Ordinal);
+        Assert.Contains("pub fn insert_counts(&self, index: i32, value: i64) -> crate::Result<()> { self.0.insert_integer(1, index, value) }", rust, StringComparison.Ordinal);
+        Assert.Contains("pub fn replace_counts(&self, index: i32, value: i64) -> crate::Result<()> { self.0.replace_integer(1, index, value) }", rust, StringComparison.Ordinal);
+        Assert.Contains("pub fn add_core_loads(&self, value: f64) -> crate::Result<()> { self.0.add_double(2, value) }", rust, StringComparison.Ordinal);
+        Assert.Contains("pub fn insert_core_loads(&self, index: i32, value: f64) -> crate::Result<()> { self.0.insert_double(2, index, value) }", rust, StringComparison.Ordinal);
+        Assert.Contains("pub fn replace_core_loads(&self, index: i32, value: f64) -> crate::Result<()> { self.0.replace_double(2, index, value) }", rust, StringComparison.Ordinal);
+        Assert.Contains("pub fn supports_number_collections(&self) -> bool { self.0.supports_number_collections() }", rust, StringComparison.Ordinal);
+        Assert.Contains("pub fn remove_counts(&self, index: i32) -> crate::Result<()> { self.0.remove_number_at(1, index) }", rust, StringComparison.Ordinal);
+        Assert.Contains("pub fn clear_core_loads(&self) -> crate::Result<()> { self.0.clear_number_collection(2) }", rust, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Emits_deterministic_scalar_number_collection_surfaces()
+    {
+        var ir = NumbersIr();
+
+        var csharpFirst = ViewModelSourceEmitter.EmitCSharp(ir);
+        var csharpSecond = ViewModelSourceEmitter.EmitCSharp(ir);
+        Assert.Equal(
+            csharpFirst.Keys.OrderBy(key => key, StringComparer.Ordinal),
+            csharpSecond.Keys.OrderBy(key => key, StringComparer.Ordinal));
+        foreach (var key in csharpFirst.Keys)
+            Assert.Equal(csharpFirst[key], csharpSecond[key]);
+        Assert.Equal(ViewModelSourceEmitter.EmitRust(ir), ViewModelSourceEmitter.EmitRust(ir));
+        Assert.Equal(
+            ViewModelSourceEmitter.EmitRust(ir, externalConsumer: true),
+            ViewModelSourceEmitter.EmitRust(ir, externalConsumer: true));
+        Assert.Equal(ViewModelSourceEmitter.EmitContract(ir), ViewModelSourceEmitter.EmitContract(ir));
+    }
+
+    [Fact]
+    public void Does_not_implement_the_number_sink_without_a_scalar_number_collection()
+    {
+        var adapter = ViewModelSourceEmitter.EmitCSharp(ShapesIr())["ShapesViewModelAdapter.g.cs"];
+
+        Assert.DoesNotContain("IAvnRustVmSink5", adapter, StringComparison.Ordinal);
+        Assert.DoesNotContain("public int AddInteger(", adapter, StringComparison.Ordinal);
+    }
+
+    private static ViewModelIr NumbersIr() => new()
+    {
+        Version = ViewModelIr.CurrentVersion,
+        Models =
+        [
+            new ViewModelDefinition
+            {
+                Id = 1,
+                Name = "NumbersViewModel",
+                ManagedNamespace = "Tests",
+                Collections =
+                [
+                    new ViewModelCollection { Id = 1, Name = "Counts", ElementKind = ViewModelValueKind.Integer },
+                    new ViewModelCollection { Id = 2, Name = "CoreLoads", ElementKind = ViewModelValueKind.Double },
+                    new ViewModelCollection { Id = 3, Name = "Labels", ElementKind = ViewModelValueKind.String },
+                ],
+            },
+        ],
+    };
+
     private static ViewModelIr ShapesIr() => new()
     {
         Version = ViewModelIr.CurrentVersion,

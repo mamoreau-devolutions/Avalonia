@@ -79,6 +79,17 @@ const IAVN_RUST_VM_SINK4_IID: Guid = Guid {
     data4: [0x9A, 0x77, 0x1F, 0x0C, 0x2B, 0x3A, 0x4D, 0x2B],
 };
 
+/// Scalar-number collection capability: appending, inserting and replacing
+/// `i64`/`f64` elements. A new IID and vtable, so every already-published sink
+/// contract is untouched. Removal, movement and clearing carry no element
+/// value and therefore stay on `IAvnRustVmSink2`.
+const IAVN_RUST_VM_SINK5_IID: Guid = Guid {
+    data1: 0x6B2E8F10,
+    data2: 0x4C91,
+    data3: 0x4E3A,
+    data4: [0x9A, 0x77, 0x1F, 0x0C, 0x2B, 0x3A, 0x4D, 0x2F],
+};
+
 /// One immutable realized range (or range reset) of a windowed collection.
 const IAVN_RUST_VM_RANGE_BATCH_IID: Guid = Guid {
     data1: 0x6B2E8F10,
@@ -289,6 +300,94 @@ pub struct IAvnRustVmSink4 {
 
 unsafe impl ComInterface for IAvnRustVmSink4 {
     const IID: Guid = IAVN_RUST_VM_SINK4_IID;
+}
+
+#[repr(C)]
+struct IAvnRustVmSink5Vtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    add_integer: unsafe extern "system" fn(*mut IAvnRustVmSink5, i32, i64) -> i32,
+    insert_integer: unsafe extern "system" fn(*mut IAvnRustVmSink5, i32, i32, i64) -> i32,
+    replace_integer: unsafe extern "system" fn(*mut IAvnRustVmSink5, i32, i32, i64) -> i32,
+    add_double: unsafe extern "system" fn(*mut IAvnRustVmSink5, i32, f64) -> i32,
+    insert_double: unsafe extern "system" fn(*mut IAvnRustVmSink5, i32, i32, f64) -> i32,
+    replace_double: unsafe extern "system" fn(*mut IAvnRustVmSink5, i32, i32, f64) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnRustVmSink5 {
+    vtbl: *const IAvnRustVmSink5Vtbl,
+}
+
+unsafe impl ComInterface for IAvnRustVmSink5 {
+    const IID: Guid = IAVN_RUST_VM_SINK5_IID;
+}
+
+impl ComPtr<IAvnRustVmSink5> {
+    pub fn add_integer(&self, collection_id: i32, value: i64) -> Result<()> {
+        unsafe {
+            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().add_integer)(
+                self.as_raw(),
+                collection_id,
+                value,
+            ))
+        }
+    }
+
+    pub fn insert_integer(&self, collection_id: i32, index: i32, value: i64) -> Result<()> {
+        unsafe {
+            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().insert_integer)(
+                self.as_raw(),
+                collection_id,
+                index,
+                value,
+            ))
+        }
+    }
+
+    pub fn replace_integer(&self, collection_id: i32, index: i32, value: i64) -> Result<()> {
+        unsafe {
+            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().replace_integer)(
+                self.as_raw(),
+                collection_id,
+                index,
+                value,
+            ))
+        }
+    }
+
+    pub fn add_double(&self, collection_id: i32, value: f64) -> Result<()> {
+        unsafe {
+            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().add_double)(
+                self.as_raw(),
+                collection_id,
+                value,
+            ))
+        }
+    }
+
+    pub fn insert_double(&self, collection_id: i32, index: i32, value: f64) -> Result<()> {
+        unsafe {
+            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().insert_double)(
+                self.as_raw(),
+                collection_id,
+                index,
+                value,
+            ))
+        }
+    }
+
+    pub fn replace_double(&self, collection_id: i32, index: i32, value: f64) -> Result<()> {
+        unsafe {
+            hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().replace_double)(
+                self.as_raw(),
+                collection_id,
+                index,
+                value,
+            ))
+        }
+    }
 }
 
 /// The transported form of a map key. The schema fixes which representation a
@@ -2530,6 +2629,10 @@ mod tests {
         assert_eq!(
             (IUNKNOWN + 2) * PTR,
             std::mem::size_of::<IAvnRustViewModel2Vtbl>()
+        );
+        assert_eq!(
+            (IUNKNOWN + 6) * PTR,
+            std::mem::size_of::<IAvnRustVmSink5Vtbl>()
         );
     }
 }

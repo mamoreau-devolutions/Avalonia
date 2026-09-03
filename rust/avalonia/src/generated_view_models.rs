@@ -62,6 +62,15 @@ impl SampleViewModelSink {
     pub fn add_log_tree(&self, value: impl LogNodeViewModel) -> crate::Result<()> { self.0.add_model(6, LogNodeViewModelDispatch { model: value }) }
     pub fn insert_log_tree(&self, index: i32, value: impl LogNodeViewModel) -> crate::Result<()> { self.0.insert_model(6, index, LogNodeViewModelDispatch { model: value }) }
     pub fn replace_log_tree(&self, index: i32, value: impl LogNodeViewModel) -> crate::Result<()> { self.0.replace_model(6, index, LogNodeViewModelDispatch { model: value }) }
+    pub fn add_core_loads(&self, value: f64) -> crate::Result<()> { self.0.add_double(8, value) }
+    pub fn insert_core_loads(&self, index: i32, value: f64) -> crate::Result<()> { self.0.insert_double(8, index, value) }
+    pub fn replace_core_loads(&self, index: i32, value: f64) -> crate::Result<()> { self.0.replace_double(8, index, value) }
+    pub fn add_core_ticks(&self, value: i64) -> crate::Result<()> { self.0.add_integer(9, value) }
+    pub fn insert_core_ticks(&self, index: i32, value: i64) -> crate::Result<()> { self.0.insert_integer(9, index, value) }
+    pub fn replace_core_ticks(&self, index: i32, value: i64) -> crate::Result<()> { self.0.replace_integer(9, index, value) }
+    /// True when the attached host implements the scalar-number sink capability.
+    /// The reflectable (dynamic-binding) adapter deliberately does not.
+    pub fn supports_number_collections(&self) -> bool { self.0.supports_number_collections() }
     pub fn remove_items(&self, index: i32) -> crate::Result<()> { self.0.remove_string_at(1, index) }
     pub fn move_items(&self, from_index: i32, to_index: i32) -> crate::Result<()> { self.0.move_string_item(1, from_index, to_index) }
     pub fn clear_items(&self) -> crate::Result<()> { self.0.clear_string_collection(1) }
@@ -80,6 +89,12 @@ impl SampleViewModelSink {
     pub fn remove_log_tree(&self, index: i32) -> crate::Result<()> { self.0.remove_model_at(6, index) }
     pub fn move_log_tree(&self, from_index: i32, to_index: i32) -> crate::Result<()> { self.0.move_model_item(6, from_index, to_index) }
     pub fn clear_log_tree(&self) -> crate::Result<()> { self.0.clear_model_collection(6) }
+    pub fn remove_core_loads(&self, index: i32) -> crate::Result<()> { self.0.remove_number_at(8, index) }
+    pub fn move_core_loads(&self, from_index: i32, to_index: i32) -> crate::Result<()> { self.0.move_number_item(8, from_index, to_index) }
+    pub fn clear_core_loads(&self) -> crate::Result<()> { self.0.clear_number_collection(8) }
+    pub fn remove_core_ticks(&self, index: i32) -> crate::Result<()> { self.0.remove_number_at(9, index) }
+    pub fn move_core_ticks(&self, from_index: i32, to_index: i32) -> crate::Result<()> { self.0.move_number_item(9, from_index, to_index) }
+    pub fn clear_core_ticks(&self) -> crate::Result<()> { self.0.clear_number_collection(9) }
     pub fn set_increment_enabled(&self, enabled: bool) -> crate::Result<()> { self.0.set_command_enabled(1, enabled) }
     pub fn set_add_enabled(&self, enabled: bool) -> crate::Result<()> { self.0.set_command_enabled(2, enabled) }
     pub fn set_save_enabled(&self, enabled: bool) -> crate::Result<()> { self.0.set_command_enabled(3, enabled) }
