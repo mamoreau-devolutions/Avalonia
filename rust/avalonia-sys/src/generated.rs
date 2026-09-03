@@ -7,6 +7,59 @@ use crate::hresult::{self, Error, Result};
 use std::ffi::c_void;
 use std::ptr;
 
+/// Blittable ABI mirror of `Avalonia.Thickness`.
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct AvnThickness {
+    pub left: f64,
+    pub top: f64,
+    pub right: f64,
+    pub bottom: f64,
+}
+
+/// Blittable ABI mirror of `Avalonia.CornerRadius`.
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct AvnCornerRadius {
+    pub top_left: f64,
+    pub top_right: f64,
+    pub bottom_right: f64,
+    pub bottom_left: f64,
+}
+
+/// Blittable ABI mirror of `Avalonia.Size`.
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct AvnSize {
+    pub width: f64,
+    pub height: f64,
+}
+
+/// Blittable ABI mirror of `Avalonia.Point`.
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct AvnPoint {
+    pub x: f64,
+    pub y: f64,
+}
+
+/// Blittable ABI mirror of `Avalonia.Rect`.
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct AvnRect {
+    pub x: f64,
+    pub y: f64,
+    pub width: f64,
+    pub height: f64,
+}
+
+/// Blittable ABI mirror of `Avalonia.Media.Color`.
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct AvnColor {
+    pub argb: u32,
+}
+
 pub const I_AVN_BUTTON_CLICK_HANDLER_IID: Guid = Guid { data1: 0x4D76B167, data2: 0xC926, data3: 0x5DBD, data4: [0x86, 0xF0, 0xEF, 0x35, 0x2D, 0x9C, 0xBF, 0x9B] };
 
 #[repr(C)]

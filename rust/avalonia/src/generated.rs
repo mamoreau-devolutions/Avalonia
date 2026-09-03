@@ -4,6 +4,216 @@
 use avalonia_sys as sys;
 use crate::{runtime::{with_factory, AsControl, EventSubscription}, Result};
 
+/// Safe mirror of `Avalonia.Thickness`, marshalled as `sys::AvnThickness`.
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct Thickness {
+    pub left: f64,
+    pub top: f64,
+    pub right: f64,
+    pub bottom: f64,
+}
+
+impl Thickness {
+    pub const fn new(left: f64, top: f64, right: f64, bottom: f64) -> Self {
+        Self { left, top, right, bottom }
+    }
+}
+
+impl From<sys::AvnThickness> for Thickness {
+    fn from(value: sys::AvnThickness) -> Self {
+        Self {
+            left: value.left,
+            top: value.top,
+            right: value.right,
+            bottom: value.bottom,
+        }
+    }
+}
+
+impl From<Thickness> for sys::AvnThickness {
+    fn from(value: Thickness) -> Self {
+        Self {
+            left: value.left,
+            top: value.top,
+            right: value.right,
+            bottom: value.bottom,
+        }
+    }
+}
+
+/// Safe mirror of `Avalonia.CornerRadius`, marshalled as `sys::AvnCornerRadius`.
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct CornerRadius {
+    pub top_left: f64,
+    pub top_right: f64,
+    pub bottom_right: f64,
+    pub bottom_left: f64,
+}
+
+impl CornerRadius {
+    pub const fn new(top_left: f64, top_right: f64, bottom_right: f64, bottom_left: f64) -> Self {
+        Self { top_left, top_right, bottom_right, bottom_left }
+    }
+}
+
+impl From<sys::AvnCornerRadius> for CornerRadius {
+    fn from(value: sys::AvnCornerRadius) -> Self {
+        Self {
+            top_left: value.top_left,
+            top_right: value.top_right,
+            bottom_right: value.bottom_right,
+            bottom_left: value.bottom_left,
+        }
+    }
+}
+
+impl From<CornerRadius> for sys::AvnCornerRadius {
+    fn from(value: CornerRadius) -> Self {
+        Self {
+            top_left: value.top_left,
+            top_right: value.top_right,
+            bottom_right: value.bottom_right,
+            bottom_left: value.bottom_left,
+        }
+    }
+}
+
+/// Safe mirror of `Avalonia.Size`, marshalled as `sys::AvnSize`.
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct Size {
+    pub width: f64,
+    pub height: f64,
+}
+
+impl Size {
+    pub const fn new(width: f64, height: f64) -> Self {
+        Self { width, height }
+    }
+}
+
+impl From<sys::AvnSize> for Size {
+    fn from(value: sys::AvnSize) -> Self {
+        Self {
+            width: value.width,
+            height: value.height,
+        }
+    }
+}
+
+impl From<Size> for sys::AvnSize {
+    fn from(value: Size) -> Self {
+        Self {
+            width: value.width,
+            height: value.height,
+        }
+    }
+}
+
+/// Safe mirror of `Avalonia.Point`, marshalled as `sys::AvnPoint`.
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct Point {
+    pub x: f64,
+    pub y: f64,
+}
+
+impl Point {
+    pub const fn new(x: f64, y: f64) -> Self {
+        Self { x, y }
+    }
+}
+
+impl From<sys::AvnPoint> for Point {
+    fn from(value: sys::AvnPoint) -> Self {
+        Self {
+            x: value.x,
+            y: value.y,
+        }
+    }
+}
+
+impl From<Point> for sys::AvnPoint {
+    fn from(value: Point) -> Self {
+        Self {
+            x: value.x,
+            y: value.y,
+        }
+    }
+}
+
+/// Safe mirror of `Avalonia.Rect`, marshalled as `sys::AvnRect`.
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct Rect {
+    pub x: f64,
+    pub y: f64,
+    pub width: f64,
+    pub height: f64,
+}
+
+impl Rect {
+    pub const fn new(x: f64, y: f64, width: f64, height: f64) -> Self {
+        Self { x, y, width, height }
+    }
+}
+
+impl From<sys::AvnRect> for Rect {
+    fn from(value: sys::AvnRect) -> Self {
+        Self {
+            x: value.x,
+            y: value.y,
+            width: value.width,
+            height: value.height,
+        }
+    }
+}
+
+impl From<Rect> for sys::AvnRect {
+    fn from(value: Rect) -> Self {
+        Self {
+            x: value.x,
+            y: value.y,
+            width: value.width,
+            height: value.height,
+        }
+    }
+}
+
+/// Safe mirror of `Avalonia.Media.Color`, marshalled as `sys::AvnColor`.
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct Color {
+    pub a: u8,
+    pub r: u8,
+    pub g: u8,
+    pub b: u8,
+}
+
+impl Color {
+    pub const fn new(a: u8, r: u8, g: u8, b: u8) -> Self {
+        Self { a, r, g, b }
+    }
+}
+
+impl From<sys::AvnColor> for Color {
+    fn from(value: sys::AvnColor) -> Self {
+        Self {
+            a: (value.argb >> 24) as u8,
+            r: (value.argb >> 16) as u8,
+            g: (value.argb >> 8) as u8,
+            b: value.argb as u8,
+        }
+    }
+}
+
+impl From<Color> for sys::AvnColor {
+    fn from(value: Color) -> Self {
+        Self {
+            argb: (u32::from(value.a) << 24)
+                | (u32::from(value.r) << 16)
+                | (u32::from(value.g) << 8)
+                | u32::from(value.b),
+        }
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Dock {

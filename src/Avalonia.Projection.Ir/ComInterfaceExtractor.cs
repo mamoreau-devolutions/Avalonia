@@ -181,6 +181,11 @@ public static class ComInterfaceExtractor
             interfaceName = type.FullName;
             return true;
         }
+        if (GeometryMarshalling.TryGetByAbiName(type.Name, out var geometry))
+        {
+            kind = geometry.Kind;
+            return true;
+        }
 
         kind = MarshallingKind.Unsupported;
         reason = $"Type '{type.FullName}' is not marshallable";

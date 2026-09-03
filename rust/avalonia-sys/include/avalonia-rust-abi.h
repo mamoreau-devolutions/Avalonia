@@ -18,6 +18,47 @@ typedef struct AvnGuid {
     uint8_t data4[8];
 } AvnGuid;
 
+/* Blittable ABI mirror of Avalonia.Thickness. */
+typedef struct AvnThickness {
+    double left;
+    double top;
+    double right;
+    double bottom;
+} AvnThickness;
+
+/* Blittable ABI mirror of Avalonia.CornerRadius. */
+typedef struct AvnCornerRadius {
+    double top_left;
+    double top_right;
+    double bottom_right;
+    double bottom_left;
+} AvnCornerRadius;
+
+/* Blittable ABI mirror of Avalonia.Size. */
+typedef struct AvnSize {
+    double width;
+    double height;
+} AvnSize;
+
+/* Blittable ABI mirror of Avalonia.Point. */
+typedef struct AvnPoint {
+    double x;
+    double y;
+} AvnPoint;
+
+/* Blittable ABI mirror of Avalonia.Rect. */
+typedef struct AvnRect {
+    double x;
+    double y;
+    double width;
+    double height;
+} AvnRect;
+
+/* Blittable ABI mirror of Avalonia.Media.Color. */
+typedef struct AvnColor {
+    uint32_t argb;
+} AvnColor;
+
 typedef struct IAvnAvaloniaObject IAvnAvaloniaObject;
 typedef struct IAvnAvaloniaObjectVtbl IAvnAvaloniaObjectVtbl;
 typedef struct IAvnBorder IAvnBorder;

@@ -61,6 +61,16 @@ public static class NativeHeaderEmitter
         sb.AppendLine("} AvnGuid;");
         sb.AppendLine();
 
+        foreach (var geometry in GeometryMarshalling.All)
+        {
+            sb.AppendLine($"/* Blittable ABI mirror of {geometry.ManagedTypeName}. */");
+            sb.AppendLine($"typedef struct {geometry.AbiName} {{");
+            foreach (var field in geometry.Fields)
+                sb.AppendLine($"    {NativeFieldType(field.Kind)} {field.NativeName};");
+            sb.AppendLine($"}} {geometry.AbiName};");
+            sb.AppendLine();
+        }
+
         foreach (var name in names)
         {
             sb.AppendLine($"typedef struct {name} {name};");
@@ -313,7 +323,16 @@ public static class NativeHeaderEmitter
             MarshallingKind.StringUtf16 => "uint16_t*",
             MarshallingKind.ComInterface or MarshallingKind.ComCollection =>
                 SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
+            _ when GeometryMarshalling.TryGet(kind, out var geometry) => geometry.AbiName,
             _ => throw new InvalidOperationException($"Unsupported ABI kind '{kind}'."),
+        };
+
+    private static string NativeFieldType(GeometryFieldKind kind) =>
+        kind switch
+        {
+            GeometryFieldKind.Double => "double",
+            GeometryFieldKind.UInt32 => "uint32_t",
+            _ => throw new InvalidOperationException($"Unsupported ABI field kind '{kind}'."),
         };
 
     private static string SimpleName(string fullName) =>

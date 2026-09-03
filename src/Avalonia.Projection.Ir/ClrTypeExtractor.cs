@@ -367,7 +367,15 @@ public static class ClrTypeExtractor
             kind = MarshallingKind.NullableBool;
             return true;
         }
-        type = Nullable.GetUnderlyingType(type) ?? type;
+        var underlying = Nullable.GetUnderlyingType(type);
+        if (underlying is not null &&
+            GeometryMarshalling.TryGetByManagedTypeName(underlying.FullName, out _))
+        {
+            kind = MarshallingKind.Unsupported;
+            reason = $"Nullable geometry type '{type.FullName}' is not marshallable";
+            return false;
+        }
+        type = underlying ?? type;
 
         if (type == typeof(int) || type.IsEnum)
             kind = MarshallingKind.I32;
@@ -381,6 +389,8 @@ public static class ClrTypeExtractor
             kind = MarshallingKind.Bool;
         else if (type == typeof(string))
             kind = MarshallingKind.StringUtf16;
+        else if (GeometryMarshalling.TryGetByManagedTypeName(type.FullName, out var geometry))
+            kind = geometry.Kind;
         else if (projectedNames.TryGetValue(type, out interfaceName))
             kind = MarshallingKind.ComInterface;
         else

@@ -1,3 +1,4 @@
+use crate::geometry;
 use crate::ir::{
     ProjectedAttachedProperty, ProjectedEvent, ProjectedMethod, ProjectedParameter,
     ProjectedProperty, ProjectedType, ProjectionIr,
@@ -13,6 +14,7 @@ pub fn emit_sys_module(ir: &ProjectionIr) -> String {
          use std::ffi::c_void;\n\
          use std::ptr;\n\n",
     );
+    out.push_str(&geometry::emit_sys_structs());
     for event in unique_events(ir) {
         out.push_str(&emit_event_handler(event));
         out.push('\n');
@@ -787,6 +789,9 @@ fn event_handler_function(event: &ProjectedEvent) -> String {
 }
 
 fn rust_abi_type(kind: &str, interface_name: Option<&str>) -> String {
+    if let Some(geometry) = geometry::find(kind) {
+        return geometry.abi_name.into();
+    }
     match kind {
         "I32" | "Bool" | "NullableBool" => "i32".into(),
         "I64" => "i64".into(),
@@ -804,6 +809,9 @@ fn rust_abi_type(kind: &str, interface_name: Option<&str>) -> String {
 }
 
 fn rust_abi_default(kind: &str) -> &'static str {
+    if geometry::is_geometry(kind) {
+        return "Default::default()";
+    }
     match kind {
         "F32" | "F64" => "0.0",
         "I32" | "I64" | "Bool" | "NullableBool" => "0",
@@ -812,6 +820,9 @@ fn rust_abi_default(kind: &str) -> &'static str {
 }
 
 fn rust_property_type(property: &ProjectedProperty) -> String {
+    if let Some(geometry) = geometry::find(&property.kind) {
+        return geometry.abi_name.into();
+    }
     match property.kind.as_str() {
         "I32" => "i32".into(),
         "I64" => "i64".into(),

@@ -1,5 +1,6 @@
 mod emit;
 mod emit_safe;
+mod geometry;
 mod ir;
 
 pub use emit::emit_sys_module;

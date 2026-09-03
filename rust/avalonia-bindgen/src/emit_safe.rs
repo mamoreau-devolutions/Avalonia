@@ -1,3 +1,4 @@
+use crate::geometry;
 use crate::ir::{ProjectedEvent, ProjectedProperty, ProjectedType, ProjectionIr};
 
 pub fn emit_safe_module(ir: &ProjectionIr) -> String {
@@ -7,6 +8,7 @@ pub fn emit_safe_module(ir: &ProjectionIr) -> String {
          use avalonia_sys as sys;\n\
          use crate::{runtime::{with_factory, AsControl, EventSubscription}, Result};\n\n",
     );
+    out.push_str(&geometry::emit_safe_structs());
 
     for projected_enum in &ir.enums {
         let mut values = Vec::new();
@@ -217,15 +219,25 @@ fn emit_type(ir: &ProjectionIr, ty: &ProjectedType) -> String {
             .any(|projected_enum| projected_enum.full_name == property.managed_type_name);
         let safe_type = if is_enum {
             enum_name.to_string()
+        } else if let Some(geometry) = geometry::find(&property.kind) {
+            geometry.safe_name.to_string()
         } else {
             rust_scalar_kind(&property.kind).to_string()
         };
         let raw_get = if is_enum {
             format!("{enum_name}::try_from(value)")
+        } else if geometry::is_geometry(&property.kind) {
+            "Ok(value.into())".to_string()
         } else {
             "Ok(value)".to_string()
         };
-        let raw_set = if is_enum { "value as i32" } else { "value" };
+        let raw_set = if is_enum {
+            "value as i32"
+        } else if geometry::is_geometry(&property.kind) {
+            "value.into()"
+        } else {
+            "value"
+        };
         format!(
             "    pub fn get_{name}(target: &impl AsControl) -> Result<{safe_type}> {{\n\
              \x20       let target = target.as_control()?;\n\
@@ -301,6 +313,14 @@ fn emit_property(property: &ProjectedProperty) -> String {
                     "    pub fn {getter}(&self) -> Result<{enum_name}> {{\n\
                      \x20       let value = self.raw.get_{snake}()?;\n\
                      \x20       {enum_name}::try_from(value)\n\
+                     \x20   }}\n"
+                ));
+            }
+            kind if geometry::is_geometry(kind) => {
+                let safe_type = geometry::find(kind).unwrap().safe_name;
+                out.push_str(&format!(
+                    "    pub fn {getter}(&self) -> Result<{safe_type}> {{\n\
+                     \x20       Ok(self.raw.get_{snake}()?.into())\n\
                      \x20   }}\n"
                 ));
             }
@@ -404,6 +424,8 @@ fn emit_method(ty: &ProjectedType, method: &crate::ir::ProjectedMethod) -> Strin
                     parameter.interface_name.as_deref().expect("interfaceName"),
                 ));
                 format!("{parameter_name}: &{safe}")
+            } else if let Some(geometry) = geometry::find(&parameter.kind) {
+                format!("{parameter_name}: {}", geometry.safe_name)
             } else {
                 format!("{parameter_name}: {}", rust_scalar_kind(&parameter.kind))
             }
@@ -417,6 +439,8 @@ fn emit_method(ty: &ProjectedType, method: &crate::ir::ProjectedMethod) -> Strin
             let parameter_name = to_snake(&parameter.name);
             if parameter.kind == "ComInterface" {
                 format!("&{parameter_name}.raw")
+            } else if geometry::is_geometry(&parameter.kind) {
+                format!("{parameter_name}.into()")
             } else {
                 parameter_name
             }
@@ -430,6 +454,13 @@ fn emit_method(ty: &ProjectedType, method: &crate::ir::ProjectedMethod) -> Strin
 }
 
 fn safe_property_input(property: &ProjectedProperty) -> (String, String, String) {
+    if let Some(geometry) = geometry::find(&property.kind) {
+        return (
+            geometry.safe_name.into(),
+            String::new(),
+            "value.into()".into(),
+        );
+    }
     match property.kind.as_str() {
         "StringUtf16" => (
             "impl AsRef<str>".into(),
@@ -464,7 +495,9 @@ fn safe_property_input(property: &ProjectedProperty) -> (String, String, String)
 }
 
 fn safe_scalar_type(property: &ProjectedProperty) -> String {
-    if property.kind == "I32" && is_enum_property(property) {
+    if let Some(geometry) = geometry::find(&property.kind) {
+        geometry.safe_name.into()
+    } else if property.kind == "I32" && is_enum_property(property) {
         simple_name(property.managed_type_name.as_deref().unwrap()).into()
     } else {
         rust_scalar_kind(&property.kind).into()

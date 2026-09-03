@@ -34,6 +34,7 @@ public static class ComSourceEmitter
                 files[SimpleName(statics.Key) + ".g.cs"] = EmitAttachedProperties(ir, statics.ToArray());
             }
             files["ProjectionRuntime.g.cs"] = EmitRuntime(ir);
+            files["ProjectionStructs.g.cs"] = EmitGeometryStructs(ir);
             files["IAvnControlFactory.g.cs"] = EmitFactory(ir);
             files["ProjectionAotRoots.g.cs"] = EmitAotRoots(ir);
         }
@@ -406,6 +407,44 @@ public static class ComSourceEmitter
         return sb.ToString();
     }
 
+    public static string EmitGeometryStructs(ProjectionIr ir)
+    {
+        var root = ir.Types.First(t => t.Kind == ProjectedTypeKind.Class && t.BaseFullName is null);
+        var sb = Header(root);
+        foreach (var geometry in GeometryMarshalling.All)
+        {
+            sb.AppendLine($"/// <summary>Blittable ABI mirror of <c>{geometry.ManagedTypeName}</c>.</summary>");
+            sb.AppendLine("[StructLayout(LayoutKind.Sequential)]");
+            sb.AppendLine($"public struct {geometry.AbiName}");
+            sb.AppendLine("{");
+            foreach (var field in geometry.Fields)
+                sb.AppendLine($"    public {FieldType(field.Kind)} {field.Name};");
+            sb.AppendLine();
+            sb.AppendLine(
+                $"    public static {geometry.AbiName} FromAvalonia(global::{geometry.ManagedTypeName} value) =>");
+            if (geometry.Conversion == GeometryConversion.PackedColor)
+            {
+                sb.AppendLine($"        new {geometry.AbiName} {{ {geometry.Fields[0].Name} = value.ToUInt32() }};");
+            }
+            else
+            {
+                sb.AppendLine($"        new {geometry.AbiName}");
+                sb.AppendLine("        {");
+                foreach (var field in geometry.Fields)
+                    sb.AppendLine($"            {field.Name} = value.{field.Name},");
+                sb.AppendLine("        };");
+            }
+            sb.AppendLine();
+            sb.AppendLine($"    public readonly global::{geometry.ManagedTypeName} ToAvalonia() =>");
+            sb.AppendLine(geometry.Conversion == GeometryConversion.PackedColor
+                ? $"        global::{geometry.ManagedTypeName}.FromUInt32({geometry.Fields[0].Name});"
+                : $"        new global::{geometry.ManagedTypeName}({string.Join(", ", geometry.Fields.Select(f => f.Name))});");
+            sb.AppendLine("}");
+            sb.AppendLine();
+        }
+        return sb.ToString().TrimEnd() + Environment.NewLine;
+    }
+
     public static string EmitCollection(ProjectionIr ir, ProjectedProperty collection)
     {
         var root = ir.Types.Single(t => t.Kind == ProjectedTypeKind.Class && t.BaseFullName is null);
@@ -527,12 +566,15 @@ public static class ComSourceEmitter
                 MarshallingKind.I32 when property.ManagedTypeName != "System.Int32" =>
                     $"(global::{property.ManagedTypeName})value",
                 MarshallingKind.Bool => "value != 0",
+                _ when GeometryMarshalling.IsGeometry(property.Kind) => "value.ToAvalonia()",
                 _ => "value",
             };
             var abiValue = property.Kind switch
             {
                 MarshallingKind.I32 when property.ManagedTypeName != "System.Int32" => "(int)result",
                 MarshallingKind.Bool => "result ? 1 : 0",
+                _ when GeometryMarshalling.TryGet(property.Kind, out var geometry) =>
+                    $"{geometry.AbiName}.FromAvalonia(result)",
                 _ => "result",
             };
             sb.AppendLine($"    public int Get{property.Name}(IAvnControl? target, out {type} value)");
@@ -783,6 +825,8 @@ public static class ComSourceEmitter
                 $"({SimpleName(property.InterfaceName!)}?)ProjectionRuntime.Wrap(_value.{property.Name} as global::Avalonia.AvaloniaObject)",
             MarshallingKind.ComCollection =>
                 $"new {SimpleName(property.InterfaceName!)[1..]}(_value.{property.Name})",
+            _ when GeometryMarshalling.TryGet(property.Kind, out var geometry) =>
+                $"{geometry.AbiName}.FromAvalonia(_value.{property.Name})",
             _ => $"_value.{property.Name}",
         };
 
@@ -794,6 +838,8 @@ public static class ComSourceEmitter
             MarshallingKind.Bool => $"eventArgs.{parameter.Name} ? 1 : 0",
             MarshallingKind.NullableBool =>
                 $"!eventArgs.{parameter.Name}.HasValue ? -1 : eventArgs.{parameter.Name}.Value ? 1 : 0",
+            _ when GeometryMarshalling.TryGet(parameter.Kind, out var geometry) =>
+                $"{geometry.AbiName}.FromAvalonia(eventArgs.{parameter.Name})",
             _ => $"eventArgs.{parameter.Name}",
         };
 
@@ -805,6 +851,7 @@ public static class ComSourceEmitter
             MarshallingKind.Bool => $"{value} != 0",
             MarshallingKind.NullableBool =>
                 $"{value} switch {{ -1 => null, 0 => false, 1 => true, _ => throw new global::System.ArgumentOutOfRangeException(nameof({value})) }}",
+            _ when GeometryMarshalling.IsGeometry(parameter.Kind) => $"{value}.ToAvalonia()",
             _ => value,
         };
 
@@ -818,6 +865,7 @@ public static class ComSourceEmitter
                 "value switch { -1 => null, 0 => false, 1 => true, _ => throw new global::System.ArgumentOutOfRangeException(nameof(value)) }",
             MarshallingKind.ComInterface =>
                 $"(global::{property.ManagedTypeName})ProjectionRuntime.Unwrap(value)!",
+            _ when GeometryMarshalling.IsGeometry(property.Kind) => "value.ToAvalonia()",
             _ => "value",
         };
 
@@ -831,6 +879,7 @@ public static class ComSourceEmitter
                 $"{parameter.Name} switch {{ -1 => null, 0 => false, 1 => true, _ => throw new global::System.ArgumentOutOfRangeException(nameof({parameter.Name})) }}",
             MarshallingKind.ComInterface =>
                 $"(global::{parameter.ManagedTypeName})ProjectionRuntime.Unwrap({parameter.Name})!",
+            _ when GeometryMarshalling.IsGeometry(parameter.Kind) => $"{parameter.Name}.ToAvalonia()",
             _ => parameter.Name,
         };
 
@@ -886,7 +935,16 @@ public static class ComSourceEmitter
             MarshallingKind.StringUtf16 => nullable ? "string?" : "string",
             MarshallingKind.ComInterface => (interfaceName is null ? "object" : SimpleName(interfaceName)) + (nullable ? "?" : ""),
             MarshallingKind.ComCollection => SimpleName(interfaceName!),
+            _ when GeometryMarshalling.TryGet(kind, out var geometry) => geometry.AbiName,
             _ => throw new InvalidOperationException($"Cannot emit C# for {kind}"),
+        };
+
+    private static string FieldType(GeometryFieldKind kind) =>
+        kind switch
+        {
+            GeometryFieldKind.Double => "double",
+            GeometryFieldKind.UInt32 => "uint",
+            _ => throw new InvalidOperationException($"Cannot emit C# for field kind {kind}"),
         };
 
     private static string? NamespaceOf(string fullName)

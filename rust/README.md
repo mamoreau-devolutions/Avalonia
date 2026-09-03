@@ -7,6 +7,9 @@ binding specifications.
 
 The native ownership contract and the MicroCom-versus-handle-table decision
 are documented in [OWNERSHIP.md](OWNERSHIP.md).
+Geometry value types (`Thickness`, `CornerRadius`, `Size`, `Point`, `Rect`,
+`Color`) cross the ABI as blittable structs, documented in
+[MARSHALLING.md](MARSHALLING.md).
 The executor-neutral completion ABI and clipboard integration are documented
 in [ASYNC.md](ASYNC.md).
 Desktop file integration (pickers, drag/drop, "open with", file associations)

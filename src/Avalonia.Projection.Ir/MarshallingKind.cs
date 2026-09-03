@@ -16,6 +16,12 @@ public enum MarshallingKind
     StringUtf16,
     ComInterface,
     ComCollection,
+    Thickness,
+    CornerRadius,
+    Size,
+    Point,
+    Rect,
+    Color,
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
