@@ -19,7 +19,7 @@ requirements are defined in [COMPATIBILITY.md](COMPATIBILITY.md).
 [`templates/avalonia-app`](templates/avalonia-app) is a minimal, copyable
 Cargo project (a `Cargo.toml` with a path dependency on `avalonia`, plus a
 `src/main.rs` that opens a window) meant to be copied outside this repository
-to bootstrap a new application. `new-app.ps1` / `new-app.sh` do the copy and
+to bootstrap a new application. `new-app.ps1` do the copy and
 package rename:
 
 ```powershell
@@ -27,7 +27,7 @@ package rename:
 ```
 
 ```bash
-./rust/new-app.sh my_app ~/src/my_app
+pwsh ./rust/new-app.ps1 my_app ~/src/my_app
 ```
 
 The template is excluded from the `rust` Cargo workspace (see the `exclude`
@@ -51,7 +51,7 @@ This is required because the producer build consumes its XamlX and platform
 submodules. The vendored template declares an empty `[workspace]`, so it does
 not become an accidental member of an enclosing consumer Cargo workspace.
 `regenerate-and-build.ps1 -ValidateTemplate` /
-`AVN_VALIDATE_TEMPLATE=1 regenerate-and-build.sh` copies it through `new-app`
+`pwsh ./regenerate-and-build.ps1 -ValidateTemplate` copies it through `new-app`
 before running `cargo check`.
 
 ## External consumer build and package
@@ -67,7 +67,7 @@ Cargo binary and defaults to `packageName`.
   -Manifest .\consumer\avalonia-app.json
 ```
 
-The cross-platform `build-app.py` (with `.ps1`/`.sh` wrappers) validates the
+The cross-platform `build-app.ps1` (PowerShell 7) validates the
 manifest and paths before it runs the producer's
 `Avalonia.ViewModelProjection.Tool` against consumer outputs. It then runs
 `cargo fmt`, builds consumer AXAML, builds the declared Cargo `--bin`, and
@@ -92,7 +92,7 @@ The external template carries the same target-specific Cargo configuration;
 
 ## One-command developer workflow
 
-`regenerate-and-build.ps1` / `regenerate-and-build.sh` replace the four
+`regenerate-and-build.ps1` replace the four
 previously separate, manually copy-pasted commands from README.md's
 "Regenerate bindings" section with one:
 
@@ -113,7 +113,7 @@ previously separate, manually copy-pasted commands from README.md's
 ```
 
 ```bash
-./rust/regenerate-and-build.sh
+pwsh ./rust/regenerate-and-build.ps1
 ```
 
 Both scripts are idempotent when the IR hasn't changed (running them against
@@ -137,15 +137,15 @@ Useful switches/environment variables:
 
 | PowerShell | Bash (env var) | Effect |
 | --- | --- | --- |
-| `-Configuration Debug` | `./regenerate-and-build.sh Debug` | Build configuration for the .NET regeneration tools and managed build (default `Release`). |
+| `-Configuration Debug` | `pwsh ./regenerate-and-build.ps1 Debug` | Build configuration for the .NET regeneration tools and managed build (default `Release`). |
 | `-SkipManagedBuild` | `AVN_SKIP_MANAGED_BUILD=1` | Skip step 4's `dotnet build`, e.g. when only the Rust side changed. |
-| `-Test` | `AVN_RUN_CARGO_TESTS=1` | Run `cargo test --workspace` instead of `cargo build --workspace`. Requires a host discoverable per [Host discovery](#host-discovery) below (`rust/build.ps1`/`rust/build.sh` publish one; set `AVN_HOST_NATIVE_LIB` otherwise). |
+| `-Test` | `AVN_RUN_CARGO_TESTS=1` | Run `cargo test --workspace` instead of `cargo build --workspace`. Requires a host discoverable per [Host discovery](#host-discovery) below (`rust/build.ps1` publish one; set `AVN_HOST_NATIVE_LIB` otherwise). |
 | `-ValidateTemplate` | `AVN_VALIDATE_TEMPLATE=1` | Additionally `cargo check` the application template in place. |
-| `-PackageRid <rid>` | `AVN_PACKAGE_RID=<rid>` | Additionally run [`package.ps1`/`package.sh`](#deterministic-per-rid-artifact-layout) for that RID. |
+| `-PackageRid <rid>` | `AVN_PACKAGE_RID=<rid>` | Additionally run [`package.ps1`](#deterministic-per-rid-artifact-layout) for that RID. |
 
-This script intentionally does not replace `rust/build.ps1` / `rust/build.sh`
+This script intentionally does not replace `rust/build.ps1`
 (full RID publish plus `cargo test --workspace` against the exact published
-host) or `package.ps1` / `package.sh` (below): it is the fast inner
+host) or `package.ps1` (below): it is the fast inner
 regenerate/compile loop, and delegates to those for anything that needs a
 real NativeAOT publish.
 
@@ -158,14 +158,14 @@ resolves the native `Avalonia.Host` library through `avalonia::discover_host_pat
    override. If set, its value is used as-is, even if nothing exists at that
    path yet, so `Host::load` can surface a precise loader error instead of
    this function silently falling back to the next mechanism. This remains
-   how `rust/build.ps1`/`rust/build.sh` point the workspace test suite at a
+   how `rust/build.ps1` point the workspace test suite at a
    freshly published host, and how you point a running app at a different
    host during development.
 2. **Adjacent to the executable** -- otherwise, the platform host file name
    (`Avalonia.Host.dll` on Windows, `Avalonia.Host.so` on Linux,
    `Avalonia.Host.dylib` on macOS) is looked up next to
    `std::env::current_exe()`. This is what lets a packaged application run
-   with no environment variable at all: [`package.ps1`/`package.sh`](#deterministic-per-rid-artifact-layout)
+   with no environment variable at all: [`package.ps1`](#deterministic-per-rid-artifact-layout)
    copy the host and the application binary into the same directory.
 
 If neither resolves, the error names both the environment variable and the
@@ -178,7 +178,7 @@ the same behavior exercised through the crate's public API.
 
 ## Deterministic per-RID artifact layout
 
-`package.ps1` (Windows) / `package.sh` (Linux and macOS) publish the NativeAOT host for
+`package.ps1` publish the NativeAOT host for
 one RID, build a Rust binary next to it, and lay both out identically
 regardless of platform, under `rust/artifacts/<rid>/`:
 
@@ -187,11 +187,11 @@ regardless of platform, under `rust/artifacts/<rid>/`:
 ```
 
 ```bash
-./rust/package.sh linux-x64
+pwsh ./rust/package.ps1 linux-x64
 ```
 
 ```bash
-./rust/package.sh osx-arm64
+pwsh ./rust/package.ps1 osx-arm64
 ```
 
 Both produce, for every supported RID:
@@ -199,7 +199,7 @@ Both produce, for every supported RID:
 - `Avalonia.Host.<dll|so|dylib>` -- the published NativeAOT host.
 - Its native rendering dependencies that publish alongside it
   (`libSkiaSharp`/`libHarfBuzzSharp`, plus `libAvaloniaNative.dylib` on
-  macOS), copied only if present. `package.sh` copies every published `.so`,
+  macOS), copied only if present. `package.ps1` copies every published `.so`,
   versioned `.so.*`, and `.dylib` dependency rather than maintaining a
   platform-specific allow-list.
 - The requested Rust binary (`hello_world` by default; pass `-Example`/an
@@ -290,7 +290,7 @@ and the checks below are what keep that true instead of assumed:
 - **The `rust/*` crates** are source only (`publish = false`, see above) and
   are never vendored as compiled binaries into any NuGet package; they are
   consumed by `cargo`, entirely outside the NuGet/CycloneDX pipeline.
-- **The `rust/package.ps1` / `rust/package.sh` output** (`Avalonia.Host` plus
+- **The `rust/package.ps1` output** (`Avalonia.Host` plus
   its native dependencies and a Rust binary, per RID) is not a NuGet package
   and is not produced by this repository's NuGet publish path -- it is a
   standalone build artifact distributed by whatever channel a consumer of
@@ -304,7 +304,7 @@ and the checks below are what keep that true instead of assumed:
   template metadata snippets that are never compiled or copied into a delivered
   bundle. No new shipped package, bundled third-party binary, npm/JS content,
   or Numerge merge group is introduced, so neither `nukebuild/SbomGenerator.cs`
-  nor `rust/generate-sbom.py`'s delivery inventory changes.
+  nor `rust/generate-sbom.ps1`'s delivery inventory changes.
 
 ## Tests
 
@@ -314,12 +314,12 @@ and the checks below are what keep that true instead of assumed:
   adjacent-file lookup succeeding and failing, and the combined error naming
   both mechanisms -- all without requiring a published host.
 - `regenerate-and-build.ps1 -ValidateTemplate` / `AVN_VALIDATE_TEMPLATE=1
-  ./regenerate-and-build.sh` and direct `cargo check --manifest-path
+  pwsh ./regenerate-and-build.ps1` and direct `cargo check --manifest-path
   rust/templates/avalonia-app/Cargo.toml` compile-check the application
   template as a standalone crate.
 - `cargo package --list` (see [Source-only crate packaging](#source-only-crate-packaging))
   is the packaging-readiness check for all three workspace crates.
-- `package.ps1` / `package.sh` self-verify their own output shape (the
+- `package.ps1` self-verify their own output shape (the
   publish step fails the script if the host file is missing, the cargo build
   step fails it if the binary is missing) and were run end to end for
   `win-x64` while developing this stage, confirming the host, its native

@@ -8,7 +8,7 @@ This crate is source-only: `publish = false` because it only works against a
 matching `Avalonia.Host` NativeAOT build produced from the same checkout, not
 against a versioned ABI contract suitable for crates.io. Copy
 [`../templates/avalonia-app`](../templates/avalonia-app) (or run
-`../new-app.ps1` / `../new-app.sh`) to start a new application against this
+`../new-app.ps1`) to start a new application against this
 crate.
 
 See [`../PRODUCTIZATION.md`](../PRODUCTIZATION.md) for the productized

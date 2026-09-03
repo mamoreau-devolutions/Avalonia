@@ -78,7 +78,7 @@ artifacts are not release artifacts.
 
 The Rust host and standalone Rust artifacts are not NuGet packages, so
 `nukebuild/SbomGenerator.cs` remains unchanged. Their per-RID delivery scope
-is instead represented by `rust/generate-sbom.py` in `sbom.cdx.json`, including
+is instead represented by `rust/generate-sbom.ps1` in `sbom.cdx.json`, including
 the host, Rust executable, bundled native binaries, and licence with SHA-256
 hashes after signing.
 

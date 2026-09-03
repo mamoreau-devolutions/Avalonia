@@ -6,8 +6,8 @@ NativeAOT host selects one Avalonia windowing backend at publish time:
 | Host platform | Runtime identifiers | Backend | Build entry point |
 | --- | --- | --- | --- |
 | Windows | `win-x64`, `win-arm64` | Win32 | `build.ps1` |
-| Linux | `linux-x64`, `linux-arm64` | X11 | `build.sh` |
-| macOS | `osx-x64`, `osx-arm64` | Avalonia.Native | `build.sh` |
+| Linux | `linux-x64`, `linux-arm64` | X11 | `build.ps1` |
+| macOS | `osx-x64`, `osx-arm64` | Avalonia.Native | `build.ps1` |
 
 `AvaloniaRustHostPlatform` controls the compile-time selection. The shared
 host contains the nano-COM ABI, ownership runtime, generated control
@@ -19,7 +19,7 @@ Linux publishes the host with a `$ORIGIN` runpath. Consequently
 `Avalonia.Host.so` without requiring a process-wide `LD_LIBRARY_PATH`.
 
 macOS publishes against `Avalonia.Native` and loads
-`libAvaloniaNative.dylib` from `@loader_path`. `build.sh` and `package.sh`
+`libAvaloniaNative.dylib` from `@loader_path`. `build.ps1` and `package.ps1`
 first invoke the repository's `xcodebuild` project with
 `CONFIGURATION_BUILD_DIR=Build/Products/Release`, so the generated
 `libAvalonia.Native.OSX.dylib` is included by `Avalonia.Native` as
@@ -29,7 +29,7 @@ reject cross-architecture macOS packaging so Xcode cannot produce a dylib that
 does not match the host RID.
 
 All build entry points run `cargo test --workspace` against the published host,
-so the requested RID architecture must match the native runner CPU. `build.sh`
+so the requested RID architecture must match the native runner CPU. `build.ps1`
 validates this for both Linux and macOS; `build.ps1` uses
 `RuntimeInformation.OSArchitecture`, rather than the potentially emulated
 process architecture, to enforce it on Windows.
@@ -45,7 +45,7 @@ git submodule update --init external/Avalonia.DBus
 Then publish the X11 NativeAOT host and run the complete Rust workspace:
 
 ```bash
-./rust/build.sh
+pwsh ./rust/build.ps1
 ```
 
 Pass `arm64` for Linux ARM64. `DOTNET` can select a non-default SDK binary.
@@ -55,7 +55,7 @@ WSL users can keep expensive intermediate files on the Linux filesystem:
 DOTNET="$HOME/.dotnet/dotnet" \
 AVN_DOTNET_ARTIFACTS="$HOME/.cache/avalonia-rust/dotnet-linux-x64" \
 CARGO_TARGET_DIR="$HOME/.cache/avalonia-rust/cargo-linux-x64" \
-./rust/build.sh
+pwsh ./rust/build.ps1
 ```
 
 The X11 host requires the standard Avalonia Linux runtime libraries, including

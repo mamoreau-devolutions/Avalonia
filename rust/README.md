@@ -26,42 +26,28 @@ Release compatibility and versioning rules are documented in
 ## Prerequisites
 
 - Windows 10 or later, Linux with X11, or macOS
+- PowerShell 7 (`pwsh`)
 - .NET SDK 10
 - A current stable Rust toolchain
 
 ## Build and test
 
-On Windows, from the repository root:
+From the repository root, with PowerShell 7:
 
 ```powershell
-.\rust\build.ps1
+pwsh ./rust/build.ps1
 ```
 
-The script publishes the Win32 NativeAOT host, points
+The script publishes the NativeAOT host for this OS, points
 `AVN_HOST_NATIVE_LIB` at it, and runs the complete Rust workspace tests.
-Use `-Architecture arm64` for Windows ARM64.
+Use `-Architecture arm64` on a matching ARM64 runner.
 
-On Linux:
+On Linux, initialize DBus sources first:
 
-```bash
+```powershell
 git submodule update --init external/Avalonia.DBus
-./rust/build.sh
+pwsh ./rust/build.ps1
 ```
-
-The Linux script publishes the X11 NativeAOT host with an origin-relative
-native dependency runpath and runs the same Rust workspace tests. Pass `arm64`
-for Linux ARM64, on a matching ARM64 runner; the tests execute native binaries.
-
-On macOS, the same script builds `libAvaloniaNative.dylib` through Xcode,
-publishes the Avalonia.Native-backed NativeAOT host, and runs the Rust
-workspace tests:
-
-```bash
-./rust/build.sh
-```
-
-Run it on an Intel Mac for `osx-x64` or an Apple Silicon Mac for `osx-arm64`;
-pass `arm64` on Apple Silicon.
 
 To run an example:
 
@@ -113,7 +99,7 @@ host may offer runtime AXAML without changing the release path.
 
 ## Regenerate bindings
 
-The one-command `regenerate-and-build.ps1` / `regenerate-and-build.sh`
+The one-command `regenerate-and-build.ps1`
 (see [PRODUCTIZATION.md](PRODUCTIZATION.md#one-command-developer-workflow))
 run every step below plus the managed and Rust builds; the commands here
 are what it runs, spelled out for anyone changing the pipeline itself:
@@ -212,7 +198,7 @@ examples use:
 ```
 
 ```bash
-./rust/new-app.sh my_app ~/src/my_app
+pwsh ./rust/new-app.ps1 my_app ~/src/my_app
 ```
 
 The scaffold is an external consumer with managed AXAML and view-model IR, not

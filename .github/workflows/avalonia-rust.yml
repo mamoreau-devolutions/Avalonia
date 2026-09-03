@@ -73,31 +73,17 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-
       - name: Install Linux smoke-test display
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install --yes xvfb
 
       - name: Check generator determinism
-        if: runner.os == 'Windows'
         shell: pwsh
         run: |
           ./rust/regenerate-and-build.ps1 -Configuration Release -SkipManagedBuild
           git diff --check
           git diff --exit-code
           if (git status --porcelain) { throw "Generation changed the checkout." }
-
-      - name: Check generator determinism
-        if: runner.os != 'Windows'
-        shell: bash
-        run: |
-          AVN_SKIP_MANAGED_BUILD=1 ./rust/regenerate-and-build.sh Release
-          git diff --check
-          git diff --exit-code
-          test -z "$(git status --porcelain)"
 
       - name: Build Avalonia.Native for managed tests
         if: runner.os == 'macOS'
@@ -115,16 +101,11 @@ jobs:
           dotnet test tests/Avalonia.Host.Tests/Avalonia.Host.Tests.csproj -c Release
           dotnet test tests/Avalonia.Projection.Generator.Tests/Avalonia.Projection.Generator.Tests.csproj -c Release
           dotnet test tests/Avalonia.Projection.Ir.Tests/Avalonia.Projection.Ir.Tests.csproj -c Release
+          pwsh ./rust/tests/test-build-app.ps1
 
       - name: Publish NativeAOT host and run cargo workspace tests
-        if: runner.os == 'Windows'
         shell: pwsh
-        run: ./rust/build.ps1 -Architecture x64
-
-      - name: Publish NativeAOT host and run cargo workspace tests
-        if: runner.os != 'Windows'
-        shell: bash
-        run: ./rust/build.sh ${{ matrix.architecture }}
+        run: ./rust/build.ps1 -Architecture ${{ matrix.architecture }}
 
       - name: Build flagship Rust view-model samples
         shell: pwsh
@@ -133,41 +114,19 @@ jobs:
           cargo build --manifest-path rust/Cargo.toml -p avalonia --example rust_dynamic_vm_axaml --release
 
       - name: Package NativeAOT sample artifacts
-        if: runner.os == 'Windows'
         shell: pwsh
         run: ./rust/package.ps1 -Rid ${{ matrix.rid }} -Configuration Release -Example rust_vm_axaml
 
-      - name: Package NativeAOT sample artifacts
-        if: runner.os != 'Windows'
-        shell: bash
-        run: ./rust/package.sh ${{ matrix.rid }} Release rust_vm_axaml
-
       - name: Verify package checksums
-        if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          $package = "rust/artifacts/${{ matrix.rid }}"
-          Get-Content "$package/checksums.sha256" | ForEach-Object {
+          $package = Join-Path 'rust' 'artifacts' '${{ matrix.rid }}'
+          Get-Content (Join-Path $package 'checksums.sha256') | ForEach-Object {
             $expected, $file = $_ -split '\s+\*', 2
             if ((Get-FileHash (Join-Path $package $file) -Algorithm SHA256).Hash.ToLowerInvariant() -ne $expected) {
               throw "Checksum mismatch for $file"
             }
           }
-
-      - name: Verify package checksums
-        if: runner.os != 'Windows'
-        shell: bash
-        run: |
-          cd rust/artifacts/${{ matrix.rid }}
-          while read -r expected file; do
-            file="${file#\*}"
-            if command -v sha256sum >/dev/null; then
-              actual="$(sha256sum -- "$file" | awk '{print $1}')"
-            else
-              actual="$(shasum -a 256 -- "$file" | awk '{print $1}')"
-            fi
-            [[ "$actual" == "$expected" ]] || { echo "Checksum mismatch for $file" >&2; exit 1; }
-          done < checksums.sha256
 
       - name: Launch packaged sample smoke test
         if: runner.os == 'Windows'

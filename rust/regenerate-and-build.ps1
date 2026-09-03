@@ -1,20 +1,24 @@
+#!/usr/bin/env pwsh
+#Requires -Version 7.0
 param(
-    [ValidateSet("Debug", "Release")]
-    [string]$Configuration = "Release",
+    [ValidateSet('Debug', 'Release')]
+    [string]$Configuration = 'Release',
     [switch]$SkipManagedBuild,
     [switch]$Test,
     [switch]$ValidateTemplate,
     [string]$PackageRid
 )
 
-$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+$PSNativeCommandUseErrorActionPreference = $true
 $repositoryRoot = Split-Path -Parent $PSScriptRoot
 
-Write-Host "==> [1/4] Regenerating object-model projection IR, C# COM sources, and native ABI header"
-dotnet run --project "$repositoryRoot\src\Avalonia.Projection.Tool" -c $Configuration -- `
-    "$repositoryRoot\rust\projection.ir.json" `
-    "$repositoryRoot\src\Avalonia.Host\Generated\ObjectModel" `
-    "$repositoryRoot\rust\avalonia-sys\include\avalonia-rust-abi.h"
+Write-Host '==> [1/4] Regenerating object-model projection IR, C# COM sources, and native ABI header'
+dotnet run --project (Join-Path $repositoryRoot 'src' 'Avalonia.Projection.Tool') -c $Configuration -- `
+    (Join-Path $repositoryRoot 'rust' 'projection.ir.json') `
+    (Join-Path $repositoryRoot 'src' 'Avalonia.Host' 'Generated' 'ObjectModel') `
+    (Join-Path $repositoryRoot 'rust' 'avalonia-sys' 'include' 'avalonia-rust-abi.h')
 if ($LASTEXITCODE -ne 0)
 {
     exit $LASTEXITCODE
@@ -25,9 +29,9 @@ Push-Location "$repositoryRoot\rust"
 try
 {
     cargo run -p avalonia-bindgen -- `
-        .\projection.ir.json `
-        .\avalonia-sys\src\generated.rs `
-        .\avalonia\src\generated.rs
+        (Join-Path '.' 'projection.ir.json') `
+        (Join-Path '.' 'avalonia-sys' 'src' 'generated.rs') `
+        (Join-Path '.' 'avalonia' 'src' 'generated.rs')
     if ($LASTEXITCODE -ne 0)
     {
         exit $LASTEXITCODE
@@ -39,12 +43,12 @@ finally
 }
 
 Write-Host "==> [1/4] Regenerating view-model adapters/registry/Rust model/contract from the canonical view-model IR"
-dotnet run --project "$repositoryRoot\src\Avalonia.ViewModelProjection.Tool" -c $Configuration -- `
-    "$repositoryRoot\rust\view-model.ir.json" `
-    "$repositoryRoot\samples\RustViewModelSample.Managed\Generated" `
-    "$repositoryRoot\src\Avalonia.Host\Generated\ViewModels" `
-    "$repositoryRoot\rust\avalonia\src\generated_view_models.rs" `
-    "$repositoryRoot\rust\view-model.contract.md"
+dotnet run --project (Join-Path $repositoryRoot 'src' 'Avalonia.ViewModelProjection.Tool') -c $Configuration -- `
+    (Join-Path $repositoryRoot 'rust' 'view-model.ir.json') `
+    (Join-Path $repositoryRoot 'samples' 'RustViewModelSample.Managed' 'Generated') `
+    (Join-Path $repositoryRoot 'src' 'Avalonia.Host' 'Generated' 'ViewModels') `
+    (Join-Path $repositoryRoot 'rust' 'avalonia' 'src' 'generated_view_models.rs') `
+    (Join-Path $repositoryRoot 'rust' 'view-model.contract.md')
 if ($LASTEXITCODE -ne 0)
 {
     exit $LASTEXITCODE
@@ -67,7 +71,7 @@ finally
 if (-not $SkipManagedBuild)
 {
     Write-Host "==> [2/4] Building managed AXAML (RustViewModelSample.Managed via Avalonia.Host)"
-    dotnet build "$repositoryRoot\src\Avalonia.Host\Avalonia.Host.csproj" -c $Configuration
+    dotnet build (Join-Path $repositoryRoot 'src' 'Avalonia.Host' 'Avalonia.Host.csproj') -c $Configuration
     if ($LASTEXITCODE -ne 0)
     {
         exit $LASTEXITCODE
@@ -75,7 +79,7 @@ if (-not $SkipManagedBuild)
 }
 
 Write-Host "==> [3/4] Building the Rust workspace"
-$cargoArgs = @("--manifest-path", "$repositoryRoot\rust\Cargo.toml", "--workspace")
+$cargoArgs = @('--manifest-path', (Join-Path $repositoryRoot 'rust' 'Cargo.toml'), '--workspace')
 if ($Test)
 {
     cargo test @cargoArgs
@@ -92,17 +96,17 @@ if ($LASTEXITCODE -ne 0)
 if ($ValidateTemplate)
 {
     Write-Host "==> [3/4] Validating the external consumer template compiles standalone"
-    $templateConsumer = "$repositoryRoot\rust\target\template-validation"
+    $templateConsumer = Join-Path $repositoryRoot 'rust' 'target' 'template-validation'
     Remove-Item $templateConsumer -Recurse -Force -ErrorAction SilentlyContinue
-    & "$PSScriptRoot\new-app.ps1" -Name template_validation -Destination $templateConsumer -ProducerRoot $repositoryRoot
-    dotnet run --project "$repositoryRoot\src\Avalonia.ViewModelProjection.Tool" -c $Configuration -- `
-        "$templateConsumer\view-model.ir.json" `
-        "$templateConsumer\managed\Generated" `
-        "$templateConsumer\generated" `
-        "$templateConsumer\generated\generated_view_models.rs" `
-        "$templateConsumer\generated\view-model.contract.md" `
+    & (Join-Path $PSScriptRoot 'new-app.ps1') -Name template_validation -Destination $templateConsumer -ProducerRoot $repositoryRoot
+    dotnet run --project (Join-Path $repositoryRoot 'src' 'Avalonia.ViewModelProjection.Tool') -c $Configuration -- `
+        (Join-Path $templateConsumer 'view-model.ir.json') `
+        (Join-Path $templateConsumer 'managed' 'Generated') `
+        (Join-Path $templateConsumer 'generated') `
+        (Join-Path $templateConsumer 'generated' 'generated_view_models.rs') `
+        (Join-Path $templateConsumer 'generated' 'view-model.contract.md') `
         --external-rust
-    cargo check --manifest-path "$templateConsumer\Cargo.toml"
+    cargo check --manifest-path (Join-Path $templateConsumer 'Cargo.toml')
     if ($LASTEXITCODE -ne 0)
     {
         exit $LASTEXITCODE
