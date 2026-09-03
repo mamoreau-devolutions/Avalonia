@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("91404D32-3815-5EC7-BA4B-6CDCD2ED9DD9")]
+[Guid("D4F85479-DCD6-5E2E-B8AB-0693A8C0D6D6")]
 public partial interface IAvnControlFactory
 {
     [PreserveSig]
@@ -110,6 +110,9 @@ public partial interface IAvnControlFactory
 
     [PreserveSig]
     int GetGridStatics(out IAvnGridStatics? value);
+
+    [PreserveSig]
+    int CreateSolidColorBrush(AvnColor color, double opacity, out IAvnBrush? value);
 
 }
 
@@ -596,6 +599,12 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
     public int GetGridStatics(out IAvnGridStatics? value)
     {
         value = new AvnGridStatics();
+        return global::Avalonia.Host.HResults.S_OK;
+    }
+
+    public int CreateSolidColorBrush(AvnColor color, double opacity, out IAvnBrush? value)
+    {
+        value = new AvnBrush(color, opacity);
         return global::Avalonia.Host.HResults.S_OK;
     }
 

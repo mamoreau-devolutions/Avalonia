@@ -4,15 +4,24 @@ public static class AvaloniaProjectionProfiles
 {
     public static ProjectionPolicy ObjectModelKernel { get; } = new()
     {
-        // Layout members widen the flattened vtable of Avalonia.StyledElement and
-        // Avalonia.Controls.Control, so every projected interface that inherits from them
-        // gets a new IID at version 3. IAvnAvaloniaObject is deliberately pinned below.
-        DefaultProjectedTypeAbiVersion = 3,
+        // Chrome members (solid brushes, border geometry and text metrics) widen the flattened
+        // vtables of Avalonia.Controls.Border, Panel, TemplatedControl and TextBlock, so every
+        // projected interface at or below one of them gets a new IID at version 4. The
+        // interfaces whose flattened vtable did not move are pinned below.
+        DefaultProjectedTypeAbiVersion = 4,
         AbiVersions = new Dictionary<string, int>(StringComparer.Ordinal)
         {
             // AvaloniaObject projects no members, so its vtable is byte-identical to
             // version 2. Republishing it under a new IID would be a gratuitous break.
             ["Avalonia.Host.Com.IAvnAvaloniaObject"] = 2,
+            // StyledElement, Control and Decorator gained nothing in the chrome wave and none
+            // of their bases did either, so their flattened vtables are byte-identical to
+            // version 3 and they keep the IIDs they published there.
+            ["Avalonia.Host.Com.IAvnStyledElement"] = 3,
+            ["Avalonia.Host.Com.IAvnControl"] = 3,
+            ["Avalonia.Host.Com.IAvnDecorator"] = 3,
+            // The factory gained CreateSolidColorBrush, which appends a slot to its vtable.
+            ["Avalonia.Host.Com.IAvnControlFactory"] = 2,
         },
         IncludeTypeNames =
         [
@@ -65,14 +74,16 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.Primitives.SelectingItemsControl"] =
                 ["SelectedIndex", "SelectionChanged"],
             ["Avalonia.Controls.Decorator"] = ["Child", "Padding"],
-            ["Avalonia.Controls.Border"] = ["BackgroundSizing"],
-            ["Avalonia.Controls.Panel"] = ["Children"],
+            ["Avalonia.Controls.Border"] =
+                ["Background", "BorderBrush", "BorderThickness", "CornerRadius", "BackgroundSizing"],
+            ["Avalonia.Controls.Panel"] = ["Background", "Children"],
             ["Avalonia.Controls.Grid"] = ["ShowGridLines", "RowSpacing", "ColumnSpacing"],
             ["Avalonia.Controls.Canvas"] = [],
             ["Avalonia.Controls.DockPanel"] = ["LastChildFill", "HorizontalSpacing", "VerticalSpacing"],
             ["Avalonia.Controls.Window"] = ["Title", "CanResize", "WindowState", "Show", "Close"],
             ["Avalonia.Controls.StackPanel"] = ["Orientation", "Spacing"],
-            ["Avalonia.Controls.TextBlock"] = ["Text"],
+            ["Avalonia.Controls.TextBlock"] =
+                ["Text", "FontSize", "FontWeight", "Foreground", "Padding", "TextAlignment"],
             ["Avalonia.Controls.Button"] = ["Click"],
             ["Avalonia.Controls.Primitives.ToggleButton"] = ["IsChecked", "IsCheckedChanged"],
             ["Avalonia.Controls.CheckBox"] = [],
@@ -84,7 +95,11 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.ComboBox"] = ["PlaceholderText"],
             ["Avalonia.Controls.ListBoxItem"] = ["IsSelected"],
             ["Avalonia.Controls.ComboBoxItem"] = [],
-            ["Avalonia.Controls.Primitives.TemplatedControl"] = [],
+            ["Avalonia.Controls.Primitives.TemplatedControl"] =
+            [
+                "Background", "BorderBrush", "BorderThickness", "CornerRadius", "FontSize",
+                "Foreground",
+            ],
             ["Avalonia.Controls.TextBox"] =
             [
                 "Text", "PlaceholderText", "AcceptsReturn", "AcceptsTab", "IsReadOnly",

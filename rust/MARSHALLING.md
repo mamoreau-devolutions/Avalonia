@@ -1,9 +1,11 @@
-# Geometry value-type marshalling
+# Value-type and solid brush marshalling
 
 Avalonia geometry value types cross the nano-COM ABI **by value** as blittable,
 sequential structs instead of as COM objects. This keeps `Margin`, `Padding`,
 `BorderThickness`, `CornerRadius` and friends cheap to read and write, and it
-avoids a COM object per rectangle.
+avoids a COM object per rectangle. Brushes are the one chrome member that is
+*not* a value type: they cross as a small read-only COM interface that carries a
+solid colour and an opacity.
 
 ## The structs
 
@@ -32,9 +34,12 @@ Everything is generated from the shared projection IR by
 
 - `src/Avalonia.Projection.Ir/GeometryMarshalling.cs` is the managed source of
   truth (kind, CLR type, ABI name, field list, conversion style).
+- `src/Avalonia.Projection.Ir/BrushMarshalling.cs` is the equivalent for the
+  solid brush interface (CLR types, ABI interface name, factory method name).
 - `ComSourceEmitter` writes the C# structs into
   `src/Avalonia.Host/Generated/ObjectModel/ProjectionStructs.g.cs`, each with
-  `FromAvalonia`/`ToAvalonia` helpers.
+  `FromAvalonia`/`ToAvalonia` helpers, and the brush interface plus its
+  `AvnBrush` wrapper into `IAvnBrush.g.cs`.
 - `NativeHeaderEmitter` writes the `typedef struct Avn*` declarations into
   `rust/avalonia-sys/include/avalonia-rust-abi.h`.
 - `rust/avalonia-bindgen/src/geometry.rs` is the Rust-side source of truth; it
@@ -86,17 +91,118 @@ readout.set_margin(Thickness::uniform(8.0))?;
 emitted from the `helpers` column of `avalonia-bindgen`'s geometry table, so a
 new geometry struct opts into them declaratively.
 
+## Solid brushes
+
+`IBrush` is an interface, not a value type, and a real brush graph (gradient
+stops, tile modes, drawings, visuals) has no blittable shape. Rather than
+project that graph, the ABI projects the one case that chrome actually needs: a
+**solid colour**.
+
+`MarshallingKind.Brush` maps `Avalonia.Media.IBrush` onto a single generated COM
+interface:
+
+```c
+struct IAvnBrushVtbl {
+    /* IUnknown slots 0-2 */
+    AvnHResult (AVN_CALL *get_color)(IAvnBrush* self, AvnColor* value);   /* slot 3 */
+    AvnHResult (AVN_CALL *get_opacity)(IAvnBrush* self, double* value);   /* slot 4 */
+};
+```
+
+`IAvnBrush` is deliberately **read-only**. The managed side hands out immutable
+brushes that several controls may share, so a setter would let one caller repaint
+another control. A brush is instead minted by the factory, which appends one slot:
+
+```c
+AvnHResult (AVN_CALL *create_solid_color_brush)(
+    IAvnControlFactory* self, AvnColor color, double opacity, IAvnBrush** value);
+```
+
+Unlike the `create_*` control slots it has no dispatcher affinity, so it does not
+verify UI-thread access.
+
+### What crosses, and what fails
+
+| Managed value                                   | `get_*`                                 | `set_*` |
+| ----------------------------------------------- | --------------------------------------- | ------- |
+| `null`                                          | `S_OK`, null pointer                    | clears the property |
+| `ISolidColorBrush` (including `SolidColorBrush`) | `S_OK`, colour + opacity                | writes an `ImmutableSolidColorBrush` |
+| gradient / drawing / visual brush                | `AVN_E_NONSOLIDBRUSH` (`0xA7A70002`)    | unreachable — the ABI cannot express one |
+
+Reading a non-solid brush fails explicitly rather than degrading to a "nearest"
+colour, because a silently wrong colour is worse than an error a caller can act
+on. Inbound, every brush is materialised as
+`Avalonia.Media.Immutable.ImmutableSolidColorBrush(color, opacity)`, so a set is
+always a solid brush by construction and anything a source brush carried beyond
+colour and opacity (transforms, gradient stops) is dropped rather than guessed.
+
+Gradients, `DrawingBrush` and `VisualBrush` are out of scope for this ABI. A
+future wave that needs them must add a separately named, separately versioned
+interface rather than widening `IAvnBrush`.
+
+In safe Rust the brush is a plain value; only crossing the ABI needs the factory:
+
+```rust
+let accent = Brush::solid(Color::rgb(0x00, 0x7A, 0xCC));
+let card = Border::new()?
+    .background(accent)?
+    .border_brush(Brush::new(Color::rgb(0xAA, 0xBB, 0xCC), 0.5))?
+    .border_thickness(Thickness::uniform(1.0))?
+    .corner_radius(CornerRadius::uniform(4.0))?;
+assert_eq!(card.get_background()?, Some(accent));
+card.set_border_brush(None)?;
+```
+
+Getters return `Result<Option<Brush>>` and setters take `impl Into<Option<Brush>>`,
+so `None` clears the property and a `Brush` needs no `Some`. `Color::rgb` is a
+`const` opaque-colour constructor, so a consumer can define a palette as
+constants.
+
+## Chrome members
+
+The chrome wave allowlists the members that make a control look like part of an
+application rather than an unstyled box:
+
+| Projected interface     | Members |
+| ----------------------- | ------- |
+| `IAvnBorder`            | `Background`, `BorderBrush`, `BorderThickness` (`Thickness`), `CornerRadius` |
+| `IAvnPanel`             | `Background` |
+| `IAvnTemplatedControl`  | `Background`, `BorderBrush`, `BorderThickness`, `CornerRadius`, `FontSize`, `Foreground` |
+| `IAvnTextBlock`         | `FontSize`, `FontWeight`, `Foreground`, `Padding` (`Thickness`), `TextAlignment` |
+
+Each brush member sits on the type that declares it in Avalonia, so `Background`
+is published once on `Panel` and once on `TemplatedControl` rather than being
+duplicated onto `Grid`, `Button`, `Window` and the rest — a derived interface
+that re-declared it would spend a second pair of slots on one property.
+`FontWeight` and `TextAlignment` join the IR enums and project as Rust enums with
+`TryFrom<i32>`. Rust enums cannot carry two names for one discriminant, so
+Avalonia's weight aliases collapse onto the first declared name: write
+`FontWeight::DemiBold` rather than `SemiBold`, and `FontWeight::Black` rather
+than `Heavy`.
+
 ## Versioning of the widened vtables
 
-Nano-COM vtables are flattened, so widening `IAvnStyledElement` and
-`IAvnControl` moves every slot of every interface that inherits from them. All
-of those interfaces therefore republish at `abiVersion` 3 under a fresh IID; the
-version 2 IIDs are retired rather than reused. `IAvnAvaloniaObject` projects no
-members, its vtable is byte-identical, and it deliberately keeps its version 2
-IID — a stale consumer that queries for it still gets exactly the contract it
-was compiled against. `IAvnControlFactory`, the collection interfaces, and the
-event handler interfaces are unchanged, because they carry interface pointers
-rather than the widened layouts.
+Nano-COM vtables are flattened, so widening a base type moves every slot of every
+interface that inherits from it. Each wave therefore republishes the affected
+interfaces at a new `abiVersion` under a fresh IID; the retired IIDs are never
+reused. An interface whose flattened vtable is byte-identical keeps its IID, so a
+stale consumer that queries for it still gets exactly the contract it was
+compiled against.
+
+| Wave     | Widened                                                     | Version | Unchanged |
+| -------- | ----------------------------------------------------------- | ------- | --------- |
+| Layout   | `IAvnStyledElement`, `IAvnControl` and everything below them | 2 → 3   | `IAvnAvaloniaObject` (2) |
+| Chrome   | `IAvnBorder`, `IAvnPanel`, `IAvnTemplatedControl`, `IAvnTextBlock` and everything below them | 3 → 4 | `IAvnAvaloniaObject` (2), `IAvnStyledElement`, `IAvnControl`, `IAvnDecorator` (3) |
+
+`IAvnControlFactory` grew `create_solid_color_brush` and moved from version 1 to
+2. `IAvnBrush` is brand new, so it starts at version 1. The collection interfaces
+and the event handler interfaces are unchanged, because they carry interface
+pointers rather than the widened layouts.
+
+`Decorator` sits between `Control` and `Border`. The chrome wave added members to
+`Border`, not to `Decorator`, and nothing was added to `Decorator`'s bases either,
+so `IAvnDecorator` keeps the version 3 IID it published with the layout wave even
+though `IAvnBorder` moved to 4.
 
 ## Host constraint: same-assembly structs
 

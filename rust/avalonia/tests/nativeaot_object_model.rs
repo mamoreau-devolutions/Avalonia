@@ -1,8 +1,8 @@
 use avalonia::{
-    App, Border, Button, ComboBox, ComboBoxItem, Dock, DockPanel, ExpandDirection, Expander, Grid,
-    HorizontalAlignment, ListBox, ListBoxItem, Orientation, ProgressBar, RadioButton, ScrollViewer,
-    StackPanel, TextBlock, TextBox, ThemeVariant, Thickness, ToggleSwitch, VerticalAlignment,
-    Window, WindowState,
+    App, Border, Brush, Button, Color, ComboBox, ComboBoxItem, CornerRadius, Dock, DockPanel,
+    ExpandDirection, Expander, FontWeight, Grid, HorizontalAlignment, ListBox, ListBoxItem,
+    Orientation, ProgressBar, RadioButton, ScrollViewer, StackPanel, TextAlignment, TextBlock,
+    TextBox, ThemeVariant, Thickness, ToggleSwitch, VerticalAlignment, Window, WindowState,
 };
 use std::future::Future;
 use std::path::PathBuf;
@@ -97,7 +97,23 @@ fn builders_create_a_real_window_through_nativeaot() {
         Grid::set_row(&button, 1)?;
         assert_eq!(Grid::get_row(&button)?, 1);
         button.subscribe_click(|_| {})?.unsubscribe()?;
-        let button = button.on_click(scope, |_| {})?;
+        let button = button
+            .on_click(scope, |_| {})?
+            .background(Brush::solid(Color::rgb(0x00, 0x7A, 0xCC)))?
+            .foreground(Brush::solid(Color::rgb(0xFF, 0xFF, 0xFF)))?
+            .border_thickness(Thickness::uniform(1.0))?
+            .corner_radius(CornerRadius::uniform(3.0))?
+            .font_size(14.0)?;
+        assert_eq!(button.get_font_size()?, 14.0);
+        assert_eq!(
+            button.get_background()?,
+            Some(Brush::solid(Color::rgb(0x00, 0x7A, 0xCC)))
+        );
+        assert_eq!(
+            button.get_foreground()?,
+            Some(Brush::solid(Color::rgb(0xFF, 0xFF, 0xFF)))
+        );
+        assert_eq!(button.get_corner_radius()?, CornerRadius::uniform(3.0));
 
         let text_box = TextBox::new()?
             .text("before")?
@@ -175,20 +191,58 @@ fn builders_create_a_real_window_through_nativeaot() {
         assert_eq!(progress.get_value()?, 40.0);
         assert!(progress.get_show_progress_text()?);
 
-        let laid_out = Border::new()?.padding(Thickness::uniform(6.0))?.child(
-            TextBlock::new()?
-                .text("Laid out from Rust")?
-                .name("layout_readout")?
-                .margin(Thickness::symmetric(12.0, 4.0))?
-                .horizontal_alignment(HorizontalAlignment::Right)?
-                .vertical_alignment(VerticalAlignment::Bottom)?
-                .min_width(64.0)?
-                .min_height(16.0)?
-                .max_width(320.0)?
-                .max_height(96.0)?
-                .opacity(0.75)?,
-        )?;
+        let text_readout = TextBlock::new()?
+            .text("Laid out from Rust")?
+            .name("layout_readout")?
+            .margin(Thickness::symmetric(12.0, 4.0))?
+            .horizontal_alignment(HorizontalAlignment::Right)?
+            .vertical_alignment(VerticalAlignment::Bottom)?
+            .min_width(64.0)?
+            .min_height(16.0)?
+            .max_width(320.0)?
+            .max_height(96.0)?
+            .opacity(0.75)?
+            .font_size(18.0)?
+            .font_weight(FontWeight::Bold)?
+            .text_alignment(TextAlignment::Center)?
+            .padding(Thickness::symmetric(3.0, 5.0))?
+            .foreground(Brush::solid(Color::rgb(0xFF, 0xFF, 0xFF)))?;
+        assert_eq!(text_readout.get_font_size()?, 18.0);
+        assert_eq!(text_readout.get_font_weight()?, FontWeight::Bold);
+        assert_eq!(text_readout.get_text_alignment()?, TextAlignment::Center);
+        assert_eq!(
+            text_readout.get_padding()?,
+            Thickness::new(3.0, 5.0, 3.0, 5.0)
+        );
+        assert_eq!(
+            text_readout.get_foreground()?,
+            Some(Brush::solid(Color::rgb(0xFF, 0xFF, 0xFF)))
+        );
+
+        let laid_out = Border::new()?
+            .padding(Thickness::uniform(6.0))?
+            .background(Brush::solid(Color::rgb(0x33, 0x66, 0x99)))?
+            .border_brush(Brush::new(Color::rgb(0xAA, 0xBB, 0xCC), 0.5))?
+            .border_thickness(Thickness::uniform(2.0))?
+            .corner_radius(CornerRadius::uniform(4.0))?
+            .child(text_readout)?;
         assert_eq!(laid_out.get_padding()?, Thickness::uniform(6.0));
+        assert_eq!(
+            laid_out.get_background()?,
+            Some(Brush::solid(Color::rgb(0x33, 0x66, 0x99)))
+        );
+        assert_eq!(
+            laid_out.get_border_brush()?,
+            Some(Brush::new(Color::rgb(0xAA, 0xBB, 0xCC), 0.5))
+        );
+        assert_eq!(laid_out.get_border_thickness()?, Thickness::uniform(2.0));
+        assert_eq!(laid_out.get_corner_radius()?, CornerRadius::uniform(4.0));
+
+        // Clearing a brush is a first-class state, not a transparent colour.
+        laid_out.set_border_brush(None)?;
+        assert_eq!(laid_out.get_border_brush()?, None);
+        laid_out.set_border_brush(Brush::new(Color::rgb(0xAA, 0xBB, 0xCC), 0.5))?;
+
         let readout = laid_out.get_child()?.expect("border child");
         assert_eq!(readout.get_margin()?, Thickness::new(12.0, 4.0, 12.0, 4.0));
         assert_eq!(
@@ -208,6 +262,7 @@ fn builders_create_a_real_window_through_nativeaot() {
         let panel = StackPanel::new()?
             .orientation(Orientation::Vertical)?
             .spacing(8.0)?
+            .background(Brush::solid(Color::rgb(0x1E, 0x1E, 0x1E)))?
             .child(TextBlock::new()?.text("Hello from Rust")?)?
             .child(text_box)?
             .child(toggle)?
@@ -222,6 +277,10 @@ fn builders_create_a_real_window_through_nativeaot() {
         assert_eq!(panel.children()?.len()?, 11);
         assert_eq!(panel.get_orientation()?, Orientation::Vertical);
         assert_eq!(panel.get_spacing()?, 8.0);
+        assert_eq!(
+            panel.get_background()?,
+            Some(Brush::solid(Color::rgb(0x1E, 0x1E, 0x1E)))
+        );
 
         let window = Window::new()?
             .title("Avalonia Rust")?

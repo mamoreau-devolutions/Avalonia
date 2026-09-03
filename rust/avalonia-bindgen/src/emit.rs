@@ -15,6 +15,10 @@ pub fn emit_sys_module(ir: &ProjectionIr) -> String {
          use std::ptr;\n\n",
     );
     out.push_str(&geometry::emit_sys_structs());
+    if ir.brush_interface_name.is_some() {
+        out.push_str(&emit_brush(ir));
+        out.push('\n');
+    }
     for event in unique_events(ir) {
         out.push_str(&emit_event_handler(event));
         out.push('\n');
@@ -165,6 +169,62 @@ fn emit_collection(collection: &ProjectedProperty) -> String {
          }\n",
     );
     out
+}
+
+fn emit_brush(ir: &ProjectionIr) -> String {
+    let name = simple_name(
+        ir.brush_interface_name
+            .as_deref()
+            .expect("brushInterfaceName"),
+    );
+    let iid = ir
+        .brush_interface_iid
+        .as_deref()
+        .expect("brushInterfaceIid for a projected brush");
+    let iid_const = format!("{}_IID", to_shouty(name));
+    let color = geometry::find("Color")
+        .expect("Color geometry struct")
+        .abi_name;
+    format!(
+        "/// A brush projected as a solid colour: a packed `{color}` plus an opacity.\n\
+         ///\n\
+         /// Read-only: the managed side hands out immutable brushes, so a new brush is minted\n\
+         /// through `IAvnControlFactory::create_solid_color_brush`. Reading a gradient, drawing\n\
+         /// or visual brush fails rather than degrading to a nearest colour.\n\
+         pub const {iid_const}: Guid = {iid_literal};\n\n\
+         #[repr(C)]\n\
+         struct {name}Vtbl {{\n\
+         \x20   query_interface: unsafe extern \"system\" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,\n\
+         \x20   add_ref: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+         \x20   release: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+         \x20   get_color: unsafe extern \"system\" fn(*mut {name}, *mut {color}) -> i32,\n\
+         \x20   get_opacity: unsafe extern \"system\" fn(*mut {name}, *mut f64) -> i32,\n\
+         }}\n\n\
+         #[repr(C)]\n\
+         pub struct {name} {{\n\
+         \x20   vtbl: *const {name}Vtbl,\n\
+         }}\n\n\
+         unsafe impl ComInterface for {name} {{\n\
+         \x20   const IID: Guid = {iid_const};\n\
+         }}\n\n\
+         impl ComPtr<{name}> {{\n\
+         \x20   pub fn color(&self) -> Result<{color}> {{\n\
+         \x20       unsafe {{\n\
+         \x20           let mut value: {color} = Default::default();\n\
+         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_color)(self.as_raw(), &mut value);\n\
+         \x20           hresult::check(hr).map(|_| value)\n\
+         \x20       }}\n\
+         \x20   }}\n\
+         \x20   pub fn opacity(&self) -> Result<f64> {{\n\
+         \x20       unsafe {{\n\
+         \x20           let mut value = 0.0;\n\
+         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_opacity)(self.as_raw(), &mut value);\n\
+         \x20           hresult::check(hr).map(|_| value)\n\
+         \x20       }}\n\
+         \x20   }}\n\
+         }}\n",
+        iid_literal = guid_literal(iid)
+    )
 }
 
 fn emit_interface(ir: &ProjectionIr, ty: &ProjectedType) -> String {
@@ -510,6 +570,15 @@ fn emit_factory(ir: &ProjectionIr) -> String {
             interface_name
         ));
     }
+    if let Some(brush) = ir.brush_interface_name.as_deref() {
+        let brush = simple_name(brush);
+        let color = geometry::find("Color")
+            .expect("Color geometry struct")
+            .abi_name;
+        out.push_str(&format!(
+            "    create_solid_color_brush: unsafe extern \"system\" fn(*mut IAvnControlFactory, {color}, f64, *mut *mut {brush}) -> i32,\n"
+        ));
+    }
     out.push_str("}\n\n#[repr(C)]\npub struct IAvnControlFactory {\n    vtbl: *const IAvnControlFactoryVtbl,\n}\n\n");
     out.push_str("unsafe impl ComInterface for IAvnControlFactory {\n    const IID: Guid = IAVN_CONTROL_FACTORY_IID;\n}\n\n");
     out.push_str("impl ComPtr<IAvnControlFactory> {\n");
@@ -538,6 +607,22 @@ fn emit_factory(ir: &ProjectionIr) -> String {
              \x20       unsafe {{\n\
              \x20           let mut value = ptr::null_mut();\n\
              \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_{owner}_statics)(self.as_raw(), &mut value);\n\
+             \x20           hresult::check(hr)?;\n\
+             \x20           ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))\n\
+             \x20       }}\n\
+             \x20   }}\n"
+        ));
+    }
+    if let Some(brush) = ir.brush_interface_name.as_deref() {
+        let brush = simple_name(brush);
+        let color = geometry::find("Color")
+            .expect("Color geometry struct")
+            .abi_name;
+        out.push_str(&format!(
+            "    pub fn create_solid_color_brush(&self, color: {color}, opacity: f64) -> Result<ComPtr<{brush}>> {{\n\
+             \x20       unsafe {{\n\
+             \x20           let mut value = ptr::null_mut();\n\
+             \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_solid_color_brush)(self.as_raw(), color, opacity, &mut value);\n\
              \x20           hresult::check(hr)?;\n\
              \x20           ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))\n\
              \x20       }}\n\
@@ -798,7 +883,7 @@ fn rust_abi_type(kind: &str, interface_name: Option<&str>) -> String {
         "F32" => "f32".into(),
         "F64" => "f64".into(),
         "StringUtf16" => "*mut u16".into(),
-        "ComInterface" | "ComCollection" => {
+        "ComInterface" | "ComCollection" | "Brush" => {
             format!(
                 "*mut {}",
                 simple_name(interface_name.expect("interfaceName"))
@@ -839,6 +924,11 @@ fn rust_property_type(property: &ProjectedProperty) -> String {
                 format!("ComPtr<{ty}>")
             }
         }
+        // A brush is always optional: a control with no brush reports a null pointer.
+        "Brush" => format!(
+            "Option<ComPtr<{}>>",
+            simple_name(property.interface_name.as_deref().expect("interfaceName"))
+        ),
         _ => "()".into(),
     }
 }
@@ -855,6 +945,7 @@ fn rust_property_result(property: &ProjectedProperty) -> String {
         "ComCollection" if property.is_nullable => {
             "Ok(ComPtr::from_raw(value))".into()
         }
+        "Brush" => "Ok(ComPtr::from_raw(value))".into(),
         "ComInterface" => {
             "ComPtr::from_projected_raw(value)".into()
         }
@@ -875,6 +966,13 @@ fn rust_property_input(property: &ProjectedProperty) -> (String, String) {
         ),
         "StringUtf16" => ("&[u16]".into(), "value.as_ptr().cast_mut()".into()),
         "ComInterface" | "ComCollection" if property.is_nullable => {
+            let ty = simple_name(property.interface_name.as_deref().expect("interfaceName"));
+            (
+                format!("Option<&ComPtr<{ty}>>"),
+                "value.map_or(ptr::null_mut(), ComPtr::as_raw)".into(),
+            )
+        }
+        "Brush" => {
             let ty = simple_name(property.interface_name.as_deref().expect("interfaceName"));
             (
                 format!("Option<&ComPtr<{ty}>>"),

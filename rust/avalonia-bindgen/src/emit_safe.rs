@@ -9,6 +9,9 @@ pub fn emit_safe_module(ir: &ProjectionIr) -> String {
          use crate::{runtime::{with_factory, AsControl, EventSubscription}, Result};\n\n",
     );
     out.push_str(&geometry::emit_safe_structs());
+    if ir.brush_interface_name.is_some() {
+        out.push_str(&emit_brush());
+    }
 
     for projected_enum in &ir.enums {
         let mut values = Vec::new();
@@ -70,6 +73,50 @@ pub fn emit_safe_module(ir: &ProjectionIr) -> String {
     out.truncate(out.trim_end().len());
     out.push('\n');
     out
+}
+
+fn emit_brush() -> String {
+    String::from(
+        "/// A solid colour brush: the only brush shape that crosses the ABI.\n\
+         ///\n\
+         /// `Background`, `BorderBrush` and `Foreground` are carried as a colour plus an\n\
+         /// opacity. Gradient, drawing and visual brushes are not projected; reading one back\n\
+         /// from a control fails instead of degrading to a nearest colour.\n\
+         #[derive(Clone, Copy, Debug, PartialEq)]\n\
+         pub struct Brush {\n\
+         \x20   pub color: Color,\n\
+         \x20   pub opacity: f64,\n\
+         }\n\n\
+         impl Brush {\n\
+         \x20   /// A fully opaque solid colour.\n\
+         \x20   pub const fn solid(color: Color) -> Self {\n\
+         \x20       Self {\n\
+         \x20           color,\n\
+         \x20           opacity: 1.0,\n\
+         \x20       }\n\
+         \x20   }\n\n\
+         \x20   /// A solid colour drawn at `opacity`, where 1.0 is fully opaque.\n\
+         \x20   pub const fn new(color: Color, opacity: f64) -> Self {\n\
+         \x20       Self { color, opacity }\n\
+         \x20   }\n\n\
+         \x20   pub(crate) fn to_raw(self) -> Result<sys::ComPtr<sys::IAvnBrush>> {\n\
+         \x20       with_factory(|factory| {\n\
+         \x20           factory.create_solid_color_brush(self.color.into(), self.opacity)\n\
+         \x20       })\n\
+         \x20   }\n\n\
+         \x20   pub(crate) fn from_raw(raw: &sys::ComPtr<sys::IAvnBrush>) -> Result<Self> {\n\
+         \x20       Ok(Self {\n\
+         \x20           color: raw.color()?.into(),\n\
+         \x20           opacity: raw.opacity()?,\n\
+         \x20       })\n\
+         \x20   }\n\
+         }\n\n\
+         impl From<Color> for Brush {\n\
+         \x20   fn from(color: Color) -> Self {\n\
+         \x20       Self::solid(color)\n\
+         \x20   }\n\
+         }\n\n",
+    )
 }
 
 fn emit_collection(property: &ProjectedProperty) -> String {
@@ -307,6 +354,11 @@ fn emit_property(property: &ProjectedProperty) -> String {
                      \x20   }}\n"
                 ));
             }
+            "Brush" => out.push_str(&format!(
+                "    pub fn {getter}(&self) -> Result<Option<Brush>> {{\n\
+                 \x20       self.raw.get_{snake}()?.as_ref().map(Brush::from_raw).transpose()\n\
+                 \x20   }}\n"
+            )),
             "I32" if is_enum_property(property) => {
                 let enum_name = simple_name(property.managed_type_name.as_deref().unwrap());
                 out.push_str(&format!(
@@ -480,6 +532,11 @@ fn safe_property_input(property: &ProjectedProperty) -> (String, String, String)
             } else {
                 "&value".into()
             },
+        ),
+        "Brush" => (
+            "impl Into<Option<Brush>>".into(),
+            "        let value = value.into().map(Brush::to_raw).transpose()?;\n".into(),
+            "value.as_ref()".into(),
         ),
         "I32" if is_enum_property(property) => (
             simple_name(property.managed_type_name.as_deref().unwrap()).into(),

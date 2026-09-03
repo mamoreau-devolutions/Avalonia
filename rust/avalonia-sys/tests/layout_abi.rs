@@ -35,13 +35,16 @@ fn control_publishes_the_layout_slots_with_geometry_by_value() {
 }
 
 #[test]
-fn widened_interfaces_publish_abi_version_three() {
+fn widened_interfaces_publish_their_layout_abi_version() {
     for expected in [
+        // Nothing was added to StyledElement, Control or Decorator after the layout wave, so
+        // their flattened vtables — and therefore their version 3 IIDs — still stand.
         "#define I_AVN_STYLED_ELEMENT_ABI_VERSION 3",
         "#define I_AVN_CONTROL_ABI_VERSION 3",
         "#define I_AVN_DECORATOR_ABI_VERSION 3",
-        "#define I_AVN_WINDOW_ABI_VERSION 3",
-        "#define I_AVN_BUTTON_ABI_VERSION 3",
+        // Window and Button inherit TemplatedControl's chrome slots, so they moved to 4.
+        "#define I_AVN_WINDOW_ABI_VERSION 4",
+        "#define I_AVN_BUTTON_ABI_VERSION 4",
         // AvaloniaObject projects no members, so its vtable never moved.
         "#define I_AVN_AVALONIA_OBJECT_ABI_VERSION 2",
     ] {
@@ -82,6 +85,21 @@ fn widened_interfaces_republish_under_fresh_iids() {
     ] {
         assert_ne!(format_iid(&current), retired, "{name} reused a retired IID");
     }
+
+    // The layout wave's own IIDs still stand for the interfaces it widened and nothing has
+    // widened since.
+    assert_eq!(
+        format_iid(&I_AVN_STYLED_ELEMENT_IID),
+        "52B157BF-839E-5307-9CE0-491FD61FF603"
+    );
+    assert_eq!(
+        format_iid(&I_AVN_CONTROL_IID),
+        "7CF51B18-C500-5D06-8FFA-D97EF7BC6487"
+    );
+    assert_eq!(
+        format_iid(&I_AVN_DECORATOR_IID),
+        "32A420CD-730F-5FC4-9148-18B497AE91A7"
+    );
 
     // AvaloniaObject gained nothing, so it keeps the IID it published at version 2.
     assert_eq!(

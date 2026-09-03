@@ -24,6 +24,9 @@ public static class ClrTypeExtractor
         foreach (var type in selected)
             types.Add(ProjectType(type, selected, projectedNames, policy, skipped));
         var attachedProperties = ExtractAttachedProperties(selected, projectedNames, policy, skipped);
+        var brushInterfaceName = BrushMarshalling.QualifiedInterfaceName(policy.ProjectionNamespace);
+        var usesBrush = types.Any(type =>
+            type.Properties.Any(property => property.Kind == MarshallingKind.Brush));
 
         return new ProjectionIr
         {
@@ -34,6 +37,11 @@ public static class ClrTypeExtractor
                 $"{policy.ProjectionNamespace}.IAvnControlFactory",
                 policy.GetAbiVersion($"{policy.ProjectionNamespace}.IAvnControlFactory")),
             FactoryAbiVersion = policy.GetAbiVersion($"{policy.ProjectionNamespace}.IAvnControlFactory"),
+            BrushInterfaceName = usesBrush ? brushInterfaceName : null,
+            BrushInterfaceIid = usesBrush
+                ? CreateDeterministicIid(brushInterfaceName, policy.GetAbiVersion(brushInterfaceName))
+                : null,
+            BrushAbiVersion = policy.GetAbiVersion(brushInterfaceName),
             Types = types,
             Enums = ExtractEnums(selected, policy),
             AttachedProperties = attachedProperties,
@@ -93,10 +101,10 @@ public static class ClrTypeExtractor
                 Name = property.Name,
                 Kind = kind,
                 InterfaceName = interfaceName,
-                InterfaceIid = kind == MarshallingKind.ComCollection
+                InterfaceIid = kind is MarshallingKind.ComCollection or MarshallingKind.Brush
                     ? CreateDeterministicIid(interfaceName!, policy.GetAbiVersion(interfaceName!))
                     : null,
-                InterfaceAbiVersion = kind == MarshallingKind.ComCollection
+                InterfaceAbiVersion = kind is MarshallingKind.ComCollection or MarshallingKind.Brush
                     ? policy.GetAbiVersion(interfaceName!)
                     : 1,
                 ElementInterfaceName = policy.TryGetOverride(type, property, out var memberOverride)
@@ -164,6 +172,7 @@ public static class ClrTypeExtractor
                     if (!TryMapType(
                             property.PropertyType,
                             projectedNames,
+                            policy,
                             out var parameterKind,
                             out var parameterInterface,
                             out var parameterReason))
@@ -231,7 +240,7 @@ public static class ClrTypeExtractor
                 continue;
             }
 
-            if (!TryProjectMethod(method, projectedNames, out var projected, out var reason))
+            if (!TryProjectMethod(method, projectedNames, policy, out var projected, out var reason))
             {
                 Skip(skipped, type, FormatMethod(method), reason!);
                 continue;
@@ -262,6 +271,7 @@ public static class ClrTypeExtractor
     private static bool TryProjectMethod(
         MethodInfo method,
         IReadOnlyDictionary<Type, string> projectedNames,
+        ProjectionPolicy policy,
         out ProjectedMethod projected,
         out string? reason)
     {
@@ -286,6 +296,7 @@ public static class ClrTypeExtractor
             if (!TryMapType(
                     parameterType,
                     projectedNames,
+                    policy,
                     out var kind,
                     out var interfaceName,
                     out var typeReason))
@@ -350,12 +361,13 @@ public static class ClrTypeExtractor
         }
 
         isNullable = IsNullable(member);
-        return TryMapType(type, projectedNames, out kind, out interfaceName, out reason);
+        return TryMapType(type, projectedNames, policy, out kind, out interfaceName, out reason);
     }
 
     private static bool TryMapType(
         Type type,
         IReadOnlyDictionary<Type, string> projectedNames,
+        ProjectionPolicy policy,
         out MarshallingKind kind,
         out string? interfaceName,
         out string? reason)
@@ -391,6 +403,11 @@ public static class ClrTypeExtractor
             kind = MarshallingKind.StringUtf16;
         else if (GeometryMarshalling.TryGetByManagedTypeName(type.FullName, out var geometry))
             kind = geometry.Kind;
+        else if (BrushMarshalling.IsBrush(type.FullName))
+        {
+            kind = MarshallingKind.Brush;
+            interfaceName = BrushMarshalling.QualifiedInterfaceName(policy.ProjectionNamespace);
+        }
         else if (projectedNames.TryGetValue(type, out interfaceName))
             kind = MarshallingKind.ComInterface;
         else
@@ -536,6 +553,7 @@ public static class ClrTypeExtractor
                 if (!TryMapType(
                         getter.ReturnType,
                         projectedNames,
+                        policy,
                         out var kind,
                         out _,
                         out var reason))

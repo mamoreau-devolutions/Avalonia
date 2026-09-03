@@ -34,6 +34,7 @@ public static class NativeHeaderEmitter
             .Concat(collections.Select(property => SimpleName(property.InterfaceName!)))
             .Concat(types.Select(type => type.Name))
             .Concat(statics.Select(group => SimpleName(group.Key)))
+            .Concat(ir.BrushInterfaceName is null ? [] : new[] { SimpleName(ir.BrushInterfaceName) })
             .Append("IAvnControlFactory")
             .Distinct(StringComparer.Ordinal)
             .OrderBy(name => name, StringComparer.Ordinal)
@@ -86,6 +87,18 @@ public static class NativeHeaderEmitter
             var arguments = @event.Parameters.Select(EventParameter).ToArray();
             EmitSlot(sb, 3, "invoke", name, arguments);
             EndInterface(sb, name, 4);
+        }
+
+        if (ir.BrushInterfaceName is { } brushInterfaceName)
+        {
+            var brushName = SimpleName(brushInterfaceName);
+            var colorAbiName = GeometryMarshalling.All
+                .Single(geometry => geometry.Kind == MarshallingKind.Color).AbiName;
+            EmitIid(sb, brushName, ir.BrushInterfaceIid!, ir.BrushAbiVersion);
+            BeginInterface(sb, brushName);
+            EmitSlot(sb, 3, "get_color", brushName, [$"{colorAbiName}* value"]);
+            EmitSlot(sb, 4, "get_opacity", brushName, ["double* value"]);
+            EndInterface(sb, brushName, 5);
         }
 
         foreach (var collection in collections)
@@ -215,6 +228,18 @@ public static class NativeHeaderEmitter
                 "IAvnControlFactory",
                 [$"{name}** value"]);
         }
+        if (ir.BrushInterfaceName is { } factoryBrushInterfaceName)
+        {
+            var brushName = SimpleName(factoryBrushInterfaceName);
+            var colorAbiName = GeometryMarshalling.All
+                .Single(geometry => geometry.Kind == MarshallingKind.Color).AbiName;
+            EmitSlot(
+                sb,
+                factorySlot++,
+                Snake(BrushMarshalling.FactoryMethodName),
+                "IAvnControlFactory",
+                [$"{colorAbiName} color", "double opacity", $"{brushName}** value"]);
+        }
         EndInterface(sb, "IAvnControlFactory", factorySlot);
 
         sb.AppendLine("#endif /* AVALONIA_RUST_ABI_H */");
@@ -298,6 +323,7 @@ public static class NativeHeaderEmitter
             MarshallingKind.StringUtf16 => "uint16_t**",
             MarshallingKind.ComInterface or MarshallingKind.ComCollection =>
                 $"{SimpleName(interfaceName!)}**",
+            MarshallingKind.Brush => $"{SimpleName(interfaceName!)}**",
             _ => $"{AbiType(kind, interfaceName, pointerForInterface: false)}*",
         };
 
@@ -307,6 +333,7 @@ public static class NativeHeaderEmitter
             MarshallingKind.StringUtf16 => "const uint16_t*",
             MarshallingKind.ComInterface or MarshallingKind.ComCollection =>
                 $"{SimpleName(interfaceName!)}*",
+            MarshallingKind.Brush => $"{SimpleName(interfaceName!)}*",
             _ => AbiType(kind, interfaceName, pointerForInterface: false),
         };
 
@@ -323,6 +350,7 @@ public static class NativeHeaderEmitter
             MarshallingKind.StringUtf16 => "uint16_t*",
             MarshallingKind.ComInterface or MarshallingKind.ComCollection =>
                 SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
+            MarshallingKind.Brush => SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
             _ when GeometryMarshalling.TryGet(kind, out var geometry) => geometry.AbiName,
             _ => throw new InvalidOperationException($"Unsupported ABI kind '{kind}'."),
         };

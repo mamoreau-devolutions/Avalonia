@@ -101,6 +101,10 @@ public class GeometryMarshallingTests
         Assert.Equal(10, (int)MarshallingKind.ComCollection);
         Assert.Equal(11, (int)MarshallingKind.Thickness);
         Assert.Equal(16, (int)MarshallingKind.Color);
+
+        // Brush was appended after the geometry kinds rather than grouped with the interface
+        // kinds, so nothing that shipped earlier moved.
+        Assert.Equal(17, (int)MarshallingKind.Brush);
     }
 
     [Fact]

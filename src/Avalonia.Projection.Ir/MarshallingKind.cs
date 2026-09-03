@@ -22,6 +22,12 @@ public enum MarshallingKind
     Point,
     Rect,
     Color,
+
+    /// <summary>
+    /// Appended rather than grouped with the interface kinds so every previously published
+    /// ordinal stays put.
+    /// </summary>
+    Brush,
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]

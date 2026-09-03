@@ -10,4 +10,11 @@ internal static class HResults
 
     /// <summary>Fixture-only failure used to prove PreserveSig HRESULT passthrough.</summary>
     public const int AVN_E_FIXTURE = unchecked((int)0xA7A70001);
+
+    /// <summary>
+    /// A brush reached the ABI that is not an <c>ISolidColorBrush</c>. Only solid colour
+    /// brushes are projected; gradients, drawing and visual brushes fail explicitly rather
+    /// than degrading to a nearest colour.
+    /// </summary>
+    public const int AVN_E_NONSOLIDBRUSH = unchecked((int)0xA7A70002);
 }

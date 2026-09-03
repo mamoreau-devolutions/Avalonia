@@ -172,7 +172,7 @@ public class ClrTypeExtractorTests
     }
 
     [Fact]
-    public void Layout_members_bump_the_abi_version_of_every_widened_interface()
+    public void Layout_members_keep_the_abi_version_of_the_interfaces_they_widened()
     {
         var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
 
@@ -184,20 +184,134 @@ public class ClrTypeExtractorTests
             ClrTypeExtractor.CreateDeterministicIid(avaloniaObject.FullName, 2),
             avaloniaObject.Iid);
 
-        // Everything below StyledElement inherits the widened slots, so every one of them
-        // republishes under a version 3 IID.
+        // StyledElement, Control and Decorator gained nothing in the chrome wave and neither
+        // did any of their bases, so their flattened vtables still match version 3 exactly.
         Assert.All(
-            ir.Types.Where(type => type.Name != "IAvnAvaloniaObject"),
-            type =>
+            new[] { "IAvnStyledElement", "IAvnControl", "IAvnDecorator" },
+            name =>
             {
+                var type = Type(ir, name);
                 Assert.Equal(3, type.AbiVersion);
                 Assert.Equal(
                     ClrTypeExtractor.CreateDeterministicIid(type.FullName, 3),
                     type.Iid);
+            });
+    }
+
+    [Fact]
+    public void Chrome_members_bump_the_abi_version_of_every_widened_interface()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+        string[] unmoved =
+            ["IAvnAvaloniaObject", "IAvnStyledElement", "IAvnControl", "IAvnDecorator"];
+
+        // Border, Panel, TemplatedControl and TextBlock all grew slots, so they and every
+        // interface below them republish under a version 4 IID.
+        Assert.All(
+            ir.Types.Where(type => !unmoved.Contains(type.Name)),
+            type =>
+            {
+                Assert.Equal(4, type.AbiVersion);
+                Assert.Equal(
+                    ClrTypeExtractor.CreateDeterministicIid(type.FullName, 4),
+                    type.Iid);
                 Assert.NotEqual(
-                    ClrTypeExtractor.CreateDeterministicIid(type.FullName, 2),
+                    ClrTypeExtractor.CreateDeterministicIid(type.FullName, 3),
                     type.Iid);
             });
+
+        // The factory grew CreateSolidColorBrush, so it republishes too.
+        Assert.Equal(2, ir.FactoryAbiVersion);
+        Assert.Equal(
+            ClrTypeExtractor.CreateDeterministicIid("Avalonia.Host.Com.IAvnControlFactory", 2),
+            ir.FactoryIid);
+    }
+
+    [Fact]
+    public void Projects_solid_brushes_and_the_remaining_chrome_members()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+
+        Assert.Equal("Avalonia.Host.Com.IAvnBrush", ir.BrushInterfaceName);
+        Assert.Equal(1, ir.BrushAbiVersion);
+        Assert.Equal(
+            ClrTypeExtractor.CreateDeterministicIid("Avalonia.Host.Com.IAvnBrush", 1),
+            ir.BrushInterfaceIid);
+
+        // Every IBrush member projects as the one brush interface and is always nullable,
+        // because a control with no brush reports a null pointer rather than a colour.
+        var brushMembers = new[]
+        {
+            (Type: "IAvnBorder", Member: nameof(Border.Background)),
+            (Type: "IAvnBorder", Member: nameof(Border.BorderBrush)),
+            (Type: "IAvnPanel", Member: nameof(Panel.Background)),
+            (Type: "IAvnTemplatedControl", Member: nameof(TemplatedControl.Background)),
+            (Type: "IAvnTemplatedControl", Member: nameof(TemplatedControl.BorderBrush)),
+            (Type: "IAvnTemplatedControl", Member: nameof(TemplatedControl.Foreground)),
+            (Type: "IAvnTextBlock", Member: nameof(TextBlock.Foreground)),
+        };
+        Assert.All(brushMembers, entry =>
+        {
+            var property = Type(ir, entry.Type).Properties
+                .Single(candidate => candidate.Name == entry.Member);
+            Assert.Equal(MarshallingKind.Brush, property.Kind);
+            Assert.Equal("Avalonia.Host.Com.IAvnBrush", property.InterfaceName);
+            Assert.Equal(ir.BrushInterfaceIid, property.InterfaceIid);
+            Assert.True(property.IsNullable);
+            Assert.True(property.CanRead && property.CanWrite);
+        });
+
+        var border = Type(ir, "IAvnBorder");
+        Assert.Equal(
+            MarshallingKind.Thickness,
+            border.Properties.Single(p => p.Name == nameof(Border.BorderThickness)).Kind);
+        Assert.Equal(
+            MarshallingKind.CornerRadius,
+            border.Properties.Single(p => p.Name == nameof(Border.CornerRadius)).Kind);
+
+        var templated = Type(ir, "IAvnTemplatedControl");
+        Assert.Equal(
+            MarshallingKind.F64,
+            templated.Properties.Single(p => p.Name == nameof(TemplatedControl.FontSize)).Kind);
+
+        var textBlock = Type(ir, "IAvnTextBlock");
+        Assert.Equal(
+            MarshallingKind.Thickness,
+            textBlock.Properties.Single(p => p.Name == nameof(TextBlock.Padding)).Kind);
+        Assert.All(
+            textBlock.Properties.Where(p => p.Name is
+                nameof(TextBlock.FontWeight) or nameof(TextBlock.TextAlignment)),
+            property => Assert.Equal(MarshallingKind.I32, property.Kind));
+        Assert.All(
+            new[] { "FontWeight", "TextAlignment" },
+            enumName => Assert.Contains(ir.Enums, projected => projected.Name == enumName));
+
+        // Gradient/drawing/visual brushes are deliberately out of scope, so nothing else in
+        // the object model may claim the brush kind.
+        Assert.DoesNotContain(
+            ir.Types.SelectMany(type => type.Properties),
+            property => property.Kind == MarshallingKind.Brush &&
+                property.InterfaceName != "Avalonia.Host.Com.IAvnBrush");
+    }
+
+    [Fact]
+    public void Chrome_members_are_not_duplicated_onto_derived_interfaces()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+
+        // Background is declared once on Panel and once on TemplatedControl; a derived
+        // interface that re-declared it would add a second pair of slots for one property.
+        Assert.All(
+            new[] { "IAvnGrid", "IAvnCanvas", "IAvnDockPanel", "IAvnStackPanel" },
+            name => Assert.DoesNotContain(
+                Type(ir, name).Properties,
+                property => property.Name == nameof(Panel.Background)));
+        Assert.All(
+            new[] { "IAvnButton", "IAvnContentControl", "IAvnWindow", "IAvnTextBox" },
+            name => Assert.DoesNotContain(
+                Type(ir, name).Properties,
+                property => property.Name is nameof(TemplatedControl.Background)
+                    or nameof(TemplatedControl.Foreground)));
     }
 
     [Fact]

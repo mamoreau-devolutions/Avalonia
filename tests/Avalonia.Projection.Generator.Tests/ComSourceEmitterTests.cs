@@ -223,7 +223,7 @@ public class ComSourceEmitterTests
         var buttonEnd = header.IndexOf("struct IAvnButton {", buttonStart, StringComparison.Ordinal);
         var buttonHeader = header[buttonStart..buttonEnd];
         Assert.Contains("get_object_id", buttonHeader, StringComparison.Ordinal);
-        Assert.Contains("#define I_AVN_BUTTON_ABI_VERSION 3", header, StringComparison.Ordinal);
+        Assert.Contains("#define I_AVN_BUTTON_ABI_VERSION 4", header, StringComparison.Ordinal);
         Assert.True(
             buttonHeader.IndexOf("get_object_id", StringComparison.Ordinal) <
             buttonHeader.IndexOf("get_classes", StringComparison.Ordinal));

@@ -1,7 +1,8 @@
 use avalonia::{
-    App, Border, Button, ComboBox, ComboBoxItem, ExpandDirection, Expander, HorizontalAlignment,
-    ListBox, ListBoxItem, Orientation, RadioButton, Slider, StackPanel, TextBlock, TextBox,
-    Thickness, ToggleSwitch, VerticalAlignment, Window,
+    App, Border, Brush, Button, Color, ComboBox, ComboBoxItem, CornerRadius, ExpandDirection,
+    Expander, FontWeight, HorizontalAlignment, ListBox, ListBoxItem, Orientation, RadioButton,
+    Slider, StackPanel, TextAlignment, TextBlock, TextBox, Thickness, ToggleSwitch,
+    VerticalAlignment, Window,
 };
 
 fn main() -> avalonia::Result<()> {
@@ -259,6 +260,22 @@ fn main() -> avalonia::Result<()> {
                 )?,
         )?;
 
+        let chrome_demo = Border::new()?
+            .padding(Thickness::uniform(10.0))?
+            .background(Brush::solid(Color::rgb(0x22, 0x27, 0x2E)))?
+            .border_brush(Brush::new(Color::rgb(0x00, 0x7A, 0xCC), 0.6))?
+            .border_thickness(Thickness::uniform(1.0))?
+            .corner_radius(CornerRadius::uniform(6.0))?
+            .child(
+                TextBlock::new()?
+                    .text("Solid brushes, border geometry and text metrics")?
+                    .foreground(Brush::solid(Color::rgb(0xEE, 0xEE, 0xEE)))?
+                    .font_size(15.0)?
+                    .font_weight(FontWeight::DemiBold)?
+                    .text_alignment(TextAlignment::Center)?
+                    .padding(Thickness::symmetric(6.0, 2.0))?,
+            )?;
+
         window.set_content(
             StackPanel::new()?
                 .orientation(Orientation::Vertical)?
@@ -275,6 +292,8 @@ fn main() -> avalonia::Result<()> {
                 .child(toggle_value)?
                 .child(TextBlock::new()?.text("Layout")?)?
                 .child(layout_demo)?
+                .child(TextBlock::new()?.text("Chrome")?)?
+                .child(chrome_demo)?
                 .child(TextBlock::new()?.text("Selection & expand patterns")?)?
                 .child(combo_box)?
                 .child(combo_status)?

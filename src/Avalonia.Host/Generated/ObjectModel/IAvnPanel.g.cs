@@ -6,11 +6,17 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("873178A5-1556-51BD-BC8F-FD98F9BFDAEA")]
+[Guid("BD97617A-EEDC-5695-88C1-E30E6673B286")]
 public partial interface IAvnPanel : IAvnControl
 {
     [PreserveSig]
     int GetChildren(out IAvnControlList value);
+
+    [PreserveSig]
+    int GetBackground(out IAvnBrush? value);
+
+    [PreserveSig]
+    int SetBackground(IAvnBrush? value);
 
 }
 
@@ -630,6 +636,37 @@ public sealed partial class AvnPanel : IAvnPanel
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = new AvnControlList(_value.Children);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetBackground(out IAvnBrush? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnBrush.FromBrush(_value.Background);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetBackground(IAvnBrush? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Background = AvnBrush.ToBrush(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

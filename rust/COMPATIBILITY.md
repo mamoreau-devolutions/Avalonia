@@ -28,6 +28,12 @@ presentation and Rust-owned state only: menus bind the already generated command
 and property surface and recent files ride the published string-collection
 transport, so version 5 introduces no view-model ABI.
 
+`projection.ir.json` version 12 adds the optional `brushInterfaceName`,
+`brushInterfaceIid` and `brushAbiVersion` members, present only when a projected
+member marshals as `Brush`. `MarshallingKind.Brush` was appended after the
+geometry kinds rather than grouped with the interface kinds, so every previously
+published ordinal is unmoved.
+
 Consumer application manifests are independently versioned by
 `consumer-app-manifest.schema.json`; version 1 is validated before any build
 command runs. A consumer must pin the producer checkout/submodule commit that
@@ -63,7 +69,13 @@ are retired rather than reused. An interface whose flattened vtable is
 byte-identical keeps its IID, so a stale consumer that queries for it still
 receives exactly the contract it compiled against. The layout wave took
 `IAvnStyledElement`, `IAvnControl` and everything below them to version 3 while
-`IAvnAvaloniaObject` stayed at version 2.
+`IAvnAvaloniaObject` stayed at version 2. The chrome wave then took
+`IAvnBorder`, `IAvnPanel`, `IAvnTemplatedControl`, `IAvnTextBlock` and everything
+below them to version 4, while `IAvnAvaloniaObject` stayed at 2 and
+`IAvnStyledElement`, `IAvnControl` and `IAvnDecorator` stayed at 3 because their
+own flattened vtables did not move. `IAvnControlFactory` gained
+`create_solid_color_brush` and moved from version 1 to 2, and the new read-only
+`IAvnBrush` starts at version 1.
 
 ## RID artifacts
 

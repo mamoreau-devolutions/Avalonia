@@ -30,10 +30,6 @@ Avalonia.AvaloniaObject.Bind(DirectPropertyBase`1, IObservable`1): Not included 
 Avalonia.AvaloniaObject.Bind(DirectPropertyBase`1, IObservable`1): Not included by projection policy
 Avalonia.AvaloniaObject.Bind(DirectPropertyBase`1, IObservable`1): Not included by projection policy
 Avalonia.AvaloniaObject.CoerceValue(AvaloniaProperty): Not included by projection policy
-Avalonia.Controls.Border.Background: Not included by projection policy
-Avalonia.Controls.Border.BorderBrush: Not included by projection policy
-Avalonia.Controls.Border.BorderThickness: Not included by projection policy
-Avalonia.Controls.Border.CornerRadius: Not included by projection policy
 Avalonia.Controls.Border.BoxShadow: Not included by projection policy
 Avalonia.Controls.Border.ClipToBoundsRadius: Not included by projection policy
 Avalonia.Controls.Border.Render(DrawingContext): Not included by projection policy
@@ -103,7 +99,6 @@ Avalonia.Controls.ListBox.Selection: Not included by projection policy
 Avalonia.Controls.ListBox.SelectionMode: Not included by projection policy
 Avalonia.Controls.ListBox.SelectAll(): Not included by projection policy
 Avalonia.Controls.ListBox.UnselectAll(): Not included by projection policy
-Avalonia.Controls.Panel.Background: Not included by projection policy
 Avalonia.Controls.Panel.IsItemsHost: Not included by projection policy
 Avalonia.Controls.Panel.Render(DrawingContext): Not included by projection policy
 Avalonia.Controls.Primitives.HeaderedContentControl.HeaderPresenter: Not included by projection policy
@@ -117,18 +112,12 @@ Avalonia.Controls.Primitives.SelectingItemsControl.WrapSelection: Not included b
 Avalonia.Controls.Primitives.SelectingItemsControl.BeginInit(): Not included by projection policy
 Avalonia.Controls.Primitives.SelectingItemsControl.EndInit(): Not included by projection policy
 Avalonia.Controls.Primitives.SelectingItemsControl.UpdateSelectionFromEvent(Control, RoutedEventArgs): Not included by projection policy
-Avalonia.Controls.Primitives.TemplatedControl.Background: Not included by projection policy
 Avalonia.Controls.Primitives.TemplatedControl.BackgroundSizing: Not included by projection policy
-Avalonia.Controls.Primitives.TemplatedControl.BorderBrush: Not included by projection policy
-Avalonia.Controls.Primitives.TemplatedControl.BorderThickness: Not included by projection policy
-Avalonia.Controls.Primitives.TemplatedControl.CornerRadius: Not included by projection policy
 Avalonia.Controls.Primitives.TemplatedControl.FontFamily: Not included by projection policy
 Avalonia.Controls.Primitives.TemplatedControl.FontFeatures: Not included by projection policy
-Avalonia.Controls.Primitives.TemplatedControl.FontSize: Not included by projection policy
 Avalonia.Controls.Primitives.TemplatedControl.FontStyle: Not included by projection policy
 Avalonia.Controls.Primitives.TemplatedControl.FontWeight: Not included by projection policy
 Avalonia.Controls.Primitives.TemplatedControl.FontStretch: Not included by projection policy
-Avalonia.Controls.Primitives.TemplatedControl.Foreground: Not included by projection policy
 Avalonia.Controls.Primitives.TemplatedControl.LetterSpacing: Not included by projection policy
 Avalonia.Controls.Primitives.TemplatedControl.Padding: Not included by projection policy
 Avalonia.Controls.Primitives.TemplatedControl.Template: Not included by projection policy
@@ -158,21 +147,16 @@ Avalonia.Controls.StackPanel.VerticalSnapPointsChanged: Not included by projecti
 Avalonia.Controls.StackPanel.GetIrregularSnapPoints(Orientation, SnapPointsAlignment): Not included by projection policy
 Avalonia.Controls.StackPanel.GetRegularSnapPoints(Orientation, SnapPointsAlignment, Double&): Not included by projection policy
 Avalonia.Controls.TextBlock.TextLayout: Not included by projection policy
-Avalonia.Controls.TextBlock.Padding: Not included by projection policy
 Avalonia.Controls.TextBlock.Background: Not included by projection policy
 Avalonia.Controls.TextBlock.FontFamily: Not included by projection policy
-Avalonia.Controls.TextBlock.FontSize: Not included by projection policy
 Avalonia.Controls.TextBlock.FontStyle: Not included by projection policy
-Avalonia.Controls.TextBlock.FontWeight: Not included by projection policy
 Avalonia.Controls.TextBlock.FontStretch: Not included by projection policy
-Avalonia.Controls.TextBlock.Foreground: Not included by projection policy
 Avalonia.Controls.TextBlock.LineHeight: Not included by projection policy
 Avalonia.Controls.TextBlock.LineSpacing: Not included by projection policy
 Avalonia.Controls.TextBlock.LetterSpacing: Not included by projection policy
 Avalonia.Controls.TextBlock.MaxLines: Not included by projection policy
 Avalonia.Controls.TextBlock.TextWrapping: Not included by projection policy
 Avalonia.Controls.TextBlock.TextTrimming: Not included by projection policy
-Avalonia.Controls.TextBlock.TextAlignment: Not included by projection policy
 Avalonia.Controls.TextBlock.TextDecorations: Not included by projection policy
 Avalonia.Controls.TextBlock.FontFeatures: Not included by projection policy
 Avalonia.Controls.TextBlock.Inlines: Not included by projection policy

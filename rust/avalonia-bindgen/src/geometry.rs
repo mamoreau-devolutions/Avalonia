@@ -266,6 +266,19 @@ pub fn emit_safe_structs() -> String {
              {helpers}}}\n\n"
         ));
 
+        if geometry.conversion == Conversion::PackedColor {
+            // A brush caller almost always wants an opaque colour, so spell it once here
+            // instead of repeating `255` at every call site.
+            out.push_str(&format!(
+                "impl {safe} {{\n\
+                 \x20   /// A fully opaque colour.\n\
+                 \x20   pub const fn rgb(r: u8, g: u8, b: u8) -> Self {{\n\
+                 \x20       Self::new(255, r, g, b)\n\
+                 \x20   }}\n\
+                 }}\n\n"
+            ));
+        }
+
         match geometry.conversion {
             Conversion::Components => {
                 let from_abi = geometry

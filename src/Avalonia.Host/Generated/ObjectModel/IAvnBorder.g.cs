@@ -6,14 +6,38 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("0A321CFC-85AB-5395-B39D-D6FF147BFF08")]
+[Guid("A8DE13FB-23AB-59DD-ABD1-000C9EA5693B")]
 public partial interface IAvnBorder : IAvnDecorator
 {
+    [PreserveSig]
+    int GetBackground(out IAvnBrush? value);
+
+    [PreserveSig]
+    int SetBackground(IAvnBrush? value);
+
     [PreserveSig]
     int GetBackgroundSizing(out int value);
 
     [PreserveSig]
     int SetBackgroundSizing(int value);
+
+    [PreserveSig]
+    int GetBorderBrush(out IAvnBrush? value);
+
+    [PreserveSig]
+    int SetBorderBrush(IAvnBrush? value);
+
+    [PreserveSig]
+    int GetBorderThickness(out AvnThickness value);
+
+    [PreserveSig]
+    int SetBorderThickness(AvnThickness value);
+
+    [PreserveSig]
+    int GetCornerRadius(out AvnCornerRadius value);
+
+    [PreserveSig]
+    int SetCornerRadius(AvnCornerRadius value);
 
 }
 
@@ -687,6 +711,37 @@ public sealed partial class AvnBorder : IAvnBorder
         }
     }
 
+    public int GetBackground(out IAvnBrush? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnBrush.FromBrush(_value.Background);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetBackground(IAvnBrush? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Background = AvnBrush.ToBrush(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetBackgroundSizing(out int value)
     {
         value = default!;
@@ -710,6 +765,99 @@ public sealed partial class AvnBorder : IAvnBorder
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.BackgroundSizing = (global::Avalonia.Media.BackgroundSizing)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetBorderBrush(out IAvnBrush? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnBrush.FromBrush(_value.BorderBrush);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetBorderBrush(IAvnBrush? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.BorderBrush = AvnBrush.ToBrush(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetBorderThickness(out AvnThickness value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnThickness.FromAvalonia(_value.BorderThickness);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetBorderThickness(AvnThickness value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.BorderThickness = value.ToAvalonia();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetCornerRadius(out AvnCornerRadius value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnCornerRadius.FromAvalonia(_value.CornerRadius);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetCornerRadius(AvnCornerRadius value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.CornerRadius = value.ToAvalonia();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
