@@ -284,4 +284,30 @@ public class TableView : ListBox
                 column.UpdateCanUserEffectivelyResize();
         }
     }
+
+    /// <inheritdoc />
+    protected override Size ArrangeOverride(Size finalSize)
+    {
+        var arranged = base.ArrangeOverride(finalSize);
+        NotifyVisibleRange();
+        return arranged;
+    }
+
+    /// <summary>
+    /// Asks a windowed items source to realize the currently visible rows.
+    /// Indexer misses still work; this is the viewport-driven path so fast
+    /// scrolling does not wait on per-cell reads.
+    /// </summary>
+    private void NotifyVisibleRange()
+    {
+        if (ItemsSource is not IViewportRangeSource source)
+            return;
+        if (ItemsPanelRoot is not VirtualizingStackPanel panel)
+            return;
+        var first = panel.FirstRealizedIndex;
+        var last = panel.LastRealizedIndex;
+        if (first < 0 || last < first)
+            return;
+        source.EnsureVisibleRange(first, last);
+    }
 }

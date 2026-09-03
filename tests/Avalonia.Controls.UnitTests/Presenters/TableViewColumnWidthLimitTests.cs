@@ -67,6 +67,21 @@ public sealed class TableViewColumnWidthLimitTests : ScopedTestBase
     }
 
     [Fact]
+    public void A_hidden_column_occupies_no_width_and_does_not_take_star_budget()
+    {
+        var columns = new AvaloniaList<TableViewColumn>
+        {
+            new() { Width = new GridLength(80), IsVisible = false },
+            new() { Width = new GridLength(1, GridUnitType.Star) },
+        };
+
+        TableViewLayoutHelper.UpdateActualWidths(columns, 400, false, 1.0);
+
+        Assert.Equal(0, columns[0].ActualWidth);
+        Assert.Equal(400, columns[1].ActualWidth);
+    }
+
+    [Fact]
     public void Unconstrained_Columns_Keep_Their_Previous_Distribution()
     {
         var columns = new AvaloniaList<TableViewColumn>

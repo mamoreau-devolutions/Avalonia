@@ -215,6 +215,7 @@ public sealed class ViewModelIr
                         $"Command parameter property '{model.Name}.{property.Name}' must not be nullable.");
             }
             ValidateDisplayPath(model, models: Models);
+            ValidateThemeVariantProperty(model, properties);
             ValidateRecentFiles(model);
             foreach (var menu in model.Menus)
                 ValidateMenu(model, menu, enumsByName);
@@ -258,7 +259,13 @@ public sealed class ViewModelIr
         if (table.Selection is { } selection)
         {
             ValidateSelectionProperty(selection.SelectedIndexProperty, ViewModelValueKind.Integer, "selectedIndexProperty");
-            ValidateSelectionProperty(selection.SelectedKeyProperty, ViewModelValueKind.String, "selectedKeyProperty");
+            if (selection.SelectedKeyProperty is { } keyName)
+            {
+                if (!ownerProperties.TryGetValue(keyName, out var key) || !key.Writable || key.Nullable ||
+                    key.Kind is not (ViewModelValueKind.String or ViewModelValueKind.Integer))
+                    throw new InvalidOperationException(
+                        $"Table '{owner.Name}.{collection.Name}' selectedKeyProperty '{keyName}' must reference a writable non-nullable String or Integer property.");
+            }
             if (selection.SelectedIndexProperty is null && selection.SelectedKeyProperty is null)
                 throw new InvalidOperationException($"Table '{owner.Name}.{collection.Name}' selection must declare an index or key property.");
             if (selection.RowKeyPath is not null)
@@ -402,6 +409,18 @@ public sealed class ViewModelIr
                     $"Model '{model.Name}' displayPath '{path}' cannot traverse scalar property '{segment}'.");
             current = models.Single(candidate => candidate.Name == property.ModelName);
         }
+    }
+
+    private static void ValidateThemeVariantProperty(
+        ViewModelDefinition model,
+        IReadOnlyDictionary<string, ViewModelProperty> properties)
+    {
+        if (model.ThemeVariantProperty is not { } name)
+            return;
+        if (!properties.TryGetValue(name, out var property) || !property.Writable || property.Nullable ||
+            property.Kind != ViewModelValueKind.Boolean)
+            throw new InvalidOperationException(
+                $"Model '{model.Name}' themeVariantProperty '{name}' must reference a writable non-nullable Boolean property.");
     }
 
     /// <summary>
@@ -916,6 +935,13 @@ public sealed class ViewModelDefinition
     /// this is what stops a row reading as its CLR adapter type name.
     /// </summary>
     public string? DisplayPath { get; init; }
+
+    /// <summary>
+    /// Optional writable Boolean property that drives
+    /// <c>Application.RequestedThemeVariant</c> (true = Dark, false = Light)
+    /// from the generated adapter, with no window code-behind.
+    /// </summary>
+    public string? ThemeVariantProperty { get; init; }
 }
 
 /// <summary>What a declared menu is projected as.</summary>

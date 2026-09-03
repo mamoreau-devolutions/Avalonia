@@ -36,7 +36,7 @@ public delegate object RustWindowElementFactory(IAvnRustViewModel? model, string
 /// <see cref="RustRangeCoordinator"/>, which posts decoding to the dispatcher
 /// and never touches this object on a Rust worker stack.
 /// </summary>
-public sealed class RustWindowedCollection : IList, IReadOnlyList<object?>, INotifyCollectionChanged, INotifyPropertyChanged, IDisposable
+public sealed class RustWindowedCollection : IList, IReadOnlyList<object?>, INotifyCollectionChanged, INotifyPropertyChanged, IDisposable, Avalonia.Controls.IViewportRangeSource
 {
     private readonly Dictionary<int, object?[]> _pages = [];
     private readonly LinkedList<int> _recent = new();
@@ -213,6 +213,31 @@ public sealed class RustWindowedCollection : IList, IReadOnlyList<object?>, INot
                 new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, items[i], null, start + i));
         }
         return true;
+    }
+
+    /// <summary>
+    /// Requests every page overlapping <paramref name="firstIndex"/>..
+    /// <paramref name="lastIndex"/> (inclusive). Called from
+    /// <see cref="Avalonia.Controls.TableView"/> after layout so the
+    /// viewport, not stray indexer misses, drives realization.
+    /// </summary>
+    public void EnsureVisibleRange(int firstIndex, int lastIndex)
+    {
+        if (_disposed || _source is null || _totalCount <= 0)
+            return;
+        if (firstIndex < 0)
+            firstIndex = 0;
+        if (lastIndex >= _totalCount)
+            lastIndex = _totalCount - 1;
+        if (lastIndex < firstIndex)
+            return;
+        var firstPage = firstIndex / PageSize;
+        var lastPage = lastIndex / PageSize;
+        for (var page = firstPage; page <= lastPage; page++)
+        {
+            if (!_pages.ContainsKey(page))
+                RequestPage(page);
+        }
     }
 
     /// <summary>

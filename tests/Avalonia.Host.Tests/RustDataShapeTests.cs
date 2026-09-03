@@ -300,6 +300,23 @@ public class RustDataShapeTests
     }
 
     [Fact]
+    public void EnsureVisibleRange_requests_overlapping_pages_without_waiting_on_indexer_misses()
+    {
+        var source = new FakeRangeSource(generation: 1, totalCount: 256);
+        using var window = new RustWindowedCollection(5, 64, 8, (_, text) => new TrackedRow(text ?? ""));
+        window.SetSource(source);
+        window.ResetTo(1, 256);
+
+        window.EnsureVisibleRange(0, 70);
+        Assert.Equal(2, source.Requests.Count);
+        Assert.Equal(0L, source.Requests[0].Offset);
+        Assert.Equal(64L, source.Requests[1].Offset);
+
+        window.EnsureVisibleRange(0, 70);
+        Assert.Equal(2, source.Requests.Count);
+    }
+
+    [Fact]
     public void Refreshing_realized_pages_reissues_range_requests_without_dropping_identity()
     {
         var source = new FakeRangeSource(generation: 4, totalCount: 16);

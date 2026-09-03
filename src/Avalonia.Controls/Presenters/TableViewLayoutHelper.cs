@@ -26,6 +26,16 @@ internal static class TableViewLayoutHelper
 
         for (var i = 0; i < columns.Count; i++)
         {
+            if (!columns[i].IsVisible)
+            {
+                if (columns[i].ActualWidth != 0)
+                {
+                    columns[i].ActualWidth = 0;
+                    modified = true;
+                }
+                continue;
+            }
+
             var width = columns[i].Width;
             if (width.IsAbsolute)
             {
@@ -68,6 +78,9 @@ internal static class TableViewLayoutHelper
 
         for (var i = 0; i < columns.Count; i++)
         {
+            if (!columns[i].IsVisible)
+                continue;
+
             var width = columns[i].Width;
             if (!width.IsAbsolute)
             {

@@ -234,6 +234,11 @@ public static class ViewModelSourceEmitter
         sb.AppendLine("using System.Runtime.InteropServices;");
         sb.AppendLine("using System.Runtime.InteropServices.Marshalling;");
         sb.AppendLine("using System.Windows.Input;");
+        if (model.ThemeVariantProperty is not null)
+        {
+            sb.AppendLine("using Avalonia;");
+            sb.AppendLine("using Avalonia.Styling;");
+        }
         sb.AppendLine("using Avalonia.Rust;");
         sb.AppendLine("using Avalonia.Rust.Interop;");
         sb.AppendLine("using Avalonia.Threading;");
@@ -355,6 +360,11 @@ public static class ViewModelSourceEmitter
         sb.AppendLine("            DisposeNestedAdapters();");
         sb.AppendLine("            throw;");
         sb.AppendLine("        }");
+        if (model.ThemeVariantProperty is { } themeProperty)
+        {
+            sb.AppendLine("        ApplyThemeVariant();");
+            sb.AppendLine($"        PropertyChanged += (_, e) => {{ if (e.PropertyName is null || e.PropertyName == nameof({themeProperty})) ApplyThemeVariant(); }};");
+        }
         sb.AppendLine("    }");
         sb.AppendLine();
         sb.AppendLine("    public event PropertyChangedEventHandler? PropertyChanged;");
@@ -483,6 +493,15 @@ public static class ViewModelSourceEmitter
         sb.AppendLine("    /// </summary>");
         sb.AppendLine("    public void Dispose() => _batch.Dispose(DisposeCore);");
         sb.AppendLine();
+        if (model.ThemeVariantProperty is { } themeName)
+        {
+            sb.AppendLine("    private void ApplyThemeVariant()");
+            sb.AppendLine("    {");
+            sb.AppendLine("        if (Application.Current is { } application)");
+            sb.AppendLine($"            application.RequestedThemeVariant = _{Lower(themeName)} ? ThemeVariant.Dark : ThemeVariant.Light;");
+            sb.AppendLine("    }");
+            sb.AppendLine();
+        }
         sb.AppendLine("    private void DisposeCore()");
         sb.AppendLine("    {");
         if (windowedCollections.Length > 0)

@@ -69,6 +69,18 @@ public class TableViewColumn : StyledElement, IHeadered
         AvaloniaProperty.Register<TableViewColumn, BindingBase?>(nameof(Binding));
 
     /// <summary>
+    /// Defines the <see cref="IsVisible"/> property.
+    /// </summary>
+    /// <remarks>
+    /// <see cref="TableViewColumn"/> is not a <see cref="Visual"/>, so
+    /// <c>Visual.IsVisible</c> is not available in compiled AXAML. This
+    /// property is the column-level hide: layout assigns it zero width and
+    /// the resize thumb is disabled.
+    /// </remarks>
+    public static readonly StyledProperty<bool> IsVisibleProperty =
+        AvaloniaProperty.Register<TableViewColumn, bool>(nameof(IsVisible), true);
+
+    /// <summary>
     /// Defines the <see cref="CanUserResize"/> property.
     /// </summary>
     public static readonly StyledProperty<bool?> CanUserResizeProperty =
@@ -218,6 +230,16 @@ public class TableViewColumn : StyledElement, IHeadered
     }
 
     /// <summary>
+    /// Gets or sets whether the column is shown. Hidden columns occupy no
+    /// layout width. The default is true. Bindable from compiled AXAML.
+    /// </summary>
+    public bool IsVisible
+    {
+        get => GetValue(IsVisibleProperty);
+        set => SetValue(IsVisibleProperty, value);
+    }
+
+    /// <summary>
     /// Gets or sets whether the column can be resized.
     /// Set to null to use the value from <see cref="Avalonia.Controls.TableView.CanUserResizeColumns"/>.
     /// The default is null.
@@ -292,6 +314,11 @@ public class TableViewColumn : StyledElement, IHeadered
             TableView?.OnColumnsSizeChanged();
         else if (change.Property == MinWidthProperty || change.Property == MaxWidthProperty)
             TableView?.OnColumnsSizeChanged();
+        else if (change.Property == IsVisibleProperty)
+        {
+            UpdateCanUserEffectivelyResize();
+            TableView?.OnColumnsSizeChanged();
+        }
         else if (change.Property == CanUserResizeProperty)
             UpdateCanUserEffectivelyResize();
         else
@@ -304,7 +331,7 @@ public class TableViewColumn : StyledElement, IHeadered
     }
 
     internal void UpdateCanUserEffectivelyResize()
-        => CanUserEffectivelyResize = CanUserResize ?? TableView?.CanUserResizeColumns ?? true;
+        => CanUserEffectivelyResize = IsVisible && (CanUserResize ?? TableView?.CanUserResizeColumns ?? true);
 
     internal override void BuildDebugDisplay(StringBuilder builder, bool includeContent)
     {
