@@ -1,8 +1,8 @@
 use avalonia::{
     App, Border, Brush, Button, ClickMode, Color, ComboBox, ComboBoxItem, CornerRadius,
-    ExpandDirection, Expander, FontWeight, HorizontalAlignment, ListBox, ListBoxItem, Orientation,
-    RadioButton, SelectionMode, Slider, StackPanel, TextAlignment, TextBlock, TextBox, Thickness,
-    ToggleSwitch, VerticalAlignment, Window,
+    ExpandDirection, Expander, FontWeight, Grid, HorizontalAlignment, ListBox, ListBoxItem,
+    Orientation, RadioButton, SelectionMode, Slider, StackPanel, TextAlignment, TextBlock, TextBox,
+    Thickness, ToggleSwitch, VerticalAlignment, Window,
 };
 
 fn main() -> avalonia::Result<()> {
@@ -306,6 +306,31 @@ fn main() -> avalonia::Result<()> {
                     .padding(Thickness::symmetric(6.0, 2.0))?,
             )?;
 
+        // Grid tracks are the same comma-separated length list AXAML uses: `*` takes the
+        // remaining space, `Auto` sizes to content, and a bare number is a fixed size.
+        let grid_demo = Grid::new()?
+            .column_definitions("Auto,*,120")?
+            .row_definitions("Auto,Auto")?
+            .column_spacing(8.0)?
+            .row_spacing(4.0)?;
+        let grid_label = TextBlock::new()?.text("Auto column")?;
+        let grid_stretch = TextBlock::new()?.text("Star column stretches")?;
+        let grid_fixed = TextBlock::new()?.text("120px")?;
+        let grid_readout = TextBlock::new()?.text(format!(
+            "columns = {}, rows = {}",
+            grid_demo.get_column_definitions()?,
+            grid_demo.get_row_definitions()?
+        ))?;
+        Grid::set_column(&grid_stretch, 1)?;
+        Grid::set_column(&grid_fixed, 2)?;
+        Grid::set_row(&grid_readout, 1)?;
+        Grid::set_column_span(&grid_readout, 3)?;
+        let grid_demo = grid_demo
+            .child(grid_label)?
+            .child(grid_stretch)?
+            .child(grid_fixed)?
+            .child(grid_readout)?;
+
         window.set_content(
             StackPanel::new()?
                 .orientation(Orientation::Vertical)?
@@ -324,6 +349,8 @@ fn main() -> avalonia::Result<()> {
                 .child(layout_demo)?
                 .child(TextBlock::new()?.text("Chrome")?)?
                 .child(chrome_demo)?
+                .child(TextBlock::new()?.text("Grid tracks")?)?
+                .child(grid_demo)?
                 .child(TextBlock::new()?.text("Selection & expand patterns")?)?
                 .child(combo_box)?
                 .child(combo_status)?

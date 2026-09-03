@@ -80,7 +80,18 @@ own flattened vtables did not move. `IAvnControlFactory` gained
 `IAvnComboBox` and everything below them to version 5; `IAvnControlFactory`
 gained no slot and stays at 2, and every interface outside those subtrees —
 including `IAvnItemsControl` and `IAvnSelectingItemsControl` — keeps the version
-whose flattened vtable it still matches.
+whose flattened vtable it still matches. The definitions wave then took
+`IAvnGrid` alone from 4 to 5 for `column_definitions`/`row_definitions`: nothing
+in the object model derives from `Grid`, the definitions cross as ordinary UTF-16
+strings rather than as a new interface, and `IAvnControlFactory` again gained no
+slot. All four IIDs `IAvnGrid` published at versions 1–4 are retired.
+
+`projection.ir.json` needs no schema change to carry a member whose CLR type is
+not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
+pair already says both, exactly as it does for an enum carried as `I32`. A
+`StringUtf16` override on a non-string member is only accepted when the managed
+type declares `static T Parse(string)` and overrides `ToString()`, so the
+conversion belongs to the type rather than to the generator.
 
 ## RID artifacts
 

@@ -4,10 +4,10 @@ public static class AvaloniaProjectionProfiles
 {
     public static ProjectionPolicy ObjectModelKernel { get; } = new()
     {
-        // The completeness wave widens the flattened vtables of Avalonia.Controls.ContentControl,
-        // Button, Primitives.ToggleButton, ListBox and ComboBox, so every projected interface at
-        // or below one of them gets a new IID at version 5. The interfaces whose flattened vtable
-        // did not move are pinned below and keep the IID they last published.
+        // The definitions wave widens the flattened vtable of Avalonia.Controls.Grid only. Every
+        // interface whose flattened vtable did not move is pinned below and keeps the IID it last
+        // published; Grid itself falls through to the default and republishes at version 5, which
+        // it has never published before.
         DefaultProjectedTypeAbiVersion = 5,
         AbiVersions = new Dictionary<string, int>(StringComparer.Ordinal)
         {
@@ -20,14 +20,13 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnStyledElement"] = 3,
             ["Avalonia.Host.Com.IAvnControl"] = 3,
             ["Avalonia.Host.Com.IAvnDecorator"] = 3,
-            // Everything the completeness wave left alone. None of these sits below
-            // ContentControl, Button, ToggleButton, ListBox or ComboBox, so their flattened
-            // vtables are byte-identical to version 4.
+            // Everything the completeness wave left alone that the definitions wave also leaves
+            // alone. None of these sits below ContentControl, Button, ToggleButton, ListBox,
+            // ComboBox or Grid, so their flattened vtables are byte-identical to version 4.
             ["Avalonia.Host.Com.IAvnBorder"] = 4,
             ["Avalonia.Host.Com.IAvnPanel"] = 4,
             ["Avalonia.Host.Com.IAvnCanvas"] = 4,
             ["Avalonia.Host.Com.IAvnDockPanel"] = 4,
-            ["Avalonia.Host.Com.IAvnGrid"] = 4,
             ["Avalonia.Host.Com.IAvnStackPanel"] = 4,
             ["Avalonia.Host.Com.IAvnTextBlock"] = 4,
             ["Avalonia.Host.Com.IAvnTemplatedControl"] = 4,
@@ -95,7 +94,8 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.Border"] =
                 ["Background", "BorderBrush", "BorderThickness", "CornerRadius", "BackgroundSizing"],
             ["Avalonia.Controls.Panel"] = ["Background", "Children"],
-            ["Avalonia.Controls.Grid"] = ["ShowGridLines", "RowSpacing", "ColumnSpacing"],
+            ["Avalonia.Controls.Grid"] =
+                ["ShowGridLines", "RowSpacing", "ColumnSpacing", "ColumnDefinitions", "RowDefinitions"],
             ["Avalonia.Controls.Canvas"] = [],
             ["Avalonia.Controls.DockPanel"] = ["LastChildFill", "HorizontalSpacing", "VerticalSpacing"],
             ["Avalonia.Controls.Window"] = ["Title", "CanResize", "WindowState", "Show", "Close"],
@@ -173,6 +173,20 @@ public static class AvaloniaProjectionProfiles
                 Kind = MarshallingKind.ComCollection,
                 InterfaceName = "Avalonia.Host.Com.IAvnStringList",
                 ElementKind = MarshallingKind.StringUtf16,
+                IsNullable = false,
+            },
+            // Grid's track definitions cross as the same comma-separated length list that
+            // ColumnDefinitions/RowDefinitions already parse and print, not as a projected
+            // collection of definition objects. The host wrapper converts with the type's own
+            // Parse/ToString, so nothing here needs an interface of its own.
+            ["Avalonia.Controls.Grid.ColumnDefinitions"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                IsNullable = false,
+            },
+            ["Avalonia.Controls.Grid.RowDefinitions"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
                 IsNullable = false,
             },
             ["Avalonia.Controls.Decorator.Child"] = new()

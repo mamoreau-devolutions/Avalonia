@@ -5670,7 +5670,7 @@ impl ComPtr<IAvnExpander> {
     }
 }
 
-pub const I_AVN_GRID_IID: Guid = Guid { data1: 0x240199CD, data2: 0xF2BD, data3: 0x55CD, data4: [0xBE, 0x4D, 0x8D, 0xA8, 0x3F, 0x22, 0x8D, 0x71] };
+pub const I_AVN_GRID_IID: Guid = Guid { data1: 0x50725F62, data2: 0xE6AC, data3: 0x5B40, data4: [0xA6, 0xCF, 0x15, 0x2F, 0x9D, 0x29, 0xE2, 0x0E] };
 
 #[repr(C)]
 struct IAvnGridVtbl {
@@ -5721,6 +5721,10 @@ struct IAvnGridVtbl {
     set_row_spacing: unsafe extern "system" fn(*mut IAvnGrid, f64) -> i32,
     get_column_spacing: unsafe extern "system" fn(*mut IAvnGrid, *mut f64) -> i32,
     set_column_spacing: unsafe extern "system" fn(*mut IAvnGrid, f64) -> i32,
+    get_column_definitions: unsafe extern "system" fn(*mut IAvnGrid, *mut *mut u16) -> i32,
+    set_column_definitions: unsafe extern "system" fn(*mut IAvnGrid, *mut u16) -> i32,
+    get_row_definitions: unsafe extern "system" fn(*mut IAvnGrid, *mut *mut u16) -> i32,
+    set_row_definitions: unsafe extern "system" fn(*mut IAvnGrid, *mut u16) -> i32,
 }
 
 #[repr(C)]
@@ -6037,6 +6041,34 @@ impl ComPtr<IAvnGrid> {
     pub fn set_column_spacing(&self, value: f64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_column_spacing)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_column_definitions(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_column_definitions)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_column_definitions(&self, value: &[u16]) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_column_definitions)(self.as_raw(), value.as_ptr().cast_mut());
+            hresult::check(hr)
+        }
+    }
+    pub fn get_row_definitions(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_row_definitions)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_row_definitions(&self, value: &[u16]) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_row_definitions)(self.as_raw(), value.as_ptr().cast_mut());
             hresult::check(hr)
         }
     }

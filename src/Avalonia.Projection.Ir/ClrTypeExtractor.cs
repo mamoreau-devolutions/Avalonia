@@ -357,6 +357,14 @@ public static class ClrTypeExtractor
                 reason = "COM collection override requires InterfaceName, ElementKind, and an interface for COM elements";
                 return false;
             }
+            if (kind == MarshallingKind.StringUtf16 &&
+                type != typeof(string) &&
+                !HasStringRoundTrip(type))
+            {
+                reason = "String override on a non-string member requires a public static Parse(string) " +
+                    "returning the member type and an overridden ToString()";
+                return false;
+            }
             return true;
         }
 
@@ -436,6 +444,28 @@ public static class ClrTypeExtractor
 
     private static bool IsNullable(PropertyInfo property) =>
         Nullability.Create(property).ReadState == NullabilityState.Nullable;
+
+    /// <summary>
+    /// A member whose CLR type is not <see cref="string"/> may still project as one, but only when
+    /// the type itself owns both halves of the conversion: a public static <c>Parse(string)</c>
+    /// returning the type, and a <c>ToString()</c> it overrides rather than inheriting from
+    /// <see cref="object"/>. Anything else would leave the emitter guessing at a conversion.
+    /// </summary>
+    private static bool HasStringRoundTrip(Type type) =>
+        type.GetMethod(
+            "Parse",
+            BindingFlags.Public | BindingFlags.Static,
+            binder: null,
+            [typeof(string)],
+            modifiers: null) is { } parse &&
+        parse.ReturnType == type &&
+        type.GetMethod(
+            nameof(ToString),
+            BindingFlags.Public | BindingFlags.Instance,
+            binder: null,
+            Type.EmptyTypes,
+            modifiers: null) is { DeclaringType: { } declaring } &&
+        declaring != typeof(object);
 
     private static bool IsNullable(ParameterInfo parameter) =>
         Nullability.Create(parameter).ReadState == NullabilityState.Nullable;

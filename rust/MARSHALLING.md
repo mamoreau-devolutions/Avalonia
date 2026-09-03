@@ -5,7 +5,9 @@ sequential structs instead of as COM objects. This keeps `Margin`, `Padding`,
 `BorderThickness`, `CornerRadius` and friends cheap to read and write, and it
 avoids a COM object per rectangle. Brushes are the one chrome member that is
 *not* a value type: they cross as a small read-only COM interface that carries a
-solid colour and an opacity.
+solid colour and an opacity. `Grid`'s track definitions are the one member that
+crosses as a **string**: they use the same comma-separated length list Avalonia
+already parses and prints (see [Grid track definitions](#grid-track-definitions)).
 
 ## The structs
 
@@ -214,6 +216,60 @@ are deliberately left to a later wave.
 the first three need reference graphs the ABI does not marshal, and `char` is not
 a marshalling kind.
 
+## Grid track definitions
+
+`Grid.ColumnDefinitions` and `Grid.RowDefinitions` are collections of
+`ColumnDefinition`/`RowDefinition` objects, but Avalonia already has a canonical
+textual form for them — the comma-separated length list AXAML writes — and both
+collections own both halves of that conversion: `static Parse(string)` and an
+overridden `ToString()`. The ABI publishes that string rather than a projected
+collection:
+
+| Projected interface | Members |
+| ------------------- | ------- |
+| `IAvnGrid`          | `ColumnDefinitions`, `RowDefinitions` (both UTF-16 strings) |
+
+```c
+AvnHResult (AVN_CALL *get_column_definitions)(IAvnGrid* self, uint16_t** value);
+AvnHResult (AVN_CALL *set_column_definitions)(IAvnGrid* self, const uint16_t* value);
+```
+
+```rust
+grid.set_column_definitions("*,Auto,120")?;
+assert_eq!(grid.get_column_definitions()?, "1*,Auto,120");
+```
+
+The host wrapper converts on both sides: a get is `ColumnDefinitions.ToString()`
+and a set is `ColumnDefinitions.Parse(value)`. This is expressed in the profile
+as an ordinary marshalling override to `StringUtf16` on a member whose CLR type
+is not `string`; the extractor refuses such an override unless the managed type
+declares `static T Parse(string)` and overrides `ToString()`, so the emitter
+never guesses at a conversion. No definition object, list interface or factory
+slot is minted, which is why this costs `IAvnGrid` four slots and nothing else.
+
+### What the string does and does not carry
+
+The list is **normalising, not byte-preserving**. `*` is shorthand for `1*`, and
+whitespace between entries is a separator, so writing `"*, Auto, 120"` and
+reading it back reports `"1*,Auto,120"`. A list that has already been normalised
+is a fixed point: writing what the getter returned changes nothing. An empty grid
+reports an empty string rather than a null pointer, and writing an empty string
+clears the tracks — there is no null definition list.
+
+The list carries only each track's `Width`/`Height`, because that is all
+`ColumnDefinitions.ToString()` prints. `MinWidth`, `MaxWidth`, `MinHeight`,
+`MaxHeight` and `SharedSizeGroup` on an individual definition are **not** in
+scope of this ABI, and a set replaces the whole collection, so anything a
+previous definition carried beyond its length is dropped rather than merged. That
+is a deliberate v1 boundary rather than an oversight: a per-definition surface
+needs its own separately named, separately versioned interfaces and is left to a
+later wave. A consumer that needs shared size groups should keep those tracks in
+AXAML.
+
+A malformed entry fails the call — `Parse` throws and the `HRESULT` carries it
+back — rather than being silently dropped or rounded to a nearest length, and the
+previous definitions stay in place.
+
 ## Versioning of the widened vtables
 
 Nano-COM vtables are flattened, so widening a base type moves every slot of every
@@ -228,12 +284,17 @@ compiled against.
 | Layout   | `IAvnStyledElement`, `IAvnControl` and everything below them | 2 → 3   | `IAvnAvaloniaObject` (2) |
 | Chrome   | `IAvnBorder`, `IAvnPanel`, `IAvnTemplatedControl`, `IAvnTextBlock` and everything below them | 3 → 4 | `IAvnAvaloniaObject` (2), `IAvnStyledElement`, `IAvnControl`, `IAvnDecorator` (3) |
 | Completeness | `IAvnContentControl`, `IAvnButton`, `IAvnToggleButton`, `IAvnListBox`, `IAvnComboBox` and everything below them | 4 → 5 | `IAvnAvaloniaObject` (2), `IAvnStyledElement`, `IAvnControl`, `IAvnDecorator` (3), `IAvnBorder`, `IAvnPanel`, `IAvnGrid`, `IAvnCanvas`, `IAvnDockPanel`, `IAvnStackPanel`, `IAvnTextBlock`, `IAvnTemplatedControl`, `IAvnItemsControl`, `IAvnSelectingItemsControl`, `IAvnTextBox`, `IAvnRangeBase`, `IAvnSlider`, `IAvnProgressBar` (4) |
+| Definitions | `IAvnGrid` alone | 4 → 5 | everything else, including `IAvnPanel`, `IAvnCanvas`, `IAvnDockPanel`, `IAvnStackPanel` (4) |
+
+Nothing in the object model derives from `Grid`, so the definitions wave moves
+exactly one interface. `IAvnGrid` has published versions 1–4 and now publishes 5;
+all four earlier IIDs are retired for good.
 
 `IAvnControlFactory` grew `create_solid_color_brush` and moved from version 1 to
-2. The completeness wave adds no factory slot, so it stays at 2. `IAvnBrush` is
-brand new, so it starts at version 1. The collection interfaces and the event
-handler interfaces are unchanged, because they carry interface pointers rather
-than the widened layouts.
+2. Neither the completeness nor the definitions wave adds a factory slot, so it
+stays at 2. `IAvnBrush` is brand new, so it starts at version 1. The collection
+interfaces and the event handler interfaces are unchanged, because they carry
+interface pointers rather than the widened layouts.
 
 `Decorator` sits between `Control` and `Border`. The chrome wave added members to
 `Border`, not to `Decorator`, and nothing was added to `Decorator`'s bases either,

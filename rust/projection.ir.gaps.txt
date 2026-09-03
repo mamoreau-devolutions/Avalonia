@@ -61,8 +61,6 @@ Avalonia.Controls.Control.SizeChanged: Not included by projection policy
 Avalonia.Controls.Expander.ContentTransition: Not included by projection policy
 Avalonia.Controls.Expander.Collapsing: Not included by projection policy
 Avalonia.Controls.Expander.Expanding: Not included by projection policy
-Avalonia.Controls.Grid.ColumnDefinitions: Not included by projection policy
-Avalonia.Controls.Grid.RowDefinitions: Not included by projection policy
 Avalonia.Controls.ItemsControl.DisplayMemberBinding: Not included by projection policy
 Avalonia.Controls.ItemsControl.ItemContainerGenerator: Not included by projection policy
 Avalonia.Controls.ItemsControl.ItemContainerTheme: Not included by projection policy

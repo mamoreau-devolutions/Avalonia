@@ -161,6 +161,44 @@ public class ComSourceEmitterTests
     }
 
     [Fact]
+    public void Emits_grid_definitions_as_strings_converted_by_the_managed_types_own_parse()
+    {
+        var ir = ClrTypeExtractor.Extract(
+            [typeof(AvaloniaObject), typeof(StyledElement), typeof(Control), typeof(Panel), typeof(Grid)],
+            AvaloniaProjectionProfiles.ObjectModelKernel);
+        var grid = ComSourceEmitter.Emit(ir)["IAvnGrid.g.cs"];
+
+        // The ABI slot is a plain non-nullable UTF-16 string in both directions.
+        foreach (var expected in new[]
+                 {
+                     "int GetColumnDefinitions(out string value);",
+                     "int SetColumnDefinitions(string value);",
+                     "int GetRowDefinitions(out string value);",
+                     "int SetRowDefinitions(string value);",
+                 })
+        {
+            Assert.Contains(expected, grid, StringComparison.Ordinal);
+        }
+
+        // The wrapper converts with ColumnDefinitions/RowDefinitions' own round trip rather
+        // than assigning a string straight onto a definition collection.
+        foreach (var expected in new[]
+                 {
+                     "value = _value.ColumnDefinitions.ToString();",
+                     "_value.ColumnDefinitions = global::Avalonia.Controls.ColumnDefinitions.Parse(value);",
+                     "value = _value.RowDefinitions.ToString();",
+                     "_value.RowDefinitions = global::Avalonia.Controls.RowDefinitions.Parse(value);",
+                 })
+        {
+            Assert.Contains(expected, grid, StringComparison.Ordinal);
+        }
+
+        // No definition object crosses, so no interface is minted for one.
+        Assert.DoesNotContain("IAvnColumnDefinition", grid, StringComparison.Ordinal);
+        Assert.DoesNotContain("IAvnRowDefinition", grid, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Checked_in_ir_and_host_sources_match_generator()
     {
         Type[] types =

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("240199CD-F2BD-55CD-BE4D-8DA83F228D71")]
+[Guid("50725F62-E6AC-5B40-A6CF-152F9D29E20E")]
 public partial interface IAvnGrid : IAvnPanel
 {
     [PreserveSig]
@@ -26,6 +26,18 @@ public partial interface IAvnGrid : IAvnPanel
 
     [PreserveSig]
     int SetColumnSpacing(double value);
+
+    [PreserveSig]
+    int GetColumnDefinitions(out string value);
+
+    [PreserveSig]
+    int SetColumnDefinitions(string value);
+
+    [PreserveSig]
+    int GetRowDefinitions(out string value);
+
+    [PreserveSig]
+    int SetRowDefinitions(string value);
 
 }
 
@@ -769,6 +781,68 @@ public sealed partial class AvnGrid : IAvnGrid
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.ColumnSpacing = value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetColumnDefinitions(out string value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.ColumnDefinitions.ToString();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetColumnDefinitions(string value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ColumnDefinitions = global::Avalonia.Controls.ColumnDefinitions.Parse(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetRowDefinitions(out string value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.RowDefinitions.ToString();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetRowDefinitions(string value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.RowDefinitions = global::Avalonia.Controls.RowDefinitions.Parse(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

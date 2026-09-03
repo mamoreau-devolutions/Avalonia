@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
@@ -211,7 +212,7 @@ public class ClrTypeExtractorTests
         Assert.All(
             new[]
             {
-                "IAvnBorder", "IAvnPanel", "IAvnCanvas", "IAvnDockPanel", "IAvnGrid",
+                "IAvnBorder", "IAvnPanel", "IAvnCanvas", "IAvnDockPanel",
                 "IAvnStackPanel", "IAvnTextBlock", "IAvnTemplatedControl", "IAvnItemsControl",
                 "IAvnSelectingItemsControl", "IAvnTextBox", "IAvnRangeBase", "IAvnSlider",
                 "IAvnProgressBar",
@@ -238,13 +239,14 @@ public class ClrTypeExtractorTests
         var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
 
         // ContentControl, Button, ToggleButton, ListBox and ComboBox all grew slots, so they
-        // and every interface below them republish under a version 5 IID.
+        // and every interface below them republish under a version 5 IID. Grid joined them at
+        // version 5 for the definitions wave.
         string[] moved =
         [
             "IAvnContentControl", "IAvnHeaderedContentControl", "IAvnExpander", "IAvnButton",
             "IAvnToggleButton", "IAvnCheckBox", "IAvnRadioButton", "IAvnToggleSwitch",
             "IAvnListBox", "IAvnComboBox", "IAvnListBoxItem", "IAvnComboBoxItem",
-            "IAvnScrollViewer", "IAvnWindow",
+            "IAvnScrollViewer", "IAvnWindow", "IAvnGrid",
         ];
 
         Assert.All(
@@ -426,8 +428,73 @@ public class ClrTypeExtractorTests
     }
 
     [Fact]
-    public void Produces_stable_unique_iids_and_explicit_gap_report()
+    public void Projects_grid_definitions_as_the_length_list_string_grid_already_parses()
     {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+
+        var grid = Type(ir, "IAvnGrid");
+        Assert.All(
+            new[] { nameof(Grid.ColumnDefinitions), nameof(Grid.RowDefinitions) },
+            name =>
+            {
+                var property = grid.Properties.Single(candidate => candidate.Name == name);
+                Assert.Equal(MarshallingKind.StringUtf16, property.Kind);
+                Assert.True(property.CanRead && property.CanWrite);
+                // Never null: an empty grid reports an empty list rather than a null pointer.
+                Assert.False(property.IsNullable);
+                // The managed type is retained so the emitter converts with the type's own
+                // Parse/ToString instead of assigning a string to a definition collection.
+                Assert.Equal($"Avalonia.Controls.{name}", property.ManagedTypeName);
+                Assert.Null(property.InterfaceName);
+                Assert.Null(property.ElementKind);
+            });
+
+        // The definition collections are not projected as types or collection interfaces of
+        // their own, so nothing new is minted to carry them.
+        Assert.DoesNotContain(
+            ir.Types,
+            type => type.Name is "IAvnColumnDefinitions" or "IAvnRowDefinitions"
+                or "IAvnColumnDefinition" or "IAvnRowDefinition");
+        Assert.DoesNotContain(
+            ir.Types.SelectMany(type => type.Properties),
+            property => property.Kind == MarshallingKind.ComCollection &&
+                property.ManagedTypeName?.EndsWith("Definitions", StringComparison.Ordinal) == true);
+    }
+
+    [Fact]
+    public void A_string_override_requires_the_managed_type_to_own_both_halves_of_the_round_trip()
+    {
+        // Grid's definitions qualify: both declare `static T Parse(string)` and override
+        // ToString(), so the projection is a conversion the type itself owns.
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+        Assert.Equal(2, Type(ir, "IAvnGrid").Properties
+            .Count(property => property.ManagedTypeName is
+                "Avalonia.Controls.ColumnDefinitions" or "Avalonia.Controls.RowDefinitions"));
+
+        // A type without that pair is refused rather than projected with a guessed conversion.
+        var policy = new ProjectionPolicy
+        {
+            IncludeTypeNames = [typeof(Panel).FullName!],
+            IncludeMembers = new Dictionary<string, IReadOnlyList<string>>(StringComparer.Ordinal)
+            {
+                [typeof(Panel).FullName!] = [nameof(Panel.Children)],
+            },
+            MemberOverrides = new Dictionary<string, MarshallingOverride>(StringComparer.Ordinal)
+            {
+                [$"{typeof(Panel).FullName}.{nameof(Panel.Children)}"] =
+                    new() { Kind = MarshallingKind.StringUtf16 },
+            },
+        };
+
+        var refused = ClrTypeExtractor.Extract([typeof(Panel)], policy);
+        Assert.Empty(refused.Types.Single().Properties);
+        Assert.Contains(refused.Skipped, skipped =>
+            skipped.Member == nameof(Panel.Children) &&
+            skipped.Reason.Contains("Parse(string)", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Produces_stable_unique_iids_and_explicit_gap_report()    {
         var first = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
         var second = ClrTypeExtractor.Extract(KernelTypes.Reverse(), AvaloniaProjectionProfiles.ObjectModelKernel);
 

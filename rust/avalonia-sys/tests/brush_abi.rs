@@ -77,7 +77,6 @@ fn chrome_wave_interfaces_publish_abi_version_four() {
         "#define I_AVN_PANEL_ABI_VERSION 4",
         "#define I_AVN_TEMPLATED_CONTROL_ABI_VERSION 4",
         "#define I_AVN_TEXT_BLOCK_ABI_VERSION 4",
-        "#define I_AVN_GRID_ABI_VERSION 4",
         // The factory grew create_solid_color_brush.
         "#define I_AVN_CONTROL_FACTORY_ABI_VERSION 2",
         // Nothing was added to StyledElement, Control or Decorator, and none of their bases

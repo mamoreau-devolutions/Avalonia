@@ -588,8 +588,8 @@
       "name": "IAvnGrid",
       "fullName": "Avalonia.Host.Com.IAvnGrid",
       "kind": "Class",
-      "iid": "240199CD-F2BD-55CD-BE4D-8DA83F228D71",
-      "abiVersion": 4,
+      "iid": "50725F62-E6AC-5B40-A6CF-152F9D29E20E",
+      "abiVersion": 5,
       "baseFullName": "Avalonia.Host.Com.IAvnPanel",
       "managedFullName": "Avalonia.Controls.Grid",
       "isConstructible": true,
@@ -620,6 +620,24 @@
           "canWrite": true,
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "ColumnDefinitions",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.ColumnDefinitions",
+          "isNullable": false
+        },
+        {
+          "name": "RowDefinitions",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.RowDefinitions",
           "isNullable": false
         }
       ],
@@ -4161,16 +4179,6 @@
     {
       "owner": "Avalonia.Controls.Expander",
       "member": "Expanding",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Grid",
-      "member": "ColumnDefinitions",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Grid",
-      "member": "RowDefinitions",
       "reason": "Not included by projection policy"
     },
     {

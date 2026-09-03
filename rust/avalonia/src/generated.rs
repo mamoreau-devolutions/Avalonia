@@ -4528,6 +4528,28 @@ impl Grid {
         self.set_column_spacing(value)?;
         Ok(self)
     }
+    pub fn get_column_definitions(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_column_definitions()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_column_definitions(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_column_definitions(&value)?)
+    }
+    pub fn column_definitions(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_column_definitions(value)?;
+        Ok(self)
+    }
+    pub fn get_row_definitions(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_row_definitions()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_row_definitions(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_row_definitions(&value)?)
+    }
+    pub fn row_definitions(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_row_definitions(value)?;
+        Ok(self)
+    }
     pub fn get_column(target: &impl AsControl) -> Result<i32> {
         let target = target.as_control()?;
         let value = with_factory(|factory| factory.get_grid_statics()?.get_column(&target))?;

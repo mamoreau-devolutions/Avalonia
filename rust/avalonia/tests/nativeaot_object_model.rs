@@ -286,6 +286,30 @@ fn builders_create_a_real_window_through_nativeaot() {
         assert!(!readout.get_is_visible()?);
         readout.set_visible(true)?;
 
+        // Grid tracks cross as the comma-separated length list Avalonia already parses. `*` is
+        // shorthand for `1*`, so the getter reports the list Avalonia normalised rather than the
+        // exact characters that were written; writing that list back is a fixed point.
+        let tracks = Grid::new()?
+            .column_definitions("*,Auto,120")?
+            .row_definitions("Auto,2*")?
+            .column_spacing(4.0)?
+            .row_spacing(2.0)?;
+        assert_eq!(tracks.get_column_definitions()?, "1*,Auto,120");
+        assert_eq!(tracks.get_row_definitions()?, "Auto,2*");
+        tracks.set_column_definitions(tracks.get_column_definitions()?)?;
+        assert_eq!(tracks.get_column_definitions()?, "1*,Auto,120");
+
+        // Clearing the tracks is an empty list, not a null.
+        tracks.set_row_definitions("")?;
+        assert_eq!(tracks.get_row_definitions()?, "");
+        tracks.set_row_definitions("Auto,2*")?;
+
+        let cell = TextBlock::new()?.text("Cell")?;
+        Grid::set_column(&cell, 1)?;
+        Grid::set_row(&cell, 1)?;
+        assert_eq!(Grid::get_column(&cell)?, 1);
+        let tracks = tracks.child(cell)?;
+
         let panel = StackPanel::new()?
             .orientation(Orientation::Vertical)?
             .spacing(8.0)?
@@ -300,8 +324,9 @@ fn builders_create_a_real_window_through_nativeaot() {
             .child(hover_panel)?
             .child(progress)?
             .child(laid_out)?
+            .child(tracks)?
             .child(button)?;
-        assert_eq!(panel.children()?.len()?, 11);
+        assert_eq!(panel.children()?.len()?, 12);
         assert_eq!(panel.get_orientation()?, Orientation::Vertical);
         assert_eq!(panel.get_spacing()?, 8.0);
         assert_eq!(

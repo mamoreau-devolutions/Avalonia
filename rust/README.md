@@ -16,7 +16,11 @@ alignments, min/max sizes, `IsVisible`, `Opacity`, `Name`, `CanResize`,
 `TextAlignment`) and control members (`ClickMode`, `IsDefault`, `IsCancel`,
 `IsPressed`, `IsThreeState`, content alignments, `SelectionMode`, `SelectAll`,
 `UnselectAll`, `IsDropDownOpen`, `IsEditable`, `MaxDropDownHeight`) are
-documented in [MARSHALLING.md](MARSHALLING.md).
+documented in [MARSHALLING.md](MARSHALLING.md). `Grid.ColumnDefinitions` and
+`Grid.RowDefinitions` cross as the same comma-separated length list AXAML uses —
+`grid.set_column_definitions("*,Auto,120")?` — which is normalising rather than
+byte-preserving and carries only each track's length; see
+[Grid track definitions](MARSHALLING.md#grid-track-definitions).
 The executor-neutral completion ABI and clipboard integration are documented
 in [ASYNC.md](ASYNC.md).
 Desktop file integration (pickers, drag/drop, "open with", file associations)

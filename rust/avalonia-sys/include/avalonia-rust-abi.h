@@ -1167,12 +1167,12 @@ struct IAvnExpander { const IAvnExpanderVtbl* vtbl; };
 #define I_AVN_EXPANDER_VTABLE_SLOTS 66
 
 static const AvnGuid I_AVN_GRID_IID = {
-    0x240199CD,
-    0xF2BD,
-    0x55CD,
-    { 0xBE, 0x4D, 0x8D, 0xA8, 0x3F, 0x22, 0x8D, 0x71 }
+    0x50725F62,
+    0xE6AC,
+    0x5B40,
+    { 0xA6, 0xCF, 0x15, 0x2F, 0x9D, 0x29, 0xE2, 0x0E }
 };
-#define I_AVN_GRID_ABI_VERSION 4
+#define I_AVN_GRID_ABI_VERSION 5
 struct IAvnGridVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnGrid* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnGrid* self); /* slot 1 */
@@ -1221,9 +1221,13 @@ struct IAvnGridVtbl {
     AvnHResult (AVN_CALL *set_row_spacing)(IAvnGrid* self, double value); /* slot 44 */
     AvnHResult (AVN_CALL *get_column_spacing)(IAvnGrid* self, double* value); /* slot 45 */
     AvnHResult (AVN_CALL *set_column_spacing)(IAvnGrid* self, double value); /* slot 46 */
+    AvnHResult (AVN_CALL *get_column_definitions)(IAvnGrid* self, uint16_t** value); /* slot 47 */
+    AvnHResult (AVN_CALL *set_column_definitions)(IAvnGrid* self, const uint16_t* value); /* slot 48 */
+    AvnHResult (AVN_CALL *get_row_definitions)(IAvnGrid* self, uint16_t** value); /* slot 49 */
+    AvnHResult (AVN_CALL *set_row_definitions)(IAvnGrid* self, const uint16_t* value); /* slot 50 */
 };
 struct IAvnGrid { const IAvnGridVtbl* vtbl; };
-#define I_AVN_GRID_VTABLE_SLOTS 47
+#define I_AVN_GRID_VTABLE_SLOTS 51
 
 static const AvnGuid I_AVN_HEADERED_CONTENT_CONTROL_IID = {
     0xEF77B5CB,
