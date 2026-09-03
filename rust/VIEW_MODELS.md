@@ -565,3 +565,37 @@ for the sample's `LogWindow`:
 
 That is the whole stage 28 / stage 30 distinction in three numbers: 100,000
 logical rows, 64 live data objects, 5 live visuals.
+
+## Stage 31: menus, accelerators, recent files and clipboard
+
+Schema version 5 adds a declared command surface: `menus` and `recentFiles` on a
+model, plus a `displayPath` that the generated adapter projects as `ToString()`.
+
+Menus are presentation, so they introduce **no view-model ABI**. The generator
+emits named factories that build real Avalonia `NativeMenu`, `ContextMenu` and
+`KeyBinding` objects wired to the already generated command and property
+surface, with no reflection anywhere:
+
+- `Create<Menu>` / `Attach<Menu>` for an application menu, which sets the
+  top-level's `NativeMenu` (exported natively where the platform has a menu bar,
+  rendered in-window by `NativeMenuBar` otherwise) and installs every declared
+  gesture as a key binding;
+- a generated `ContextMenu` subclass per context menu, attachable from compiled
+  AXAML and bound from the target control's data context;
+- `Create<Menu>` / `Attach<Menu>` returning key bindings only for an
+  accelerator-only menu.
+
+A recent-file list is a bounded MRU list of stage 29 storage URIs published
+through the existing string-collection transport, so it needs no new ABI and
+nothing platform-specific. `TableViewColumn` gained `MinWidth`/`MaxWidth`, so
+the schema's declared column minimum is now honoured by compiled AXAML, and
+`TableViewRow` composes its accessible name from its cells instead of the row
+item's CLR type name.
+
+Only the clipboard needs the host: a fourth separately versioned capability
+(`IAvnApplication4`) adds clearing, multi-format writes and reading file entries
+back as immutable storage snapshots. The frozen text methods on
+`IAvnApplication` are unchanged.
+
+See [MENUS.md](MENUS.md) for the full design, the enabled-state rule and the
+honest platform limits.

@@ -88,6 +88,13 @@ public sealed partial class TraceRowViewModelAdapter : IAvnRustVmSink, IAvnRustV
     }
 
 
+    /// <summary>
+    /// The declared display projection (<c>Message</c>). Presentation and UI
+    /// automation fall back to this for an untemplated data item, so it reports
+    /// the row's own text rather than this adapter's CLR type name.
+    /// </summary>
+    public override string ToString() => Message;
+
     public bool HasErrors => _errors.Count > 0;
 
     public IEnumerable GetErrors(string? propertyName) =>

@@ -14,3 +14,12 @@ binary, and writes the adjacent runnable bundle declared by the manifest.
 Generated external bindings use a crate-root compatibility bridge. Keep the
 `view_model` exports in `src/main.rs`, including `DynamicViewModel`,
 `ViewModelSink`, `ViewModelBatch`, and `BatchCompletion`.
+
+The scaffold's schema declares a stage 31 `Main` menu with a copy command
+(`Ctrl+C`), a recent-file submenu and `Exit` (`Ctrl+Q`). `MainWindow.axaml.cs`
+attaches it through the generated `MainViewModelMenus.AttachMain`, which sets
+the top-level's `NativeMenu` and installs the declared gestures as key
+bindings; the `NativeMenuBar` in `MainWindow.axaml` renders that same menu
+in-window on platforms without a native menu bar. Recent files are Rust-owned
+storage URIs published through the generated `publish_recent_files`. See
+`MENUS.md` in the producer checkout.

@@ -5,10 +5,16 @@ namespace Avalonia.Projection.Ir;
 
 public sealed class ViewModelIr
 {
-    public const int CurrentVersion = 4;
+    public const int CurrentVersion = 5;
 
     /// <summary>The first schema version that accepts stage 30 richer data shapes.</summary>
     public const int RicherDataShapesVersion = 4;
+
+    /// <summary>
+    /// The first schema version that accepts stage 31 command surfaces: menus,
+    /// keyboard accelerators, recent-file lists and declared display paths.
+    /// </summary>
+    public const int CommandSurfaceVersion = 5;
 
     public int Version { get; init; } = CurrentVersion;
     public IReadOnlyList<ViewModelEnumDefinition> Enums { get; init; } = [];
@@ -32,13 +38,16 @@ public sealed class ViewModelIr
 
     public void Validate()
     {
-        if (Version is not (2 or 3 or CurrentVersion))
+        if (Version is not (2 or 3 or 4 or CurrentVersion))
             throw new InvalidOperationException($"Unsupported view-model IR version {Version}.");
         if (Version == 2 && Models.Any(model => model.Collections.Any(collection => collection.Table is not null)))
             throw new InvalidOperationException("View-model IR version 2 does not support table metadata; upgrade to version 3.");
         if (Version < RicherDataShapesVersion && Models.Any(HasRicherDataShapes))
             throw new InvalidOperationException(
                 $"View-model IR version {Version} does not support keyed maps, windowed collections, tree metadata, structured command results, progress or cancellation; upgrade to version {RicherDataShapesVersion}.");
+        if (Version < CommandSurfaceVersion && Models.Any(HasCommandSurfaces))
+            throw new InvalidOperationException(
+                $"View-model IR version {Version} does not support menus, keyboard accelerators, recent-file lists or display paths; upgrade to version {CommandSurfaceVersion}.");
         EnsurePositiveIds(Enums, enumDefinition => enumDefinition.Id, "enum");
         EnsurePositiveIds(Models, model => model.Id, "model");
         EnsurePositiveIds(Views, view => view.Id, "view");
@@ -106,6 +115,7 @@ public sealed class ViewModelIr
             EnsurePositiveIds(model.Collections, collection => collection.Id, $"{model.Name} collection");
             EnsurePositiveIds(model.Maps, map => map.Id, $"{model.Name} map");
             EnsurePositiveIds(model.Commands, command => command.Id, $"{model.Name} command");
+            EnsurePositiveIds(model.Menus, menu => menu.Id, $"{model.Name} menu");
             EnsureUnique(model.Properties, property => property.Id, $"{model.Name} property ID");
             EnsureUnique(model.Properties, property => property.Name, $"{model.Name} property name");
             EnsureUnique(model.Collections, collection => collection.Id, $"{model.Name} collection ID");
@@ -114,6 +124,8 @@ public sealed class ViewModelIr
             EnsureUnique(model.Maps, map => map.Name, $"{model.Name} map name");
             EnsureUnique(model.Commands, command => command.Id, $"{model.Name} command ID");
             EnsureUnique(model.Commands, command => command.Name, $"{model.Name} command name");
+            EnsureUnique(model.Menus, menu => menu.Id, $"{model.Name} menu ID");
+            EnsureUnique(model.Menus, menu => menu.Name, $"{model.Name} menu name");
             EnsureUnique(
                 model.Properties.Select(property => property.Name)
                     .Concat(model.Collections.Select(collection => collection.Name))
@@ -201,6 +213,10 @@ public sealed class ViewModelIr
                     throw new InvalidOperationException(
                         $"Command parameter property '{model.Name}.{property.Name}' must not be nullable.");
             }
+            ValidateDisplayPath(model, models: Models);
+            ValidateRecentFiles(model);
+            foreach (var menu in model.Menus)
+                ValidateMenu(model, menu, enumsByName);
         }
 
         ValidateAcyclicModelGraph();
@@ -344,6 +360,269 @@ public sealed class ViewModelIr
         model.Maps.Count > 0 ||
         model.Collections.Any(collection => collection.Window is not null || collection.Tree is not null || collection.Recursive) ||
         model.Commands.Any(command => command.ResultModelName is not null || command.SupportsProgress || command.SupportsCancellation);
+
+    private static bool HasCommandSurfaces(ViewModelDefinition model) =>
+        model.Menus.Count > 0 ||
+        model.RecentFiles is not null ||
+        model.DisplayPath is not null;
+
+    /// <summary>
+    /// Validates the optional declared display path: a dotted path on the model
+    /// itself, ending in a string property, that the generated adapter projects
+    /// as <c>ToString()</c>. It is what gives a row, list item or tree node a
+    /// meaningful accessible name instead of the adapter's CLR type name.
+    /// </summary>
+    private static void ValidateDisplayPath(
+        ViewModelDefinition model,
+        IReadOnlyList<ViewModelDefinition> models)
+    {
+        if (model.DisplayPath is not { } path)
+            return;
+        EnsureNotBlank(path, $"Display path for model '{model.Name}'");
+        var current = model;
+        var segments = path.Split('.');
+        for (var index = 0; index < segments.Length; index++)
+        {
+            var segment = segments[index];
+            EnsureIdentifier(segment, $"Display path segment in model '{model.Name}'");
+            var property = current.Properties.SingleOrDefault(candidate => candidate.Name == segment)
+                ?? throw new InvalidOperationException(
+                    $"Model '{model.Name}' displayPath '{path}' references unknown property '{segment}' on '{current.Name}'.");
+            if (index == segments.Length - 1)
+            {
+                if (property.Kind != ViewModelValueKind.String)
+                    throw new InvalidOperationException(
+                        $"Model '{model.Name}' displayPath '{path}' must end in a String property.");
+                return;
+            }
+
+            if (property.Kind != ViewModelValueKind.Model || property.ModelName is null)
+                throw new InvalidOperationException(
+                    $"Model '{model.Name}' displayPath '{path}' cannot traverse scalar property '{segment}'.");
+            current = models.Single(candidate => candidate.Name == property.ModelName);
+        }
+    }
+
+    /// <summary>
+    /// Validates the recent-file list. It deliberately reuses the already
+    /// published string-collection transport: an entry <em>is</em> a stage 29
+    /// storage URI, which is the only member a storage item is guaranteed to
+    /// have, and the menu header is derived from it. No new ABI is introduced.
+    /// </summary>
+    private static void ValidateRecentFiles(ViewModelDefinition model)
+    {
+        if (model.RecentFiles is not { } recent)
+            return;
+        if (recent.Capacity <= 0)
+            throw new InvalidOperationException(
+                $"Recent files on '{model.Name}' must declare a positive capacity.");
+        var collection = model.Collections.SingleOrDefault(candidate => candidate.Name == recent.Collection)
+            ?? throw new InvalidOperationException(
+                $"Recent files on '{model.Name}' references unknown collection '{recent.Collection}'.");
+        if (collection.ElementKind != ViewModelValueKind.String)
+            throw new InvalidOperationException(
+                $"Recent files collection '{model.Name}.{collection.Name}' must contain strings (storage URIs).");
+        if (collection.Window is not null || collection.Table is not null || collection.Tree is not null)
+            throw new InvalidOperationException(
+                $"Recent files collection '{model.Name}.{collection.Name}' must be a plain string collection.");
+        var command = model.Commands.SingleOrDefault(candidate => candidate.Name == recent.ActivateCommand)
+            ?? throw new InvalidOperationException(
+                $"Recent files on '{model.Name}' references unknown activate command '{recent.ActivateCommand}'.");
+        if (command.ParameterProperty is not null)
+            throw new InvalidOperationException(
+                $"Recent files activate command '{model.Name}.{command.Name}' must not use parameterProperty; the selected URI is passed as the command parameter.");
+    }
+
+    private static void ValidateMenu(
+        ViewModelDefinition model,
+        ViewModelMenu menu,
+        IReadOnlyDictionary<string, ViewModelEnumDefinition> enumsByName)
+    {
+        EnsureIdentifier(menu.Name, $"Menu name in model '{model.Name}'");
+        if (menu.Items.Count == 0)
+            throw new InvalidOperationException($"Menu '{model.Name}.{menu.Name}' must declare at least one item.");
+        if (menu.Kind == ViewModelMenuKind.Accelerators)
+        {
+            foreach (var item in menu.Items)
+            {
+                if (item.Kind is not (ViewModelMenuItemKind.Command or ViewModelMenuItemKind.Toggle or ViewModelMenuItemKind.Radio))
+                    throw new InvalidOperationException(
+                        $"Accelerator menu '{model.Name}.{menu.Name}' item '{item.Name}' must be a command, toggle or radio item.");
+                if (item.Gesture is null)
+                    throw new InvalidOperationException(
+                        $"Accelerator menu '{model.Name}.{menu.Name}' item '{item.Name}' must declare a gesture.");
+            }
+        }
+        var ids = new HashSet<int>();
+        var names = new HashSet<string>(StringComparer.Ordinal);
+        ValidateMenuItems(model, menu, menu.Items, ids, names, enumsByName, depth: 0);
+    }
+
+    /// <summary>
+    /// The key menu item names are made unique by.
+    /// </summary>
+    /// <remarks>
+    /// Every item of a menu, nested submenu items included, is projected into
+    /// one generated method body whose local names are the item name with a
+    /// lower-cased first character. Two names that differ only in that first
+    /// character would therefore collide as generated locals, so uniqueness is
+    /// enforced on the same key rather than on the verbatim name - a schema
+    /// error is a far better report than a compile error in generated code.
+    /// </remarks>
+    private static string MenuItemNameKey(string name) =>
+        char.ToLowerInvariant(name[0]) + name[1..];
+
+    private static void ValidateMenuItems(
+        ViewModelDefinition model,
+        ViewModelMenu menu,
+        IReadOnlyList<ViewModelMenuItem> items,
+        HashSet<int> ids,
+        HashSet<string> names,
+        IReadOnlyDictionary<string, ViewModelEnumDefinition> enumsByName,
+        int depth)
+    {
+        if (depth > MaxMenuDepth)
+            throw new InvalidOperationException(
+                $"Menu '{model.Name}.{menu.Name}' nests deeper than {MaxMenuDepth} levels.");
+        foreach (var item in items)
+        {
+            if (item.Id <= 0)
+                throw new InvalidOperationException($"Menu item ID '{item.Id}' in '{model.Name}.{menu.Name}' must be positive.");
+            if (!ids.Add(item.Id))
+                throw new InvalidOperationException($"Duplicate menu item ID '{item.Id}' in '{model.Name}.{menu.Name}'.");
+            EnsureIdentifier(item.Name, $"Menu item name in '{model.Name}.{menu.Name}'");
+            if (!names.Add(MenuItemNameKey(item.Name)))
+                throw new InvalidOperationException($"Duplicate menu item name '{item.Name}' in '{model.Name}.{menu.Name}'.");
+            ValidateMenuItem(model, menu, item, enumsByName);
+            if (item.Items.Count > 0)
+                ValidateMenuItems(model, menu, item.Items, ids, names, enumsByName, depth + 1);
+        }
+    }
+
+    private static void ValidateMenuItem(
+        ViewModelDefinition model,
+        ViewModelMenu menu,
+        ViewModelMenuItem item,
+        IReadOnlyDictionary<string, ViewModelEnumDefinition> enumsByName)
+    {
+        var where = $"Menu item '{model.Name}.{menu.Name}.{item.Name}'";
+        if (item.Kind == ViewModelMenuItemKind.Separator)
+        {
+            if (item.Header is not null || item.Command is not null || item.Gesture is not null ||
+                item.ToggleProperty is not null || item.RadioProperty is not null || item.Items.Count > 0)
+                throw new InvalidOperationException($"{where} is a separator and cannot declare any other member.");
+            return;
+        }
+
+        EnsureNotBlank(item.Header ?? "", $"Header for {where.ToLowerInvariant()}");
+        if (item.Gesture is { } gesture)
+            EnsureNotBlank(gesture, $"Gesture for {where.ToLowerInvariant()}");
+        if (item.IsEnabledProperty is { } enabled)
+            RequireBooleanProperty(model, enabled, $"{where} isEnabledProperty");
+
+        switch (item.Kind)
+        {
+            case ViewModelMenuItemKind.Command:
+                if (item.Command is null)
+                    throw new InvalidOperationException($"{where} must declare a command.");
+                RequireCommand(model, item.Command, where);
+                RejectSubItems(item, where);
+                break;
+            case ViewModelMenuItemKind.Submenu:
+                if (item.Items.Count == 0)
+                    throw new InvalidOperationException($"{where} is a submenu and must declare items.");
+                if (item.Command is not null || item.Gesture is not null)
+                    throw new InvalidOperationException($"{where} is a submenu and cannot declare a command or gesture.");
+                break;
+            case ViewModelMenuItemKind.Toggle:
+                if (item.ToggleProperty is null)
+                    throw new InvalidOperationException($"{where} must declare a toggleProperty.");
+                var toggle = RequireBooleanProperty(model, item.ToggleProperty, $"{where} toggleProperty");
+                if (!toggle.Writable)
+                    throw new InvalidOperationException($"{where} toggleProperty '{toggle.Name}' must be writable.");
+                if (item.Command is not null)
+                    RequireCommand(model, item.Command, where);
+                RejectSubItems(item, where);
+                break;
+            case ViewModelMenuItemKind.Radio:
+                if (item.RadioProperty is null || item.RadioValue is null)
+                    throw new InvalidOperationException($"{where} must declare a radioProperty and a radioValue.");
+                ValidateRadio(model, item, enumsByName, where);
+                if (item.Command is not null)
+                    RequireCommand(model, item.Command, where);
+                RejectSubItems(item, where);
+                break;
+            case ViewModelMenuItemKind.RecentFiles:
+                if (model.RecentFiles is null)
+                    throw new InvalidOperationException($"{where} is a recent-file submenu but '{model.Name}' declares no recentFiles.");
+                if (item.Command is not null || item.Gesture is not null)
+                    throw new InvalidOperationException($"{where} is a recent-file submenu and cannot declare a command or gesture.");
+                RejectSubItems(item, where);
+                break;
+            default:
+                throw new InvalidOperationException($"{where} has an unsupported kind '{item.Kind}'.");
+        }
+
+        if (item.ToggleProperty is not null && item.Kind != ViewModelMenuItemKind.Toggle)
+            throw new InvalidOperationException($"{where} declares a toggleProperty but is not a toggle.");
+        if ((item.RadioProperty is not null || item.RadioValue is not null) && item.Kind != ViewModelMenuItemKind.Radio)
+            throw new InvalidOperationException($"{where} declares radio members but is not a radio item.");
+
+        static void RejectSubItems(ViewModelMenuItem item, string where)
+        {
+            if (item.Items.Count > 0)
+                throw new InvalidOperationException($"{where} cannot declare nested items.");
+        }
+    }
+
+    private static void ValidateRadio(
+        ViewModelDefinition model,
+        ViewModelMenuItem item,
+        IReadOnlyDictionary<string, ViewModelEnumDefinition> enumsByName,
+        string where)
+    {
+        var property = model.Properties.SingleOrDefault(candidate => candidate.Name == item.RadioProperty)
+            ?? throw new InvalidOperationException($"{where} radioProperty '{item.RadioProperty}' is not a property of '{model.Name}'.");
+        if (!property.Writable)
+            throw new InvalidOperationException($"{where} radioProperty '{property.Name}' must be writable.");
+        if (property.Nullable)
+            throw new InvalidOperationException($"{where} radioProperty '{property.Name}' must not be nullable.");
+        switch (property.Kind)
+        {
+            case ViewModelValueKind.String:
+                break;
+            case ViewModelValueKind.Enum:
+                var enumDefinition = enumsByName[property.EnumName!];
+                if (!enumDefinition.Members.Any(member => member.Name == item.RadioValue))
+                    throw new InvalidOperationException(
+                        $"{where} radioValue '{item.RadioValue}' is not a member of enum '{enumDefinition.Name}'.");
+                break;
+            default:
+                throw new InvalidOperationException(
+                    $"{where} radioProperty '{property.Name}' must be a String or Enum property.");
+        }
+    }
+
+    private static ViewModelProperty RequireBooleanProperty(
+        ViewModelDefinition model,
+        string name,
+        string where)
+    {
+        var property = model.Properties.SingleOrDefault(candidate => candidate.Name == name)
+            ?? throw new InvalidOperationException($"{where} '{name}' is not a property of '{model.Name}'.");
+        if (property.Kind != ViewModelValueKind.Boolean)
+            throw new InvalidOperationException($"{where} '{name}' must be a Boolean property.");
+        return property;
+    }
+
+    private static void RequireCommand(ViewModelDefinition model, string name, string where)
+    {
+        if (model.Commands.All(command => command.Name != name))
+            throw new InvalidOperationException($"{where} references unknown command '{name}'.");
+    }
+
+    /// <summary>Maximum nesting depth of a declared menu, submenus included.</summary>
+    public const int MaxMenuDepth = 8;
 
     private static void ValidateNodePath(
         ViewModelDefinition owner, ViewModelCollection collection, ViewModelDefinition node,
@@ -617,6 +896,142 @@ public sealed class ViewModelDefinition
     public IReadOnlyList<ViewModelMap> Maps { get; init; } = [];
 
     public IReadOnlyList<ViewModelCommand> Commands { get; init; } = [];
+
+    /// <summary>
+    /// Application, context and accelerator-only menus bound to this model's
+    /// generated commands and properties. Menus are presentation, so nothing
+    /// here crosses the ABI: the generated managed factory wires already
+    /// generated commands and property notifications.
+    /// </summary>
+    public IReadOnlyList<ViewModelMenu> Menus { get; init; } = [];
+
+    /// <summary>Optional generated recent-file list over a declared string (URI) collection.</summary>
+    public ViewModelRecentFiles? RecentFiles { get; init; }
+
+    /// <summary>
+    /// Optional dotted path on this model, ending in a string property, that
+    /// the generated adapter projects as <c>ToString()</c>. Presentation and UI
+    /// automation fall back to <c>ToString()</c> for a data item, so declaring
+    /// this is what stops a row reading as its CLR adapter type name.
+    /// </summary>
+    public string? DisplayPath { get; init; }
+}
+
+/// <summary>What a declared menu is projected as.</summary>
+public enum ViewModelMenuKind
+{
+    /// <summary>
+    /// The application/window menu. Projected as an Avalonia <c>NativeMenu</c>
+    /// set on a top-level, which the platform exports natively where it has a
+    /// menu bar (macOS) and which <c>NativeMenuBar</c> renders in-window
+    /// elsewhere. Declared gestures additionally become window key bindings,
+    /// because only a native menu bar handles its own shortcuts.
+    /// </summary>
+    Application,
+
+    /// <summary>
+    /// A context menu. Projected as a generated <c>ContextMenu</c> subclass so
+    /// compiled AXAML can attach it to any control and inherit its data context.
+    /// </summary>
+    Context,
+
+    /// <summary>
+    /// Keyboard accelerators with no visual menu. Projected only as key
+    /// bindings, for shortcuts that are not on any menu item.
+    /// </summary>
+    Accelerators,
+}
+
+/// <summary>What one declared menu item does.</summary>
+public enum ViewModelMenuItemKind
+{
+    /// <summary>Invokes a generated command.</summary>
+    Command,
+
+    /// <summary>A separator line. Carries no other member.</summary>
+    Separator,
+
+    /// <summary>A checkable item mirroring (and writing) a writable Boolean property.</summary>
+    Toggle,
+
+    /// <summary>One option of a radio group over a writable String or Enum property.</summary>
+    Radio,
+
+    /// <summary>A nested submenu of further items.</summary>
+    Submenu,
+
+    /// <summary>A submenu populated from the model's declared recent-file list.</summary>
+    RecentFiles,
+}
+
+/// <summary>One declared menu owned by a view model.</summary>
+public sealed class ViewModelMenu
+{
+    public required int Id { get; init; }
+    public required string Name { get; init; }
+    public required ViewModelMenuKind Kind { get; init; }
+    public IReadOnlyList<ViewModelMenuItem> Items { get; init; } = [];
+}
+
+/// <summary>One item in a declared menu.</summary>
+public sealed class ViewModelMenuItem
+{
+    public required int Id { get; init; }
+    public required string Name { get; init; }
+    public required ViewModelMenuItemKind Kind { get; init; }
+
+    /// <summary>Display text. Required for every kind except <see cref="ViewModelMenuItemKind.Separator"/>.</summary>
+    public string? Header { get; init; }
+
+    /// <summary>Name of the command (without the generated <c>Command</c> suffix) this item invokes.</summary>
+    public string? Command { get; init; }
+
+    /// <summary>
+    /// Keyboard accelerator in Avalonia <see cref="Avalonia.Input.KeyGesture"/>
+    /// syntax, for example <c>Ctrl+O</c> or <c>Ctrl+Shift+S</c>. The literal
+    /// text is carried through to <c>KeyGesture.Parse</c>; the platform-specific
+    /// <c>Cmd</c> mapping stays Avalonia's concern.
+    /// </summary>
+    public string? Gesture { get; init; }
+
+    /// <summary>Writable Boolean property mirrored by, and written from, a toggle item.</summary>
+    public string? ToggleProperty { get; init; }
+
+    /// <summary>Writable String or Enum property a radio item writes.</summary>
+    public string? RadioProperty { get; init; }
+
+    /// <summary>Value written to <see cref="RadioProperty"/>: an enum member name, or a literal string.</summary>
+    public string? RadioValue { get; init; }
+
+    /// <summary>Optional Boolean property controlling this item's enabled state.</summary>
+    public string? IsEnabledProperty { get; init; }
+
+    /// <summary>Child items of a <see cref="ViewModelMenuItemKind.Submenu"/>.</summary>
+    public IReadOnlyList<ViewModelMenuItem> Items { get; init; } = [];
+}
+
+/// <summary>
+/// A generated most-recently-used file list.
+/// </summary>
+/// <remarks>
+/// The list is deliberately a plain string collection of stage 29 storage URIs:
+/// a URI is the only member <c>IStorageItem</c> guarantees, so it is the stable
+/// identity, and the menu header is derived from it. That keeps recent files on
+/// the already published collection transport with no new ABI and nothing
+/// platform-specific (this is not a Windows jump list).
+/// </remarks>
+public sealed class ViewModelRecentFiles
+{
+    public required int Id { get; init; }
+
+    /// <summary>Name of the string collection holding the URIs, most recent first.</summary>
+    public required string Collection { get; init; }
+
+    /// <summary>Command invoked with the chosen URI as its command parameter.</summary>
+    public required string ActivateCommand { get; init; }
+
+    /// <summary>Maximum retained entries. Enforced by the generated Rust list.</summary>
+    public int Capacity { get; init; } = 10;
 }
 
 /// <summary>

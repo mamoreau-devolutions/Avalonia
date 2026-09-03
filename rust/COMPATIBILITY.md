@@ -21,6 +21,12 @@ Version 4 adds the stage 30 richer data shapes as optional members only:
 `resultModelName`/`supportsProgress`/`supportsCancellation` on a command. A
 schema that declares any of them while claiming version 3 or lower is rejected
 with an explicit upgrade message rather than being silently downgraded.
+Version 5 adds the stage 31 command surfaces as optional members only: `menus`,
+`recentFiles` and `displayPath` on a model. A schema that declares any of them
+while claiming version 4 or lower is rejected the same way. These are
+presentation and Rust-owned state only: menus bind the already generated command
+and property surface and recent files ride the published string-collection
+transport, so version 5 introduces no view-model ABI.
 
 Consumer application manifests are independently versioned by
 `consumer-app-manifest.schema.json`; version 1 is validated before any build
@@ -36,9 +42,11 @@ conventions, ownership rules, and error semantics are immutable. Never reuse an
 IID for a changed interface and never insert a slot into an existing vtable.
 Add a separately named, separately versioned interface with a new IID (for
 example `IAvnRustVmSink2`, stage 29's `IAvnApplication3` desktop file
-integration capability, or stage 30's `IAvnRustVmSink4` richer data shapes,
+integration capability, stage 30's `IAvnRustVmSink4` richer data shapes,
 `IAvnRustVmRangeBatch` windowed range payload, `IAvnRustRangeSource` and
-`IAvnRustViewModel2`), then negotiate/query it as optional capability.
+`IAvnRustViewModel2`, or stage 31's `IAvnApplication4` clipboard command
+capability and its host-owned `IAvnClipboardData` payload builder), then
+negotiate/query it as optional capability.
 A producer or host that predates an optional capability must report
 `E_NOINTERFACE` explicitly; silently dropping the affected updates is not an
 acceptable degradation.

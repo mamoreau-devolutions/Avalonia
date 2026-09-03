@@ -18,9 +18,9 @@
 //! is therefore accepted, and the panel reports what happened.
 
 use avalonia::{
-    ActivationEvent, AppScope, DragDropEffects, FileDropEvent, FileTypeFilter, FolderPickerOptions,
-    OpenFilePickerOptions, PickerOutcome, SampleViewModelSink, SaveFilePickerOptions, StorageItem,
-    Window,
+    ActivationEvent, AppScope, ClipboardData, DragDropEffects, FileDropEvent, FileTypeFilter,
+    FolderPickerOptions, OpenFilePickerOptions, PickerOutcome, RecentFileList, SampleViewModelSink,
+    SaveFilePickerOptions, StorageItem, Window, SAMPLE_VIEW_MODEL_RECENT_FILES_CAPACITY,
 };
 use std::sync::{Arc, Mutex};
 
@@ -41,11 +41,26 @@ pub struct DesktopFiles {
     state: Mutex<DesktopFilesState>,
 }
 
-#[derive(Default)]
 struct DesktopFilesState {
     scope: Option<AppScope>,
     window: Option<Window>,
     sink: Option<SampleViewModelSink>,
+    /// Stage 31: Rust owns the most-recently-used list. Entries are stage 29
+    /// storage URIs, so the same value identifies a picked file, a dropped
+    /// file and an "open with" activation, and the generated menu derives its
+    /// header from it.
+    recent: RecentFileList,
+}
+
+impl Default for DesktopFilesState {
+    fn default() -> Self {
+        Self {
+            scope: None,
+            window: None,
+            sink: None,
+            recent: RecentFileList::with_capacity(SAMPLE_VIEW_MODEL_RECENT_FILES_CAPACITY),
+        }
+    }
 }
 
 struct Ready {
@@ -85,6 +100,7 @@ impl DesktopFiles {
             return;
         };
         let _ = publish_items(&ready.sink, items, "startup");
+        self.remember(items);
         let _ = ready.sink.set_activation_status(activation_summary(items));
     }
 
@@ -97,6 +113,7 @@ impl DesktopFiles {
         let items = event.items();
         if !items.is_empty() {
             let _ = publish_items(&ready.sink, items, "activation");
+            self.remember(items);
         }
         let _ = ready
             .sink
@@ -119,6 +136,7 @@ impl DesktopFiles {
             FileDropEvent::Leave => "Drag left the panel".to_string(),
             FileDropEvent::Drop { items, .. } => {
                 let _ = publish_items(&ready.sink, items, "drop");
+                self.remember(items);
                 format!("Dropped {} item(s)", items.len())
             }
         };
@@ -128,7 +146,6 @@ impl DesktopFiles {
     pub fn open_files(self: &Arc<Self>) -> avalonia::Result<()> {
         self.start(PickerKind::OpenFiles)
     }
-
     pub fn open_folder(self: &Arc<Self>) -> avalonia::Result<()> {
         self.start(PickerKind::OpenFolder)
     }
@@ -173,12 +190,14 @@ impl DesktopFiles {
             .set_file_status(format!("{kind:?} picker open..."));
 
         let sink = ready.sink.clone();
+        let handle = self.clone();
         ready.scope.spawn(async move {
             let outcome = operation.await;
             let status = match &outcome {
                 Ok(PickerOutcome::Cancelled) => format!("{kind:?} cancelled"),
                 Ok(PickerOutcome::Selected(items)) => {
                     let _ = publish_items(&sink, items, "picker");
+                    handle.remember(items);
                     format!("{kind:?} selected {} item(s)", items.len())
                 }
                 // Cancellation is not an error; anything reaching here really is
@@ -190,6 +209,115 @@ impl DesktopFiles {
         })
     }
 
+    /// Stage 31 command surface: recent files and the clipboard.
+    ///
+    /// Every clipboard operation is asynchronous, because a platform clipboard
+    /// read can block for as long as the owning application takes to render the
+    /// requested format. The future is awaited on the application scope's
+    /// executor and the outcome is published back through the same sink, so the
+    /// UI thread is never blocked by a menu command.
+    pub fn remember(&self, items: &[StorageItem]) {
+        let Some(ready) = self.ready() else {
+            return;
+        };
+        let changed = {
+            let mut state = self.lock();
+            state.recent.extend_items(items).is_changed()
+        };
+        if !changed {
+            return;
+        }
+
+        let state = self.lock();
+        let _ = ready.sink.publish_recent_files(&state.recent);
+    }
+
+    pub fn open_recent(&self, uri: String) -> avalonia::Result<()> {
+        let Some(ready) = self.ready() else {
+            return Ok(());
+        };
+        let changed = {
+            let mut state = self.lock();
+            state.recent.push(uri.clone()).is_changed()
+        };
+        if changed {
+            let state = self.lock();
+            ready.sink.publish_recent_files(&state.recent)?;
+        }
+
+        ready.sink.set_file_status(format!("Reopened {uri}"))
+    }
+
+    pub fn copy_text(self: &Arc<Self>, text: String, cut: bool) -> avalonia::Result<()> {
+        let Some(ready) = self.ready() else {
+            return Ok(());
+        };
+        let verb = if cut { "Cut" } else { "Copied" };
+        let length = text.chars().count();
+        let operation = ready
+            .scope
+            .clipboard_write(&ready.window, &ClipboardData::text(text))?;
+        let sink = ready.sink.clone();
+        ready.scope.spawn(async move {
+            let status = match operation.await {
+                Ok(()) => format!("{verb} {length} character(s) to the clipboard"),
+                Err(error) => format!("Clipboard write failed: {error}"),
+            };
+            let _ = sink.set_clipboard_status(status);
+        })
+    }
+
+    pub fn paste(self: &Arc<Self>) -> avalonia::Result<()> {
+        let Some(ready) = self.ready() else {
+            return Ok(());
+        };
+        let text = ready.scope.clipboard_get_text(&ready.window)?;
+        let files = ready.scope.clipboard_read_files(&ready.window)?;
+        let sink = ready.sink.clone();
+        let handle = self.clone();
+        ready.scope.spawn(async move {
+            let status = match text.await {
+                Ok(Some(value)) => format!("Pasted {} character(s)", value.chars().count()),
+                Ok(None) => "Clipboard has no text".to_string(),
+                Err(error) => format!("Clipboard read failed: {error}"),
+            };
+            // File entries are optional: a clipboard with no files completes
+            // successfully with an empty list, which is not a failure.
+            let status = match files.await {
+                Ok(items) if !items.is_empty() => {
+                    let _ = publish_items(&sink, &items, "clipboard");
+                    handle.remember(&items);
+                    format!("{status}; {} file(s) on the clipboard", items.len())
+                }
+                Ok(_) => status,
+                Err(error) => format!("{status}; file read failed: {error}"),
+            };
+            let _ = sink.set_clipboard_status(status);
+        })
+    }
+
+    pub fn clear_clipboard(self: &Arc<Self>) -> avalonia::Result<()> {
+        let Some(ready) = self.ready() else {
+            return Ok(());
+        };
+        let operation = ready.scope.clipboard_clear(&ready.window)?;
+        let sink = ready.sink.clone();
+        ready.scope.spawn(async move {
+            let status = match operation.await {
+                Ok(()) => "Clipboard cleared".to_string(),
+                Err(error) => format!("Clipboard clear failed: {error}"),
+            };
+            let _ = sink.set_clipboard_status(status);
+        })
+    }
+
+    pub fn exit(&self) -> avalonia::Result<()> {
+        let Some(ready) = self.ready() else {
+            return Ok(());
+        };
+        ready.scope.shutdown()
+    }
+
     fn ready(&self) -> Option<Ready> {
         let state = self.lock();
         Some(Ready {
@@ -198,7 +326,6 @@ impl DesktopFiles {
             sink: state.sink.clone()?,
         })
     }
-
     fn lock(&self) -> std::sync::MutexGuard<'_, DesktopFilesState> {
         self.state.lock().expect("desktop file state lock poisoned")
     }

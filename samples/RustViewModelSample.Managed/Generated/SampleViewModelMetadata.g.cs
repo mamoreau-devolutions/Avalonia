@@ -28,6 +28,8 @@ public static class SampleViewModelMetadata
             new(13, "DropStatus", RustViewModelValueKind.String, false, false, "Drop files or folders onto the panel below", null),
             new(14, "ActivationStatus", RustViewModelValueKind.String, false, false, "No startup files", null),
             new(15, "LogWindowStatus", RustViewModelValueKind.String, false, false, "Idle", null),
+            new(16, "ShowTraceDetails", RustViewModelValueKind.Boolean, true, false, true, null),
+            new(17, "ClipboardStatus", RustViewModelValueKind.String, false, false, "Clipboard idle", null),
         ],
         [
             new(1, "Items", RustViewModelValueKind.String, null, null, null, null, false),
@@ -36,6 +38,7 @@ public static class SampleViewModelMetadata
             new(4, "SelectedFiles", RustViewModelValueKind.String, null, null, null, null, false),
             new(5, "LogWindow", RustViewModelValueKind.Model, global::Avalonia.Rust.Sample.Generated.TraceRowViewModelMetadata.Descriptor, null, new(64, 8), null, false),
             new(6, "LogTree", RustViewModelValueKind.Model, global::Avalonia.Rust.Sample.Generated.LogNodeViewModelMetadata.Descriptor, null, null, new("Children", "Label", "HasChildren"), false),
+            new(7, "RecentFiles", RustViewModelValueKind.String, null, null, null, null, false),
         ],
         [
             new(1, "IncrementCommand", false, null, false, null, false, false),
@@ -52,6 +55,12 @@ public static class SampleViewModelMetadata
             new(12, "OpenFolderCommand", true, null, false, null, false, false),
             new(13, "SaveExportCommand", true, null, false, null, false, false),
             new(14, "RefreshLogWindowCommand", false, null, false, null, false, false),
+            new(15, "OpenRecentFileCommand", false, null, true, null, false, false),
+            new(16, "CopySelectedRowCommand", true, null, false, null, false, false),
+            new(17, "CutSelectedRowCommand", true, null, false, null, false, false),
+            new(18, "PasteFromClipboardCommand", true, null, false, null, false, false),
+            new(19, "ClearClipboardCommand", true, null, false, null, false, false),
+            new(20, "ExitApplicationCommand", false, null, false, null, false, false),
         ],
         [
             new(1, "SeverityCounts", RustViewModelValueKind.String, RustViewModelValueKind.Integer, null),
@@ -62,10 +71,10 @@ public static class SampleViewModelMetadata
 
     public static IReadOnlyList<TableViewColumn> CreateTraceRowsTableColumns() =>
     [
-        new() { Header = "Timestamp", Width = new global::Avalonia.Controls.GridLength(150D, global::Avalonia.Controls.GridUnitType.Pixel), CanUserResize = true, HorizontalContentAlignment = HorizontalAlignment.Left },
-        new() { Header = "Severity", Width = new global::Avalonia.Controls.GridLength(90D, global::Avalonia.Controls.GridUnitType.Pixel), CanUserResize = true, HorizontalContentAlignment = HorizontalAlignment.Center },
+        new() { Header = "Timestamp", Width = new global::Avalonia.Controls.GridLength(150D, global::Avalonia.Controls.GridUnitType.Pixel), MinWidth = 100D, CanUserResize = true, HorizontalContentAlignment = HorizontalAlignment.Left },
+        new() { Header = "Severity", Width = new global::Avalonia.Controls.GridLength(90D, global::Avalonia.Controls.GridUnitType.Pixel), MinWidth = 70D, CanUserResize = true, HorizontalContentAlignment = HorizontalAlignment.Center },
         new() { Header = "Source", Width = new global::Avalonia.Controls.GridLength(120D, global::Avalonia.Controls.GridUnitType.Pixel), CanUserResize = true, HorizontalContentAlignment = HorizontalAlignment.Left },
-        new() { Header = "Message", Width = new global::Avalonia.Controls.GridLength(1D, global::Avalonia.Controls.GridUnitType.Star), CanUserResize = true, HorizontalContentAlignment = HorizontalAlignment.Left },
+        new() { Header = "Message", Width = new global::Avalonia.Controls.GridLength(1D, global::Avalonia.Controls.GridUnitType.Star), MinWidth = 260D, CanUserResize = true, HorizontalContentAlignment = HorizontalAlignment.Left },
     ];
 
     private static RustTableDescriptor CreateTraceRowsTable() => new(

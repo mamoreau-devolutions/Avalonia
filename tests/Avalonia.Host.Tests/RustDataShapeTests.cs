@@ -249,7 +249,7 @@ public class RustDataShapeTests
         // The generated adapter disposes a window through TryDispose, so a
         // hostile observer cannot abort the rest of the teardown.
         Assert.Throws<InvalidOperationException>(window.Dispose);
-        Assert.Equal(0, window.Count);
+        Assert.Empty(window);
     }
 
     [Fact]
@@ -314,7 +314,6 @@ public class RustDataShapeTests
         window.Dispose();
 
         Assert.Equal(1, resets);
-        Assert.Equal(0, window.Count);
         Assert.Empty(window);
     }
 

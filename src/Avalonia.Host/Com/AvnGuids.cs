@@ -21,4 +21,10 @@ internal static class AvnGuids
     public const string IAvnStorageCompletion = "6B2E8F10-4C91-4E3A-9A77-1F0C2B3A4D54";
     public const string IAvnFileDropHandler = "6B2E8F10-4C91-4E3A-9A77-1F0C2B3A4D55";
     public const string IAvnActivationHandler = "6B2E8F10-4C91-4E3A-9A77-1F0C2B3A4D56";
+
+    // Stage 31 clipboard commands. Another separately versioned capability;
+    // the stage 29 storage snapshot interfaces are reused as-is for reading
+    // file entries back, and nothing below is added to a published vtable.
+    public const string IAvnApplication4 = "6B2E8F10-4C91-4E3A-9A77-1F0C2B3A4D60";
+    public const string IAvnClipboardData = "6B2E8F10-4C91-4E3A-9A77-1F0C2B3A4D61";
 }

@@ -10,6 +10,8 @@ namespace Avalonia.Rust.Sample.Views;
 public partial class RustVmWindow : Window
 {
     private readonly SampleViewModelAdapter _adapter;
+    private IDisposable? _menu;
+    private IDisposable? _shortcuts;
 
     public RustVmWindow()
     {
@@ -21,7 +23,20 @@ public partial class RustVmWindow : Window
     {
         _adapter = new SampleViewModelAdapter(model);
         DataContext = _adapter;
-        Closed += (_, _) => _adapter.Dispose();
+
+        // The application menu, its accelerators and the standalone shortcuts
+        // are all generated from the same schema. Attaching sets the top-level's
+        // NativeMenu (exported natively where the platform has a menu bar,
+        // rendered by the NativeMenuBar above everywhere else) and installs the
+        // declared gestures as key bindings.
+        _menu = SampleViewModelMenus.AttachMain(this, _adapter);
+        _shortcuts = SampleViewModelMenus.AttachShortcuts(this, _adapter);
+        Closed += (_, _) =>
+        {
+            _shortcuts?.Dispose();
+            _menu?.Dispose();
+            _adapter.Dispose();
+        };
     }
 
     private void InitializeComponent() =>

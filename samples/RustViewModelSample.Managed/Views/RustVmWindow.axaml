@@ -32,7 +32,17 @@
       </StackPanel>
     </DataTemplate>
   </Window.Resources>
-  <ScrollViewer>
+  <DockPanel>
+    <!--
+      One declared menu model serves both platforms: on macOS the host exports
+      it as the real application menu, and everywhere else this NativeMenuBar
+      renders the same NativeMenu in-window. The menu itself is attached in
+      code-behind through the generated `SampleViewModelMenus.AttachMain`, which
+      also installs the declared accelerators as window key bindings - only a
+      native menu bar handles its own shortcuts.
+    -->
+    <NativeMenuBar x:Name="MainMenuBar" DockPanel.Dock="Top" />
+    <ScrollViewer>
     <StackPanel Margin="20" Spacing="10">
       <TextBlock Text="Managed AXAML presentation, Rust-owned state" FontSize="20" />
       <TextBlock Text="Name (validated by Rust: cannot be empty)" />
@@ -144,16 +154,28 @@
 
       <TextBlock Text="CMTrace snapshot (100,000 Rust-owned rows)" FontWeight="Bold" />
       <TextBlock Text="{Binding TraceSortDirection, StringFormat='Sort: {0}'}" />
+      <TextBlock x:Name="ClipboardStatusText" Text="{Binding ClipboardStatus}" />
       <!-- TableView virtualizes TableViewRow containers.  Its cells use compiled
            AXAML bindings; the generated descriptor supplies the matching stable
-           table contract without manufacturing reflection bindings. -->
+           table contract without manufacturing reflection bindings.
+           MinWidth mirrors the schema's declared per-column minimum, so a
+           resize or a narrow window cannot collapse a column to nothing. -->
       <TableView x:Name="TraceTable"
                  ItemsSource="{Binding TraceRows}"
                  SelectedIndex="{Binding SelectedTraceIndex, Mode=TwoWay}"
                  Height="300"
                  CanUserResizeColumns="True">
+        <!--
+          The generated context menu is a real ContextMenu subclass, so it is
+          declared here in compiled AXAML and inherits the table's data context;
+          its items bind to the same generated commands the application menu
+          uses.
+        -->
+        <TableView.ContextMenu>
+          <vm:SampleViewModelTraceRowsContextMenu />
+        </TableView.ContextMenu>
         <TableView.Columns>
-          <TableViewColumn Width="150" CanUserResize="True" Binding="{Binding Timestamp}">
+          <TableViewColumn Width="150" MinWidth="100" CanUserResize="True" Binding="{Binding Timestamp}">
             <TableViewColumn.Header>
               <Button x:DataType="vm:SampleViewModelAdapter"
                       Command="{Binding SortTraceRowsCommand}"
@@ -161,7 +183,7 @@
                       Content="Timestamp" />
             </TableViewColumn.Header>
           </TableViewColumn>
-          <TableViewColumn Width="90" CanUserResize="True"
+          <TableViewColumn Width="90" MinWidth="70" CanUserResize="True"
                            HorizontalContentAlignment="Center">
             <TableViewColumn.Header>
               <Button x:DataType="vm:SampleViewModelAdapter"
@@ -185,10 +207,13 @@
                       Content="Source" />
             </TableViewColumn.Header>
           </TableViewColumn>
-          <TableViewColumn Width="*" CanUserResize="True" Binding="{Binding Message}" />
+          <TableViewColumn Width="*" MinWidth="260" CanUserResize="True" Binding="{Binding Message}" />
         </TableView.Columns>
       </TableView>
       <TextBlock Text="{Binding SelectedTraceKey, StringFormat='Selected row: {0}'}" />
+
+      <TextBlock Text="Recent files (Rust-owned MRU list, projected into the File menu)" FontWeight="Bold" />
+      <ListBox x:Name="RecentFilesList" ItemsSource="{Binding RecentFiles}" Height="70" />
 
       <TextBlock Text="Windowed CMTrace log (Stage 30: data objects bounded, not just visuals)" FontWeight="Bold" />
       <TextBlock x:Name="LogWindowStatusText" Text="{Binding LogWindowStatus}" />
@@ -261,4 +286,5 @@
       <ItemsControl x:Name="SeverityCountsList" ItemsSource="{Binding SeverityCounts}" />
     </StackPanel>
   </ScrollViewer>
+  </DockPanel>
 </Window>

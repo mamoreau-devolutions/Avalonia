@@ -23,6 +23,9 @@ impl std::convert::TryFrom<i64> for Priority {
 #[derive(Clone, Debug)]
 pub struct SampleViewModelSink(crate::view_model::ViewModelSink);
 
+/// Declared capacity of the `SampleViewModel` recent-file list.
+pub const SAMPLE_VIEW_MODEL_RECENT_FILES_CAPACITY: usize = 8;
+
 impl SampleViewModelSink {
     pub fn set_name(&self, value: impl AsRef<str>) -> crate::Result<()> { self.0.set_string(1, value) }
     pub fn set_count(&self, value: i64) -> crate::Result<()> { self.0.set_integer(2, value) }
@@ -39,12 +42,17 @@ impl SampleViewModelSink {
     pub fn set_drop_status(&self, value: impl AsRef<str>) -> crate::Result<()> { self.0.set_string(13, value) }
     pub fn set_activation_status(&self, value: impl AsRef<str>) -> crate::Result<()> { self.0.set_string(14, value) }
     pub fn set_log_window_status(&self, value: impl AsRef<str>) -> crate::Result<()> { self.0.set_string(15, value) }
+    pub fn set_show_trace_details(&self, value: bool) -> crate::Result<()> { self.0.set_boolean(16, value) }
+    pub fn set_clipboard_status(&self, value: impl AsRef<str>) -> crate::Result<()> { self.0.set_string(17, value) }
     pub fn add_items(&self, value: impl AsRef<str>) -> crate::Result<()> { self.0.add_string(1, value) }
     pub fn insert_items(&self, index: i32, value: impl AsRef<str>) -> crate::Result<()> { self.0.insert_string(1, index, value) }
     pub fn replace_items(&self, index: i32, value: impl AsRef<str>) -> crate::Result<()> { self.0.replace_string(1, index, value) }
     pub fn add_selected_files(&self, value: impl AsRef<str>) -> crate::Result<()> { self.0.add_string(4, value) }
     pub fn insert_selected_files(&self, index: i32, value: impl AsRef<str>) -> crate::Result<()> { self.0.insert_string(4, index, value) }
     pub fn replace_selected_files(&self, index: i32, value: impl AsRef<str>) -> crate::Result<()> { self.0.replace_string(4, index, value) }
+    pub fn add_recent_files(&self, value: impl AsRef<str>) -> crate::Result<()> { self.0.add_string(7, value) }
+    pub fn insert_recent_files(&self, index: i32, value: impl AsRef<str>) -> crate::Result<()> { self.0.insert_string(7, index, value) }
+    pub fn replace_recent_files(&self, index: i32, value: impl AsRef<str>) -> crate::Result<()> { self.0.replace_string(7, index, value) }
     pub fn add_tasks(&self, value: impl TaskItemViewModel) -> crate::Result<()> { self.0.add_model(2, TaskItemViewModelDispatch { model: value }) }
     pub fn insert_tasks(&self, index: i32, value: impl TaskItemViewModel) -> crate::Result<()> { self.0.insert_model(2, index, TaskItemViewModelDispatch { model: value }) }
     pub fn replace_tasks(&self, index: i32, value: impl TaskItemViewModel) -> crate::Result<()> { self.0.replace_model(2, index, TaskItemViewModelDispatch { model: value }) }
@@ -60,6 +68,9 @@ impl SampleViewModelSink {
     pub fn remove_selected_files(&self, index: i32) -> crate::Result<()> { self.0.remove_string_at(4, index) }
     pub fn move_selected_files(&self, from_index: i32, to_index: i32) -> crate::Result<()> { self.0.move_string_item(4, from_index, to_index) }
     pub fn clear_selected_files(&self) -> crate::Result<()> { self.0.clear_string_collection(4) }
+    pub fn remove_recent_files(&self, index: i32) -> crate::Result<()> { self.0.remove_string_at(7, index) }
+    pub fn move_recent_files(&self, from_index: i32, to_index: i32) -> crate::Result<()> { self.0.move_string_item(7, from_index, to_index) }
+    pub fn clear_recent_files(&self) -> crate::Result<()> { self.0.clear_string_collection(7) }
     pub fn remove_tasks(&self, index: i32) -> crate::Result<()> { self.0.remove_model_at(2, index) }
     pub fn move_tasks(&self, from_index: i32, to_index: i32) -> crate::Result<()> { self.0.move_model_item(2, from_index, to_index) }
     pub fn clear_tasks(&self) -> crate::Result<()> { self.0.clear_model_collection(2) }
@@ -83,6 +94,22 @@ impl SampleViewModelSink {
     pub fn set_open_folder_enabled(&self, enabled: bool) -> crate::Result<()> { self.0.set_command_enabled(12, enabled) }
     pub fn set_save_export_enabled(&self, enabled: bool) -> crate::Result<()> { self.0.set_command_enabled(13, enabled) }
     pub fn set_refresh_log_window_enabled(&self, enabled: bool) -> crate::Result<()> { self.0.set_command_enabled(14, enabled) }
+    pub fn set_open_recent_file_enabled(&self, enabled: bool) -> crate::Result<()> { self.0.set_command_enabled(15, enabled) }
+    pub fn set_copy_selected_row_enabled(&self, enabled: bool) -> crate::Result<()> { self.0.set_command_enabled(16, enabled) }
+    pub fn set_cut_selected_row_enabled(&self, enabled: bool) -> crate::Result<()> { self.0.set_command_enabled(17, enabled) }
+    pub fn set_paste_from_clipboard_enabled(&self, enabled: bool) -> crate::Result<()> { self.0.set_command_enabled(18, enabled) }
+    pub fn set_clear_clipboard_enabled(&self, enabled: bool) -> crate::Result<()> { self.0.set_command_enabled(19, enabled) }
+    pub fn set_exit_application_enabled(&self, enabled: bool) -> crate::Result<()> { self.0.set_command_enabled(20, enabled) }
+    /// Publishes the most-recently-used storage URIs into `RecentFiles`.
+    ///
+    /// The list is bounded by its own capacity (8), so this replaces a
+    /// handful of entries rather than a data set; the generated menu derives
+    /// each header from the URI and passes the URI back as the command parameter.
+    pub fn publish_recent_files(&self, recent: &crate::RecentFileList) -> crate::Result<()> {
+        self.0.clear_string_collection(7)?;
+        for uri in recent.entries() { self.0.add_string(7, uri)?; }
+        Ok(())
+    }
     pub fn set_name_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(1, message) }
     pub fn set_count_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(2, message) }
     pub fn set_new_item_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(3, message) }
@@ -97,6 +124,8 @@ impl SampleViewModelSink {
     pub fn set_drop_status_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(13, message) }
     pub fn set_activation_status_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(14, message) }
     pub fn set_log_window_status_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(15, message) }
+    pub fn set_show_trace_details_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(16, message) }
+    pub fn set_clipboard_status_error(&self, message: Option<&str>) -> crate::Result<()> { self.0.set_property_error(17, message) }
     /// True when the attached host implements the stage 30 sink capability.
     /// The reflectable (dynamic-binding) adapter deliberately does not.
     pub fn supports_richer_shapes(&self) -> bool { self.0.supports_richer_shapes() }
@@ -173,6 +202,12 @@ impl SampleViewModelSinkBatch {
     pub fn set_log_window_status(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 15, 0, value); }
     pub fn set_log_window_status_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 15, 0, message); }
     pub fn clear_log_window_status_error(&mut self) { self.0.push_clear_error(15); }
+    pub fn set_show_trace_details(&mut self, value: bool) { self.0.push_boolean(3, 16, value); }
+    pub fn set_show_trace_details_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 16, 0, message); }
+    pub fn clear_show_trace_details_error(&mut self) { self.0.push_clear_error(16); }
+    pub fn set_clipboard_status(&mut self, value: impl AsRef<str>) { self.0.push_string(1, 17, 0, value); }
+    pub fn set_clipboard_status_error(&mut self, message: impl AsRef<str>) { self.0.push_string(18, 17, 0, message); }
+    pub fn clear_clipboard_status_error(&mut self) { self.0.push_clear_error(17); }
     pub fn add_items(&mut self, value: impl AsRef<str>) { self.0.push_string(7, 1, 0, value); }
     pub fn insert_items(&mut self, index: i32, value: impl AsRef<str>) { self.0.push_string(9, 1, index, value); }
     pub fn replace_items(&mut self, index: i32, value: impl AsRef<str>) { self.0.push_string(11, 1, index, value); }
@@ -187,6 +222,13 @@ impl SampleViewModelSinkBatch {
     pub fn remove_selected_files(&mut self, index: i32) { self.0.push_indices(13, 4, index, 0); }
     pub fn move_selected_files(&mut self, from_index: i32, to_index: i32) { self.0.push_indices(14, 4, from_index, to_index); }
     pub fn clear_selected_files(&mut self) { self.0.push_indices(19, 4, 0, 0); }
+    pub fn add_recent_files(&mut self, value: impl AsRef<str>) { self.0.push_string(7, 7, 0, value); }
+    pub fn insert_recent_files(&mut self, index: i32, value: impl AsRef<str>) { self.0.push_string(9, 7, index, value); }
+    pub fn replace_recent_files(&mut self, index: i32, value: impl AsRef<str>) { self.0.push_string(11, 7, index, value); }
+    pub fn replace_recent_files_snapshot<S: AsRef<str>>(&mut self, values: impl IntoIterator<Item = S>) { self.0.push_string_snapshot(7, values); }
+    pub fn remove_recent_files(&mut self, index: i32) { self.0.push_indices(13, 7, index, 0); }
+    pub fn move_recent_files(&mut self, from_index: i32, to_index: i32) { self.0.push_indices(14, 7, from_index, to_index); }
+    pub fn clear_recent_files(&mut self) { self.0.push_indices(19, 7, 0, 0); }
     pub fn add_tasks(&mut self, value: impl TaskItemViewModel) { self.0.push_model(8, 2, 0, TaskItemViewModelDispatch { model: value }); }
     pub fn insert_tasks(&mut self, index: i32, value: impl TaskItemViewModel) { self.0.push_model(10, 2, index, TaskItemViewModelDispatch { model: value }); }
     pub fn replace_tasks(&mut self, index: i32, value: impl TaskItemViewModel) { self.0.push_model(12, 2, index, TaskItemViewModelDispatch { model: value }); }
@@ -222,6 +264,14 @@ impl SampleViewModelSinkBatch {
     pub fn set_open_folder_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 12, enabled); }
     pub fn set_save_export_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 13, enabled); }
     pub fn set_refresh_log_window_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 14, enabled); }
+    pub fn set_open_recent_file_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 15, enabled); }
+    pub fn set_copy_selected_row_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 16, enabled); }
+    pub fn set_cut_selected_row_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 17, enabled); }
+    pub fn set_paste_from_clipboard_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 18, enabled); }
+    pub fn set_clear_clipboard_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 19, enabled); }
+    pub fn set_exit_application_enabled(&mut self, enabled: bool) { self.0.push_boolean(17, 20, enabled); }
+    /// Stages the most-recently-used storage URIs as one `RecentFiles` snapshot.
+    pub fn set_recent_files(&mut self, recent: &crate::RecentFileList) { self.0.push_string_snapshot(7, recent.entries()); }
 }
 
 pub trait SampleViewModel: Send + 'static {
@@ -234,6 +284,7 @@ pub trait SampleViewModel: Send + 'static {
     fn set_new_task_title(&mut self, value: String) -> crate::Result<()>;
     fn set_selected_trace_index(&mut self, value: i64) -> crate::Result<()>;
     fn set_selected_trace_key(&mut self, value: String) -> crate::Result<()>;
+    fn set_show_trace_details(&mut self, value: bool) -> crate::Result<()>;
     fn increment(&mut self) -> crate::Result<()>;
     fn add(&mut self, value: String) -> crate::Result<()>;
     fn save(&mut self, token: crate::CancellationToken) -> crate::Result<()>;
@@ -248,6 +299,12 @@ pub trait SampleViewModel: Send + 'static {
     fn open_folder(&mut self) -> crate::Result<()>;
     fn save_export(&mut self) -> crate::Result<()>;
     fn refresh_log_window(&mut self) -> crate::Result<()>;
+    fn open_recent_file(&mut self, value: String) -> crate::Result<()>;
+    fn copy_selected_row(&mut self) -> crate::Result<()>;
+    fn cut_selected_row(&mut self) -> crate::Result<()>;
+    fn paste_from_clipboard(&mut self) -> crate::Result<()>;
+    fn clear_clipboard(&mut self) -> crate::Result<()>;
+    fn exit_application(&mut self) -> crate::Result<()>;
     /// Realizes one page of `LogWindow`. Called on the runtime's dedicated
     /// range thread, never on the UI thread, so it may take as long as the dataset needs.
     fn request_log_window_range(&mut self, request: crate::RangeRequest) -> crate::Result<()>;
@@ -275,8 +332,11 @@ impl<T: SampleViewModel> crate::view_model::DynamicViewModel for SampleViewModel
             _ => Err(crate::Error::InvalidViewModelMember { kind: "property", id: property_id }),
         }
     }
-    fn set_boolean(&mut self, property_id: i32, _value: bool) -> crate::Result<()> {
-        Err(crate::Error::InvalidViewModelMember { kind: "property", id: property_id })
+    fn set_boolean(&mut self, property_id: i32, value: bool) -> crate::Result<()> {
+        match property_id {
+            16 => self.model.set_show_trace_details(value),
+            _ => Err(crate::Error::InvalidViewModelMember { kind: "property", id: property_id }),
+        }
     }
     fn set_double(&mut self, property_id: i32, _value: f64) -> crate::Result<()> {
         Err(crate::Error::InvalidViewModelMember { kind: "property", id: property_id })
@@ -293,6 +353,8 @@ impl<T: SampleViewModel> crate::view_model::DynamicViewModel for SampleViewModel
             9 => self.model.clear_tasks(),
             10 => self.model.sort_trace_rows(parameter.unwrap_or_default()),
             14 => self.model.refresh_log_window(),
+            15 => self.model.open_recent_file(parameter.unwrap_or_default()),
+            20 => self.model.exit_application(),
             _ => Err(crate::Error::InvalidViewModelMember { kind: "command", id: command_id }),
         }
     }
@@ -302,6 +364,10 @@ impl<T: SampleViewModel> crate::view_model::DynamicViewModel for SampleViewModel
             11 => self.model.open_files(),
             12 => self.model.open_folder(),
             13 => self.model.save_export(),
+            16 => self.model.copy_selected_row(),
+            17 => self.model.cut_selected_row(),
+            18 => self.model.paste_from_clipboard(),
+            19 => self.model.clear_clipboard(),
             _ => Err(crate::Error::InvalidViewModelMember { kind: "command", id: command_id }),
         }
     }

@@ -1,6 +1,6 @@
 # Generated Rust view-model contract
 
-Schema version: `4`
+Schema version: `5`
 
 ## Enums
 
@@ -27,12 +27,15 @@ Schema version: `4`
 | Property | 13 | `DropStatus` | `String` | Rust to managed |
 | Property | 14 | `ActivationStatus` | `String` | Rust to managed |
 | Property | 15 | `LogWindowStatus` | `String` | Rust to managed |
+| Property | 16 | `ShowTraceDetails` | `Boolean` | Rust and managed |
+| Property | 17 | `ClipboardStatus` | `String` | Rust to managed |
 | Collection | 1 | `Items` | `String` | Rust to managed |
 | Collection | 2 | `Tasks` | Model `TaskItemViewModel` | Rust to managed |
 | Collection | 3 | `TraceRows` | Model `TraceRowViewModel` | Rust to managed |
 | Collection | 4 | `SelectedFiles` | `String` | Rust to managed |
 | Collection | 5 | `LogWindow` | Model `TraceRowViewModel` (windowed: page 64, 8 live pages) | Rust to managed |
 | Collection | 6 | `LogTree` | Model `LogNodeViewModel` (tree root) | Rust to managed |
+| Collection | 7 | `RecentFiles` | `String` | Rust to managed |
 | Map | 1 | `SeverityCounts` | `String` to `Integer` | Rust to managed |
 | Map | 2 | `SourceDetails` | `String` to Model `TraceEventViewModel` | Rust to managed |
 | Command | 1 | `Increment` | None | Managed to Rust |
@@ -49,10 +52,58 @@ Schema version: `4`
 | Async command | 12 | `OpenFolder` | None | Managed to Rust |
 | Async command | 13 | `SaveExport` | None | Managed to Rust |
 | Command | 14 | `RefreshLogWindow` | None | Managed to Rust |
+| Command | 15 | `OpenRecentFile` | None | Managed to Rust |
+| Async command | 16 | `CopySelectedRow` | None | Managed to Rust |
+| Async command | 17 | `CutSelectedRow` | None | Managed to Rust |
+| Async command | 18 | `PasteFromClipboard` | None | Managed to Rust |
+| Async command | 19 | `ClearClipboard` | None | Managed to Rust |
+| Command | 20 | `ExitApplication` | None | Managed to Rust |
 
 ### Tree `LogTree`
 
 Node model `LogNodeViewModel`, children `Children`, header `Label`, has-children `HasChildren`.
+
+### Recent files `RecentFiles`
+
+Storage URIs published into collection `RecentFiles`, capacity 8, activated by `OpenRecentFileCommand` with the chosen URI as its command parameter.
+
+### Application menu `Main` (`1`)
+
+| ID | Item | Kind | Header | Command | Gesture | Bound member |
+| ---: | --- | --- | --- | --- | --- | --- |
+| 1 | `File` | Submenu | _File | - | - | - |
+| 2 |     `Open` | Command | _Open files... | `OpenFilesCommand` | `Ctrl+O` | - |
+| 3 |     `OpenFolder` | Command | Open f_older... | `OpenFolderCommand` | - | - |
+| 4 |     `Recent` | RecentFiles | Recent _files | - | - | recent files |
+| 5 |     `FileSeparator` | Separator | - | - | - | - |
+| 6 |     `Exit` | Command | E_xit | `ExitApplicationCommand` | `Ctrl+Q` | - |
+| 7 | `Edit` | Submenu | _Edit | - | - | - |
+| 8 |     `Copy` | Command | _Copy row | `CopySelectedRowCommand` | `Ctrl+C` | - |
+| 9 |     `Cut` | Command | Cu_t row | `CutSelectedRowCommand` | `Ctrl+X` | - |
+| 10 |     `Paste` | Command | _Paste | `PasteFromClipboardCommand` | `Ctrl+V` | - |
+| 11 |     `EditSeparator` | Separator | - | - | - | - |
+| 12 |     `ClearClipboard` | Command | C_lear clipboard | `ClearClipboardCommand` | - | - |
+| 13 | `View` | Submenu | _View | - | - | - |
+| 14 |     `ShowDetails` | Toggle | Show trace _details | - | - | `ShowTraceDetails` |
+| 15 |     `ViewSeparator` | Separator | - | - | - | - |
+| 16 |     `PriorityLow` | Radio | Priority: low | - | - | `Priority` = `Low` |
+| 17 |     `PriorityNormal` | Radio | Priority: normal | - | - | `Priority` = `Normal` |
+| 18 |     `PriorityHigh` | Radio | Priority: high | - | - | `Priority` = `High` |
+
+### Context menu `TraceRows` (`2`)
+
+| ID | Item | Kind | Header | Command | Gesture | Bound member |
+| ---: | --- | --- | --- | --- | --- | --- |
+| 1 | `CopyRow` | Command | Copy row | `CopySelectedRowCommand` | `Ctrl+C` | - |
+| 2 | `Separator` | Separator | - | - | - | - |
+| 3 | `ShowDetails` | Toggle | Show trace details | - | - | `ShowTraceDetails` |
+| 4 | `Recent` | RecentFiles | Recent files | - | - | recent files |
+
+### Accelerators menu `Shortcuts` (`3`)
+
+| ID | Item | Kind | Header | Command | Gesture | Bound member |
+| ---: | --- | --- | --- | --- | --- | --- |
+| 1 | `RefreshLogWindow` | Command | Refresh log window | `RefreshLogWindowCommand` | `Ctrl+R` | - |
 
 ### Table `TraceRows`
 
@@ -87,6 +138,8 @@ Sort: `SortTraceRows` command, initial column `Timestamp`, direction property `T
 | Property | 2 | `Severity` | `String` | Rust to managed |
 | Property | 3 | `Message` | `String` | Rust to managed |
 | Property | 4 | `Event` | Model `TraceEventViewModel`, nullable | Rust to managed |
+
+Display projection (`ToString()`): `Message`.
 
 ## Model `TraceEventViewModel` (`5`)
 

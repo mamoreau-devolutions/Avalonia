@@ -3,11 +3,26 @@ using System.IO;
 using Avalonia.Projection.Generator;
 using Avalonia.Projection.Ir;
 
+// `--normalize <view-model-ir>` rewrites the schema file in its canonical
+// serialized form. The checked-in schema is asserted to round-trip byte for
+// byte, so this is how a hand-edited schema is brought back to canonical order
+// after new members are added.
+if (args.Length == 2 && args[0] == "--normalize")
+{
+    var file = Path.GetFullPath(args[1]);
+    var normalized = ViewModelIr.FromJson(File.ReadAllText(file));
+    File.WriteAllText(file, normalized.ToJson() + Environment.NewLine);
+    Console.WriteLine($"Normalized {file}.");
+    return 0;
+}
+
 var externalRust = args.Length == 6 && args[5] == "--external-rust";
 if (args.Length != 5 && !externalRust)
 {
     Console.Error.WriteLine(
         "Usage: Avalonia.ViewModelProjection.Tool <view-model-ir> <adapter-output-directory> <registry-output-directory> <rust-output> <contract-output> [--external-rust]");
+    Console.Error.WriteLine(
+        "       Avalonia.ViewModelProjection.Tool --normalize <view-model-ir>");
     return 2;
 }
 

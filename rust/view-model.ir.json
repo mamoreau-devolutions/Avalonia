@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "enums": [
     {
       "id": 1,
@@ -145,6 +145,22 @@
           "writable": false,
           "nullable": false,
           "initialString": "Idle"
+        },
+        {
+          "id": 16,
+          "name": "ShowTraceDetails",
+          "kind": "Boolean",
+          "writable": true,
+          "nullable": false,
+          "initialBoolean": true
+        },
+        {
+          "id": 17,
+          "name": "ClipboardStatus",
+          "kind": "String",
+          "writable": false,
+          "nullable": false,
+          "initialString": "Clipboard idle"
         }
       ],
       "collections": [
@@ -260,6 +276,12 @@
             "headerPath": "Label",
             "hasChildrenProperty": "HasChildren"
           }
+        },
+        {
+          "id": 7,
+          "name": "RecentFiles",
+          "elementKind": "String",
+          "recursive": false
         }
       ],
       "maps": [
@@ -378,8 +400,263 @@
           "isAsync": false,
           "supportsProgress": false,
           "supportsCancellation": false
+        },
+        {
+          "id": 15,
+          "name": "OpenRecentFile",
+          "isAsync": false,
+          "supportsProgress": false,
+          "supportsCancellation": false
+        },
+        {
+          "id": 16,
+          "name": "CopySelectedRow",
+          "isAsync": true,
+          "supportsProgress": false,
+          "supportsCancellation": false
+        },
+        {
+          "id": 17,
+          "name": "CutSelectedRow",
+          "isAsync": true,
+          "supportsProgress": false,
+          "supportsCancellation": false
+        },
+        {
+          "id": 18,
+          "name": "PasteFromClipboard",
+          "isAsync": true,
+          "supportsProgress": false,
+          "supportsCancellation": false
+        },
+        {
+          "id": 19,
+          "name": "ClearClipboard",
+          "isAsync": true,
+          "supportsProgress": false,
+          "supportsCancellation": false
+        },
+        {
+          "id": 20,
+          "name": "ExitApplication",
+          "isAsync": false,
+          "supportsProgress": false,
+          "supportsCancellation": false
         }
-      ]
+      ],
+      "menus": [
+        {
+          "id": 1,
+          "name": "Main",
+          "kind": "Application",
+          "items": [
+            {
+              "id": 1,
+              "name": "File",
+              "kind": "Submenu",
+              "header": "_File",
+              "items": [
+                {
+                  "id": 2,
+                  "name": "Open",
+                  "kind": "Command",
+                  "header": "_Open files...",
+                  "command": "OpenFiles",
+                  "gesture": "Ctrl\u002BO",
+                  "items": []
+                },
+                {
+                  "id": 3,
+                  "name": "OpenFolder",
+                  "kind": "Command",
+                  "header": "Open f_older...",
+                  "command": "OpenFolder",
+                  "items": []
+                },
+                {
+                  "id": 4,
+                  "name": "Recent",
+                  "kind": "RecentFiles",
+                  "header": "Recent _files",
+                  "items": []
+                },
+                {
+                  "id": 5,
+                  "name": "FileSeparator",
+                  "kind": "Separator",
+                  "items": []
+                },
+                {
+                  "id": 6,
+                  "name": "Exit",
+                  "kind": "Command",
+                  "header": "E_xit",
+                  "command": "ExitApplication",
+                  "gesture": "Ctrl\u002BQ",
+                  "items": []
+                }
+              ]
+            },
+            {
+              "id": 7,
+              "name": "Edit",
+              "kind": "Submenu",
+              "header": "_Edit",
+              "items": [
+                {
+                  "id": 8,
+                  "name": "Copy",
+                  "kind": "Command",
+                  "header": "_Copy row",
+                  "command": "CopySelectedRow",
+                  "gesture": "Ctrl\u002BC",
+                  "items": []
+                },
+                {
+                  "id": 9,
+                  "name": "Cut",
+                  "kind": "Command",
+                  "header": "Cu_t row",
+                  "command": "CutSelectedRow",
+                  "gesture": "Ctrl\u002BX",
+                  "items": []
+                },
+                {
+                  "id": 10,
+                  "name": "Paste",
+                  "kind": "Command",
+                  "header": "_Paste",
+                  "command": "PasteFromClipboard",
+                  "gesture": "Ctrl\u002BV",
+                  "items": []
+                },
+                {
+                  "id": 11,
+                  "name": "EditSeparator",
+                  "kind": "Separator",
+                  "items": []
+                },
+                {
+                  "id": 12,
+                  "name": "ClearClipboard",
+                  "kind": "Command",
+                  "header": "C_lear clipboard",
+                  "command": "ClearClipboard",
+                  "items": []
+                }
+              ]
+            },
+            {
+              "id": 13,
+              "name": "View",
+              "kind": "Submenu",
+              "header": "_View",
+              "items": [
+                {
+                  "id": 14,
+                  "name": "ShowDetails",
+                  "kind": "Toggle",
+                  "header": "Show trace _details",
+                  "toggleProperty": "ShowTraceDetails",
+                  "items": []
+                },
+                {
+                  "id": 15,
+                  "name": "ViewSeparator",
+                  "kind": "Separator",
+                  "items": []
+                },
+                {
+                  "id": 16,
+                  "name": "PriorityLow",
+                  "kind": "Radio",
+                  "header": "Priority: low",
+                  "radioProperty": "Priority",
+                  "radioValue": "Low",
+                  "items": []
+                },
+                {
+                  "id": 17,
+                  "name": "PriorityNormal",
+                  "kind": "Radio",
+                  "header": "Priority: normal",
+                  "radioProperty": "Priority",
+                  "radioValue": "Normal",
+                  "items": []
+                },
+                {
+                  "id": 18,
+                  "name": "PriorityHigh",
+                  "kind": "Radio",
+                  "header": "Priority: high",
+                  "radioProperty": "Priority",
+                  "radioValue": "High",
+                  "items": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "name": "TraceRows",
+          "kind": "Context",
+          "items": [
+            {
+              "id": 1,
+              "name": "CopyRow",
+              "kind": "Command",
+              "header": "Copy row",
+              "command": "CopySelectedRow",
+              "gesture": "Ctrl\u002BC",
+              "items": []
+            },
+            {
+              "id": 2,
+              "name": "Separator",
+              "kind": "Separator",
+              "items": []
+            },
+            {
+              "id": 3,
+              "name": "ShowDetails",
+              "kind": "Toggle",
+              "header": "Show trace details",
+              "toggleProperty": "ShowTraceDetails",
+              "items": []
+            },
+            {
+              "id": 4,
+              "name": "Recent",
+              "kind": "RecentFiles",
+              "header": "Recent files",
+              "items": []
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "name": "Shortcuts",
+          "kind": "Accelerators",
+          "items": [
+            {
+              "id": 1,
+              "name": "RefreshLogWindow",
+              "kind": "Command",
+              "header": "Refresh log window",
+              "command": "RefreshLogWindow",
+              "gesture": "Ctrl\u002BR",
+              "items": []
+            }
+          ]
+        }
+      ],
+      "recentFiles": {
+        "id": 1,
+        "collection": "RecentFiles",
+        "activateCommand": "OpenRecentFile",
+        "capacity": 8
+      }
     },
     {
       "id": 2,
@@ -405,7 +682,8 @@
       ],
       "collections": [],
       "maps": [],
-      "commands": []
+      "commands": [],
+      "menus": []
     },
     {
       "id": 3,
@@ -430,7 +708,8 @@
       ],
       "collections": [],
       "maps": [],
-      "commands": []
+      "commands": [],
+      "menus": []
     },
     {
       "id": 4,
@@ -472,7 +751,9 @@
       ],
       "collections": [],
       "maps": [],
-      "commands": []
+      "commands": [],
+      "menus": [],
+      "displayPath": "Message"
     },
     {
       "id": 5,
@@ -498,7 +779,8 @@
       ],
       "collections": [],
       "maps": [],
-      "commands": []
+      "commands": [],
+      "menus": []
     },
     {
       "id": 6,
@@ -540,7 +822,8 @@
         }
       ],
       "maps": [],
-      "commands": []
+      "commands": [],
+      "menus": []
     },
     {
       "id": 7,
@@ -574,7 +857,8 @@
       ],
       "collections": [],
       "maps": [],
-      "commands": []
+      "commands": [],
+      "menus": []
     }
   ],
   "views": [

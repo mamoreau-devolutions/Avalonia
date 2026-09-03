@@ -3,16 +3,20 @@ mod generated;
 #[rustfmt::skip]
 mod generated_view_models;
 mod async_runtime;
+pub mod clipboard;
 pub mod data_shapes;
+pub mod menu;
 mod runtime;
 pub mod storage;
 pub mod value_converter;
 pub mod view_model;
 
 pub use async_runtime::{AsyncOperation, AsyncValue};
+pub use clipboard::{ClipboardCapabilities, ClipboardData, ClipboardFilesOperation};
 pub use data_shapes::{CancellationToken, MapKey, RangeBatch, RangeRequest};
 pub use generated::*;
 pub use generated_view_models::*;
+pub use menu::{RecentFileList, RecentFilesChange};
 pub use runtime::{
     discover_host_path, App, AppContext, AppScope, AsControl, EventSubscription, ResourceValue,
     ThemeVariant, HOST_NATIVE_LIB_ENV_VAR,

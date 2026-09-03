@@ -28,6 +28,15 @@ Clipboard text read/write is the first real consumer. On Windows the host
 initializes OLE around the Avalonia application lifetime because a Rust
 executable has no managed `[STAThread]` entry point.
 
+Stage 31's clipboard commands extend that first consumer without touching the
+frozen text methods: clearing and multi-format writes complete through the same
+`IAvnAsyncCompletion`, while reading file entries reuses stage 29's
+`IAvnStorageCompletion` because the result is a list of storage items. They stay
+asynchronous for a concrete reason: a platform clipboard read can block for as
+long as the owning application takes to render the requested format, so a
+synchronous clipboard API would be a UI-thread hazard. See
+[MENUS.md](MENUS.md#clipboard).
+
 Stage 29's storage pickers are the second. They reuse the same operation
 registry (so `CancelAsyncOperation` and shutdown cancellation behave
 identically) but complete through their own separately versioned

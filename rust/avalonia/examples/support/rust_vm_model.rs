@@ -39,6 +39,8 @@ pub struct Model {
     selected_trace_index: i64,
     selected_trace_key: String,
     trace_sort_direction: String,
+    /// Stage 31: mirrored by the generated View menu's checkable item.
+    show_trace_details: bool,
     desktop_files: Arc<DesktopFiles>,
 }
 
@@ -173,6 +175,7 @@ impl Model {
             selected_trace_index: 0,
             selected_trace_key: "trace-000000".to_string(),
             trace_sort_direction: "Ascending".to_string(),
+            show_trace_details: true,
             desktop_files,
         }
     }
@@ -194,6 +197,8 @@ impl Model {
         sink.set_selected_trace_index(self.selected_trace_index)?;
         sink.set_selected_trace_key(&self.selected_trace_key)?;
         sink.set_trace_sort_direction(&self.trace_sort_direction)?;
+        sink.set_show_trace_details(self.show_trace_details)?;
+        sink.set_clipboard_status("Clipboard idle")?;
         self.publish_richer_shapes(sink)?;
         self.publish_trace_snapshot(sink)
     }
@@ -257,6 +262,21 @@ impl Model {
         let index = index.clamp(0, self.trace_rows.len().saturating_sub(1) as i64);
         self.selected_trace_index = index;
         self.selected_trace_key = self.trace_rows[index as usize].id.clone();
+    }
+
+    /// The text a Copy/Cut menu command puts on the clipboard. Rust owns the
+    /// data, so the clipboard payload is composed here rather than scraped out
+    /// of presentation.
+    fn selected_row_text(&self) -> String {
+        let record = &self.trace_rows[self.selected_trace_index as usize];
+        if self.show_trace_details {
+            format!(
+                "{}\t{}\t{}\t{}",
+                record.timestamp, record.severity, record.source, record.message
+            )
+        } else {
+            record.message.clone()
+        }
     }
 }
 
@@ -695,5 +715,38 @@ impl SampleViewModel for Model {
 
     fn save_export(&mut self) -> avalonia::Result<()> {
         self.desktop_files.save_export()
+    }
+
+    /// Stage 31 command surface. The menu, its accelerators and the context
+    /// menu are managed presentation built from the same schema; everything
+    /// they invoke lands here, in Rust-owned state.
+    fn set_show_trace_details(&mut self, value: bool) -> avalonia::Result<()> {
+        self.show_trace_details = value;
+        Ok(())
+    }
+
+    fn open_recent_file(&mut self, value: String) -> avalonia::Result<()> {
+        self.desktop_files.open_recent(value)
+    }
+
+    fn copy_selected_row(&mut self) -> avalonia::Result<()> {
+        self.desktop_files
+            .copy_text(self.selected_row_text(), false)
+    }
+
+    fn cut_selected_row(&mut self) -> avalonia::Result<()> {
+        self.desktop_files.copy_text(self.selected_row_text(), true)
+    }
+
+    fn paste_from_clipboard(&mut self) -> avalonia::Result<()> {
+        self.desktop_files.paste()
+    }
+
+    fn clear_clipboard(&mut self) -> avalonia::Result<()> {
+        self.desktop_files.clear_clipboard()
+    }
+
+    fn exit_application(&mut self) -> avalonia::Result<()> {
+        self.desktop_files.exit()
     }
 }

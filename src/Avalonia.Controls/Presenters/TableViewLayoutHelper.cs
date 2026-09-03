@@ -29,7 +29,7 @@ internal static class TableViewLayoutHelper
             var width = columns[i].Width;
             if (width.IsAbsolute)
             {
-                var actualWidth = width.Value;
+                var actualWidth = columns[i].ClampWidth(width.Value);
 
                 if (useLayoutRounding)
                     actualWidth = LayoutHelper.RoundLayoutValue(actualWidth, layoutScale);
@@ -84,6 +84,18 @@ internal static class TableViewLayoutHelper
                 }
                 else
                     roundedEdge = unroundedEdge;
+
+                // The min/max limits are applied after the proportional share so a
+                // constrained star column keeps its place in the distribution; the
+                // cumulative-edge bookkeeping above stays on the unconstrained share,
+                // which is what keeps the remaining columns from drifting.
+                var clamped = columns[i].ClampWidth(actualWidth);
+                if (clamped != actualWidth)
+                {
+                    actualWidth = useLayoutRounding
+                        ? LayoutHelper.RoundLayoutValue(clamped, layoutScale)
+                        : clamped;
+                }
 
                 if (columns[i].ActualWidth != actualWidth)
                 {

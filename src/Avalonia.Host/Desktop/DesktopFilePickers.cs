@@ -93,6 +93,20 @@ public sealed record DesktopPickerResult(
         item is null
             ? Cancel
             : new DesktopPickerResult(false, new[] { StorageItemSnapshot.FromStorageItem(item) });
+
+    /// <summary>
+    /// A completed, possibly empty result.
+    /// </summary>
+    /// <remarks>
+    /// An empty <em>picker</em> result means the user dismissed the dialog, so
+    /// <see cref="From(IReadOnlyList{IStorageItem})"/> reports
+    /// <see cref="Cancelled"/>. A clipboard read has no dialog to dismiss: a
+    /// clipboard that simply carries no files is a successful empty result, and
+    /// conflating the two would make "nothing to paste" indistinguishable from
+    /// "the user cancelled".
+    /// </remarks>
+    public static DesktopPickerResult Completed(IReadOnlyList<IStorageItem>? items) =>
+        new(false, StorageItemSnapshot.FromStorageItems(items));
 }
 
 /// <summary>

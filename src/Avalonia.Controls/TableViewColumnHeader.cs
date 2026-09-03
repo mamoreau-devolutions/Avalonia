@@ -61,8 +61,10 @@ public class TableViewColumnHeader : ContentControl
         if (double.IsNaN(actualWidth))
             return;
 
-        var minWidth = _resizer?.Bounds.Width ?? 0;
+        var minWidth = Math.Max(_resizer?.Bounds.Width ?? 0, column.MinWidth);
         var newWidth = Math.Max(minWidth, actualWidth + e.Vector.X);
+        if (newWidth > column.MaxWidth)
+            newWidth = Math.Max(minWidth, column.MaxWidth);
         column.Width = new GridLength(newWidth, GridUnitType.Pixel);
     }
 

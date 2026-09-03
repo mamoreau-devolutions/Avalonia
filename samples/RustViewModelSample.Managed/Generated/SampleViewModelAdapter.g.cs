@@ -43,6 +43,8 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     private string _dropStatus = "Drop files or folders onto the panel below";
     private string _activationStatus = "No startup files";
     private string _logWindowStatus = "Idle";
+    private bool _showTraceDetails = true;
+    private string _clipboardStatus = "Clipboard idle";
     private global::Avalonia.Rust.Sample.Generated.SaveReportViewModelAdapter? _saveResult;
     private double? _saveProgress;
     private string? _saveProgressMessage;
@@ -90,6 +92,12 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         OpenFolderCommand = new DelegateCommand(parameter => Check(_model.BeginAsync(12, null)));
         SaveExportCommand = new DelegateCommand(parameter => Check(_model.BeginAsync(13, null)));
         RefreshLogWindowCommand = new DelegateCommand(parameter => Check(_model.Execute(14, null)));
+        OpenRecentFileCommand = new DelegateCommand(parameter => Check(_model.Execute(15, parameter as string)));
+        CopySelectedRowCommand = new DelegateCommand(parameter => Check(_model.BeginAsync(16, null)));
+        CutSelectedRowCommand = new DelegateCommand(parameter => Check(_model.BeginAsync(17, null)));
+        PasteFromClipboardCommand = new DelegateCommand(parameter => Check(_model.BeginAsync(18, null)));
+        ClearClipboardCommand = new DelegateCommand(parameter => Check(_model.BeginAsync(19, null)));
+        ExitApplicationCommand = new DelegateCommand(parameter => Check(_model.Execute(20, null)));
         try
         {
             Check(_model.Attach(this));
@@ -373,11 +381,49 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         get => _logWindowStatus;
     }
 
+    public bool ShowTraceDetails
+    {
+        get => _showTraceDetails;
+        set
+        {
+            var accepted = value;
+            if (Equals(_showTraceDetails, accepted))
+                return;
+            var previous = _showTraceDetails;
+            var inbound = _inboundWrites.Begin(16);
+            try
+            {
+                Check(_model.SetBoolean(16, (accepted ? 1 : 0)));
+                if (!_inboundWrites.WasPublished(inbound))
+                {
+                    _inboundWrites.CommitLocal(16);
+                    SetField(ref _showTraceDetails, accepted, nameof(ShowTraceDetails));
+                }
+            }
+            catch
+            {
+                if (_inboundWrites.ShouldRollback(inbound))
+                {
+                    _inboundWrites.CommitLocal(16);
+                    SetField(ref _showTraceDetails, previous, nameof(ShowTraceDetails));
+                }
+                throw;
+            }
+            finally { _inboundWrites.End(inbound); }
+        }
+    }
+
+    public string ClipboardStatus
+    {
+        get => _clipboardStatus;
+    }
+
     public BatchObservableCollection<string> Items { get; } = [];
     public BatchObservableCollection<global::Avalonia.Rust.Sample.Generated.TaskItemViewModelAdapter> Tasks { get; } = [];
     public BatchObservableCollection<global::Avalonia.Rust.Sample.Generated.TraceRowViewModelAdapter> TraceRows { get; } = [];
     public BatchObservableCollection<string> SelectedFiles { get; } = [];
     public BatchObservableCollection<global::Avalonia.Rust.Sample.Generated.LogNodeViewModelAdapter> LogTree { get; } = [];
+    public BatchObservableCollection<string> RecentFiles { get; } = [];
     /// <summary>
     /// Range-backed projection: <c>Count</c> is the Rust dataset's total size while at
     /// most 64 x 8 element objects are live.
@@ -400,6 +446,12 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     public DelegateCommand OpenFolderCommand { get; }
     public DelegateCommand SaveExportCommand { get; }
     public DelegateCommand RefreshLogWindowCommand { get; }
+    public DelegateCommand OpenRecentFileCommand { get; }
+    public DelegateCommand CopySelectedRowCommand { get; }
+    public DelegateCommand CutSelectedRowCommand { get; }
+    public DelegateCommand PasteFromClipboardCommand { get; }
+    public DelegateCommand ClearClipboardCommand { get; }
+    public DelegateCommand ExitApplicationCommand { get; }
     /// <summary>Cancels the in-flight invocation. Disabled while nothing is running.</summary>
     public DelegateCommand CancelSaveCommand { get; }
     /// <summary>The command's last typed structured result, or null.</summary>
@@ -432,6 +484,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
             13 => Apply(() => { var converted = value ?? ""; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_dropStatus, converted)) SetField(ref _dropStatus, converted, nameof(DropStatus)); }),
             14 => Apply(() => { var converted = value ?? ""; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_activationStatus, converted)) SetField(ref _activationStatus, converted, nameof(ActivationStatus)); }),
             15 => Apply(() => { var converted = value ?? ""; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_logWindowStatus, converted)) SetField(ref _logWindowStatus, converted, nameof(LogWindowStatus)); }),
+            17 => Apply(() => { var converted = value ?? ""; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_clipboardStatus, converted)) SetField(ref _clipboardStatus, converted, nameof(ClipboardStatus)); }),
             _ => unchecked((int)0x80070057),
         };
     }
@@ -453,6 +506,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         var inbound = _inboundWrites.MarkPublication(propertyId);
         return propertyId switch
         {
+            16 => Apply(() => { var converted = value != 0; _inboundWrites.CommitPublication(propertyId, inbound); if (!Equals(_showTraceDetails, converted)) SetField(ref _showTraceDetails, converted, nameof(ShowTraceDetails)); }),
             _ => unchecked((int)0x80070057),
         };
     }
@@ -500,6 +554,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     {
         1 => Apply(() => { if ((uint)index > (uint)Items.Count) return unchecked((int)0x80070057); Items.Insert(index, value ?? ""); return 0; }),
         4 => Apply(() => { if ((uint)index > (uint)SelectedFiles.Count) return unchecked((int)0x80070057); SelectedFiles.Insert(index, value ?? ""); return 0; }),
+        7 => Apply(() => { if ((uint)index > (uint)RecentFiles.Count) return unchecked((int)0x80070057); RecentFiles.Insert(index, value ?? ""); return 0; }),
         _ => unchecked((int)0x80070057),
     };
 
@@ -515,6 +570,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     {
         1 => Apply(() => { if ((uint)index >= (uint)Items.Count) return unchecked((int)0x80070057); Items[index] = value ?? ""; return 0; }),
         4 => Apply(() => { if ((uint)index >= (uint)SelectedFiles.Count) return unchecked((int)0x80070057); SelectedFiles[index] = value ?? ""; return 0; }),
+        7 => Apply(() => { if ((uint)index >= (uint)RecentFiles.Count) return unchecked((int)0x80070057); RecentFiles[index] = value ?? ""; return 0; }),
         _ => unchecked((int)0x80070057),
     };
 
@@ -551,6 +607,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     {
         1 => Apply(() => { if ((uint)index >= (uint)Items.Count) return unchecked((int)0x80070057); Items.RemoveAt(index); return 0; }),
         4 => Apply(() => { if ((uint)index >= (uint)SelectedFiles.Count) return unchecked((int)0x80070057); SelectedFiles.RemoveAt(index); return 0; }),
+        7 => Apply(() => { if ((uint)index >= (uint)RecentFiles.Count) return unchecked((int)0x80070057); RecentFiles.RemoveAt(index); return 0; }),
         2 => Apply(() =>
         {
             if ((uint)index >= (uint)Tasks.Count) return unchecked((int)0x80070057);
@@ -585,6 +642,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         3 => Apply(() => { if ((uint)fromIndex >= (uint)TraceRows.Count || (uint)toIndex >= (uint)TraceRows.Count) return unchecked((int)0x80070057); TraceRows.Move(fromIndex, toIndex); return 0; }),
         4 => Apply(() => { if ((uint)fromIndex >= (uint)SelectedFiles.Count || (uint)toIndex >= (uint)SelectedFiles.Count) return unchecked((int)0x80070057); SelectedFiles.Move(fromIndex, toIndex); return 0; }),
         6 => Apply(() => { if ((uint)fromIndex >= (uint)LogTree.Count || (uint)toIndex >= (uint)LogTree.Count) return unchecked((int)0x80070057); LogTree.Move(fromIndex, toIndex); return 0; }),
+        7 => Apply(() => { if ((uint)fromIndex >= (uint)RecentFiles.Count || (uint)toIndex >= (uint)RecentFiles.Count) return unchecked((int)0x80070057); RecentFiles.Move(fromIndex, toIndex); return 0; }),
         _ => unchecked((int)0x80070057),
     };
 
@@ -592,6 +650,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     {
         1 => Apply(Items.Clear),
         4 => Apply(SelectedFiles.Clear),
+        7 => Apply(RecentFiles.Clear),
         2 => Apply(() =>
         {
             foreach (var item in Tasks) item.Dispose();
@@ -626,6 +685,12 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         12 => Apply(() => OpenFolderCommand.SetEnabled(enabled != 0)),
         13 => Apply(() => SaveExportCommand.SetEnabled(enabled != 0)),
         14 => Apply(() => RefreshLogWindowCommand.SetEnabled(enabled != 0)),
+        15 => Apply(() => OpenRecentFileCommand.SetEnabled(enabled != 0)),
+        16 => Apply(() => CopySelectedRowCommand.SetEnabled(enabled != 0)),
+        17 => Apply(() => CutSelectedRowCommand.SetEnabled(enabled != 0)),
+        18 => Apply(() => PasteFromClipboardCommand.SetEnabled(enabled != 0)),
+        19 => Apply(() => ClearClipboardCommand.SetEnabled(enabled != 0)),
+        20 => Apply(() => ExitApplicationCommand.SetEnabled(enabled != 0)),
         _ => unchecked((int)0x80070057),
     };
 
@@ -646,6 +711,8 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         13 => Apply(() => SetError(nameof(DropStatus), message)),
         14 => Apply(() => SetError(nameof(ActivationStatus), message)),
         15 => Apply(() => SetError(nameof(LogWindowStatus), message)),
+        16 => Apply(() => SetError(nameof(ShowTraceDetails), message)),
+        17 => Apply(() => SetError(nameof(ClipboardStatus), message)),
         _ => unchecked((int)0x80070057),
     };
 
@@ -653,6 +720,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     {
         1 => Apply(() => Items.Add(value ?? "")),
         4 => Apply(() => SelectedFiles.Add(value ?? "")),
+        7 => Apply(() => RecentFiles.Add(value ?? "")),
         _ => unchecked((int)0x80070057),
     };
 
@@ -768,6 +836,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
     {
         1 => Apply(() => Items.ReplaceSnapshot(values)),
         4 => Apply(() => SelectedFiles.ReplaceSnapshot(values)),
+        7 => Apply(() => RecentFiles.ReplaceSnapshot(values)),
         _ => unchecked((int)0x80070057),
     };
 
@@ -822,6 +891,8 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
             13 => new RustVmBatchProperty(nameof(DropStatus), RustVmValueWireKind.String, false, false),
             14 => new RustVmBatchProperty(nameof(ActivationStatus), RustVmValueWireKind.String, false, false),
             15 => new RustVmBatchProperty(nameof(LogWindowStatus), RustVmValueWireKind.String, false, false),
+            16 => new RustVmBatchProperty(nameof(ShowTraceDetails), RustVmValueWireKind.Boolean, false, false),
+            17 => new RustVmBatchProperty(nameof(ClipboardStatus), RustVmValueWireKind.String, false, false),
             _ => default,
         };
         return property.Name is not null;
@@ -836,6 +907,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
             3 => new RustVmBatchCollectionInfo(nameof(TraceRows), RustVmValueWireKind.Model, TraceRows),
             4 => new RustVmBatchCollectionInfo(nameof(SelectedFiles), RustVmValueWireKind.String, SelectedFiles),
             6 => new RustVmBatchCollectionInfo(nameof(LogTree), RustVmValueWireKind.Model, LogTree),
+            7 => new RustVmBatchCollectionInfo(nameof(RecentFiles), RustVmValueWireKind.String, RecentFiles),
             _ => default,
         };
         return collection.Items is not null;
@@ -859,6 +931,12 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
             12 => OpenFolderCommand,
             13 => SaveExportCommand,
             14 => RefreshLogWindowCommand,
+            15 => OpenRecentFileCommand,
+            16 => CopySelectedRowCommand,
+            17 => CutSelectedRowCommand,
+            18 => PasteFromClipboardCommand,
+            19 => ClearClipboardCommand,
+            20 => ExitApplicationCommand,
             _ => null!,
         };
         return command is not null;
@@ -993,6 +1071,20 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
                 var next = value.Text ?? "";
                 if (Equals(_logWindowStatus, next)) return false;
                 _logWindowStatus = next;
+                return true;
+            }
+            case 16:
+            {
+                var next = value.Boolean;
+                if (Equals(_showTraceDetails, next)) return false;
+                _showTraceDetails = next;
+                return true;
+            }
+            case 17:
+            {
+                var next = value.Text ?? "";
+                if (Equals(_clipboardStatus, next)) return false;
+                _clipboardStatus = next;
                 return true;
             }
             default: return false;

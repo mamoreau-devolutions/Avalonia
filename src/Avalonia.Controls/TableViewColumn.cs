@@ -39,6 +39,18 @@ public class TableViewColumn : StyledElement, IHeadered
         AvaloniaProperty.Register<TableViewColumn, GridLength>(nameof(Width), new GridLength(1, GridUnitType.Star));
 
     /// <summary>
+    /// Defines the <see cref="MinWidth"/> property.
+    /// </summary>
+    public static readonly StyledProperty<double> MinWidthProperty =
+        AvaloniaProperty.Register<TableViewColumn, double>(nameof(MinWidth), 0d, validate: IsValidWidthLimit);
+
+    /// <summary>
+    /// Defines the <see cref="MaxWidth"/> property.
+    /// </summary>
+    public static readonly StyledProperty<double> MaxWidthProperty =
+        AvaloniaProperty.Register<TableViewColumn, double>(nameof(MaxWidth), double.PositiveInfinity, validate: IsValidWidthLimit);
+
+    /// <summary>
     /// Defines the <see cref="CellTheme"/> property.
     /// </summary>
     public static readonly StyledProperty<ControlTheme?> CellThemeProperty =
@@ -124,6 +136,52 @@ public class TableViewColumn : StyledElement, IHeadered
         get => GetValue(WidthProperty);
         set => SetValue(WidthProperty, value);
     }
+
+    /// <summary>
+    /// Gets or sets the minimum width of the column, in device independent
+    /// pixels. Applies to every width mode and to interactive resizing.
+    /// The default is 0.
+    /// </summary>
+    public double MinWidth
+    {
+        get => GetValue(MinWidthProperty);
+        set => SetValue(MinWidthProperty, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the maximum width of the column, in device independent
+    /// pixels. Applies to every width mode and to interactive resizing.
+    /// The default is <see cref="double.PositiveInfinity"/>.
+    /// </summary>
+    /// <remarks>
+    /// When <see cref="MinWidth"/> is greater than <see cref="MaxWidth"/> the
+    /// minimum wins, matching how <see cref="Layoutable"/> resolves the same
+    /// conflict.
+    /// </remarks>
+    public double MaxWidth
+    {
+        get => GetValue(MaxWidthProperty);
+        set => SetValue(MaxWidthProperty, value);
+    }
+
+    /// <summary>
+    /// Clamps <paramref name="width"/> into this column's
+    /// <see cref="MinWidth"/>/<see cref="MaxWidth"/> range.
+    /// </summary>
+    internal double ClampWidth(double width)
+    {
+        var min = MinWidth;
+        var max = MaxWidth;
+        if (double.IsNaN(width))
+            return width;
+        if (width > max)
+            width = max;
+        if (width < min)
+            width = min;
+        return width;
+    }
+
+    private static bool IsValidWidthLimit(double value) => value >= 0 && !double.IsNaN(value);
 
     /// <summary>
     /// Gets or sets the theme to apply to the cells.
@@ -231,6 +289,8 @@ public class TableViewColumn : StyledElement, IHeadered
         base.OnPropertyChanged(change);
 
         if (change.Property == WidthProperty)
+            TableView?.OnColumnsSizeChanged();
+        else if (change.Property == MinWidthProperty || change.Property == MaxWidthProperty)
             TableView?.OnColumnsSizeChanged();
         else if (change.Property == CanUserResizeProperty)
             UpdateCanUserEffectivelyResize();

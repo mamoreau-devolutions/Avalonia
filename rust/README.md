@@ -11,6 +11,8 @@ The executor-neutral completion ABI and clipboard integration are documented
 in [ASYNC.md](ASYNC.md).
 Desktop file integration (pickers, drag/drop, "open with", file associations)
 is documented in [DESKTOP_FILES.md](DESKTOP_FILES.md).
+Menus, keyboard accelerators, recent files and clipboard commands are
+documented in [MENUS.md](MENUS.md).
 The Rust-state/managed-presentation application model is documented in
 [VIEW_MODELS.md](VIEW_MODELS.md).
 Platform host selection and the Windows/Linux/macOS validation are documented in
@@ -86,7 +88,12 @@ Rust model through generated runtime metadata and the AOT-safe `RustBinding`
 markup extension. Both also demonstrate stage 29 desktop file integration:
 Rust-owned Open files / Open folder / Save-export commands, a drop panel, and
 the startup "open with" activation list. Launch either example with file paths
-to populate that list. The dynamic adapter also implements `IReflectableType` for
+to populate that list. `rust_vm_axaml` additionally demonstrates stage 31's
+declared command surface: a File menu (Open, a recent-files submenu, Exit), an
+Edit menu wired to the clipboard (copy, cut, paste, clear), a View menu with a
+checkable item and a radio group, a context menu on the CMTrace table, a
+`Ctrl+O` accelerator and a standalone `Ctrl+R` shortcut that is on no menu at
+all. See [MENUS.md](MENUS.md). The dynamic adapter also implements `IReflectableType` for
 JIT reflection bindings; NativeAOT applications use `RustBinding` because
 Avalonia's general reflection binding requires dynamic code. Both examples
 also register a Rust-authored `IValueConverter` (`CountToLabel`, formatting
@@ -181,6 +188,18 @@ startup/"open with" activation. It reuses `TopLevel.StorageProvider`, the
 dialog, keeps user cancellation distinct from failure, and never asks Rust to
 negotiate a drag effect inside the platform drag loop. See
 [DESKTOP_FILES.md](DESKTOP_FILES.md).
+
+Stage 31 adds a declared command surface on schema v5: application menus,
+context menus, keyboard accelerators, a recent-file list and clipboard
+operations. Menus are presentation, so they add **no view-model ABI** -- the
+generated factories build real `NativeMenu`/`ContextMenu`/`KeyBinding` objects
+bound to the already generated command and property surface, with no reflection
+anywhere. Recent files ride the published string-collection transport because an
+entry is a stage 29 storage URI. Only the clipboard needs the host, through a
+fourth separately versioned capability (`IAvnApplication4`) that adds clearing,
+multi-format writes and reading file entries back as the same immutable storage
+snapshots; the frozen text methods on `IAvnApplication` are unchanged. See
+[MENUS.md](MENUS.md).
 
 ## Start a new application
 

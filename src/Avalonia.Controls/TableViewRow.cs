@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Avalonia.Automation.Peers;
 using Avalonia.Collections;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Presenters;
@@ -17,6 +18,16 @@ public class TableViewRow : ListBoxItem
     private TableViewCellsPresenter? _cellsPresenter;
 
     internal AvaloniaList<TableViewColumn>? Columns { get; set; }
+
+    /// <summary>
+    /// The realized cells presenter, or null before the template is applied.
+    /// </summary>
+    /// <remarks>
+    /// A row's template hosts the cells presenter directly rather than through
+    /// a <see cref="ContentPresenter"/>, so the inherited
+    /// <see cref="ContentControl.Presenter"/> is not the way to reach it.
+    /// </remarks>
+    internal TableViewCellsPresenter? CellsPresenter => _cellsPresenter;
 
     /// <inheritdoc />
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
@@ -51,4 +62,8 @@ public class TableViewRow : ListBoxItem
 
     internal void RefreshCell(int columnIndex)
         => _cellsPresenter?.RefreshCell(columnIndex);
+
+    /// <inheritdoc />
+    protected override AutomationPeer OnCreateAutomationPeer()
+        => new TableViewRowAutomationPeer(this);
 }
