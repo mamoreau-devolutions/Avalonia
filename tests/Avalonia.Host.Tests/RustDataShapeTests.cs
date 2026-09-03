@@ -300,6 +300,34 @@ public class RustDataShapeTests
     }
 
     [Fact]
+    public void A_shared_queue_eviction_unpends_the_victim_collection()
+    {
+        var source = new FakeRangeSource(generation: 1, totalCount: 16);
+        using var victim = new RustWindowedCollection(5, 4, 2, (_, text) => new TrackedRow(text ?? ""));
+        using var requester = new RustWindowedCollection(6, 4, 2, (_, text) => new TrackedRow(text ?? ""));
+        victim.SetSource(source);
+        requester.SetSource(source);
+        victim.ResetTo(1, 16);
+        requester.ResetTo(1, 16);
+        RustWindowedCollection? Resolve(int id) => id == 5 ? victim : id == 6 ? requester : null;
+        victim.SetPeerResolver(Resolve);
+        requester.SetPeerResolver(Resolve);
+
+        Assert.Null(victim[0]);
+        Assert.Single(source.Requests);
+
+        source.Dropped = (5, 0);
+        Assert.Null(requester[4]);
+        Assert.Equal(2, source.Requests.Count);
+
+        source.Requests.Clear();
+        Assert.Null(victim[0]);
+        Assert.Single(source.Requests);
+        Assert.Equal(5, source.Requests[0].Collection);
+        Assert.Equal(0L, source.Requests[0].Offset);
+    }
+
+    [Fact]
     public void Disposing_a_window_publishes_the_emptied_count()
     {
         var window = new RustWindowedCollection(5, 4, 2, (_, text) => new TrackedRow(text ?? ""));

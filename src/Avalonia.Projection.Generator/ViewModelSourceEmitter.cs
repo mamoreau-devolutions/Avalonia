@@ -314,6 +314,7 @@ public static class ViewModelSourceEmitter
                     : "(_, text) => text ?? string.Empty";
                 sb.AppendLine($"        {collection.Name} = new RustWindowedCollection({collection.Id}, {window.PageSize}, {window.MaxLivePages}, {factory});");
                 sb.AppendLine($"        {collection.Name}.SetSource(rangeSource);");
+                sb.AppendLine($"        {collection.Name}.SetPeerResolver(ResolveWindow);");
             }
         }
         foreach (var command in model.Commands)

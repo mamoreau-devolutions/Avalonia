@@ -76,6 +76,7 @@ public sealed partial class SampleViewModelAdapter : IAvnRustVmSink, IAvnRustVmS
         var rangeSource = RustAsyncCommands.TryResolveRangeSource(model);
         LogWindow = new RustWindowedCollection(5, 64, 8, (nested, _) => new global::Avalonia.Rust.Sample.Generated.TraceRowViewModelAdapter(nested!, _dispatch, _post));
         LogWindow.SetSource(rangeSource);
+        LogWindow.SetPeerResolver(ResolveWindow);
         IncrementCommand = new DelegateCommand(parameter => Check(_model.Execute(1, null)));
         AddCommand = new DelegateCommand(parameter => Check(_model.Execute(2, NewItem)));
         SaveCommand = new DelegateCommand(parameter => _saveOperation = RustAsyncCommands.Begin(_model, _tracked, 3, null));

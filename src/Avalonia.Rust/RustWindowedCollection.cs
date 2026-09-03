@@ -44,6 +44,7 @@ public sealed class RustWindowedCollection : IList, IReadOnlyList<object?>, INot
     private readonly HashSet<int> _pending = [];
     private readonly RustWindowElementFactory _factory;
     private IAvnRustRangeSource? _source;
+    private Func<int, RustWindowedCollection?>? _resolvePeer;
     private long _generation;
     private int _totalCount;
     private int _liveElements;
@@ -135,6 +136,14 @@ public sealed class RustWindowedCollection : IList, IReadOnlyList<object?>, INot
     /// view model rather than handed to the constructor.
     /// </summary>
     public void SetSource(IAvnRustRangeSource? source) => _source = source;
+
+    /// <summary>
+    /// Resolves other windowed collections on the same model. The range-request
+    /// queue is shared and bounded, so accepting this window's request may
+    /// evict another collection's; that victim must stop waiting for a batch
+    /// that will never arrive.
+    /// </summary>
+    public void SetPeerResolver(Func<int, RustWindowedCollection?>? resolve) => _resolvePeer = resolve;
 
     /// <summary>
     /// Republishes the dataset identity. A new generation invalidates every
@@ -309,8 +318,13 @@ public sealed class RustWindowedCollection : IList, IReadOnlyList<object?>, INot
                 CollectionId, offset, length, _generation, out var droppedCollection, out var dropped);
             if (hr < 0)
                 _pending.Remove(page);
-            else if (dropped >= 0 && droppedCollection == CollectionId)
-                AbandonPage(dropped);
+            else if (dropped >= 0)
+            {
+                if (droppedCollection == CollectionId)
+                    AbandonPage(dropped);
+                else
+                    _resolvePeer?.Invoke(droppedCollection)?.AbandonPage(dropped);
+            }
         }
         catch
         {
