@@ -31,8 +31,8 @@ public static class AvaloniaProjectionProfiles
             // Wave M grew TemplatedControl (fonts/padding) and TextBlock (fonts/wrapping).
             // Nano-COM vtables are flattened, so every interface below TemplatedControl
             // republishes. TextBlock is not under TemplatedControl; SelectableTextBlock is.
-            ["Avalonia.Host.Com.IAvnTextBlock"] = 7,
-            ["Avalonia.Host.Com.IAvnSelectableTextBlock"] = 4,
+            ["Avalonia.Host.Com.IAvnTextBlock"] = 8,
+            ["Avalonia.Host.Com.IAvnSelectableTextBlock"] = 5,
             ["Avalonia.Host.Com.IAvnTemplatedControl"] = 6,
             ["Avalonia.Host.Com.IAvnItemsControl"] = 7,
             ["Avalonia.Host.Com.IAvnSelectingItemsControl"] = 7,
@@ -313,6 +313,7 @@ public static class AvaloniaProjectionProfiles
                 "Text", "FontSize", "FontWeight", "FontFamily", "FontStyle", "FontStretch",
                 "Foreground", "Background", "Padding", "TextAlignment", "LetterSpacing",
                 "LineSpacing", "LineHeight", "BaselineOffset", "MaxLines", "TextWrapping",
+                "TextTrimming",
             ],
             ["Avalonia.Controls.Image"] =
                 ["Source", "Stretch", "StretchDirection", "BlendMode"],
@@ -626,6 +627,12 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.TextBlock.FontFamily"] = new()
             {
                 Kind = MarshallingKind.StringUtf16,
+                IsNullable = false,
+            },
+            ["Avalonia.Controls.TextBlock.TextTrimming"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                StringConverterTypeName = "Avalonia.Host.Com.AvnTextTrimming",
                 IsNullable = false,
             },
             ["Avalonia.Controls.Control.ContextMenu"] = new()

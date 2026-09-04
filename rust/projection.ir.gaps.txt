@@ -236,7 +236,6 @@ Avalonia.Controls.TableViewColumn.CellTemplate: Not included by projection polic
 Avalonia.Controls.TableViewColumn.Binding: Not included by projection policy
 Avalonia.Controls.TableViewColumn.TableView: Not included by projection policy
 Avalonia.Controls.TextBlock.TextLayout: Not included by projection policy
-Avalonia.Controls.TextBlock.TextTrimming: Not included by projection policy
 Avalonia.Controls.TextBlock.TextDecorations: Not included by projection policy
 Avalonia.Controls.TextBlock.FontFeatures: Not included by projection policy
 Avalonia.Controls.TextBlock.Inlines: Not included by projection policy

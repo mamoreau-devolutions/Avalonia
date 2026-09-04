@@ -1266,7 +1266,7 @@ public class ClrTypeExtractorTests
                 Assert.Equal(3, type.AbiVersion);
                 Assert.True(type.IsConstructible);
             });
-        Assert.Equal(4, Type(ir, "IAvnSelectableTextBlock").AbiVersion);
+        Assert.Equal(5, Type(ir, "IAvnSelectableTextBlock").AbiVersion);
         Assert.True(Type(ir, "IAvnSelectableTextBlock").IsConstructible);
         Assert.Equal(4, Type(ir, "IAvnNumericUpDown").AbiVersion);
         Assert.Equal(4, Type(ir, "IAvnAutoCompleteBox").AbiVersion);
@@ -1497,15 +1497,17 @@ public class ClrTypeExtractorTests
         Assert.Null(fontFamily.StringConverterTypeName);
 
         var textBlock = Type(ir, "IAvnTextBlock");
-        Assert.Equal(7, textBlock.AbiVersion);
+        Assert.Equal(8, textBlock.AbiVersion);
         Assert.All(
             new[] { "FontFamily", "FontStyle", "FontStretch", "Background", "LetterSpacing",
                 "LineSpacing", "MaxLines", "TextWrapping" },
             name => Assert.Contains(textBlock.Properties, p => p.Name == name));
 
-        Assert.Equal(4, Type(ir, "IAvnSelectableTextBlock").AbiVersion);
+        Assert.Equal(5, Type(ir, "IAvnSelectableTextBlock").AbiVersion);
         Assert.Equal(6, Type(ir, "IAvnBorder").AbiVersion);
-        Assert.DoesNotContain(textBlock.Properties, p => p.Name == "TextTrimming");
+        var trimming = textBlock.Properties.Single(p => p.Name == "TextTrimming");
+        Assert.Equal(MarshallingKind.StringUtf16, trimming.Kind);
+        Assert.Equal("Avalonia.Host.Com.AvnTextTrimming", trimming.StringConverterTypeName);
         Assert.Equal(13, ir.FactoryAbiVersion);
     }
 
@@ -1613,13 +1615,13 @@ public class ClrTypeExtractorTests
     {
         var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
         var textBlock = Type(ir, "IAvnTextBlock");
-        Assert.Equal(7, textBlock.AbiVersion);
+        Assert.Equal(8, textBlock.AbiVersion);
         Assert.Contains(textBlock.Properties, p => p.Name == "LineHeight");
         Assert.Contains(textBlock.Properties, p => p.Name == "BaselineOffset");
-        Assert.DoesNotContain(textBlock.Properties, p => p.Name == "TextTrimming");
+        Assert.Contains(textBlock.Properties, p => p.Name == "TextTrimming");
 
         var selectable = Type(ir, "IAvnSelectableTextBlock");
-        Assert.Equal(4, selectable.AbiVersion);
+        Assert.Equal(5, selectable.AbiVersion);
         Assert.Contains(selectable.Properties, p => p.Name == "SelectionBrush");
         Assert.Contains(selectable.Methods, m => m.Name == "SelectAll");
         Assert.Contains(selectable.Events, e => e.Name == "CopyingToClipboard");

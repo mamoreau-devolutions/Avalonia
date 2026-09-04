@@ -27755,6 +27755,17 @@ impl SelectableTextBlock {
         self.set_text_wrapping(value)?;
         Ok(self)
     }
+    pub fn get_text_trimming(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_text_trimming()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_text_trimming(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_text_trimming(&value)?)
+    }
+    pub fn text_trimming(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_text_trimming(value)?;
+        Ok(self)
+    }
     pub fn get_text_alignment(&self) -> Result<TextAlignment> {
         let value = self.raw.get_text_alignment()?;
         TextAlignment::try_from(value)
@@ -35377,6 +35388,17 @@ impl TextBlock {
     }
     pub fn text_wrapping(self, value: TextWrapping) -> Result<Self> {
         self.set_text_wrapping(value)?;
+        Ok(self)
+    }
+    pub fn get_text_trimming(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_text_trimming()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_text_trimming(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_text_trimming(&value)?)
+    }
+    pub fn text_trimming(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_text_trimming(value)?;
         Ok(self)
     }
     pub fn get_text_alignment(&self) -> Result<TextAlignment> {

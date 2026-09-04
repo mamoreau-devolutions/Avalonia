@@ -47,6 +47,7 @@ fn completeness_members_are_published_on_the_type_that_declares_them() {
         "*set_padding)(IAvnTemplatedControl* self, AvnThickness value)",
         "*set_font_family)(IAvnTextBlock* self, const uint16_t* value)",
         "*set_text_wrapping)(IAvnTextBlock* self, int32_t value)",
+        "*set_text_trimming)(IAvnTextBlock* self, const uint16_t* value)",
         "*set_selected_text)(IAvnTextBox* self, const uint16_t* value)",
         "*select_all)(IAvnTextBox* self)",
         "*clear_selection)(IAvnTextBox* self)",
@@ -104,7 +105,7 @@ fn widened_interfaces_publish_abi_version_five() {
         "#define I_AVN_SCROLL_VIEWER_ABI_VERSION 8",
         "#define I_AVN_WINDOW_ABI_VERSION 10",
         "#define I_AVN_TEMPLATED_CONTROL_ABI_VERSION 6",
-        "#define I_AVN_TEXT_BLOCK_ABI_VERSION 7",
+        "#define I_AVN_TEXT_BLOCK_ABI_VERSION 8",
         "#define I_AVN_TEXT_BOX_ABI_VERSION 10",
         "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 7",
         "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 7",
@@ -273,7 +274,7 @@ fn widened_interfaces_republish_under_fresh_iids() {
     );
     assert_eq!(
         format_iid(&I_AVN_TEXT_BLOCK_IID),
-        "3975D6B6-4298-59DE-B380-7C20DAA0DF27"
+        "89F4FFBF-8672-5A0E-B2E0-DA4A3F2C12A2"
     );
 }
 

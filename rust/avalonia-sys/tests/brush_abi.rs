@@ -76,7 +76,7 @@ fn chrome_wave_interfaces_publish_abi_version_four() {
         "#define I_AVN_BORDER_ABI_VERSION 6",
         "#define I_AVN_PANEL_ABI_VERSION 5",
         "#define I_AVN_TEMPLATED_CONTROL_ABI_VERSION 6",
-        "#define I_AVN_TEXT_BLOCK_ABI_VERSION 7",
+        "#define I_AVN_TEXT_BLOCK_ABI_VERSION 8",
         // The factory grew create_solid_color_brush at version 2, a creator per wave A control
         // at version 3, and a creator per constructible wave B type at version 4.
         "#define I_AVN_CONTROL_FACTORY_ABI_VERSION 13",

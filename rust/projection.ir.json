@@ -4321,8 +4321,8 @@
       "name": "IAvnSelectableTextBlock",
       "fullName": "Avalonia.Host.Com.IAvnSelectableTextBlock",
       "kind": "Class",
-      "iid": "87419452-29A4-5C17-A21C-5DEBAA5AB1DC",
-      "abiVersion": 4,
+      "iid": "64DADF29-B8E9-5B35-87F2-D4924DE7EC48",
+      "abiVersion": 5,
       "baseFullName": "Avalonia.Host.Com.IAvnTextBlock",
       "managedFullName": "Avalonia.Controls.SelectableTextBlock",
       "isConstructible": true,
@@ -5212,8 +5212,8 @@
       "name": "IAvnTextBlock",
       "fullName": "Avalonia.Host.Com.IAvnTextBlock",
       "kind": "Class",
-      "iid": "3975D6B6-4298-59DE-B380-7C20DAA0DF27",
-      "abiVersion": 7,
+      "iid": "89F4FFBF-8672-5A0E-B2E0-DA4A3F2C12A2",
+      "abiVersion": 8,
       "baseFullName": "Avalonia.Host.Com.IAvnControl",
       "managedFullName": "Avalonia.Controls.TextBlock",
       "isConstructible": true,
@@ -5348,6 +5348,16 @@
           "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Media.TextWrapping",
           "isNullable": false
+        },
+        {
+          "name": "TextTrimming",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.TextTrimming",
+          "isNullable": false,
+          "stringConverterTypeName": "Avalonia.Host.Com.AvnTextTrimming"
         },
         {
           "name": "TextAlignment",
@@ -11261,11 +11271,6 @@
     {
       "owner": "Avalonia.Controls.TextBlock",
       "member": "TextLayout",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TextBlock",
-      "member": "TextTrimming",
       "reason": "Not included by projection policy"
     },
     {

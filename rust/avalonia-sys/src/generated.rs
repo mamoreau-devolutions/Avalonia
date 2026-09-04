@@ -44056,7 +44056,7 @@ impl ComPtr<IAvnScrollViewer> {
     }
 }
 
-pub const I_AVN_SELECTABLE_TEXT_BLOCK_IID: Guid = Guid { data1: 0x87419452, data2: 0x29A4, data3: 0x5C17, data4: [0xA2, 0x1C, 0x5D, 0xEB, 0xAA, 0x5A, 0xB1, 0xDC] };
+pub const I_AVN_SELECTABLE_TEXT_BLOCK_IID: Guid = Guid { data1: 0x64DADF29, data2: 0xB8E9, data3: 0x5B35, data4: [0x87, 0xF2, 0xD4, 0x92, 0x4D, 0xE7, 0xEC, 0x48] };
 
 #[repr(C)]
 struct IAvnSelectableTextBlockVtbl {
@@ -44135,6 +44135,8 @@ struct IAvnSelectableTextBlockVtbl {
     set_max_lines: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i32) -> i32,
     get_text_wrapping: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut i32) -> i32,
     set_text_wrapping: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i32) -> i32,
+    get_text_trimming: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut *mut u16) -> i32,
+    set_text_trimming: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut u16) -> i32,
     get_text_alignment: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut i32) -> i32,
     set_text_alignment: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i32) -> i32,
     get_baseline_offset: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut f64) -> i32,
@@ -44664,6 +44666,20 @@ impl ComPtr<IAvnSelectableTextBlock> {
     pub fn set_text_wrapping(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_text_wrapping)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_text_trimming(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_text_trimming)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_text_trimming(&self, value: &[u16]) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_text_trimming)(self.as_raw(), value.as_ptr().cast_mut());
             hresult::check(hr)
         }
     }
@@ -56731,7 +56747,7 @@ impl ComPtr<IAvnTableViewRow> {
     }
 }
 
-pub const I_AVN_TEXT_BLOCK_IID: Guid = Guid { data1: 0x3975D6B6, data2: 0x4298, data3: 0x59DE, data4: [0xB3, 0x80, 0x7C, 0x20, 0xDA, 0xA0, 0xDF, 0x27] };
+pub const I_AVN_TEXT_BLOCK_IID: Guid = Guid { data1: 0x89F4FFBF, data2: 0x8672, data3: 0x5A0E, data4: [0xB2, 0xE0, 0xDA, 0x4A, 0x3F, 0x2C, 0x12, 0xA2] };
 
 #[repr(C)]
 struct IAvnTextBlockVtbl {
@@ -56810,6 +56826,8 @@ struct IAvnTextBlockVtbl {
     set_max_lines: unsafe extern "system" fn(*mut IAvnTextBlock, i32) -> i32,
     get_text_wrapping: unsafe extern "system" fn(*mut IAvnTextBlock, *mut i32) -> i32,
     set_text_wrapping: unsafe extern "system" fn(*mut IAvnTextBlock, i32) -> i32,
+    get_text_trimming: unsafe extern "system" fn(*mut IAvnTextBlock, *mut *mut u16) -> i32,
+    set_text_trimming: unsafe extern "system" fn(*mut IAvnTextBlock, *mut u16) -> i32,
     get_text_alignment: unsafe extern "system" fn(*mut IAvnTextBlock, *mut i32) -> i32,
     set_text_alignment: unsafe extern "system" fn(*mut IAvnTextBlock, i32) -> i32,
     get_baseline_offset: unsafe extern "system" fn(*mut IAvnTextBlock, *mut f64) -> i32,
@@ -57324,6 +57342,20 @@ impl ComPtr<IAvnTextBlock> {
     pub fn set_text_wrapping(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_text_wrapping)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_text_trimming(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_text_trimming)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_text_trimming(&self, value: &[u16]) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_text_trimming)(self.as_raw(), value.as_ptr().cast_mut());
             hresult::check(hr)
         }
     }

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("3975D6B6-4298-59DE-B380-7C20DAA0DF27")]
+[Guid("89F4FFBF-8672-5A0E-B2E0-DA4A3F2C12A2")]
 public partial interface IAvnTextBlock : IAvnControl
 {
     [PreserveSig]
@@ -92,6 +92,12 @@ public partial interface IAvnTextBlock : IAvnControl
 
     [PreserveSig]
     int SetTextWrapping(int value);
+
+    [PreserveSig]
+    int GetTextTrimming(out string value);
+
+    [PreserveSig]
+    int SetTextTrimming(string value);
 
     [PreserveSig]
     int GetTextAlignment(out int value);
@@ -1315,6 +1321,37 @@ public sealed partial class AvnTextBlock : IAvnTextBlock
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.TextWrapping = (global::Avalonia.Media.TextWrapping)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetTextTrimming(out string value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = global::Avalonia.Host.Com.AvnTextTrimming.ToAbi(_value.TextTrimming);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetTextTrimming(string value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.TextTrimming = global::Avalonia.Host.Com.AvnTextTrimming.FromAbi(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
