@@ -36,7 +36,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnTemplatedControl"] = 5,
             ["Avalonia.Host.Com.IAvnItemsControl"] = 5,
             ["Avalonia.Host.Com.IAvnSelectingItemsControl"] = 5,
-            ["Avalonia.Host.Com.IAvnTextBox"] = 5,
+            ["Avalonia.Host.Com.IAvnTextBox"] = 6,
             ["Avalonia.Host.Com.IAvnRangeBase"] = 5,
             ["Avalonia.Host.Com.IAvnSlider"] = 5,
             ["Avalonia.Host.Com.IAvnProgressBar"] = 5,
@@ -75,7 +75,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnHyperlinkButton"] = 2,
             ["Avalonia.Host.Com.IAvnIconElement"] = 2,
             ["Avalonia.Host.Com.IAvnLabel"] = 2,
-            ["Avalonia.Host.Com.IAvnMaskedTextBox"] = 2,
+            ["Avalonia.Host.Com.IAvnMaskedTextBox"] = 3,
             ["Avalonia.Host.Com.IAvnMenu"] = 2,
             ["Avalonia.Host.Com.IAvnMenuBase"] = 2,
             ["Avalonia.Host.Com.IAvnMenuItem"] = 2,
@@ -408,7 +408,8 @@ public static class AvaloniaProjectionProfiles
                 "IsDropDownOpen", "FilterMode", "IsTextCompletionEnabled",
             ],
             ["Avalonia.Controls.MaskedTextBox"] =
-                ["Mask", "AsciiOnly", "HidePromptOnLeave", "ResetOnPrompt", "ResetOnSpace"],
+                ["Mask", "AsciiOnly", "HidePromptOnLeave", "ResetOnPrompt", "ResetOnSpace",
+                 "MaskCompleted", "MaskFull"],
             ["Avalonia.Controls.SelectableTextBlock"] =
                 ["SelectionStart", "SelectionEnd", "SelectedText", "CanCopy", "Copy"],
             ["Avalonia.Controls.Calendar"] =
@@ -492,6 +493,12 @@ public static class AvaloniaProjectionProfiles
                 "MinLines", "LineHeight", "RevealPassword", "TextWrapping", "NewLine",
                 "IsUndoEnabled", "UndoLimit", "CanUndo", "CanRedo", "CanCut", "CanCopy",
                 "CanPaste", "Clear", "Cut", "Copy", "Paste", "Undo", "Redo", "TextChanged",
+                "SelectedText", "HorizontalContentAlignment", "VerticalContentAlignment",
+                "TextAlignment", "SelectionBrush", "SelectionForegroundBrush", "CaretBrush",
+                "IsInactiveSelectionHighlightEnabled", "ClearSelectionOnLostFocus",
+                "UseFloatingPlaceholder", "PlaceholderForeground", "InnerLeftContent",
+                "InnerRightContent", "SelectAll", "ClearSelection",
+                "CopyingToClipboard", "CuttingToClipboard", "PastingFromClipboard",
             ],
             ["Avalonia.Controls.ScrollViewer"] =
             [
@@ -552,6 +559,18 @@ public static class AvaloniaProjectionProfiles
             {
                 Kind = MarshallingKind.StringUtf16,
                 IsNullable = false,
+            },
+            ["Avalonia.Controls.TextBox.InnerLeftContent"] = new()
+            {
+                Kind = MarshallingKind.ComInterface,
+                InterfaceName = "Avalonia.Host.Com.IAvnControl",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.TextBox.InnerRightContent"] = new()
+            {
+                Kind = MarshallingKind.ComInterface,
+                InterfaceName = "Avalonia.Host.Com.IAvnControl",
+                IsNullable = true,
             },
             ["Avalonia.Controls.Grid.ColumnDefinitions"] = new()
             {
@@ -800,6 +819,18 @@ public static class AvaloniaProjectionProfiles
                 PayloadKind = EventPayloadKind.None,
             },
             ["Avalonia.Controls.TextBox.TextChanged"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.TextBox.CopyingToClipboard"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.TextBox.CuttingToClipboard"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.TextBox.PastingFromClipboard"] = new()
             {
                 PayloadKind = EventPayloadKind.None,
             },

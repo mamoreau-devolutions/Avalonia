@@ -1265,6 +1265,171 @@ unsafe extern "system" fn i_avn_split_view_pane_opened_handler_invoke(this: *mut
     crate::event_callback::invoke::<IAvnSplitViewPaneOpenedHandler, ()>(this, &mut ())
 }
 
+pub const I_AVN_TEXT_BOX_COPYING_TO_CLIPBOARD_HANDLER_IID: Guid = Guid { data1: 0xF367E5D4, data2: 0xB10F, data3: 0x5BFC, data4: [0x9B, 0x1B, 0x12, 0x1A, 0x76, 0x50, 0xF6, 0xA2] };
+
+#[repr(C)]
+struct IAvnTextBoxCopyingToClipboardHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnTextBoxCopyingToClipboardHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnTextBoxCopyingToClipboardHandler {
+    vtbl: *const IAvnTextBoxCopyingToClipboardHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnTextBoxCopyingToClipboardHandler {
+    const IID: Guid = I_AVN_TEXT_BOX_COPYING_TO_CLIPBOARD_HANDLER_IID;
+}
+
+impl ComPtr<IAvnTextBoxCopyingToClipboardHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_TEXT_BOX_COPYING_TO_CLIPBOARD_HANDLER_VTBL: IAvnTextBoxCopyingToClipboardHandlerVtbl = IAvnTextBoxCopyingToClipboardHandlerVtbl {
+    query_interface: i_avn_text_box_copying_to_clipboard_handler_query_interface,
+    add_ref: i_avn_text_box_copying_to_clipboard_handler_add_ref,
+    release: i_avn_text_box_copying_to_clipboard_handler_release,
+    invoke: i_avn_text_box_copying_to_clipboard_handler_invoke,
+};
+
+pub fn text_box_copying_to_clipboard_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnTextBoxCopyingToClipboardHandler> {
+    crate::event_callback::create::<IAvnTextBoxCopyingToClipboardHandler, ()>(IAvnTextBoxCopyingToClipboardHandler { vtbl: &I_AVN_TEXT_BOX_COPYING_TO_CLIPBOARD_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_text_box_copying_to_clipboard_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnTextBoxCopyingToClipboardHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_text_box_copying_to_clipboard_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnTextBoxCopyingToClipboardHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_text_box_copying_to_clipboard_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnTextBoxCopyingToClipboardHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_text_box_copying_to_clipboard_handler_invoke(this: *mut IAvnTextBoxCopyingToClipboardHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnTextBoxCopyingToClipboardHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_TEXT_BOX_CUTTING_TO_CLIPBOARD_HANDLER_IID: Guid = Guid { data1: 0x20A41A73, data2: 0x9839, data3: 0x5C37, data4: [0xA1, 0x49, 0x47, 0xDC, 0xA6, 0x2A, 0x14, 0x99] };
+
+#[repr(C)]
+struct IAvnTextBoxCuttingToClipboardHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnTextBoxCuttingToClipboardHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnTextBoxCuttingToClipboardHandler {
+    vtbl: *const IAvnTextBoxCuttingToClipboardHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnTextBoxCuttingToClipboardHandler {
+    const IID: Guid = I_AVN_TEXT_BOX_CUTTING_TO_CLIPBOARD_HANDLER_IID;
+}
+
+impl ComPtr<IAvnTextBoxCuttingToClipboardHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_TEXT_BOX_CUTTING_TO_CLIPBOARD_HANDLER_VTBL: IAvnTextBoxCuttingToClipboardHandlerVtbl = IAvnTextBoxCuttingToClipboardHandlerVtbl {
+    query_interface: i_avn_text_box_cutting_to_clipboard_handler_query_interface,
+    add_ref: i_avn_text_box_cutting_to_clipboard_handler_add_ref,
+    release: i_avn_text_box_cutting_to_clipboard_handler_release,
+    invoke: i_avn_text_box_cutting_to_clipboard_handler_invoke,
+};
+
+pub fn text_box_cutting_to_clipboard_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnTextBoxCuttingToClipboardHandler> {
+    crate::event_callback::create::<IAvnTextBoxCuttingToClipboardHandler, ()>(IAvnTextBoxCuttingToClipboardHandler { vtbl: &I_AVN_TEXT_BOX_CUTTING_TO_CLIPBOARD_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_text_box_cutting_to_clipboard_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnTextBoxCuttingToClipboardHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_text_box_cutting_to_clipboard_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnTextBoxCuttingToClipboardHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_text_box_cutting_to_clipboard_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnTextBoxCuttingToClipboardHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_text_box_cutting_to_clipboard_handler_invoke(this: *mut IAvnTextBoxCuttingToClipboardHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnTextBoxCuttingToClipboardHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_TEXT_BOX_PASTING_FROM_CLIPBOARD_HANDLER_IID: Guid = Guid { data1: 0x9EE4C061, data2: 0x60F0, data3: 0x5BA6, data4: [0xB1, 0xAC, 0x5C, 0x65, 0x33, 0xB7, 0x24, 0x8C] };
+
+#[repr(C)]
+struct IAvnTextBoxPastingFromClipboardHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnTextBoxPastingFromClipboardHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnTextBoxPastingFromClipboardHandler {
+    vtbl: *const IAvnTextBoxPastingFromClipboardHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnTextBoxPastingFromClipboardHandler {
+    const IID: Guid = I_AVN_TEXT_BOX_PASTING_FROM_CLIPBOARD_HANDLER_IID;
+}
+
+impl ComPtr<IAvnTextBoxPastingFromClipboardHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_TEXT_BOX_PASTING_FROM_CLIPBOARD_HANDLER_VTBL: IAvnTextBoxPastingFromClipboardHandlerVtbl = IAvnTextBoxPastingFromClipboardHandlerVtbl {
+    query_interface: i_avn_text_box_pasting_from_clipboard_handler_query_interface,
+    add_ref: i_avn_text_box_pasting_from_clipboard_handler_add_ref,
+    release: i_avn_text_box_pasting_from_clipboard_handler_release,
+    invoke: i_avn_text_box_pasting_from_clipboard_handler_invoke,
+};
+
+pub fn text_box_pasting_from_clipboard_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnTextBoxPastingFromClipboardHandler> {
+    crate::event_callback::create::<IAvnTextBoxPastingFromClipboardHandler, ()>(IAvnTextBoxPastingFromClipboardHandler { vtbl: &I_AVN_TEXT_BOX_PASTING_FROM_CLIPBOARD_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_text_box_pasting_from_clipboard_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnTextBoxPastingFromClipboardHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_text_box_pasting_from_clipboard_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnTextBoxPastingFromClipboardHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_text_box_pasting_from_clipboard_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnTextBoxPastingFromClipboardHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_text_box_pasting_from_clipboard_handler_invoke(this: *mut IAvnTextBoxPastingFromClipboardHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnTextBoxPastingFromClipboardHandler, ()>(this, &mut ())
+}
+
 pub const I_AVN_TEXT_BOX_TEXT_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x599D5C79, data2: 0xE8CB, data3: 0x52F0, data4: [0xBD, 0x79, 0xCE, 0xFE, 0x66, 0xD9, 0x9C, 0x0C] };
 
 #[repr(C)]
@@ -20804,7 +20969,7 @@ impl ComPtr<IAvnListBoxItem> {
     }
 }
 
-pub const I_AVN_MASKED_TEXT_BOX_IID: Guid = Guid { data1: 0x38CEDC20, data2: 0xA0BC, data3: 0x57BD, data4: [0x92, 0xF3, 0x7A, 0x4C, 0x28, 0x7B, 0xA3, 0x5D] };
+pub const I_AVN_MASKED_TEXT_BOX_IID: Guid = Guid { data1: 0xDDBA5432, data2: 0x2E90, data3: 0x5ECD, data4: [0xA4, 0x02, 0x38, 0x6F, 0x32, 0x2F, 0x05, 0xD3] };
 
 #[repr(C)]
 struct IAvnMaskedTextBoxVtbl {
@@ -20870,6 +21035,10 @@ struct IAvnMaskedTextBoxVtbl {
     set_letter_spacing: unsafe extern "system" fn(*mut IAvnMaskedTextBox, f64) -> i32,
     get_padding: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut AvnThickness) -> i32,
     set_padding: unsafe extern "system" fn(*mut IAvnMaskedTextBox, AvnThickness) -> i32,
+    get_is_inactive_selection_highlight_enabled: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
+    set_is_inactive_selection_highlight_enabled: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i32) -> i32,
+    get_clear_selection_on_lost_focus: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
+    set_clear_selection_on_lost_focus: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i32) -> i32,
     get_accepts_return: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
     set_accepts_return: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i32) -> i32,
     get_accepts_tab: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
@@ -20878,6 +21047,12 @@ struct IAvnMaskedTextBoxVtbl {
     set_caret_index: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i32) -> i32,
     get_is_read_only: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
     set_is_read_only: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i32) -> i32,
+    get_selection_brush: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut *mut IAvnBrush) -> i32,
+    set_selection_brush: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnBrush) -> i32,
+    get_selection_foreground_brush: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut *mut IAvnBrush) -> i32,
+    set_selection_foreground_brush: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnBrush) -> i32,
+    get_caret_brush: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut *mut IAvnBrush) -> i32,
+    set_caret_brush: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnBrush) -> i32,
     get_selection_start: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
     set_selection_start: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i32) -> i32,
     get_selection_end: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
@@ -20892,8 +21067,24 @@ struct IAvnMaskedTextBoxVtbl {
     set_line_height: unsafe extern "system" fn(*mut IAvnMaskedTextBox, f64) -> i32,
     get_text: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut *mut u16) -> i32,
     set_text: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut u16) -> i32,
+    get_selected_text: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut *mut u16) -> i32,
+    set_selected_text: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut u16) -> i32,
+    get_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
+    set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i32) -> i32,
+    get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
+    set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i32) -> i32,
+    get_text_alignment: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
+    set_text_alignment: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i32) -> i32,
     get_placeholder_text: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut *mut u16) -> i32,
     set_placeholder_text: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut u16) -> i32,
+    get_use_floating_placeholder: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
+    set_use_floating_placeholder: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i32) -> i32,
+    get_placeholder_foreground: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut *mut IAvnBrush) -> i32,
+    set_placeholder_foreground: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnBrush) -> i32,
+    get_inner_left_content: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut *mut IAvnControl) -> i32,
+    set_inner_left_content: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnControl) -> i32,
+    get_inner_right_content: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut *mut IAvnControl) -> i32,
+    set_inner_right_content: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnControl) -> i32,
     get_reveal_password: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
     set_reveal_password: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i32) -> i32,
     get_text_wrapping: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
@@ -20909,12 +21100,20 @@ struct IAvnMaskedTextBoxVtbl {
     set_undo_limit: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i32) -> i32,
     get_can_undo: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
     get_can_redo: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
+    clear_selection: unsafe extern "system" fn(*mut IAvnMaskedTextBox) -> i32,
     cut: unsafe extern "system" fn(*mut IAvnMaskedTextBox) -> i32,
     copy: unsafe extern "system" fn(*mut IAvnMaskedTextBox) -> i32,
     paste: unsafe extern "system" fn(*mut IAvnMaskedTextBox) -> i32,
     clear: unsafe extern "system" fn(*mut IAvnMaskedTextBox) -> i32,
+    select_all: unsafe extern "system" fn(*mut IAvnMaskedTextBox) -> i32,
     undo: unsafe extern "system" fn(*mut IAvnMaskedTextBox) -> i32,
     redo: unsafe extern "system" fn(*mut IAvnMaskedTextBox) -> i32,
+    advise_copying_to_clipboard: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnTextBoxCopyingToClipboardHandler, *mut i64) -> i32,
+    unadvise_copying_to_clipboard: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i64) -> i32,
+    advise_cutting_to_clipboard: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnTextBoxCuttingToClipboardHandler, *mut i64) -> i32,
+    unadvise_cutting_to_clipboard: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i64) -> i32,
+    advise_pasting_from_clipboard: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnTextBoxPastingFromClipboardHandler, *mut i64) -> i32,
+    unadvise_pasting_from_clipboard: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i64) -> i32,
     advise_text_changed: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnTextBoxTextChangedHandler, *mut i64) -> i32,
     unadvise_text_changed: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i64) -> i32,
     get_ascii_only: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
@@ -20923,6 +21122,8 @@ struct IAvnMaskedTextBoxVtbl {
     set_hide_prompt_on_leave: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i32) -> i32,
     get_mask: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut *mut u16) -> i32,
     set_mask: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut u16) -> i32,
+    get_mask_completed: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
+    get_mask_full: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
     get_reset_on_prompt: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
     set_reset_on_prompt: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i32) -> i32,
     get_reset_on_space: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
@@ -21350,6 +21551,34 @@ impl ComPtr<IAvnMaskedTextBox> {
             hresult::check(hr)
         }
     }
+    pub fn get_is_inactive_selection_highlight_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_inactive_selection_highlight_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_inactive_selection_highlight_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_inactive_selection_highlight_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_clear_selection_on_lost_focus(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_clear_selection_on_lost_focus)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_clear_selection_on_lost_focus(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_clear_selection_on_lost_focus)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
     pub fn get_accepts_return(&self) -> Result<bool> {
         unsafe {
             let mut value: i32 = 0;
@@ -21403,6 +21632,48 @@ impl ComPtr<IAvnMaskedTextBox> {
     pub fn set_is_read_only(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_read_only)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selection_brush(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selection_brush)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_selection_brush(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selection_brush)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selection_foreground_brush(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selection_foreground_brush)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_selection_foreground_brush(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selection_foreground_brush)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_caret_brush(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_caret_brush)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_caret_brush(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_caret_brush)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }
@@ -21504,6 +21775,62 @@ impl ComPtr<IAvnMaskedTextBox> {
             hresult::check(hr)
         }
     }
+    pub fn get_selected_text(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_text)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_text(&self, value: &[u16]) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_text)(self.as_raw(), value.as_ptr().cast_mut());
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_text_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_text_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_text_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_text_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
     pub fn get_placeholder_text(&self) -> Result<*mut u16> {
         unsafe {
             let mut value: *mut u16 = ptr::null_mut();
@@ -21515,6 +21842,62 @@ impl ComPtr<IAvnMaskedTextBox> {
     pub fn set_placeholder_text(&self, value: Option<&[u16]>) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placeholder_text)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_use_floating_placeholder(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_use_floating_placeholder)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_use_floating_placeholder(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_use_floating_placeholder)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_placeholder_foreground(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_placeholder_foreground)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_placeholder_foreground(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placeholder_foreground)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_inner_left_content(&self) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_inner_left_content)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_inner_left_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_inner_left_content)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_inner_right_content(&self) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_inner_right_content)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_inner_right_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_inner_right_content)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }
@@ -21628,6 +22011,12 @@ impl ComPtr<IAvnMaskedTextBox> {
             Ok(value != 0)
         }
     }
+    pub fn clear_selection(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().clear_selection)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
     pub fn cut(&self) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().cut)(self.as_raw());
@@ -21652,6 +22041,12 @@ impl ComPtr<IAvnMaskedTextBox> {
             hresult::check(hr)
         }
     }
+    pub fn select_all(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().select_all)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
     pub fn undo(&self) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().undo)(self.as_raw());
@@ -21661,6 +22056,45 @@ impl ComPtr<IAvnMaskedTextBox> {
     pub fn redo(&self) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().redo)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_copying_to_clipboard(&self, handler: &ComPtr<IAvnTextBoxCopyingToClipboardHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_copying_to_clipboard)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_copying_to_clipboard(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_copying_to_clipboard)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_cutting_to_clipboard(&self, handler: &ComPtr<IAvnTextBoxCuttingToClipboardHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_cutting_to_clipboard)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_cutting_to_clipboard(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_cutting_to_clipboard)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pasting_from_clipboard(&self, handler: &ComPtr<IAvnTextBoxPastingFromClipboardHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pasting_from_clipboard)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pasting_from_clipboard(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pasting_from_clipboard)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -21717,6 +22151,22 @@ impl ComPtr<IAvnMaskedTextBox> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_mask)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
             hresult::check(hr)
+        }
+    }
+    pub fn get_mask_completed(&self) -> Result<Option<bool>> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_mask_completed)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            match value { -1 => Ok(None), 0 => Ok(Some(false)), 1 => Ok(Some(true)), _ => Err(Error(hresult::E_INVALIDARG)) }
+        }
+    }
+    pub fn get_mask_full(&self) -> Result<Option<bool>> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_mask_full)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            match value { -1 => Ok(None), 0 => Ok(Some(false)), 1 => Ok(Some(true)), _ => Err(Error(hresult::E_INVALIDARG)) }
         }
     }
     pub fn get_reset_on_prompt(&self) -> Result<bool> {
@@ -47597,7 +48047,7 @@ impl ComPtr<IAvnTextBlock> {
     }
 }
 
-pub const I_AVN_TEXT_BOX_IID: Guid = Guid { data1: 0xC7D28CD9, data2: 0x7045, data3: 0x52EE, data4: [0x9E, 0x5A, 0x5D, 0x14, 0x0E, 0x55, 0x03, 0x03] };
+pub const I_AVN_TEXT_BOX_IID: Guid = Guid { data1: 0x0A134107, data2: 0xC133, data3: 0x5FA2, data4: [0x91, 0xFD, 0xBB, 0x3A, 0x90, 0x17, 0xA9, 0xF2] };
 
 #[repr(C)]
 struct IAvnTextBoxVtbl {
@@ -47663,6 +48113,10 @@ struct IAvnTextBoxVtbl {
     set_letter_spacing: unsafe extern "system" fn(*mut IAvnTextBox, f64) -> i32,
     get_padding: unsafe extern "system" fn(*mut IAvnTextBox, *mut AvnThickness) -> i32,
     set_padding: unsafe extern "system" fn(*mut IAvnTextBox, AvnThickness) -> i32,
+    get_is_inactive_selection_highlight_enabled: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
+    set_is_inactive_selection_highlight_enabled: unsafe extern "system" fn(*mut IAvnTextBox, i32) -> i32,
+    get_clear_selection_on_lost_focus: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
+    set_clear_selection_on_lost_focus: unsafe extern "system" fn(*mut IAvnTextBox, i32) -> i32,
     get_accepts_return: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
     set_accepts_return: unsafe extern "system" fn(*mut IAvnTextBox, i32) -> i32,
     get_accepts_tab: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
@@ -47671,6 +48125,12 @@ struct IAvnTextBoxVtbl {
     set_caret_index: unsafe extern "system" fn(*mut IAvnTextBox, i32) -> i32,
     get_is_read_only: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
     set_is_read_only: unsafe extern "system" fn(*mut IAvnTextBox, i32) -> i32,
+    get_selection_brush: unsafe extern "system" fn(*mut IAvnTextBox, *mut *mut IAvnBrush) -> i32,
+    set_selection_brush: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnBrush) -> i32,
+    get_selection_foreground_brush: unsafe extern "system" fn(*mut IAvnTextBox, *mut *mut IAvnBrush) -> i32,
+    set_selection_foreground_brush: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnBrush) -> i32,
+    get_caret_brush: unsafe extern "system" fn(*mut IAvnTextBox, *mut *mut IAvnBrush) -> i32,
+    set_caret_brush: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnBrush) -> i32,
     get_selection_start: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
     set_selection_start: unsafe extern "system" fn(*mut IAvnTextBox, i32) -> i32,
     get_selection_end: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
@@ -47685,8 +48145,24 @@ struct IAvnTextBoxVtbl {
     set_line_height: unsafe extern "system" fn(*mut IAvnTextBox, f64) -> i32,
     get_text: unsafe extern "system" fn(*mut IAvnTextBox, *mut *mut u16) -> i32,
     set_text: unsafe extern "system" fn(*mut IAvnTextBox, *mut u16) -> i32,
+    get_selected_text: unsafe extern "system" fn(*mut IAvnTextBox, *mut *mut u16) -> i32,
+    set_selected_text: unsafe extern "system" fn(*mut IAvnTextBox, *mut u16) -> i32,
+    get_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
+    set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnTextBox, i32) -> i32,
+    get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
+    set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnTextBox, i32) -> i32,
+    get_text_alignment: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
+    set_text_alignment: unsafe extern "system" fn(*mut IAvnTextBox, i32) -> i32,
     get_placeholder_text: unsafe extern "system" fn(*mut IAvnTextBox, *mut *mut u16) -> i32,
     set_placeholder_text: unsafe extern "system" fn(*mut IAvnTextBox, *mut u16) -> i32,
+    get_use_floating_placeholder: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
+    set_use_floating_placeholder: unsafe extern "system" fn(*mut IAvnTextBox, i32) -> i32,
+    get_placeholder_foreground: unsafe extern "system" fn(*mut IAvnTextBox, *mut *mut IAvnBrush) -> i32,
+    set_placeholder_foreground: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnBrush) -> i32,
+    get_inner_left_content: unsafe extern "system" fn(*mut IAvnTextBox, *mut *mut IAvnControl) -> i32,
+    set_inner_left_content: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnControl) -> i32,
+    get_inner_right_content: unsafe extern "system" fn(*mut IAvnTextBox, *mut *mut IAvnControl) -> i32,
+    set_inner_right_content: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnControl) -> i32,
     get_reveal_password: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
     set_reveal_password: unsafe extern "system" fn(*mut IAvnTextBox, i32) -> i32,
     get_text_wrapping: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
@@ -47702,12 +48178,20 @@ struct IAvnTextBoxVtbl {
     set_undo_limit: unsafe extern "system" fn(*mut IAvnTextBox, i32) -> i32,
     get_can_undo: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
     get_can_redo: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
+    clear_selection: unsafe extern "system" fn(*mut IAvnTextBox) -> i32,
     cut: unsafe extern "system" fn(*mut IAvnTextBox) -> i32,
     copy: unsafe extern "system" fn(*mut IAvnTextBox) -> i32,
     paste: unsafe extern "system" fn(*mut IAvnTextBox) -> i32,
     clear: unsafe extern "system" fn(*mut IAvnTextBox) -> i32,
+    select_all: unsafe extern "system" fn(*mut IAvnTextBox) -> i32,
     undo: unsafe extern "system" fn(*mut IAvnTextBox) -> i32,
     redo: unsafe extern "system" fn(*mut IAvnTextBox) -> i32,
+    advise_copying_to_clipboard: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnTextBoxCopyingToClipboardHandler, *mut i64) -> i32,
+    unadvise_copying_to_clipboard: unsafe extern "system" fn(*mut IAvnTextBox, i64) -> i32,
+    advise_cutting_to_clipboard: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnTextBoxCuttingToClipboardHandler, *mut i64) -> i32,
+    unadvise_cutting_to_clipboard: unsafe extern "system" fn(*mut IAvnTextBox, i64) -> i32,
+    advise_pasting_from_clipboard: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnTextBoxPastingFromClipboardHandler, *mut i64) -> i32,
+    unadvise_pasting_from_clipboard: unsafe extern "system" fn(*mut IAvnTextBox, i64) -> i32,
     advise_text_changed: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnTextBoxTextChangedHandler, *mut i64) -> i32,
     unadvise_text_changed: unsafe extern "system" fn(*mut IAvnTextBox, i64) -> i32,
 }
@@ -48133,6 +48617,34 @@ impl ComPtr<IAvnTextBox> {
             hresult::check(hr)
         }
     }
+    pub fn get_is_inactive_selection_highlight_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_inactive_selection_highlight_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_inactive_selection_highlight_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_inactive_selection_highlight_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_clear_selection_on_lost_focus(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_clear_selection_on_lost_focus)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_clear_selection_on_lost_focus(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_clear_selection_on_lost_focus)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
     pub fn get_accepts_return(&self) -> Result<bool> {
         unsafe {
             let mut value: i32 = 0;
@@ -48186,6 +48698,48 @@ impl ComPtr<IAvnTextBox> {
     pub fn set_is_read_only(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_read_only)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selection_brush(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selection_brush)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_selection_brush(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selection_brush)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selection_foreground_brush(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selection_foreground_brush)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_selection_foreground_brush(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selection_foreground_brush)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_caret_brush(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_caret_brush)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_caret_brush(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_caret_brush)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }
@@ -48287,6 +48841,62 @@ impl ComPtr<IAvnTextBox> {
             hresult::check(hr)
         }
     }
+    pub fn get_selected_text(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_text)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_text(&self, value: &[u16]) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_text)(self.as_raw(), value.as_ptr().cast_mut());
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_text_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_text_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_text_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_text_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
     pub fn get_placeholder_text(&self) -> Result<*mut u16> {
         unsafe {
             let mut value: *mut u16 = ptr::null_mut();
@@ -48298,6 +48908,62 @@ impl ComPtr<IAvnTextBox> {
     pub fn set_placeholder_text(&self, value: Option<&[u16]>) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placeholder_text)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_use_floating_placeholder(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_use_floating_placeholder)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_use_floating_placeholder(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_use_floating_placeholder)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_placeholder_foreground(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_placeholder_foreground)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_placeholder_foreground(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placeholder_foreground)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_inner_left_content(&self) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_inner_left_content)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_inner_left_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_inner_left_content)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_inner_right_content(&self) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_inner_right_content)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_inner_right_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_inner_right_content)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }
@@ -48411,6 +49077,12 @@ impl ComPtr<IAvnTextBox> {
             Ok(value != 0)
         }
     }
+    pub fn clear_selection(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().clear_selection)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
     pub fn cut(&self) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().cut)(self.as_raw());
@@ -48435,6 +49107,12 @@ impl ComPtr<IAvnTextBox> {
             hresult::check(hr)
         }
     }
+    pub fn select_all(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().select_all)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
     pub fn undo(&self) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().undo)(self.as_raw());
@@ -48444,6 +49122,45 @@ impl ComPtr<IAvnTextBox> {
     pub fn redo(&self) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().redo)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_copying_to_clipboard(&self, handler: &ComPtr<IAvnTextBoxCopyingToClipboardHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_copying_to_clipboard)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_copying_to_clipboard(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_copying_to_clipboard)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_cutting_to_clipboard(&self, handler: &ComPtr<IAvnTextBoxCuttingToClipboardHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_cutting_to_clipboard)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_cutting_to_clipboard(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_cutting_to_clipboard)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pasting_from_clipboard(&self, handler: &ComPtr<IAvnTextBoxPastingFromClipboardHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pasting_from_clipboard)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pasting_from_clipboard(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pasting_from_clipboard)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }

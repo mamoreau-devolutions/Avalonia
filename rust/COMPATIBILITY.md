@@ -184,6 +184,13 @@ TextWrapping, and moves from 4 to 5; `IAvnSelectableTextBlock` goes from 1 to 2.
 factory is unmoved at 13. Panels, Border, Image, shapes and flyouts are not
 under TemplatedControl and keep their IIDs.
 
+Wave N widens the TextBox leaf. `IAvnTextBox` grows SelectedText, content
+alignments, selection/caret brushes, floating placeholder, inner left/right
+content as `IAvnControl`, SelectAll/ClearSelection, and clipboard events, and
+moves from 5 to 6. `IAvnMaskedTextBox` grows MaskCompleted/MaskFull and moves
+from 2 to 3. PasswordChar, PromptChar, CaretBlinkInterval, GetLineCount and
+the obsolete Watermark aliases stay gaps. The factory is unmoved.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A

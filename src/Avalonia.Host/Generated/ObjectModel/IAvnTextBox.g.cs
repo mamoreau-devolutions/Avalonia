@@ -6,9 +6,21 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("C7D28CD9-7045-52EE-9E5A-5D140E550303")]
+[Guid("0A134107-C133-5FA2-91FD-BB3A9017A9F2")]
 public partial interface IAvnTextBox : IAvnTemplatedControl
 {
+    [PreserveSig]
+    int GetIsInactiveSelectionHighlightEnabled(out int value);
+
+    [PreserveSig]
+    int SetIsInactiveSelectionHighlightEnabled(int value);
+
+    [PreserveSig]
+    int GetClearSelectionOnLostFocus(out int value);
+
+    [PreserveSig]
+    int SetClearSelectionOnLostFocus(int value);
+
     [PreserveSig]
     int GetAcceptsReturn(out int value);
 
@@ -32,6 +44,24 @@ public partial interface IAvnTextBox : IAvnTemplatedControl
 
     [PreserveSig]
     int SetIsReadOnly(int value);
+
+    [PreserveSig]
+    int GetSelectionBrush(out IAvnBrush? value);
+
+    [PreserveSig]
+    int SetSelectionBrush(IAvnBrush? value);
+
+    [PreserveSig]
+    int GetSelectionForegroundBrush(out IAvnBrush? value);
+
+    [PreserveSig]
+    int SetSelectionForegroundBrush(IAvnBrush? value);
+
+    [PreserveSig]
+    int GetCaretBrush(out IAvnBrush? value);
+
+    [PreserveSig]
+    int SetCaretBrush(IAvnBrush? value);
 
     [PreserveSig]
     int GetSelectionStart(out int value);
@@ -76,10 +106,58 @@ public partial interface IAvnTextBox : IAvnTemplatedControl
     int SetText(string? value);
 
     [PreserveSig]
+    int GetSelectedText(out string value);
+
+    [PreserveSig]
+    int SetSelectedText(string value);
+
+    [PreserveSig]
+    int GetHorizontalContentAlignment(out int value);
+
+    [PreserveSig]
+    int SetHorizontalContentAlignment(int value);
+
+    [PreserveSig]
+    int GetVerticalContentAlignment(out int value);
+
+    [PreserveSig]
+    int SetVerticalContentAlignment(int value);
+
+    [PreserveSig]
+    int GetTextAlignment(out int value);
+
+    [PreserveSig]
+    int SetTextAlignment(int value);
+
+    [PreserveSig]
     int GetPlaceholderText(out string? value);
 
     [PreserveSig]
     int SetPlaceholderText(string? value);
+
+    [PreserveSig]
+    int GetUseFloatingPlaceholder(out int value);
+
+    [PreserveSig]
+    int SetUseFloatingPlaceholder(int value);
+
+    [PreserveSig]
+    int GetPlaceholderForeground(out IAvnBrush? value);
+
+    [PreserveSig]
+    int SetPlaceholderForeground(IAvnBrush? value);
+
+    [PreserveSig]
+    int GetInnerLeftContent(out IAvnControl? value);
+
+    [PreserveSig]
+    int SetInnerLeftContent(IAvnControl? value);
+
+    [PreserveSig]
+    int GetInnerRightContent(out IAvnControl? value);
+
+    [PreserveSig]
+    int SetInnerRightContent(IAvnControl? value);
 
     [PreserveSig]
     int GetRevealPassword(out int value);
@@ -127,6 +205,9 @@ public partial interface IAvnTextBox : IAvnTemplatedControl
     int GetCanRedo(out int value);
 
     [PreserveSig]
+    int ClearSelection();
+
+    [PreserveSig]
     int Cut();
 
     [PreserveSig]
@@ -139,10 +220,31 @@ public partial interface IAvnTextBox : IAvnTemplatedControl
     int Clear();
 
     [PreserveSig]
+    int SelectAll();
+
+    [PreserveSig]
     int Undo();
 
     [PreserveSig]
     int Redo();
+
+    [PreserveSig]
+    int AdviseCopyingToClipboard(IAvnTextBoxCopyingToClipboardHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadviseCopyingToClipboard(long subscriptionId);
+
+    [PreserveSig]
+    int AdviseCuttingToClipboard(IAvnTextBoxCuttingToClipboardHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadviseCuttingToClipboard(long subscriptionId);
+
+    [PreserveSig]
+    int AdvisePastingFromClipboard(IAvnTextBoxPastingFromClipboardHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadvisePastingFromClipboard(long subscriptionId);
 
     [PreserveSig]
     int AdviseTextChanged(IAvnTextBoxTextChangedHandler? handler, out long subscriptionId);
@@ -163,6 +265,12 @@ public sealed partial class AvnTextBox : IAvnTextBox
     private long _nextPointerEnteredSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnControlPointerExitedHandler Handler, global::System.Action Unsubscribe)> _pointerExitedSubscriptions = new();
     private long _nextPointerExitedSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnTextBoxCopyingToClipboardHandler Handler, global::System.Action Unsubscribe)> _copyingToClipboardSubscriptions = new();
+    private long _nextCopyingToClipboardSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnTextBoxCuttingToClipboardHandler Handler, global::System.Action Unsubscribe)> _cuttingToClipboardSubscriptions = new();
+    private long _nextCuttingToClipboardSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnTextBoxPastingFromClipboardHandler Handler, global::System.Action Unsubscribe)> _pastingFromClipboardSubscriptions = new();
+    private long _nextPastingFromClipboardSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnTextBoxTextChangedHandler Handler, global::System.Action Unsubscribe)> _textChangedSubscriptions = new();
     private long _nextTextChangedSubscriptionId;
 
@@ -1134,6 +1242,68 @@ public sealed partial class AvnTextBox : IAvnTextBox
         }
     }
 
+    public int GetIsInactiveSelectionHighlightEnabled(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.IsInactiveSelectionHighlightEnabled ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetIsInactiveSelectionHighlightEnabled(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.IsInactiveSelectionHighlightEnabled = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetClearSelectionOnLostFocus(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.ClearSelectionOnLostFocus ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetClearSelectionOnLostFocus(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ClearSelectionOnLostFocus = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetAcceptsReturn(out int value)
     {
         value = default!;
@@ -1250,6 +1420,99 @@ public sealed partial class AvnTextBox : IAvnTextBox
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.IsReadOnly = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetSelectionBrush(out IAvnBrush? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnBrush.FromBrush(_value.SelectionBrush);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetSelectionBrush(IAvnBrush? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.SelectionBrush = AvnBrush.ToBrush(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetSelectionForegroundBrush(out IAvnBrush? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnBrush.FromBrush(_value.SelectionForegroundBrush);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetSelectionForegroundBrush(IAvnBrush? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.SelectionForegroundBrush = AvnBrush.ToBrush(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetCaretBrush(out IAvnBrush? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnBrush.FromBrush(_value.CaretBrush);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetCaretBrush(IAvnBrush? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.CaretBrush = AvnBrush.ToBrush(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -1475,6 +1738,130 @@ public sealed partial class AvnTextBox : IAvnTextBox
         }
     }
 
+    public int GetSelectedText(out string value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.SelectedText;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetSelectedText(string value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.SelectedText = value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetHorizontalContentAlignment(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.HorizontalContentAlignment;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetHorizontalContentAlignment(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.HorizontalContentAlignment = (global::Avalonia.Layout.HorizontalAlignment)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetVerticalContentAlignment(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.VerticalContentAlignment;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetVerticalContentAlignment(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.VerticalContentAlignment = (global::Avalonia.Layout.VerticalAlignment)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetTextAlignment(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.TextAlignment;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetTextAlignment(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.TextAlignment = (global::Avalonia.Media.TextAlignment)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetPlaceholderText(out string? value)
     {
         value = default!;
@@ -1498,6 +1885,130 @@ public sealed partial class AvnTextBox : IAvnTextBox
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.PlaceholderText = value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetUseFloatingPlaceholder(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.UseFloatingPlaceholder ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetUseFloatingPlaceholder(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.UseFloatingPlaceholder = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetPlaceholderForeground(out IAvnBrush? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnBrush.FromBrush(_value.PlaceholderForeground);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetPlaceholderForeground(IAvnBrush? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.PlaceholderForeground = AvnBrush.ToBrush(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetInnerLeftContent(out IAvnControl? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (IAvnControl?)ProjectionRuntime.Wrap(_value.InnerLeftContent as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetInnerLeftContent(IAvnControl? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.InnerLeftContent = (global::System.Object)ProjectionRuntime.Unwrap(value)!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetInnerRightContent(out IAvnControl? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (IAvnControl?)ProjectionRuntime.Wrap(_value.InnerRightContent as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetInnerRightContent(IAvnControl? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.InnerRightContent = (global::System.Object)ProjectionRuntime.Unwrap(value)!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -1741,6 +2252,21 @@ public sealed partial class AvnTextBox : IAvnTextBox
         }
     }
 
+    public int ClearSelection()
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ClearSelection();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int Cut()
     {
         try
@@ -1801,6 +2327,21 @@ public sealed partial class AvnTextBox : IAvnTextBox
         }
     }
 
+    public int SelectAll()
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.SelectAll();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int Undo()
     {
         try
@@ -1823,6 +2364,144 @@ public sealed partial class AvnTextBox : IAvnTextBox
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Redo();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseCopyingToClipboard(IAvnTextBoxCopyingToClipboardHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<Avalonia.Interactivity.RoutedEventArgs>((_, eventArgs) =>
+            {
+                var hr = handler.Invoke();
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.CopyingToClipboard += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextCopyingToClipboardSubscriptionId);
+            _copyingToClipboardSubscriptions.Add(subscriptionId, (handler, () => eventSource.CopyingToClipboard -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseCopyingToClipboard(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_copyingToClipboardSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseCuttingToClipboard(IAvnTextBoxCuttingToClipboardHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<Avalonia.Interactivity.RoutedEventArgs>((_, eventArgs) =>
+            {
+                var hr = handler.Invoke();
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.CuttingToClipboard += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextCuttingToClipboardSubscriptionId);
+            _cuttingToClipboardSubscriptions.Add(subscriptionId, (handler, () => eventSource.CuttingToClipboard -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseCuttingToClipboard(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_cuttingToClipboardSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdvisePastingFromClipboard(IAvnTextBoxPastingFromClipboardHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<Avalonia.Interactivity.RoutedEventArgs>((_, eventArgs) =>
+            {
+                var hr = handler.Invoke();
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.PastingFromClipboard += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextPastingFromClipboardSubscriptionId);
+            _pastingFromClipboardSubscriptions.Add(subscriptionId, (handler, () => eventSource.PastingFromClipboard -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadvisePastingFromClipboard(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_pastingFromClipboardSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -1897,6 +2576,24 @@ public sealed partial class AvnTextBox : IAvnTextBox
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
         }
         _pointerExitedSubscriptions.Clear();
+        foreach (var subscription in _copyingToClipboardSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _copyingToClipboardSubscriptions.Clear();
+        foreach (var subscription in _cuttingToClipboardSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _cuttingToClipboardSubscriptions.Clear();
+        foreach (var subscription in _pastingFromClipboardSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _pastingFromClipboardSubscriptions.Clear();
         foreach (var subscription in _textChangedSubscriptions.Values)
         {
             subscription.Unsubscribe();

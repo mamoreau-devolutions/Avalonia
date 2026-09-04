@@ -1220,7 +1220,7 @@ public class ClrTypeExtractorTests
             new[]
             {
                 "IAvnButtonSpinner", "IAvnNumericUpDown", "IAvnAutoCompleteBox",
-                "IAvnMaskedTextBox", "IAvnSelectableTextBlock",
+                "IAvnSelectableTextBlock",
             },
             name =>
             {
@@ -1228,6 +1228,7 @@ public class ClrTypeExtractorTests
                 Assert.Equal(2, type.AbiVersion);
                 Assert.True(type.IsConstructible);
             });
+        Assert.Equal(3, Type(ir, "IAvnMaskedTextBox").AbiVersion);
 
         Assert.Equal("Avalonia.Host.Com.IAvnSpinner", Type(ir, "IAvnButtonSpinner").BaseFullName);
         Assert.Equal("Avalonia.Host.Com.IAvnTemplatedControl", Type(ir, "IAvnNumericUpDown").BaseFullName);
@@ -1452,6 +1453,26 @@ public class ClrTypeExtractorTests
         Assert.Equal(2, Type(ir, "IAvnSelectableTextBlock").AbiVersion);
         Assert.Equal(4, Type(ir, "IAvnBorder").AbiVersion);
         Assert.DoesNotContain(textBlock.Properties, p => p.Name == "TextTrimming");
+        Assert.Equal(13, ir.FactoryAbiVersion);
+    }
+
+    [Fact]
+    public void Wave_n_textbox_remainder_bumps_only_textbox_and_masked_textbox()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+        var textBox = Type(ir, "IAvnTextBox");
+        Assert.Equal(6, textBox.AbiVersion);
+        Assert.All(
+            new[] { "SelectedText", "TextAlignment", "SelectionBrush", "InnerLeftContent",
+                "UseFloatingPlaceholder", "PlaceholderForeground" },
+            name => Assert.Contains(textBox.Properties, p => p.Name == name));
+        Assert.All(
+            new[] { "SelectAll", "ClearSelection" },
+            name => Assert.Contains(textBox.Methods, m => m.Name == name));
+        Assert.DoesNotContain(textBox.Properties, p => p.Name is "PasswordChar" or "Watermark" or "CaretBlinkInterval");
+        Assert.Equal(3, Type(ir, "IAvnMaskedTextBox").AbiVersion);
+        Assert.Contains(Type(ir, "IAvnMaskedTextBox").Properties, p => p.Name == "MaskCompleted");
+        Assert.Equal(5, Type(ir, "IAvnTemplatedControl").AbiVersion);
         Assert.Equal(13, ir.FactoryAbiVersion);
     }
 

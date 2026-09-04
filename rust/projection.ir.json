@@ -1822,8 +1822,8 @@
       "name": "IAvnMaskedTextBox",
       "fullName": "Avalonia.Host.Com.IAvnMaskedTextBox",
       "kind": "Class",
-      "iid": "38CEDC20-A0BC-57BD-92F3-7A4C287BA35D",
-      "abiVersion": 2,
+      "iid": "DDBA5432-2E90-5ECD-A402-386F322F05D3",
+      "abiVersion": 3,
       "baseFullName": "Avalonia.Host.Com.IAvnTextBox",
       "managedFullName": "Avalonia.Controls.MaskedTextBox",
       "isConstructible": true,
@@ -1854,6 +1854,24 @@
           "canWrite": true,
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.String",
+          "isNullable": true
+        },
+        {
+          "name": "MaskCompleted",
+          "kind": "NullableBool",
+          "canRead": true,
+          "canWrite": false,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Nullable\u00601[[System.Boolean, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "isNullable": true
+        },
+        {
+          "name": "MaskFull",
+          "kind": "NullableBool",
+          "canRead": true,
+          "canWrite": false,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Nullable\u00601[[System.Boolean, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
           "isNullable": true
         },
         {
@@ -4328,12 +4346,19 @@
       "name": "IAvnTextBox",
       "fullName": "Avalonia.Host.Com.IAvnTextBox",
       "kind": "Class",
-      "iid": "C7D28CD9-7045-52EE-9E5A-5D140E550303",
-      "abiVersion": 5,
+      "iid": "0A134107-C133-5FA2-91FD-BB3A9017A9F2",
+      "abiVersion": 6,
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.TextBox",
       "isConstructible": true,
       "methods": [
+        {
+          "name": "ClearSelection",
+          "managedName": "ClearSelection",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": []
+        },
         {
           "name": "Cut",
           "managedName": "Cut",
@@ -4363,6 +4388,13 @@
           "parameters": []
         },
         {
+          "name": "SelectAll",
+          "managedName": "SelectAll",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": []
+        },
+        {
           "name": "Undo",
           "managedName": "Undo",
           "returnKind": "I32",
@@ -4378,6 +4410,24 @@
         }
       ],
       "properties": [
+        {
+          "name": "IsInactiveSelectionHighlightEnabled",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "ClearSelectionOnLostFocus",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
         {
           "name": "AcceptsReturn",
           "kind": "Bool",
@@ -4413,6 +4463,39 @@
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
+        },
+        {
+          "name": "SelectionBrush",
+          "kind": "Brush",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnBrush",
+          "interfaceIid": "FC7CCBAE-ED75-5C6D-8516-DF706E137ED3",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.IBrush",
+          "isNullable": true
+        },
+        {
+          "name": "SelectionForegroundBrush",
+          "kind": "Brush",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnBrush",
+          "interfaceIid": "FC7CCBAE-ED75-5C6D-8516-DF706E137ED3",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.IBrush",
+          "isNullable": true
+        },
+        {
+          "name": "CaretBrush",
+          "kind": "Brush",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnBrush",
+          "interfaceIid": "FC7CCBAE-ED75-5C6D-8516-DF706E137ED3",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.IBrush",
+          "isNullable": true
         },
         {
           "name": "SelectionStart",
@@ -4478,12 +4561,88 @@
           "isNullable": true
         },
         {
+          "name": "SelectedText",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.String",
+          "isNullable": false
+        },
+        {
+          "name": "HorizontalContentAlignment",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Layout.HorizontalAlignment",
+          "isNullable": false
+        },
+        {
+          "name": "VerticalContentAlignment",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Layout.VerticalAlignment",
+          "isNullable": false
+        },
+        {
+          "name": "TextAlignment",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.TextAlignment",
+          "isNullable": false
+        },
+        {
           "name": "PlaceholderText",
           "kind": "StringUtf16",
           "canRead": true,
           "canWrite": true,
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.String",
+          "isNullable": true
+        },
+        {
+          "name": "UseFloatingPlaceholder",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "PlaceholderForeground",
+          "kind": "Brush",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnBrush",
+          "interfaceIid": "FC7CCBAE-ED75-5C6D-8516-DF706E137ED3",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.IBrush",
+          "isNullable": true
+        },
+        {
+          "name": "InnerLeftContent",
+          "kind": "ComInterface",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnControl",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Object",
+          "isNullable": true
+        },
+        {
+          "name": "InnerRightContent",
+          "kind": "ComInterface",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnControl",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Object",
           "isNullable": true
         },
         {
@@ -4578,6 +4737,33 @@
         }
       ],
       "events": [
+        {
+          "name": "CopyingToClipboard",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnTextBoxCopyingToClipboardHandler",
+          "handlerInterfaceIid": "F367E5D4-B10F-5BFC-9B1B-121A7650F6A2",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E",
+          "parameters": []
+        },
+        {
+          "name": "CuttingToClipboard",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnTextBoxCuttingToClipboardHandler",
+          "handlerInterfaceIid": "20A41A73-9839-5C37-A149-47DCA62A1499",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E",
+          "parameters": []
+        },
+        {
+          "name": "PastingFromClipboard",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnTextBoxPastingFromClipboardHandler",
+          "handlerInterfaceIid": "9EE4C061-60F0-5BA6-B1AC-5C6533B7248C",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E",
+          "parameters": []
+        },
         {
           "name": "TextChanged",
           "handlerInterfaceName": "Avalonia.Host.Com.IAvnTextBoxTextChangedHandler",
@@ -9343,16 +9529,6 @@
     },
     {
       "owner": "Avalonia.Controls.MaskedTextBox",
-      "member": "MaskCompleted",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.MaskedTextBox",
-      "member": "MaskFull",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.MaskedTextBox",
       "member": "MaskProvider",
       "reason": "Not included by projection policy"
     },
@@ -10223,32 +10399,7 @@
     },
     {
       "owner": "Avalonia.Controls.TextBox",
-      "member": "IsInactiveSelectionHighlightEnabled",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TextBox",
-      "member": "ClearSelectionOnLostFocus",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TextBox",
       "member": "PasswordChar",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TextBox",
-      "member": "SelectionBrush",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TextBox",
-      "member": "SelectionForegroundBrush",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TextBox",
-      "member": "CaretBrush",
       "reason": "Not included by projection policy"
     },
     {
@@ -10258,32 +10409,7 @@
     },
     {
       "owner": "Avalonia.Controls.TextBox",
-      "member": "SelectedText",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TextBox",
-      "member": "HorizontalContentAlignment",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TextBox",
-      "member": "VerticalContentAlignment",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TextBox",
-      "member": "TextAlignment",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TextBox",
       "member": "Watermark",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TextBox",
-      "member": "UseFloatingPlaceholder",
       "reason": "Not included by projection policy"
     },
     {
@@ -10293,47 +10419,12 @@
     },
     {
       "owner": "Avalonia.Controls.TextBox",
-      "member": "PlaceholderForeground",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TextBox",
       "member": "WatermarkForeground",
       "reason": "Not included by projection policy"
     },
     {
       "owner": "Avalonia.Controls.TextBox",
-      "member": "InnerLeftContent",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TextBox",
-      "member": "InnerRightContent",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TextBox",
-      "member": "CopyingToClipboard",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TextBox",
-      "member": "CuttingToClipboard",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TextBox",
-      "member": "PastingFromClipboard",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TextBox",
       "member": "TextChanging",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TextBox",
-      "member": "ClearSelection()",
       "reason": "Not included by projection policy"
     },
     {
@@ -10344,11 +10435,6 @@
     {
       "owner": "Avalonia.Controls.TextBox",
       "member": "ScrollToLine(Int32)",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TextBox",
-      "member": "SelectAll()",
       "reason": "Not included by projection policy"
     },
     {

@@ -14170,6 +14170,22 @@ impl MaskedTextBox {
         self.set_padding(value)?;
         Ok(self)
     }
+    pub fn get_is_inactive_selection_highlight_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_inactive_selection_highlight_enabled()?) }
+    pub fn set_inactive_selection_highlight_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_inactive_selection_highlight_enabled(value)?)
+    }
+    pub fn inactive_selection_highlight_enabled(self, value: bool) -> Result<Self> {
+        self.set_inactive_selection_highlight_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_clear_selection_on_lost_focus(&self) -> Result<bool> { Ok(self.raw.get_clear_selection_on_lost_focus()?) }
+    pub fn set_clear_selection_on_lost_focus(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_clear_selection_on_lost_focus(value)?)
+    }
+    pub fn clear_selection_on_lost_focus(self, value: bool) -> Result<Self> {
+        self.set_clear_selection_on_lost_focus(value)?;
+        Ok(self)
+    }
     pub fn get_accepts_return(&self) -> Result<bool> { Ok(self.raw.get_accepts_return()?) }
     pub fn set_accepts_return(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_accepts_return(value)?)
@@ -14200,6 +14216,39 @@ impl MaskedTextBox {
     }
     pub fn read_only(self, value: bool) -> Result<Self> {
         self.set_read_only(value)?;
+        Ok(self)
+    }
+    pub fn get_selection_brush(&self) -> Result<Option<Brush>> {
+        self.raw.get_selection_brush()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_selection_brush(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_selection_brush(value.as_ref())?)
+    }
+    pub fn selection_brush(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_selection_brush(value)?;
+        Ok(self)
+    }
+    pub fn get_selection_foreground_brush(&self) -> Result<Option<Brush>> {
+        self.raw.get_selection_foreground_brush()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_selection_foreground_brush(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_selection_foreground_brush(value.as_ref())?)
+    }
+    pub fn selection_foreground_brush(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_selection_foreground_brush(value)?;
+        Ok(self)
+    }
+    pub fn get_caret_brush(&self) -> Result<Option<Brush>> {
+        self.raw.get_caret_brush()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_caret_brush(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_caret_brush(value.as_ref())?)
+    }
+    pub fn caret_brush(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_caret_brush(value)?;
         Ok(self)
     }
     pub fn get_selection_start(&self) -> Result<i32> { Ok(self.raw.get_selection_start()?) }
@@ -14261,6 +14310,50 @@ impl MaskedTextBox {
         self.set_text(value)?;
         Ok(self)
     }
+    pub fn get_selected_text(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_selected_text()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_selected_text(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_selected_text(&value)?)
+    }
+    pub fn selected_text(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_selected_text(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_content_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_content_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_content_alignment(value as i32)?)
+    }
+    pub fn horizontal_content_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_content_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_content_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_content_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_content_alignment(value as i32)?)
+    }
+    pub fn vertical_content_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_content_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_text_alignment(&self) -> Result<TextAlignment> {
+        let value = self.raw.get_text_alignment()?;
+        TextAlignment::try_from(value)
+    }
+    pub fn set_text_alignment(&self, value: TextAlignment) -> Result<()> {
+        Ok(self.raw.set_text_alignment(value as i32)?)
+    }
+    pub fn text_alignment(self, value: TextAlignment) -> Result<Self> {
+        self.set_text_alignment(value)?;
+        Ok(self)
+    }
     pub fn get_placeholder_text(&self) -> Result<Option<String>> {
         unsafe { Ok(sys::take_utf16(self.raw.get_placeholder_text()?)) }
     }
@@ -14270,6 +14363,47 @@ impl MaskedTextBox {
     }
     pub fn placeholder_text(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_placeholder_text(value)?;
+        Ok(self)
+    }
+    pub fn get_use_floating_placeholder(&self) -> Result<bool> { Ok(self.raw.get_use_floating_placeholder()?) }
+    pub fn set_use_floating_placeholder(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_use_floating_placeholder(value)?)
+    }
+    pub fn use_floating_placeholder(self, value: bool) -> Result<Self> {
+        self.set_use_floating_placeholder(value)?;
+        Ok(self)
+    }
+    pub fn get_placeholder_foreground(&self) -> Result<Option<Brush>> {
+        self.raw.get_placeholder_foreground()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_placeholder_foreground(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_placeholder_foreground(value.as_ref())?)
+    }
+    pub fn placeholder_foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_placeholder_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_inner_left_content(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_inner_left_content()?.map(|raw| Control { raw }))
+    }
+    pub fn set_inner_left_content(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_inner_left_content(Some(&value))?)
+    }
+    pub fn inner_left_content(self, value: impl AsControl) -> Result<Self> {
+        self.set_inner_left_content(value)?;
+        Ok(self)
+    }
+    pub fn get_inner_right_content(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_inner_right_content()?.map(|raw| Control { raw }))
+    }
+    pub fn set_inner_right_content(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_inner_right_content(Some(&value))?)
+    }
+    pub fn inner_right_content(self, value: impl AsControl) -> Result<Self> {
+        self.set_inner_right_content(value)?;
         Ok(self)
     }
     pub fn get_reveal_password(&self) -> Result<bool> { Ok(self.raw.get_reveal_password()?) }
@@ -14323,12 +14457,53 @@ impl MaskedTextBox {
     }
     pub fn can_undo(&self) -> Result<bool> { Ok(self.raw.get_can_undo()?) }
     pub fn can_redo(&self) -> Result<bool> { Ok(self.raw.get_can_redo()?) }
+    pub fn clear_selection(&self) -> Result<()> { Ok(self.raw.clear_selection()?) }
     pub fn cut(&self) -> Result<()> { Ok(self.raw.cut()?) }
     pub fn copy(&self) -> Result<()> { Ok(self.raw.copy()?) }
     pub fn paste(&self) -> Result<()> { Ok(self.raw.paste()?) }
     pub fn clear(&self) -> Result<()> { Ok(self.raw.clear()?) }
+    pub fn select_all(&self) -> Result<()> { Ok(self.raw.select_all()?) }
     pub fn undo(&self) -> Result<()> { Ok(self.raw.undo()?) }
     pub fn redo(&self) -> Result<()> { Ok(self.raw.redo()?) }
+    pub fn subscribe_copying_to_clipboard(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::text_box_copying_to_clipboard_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_copying_to_clipboard(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_copying_to_clipboard(subscription_id)))
+    }
+    pub fn on_copying_to_clipboard(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_copying_to_clipboard(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_cutting_to_clipboard(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::text_box_cutting_to_clipboard_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_cutting_to_clipboard(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_cutting_to_clipboard(subscription_id)))
+    }
+    pub fn on_cutting_to_clipboard(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_cutting_to_clipboard(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_pasting_from_clipboard(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::text_box_pasting_from_clipboard_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pasting_from_clipboard(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pasting_from_clipboard(subscription_id)))
+    }
+    pub fn on_pasting_from_clipboard(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pasting_from_clipboard(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_text_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::text_box_text_changed_handler(move || {
             callback(());
@@ -14369,6 +14544,8 @@ impl MaskedTextBox {
         self.set_mask(value)?;
         Ok(self)
     }
+    pub fn mask_completed(&self) -> Result<Option<bool>> { Ok(self.raw.get_mask_completed()?) }
+    pub fn mask_full(&self) -> Result<Option<bool>> { Ok(self.raw.get_mask_full()?) }
     pub fn get_reset_on_prompt(&self) -> Result<bool> { Ok(self.raw.get_reset_on_prompt()?) }
     pub fn set_reset_on_prompt(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_reset_on_prompt(value)?)
@@ -30180,6 +30357,22 @@ impl TextBox {
         self.set_padding(value)?;
         Ok(self)
     }
+    pub fn get_is_inactive_selection_highlight_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_inactive_selection_highlight_enabled()?) }
+    pub fn set_inactive_selection_highlight_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_inactive_selection_highlight_enabled(value)?)
+    }
+    pub fn inactive_selection_highlight_enabled(self, value: bool) -> Result<Self> {
+        self.set_inactive_selection_highlight_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_clear_selection_on_lost_focus(&self) -> Result<bool> { Ok(self.raw.get_clear_selection_on_lost_focus()?) }
+    pub fn set_clear_selection_on_lost_focus(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_clear_selection_on_lost_focus(value)?)
+    }
+    pub fn clear_selection_on_lost_focus(self, value: bool) -> Result<Self> {
+        self.set_clear_selection_on_lost_focus(value)?;
+        Ok(self)
+    }
     pub fn get_accepts_return(&self) -> Result<bool> { Ok(self.raw.get_accepts_return()?) }
     pub fn set_accepts_return(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_accepts_return(value)?)
@@ -30210,6 +30403,39 @@ impl TextBox {
     }
     pub fn read_only(self, value: bool) -> Result<Self> {
         self.set_read_only(value)?;
+        Ok(self)
+    }
+    pub fn get_selection_brush(&self) -> Result<Option<Brush>> {
+        self.raw.get_selection_brush()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_selection_brush(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_selection_brush(value.as_ref())?)
+    }
+    pub fn selection_brush(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_selection_brush(value)?;
+        Ok(self)
+    }
+    pub fn get_selection_foreground_brush(&self) -> Result<Option<Brush>> {
+        self.raw.get_selection_foreground_brush()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_selection_foreground_brush(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_selection_foreground_brush(value.as_ref())?)
+    }
+    pub fn selection_foreground_brush(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_selection_foreground_brush(value)?;
+        Ok(self)
+    }
+    pub fn get_caret_brush(&self) -> Result<Option<Brush>> {
+        self.raw.get_caret_brush()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_caret_brush(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_caret_brush(value.as_ref())?)
+    }
+    pub fn caret_brush(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_caret_brush(value)?;
         Ok(self)
     }
     pub fn get_selection_start(&self) -> Result<i32> { Ok(self.raw.get_selection_start()?) }
@@ -30271,6 +30497,50 @@ impl TextBox {
         self.set_text(value)?;
         Ok(self)
     }
+    pub fn get_selected_text(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_selected_text()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_selected_text(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_selected_text(&value)?)
+    }
+    pub fn selected_text(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_selected_text(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_content_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_content_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_content_alignment(value as i32)?)
+    }
+    pub fn horizontal_content_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_content_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_content_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_content_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_content_alignment(value as i32)?)
+    }
+    pub fn vertical_content_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_content_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_text_alignment(&self) -> Result<TextAlignment> {
+        let value = self.raw.get_text_alignment()?;
+        TextAlignment::try_from(value)
+    }
+    pub fn set_text_alignment(&self, value: TextAlignment) -> Result<()> {
+        Ok(self.raw.set_text_alignment(value as i32)?)
+    }
+    pub fn text_alignment(self, value: TextAlignment) -> Result<Self> {
+        self.set_text_alignment(value)?;
+        Ok(self)
+    }
     pub fn get_placeholder_text(&self) -> Result<Option<String>> {
         unsafe { Ok(sys::take_utf16(self.raw.get_placeholder_text()?)) }
     }
@@ -30280,6 +30550,47 @@ impl TextBox {
     }
     pub fn placeholder_text(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_placeholder_text(value)?;
+        Ok(self)
+    }
+    pub fn get_use_floating_placeholder(&self) -> Result<bool> { Ok(self.raw.get_use_floating_placeholder()?) }
+    pub fn set_use_floating_placeholder(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_use_floating_placeholder(value)?)
+    }
+    pub fn use_floating_placeholder(self, value: bool) -> Result<Self> {
+        self.set_use_floating_placeholder(value)?;
+        Ok(self)
+    }
+    pub fn get_placeholder_foreground(&self) -> Result<Option<Brush>> {
+        self.raw.get_placeholder_foreground()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_placeholder_foreground(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_placeholder_foreground(value.as_ref())?)
+    }
+    pub fn placeholder_foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_placeholder_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_inner_left_content(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_inner_left_content()?.map(|raw| Control { raw }))
+    }
+    pub fn set_inner_left_content(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_inner_left_content(Some(&value))?)
+    }
+    pub fn inner_left_content(self, value: impl AsControl) -> Result<Self> {
+        self.set_inner_left_content(value)?;
+        Ok(self)
+    }
+    pub fn get_inner_right_content(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_inner_right_content()?.map(|raw| Control { raw }))
+    }
+    pub fn set_inner_right_content(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_inner_right_content(Some(&value))?)
+    }
+    pub fn inner_right_content(self, value: impl AsControl) -> Result<Self> {
+        self.set_inner_right_content(value)?;
         Ok(self)
     }
     pub fn get_reveal_password(&self) -> Result<bool> { Ok(self.raw.get_reveal_password()?) }
@@ -30333,12 +30644,53 @@ impl TextBox {
     }
     pub fn can_undo(&self) -> Result<bool> { Ok(self.raw.get_can_undo()?) }
     pub fn can_redo(&self) -> Result<bool> { Ok(self.raw.get_can_redo()?) }
+    pub fn clear_selection(&self) -> Result<()> { Ok(self.raw.clear_selection()?) }
     pub fn cut(&self) -> Result<()> { Ok(self.raw.cut()?) }
     pub fn copy(&self) -> Result<()> { Ok(self.raw.copy()?) }
     pub fn paste(&self) -> Result<()> { Ok(self.raw.paste()?) }
     pub fn clear(&self) -> Result<()> { Ok(self.raw.clear()?) }
+    pub fn select_all(&self) -> Result<()> { Ok(self.raw.select_all()?) }
     pub fn undo(&self) -> Result<()> { Ok(self.raw.undo()?) }
     pub fn redo(&self) -> Result<()> { Ok(self.raw.redo()?) }
+    pub fn subscribe_copying_to_clipboard(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::text_box_copying_to_clipboard_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_copying_to_clipboard(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_copying_to_clipboard(subscription_id)))
+    }
+    pub fn on_copying_to_clipboard(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_copying_to_clipboard(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_cutting_to_clipboard(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::text_box_cutting_to_clipboard_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_cutting_to_clipboard(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_cutting_to_clipboard(subscription_id)))
+    }
+    pub fn on_cutting_to_clipboard(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_cutting_to_clipboard(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_pasting_from_clipboard(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::text_box_pasting_from_clipboard_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pasting_from_clipboard(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pasting_from_clipboard(subscription_id)))
+    }
+    pub fn on_pasting_from_clipboard(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pasting_from_clipboard(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_text_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::text_box_text_changed_handler(move || {
             callback(());
