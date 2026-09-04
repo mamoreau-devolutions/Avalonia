@@ -6,9 +6,15 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("50125360-3E04-5B86-A0AF-3B3EA3FD3134")]
+[Guid("AEF37812-2637-5667-831C-4ACA9776E036")]
 public partial interface IAvnMenuItem : IAvnHeaderedSelectingItemsControl
 {
+    [PreserveSig]
+    int GetCommand(out IAvnCommand? value);
+
+    [PreserveSig]
+    int SetCommand(IAvnCommand? value);
+
     [PreserveSig]
     int GetIcon(out IAvnControl? value);
 
@@ -1477,6 +1483,37 @@ public sealed partial class AvnMenuItem : IAvnMenuItem
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Header = (global::System.Object)ProjectionRuntime.Unwrap(value)!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetCommand(out IAvnCommand? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnCommand.FromCommand(_value.Command);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetCommand(IAvnCommand? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Command = AvnCommand.ToCommand(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

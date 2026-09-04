@@ -3707,6 +3707,16 @@ impl Button {
         self.set_click_mode(value)?;
         Ok(self)
     }
+    pub fn get_command(&self) -> Result<Option<sys::ComPtr<sys::IAvnCommand>>> {
+        Ok(self.raw.get_command()?)
+    }
+    pub fn set_command(&self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<()> {
+        Ok(self.raw.set_command(value)?)
+    }
+    pub fn command(self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<Self> {
+        self.set_command(value)?;
+        Ok(self)
+    }
     pub fn get_is_default(&self) -> Result<bool> { Ok(self.raw.get_is_default()?) }
     pub fn set_default(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_default(value)?)
@@ -6238,6 +6248,16 @@ impl CheckBox {
         self.set_click_mode(value)?;
         Ok(self)
     }
+    pub fn get_command(&self) -> Result<Option<sys::ComPtr<sys::IAvnCommand>>> {
+        Ok(self.raw.get_command()?)
+    }
+    pub fn set_command(&self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<()> {
+        Ok(self.raw.set_command(value)?)
+    }
+    pub fn command(self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<Self> {
+        self.set_command(value)?;
+        Ok(self)
+    }
     pub fn get_is_default(&self) -> Result<bool> { Ok(self.raw.get_is_default()?) }
     pub fn set_default(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_default(value)?)
@@ -7985,6 +8005,16 @@ impl CommandBarButton {
         self.set_click_mode(value)?;
         Ok(self)
     }
+    pub fn get_command(&self) -> Result<Option<sys::ComPtr<sys::IAvnCommand>>> {
+        Ok(self.raw.get_command()?)
+    }
+    pub fn set_command(&self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<()> {
+        Ok(self.raw.set_command(value)?)
+    }
+    pub fn command(self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<Self> {
+        self.set_command(value)?;
+        Ok(self)
+    }
     pub fn get_is_default(&self) -> Result<bool> { Ok(self.raw.get_is_default()?) }
     pub fn set_default(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_default(value)?)
@@ -8815,6 +8845,16 @@ impl CommandBarToggleButton {
     }
     pub fn click_mode(self, value: ClickMode) -> Result<Self> {
         self.set_click_mode(value)?;
+        Ok(self)
+    }
+    pub fn get_command(&self) -> Result<Option<sys::ComPtr<sys::IAvnCommand>>> {
+        Ok(self.raw.get_command()?)
+    }
+    pub fn set_command(&self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<()> {
+        Ok(self.raw.set_command(value)?)
+    }
+    pub fn command(self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<Self> {
+        self.set_command(value)?;
         Ok(self)
     }
     pub fn get_is_default(&self) -> Result<bool> { Ok(self.raw.get_is_default()?) }
@@ -11378,6 +11418,16 @@ impl DropDownButton {
         self.set_click_mode(value)?;
         Ok(self)
     }
+    pub fn get_command(&self) -> Result<Option<sys::ComPtr<sys::IAvnCommand>>> {
+        Ok(self.raw.get_command()?)
+    }
+    pub fn set_command(&self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<()> {
+        Ok(self.raw.set_command(value)?)
+    }
+    pub fn command(self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<Self> {
+        self.set_command(value)?;
+        Ok(self)
+    }
     pub fn get_is_default(&self) -> Result<bool> { Ok(self.raw.get_is_default()?) }
     pub fn set_default(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_default(value)?)
@@ -13845,6 +13895,16 @@ impl HyperlinkButton {
     }
     pub fn click_mode(self, value: ClickMode) -> Result<Self> {
         self.set_click_mode(value)?;
+        Ok(self)
+    }
+    pub fn get_command(&self) -> Result<Option<sys::ComPtr<sys::IAvnCommand>>> {
+        Ok(self.raw.get_command()?)
+    }
+    pub fn set_command(&self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<()> {
+        Ok(self.raw.set_command(value)?)
+    }
+    pub fn command(self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<Self> {
+        self.set_command(value)?;
         Ok(self)
     }
     pub fn get_is_default(&self) -> Result<bool> { Ok(self.raw.get_is_default()?) }
@@ -18454,6 +18514,16 @@ impl MenuItem {
     }
     pub fn header(self, value: impl AsControl) -> Result<Self> {
         self.set_header(value)?;
+        Ok(self)
+    }
+    pub fn get_command(&self) -> Result<Option<sys::ComPtr<sys::IAvnCommand>>> {
+        Ok(self.raw.get_command()?)
+    }
+    pub fn set_command(&self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<()> {
+        Ok(self.raw.set_command(value)?)
+    }
+    pub fn command(self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<Self> {
+        self.set_command(value)?;
         Ok(self)
     }
     pub fn get_icon(&self) -> Result<Option<Control>> {
@@ -24500,6 +24570,16 @@ impl ToggleButton {
         self.set_click_mode(value)?;
         Ok(self)
     }
+    pub fn get_command(&self) -> Result<Option<sys::ComPtr<sys::IAvnCommand>>> {
+        Ok(self.raw.get_command()?)
+    }
+    pub fn set_command(&self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<()> {
+        Ok(self.raw.set_command(value)?)
+    }
+    pub fn command(self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<Self> {
+        self.set_command(value)?;
+        Ok(self)
+    }
     pub fn get_is_default(&self) -> Result<bool> { Ok(self.raw.get_is_default()?) }
     pub fn set_default(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_default(value)?)
@@ -25669,6 +25749,16 @@ impl RadioButton {
         self.set_click_mode(value)?;
         Ok(self)
     }
+    pub fn get_command(&self) -> Result<Option<sys::ComPtr<sys::IAvnCommand>>> {
+        Ok(self.raw.get_command()?)
+    }
+    pub fn set_command(&self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<()> {
+        Ok(self.raw.set_command(value)?)
+    }
+    pub fn command(self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<Self> {
+        self.set_command(value)?;
+        Ok(self)
+    }
     pub fn get_is_default(&self) -> Result<bool> { Ok(self.raw.get_is_default()?) }
     pub fn set_default(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_default(value)?)
@@ -26822,6 +26912,16 @@ impl RepeatButton {
     }
     pub fn click_mode(self, value: ClickMode) -> Result<Self> {
         self.set_click_mode(value)?;
+        Ok(self)
+    }
+    pub fn get_command(&self) -> Result<Option<sys::ComPtr<sys::IAvnCommand>>> {
+        Ok(self.raw.get_command()?)
+    }
+    pub fn set_command(&self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<()> {
+        Ok(self.raw.set_command(value)?)
+    }
+    pub fn command(self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<Self> {
+        self.set_command(value)?;
         Ok(self)
     }
     pub fn get_is_default(&self) -> Result<bool> { Ok(self.raw.get_is_default()?) }
@@ -32175,6 +32275,16 @@ impl SplitButton {
         self.set_vertical_content_alignment(value)?;
         Ok(self)
     }
+    pub fn get_command(&self) -> Result<Option<sys::ComPtr<sys::IAvnCommand>>> {
+        Ok(self.raw.get_command()?)
+    }
+    pub fn set_command(&self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<()> {
+        Ok(self.raw.set_command(value)?)
+    }
+    pub fn command(self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<Self> {
+        self.set_command(value)?;
+        Ok(self)
+    }
     pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
         Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
     }
@@ -37149,6 +37259,16 @@ impl ToggleSplitButton {
         self.set_vertical_content_alignment(value)?;
         Ok(self)
     }
+    pub fn get_command(&self) -> Result<Option<sys::ComPtr<sys::IAvnCommand>>> {
+        Ok(self.raw.get_command()?)
+    }
+    pub fn set_command(&self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<()> {
+        Ok(self.raw.set_command(value)?)
+    }
+    pub fn command(self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<Self> {
+        self.set_command(value)?;
+        Ok(self)
+    }
     pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
         Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
     }
@@ -37578,6 +37698,16 @@ impl ToggleSwitch {
     }
     pub fn click_mode(self, value: ClickMode) -> Result<Self> {
         self.set_click_mode(value)?;
+        Ok(self)
+    }
+    pub fn get_command(&self) -> Result<Option<sys::ComPtr<sys::IAvnCommand>>> {
+        Ok(self.raw.get_command()?)
+    }
+    pub fn set_command(&self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<()> {
+        Ok(self.raw.set_command(value)?)
+    }
+    pub fn command(self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<Self> {
+        self.set_command(value)?;
         Ok(self)
     }
     pub fn get_is_default(&self) -> Result<bool> { Ok(self.raw.get_is_default()?) }
@@ -38530,6 +38660,16 @@ impl TrayIcon {
     pub fn new() -> Result<Self> {
         with_factory(|factory| factory.create_tray_icon())
             .map(|raw| Self { raw })
+    }
+    pub fn get_command(&self) -> Result<Option<sys::ComPtr<sys::IAvnCommand>>> {
+        Ok(self.raw.get_command()?)
+    }
+    pub fn set_command(&self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<()> {
+        Ok(self.raw.set_command(value)?)
+    }
+    pub fn command(self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<Self> {
+        self.set_command(value)?;
+        Ok(self)
     }
     pub fn get_tool_tip_text(&self) -> Result<Option<String>> {
         unsafe { Ok(sys::take_utf16(self.raw.get_tool_tip_text()?)) }

@@ -6,9 +6,15 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("6F1730A5-F135-59C5-A6D4-714C68A1A2FC")]
+[Guid("CCCCAE86-B19E-565E-ADCE-36AC342A74C1")]
 public partial interface IAvnTrayIcon : IAvnAvaloniaObject
 {
+    [PreserveSig]
+    int GetCommand(out IAvnCommand? value);
+
+    [PreserveSig]
+    int SetCommand(IAvnCommand? value);
+
     [PreserveSig]
     int GetToolTipText(out string? value);
 
@@ -61,6 +67,37 @@ public sealed partial class AvnTrayIcon : IAvnTrayIcon
         catch (global::System.Exception e)
         {
             value = 0;
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetCommand(out IAvnCommand? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnCommand.FromCommand(_value.Command);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetCommand(IAvnCommand? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Command = AvnCommand.ToCommand(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
             return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
         }
     }

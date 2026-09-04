@@ -35,6 +35,13 @@ public static class NativeHeaderEmitter
             .Concat(types.Select(type => type.Name))
             .Concat(statics.Select(group => SimpleName(group.Key)))
             .Concat(ir.BrushInterfaceName is null ? [] : new[] { SimpleName(ir.BrushInterfaceName) })
+            .Concat(ir.CommandInterfaceName is null
+                ? []
+                : new[]
+                {
+                    SimpleName(ir.CommandInterfaceName),
+                    CommandMarshalling.HandlerInterfaceName,
+                })
             .Append("IAvnControlFactory")
             .Distinct(StringComparer.Ordinal)
             .OrderBy(name => name, StringComparer.Ordinal)
@@ -105,6 +112,27 @@ public static class NativeHeaderEmitter
             EmitSlot(sb, 3, "get_color", brushName, [$"{colorAbiName}* value"]);
             EmitSlot(sb, 4, "get_opacity", brushName, ["double* value"]);
             EndInterface(sb, brushName, 5);
+        }
+
+        if (ir.CommandInterfaceName is { } commandInterfaceName)
+        {
+            var commandName = SimpleName(commandInterfaceName);
+            var handlerName = CommandMarshalling.HandlerInterfaceName;
+            var ns = commandInterfaceName[..commandInterfaceName.LastIndexOf('.')];
+            var handlerIid = ClrTypeExtractor.CreateDeterministicIid(
+                CommandMarshalling.QualifiedHandlerInterfaceName(ns));
+            EmitIid(sb, handlerName, handlerIid, 1);
+            BeginInterface(sb, handlerName);
+            EmitSlot(sb, 3, "invoke", handlerName, []);
+            EndInterface(sb, handlerName, 4);
+            EmitIid(sb, commandName, ir.CommandInterfaceIid!, ir.CommandAbiVersion);
+            BeginInterface(sb, commandName);
+            EmitSlot(sb, 3, "execute", commandName, []);
+            EmitSlot(sb, 4, "can_execute", commandName, ["int32_t* value"]);
+            EmitSlot(sb, 5, "advise_can_execute_changed", commandName,
+                [$"{handlerName}* handler", "int64_t* subscription_id"]);
+            EmitSlot(sb, 6, "unadvise_can_execute_changed", commandName, ["int64_t subscription_id"]);
+            EndInterface(sb, commandName, 7);
         }
 
         foreach (var collection in collections)
@@ -330,6 +358,7 @@ public static class NativeHeaderEmitter
             MarshallingKind.ComInterface or MarshallingKind.ComCollection =>
                 $"{SimpleName(interfaceName!)}**",
             MarshallingKind.Brush => $"{SimpleName(interfaceName!)}**",
+            MarshallingKind.Command => $"{SimpleName(interfaceName!)}**",
             _ => $"{AbiType(kind, interfaceName, pointerForInterface: false, isNullable)}*",
         };
 
@@ -340,6 +369,7 @@ public static class NativeHeaderEmitter
             MarshallingKind.ComInterface or MarshallingKind.ComCollection =>
                 $"{SimpleName(interfaceName!)}*",
             MarshallingKind.Brush => $"{SimpleName(interfaceName!)}*",
+            MarshallingKind.Command => $"{SimpleName(interfaceName!)}*",
             _ => AbiType(kind, interfaceName, pointerForInterface: false, isNullable),
         };
 
@@ -359,6 +389,7 @@ public static class NativeHeaderEmitter
             MarshallingKind.ComInterface or MarshallingKind.ComCollection =>
                 SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
             MarshallingKind.Brush => SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
+            MarshallingKind.Command => SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
             _ when GeometryMarshalling.TryGet(kind, out var geometry) =>
                 isNullable ? geometry.OptionalAbiName : geometry.AbiName,
             _ => throw new InvalidOperationException($"Unsupported ABI kind '{kind}'."),

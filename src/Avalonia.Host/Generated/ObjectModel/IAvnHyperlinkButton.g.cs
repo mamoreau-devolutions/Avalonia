@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("0524F2D5-3491-599B-B545-9BC807225C35")]
+[Guid("471B3BAE-2E59-5955-9738-F854F5EBA827")]
 public partial interface IAvnHyperlinkButton : IAvnButton
 {
     [PreserveSig]
@@ -1295,6 +1295,37 @@ public sealed partial class AvnHyperlinkButton : IAvnHyperlinkButton
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.ClickMode = (global::Avalonia.Controls.ClickMode)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetCommand(out IAvnCommand? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnCommand.FromCommand(_value.Command);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetCommand(IAvnCommand? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Command = AvnCommand.ToCommand(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

@@ -8,6 +8,8 @@ pub struct ProjectionIr {
     pub factory_iid: Option<String>,
     pub brush_interface_name: Option<String>,
     pub brush_interface_iid: Option<String>,
+    pub command_interface_name: Option<String>,
+    pub command_interface_iid: Option<String>,
     #[serde(default)]
     pub types: Vec<ProjectedType>,
     #[serde(default)]

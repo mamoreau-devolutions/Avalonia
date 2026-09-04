@@ -5,7 +5,7 @@ namespace Avalonia.Projection.Ir;
 
 public sealed class ProjectionIr
 {
-    public const int CurrentVersion = 13;
+    public const int CurrentVersion = 14;
 
     public int Version { get; init; } = CurrentVersion;
     public string? SourceAssembly { get; init; }
@@ -19,6 +19,14 @@ public sealed class ProjectionIr
     public string? BrushInterfaceName { get; init; }
     public string? BrushInterfaceIid { get; init; }
     public int BrushAbiVersion { get; init; } = 1;
+
+    /// <summary>
+    /// The projected command interface, present only when a member marshals as
+    /// <see cref="MarshallingKind.Command"/>.
+    /// </summary>
+    public string? CommandInterfaceName { get; init; }
+    public string? CommandInterfaceIid { get; init; }
+    public int CommandAbiVersion { get; init; } = 1;
 
     public IReadOnlyList<ProjectedType> Types { get; init; } = [];
     public IReadOnlyList<ProjectedEnum> Enums { get; init; } = [];

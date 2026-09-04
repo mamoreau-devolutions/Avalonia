@@ -40,6 +40,12 @@ public enum MarshallingKind
     /// A single UTF-16 code unit (<see cref="char"/> / <c>uint16_t</c>).
     /// </summary>
     CharUtf16,
+
+    /// <summary>
+    /// Appended after CharUtf16 so every previously published ordinal stays put.
+    /// A nano-COM <c>IAvnCommand</c> wrapping <c>System.Windows.Input.ICommand</c>.
+    /// </summary>
+    Command,
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]

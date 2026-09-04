@@ -13,12 +13,13 @@ fn overlay_controls_publish_at_version_one() {
         "*open)(IAvnPopup* self)",
         "*close)(IAvnPopup* self)",
         "*set_tool_tip_text)(IAvnTrayIcon* self, const uint16_t* value)",
+        "*set_command)(IAvnTrayIcon* self, IAvnCommand* value)",
         "*set_max_items)(IAvnWindowNotificationManager* self, int32_t value)",
         "*set_pull_direction)(IAvnRefreshContainer* self, int32_t value)",
         "*create_popup)(IAvnControlFactory* self, IAvnPopup** value)",
         "*create_tray_icon)(IAvnControlFactory* self, IAvnTrayIcon** value)",
         "#define I_AVN_POPUP_ABI_VERSION 5",
-        "#define I_AVN_TRAY_ICON_ABI_VERSION 1",
+        "#define I_AVN_TRAY_ICON_ABI_VERSION 2",
         "#define I_AVN_CONTROL_FACTORY_ABI_VERSION 13",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
@@ -26,7 +27,6 @@ fn overlay_controls_publish_at_version_one() {
     for forbidden in [
         "*set_menu)(IAvnTrayIcon",
         "*set_icon)(IAvnTrayIcon",
-        "*set_command)(IAvnTrayIcon",
     ] {
         assert!(
             !HEADER.contains(forbidden),

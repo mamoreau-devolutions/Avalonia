@@ -34,6 +34,11 @@ member marshals as `Brush`. `MarshallingKind.Brush` was appended after the
 geometry kinds rather than grouped with the interface kinds, so every previously
 published ordinal is unmoved.
 
+Version 14 adds optional `commandInterfaceName`, `commandInterfaceIid` and
+`commandAbiVersion`, present only when a member marshals as `Command`.
+`MarshallingKind.Command` was appended after CharUtf16, so every previously
+published ordinal is unmoved.
+
 Version 13 adds two optional members, both host-side only. A projected property
 and an attached property may carry `stringConverterTypeName`, naming the host
 type that converts the member between its CLR type and the UTF-16 string in its
@@ -274,6 +279,11 @@ to 8, `IAvnSelectableTextBlock` 4 to 5. Factory 13.
 
 Label.Target projects as nullable `IAvnControl` (`IInputElement` values that
 are Controls). `IAvnLabel` 3 to 4. Factory 13.
+
+`IAvnCommand` wraps `System.Windows.Input.ICommand` (`Execute` / `CanExecute`,
+no CommandParameter). Button and descendants 8 to 9 (or 4 to 5 for the wave D
+leaves), MenuItem 5 to 6, SplitButton/ToggleSplitButton 4 to 5, TrayIcon 1 to 2.
+Factory 13.
 
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and

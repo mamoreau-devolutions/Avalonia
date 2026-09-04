@@ -166,6 +166,39 @@ impl ComPtr<IAvnBrush> {
     }
 }
 
+pub const I_AVN_COMMAND_IID: Guid = Guid { data1: 0xFB93FAB9, data2: 0x2BAA, data3: 0x5AD2, data4: [0x95, 0xDC, 0x0F, 0x26, 0x1A, 0xF7, 0xB4, 0x47] };
+
+#[repr(C)]
+struct IAvnCommandVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    execute: unsafe extern "system" fn(*mut IAvnCommand) -> i32,
+    can_execute: unsafe extern "system" fn(*mut IAvnCommand, *mut i32) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnCommand {
+    vtbl: *const IAvnCommandVtbl,
+}
+
+unsafe impl ComInterface for IAvnCommand {
+    const IID: Guid = I_AVN_COMMAND_IID;
+}
+
+impl ComPtr<IAvnCommand> {
+    pub fn execute(&self) -> Result<()> {
+        unsafe { hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().execute)(self.as_raw())) }
+    }
+    pub fn can_execute(&self) -> Result<bool> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().can_execute)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value != 0)
+        }
+    }
+}
+
 pub const I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_OPENED_HANDLER_IID: Guid = Guid { data1: 0x48E353BF, data2: 0x246E, data3: 0x5FC7, data4: [0x9C, 0xF4, 0xDE, 0x08, 0x2C, 0xE3, 0x0E, 0xD8] };
 
 #[repr(C)]
@@ -4228,7 +4261,7 @@ impl ComPtr<IAvnBorder> {
     }
 }
 
-pub const I_AVN_BUTTON_IID: Guid = Guid { data1: 0x6145E298, data2: 0xC66D, data3: 0x5A68, data4: [0x8A, 0xD1, 0xF8, 0x29, 0xC9, 0x77, 0x3D, 0xB5] };
+pub const I_AVN_BUTTON_IID: Guid = Guid { data1: 0xA47AB795, data2: 0x2D16, data3: 0x5F5D, data4: [0x91, 0x4C, 0xD9, 0x64, 0x15, 0x20, 0xB7, 0xE9] };
 
 #[repr(C)]
 struct IAvnButtonVtbl {
@@ -4311,6 +4344,8 @@ struct IAvnButtonVtbl {
     set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnButton, i32) -> i32,
     get_click_mode: unsafe extern "system" fn(*mut IAvnButton, *mut i32) -> i32,
     set_click_mode: unsafe extern "system" fn(*mut IAvnButton, i32) -> i32,
+    get_command: unsafe extern "system" fn(*mut IAvnButton, *mut *mut IAvnCommand) -> i32,
+    set_command: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnCommand) -> i32,
     get_is_default: unsafe extern "system" fn(*mut IAvnButton, *mut i32) -> i32,
     set_is_default: unsafe extern "system" fn(*mut IAvnButton, i32) -> i32,
     get_is_cancel: unsafe extern "system" fn(*mut IAvnButton, *mut i32) -> i32,
@@ -4858,6 +4893,20 @@ impl ComPtr<IAvnButton> {
     pub fn set_click_mode(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_click_mode)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_command(&self) -> Result<Option<ComPtr<IAvnCommand>>> {
+        unsafe {
+            let mut value: *mut IAvnCommand = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_command)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_command(&self, value: Option<&ComPtr<IAvnCommand>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_command)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }
@@ -8325,7 +8374,7 @@ impl ComPtr<IAvnCarousel> {
     }
 }
 
-pub const I_AVN_CHECK_BOX_IID: Guid = Guid { data1: 0xB66D924E, data2: 0xA325, data3: 0x5931, data4: [0x89, 0xCB, 0xBD, 0x9B, 0xDE, 0x14, 0x11, 0xF2] };
+pub const I_AVN_CHECK_BOX_IID: Guid = Guid { data1: 0x3EDB0298, data2: 0xB20B, data3: 0x5035, data4: [0xA7, 0xB7, 0x05, 0x99, 0xF4, 0x7F, 0x30, 0x5D] };
 
 #[repr(C)]
 struct IAvnCheckBoxVtbl {
@@ -8408,6 +8457,8 @@ struct IAvnCheckBoxVtbl {
     set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnCheckBox, i32) -> i32,
     get_click_mode: unsafe extern "system" fn(*mut IAvnCheckBox, *mut i32) -> i32,
     set_click_mode: unsafe extern "system" fn(*mut IAvnCheckBox, i32) -> i32,
+    get_command: unsafe extern "system" fn(*mut IAvnCheckBox, *mut *mut IAvnCommand) -> i32,
+    set_command: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnCommand) -> i32,
     get_is_default: unsafe extern "system" fn(*mut IAvnCheckBox, *mut i32) -> i32,
     set_is_default: unsafe extern "system" fn(*mut IAvnCheckBox, i32) -> i32,
     get_is_cancel: unsafe extern "system" fn(*mut IAvnCheckBox, *mut i32) -> i32,
@@ -8961,6 +9012,20 @@ impl ComPtr<IAvnCheckBox> {
     pub fn set_click_mode(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_click_mode)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_command(&self) -> Result<Option<ComPtr<IAvnCommand>>> {
+        unsafe {
+            let mut value: *mut IAvnCommand = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_command)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_command(&self, value: Option<&ComPtr<IAvnCommand>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_command)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }
@@ -11219,7 +11284,7 @@ impl ComPtr<IAvnCommandBar> {
     }
 }
 
-pub const I_AVN_COMMAND_BAR_BUTTON_IID: Guid = Guid { data1: 0xD3C9F301, data2: 0x6E8D, data3: 0x5B8E, data4: [0xAD, 0x6F, 0x29, 0xC8, 0x5D, 0x64, 0x01, 0x6A] };
+pub const I_AVN_COMMAND_BAR_BUTTON_IID: Guid = Guid { data1: 0x79ECE92B, data2: 0xB507, data3: 0x5D64, data4: [0x90, 0xF2, 0x0D, 0xB4, 0x5A, 0x7F, 0xA0, 0x6D] };
 
 #[repr(C)]
 struct IAvnCommandBarButtonVtbl {
@@ -11302,6 +11367,8 @@ struct IAvnCommandBarButtonVtbl {
     set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnCommandBarButton, i32) -> i32,
     get_click_mode: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut i32) -> i32,
     set_click_mode: unsafe extern "system" fn(*mut IAvnCommandBarButton, i32) -> i32,
+    get_command: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut *mut IAvnCommand) -> i32,
+    set_command: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut IAvnCommand) -> i32,
     get_is_default: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut i32) -> i32,
     set_is_default: unsafe extern "system" fn(*mut IAvnCommandBarButton, i32) -> i32,
     get_is_cancel: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut i32) -> i32,
@@ -11859,6 +11926,20 @@ impl ComPtr<IAvnCommandBarButton> {
     pub fn set_click_mode(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_click_mode)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_command(&self) -> Result<Option<ComPtr<IAvnCommand>>> {
+        unsafe {
+            let mut value: *mut IAvnCommand = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_command)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_command(&self, value: Option<&ComPtr<IAvnCommand>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_command)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }
@@ -12591,7 +12672,7 @@ impl ComPtr<IAvnCommandBarSeparator> {
     }
 }
 
-pub const I_AVN_COMMAND_BAR_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0x4B6A6D38, data2: 0x0B41, data3: 0x508B, data4: [0xAC, 0x6E, 0x3A, 0x47, 0xFF, 0x2F, 0xD8, 0x2F] };
+pub const I_AVN_COMMAND_BAR_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0xD4E7FE62, data2: 0x9B9A, data3: 0x56D0, data4: [0xAF, 0x9E, 0x48, 0x67, 0x0B, 0x8F, 0x74, 0xC6] };
 
 #[repr(C)]
 struct IAvnCommandBarToggleButtonVtbl {
@@ -12674,6 +12755,8 @@ struct IAvnCommandBarToggleButtonVtbl {
     set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, i32) -> i32,
     get_click_mode: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut i32) -> i32,
     set_click_mode: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, i32) -> i32,
+    get_command: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut *mut IAvnCommand) -> i32,
+    set_command: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut IAvnCommand) -> i32,
     get_is_default: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut i32) -> i32,
     set_is_default: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, i32) -> i32,
     get_is_cancel: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut i32) -> i32,
@@ -13237,6 +13320,20 @@ impl ComPtr<IAvnCommandBarToggleButton> {
     pub fn set_click_mode(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_click_mode)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_command(&self) -> Result<Option<ComPtr<IAvnCommand>>> {
+        unsafe {
+            let mut value: *mut IAvnCommand = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_command)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_command(&self, value: Option<&ComPtr<IAvnCommand>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_command)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }
@@ -16833,7 +16930,7 @@ impl ComPtr<IAvnDockPanel> {
     }
 }
 
-pub const I_AVN_DROP_DOWN_BUTTON_IID: Guid = Guid { data1: 0x3430F414, data2: 0xD1E9, data3: 0x5AC6, data4: [0x82, 0x55, 0x3B, 0x78, 0x51, 0x73, 0x09, 0xDF] };
+pub const I_AVN_DROP_DOWN_BUTTON_IID: Guid = Guid { data1: 0xBFC9AA65, data2: 0x7E71, data3: 0x53EB, data4: [0x9C, 0xA5, 0xD6, 0x87, 0x26, 0xDC, 0x6A, 0xC2] };
 
 #[repr(C)]
 struct IAvnDropDownButtonVtbl {
@@ -16916,6 +17013,8 @@ struct IAvnDropDownButtonVtbl {
     set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnDropDownButton, i32) -> i32,
     get_click_mode: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut i32) -> i32,
     set_click_mode: unsafe extern "system" fn(*mut IAvnDropDownButton, i32) -> i32,
+    get_command: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut *mut IAvnCommand) -> i32,
+    set_command: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut IAvnCommand) -> i32,
     get_is_default: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut i32) -> i32,
     set_is_default: unsafe extern "system" fn(*mut IAvnDropDownButton, i32) -> i32,
     get_is_cancel: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut i32) -> i32,
@@ -17463,6 +17562,20 @@ impl ComPtr<IAvnDropDownButton> {
     pub fn set_click_mode(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_click_mode)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_command(&self) -> Result<Option<ComPtr<IAvnCommand>>> {
+        unsafe {
+            let mut value: *mut IAvnCommand = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_command)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_command(&self, value: Option<&ComPtr<IAvnCommand>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_command)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }
@@ -20803,7 +20916,7 @@ impl ComPtr<IAvnGroupBox> {
     }
 }
 
-pub const I_AVN_HYPERLINK_BUTTON_IID: Guid = Guid { data1: 0x0524F2D5, data2: 0x3491, data3: 0x599B, data4: [0xB5, 0x45, 0x9B, 0xC8, 0x07, 0x22, 0x5C, 0x35] };
+pub const I_AVN_HYPERLINK_BUTTON_IID: Guid = Guid { data1: 0x471B3BAE, data2: 0x2E59, data3: 0x5955, data4: [0x97, 0x38, 0xF8, 0x54, 0xF5, 0xEB, 0xA8, 0x27] };
 
 #[repr(C)]
 struct IAvnHyperlinkButtonVtbl {
@@ -20886,6 +20999,8 @@ struct IAvnHyperlinkButtonVtbl {
     set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnHyperlinkButton, i32) -> i32,
     get_click_mode: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut i32) -> i32,
     set_click_mode: unsafe extern "system" fn(*mut IAvnHyperlinkButton, i32) -> i32,
+    get_command: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut *mut IAvnCommand) -> i32,
+    set_command: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut IAvnCommand) -> i32,
     get_is_default: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut i32) -> i32,
     set_is_default: unsafe extern "system" fn(*mut IAvnHyperlinkButton, i32) -> i32,
     get_is_cancel: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut i32) -> i32,
@@ -21437,6 +21552,20 @@ impl ComPtr<IAvnHyperlinkButton> {
     pub fn set_click_mode(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_click_mode)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_command(&self) -> Result<Option<ComPtr<IAvnCommand>>> {
+        unsafe {
+            let mut value: *mut IAvnCommand = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_command)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_command(&self, value: Option<&ComPtr<IAvnCommand>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_command)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }
@@ -28550,7 +28679,7 @@ impl ComPtr<IAvnMenuFlyout> {
     }
 }
 
-pub const I_AVN_MENU_ITEM_IID: Guid = Guid { data1: 0x50125360, data2: 0x3E04, data3: 0x5B86, data4: [0xA0, 0xAF, 0x3B, 0x3E, 0xA3, 0xFD, 0x31, 0x34] };
+pub const I_AVN_MENU_ITEM_IID: Guid = Guid { data1: 0xAEF37812, data2: 0x2637, data3: 0x5667, data4: [0x83, 0x1C, 0x4A, 0xCA, 0x97, 0x76, 0xE0, 0x36] };
 
 #[repr(C)]
 struct IAvnMenuItemVtbl {
@@ -28640,6 +28769,8 @@ struct IAvnMenuItemVtbl {
     unadvise_selection_changed: unsafe extern "system" fn(*mut IAvnMenuItem, i64) -> i32,
     get_header: unsafe extern "system" fn(*mut IAvnMenuItem, *mut *mut IAvnControl) -> i32,
     set_header: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnControl) -> i32,
+    get_command: unsafe extern "system" fn(*mut IAvnMenuItem, *mut *mut IAvnCommand) -> i32,
+    set_command: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnCommand) -> i32,
     get_icon: unsafe extern "system" fn(*mut IAvnMenuItem, *mut *mut IAvnControl) -> i32,
     set_icon: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnControl) -> i32,
     get_is_selected: unsafe extern "system" fn(*mut IAvnMenuItem, *mut i32) -> i32,
@@ -29249,6 +29380,20 @@ impl ComPtr<IAvnMenuItem> {
     pub fn set_header(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_header)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_command(&self) -> Result<Option<ComPtr<IAvnCommand>>> {
+        unsafe {
+            let mut value: *mut IAvnCommand = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_command)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_command(&self, value: Option<&ComPtr<IAvnCommand>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_command)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }
@@ -38655,7 +38800,7 @@ impl ComPtr<IAvnThumb> {
     }
 }
 
-pub const I_AVN_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0xED70AAF8, data2: 0x5651, data3: 0x5844, data4: [0xBA, 0x09, 0x07, 0x8F, 0x9E, 0xB9, 0xB7, 0xD1] };
+pub const I_AVN_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0x4B6CC48D, data2: 0x00FF, data3: 0x569F, data4: [0xA9, 0x65, 0xFE, 0x8C, 0x6B, 0x86, 0xC5, 0x02] };
 
 #[repr(C)]
 struct IAvnToggleButtonVtbl {
@@ -38738,6 +38883,8 @@ struct IAvnToggleButtonVtbl {
     set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnToggleButton, i32) -> i32,
     get_click_mode: unsafe extern "system" fn(*mut IAvnToggleButton, *mut i32) -> i32,
     set_click_mode: unsafe extern "system" fn(*mut IAvnToggleButton, i32) -> i32,
+    get_command: unsafe extern "system" fn(*mut IAvnToggleButton, *mut *mut IAvnCommand) -> i32,
+    set_command: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnCommand) -> i32,
     get_is_default: unsafe extern "system" fn(*mut IAvnToggleButton, *mut i32) -> i32,
     set_is_default: unsafe extern "system" fn(*mut IAvnToggleButton, i32) -> i32,
     get_is_cancel: unsafe extern "system" fn(*mut IAvnToggleButton, *mut i32) -> i32,
@@ -39291,6 +39438,20 @@ impl ComPtr<IAvnToggleButton> {
     pub fn set_click_mode(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_click_mode)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_command(&self) -> Result<Option<ComPtr<IAvnCommand>>> {
+        unsafe {
+            let mut value: *mut IAvnCommand = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_command)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_command(&self, value: Option<&ComPtr<IAvnCommand>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_command)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }
@@ -40605,7 +40766,7 @@ impl ComPtr<IAvnProgressBar> {
     }
 }
 
-pub const I_AVN_RADIO_BUTTON_IID: Guid = Guid { data1: 0x35D41892, data2: 0x3FB7, data3: 0x5891, data4: [0xAA, 0x85, 0xA2, 0x8C, 0x93, 0xB7, 0x8C, 0x06] };
+pub const I_AVN_RADIO_BUTTON_IID: Guid = Guid { data1: 0xD5527821, data2: 0x5EC6, data3: 0x55DD, data4: [0xBD, 0x26, 0x22, 0xCD, 0x38, 0x82, 0x5C, 0xF3] };
 
 #[repr(C)]
 struct IAvnRadioButtonVtbl {
@@ -40688,6 +40849,8 @@ struct IAvnRadioButtonVtbl {
     set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnRadioButton, i32) -> i32,
     get_click_mode: unsafe extern "system" fn(*mut IAvnRadioButton, *mut i32) -> i32,
     set_click_mode: unsafe extern "system" fn(*mut IAvnRadioButton, i32) -> i32,
+    get_command: unsafe extern "system" fn(*mut IAvnRadioButton, *mut *mut IAvnCommand) -> i32,
+    set_command: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnCommand) -> i32,
     get_is_default: unsafe extern "system" fn(*mut IAvnRadioButton, *mut i32) -> i32,
     set_is_default: unsafe extern "system" fn(*mut IAvnRadioButton, i32) -> i32,
     get_is_cancel: unsafe extern "system" fn(*mut IAvnRadioButton, *mut i32) -> i32,
@@ -41243,6 +41406,20 @@ impl ComPtr<IAvnRadioButton> {
     pub fn set_click_mode(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_click_mode)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_command(&self) -> Result<Option<ComPtr<IAvnCommand>>> {
+        unsafe {
+            let mut value: *mut IAvnCommand = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_command)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_command(&self, value: Option<&ComPtr<IAvnCommand>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_command)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }
@@ -42410,7 +42587,7 @@ impl ComPtr<IAvnRelativePanel> {
     }
 }
 
-pub const I_AVN_REPEAT_BUTTON_IID: Guid = Guid { data1: 0x8C2602A3, data2: 0x4920, data3: 0x5717, data4: [0x8A, 0x34, 0x9F, 0xA0, 0x39, 0x15, 0x9F, 0xAC] };
+pub const I_AVN_REPEAT_BUTTON_IID: Guid = Guid { data1: 0xCCB2A943, data2: 0x5B7E, data3: 0x5EF4, data4: [0xA6, 0x8D, 0xC3, 0x87, 0x61, 0x33, 0x75, 0x2A] };
 
 #[repr(C)]
 struct IAvnRepeatButtonVtbl {
@@ -42493,6 +42670,8 @@ struct IAvnRepeatButtonVtbl {
     set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnRepeatButton, i32) -> i32,
     get_click_mode: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut i32) -> i32,
     set_click_mode: unsafe extern "system" fn(*mut IAvnRepeatButton, i32) -> i32,
+    get_command: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut *mut IAvnCommand) -> i32,
+    set_command: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut IAvnCommand) -> i32,
     get_is_default: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut i32) -> i32,
     set_is_default: unsafe extern "system" fn(*mut IAvnRepeatButton, i32) -> i32,
     get_is_cancel: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut i32) -> i32,
@@ -43044,6 +43223,20 @@ impl ComPtr<IAvnRepeatButton> {
     pub fn set_click_mode(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_click_mode)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_command(&self) -> Result<Option<ComPtr<IAvnCommand>>> {
+        unsafe {
+            let mut value: *mut IAvnCommand = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_command)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_command(&self, value: Option<&ComPtr<IAvnCommand>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_command)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }
@@ -51399,7 +51592,7 @@ impl ComPtr<IAvnSpinner> {
     }
 }
 
-pub const I_AVN_SPLIT_BUTTON_IID: Guid = Guid { data1: 0x7640B99C, data2: 0x6E7B, data3: 0x5B8D, data4: [0x89, 0x0D, 0x0E, 0xA0, 0xDA, 0x73, 0x20, 0x41] };
+pub const I_AVN_SPLIT_BUTTON_IID: Guid = Guid { data1: 0x9FB9F403, data2: 0x5A98, data3: 0x56B9, data4: [0x99, 0xFA, 0x92, 0x0A, 0x9E, 0xA4, 0x70, 0x07] };
 
 #[repr(C)]
 struct IAvnSplitButtonVtbl {
@@ -51480,6 +51673,8 @@ struct IAvnSplitButtonVtbl {
     set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnSplitButton, i32) -> i32,
     get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnSplitButton, *mut i32) -> i32,
     set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnSplitButton, i32) -> i32,
+    get_command: unsafe extern "system" fn(*mut IAvnSplitButton, *mut *mut IAvnCommand) -> i32,
+    set_command: unsafe extern "system" fn(*mut IAvnSplitButton, *mut IAvnCommand) -> i32,
     get_flyout: unsafe extern "system" fn(*mut IAvnSplitButton, *mut *mut IAvnFlyoutBase) -> i32,
     set_flyout: unsafe extern "system" fn(*mut IAvnSplitButton, *mut IAvnFlyoutBase) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnSplitButton, *mut IAvnSplitButtonClickHandler, *mut i64) -> i32,
@@ -52008,6 +52203,20 @@ impl ComPtr<IAvnSplitButton> {
     pub fn set_vertical_content_alignment(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_command(&self) -> Result<Option<ComPtr<IAvnCommand>>> {
+        unsafe {
+            let mut value: *mut IAvnCommand = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_command)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_command(&self, value: Option<&ComPtr<IAvnCommand>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_command)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }
@@ -59706,7 +59915,7 @@ impl ComPtr<IAvnTimePicker> {
     }
 }
 
-pub const I_AVN_TOGGLE_SPLIT_BUTTON_IID: Guid = Guid { data1: 0x680541A4, data2: 0x4BB2, data3: 0x58D6, data4: [0xA3, 0xD8, 0x93, 0x5F, 0x8E, 0x96, 0x09, 0x5D] };
+pub const I_AVN_TOGGLE_SPLIT_BUTTON_IID: Guid = Guid { data1: 0x8F7552C3, data2: 0x8EA6, data3: 0x5748, data4: [0x9D, 0x1E, 0xD6, 0x5E, 0xF1, 0x14, 0xCB, 0xC4] };
 
 #[repr(C)]
 struct IAvnToggleSplitButtonVtbl {
@@ -59787,6 +59996,8 @@ struct IAvnToggleSplitButtonVtbl {
     set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnToggleSplitButton, i32) -> i32,
     get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut i32) -> i32,
     set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnToggleSplitButton, i32) -> i32,
+    get_command: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut *mut IAvnCommand) -> i32,
+    set_command: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut IAvnCommand) -> i32,
     get_flyout: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut *mut IAvnFlyoutBase) -> i32,
     set_flyout: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut IAvnFlyoutBase) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut IAvnSplitButtonClickHandler, *mut i64) -> i32,
@@ -60322,6 +60533,20 @@ impl ComPtr<IAvnToggleSplitButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_command(&self) -> Result<Option<ComPtr<IAvnCommand>>> {
+        unsafe {
+            let mut value: *mut IAvnCommand = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_command)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_command(&self, value: Option<&ComPtr<IAvnCommand>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_command)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
     pub fn get_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
         unsafe {
             let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
@@ -60378,7 +60603,7 @@ impl ComPtr<IAvnToggleSplitButton> {
     }
 }
 
-pub const I_AVN_TOGGLE_SWITCH_IID: Guid = Guid { data1: 0x6CF8D113, data2: 0xA905, data3: 0x5505, data4: [0x8D, 0x5F, 0x34, 0x57, 0xEC, 0xD4, 0xC6, 0xD8] };
+pub const I_AVN_TOGGLE_SWITCH_IID: Guid = Guid { data1: 0x5AFFE550, data2: 0x813F, data3: 0x50CE, data4: [0xAC, 0x52, 0x17, 0x7D, 0xE8, 0x4E, 0x22, 0x27] };
 
 #[repr(C)]
 struct IAvnToggleSwitchVtbl {
@@ -60461,6 +60686,8 @@ struct IAvnToggleSwitchVtbl {
     set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnToggleSwitch, i32) -> i32,
     get_click_mode: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut i32) -> i32,
     set_click_mode: unsafe extern "system" fn(*mut IAvnToggleSwitch, i32) -> i32,
+    get_command: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut *mut IAvnCommand) -> i32,
+    set_command: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnCommand) -> i32,
     get_is_default: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut i32) -> i32,
     set_is_default: unsafe extern "system" fn(*mut IAvnToggleSwitch, i32) -> i32,
     get_is_cancel: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut i32) -> i32,
@@ -61018,6 +61245,20 @@ impl ComPtr<IAvnToggleSwitch> {
     pub fn set_click_mode(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_click_mode)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_command(&self) -> Result<Option<ComPtr<IAvnCommand>>> {
+        unsafe {
+            let mut value: *mut IAvnCommand = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_command)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_command(&self, value: Option<&ComPtr<IAvnCommand>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_command)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }
@@ -62391,7 +62632,7 @@ impl ComPtr<IAvnTransitioningContentControl> {
     }
 }
 
-pub const I_AVN_TRAY_ICON_IID: Guid = Guid { data1: 0x6F1730A5, data2: 0xF135, data3: 0x59C5, data4: [0xA6, 0xD4, 0x71, 0x4C, 0x68, 0xA1, 0xA2, 0xFC] };
+pub const I_AVN_TRAY_ICON_IID: Guid = Guid { data1: 0xCCCCAE86, data2: 0xB19E, data3: 0x565E, data4: [0xAD, 0xCE, 0x36, 0xAC, 0x34, 0x2A, 0x74, 0xC1] };
 
 #[repr(C)]
 struct IAvnTrayIconVtbl {
@@ -62400,6 +62641,8 @@ struct IAvnTrayIconVtbl {
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     get_object_id: unsafe extern "system" fn(*mut IAvnTrayIcon, *mut i64) -> i32,
     get_lifetime_token: unsafe extern "system" fn(*mut IAvnTrayIcon, *mut i64) -> i32,
+    get_command: unsafe extern "system" fn(*mut IAvnTrayIcon, *mut *mut IAvnCommand) -> i32,
+    set_command: unsafe extern "system" fn(*mut IAvnTrayIcon, *mut IAvnCommand) -> i32,
     get_tool_tip_text: unsafe extern "system" fn(*mut IAvnTrayIcon, *mut *mut u16) -> i32,
     set_tool_tip_text: unsafe extern "system" fn(*mut IAvnTrayIcon, *mut u16) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnTrayIcon, *mut i32) -> i32,
@@ -62428,6 +62671,20 @@ impl ComPtr<IAvnTrayIcon> {
             let mut value = 0i64;
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
             hresult::check(hr).map(|_| value as usize as *mut IUnknown)
+        }
+    }
+    pub fn get_command(&self) -> Result<Option<ComPtr<IAvnCommand>>> {
+        unsafe {
+            let mut value: *mut IAvnCommand = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_command)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_command(&self, value: Option<&ComPtr<IAvnCommand>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_command)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
         }
     }
     pub fn get_tool_tip_text(&self) -> Result<*mut u16> {

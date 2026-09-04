@@ -517,7 +517,7 @@ public class ClrTypeExtractorTests
         Assert.All(
             new[] { "IAvnMenuBase", "IAvnMenu", "IAvnHeaderedSelectingItemsControl" },
             name => Assert.Equal(4, Type(ir, name).AbiVersion));
-        Assert.Equal(5, Type(ir, "IAvnMenuItem").AbiVersion);
+        Assert.Equal(6, Type(ir, "IAvnMenuItem").AbiVersion);
 
         var pinned = new Dictionary<string, int>(StringComparer.Ordinal)
         {
@@ -565,8 +565,9 @@ public class ClrTypeExtractorTests
         Assert.DoesNotContain(
             ir.AttachedProperties,
             property => property.Name is "AttachedFlyout" or "Flyout");
-        Assert.Contains(ir.Skipped, skipped =>
-            skipped.Owner == typeof(Button).FullName && skipped.Member == nameof(Button.Command));
+        Assert.Equal(
+            MarshallingKind.Command,
+            Type(ir, "IAvnButton").Properties.Single(p => p.Name == nameof(Button.Command)).Kind);
 
         var target = flyoutBase.Properties.Single(property => property.Name == "Target");
         Assert.Equal(MarshallingKind.ComInterface, target.Kind);
@@ -659,10 +660,13 @@ public class ClrTypeExtractorTests
         // stay in the gap report rather than being approximated.
         Assert.Contains(menuItem.Events, @event =>
             @event.Name == nameof(MenuItem.Click) && @event.PayloadKind == EventPayloadKind.None);
+        Assert.Equal(
+            MarshallingKind.Command,
+            menuItem.Properties.Single(property => property.Name == nameof(MenuItem.Command)).Kind);
         Assert.All(
             new[]
             {
-                nameof(MenuItem.Command), nameof(MenuItem.CommandParameter),
+                nameof(MenuItem.CommandParameter),
                 nameof(MenuItem.HotKey), nameof(MenuItem.InputGesture),
             },
             name =>
@@ -1210,7 +1214,7 @@ public class ClrTypeExtractorTests
             name =>
             {
                 var type = Type(ir, name);
-                Assert.Equal(4, type.AbiVersion);
+                Assert.Equal(5, type.AbiVersion);
                 Assert.True(type.IsConstructible);
             });
 
@@ -1238,7 +1242,9 @@ public class ClrTypeExtractorTests
         var split = Type(ir, "IAvnSplitButton");
         Assert.Contains(split.Events, @event => @event.Name == "Click");
         Assert.Contains(split.Properties, property => property.Name == "Flyout");
-        Assert.DoesNotContain(split.Properties, property => property.Name == "Command");
+        Assert.Equal(
+            MarshallingKind.Command,
+            split.Properties.Single(property => property.Name == "Command").Kind);
 
         var menuFlyout = Type(ir, "IAvnMenuFlyout");
         var items = menuFlyout.Properties.Single(property => property.Name == "Items");
@@ -1406,7 +1412,10 @@ public class ClrTypeExtractorTests
 
         var child = Type(ir, "IAvnPopup").Properties.Single(p => p.Name == "Child");
         Assert.Equal(MarshallingKind.ComInterface, child.Kind);
-        Assert.DoesNotContain(Type(ir, "IAvnTrayIcon").Properties, p => p.Name is "Menu" or "Icon" or "Command");
+        Assert.DoesNotContain(Type(ir, "IAvnTrayIcon").Properties, p => p.Name is "Menu" or "Icon");
+        Assert.Equal(
+            MarshallingKind.Command,
+            Type(ir, "IAvnTrayIcon").Properties.Single(p => p.Name == "Command").Kind);
 
         Assert.Equal(13, ir.FactoryAbiVersion);
     }
@@ -1561,18 +1570,18 @@ public class ClrTypeExtractorTests
     {
         var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
         var button = Type(ir, "IAvnButton");
-        Assert.Equal(8, button.AbiVersion);
+        Assert.Equal(9, button.AbiVersion);
         var flyout = button.Properties.Single(p => p.Name == "Flyout");
         Assert.Equal(MarshallingKind.ComInterface, flyout.Kind);
         Assert.Equal("Avalonia.Host.Com.IAvnFlyoutBase", flyout.InterfaceName);
         Assert.True(flyout.IsNullable);
 
         var split = Type(ir, "IAvnSplitButton");
-        Assert.Equal(4, split.AbiVersion);
+        Assert.Equal(5, split.AbiVersion);
         Assert.Contains(split.Properties, p => p.Name == "Flyout");
 
         var menu = Type(ir, "IAvnMenuItem");
-        Assert.Equal(5, menu.AbiVersion);
+        Assert.Equal(6, menu.AbiVersion);
         Assert.Contains(menu.Properties, p => p.Name == "HasSubMenu");
         Assert.Contains(menu.Methods, m => m.Name == "Open");
         Assert.Contains(menu.Methods, m => m.Name == "Close");
@@ -1703,7 +1712,7 @@ public class ClrTypeExtractorTests
         Assert.Contains(control.Events, e => e.Name == "Loaded");
         Assert.Contains(control.Events, e => e.Name == "Unloaded");
         Assert.Equal(3, Type(ir, "IAvnStyledElement").AbiVersion);
-        Assert.Equal(8, Type(ir, "IAvnButton").AbiVersion);
+        Assert.Equal(9, Type(ir, "IAvnButton").AbiVersion);
         Assert.Equal(3, Type(ir, "IAvnFlyout").AbiVersion);
         Assert.Equal(13, ir.FactoryAbiVersion);
     }
@@ -1717,10 +1726,11 @@ public class ClrTypeExtractorTests
             first.Types.Select(t => (t.FullName, t.Iid)),
             second.Types.Select(t => (t.FullName, t.Iid)));
         Assert.Equal(first.Types.Count, first.Types.Select(t => t.Iid).Distinct().Count());
-        Assert.Contains(first.Skipped, s =>
-            s.Owner == typeof(Button).FullName &&
-            s.Member == nameof(Button.Command) &&
-            s.Reason == "Not included by projection policy");
+        Assert.DoesNotContain(first.Skipped, s =>
+            s.Owner == typeof(Button).FullName && s.Member == nameof(Button.Command));
+        Assert.Equal(
+            MarshallingKind.Command,
+            Type(first, "IAvnButton").Properties.Single(p => p.Name == nameof(Button.Command)).Kind);
     }
 
     [Fact]

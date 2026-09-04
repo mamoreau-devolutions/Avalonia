@@ -19,6 +19,10 @@ pub fn emit_sys_module(ir: &ProjectionIr) -> String {
         out.push_str(&emit_brush(ir));
         out.push('\n');
     }
+    if ir.command_interface_name.is_some() {
+        out.push_str(&emit_command(ir));
+        out.push('\n');
+    }
     for event in unique_events(ir) {
         out.push_str(&emit_event_handler(event));
         out.push('\n');
@@ -224,6 +228,50 @@ fn emit_brush(ir: &ProjectionIr) -> String {
          \x20           let mut value = 0.0;\n\
          \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_opacity)(self.as_raw(), &mut value);\n\
          \x20           hresult::check(hr).map(|_| value)\n\
+         \x20       }}\n\
+         \x20   }}\n\
+         }}\n",
+        iid_literal = guid_literal(iid)
+    )
+}
+
+fn emit_command(ir: &ProjectionIr) -> String {
+    let name = simple_name(
+        ir.command_interface_name
+            .as_deref()
+            .expect("commandInterfaceName"),
+    );
+    let iid = ir
+        .command_interface_iid
+        .as_deref()
+        .expect("commandInterfaceIid for a projected command");
+    let iid_const = format!("{}_IID", to_shouty(name));
+    format!(
+        "pub const {iid_const}: Guid = {iid_literal};\n\n\
+         #[repr(C)]\n\
+         struct {name}Vtbl {{\n\
+         \x20   query_interface: unsafe extern \"system\" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,\n\
+         \x20   add_ref: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+         \x20   release: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+         \x20   execute: unsafe extern \"system\" fn(*mut {name}) -> i32,\n\
+         \x20   can_execute: unsafe extern \"system\" fn(*mut {name}, *mut i32) -> i32,\n\
+         }}\n\n\
+         #[repr(C)]\n\
+         pub struct {name} {{\n\
+         \x20   vtbl: *const {name}Vtbl,\n\
+         }}\n\n\
+         unsafe impl ComInterface for {name} {{\n\
+         \x20   const IID: Guid = {iid_const};\n\
+         }}\n\n\
+         impl ComPtr<{name}> {{\n\
+         \x20   pub fn execute(&self) -> Result<()> {{\n\
+         \x20       unsafe {{ hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().execute)(self.as_raw())) }}\n\
+         \x20   }}\n\
+         \x20   pub fn can_execute(&self) -> Result<bool> {{\n\
+         \x20       unsafe {{\n\
+         \x20           let mut value = 0;\n\
+         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().can_execute)(self.as_raw(), &mut value);\n\
+         \x20           hresult::check(hr).map(|_| value != 0)\n\
          \x20       }}\n\
          \x20   }}\n\
          }}\n",
@@ -925,7 +973,7 @@ fn rust_abi_type(kind: &str, interface_name: Option<&str>, is_nullable: bool) ->
         "F32" => "f32".into(),
         "F64" => "f64".into(),
         "StringUtf16" => "*mut u16".into(),
-        "ComInterface" | "ComCollection" | "Brush" => {
+        "ComInterface" | "ComCollection" | "Brush" | "Command" => {
             format!(
                 "*mut {}",
                 simple_name(interface_name.expect("interfaceName"))
@@ -972,7 +1020,7 @@ fn rust_property_type(property: &ProjectedProperty) -> String {
             }
         }
         // A brush is always optional: a control with no brush reports a null pointer.
-        "Brush" => format!(
+        "Brush" | "Command" => format!(
             "Option<ComPtr<{}>>",
             simple_name(property.interface_name.as_deref().expect("interfaceName"))
         ),
@@ -992,7 +1040,7 @@ fn rust_property_result(property: &ProjectedProperty) -> String {
         "ComCollection" if property.is_nullable => {
             "Ok(ComPtr::from_raw(value))".into()
         }
-        "Brush" => "Ok(ComPtr::from_raw(value))".into(),
+        "Brush" | "Command" => "Ok(ComPtr::from_raw(value))".into(),
         "ComInterface" => {
             "ComPtr::from_projected_raw(value)".into()
         }
@@ -1019,7 +1067,7 @@ fn rust_property_input(property: &ProjectedProperty) -> (String, String) {
                 "value.map_or(ptr::null_mut(), ComPtr::as_raw)".into(),
             )
         }
-        "Brush" => {
+        "Brush" | "Command" => {
             let ty = simple_name(property.interface_name.as_deref().expect("interfaceName"));
             (
                 format!("Option<&ComPtr<{ty}>>"),

@@ -438,6 +438,11 @@ fn emit_property(
                  \x20       self.raw.get_{snake}()?.as_ref().map(Brush::from_raw).transpose()\n\
                  \x20   }}\n"
             )),
+            "Command" => out.push_str(&format!(
+                "    pub fn {getter}(&self) -> Result<Option<sys::ComPtr<sys::IAvnCommand>>> {{\n\
+                 \x20       Ok(self.raw.get_{snake}()?)\n\
+                 \x20   }}\n"
+            )),
             "I32" if is_enum_property(property, flags_enums) => {
                 let enum_name = simple_name(property.managed_type_name.as_deref().unwrap());
                 out.push_str(&format!(
@@ -709,6 +714,11 @@ fn safe_property_input(
             "impl Into<Option<Brush>>".into(),
             "        let value = value.into().map(Brush::to_raw).transpose()?;\n".into(),
             "value.as_ref()".into(),
+        ),
+        "Command" => (
+            "Option<&sys::ComPtr<sys::IAvnCommand>>".into(),
+            String::new(),
+            "value".into(),
         ),
         "I32" if is_enum_property(property, flags_enums) => (
             simple_name(property.managed_type_name.as_deref().unwrap()).into(),

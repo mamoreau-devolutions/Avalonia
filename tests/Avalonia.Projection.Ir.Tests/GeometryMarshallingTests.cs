@@ -107,6 +107,7 @@ public class GeometryMarshallingTests
         Assert.Equal(17, (int)MarshallingKind.Brush);
         Assert.Equal(18, (int)MarshallingKind.Vector);
         Assert.Equal(19, (int)MarshallingKind.CharUtf16);
+        Assert.Equal(20, (int)MarshallingKind.Command);
     }
 
     [Fact]

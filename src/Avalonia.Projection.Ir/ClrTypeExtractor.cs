@@ -28,6 +28,9 @@ public static class ClrTypeExtractor
         var brushInterfaceName = BrushMarshalling.QualifiedInterfaceName(policy.ProjectionNamespace);
         var usesBrush = types.Any(type =>
             type.Properties.Any(property => property.Kind == MarshallingKind.Brush));
+        var commandInterfaceName = CommandMarshalling.QualifiedInterfaceName(policy.ProjectionNamespace);
+        var usesCommand = types.Any(type =>
+            type.Properties.Any(property => property.Kind == MarshallingKind.Command));
 
         return new ProjectionIr
         {
@@ -43,6 +46,11 @@ public static class ClrTypeExtractor
                 ? CreateDeterministicIid(brushInterfaceName, policy.GetAbiVersion(brushInterfaceName))
                 : null,
             BrushAbiVersion = policy.GetAbiVersion(brushInterfaceName),
+            CommandInterfaceName = usesCommand ? commandInterfaceName : null,
+            CommandInterfaceIid = usesCommand
+                ? CreateDeterministicIid(commandInterfaceName, policy.GetAbiVersion(commandInterfaceName))
+                : null,
+            CommandAbiVersion = policy.GetAbiVersion(commandInterfaceName),
             Types = types,
             Enums = ExtractEnums(selected, policy),
             AttachedProperties = attachedProperties,
@@ -443,6 +451,11 @@ public static class ClrTypeExtractor
         {
             kind = MarshallingKind.Brush;
             interfaceName = BrushMarshalling.QualifiedInterfaceName(policy.ProjectionNamespace);
+        }
+        else if (CommandMarshalling.IsCommand(type.FullName))
+        {
+            kind = MarshallingKind.Command;
+            interfaceName = CommandMarshalling.QualifiedInterfaceName(policy.ProjectionNamespace);
         }
         else if (projectedNames.TryGetValue(type, out interfaceName))
             kind = MarshallingKind.ComInterface;

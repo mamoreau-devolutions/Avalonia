@@ -13,9 +13,9 @@ fn repeat_button_and_hyperlink_are_buttons() {
         "*set_is_visited)(IAvnHyperlinkButton* self, int32_t value)",
         "*get_navigate_uri)(IAvnHyperlinkButton* self, uint16_t** value)",
         "*set_navigate_uri)(IAvnHyperlinkButton* self, const uint16_t* value)",
-        "#define I_AVN_REPEAT_BUTTON_ABI_VERSION 4",
-        "#define I_AVN_HYPERLINK_BUTTON_ABI_VERSION 4",
-        "#define I_AVN_DROP_DOWN_BUTTON_ABI_VERSION 4",
+        "#define I_AVN_REPEAT_BUTTON_ABI_VERSION 5",
+        "#define I_AVN_HYPERLINK_BUTTON_ABI_VERSION 5",
+        "#define I_AVN_DROP_DOWN_BUTTON_ABI_VERSION 5",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
     }
@@ -35,7 +35,7 @@ fn split_button_carries_click_and_no_icommand() {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
     }
 
-    for forbidden in ["*set_command)(IAvnSplitButton"] {
+    for forbidden in ["*set_command_parameter)(IAvnSplitButton"] {
         assert!(
             !HEADER.contains(forbidden),
             "header must not declare `{forbidden}`"
@@ -51,7 +51,7 @@ fn menu_flyout_items_use_the_existing_item_list() {
         "*set_horizontal_offset)(IAvnContextMenu* self, double value)",
         "#define I_AVN_MENU_FLYOUT_ABI_VERSION 3",
         "#define I_AVN_CONTEXT_MENU_ABI_VERSION 7",
-        "#define I_AVN_BUTTON_ABI_VERSION 8",
+        "#define I_AVN_BUTTON_ABI_VERSION 9",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
     }
