@@ -1,0 +1,28 @@
+//! ABI guarantees for the wave I overlay and notification controls.
+
+const HEADER: &str = include_str!("../include/avalonia-rust-abi.h");
+
+#[test]
+fn overlay_controls_publish_at_version_one() {
+    for expected in [
+        "*set_child)(IAvnPopup* self, IAvnControl* value)",
+        "*set_is_open)(IAvnPopup* self, int32_t value)",
+        "*set_tool_tip_text)(IAvnTrayIcon* self, const uint16_t* value)",
+        "*set_max_items)(IAvnWindowNotificationManager* self, int32_t value)",
+        "*set_pull_direction)(IAvnRefreshContainer* self, int32_t value)",
+        "*create_popup)(IAvnControlFactory* self, IAvnPopup** value)",
+        "*create_tray_icon)(IAvnControlFactory* self, IAvnTrayIcon** value)",
+        "#define I_AVN_POPUP_ABI_VERSION 1",
+        "#define I_AVN_TRAY_ICON_ABI_VERSION 1",
+        "#define I_AVN_CONTROL_FACTORY_ABI_VERSION 11",
+    ] {
+        assert!(HEADER.contains(expected), "header is missing `{expected}`");
+    }
+    for forbidden in [
+        "*set_menu)(IAvnTrayIcon",
+        "*set_icon)(IAvnTrayIcon",
+        "*set_command)(IAvnTrayIcon",
+    ] {
+        assert!(!HEADER.contains(forbidden), "header must not declare `{forbidden}`");
+    }
+}

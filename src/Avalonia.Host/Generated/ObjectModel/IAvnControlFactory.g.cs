@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("56E24666-EFE8-5AB6-97BD-2A32B9C21395")]
+[Guid("D6AFB17D-D7AE-57F6-B183-44BCD5D5B32E")]
 public partial interface IAvnControlFactory
 {
     [PreserveSig]
@@ -136,6 +136,9 @@ public partial interface IAvnControlFactory
     int CreateMenuItem(out IAvnMenuItem? value);
 
     [PreserveSig]
+    int CreateNotificationCard(out IAvnNotificationCard? value);
+
+    [PreserveSig]
     int CreateNumericUpDown(out IAvnNumericUpDown? value);
 
     [PreserveSig]
@@ -151,6 +154,9 @@ public partial interface IAvnControlFactory
     int CreatePolyline(out IAvnPolyline? value);
 
     [PreserveSig]
+    int CreatePopup(out IAvnPopup? value);
+
+    [PreserveSig]
     int CreateProgressBar(out IAvnProgressBar? value);
 
     [PreserveSig]
@@ -158,6 +164,9 @@ public partial interface IAvnControlFactory
 
     [PreserveSig]
     int CreateRectangle(out IAvnRectangle? value);
+
+    [PreserveSig]
+    int CreateRefreshContainer(out IAvnRefreshContainer? value);
 
     [PreserveSig]
     int CreateRelativePanel(out IAvnRelativePanel? value);
@@ -232,6 +241,9 @@ public partial interface IAvnControlFactory
     int CreateTransitioningContentControl(out IAvnTransitioningContentControl? value);
 
     [PreserveSig]
+    int CreateTrayIcon(out IAvnTrayIcon? value);
+
+    [PreserveSig]
     int CreateTreeView(out IAvnTreeView? value);
 
     [PreserveSig]
@@ -248,6 +260,9 @@ public partial interface IAvnControlFactory
 
     [PreserveSig]
     int CreateWindow(out IAvnWindow? value);
+
+    [PreserveSig]
+    int CreateWindowNotificationManager(out IAvnWindowNotificationManager? value);
 
     [PreserveSig]
     int CreateWrapPanel(out IAvnWrapPanel? value);
@@ -905,6 +920,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         }
     }
 
+    public int CreateNotificationCard(out IAvnNotificationCard? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnNotificationCard)ProjectionRuntime.Wrap(new global::Avalonia.Controls.Notifications.NotificationCard())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int CreateNumericUpDown(out IAvnNumericUpDown? value)
     {
         value = null;
@@ -980,6 +1010,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         }
     }
 
+    public int CreatePopup(out IAvnPopup? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnPopup)ProjectionRuntime.Wrap(new global::Avalonia.Controls.Primitives.Popup())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int CreateProgressBar(out IAvnProgressBar? value)
     {
         value = null;
@@ -1017,6 +1062,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         {
             global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
             value = (IAvnRectangle)ProjectionRuntime.Wrap(new global::Avalonia.Controls.Shapes.Rectangle())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateRefreshContainer(out IAvnRefreshContainer? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnRefreshContainer)ProjectionRuntime.Wrap(new global::Avalonia.Controls.RefreshContainer())!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -1385,6 +1445,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         }
     }
 
+    public int CreateTrayIcon(out IAvnTrayIcon? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnTrayIcon)ProjectionRuntime.Wrap(new global::Avalonia.Controls.TrayIcon())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int CreateTreeView(out IAvnTreeView? value)
     {
         value = null;
@@ -1467,6 +1542,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         {
             global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
             value = (IAvnWindow)ProjectionRuntime.Wrap(new global::Avalonia.Controls.Window())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateWindowNotificationManager(out IAvnWindowNotificationManager? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnWindowNotificationManager)ProjectionRuntime.Wrap(new global::Avalonia.Controls.Notifications.WindowNotificationManager())!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

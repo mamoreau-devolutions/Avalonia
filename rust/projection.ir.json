@@ -1,8 +1,8 @@
 {
   "version": 13,
   "sourceAssembly": "Avalonia.Base,Avalonia.Controls",
-  "factoryIid": "56E24666-EFE8-5AB6-97BD-2A32B9C21395",
-  "factoryAbiVersion": 10,
+  "factoryIid": "D6AFB17D-D7AE-57F6-B183-44BCD5D5B32E",
+  "factoryAbiVersion": 11,
   "brushInterfaceName": "Avalonia.Host.Com.IAvnBrush",
   "brushInterfaceIid": "FC7CCBAE-ED75-5C6D-8516-DF706E137ED3",
   "brushAbiVersion": 1,
@@ -1813,6 +1813,70 @@
       ]
     },
     {
+      "name": "IAvnNotificationCard",
+      "fullName": "Avalonia.Host.Com.IAvnNotificationCard",
+      "kind": "Class",
+      "iid": "E4437116-0B2B-510F-AF56-6A04A37A04D0",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
+      "managedFullName": "Avalonia.Controls.Notifications.NotificationCard",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "IsClosed",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "NotificationType",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Notifications.NotificationType",
+          "isNullable": false
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IAvnWindowNotificationManager",
+      "fullName": "Avalonia.Host.Com.IAvnWindowNotificationManager",
+      "kind": "Class",
+      "iid": "02AE0E5C-1BD1-5444-963B-7C73BE239D98",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
+      "managedFullName": "Avalonia.Controls.Notifications.WindowNotificationManager",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "Position",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Notifications.NotificationPosition",
+          "isNullable": false
+        },
+        {
+          "name": "MaxItems",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Int32",
+          "isNullable": false
+        }
+      ],
+      "events": []
+    },
+    {
       "name": "IAvnNumericUpDown",
       "fullName": "Avalonia.Host.Com.IAvnNumericUpDown",
       "kind": "Class",
@@ -2120,6 +2184,102 @@
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.Object",
           "isNullable": true
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IAvnPopup",
+      "fullName": "Avalonia.Host.Com.IAvnPopup",
+      "kind": "Class",
+      "iid": "806D4F89-A20E-50A2-802E-7D462AEA78DB",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnControl",
+      "managedFullName": "Avalonia.Controls.Primitives.Popup",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "WindowManagerAddShadowHint",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "Child",
+          "kind": "ComInterface",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnControl",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Control",
+          "isNullable": true
+        },
+        {
+          "name": "IsLightDismissEnabled",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "IsOpen",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "Placement",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.PlacementMode",
+          "isNullable": false
+        },
+        {
+          "name": "OverlayDismissEventPassThrough",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "HorizontalOffset",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "VerticalOffset",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "Topmost",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
         }
       ],
       "events": []
@@ -2569,6 +2729,38 @@
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.String",
           "isNullable": true
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IAvnRefreshContainer",
+      "fullName": "Avalonia.Host.Com.IAvnRefreshContainer",
+      "kind": "Class",
+      "iid": "CD69E49C-3B2C-5C7B-B5AF-ED2E5EE954A2",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
+      "managedFullName": "Avalonia.Controls.RefreshContainer",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "IsMouseEnabled",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "PullDirection",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Input.PullDirection",
+          "isNullable": false
         }
       ],
       "events": []
@@ -3963,6 +4155,38 @@
       "events": []
     },
     {
+      "name": "IAvnTrayIcon",
+      "fullName": "Avalonia.Host.Com.IAvnTrayIcon",
+      "kind": "Class",
+      "iid": "6F1730A5-F135-59C5-A6D4-714C68A1A2FC",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnAvaloniaObject",
+      "managedFullName": "Avalonia.Controls.TrayIcon",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "ToolTipText",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.String",
+          "isNullable": true
+        },
+        {
+          "name": "IsVisible",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        }
+      ],
+      "events": []
+    },
+    {
       "name": "IAvnTreeView",
       "fullName": "Avalonia.Host.Com.IAvnTreeView",
       "kind": "Class",
@@ -4734,6 +4958,58 @@
         {
           "name": "Radio",
           "value": 2
+        }
+      ]
+    },
+    {
+      "name": "NotificationPosition",
+      "fullName": "Avalonia.Controls.Notifications.NotificationPosition",
+      "values": [
+        {
+          "name": "TopLeft",
+          "value": 0
+        },
+        {
+          "name": "TopRight",
+          "value": 1
+        },
+        {
+          "name": "BottomLeft",
+          "value": 2
+        },
+        {
+          "name": "BottomRight",
+          "value": 3
+        },
+        {
+          "name": "TopCenter",
+          "value": 4
+        },
+        {
+          "name": "BottomCenter",
+          "value": 5
+        }
+      ]
+    },
+    {
+      "name": "NotificationType",
+      "fullName": "Avalonia.Controls.Notifications.NotificationType",
+      "values": [
+        {
+          "name": "Information",
+          "value": 0
+        },
+        {
+          "name": "Success",
+          "value": 1
+        },
+        {
+          "name": "Warning",
+          "value": 2
+        },
+        {
+          "name": "Error",
+          "value": 3
         }
       ]
     },
@@ -6560,6 +6836,28 @@
       ]
     },
     {
+      "name": "PullDirection",
+      "fullName": "Avalonia.Input.PullDirection",
+      "values": [
+        {
+          "name": "TopToBottom",
+          "value": 0
+        },
+        {
+          "name": "BottomToTop",
+          "value": 1
+        },
+        {
+          "name": "LeftToRight",
+          "value": 2
+        },
+        {
+          "name": "RightToLeft",
+          "value": 3
+        }
+      ]
+    },
+    {
       "name": "HorizontalAlignment",
       "fullName": "Avalonia.Layout.HorizontalAlignment",
       "values": [
@@ -8223,6 +8521,51 @@
       "reason": "Not included by projection policy"
     },
     {
+      "owner": "Avalonia.Controls.Notifications.NotificationCard",
+      "member": "IsClosing",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Notifications.NotificationCard",
+      "member": "NotificationClosed",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Notifications.NotificationCard",
+      "member": "Close()",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Notifications.WindowNotificationManager",
+      "member": "Show(INotification)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Notifications.WindowNotificationManager",
+      "member": "Show(Object)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Notifications.WindowNotificationManager",
+      "member": "Show(Object, NotificationType, Nullable\u00601, Action, Action, String[])",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Notifications.WindowNotificationManager",
+      "member": "Close(INotification)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Notifications.WindowNotificationManager",
+      "member": "Close(Object)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Notifications.WindowNotificationManager",
+      "member": "CloseAll()",
+      "reason": "Not included by projection policy"
+    },
+    {
       "owner": "Avalonia.Controls.NumericUpDown",
       "member": "NumberFormat",
       "reason": "Not included by projection policy"
@@ -8325,6 +8668,101 @@
     {
       "owner": "Avalonia.Controls.Primitives.HeaderedSelectingItemsControl",
       "member": "HeaderPresenter",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.Popup",
+      "member": "OpenedPopups",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.Popup",
+      "member": "DependencyResolver",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.Popup",
+      "member": "InheritsTransform",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.Popup",
+      "member": "PlacementAnchor",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.Popup",
+      "member": "PlacementConstraintAdjustment",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.Popup",
+      "member": "PlacementGravity",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.Popup",
+      "member": "PlacementRect",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.Popup",
+      "member": "PlacementTarget",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.Popup",
+      "member": "CustomPopupPlacementCallback",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.Popup",
+      "member": "OverlayInputPassThroughElement",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.Popup",
+      "member": "TakesFocusFromNativeControl",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.Popup",
+      "member": "ShouldUseOverlayLayer",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.Popup",
+      "member": "IsUsingOverlayLayer",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.Popup",
+      "member": "IsPointerOverPopup",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.Popup",
+      "member": "Closed",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.Popup",
+      "member": "Opened",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.Popup",
+      "member": "Open()",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.Popup",
+      "member": "Close()",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.Popup",
+      "member": "IsInsidePopup(Visual)",
       "reason": "Not included by projection policy"
     },
     {
@@ -8495,6 +8933,21 @@
     {
       "owner": "Avalonia.Controls.ProgressBar",
       "member": "TemplateSettings",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.RefreshContainer",
+      "member": "Visualizer",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.RefreshContainer",
+      "member": "RefreshRequested",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.RefreshContainer",
+      "member": "RequestRefresh()",
       "reason": "Not included by projection policy"
     },
     {
@@ -9005,6 +9458,41 @@
     {
       "owner": "Avalonia.Controls.TransitioningContentControl",
       "member": "TransitionCompleted",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TrayIcon",
+      "member": "Command",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TrayIcon",
+      "member": "CommandParameter",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TrayIcon",
+      "member": "Menu",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TrayIcon",
+      "member": "Icon",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TrayIcon",
+      "member": "NativeMenuExporter",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TrayIcon",
+      "member": "Clicked",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TrayIcon",
+      "member": "Dispose()",
       "reason": "Not included by projection policy"
     },
     {

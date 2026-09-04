@@ -149,6 +149,11 @@ Path, Polygon, Polyline, Arc and Sector publish at version 1.
 are `AvnPoint`. `Path.Data` is the path mini-language through `AvnGeometry`.
 `Points` collections stay gaps.
 
+Wave I is the same shape. `IAvnPopup`, `IAvnTrayIcon`, `IAvnWindowNotificationManager`,
+`IAvnNotificationCard` and `IAvnRefreshContainer` publish at version 1.
+`IAvnControlFactory` moves from 10 to 11. TrayIcon hangs off `IAvnAvaloniaObject`.
+`NativeMenu`, `WindowIcon` and `ICommand` stay gaps.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A

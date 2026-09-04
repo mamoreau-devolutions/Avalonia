@@ -94,6 +94,11 @@ public class ClrTypeExtractorTests
         typeof(Avalonia.Controls.Shapes.Polyline),
         typeof(Avalonia.Controls.Shapes.Arc),
         typeof(Avalonia.Controls.Shapes.Sector),
+        typeof(Popup),
+        typeof(TrayIcon),
+        typeof(Avalonia.Controls.Notifications.WindowNotificationManager),
+        typeof(Avalonia.Controls.Notifications.NotificationCard),
+        typeof(RefreshContainer),
         typeof(TextBox),
         typeof(ScrollViewer),
         typeof(RangeBase),
@@ -284,9 +289,9 @@ public class ClrTypeExtractorTests
         // The factory grew a creator per wave A control plus GetToolTipStatics, then one per
         // constructible wave B type, then one per constructible wave C type, so it has moved
         // three times off the version 2 IID it published for CreateSolidColorBrush.
-        Assert.Equal(10, ir.FactoryAbiVersion);
+        Assert.Equal(11, ir.FactoryAbiVersion);
         Assert.Equal(
-            ClrTypeExtractor.CreateDeterministicIid("Avalonia.Host.Com.IAvnControlFactory", 10),
+            ClrTypeExtractor.CreateDeterministicIid("Avalonia.Host.Com.IAvnControlFactory", 11),
             ir.FactoryIid);
     }
 
@@ -1120,7 +1125,7 @@ public class ClrTypeExtractorTests
             property => property.Name is "Above" or "Below" or "LeftOf" or "RightOf"
                 or "AlignLeftWith" or "Order" or "Grow" or "Shrink" or "Basis");
 
-        Assert.Equal(10, ir.FactoryAbiVersion);
+        Assert.Equal(11, ir.FactoryAbiVersion);
     }
 
     [Fact]
@@ -1173,7 +1178,7 @@ public class ClrTypeExtractorTests
         Assert.Equal(MarshallingKind.ComCollection, items.Kind);
         Assert.Equal("Avalonia.Host.Com.IAvnItemList", items.InterfaceName);
 
-        Assert.Equal(10, ir.FactoryAbiVersion);
+        Assert.Equal(11, ir.FactoryAbiVersion);
     }
 
     [Fact]
@@ -1217,7 +1222,7 @@ public class ClrTypeExtractorTests
         Assert.True(selectedText.CanRead);
         Assert.False(selectedText.CanWrite);
 
-        Assert.Equal(10, ir.FactoryAbiVersion);
+        Assert.Equal(11, ir.FactoryAbiVersion);
     }
 
     [Fact]
@@ -1250,7 +1255,7 @@ public class ClrTypeExtractorTests
             Type(ir, "IAvnCalendar").Properties,
             p => p.Name == "SelectedDates");
 
-        Assert.Equal(10, ir.FactoryAbiVersion);
+        Assert.Equal(11, ir.FactoryAbiVersion);
     }
 
     [Fact]
@@ -1275,7 +1280,7 @@ public class ClrTypeExtractorTests
             Type(ir, "IAvnLayoutTransformControl").Properties,
             p => p.Name == "LayoutTransform");
 
-        Assert.Equal(10, ir.FactoryAbiVersion);
+        Assert.Equal(11, ir.FactoryAbiVersion);
     }
 
     [Fact]
@@ -1313,7 +1318,25 @@ public class ClrTypeExtractorTests
         Assert.True(data.IsNullable);
         Assert.DoesNotContain(Type(ir, "IAvnPolygon").Properties, p => p.Name == "Points");
 
-        Assert.Equal(10, ir.FactoryAbiVersion);
+        Assert.Equal(11, ir.FactoryAbiVersion);
+    }
+
+    [Fact]
+    public void Wave_i_overlay_publishes_new_interfaces_at_version_one()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+
+        Assert.Equal("Avalonia.Host.Com.IAvnControl", Type(ir, "IAvnPopup").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnAvaloniaObject", Type(ir, "IAvnTrayIcon").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnTemplatedControl", Type(ir, "IAvnWindowNotificationManager").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnContentControl", Type(ir, "IAvnNotificationCard").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnContentControl", Type(ir, "IAvnRefreshContainer").BaseFullName);
+
+        var child = Type(ir, "IAvnPopup").Properties.Single(p => p.Name == "Child");
+        Assert.Equal(MarshallingKind.ComInterface, child.Kind);
+        Assert.DoesNotContain(Type(ir, "IAvnTrayIcon").Properties, p => p.Name is "Menu" or "Icon" or "Command");
+
+        Assert.Equal(11, ir.FactoryAbiVersion);
     }
 
     [Fact]

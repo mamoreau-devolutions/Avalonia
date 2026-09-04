@@ -61,8 +61,8 @@ public static class AvaloniaProjectionProfiles
             // ToggleSplitButton, HyperlinkButton, ContextMenu, MenuFlyout), so it republishes
             // at version 6, wave E six more (Spinner is abstract) so 7, and wave F two more
             // (Calendar, CalendarDatePicker) so 8, wave G seven more so 9, and wave H
-            // eight constructible shapes (Shape is abstract) so 10.
-            ["Avalonia.Host.Com.IAvnControlFactory"] = 10,
+            // eight constructible shapes (Shape is abstract) so 10, and wave I five more so 11.
+            ["Avalonia.Host.Com.IAvnControlFactory"] = 11,
         },
         IncludeTypeNames =
         [
@@ -165,6 +165,13 @@ public static class AvaloniaProjectionProfiles
             "Avalonia.Controls.Shapes.Polyline",
             "Avalonia.Controls.Shapes.Arc",
             "Avalonia.Controls.Shapes.Sector",
+            // Wave I. Overlay and notifications. TrayIcon is an AvaloniaObject, not a Control.
+            // NativeMenu, WindowIcon and ICommand stay gaps.
+            "Avalonia.Controls.Primitives.Popup",
+            "Avalonia.Controls.TrayIcon",
+            "Avalonia.Controls.Notifications.WindowNotificationManager",
+            "Avalonia.Controls.Notifications.NotificationCard",
+            "Avalonia.Controls.RefreshContainer",
             "Avalonia.Controls.TextBox",
             "Avalonia.Controls.ScrollViewer",
             "Avalonia.Controls.Primitives.RangeBase",
@@ -358,6 +365,16 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.Shapes.Polyline"] = ["FillRule"],
             ["Avalonia.Controls.Shapes.Arc"] = ["StartAngle", "SweepAngle"],
             ["Avalonia.Controls.Shapes.Sector"] = ["StartAngle", "SweepAngle"],
+            ["Avalonia.Controls.Primitives.Popup"] =
+            [
+                "Child", "IsOpen", "Placement", "HorizontalOffset", "VerticalOffset",
+                "IsLightDismissEnabled", "Topmost", "WindowManagerAddShadowHint",
+                "OverlayDismissEventPassThrough",
+            ],
+            ["Avalonia.Controls.TrayIcon"] = ["ToolTipText", "IsVisible"],
+            ["Avalonia.Controls.Notifications.WindowNotificationManager"] = ["Position", "MaxItems"],
+            ["Avalonia.Controls.Notifications.NotificationCard"] = ["IsClosed", "NotificationType"],
+            ["Avalonia.Controls.RefreshContainer"] = ["PullDirection", "IsMouseEnabled"],
             ["Avalonia.Controls.Primitives.TemplatedControl"] =
             [
                 "Background", "BorderBrush", "BorderThickness", "CornerRadius", "FontSize",
@@ -569,6 +586,12 @@ public static class AvaloniaProjectionProfiles
             {
                 Kind = MarshallingKind.StringUtf16,
                 StringConverterTypeName = "Avalonia.Host.Com.AvnGeometry",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.Primitives.Popup.Child"] = new()
+            {
+                Kind = MarshallingKind.ComInterface,
+                InterfaceName = "Avalonia.Host.Com.IAvnControl",
                 IsNullable = true,
             },
             // The projection has no date/time ABI shape, so a date crosses as an ISO-8601
