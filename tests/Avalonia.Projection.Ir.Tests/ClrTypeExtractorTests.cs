@@ -1334,6 +1334,7 @@ public class ClrTypeExtractorTests
         Assert.Equal("Avalonia.Host.Com.IAvnSelectingItemsControl", Type(ir, "IAvnCarousel").BaseFullName);
         Assert.Equal("Avalonia.Host.Com.IAvnContentControl", Type(ir, "IAvnTransitioningContentControl").BaseFullName);
         Assert.Equal("Avalonia.Host.Com.IAvnContentControl", Type(ir, "IAvnLabel").BaseFullName);
+        Assert.Equal(4, Type(ir, "IAvnLabel").AbiVersion);
         Assert.Equal("Avalonia.Host.Com.IAvnTemplatedControl", Type(ir, "IAvnSeparator").BaseFullName);
         Assert.Equal("Avalonia.Host.Com.IAvnHeaderedContentControl", Type(ir, "IAvnGroupBox").BaseFullName);
         Assert.Equal("Avalonia.Host.Com.IAvnContentControl", Type(ir, "IAvnUserControl").BaseFullName);
@@ -1343,7 +1344,10 @@ public class ClrTypeExtractorTests
         Assert.True(isSwiping.CanRead);
         Assert.False(isSwiping.CanWrite);
         Assert.DoesNotContain(Type(ir, "IAvnCarousel").Properties, p => p.Name == "PageTransition");
-        Assert.DoesNotContain(Type(ir, "IAvnLabel").Properties, p => p.Name == "Target");
+        var labelTarget = Type(ir, "IAvnLabel").Properties.Single(p => p.Name == "Target");
+        Assert.Equal(MarshallingKind.ComInterface, labelTarget.Kind);
+        Assert.Equal("Avalonia.Host.Com.IAvnControl", labelTarget.InterfaceName);
+        Assert.True(labelTarget.IsNullable);
         Assert.DoesNotContain(
             Type(ir, "IAvnLayoutTransformControl").Properties,
             p => p.Name == "LayoutTransform");

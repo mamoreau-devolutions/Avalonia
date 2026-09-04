@@ -4653,12 +4653,12 @@ struct IAvnItemsControl { const IAvnItemsControlVtbl* vtbl; };
 #define I_AVN_ITEMS_CONTROL_VTABLE_SLOTS 74
 
 static const AvnGuid I_AVN_LABEL_IID = {
-    0x96FF4F16,
-    0x9BDF,
-    0x5DCB,
-    { 0xB0, 0xA2, 0xB6, 0xF0, 0x52, 0x68, 0x68, 0x71 }
+    0x03D8AC49,
+    0x5620,
+    0x5547,
+    { 0x8B, 0x33, 0x91, 0xCB, 0xFC, 0x4A, 0x13, 0x4D }
 };
-#define I_AVN_LABEL_ABI_VERSION 3
+#define I_AVN_LABEL_ABI_VERSION 4
 struct IAvnLabelVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnLabel* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnLabel* self); /* slot 1 */
@@ -4737,9 +4737,11 @@ struct IAvnLabelVtbl {
     AvnHResult (AVN_CALL *set_horizontal_content_alignment)(IAvnLabel* self, int32_t value); /* slot 74 */
     AvnHResult (AVN_CALL *get_vertical_content_alignment)(IAvnLabel* self, int32_t* value); /* slot 75 */
     AvnHResult (AVN_CALL *set_vertical_content_alignment)(IAvnLabel* self, int32_t value); /* slot 76 */
+    AvnHResult (AVN_CALL *get_target)(IAvnLabel* self, IAvnControl** value); /* slot 77 */
+    AvnHResult (AVN_CALL *set_target)(IAvnLabel* self, IAvnControl* value); /* slot 78 */
 };
 struct IAvnLabel { const IAvnLabelVtbl* vtbl; };
-#define I_AVN_LABEL_VTABLE_SLOTS 77
+#define I_AVN_LABEL_VTABLE_SLOTS 79
 
 static const AvnGuid I_AVN_LAYOUT_TRANSFORM_CONTROL_IID = {
     0xFCA3934D,

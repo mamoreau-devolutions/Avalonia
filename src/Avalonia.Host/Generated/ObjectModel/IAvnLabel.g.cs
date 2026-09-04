@@ -6,9 +6,15 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("96FF4F16-9BDF-5DCB-B0A2-B6F052686871")]
+[Guid("03D8AC49-5620-5547-8B33-91CBFC4A134D")]
 public partial interface IAvnLabel : IAvnContentControl
 {
+    [PreserveSig]
+    int GetTarget(out IAvnControl? value);
+
+    [PreserveSig]
+    int SetTarget(IAvnControl? value);
+
 }
 
 [GeneratedComClass]
@@ -1250,6 +1256,37 @@ public sealed partial class AvnLabel : IAvnLabel
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.VerticalContentAlignment = (global::Avalonia.Layout.VerticalAlignment)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetTarget(out IAvnControl? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (IAvnControl?)ProjectionRuntime.Wrap(_value.Target as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetTarget(IAvnControl? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Target = (global::Avalonia.Input.IInputElement)ProjectionRuntime.Unwrap(value)!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

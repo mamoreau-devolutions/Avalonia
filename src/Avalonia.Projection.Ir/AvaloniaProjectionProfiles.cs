@@ -78,7 +78,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnHeaderedSelectingItemsControl"] = 4,
             ["Avalonia.Host.Com.IAvnHyperlinkButton"] = 4,
             ["Avalonia.Host.Com.IAvnIconElement"] = 3,
-            ["Avalonia.Host.Com.IAvnLabel"] = 3,
+            ["Avalonia.Host.Com.IAvnLabel"] = 4,
             ["Avalonia.Host.Com.IAvnMaskedTextBox"] = 7,
             ["Avalonia.Host.Com.IAvnMenu"] = 4,
             ["Avalonia.Host.Com.IAvnMenuBase"] = 4,
@@ -481,7 +481,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.Carousel"] =
                 ["IsSwipeEnabled", "ViewportFraction", "IsSwiping", "Next", "Previous"],
             ["Avalonia.Controls.TransitioningContentControl"] = ["IsTransitionReversed"],
-            ["Avalonia.Controls.Label"] = [],
+            ["Avalonia.Controls.Label"] = ["Target"],
             ["Avalonia.Controls.Separator"] = [],
             ["Avalonia.Controls.GroupBox"] = [],
             ["Avalonia.Controls.UserControl"] = [],
@@ -634,6 +634,12 @@ public static class AvaloniaProjectionProfiles
                 Kind = MarshallingKind.StringUtf16,
                 StringConverterTypeName = "Avalonia.Host.Com.AvnTextTrimming",
                 IsNullable = false,
+            },
+            ["Avalonia.Controls.Label.Target"] = new()
+            {
+                Kind = MarshallingKind.ComInterface,
+                InterfaceName = "Avalonia.Host.Com.IAvnControl",
+                IsNullable = true,
             },
             ["Avalonia.Controls.Control.ContextMenu"] = new()
             {

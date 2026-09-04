@@ -2166,13 +2166,24 @@
       "name": "IAvnLabel",
       "fullName": "Avalonia.Host.Com.IAvnLabel",
       "kind": "Class",
-      "iid": "96FF4F16-9BDF-5DCB-B0A2-B6F052686871",
-      "abiVersion": 3,
+      "iid": "03D8AC49-5620-5547-8B33-91CBFC4A134D",
+      "abiVersion": 4,
       "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
       "managedFullName": "Avalonia.Controls.Label",
       "isConstructible": true,
       "methods": [],
-      "properties": [],
+      "properties": [
+        {
+          "name": "Target",
+          "kind": "ComInterface",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnControl",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Input.IInputElement",
+          "isNullable": true
+        }
+      ],
       "events": []
     },
     {
@@ -10702,11 +10713,6 @@
       "owner": "Avalonia.Controls.ItemsControl",
       "member": "ScrollIntoView(Object)",
       "reason": "Parameter \u0027item\u0027: Type \u0027System.Object\u0027 is not marshallable"
-    },
-    {
-      "owner": "Avalonia.Controls.Label",
-      "member": "Target",
-      "reason": "Not included by projection policy"
     },
     {
       "owner": "Avalonia.Controls.LayoutTransformControl",

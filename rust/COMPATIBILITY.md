@@ -272,6 +272,9 @@ Thumb drag events carry `AvnVector` by value. `IAvnThumb` and `IAvnGridSplitter`
 TextTrimming crosses as a UTF-16 name via a host converter. `IAvnTextBlock` 7
 to 8, `IAvnSelectableTextBlock` 4 to 5. Factory 13.
 
+Label.Target projects as nullable `IAvnControl` (`IInputElement` values that
+are Controls). `IAvnLabel` 3 to 4. Factory 13.
+
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and
 `IAvnNumericUpDown` each move from 2 to 3. Templates, filters, ItemsSource,

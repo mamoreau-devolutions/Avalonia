@@ -122,7 +122,6 @@ Avalonia.Controls.ItemsControl.IndexFromContainer(Control): Not included by proj
 Avalonia.Controls.ItemsControl.ItemFromContainer(Control): Not included by projection policy
 Avalonia.Controls.ItemsControl.GetRealizedContainers(): Not included by projection policy
 Avalonia.Controls.ItemsControl.ScrollIntoView(Object): Parameter 'item': Type 'System.Object' is not marshallable
-Avalonia.Controls.Label.Target: Not included by projection policy
 Avalonia.Controls.LayoutTransformControl.LayoutTransform: Not included by projection policy
 Avalonia.Controls.LayoutTransformControl.TransformRoot: Not included by projection policy
 Avalonia.Controls.ListBox.Scroll: Not included by projection policy

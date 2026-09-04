@@ -23116,7 +23116,7 @@ impl ComPtr<IAvnItemsControl> {
     }
 }
 
-pub const I_AVN_LABEL_IID: Guid = Guid { data1: 0x96FF4F16, data2: 0x9BDF, data3: 0x5DCB, data4: [0xB0, 0xA2, 0xB6, 0xF0, 0x52, 0x68, 0x68, 0x71] };
+pub const I_AVN_LABEL_IID: Guid = Guid { data1: 0x03D8AC49, data2: 0x5620, data3: 0x5547, data4: [0x8B, 0x33, 0x91, 0xCB, 0xFC, 0x4A, 0x13, 0x4D] };
 
 #[repr(C)]
 struct IAvnLabelVtbl {
@@ -23197,6 +23197,8 @@ struct IAvnLabelVtbl {
     set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnLabel, i32) -> i32,
     get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnLabel, *mut i32) -> i32,
     set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnLabel, i32) -> i32,
+    get_target: unsafe extern "system" fn(*mut IAvnLabel, *mut *mut IAvnControl) -> i32,
+    set_target: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnControl) -> i32,
 }
 
 #[repr(C)]
@@ -23721,6 +23723,20 @@ impl ComPtr<IAvnLabel> {
     pub fn set_vertical_content_alignment(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_target(&self) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_target)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_target(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_target)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }

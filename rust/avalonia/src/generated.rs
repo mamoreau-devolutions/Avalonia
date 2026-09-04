@@ -15237,6 +15237,17 @@ impl Label {
         self.set_vertical_content_alignment(value)?;
         Ok(self)
     }
+    pub fn get_target(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_target()?.map(|raw| Control { raw }))
+    }
+    pub fn set_target(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_target(Some(&value))?)
+    }
+    pub fn target(self, value: impl AsControl) -> Result<Self> {
+        self.set_target(value)?;
+        Ok(self)
+    }
 }
 
 impl AsControl for Label {
