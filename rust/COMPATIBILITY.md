@@ -143,6 +143,12 @@ Wave G is the same shape. `IAvnCarousel`, `IAvnTransitioningContentControl`,
 `IAvnLayoutTransformControl` publish at version 1. `IAvnControlFactory` moves
 from 8 to 9. `PageTransition`, `LayoutTransform` and `Label.Target` stay gaps.
 
+Wave H is the same shape. `IAvnShape` (abstract) plus Rectangle, Ellipse, Line,
+Path, Polygon, Polyline, Arc and Sector publish at version 1.
+`IAvnControlFactory` moves from 9 to 10. Fill/Stroke are brushes. Line points
+are `AvnPoint`. `Path.Data` is the path mini-language through `AvnGeometry`.
+`Points` collections stay gaps.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A

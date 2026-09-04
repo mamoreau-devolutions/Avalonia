@@ -1,8 +1,8 @@
 {
   "version": 13,
   "sourceAssembly": "Avalonia.Base,Avalonia.Controls",
-  "factoryIid": "E8C61827-3DEA-5DA1-B2F2-B53C35B67E65",
-  "factoryAbiVersion": 9,
+  "factoryIid": "56E24666-EFE8-5AB6-97BD-2A32B9C21395",
+  "factoryAbiVersion": 10,
   "brushInterfaceName": "Avalonia.Host.Com.IAvnBrush",
   "brushInterfaceIid": "FC7CCBAE-ED75-5C6D-8516-DF706E137ED3",
   "brushAbiVersion": 1,
@@ -2854,6 +2854,307 @@
       "isConstructible": true,
       "methods": [],
       "properties": [],
+      "events": []
+    },
+    {
+      "name": "IAvnArc",
+      "fullName": "Avalonia.Host.Com.IAvnArc",
+      "kind": "Class",
+      "iid": "A01B05C9-E7B5-5E48-AC6B-0380B544D25F",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnShape",
+      "managedFullName": "Avalonia.Controls.Shapes.Arc",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "StartAngle",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "SweepAngle",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IAvnEllipse",
+      "fullName": "Avalonia.Host.Com.IAvnEllipse",
+      "kind": "Class",
+      "iid": "FC9264FB-21C6-5DF7-BF47-22ED804D4B49",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnShape",
+      "managedFullName": "Avalonia.Controls.Shapes.Ellipse",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [],
+      "events": []
+    },
+    {
+      "name": "IAvnLine",
+      "fullName": "Avalonia.Host.Com.IAvnLine",
+      "kind": "Class",
+      "iid": "0FC92D69-6C41-5CD5-84C7-12D23C0AA984",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnShape",
+      "managedFullName": "Avalonia.Controls.Shapes.Line",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "StartPoint",
+          "kind": "Point",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Point",
+          "isNullable": false
+        },
+        {
+          "name": "EndPoint",
+          "kind": "Point",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Point",
+          "isNullable": false
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IAvnPath",
+      "fullName": "Avalonia.Host.Com.IAvnPath",
+      "kind": "Class",
+      "iid": "12654CD6-16FC-5B65-9F01-1B11A5A498B2",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnShape",
+      "managedFullName": "Avalonia.Controls.Shapes.Path",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "Data",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.Geometry",
+          "isNullable": true,
+          "stringConverterTypeName": "Avalonia.Host.Com.AvnGeometry"
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IAvnPolygon",
+      "fullName": "Avalonia.Host.Com.IAvnPolygon",
+      "kind": "Class",
+      "iid": "0E2FEAD9-B930-5825-8EC7-714AF2F3302E",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnShape",
+      "managedFullName": "Avalonia.Controls.Shapes.Polygon",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "FillRule",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.FillRule",
+          "isNullable": false
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IAvnPolyline",
+      "fullName": "Avalonia.Host.Com.IAvnPolyline",
+      "kind": "Class",
+      "iid": "82DE2551-BCFC-525A-B1AC-FF194AFD2651",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnShape",
+      "managedFullName": "Avalonia.Controls.Shapes.Polyline",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "FillRule",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.FillRule",
+          "isNullable": false
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IAvnRectangle",
+      "fullName": "Avalonia.Host.Com.IAvnRectangle",
+      "kind": "Class",
+      "iid": "A1B1A0A3-54E4-59E2-A316-D2A35BE8E063",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnShape",
+      "managedFullName": "Avalonia.Controls.Shapes.Rectangle",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "RadiusX",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "RadiusY",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IAvnSector",
+      "fullName": "Avalonia.Host.Com.IAvnSector",
+      "kind": "Class",
+      "iid": "62878E00-6F7E-5EA0-A94C-D857B6022734",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnShape",
+      "managedFullName": "Avalonia.Controls.Shapes.Sector",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "StartAngle",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "SweepAngle",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IAvnShape",
+      "fullName": "Avalonia.Host.Com.IAvnShape",
+      "kind": "Class",
+      "iid": "9A7088C5-7AF4-525D-94F1-999918335266",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnControl",
+      "managedFullName": "Avalonia.Controls.Shapes.Shape",
+      "isConstructible": false,
+      "methods": [],
+      "properties": [
+        {
+          "name": "Fill",
+          "kind": "Brush",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnBrush",
+          "interfaceIid": "FC7CCBAE-ED75-5C6D-8516-DF706E137ED3",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.IBrush",
+          "isNullable": true
+        },
+        {
+          "name": "Stretch",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.Stretch",
+          "isNullable": false
+        },
+        {
+          "name": "Stroke",
+          "kind": "Brush",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnBrush",
+          "interfaceIid": "FC7CCBAE-ED75-5C6D-8516-DF706E137ED3",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.IBrush",
+          "isNullable": true
+        },
+        {
+          "name": "StrokeDashOffset",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "StrokeThickness",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "StrokeLineCap",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.PenLineCap",
+          "isNullable": false
+        },
+        {
+          "name": "StrokeJoin",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.PenLineJoin",
+          "isNullable": false
+        },
+        {
+          "name": "StrokeMiterLimit",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        }
+      ],
       "events": []
     },
     {
@@ -6335,6 +6636,20 @@
       ]
     },
     {
+      "name": "FillRule",
+      "fullName": "Avalonia.Media.FillRule",
+      "values": [
+        {
+          "name": "EvenOdd",
+          "value": 0
+        },
+        {
+          "name": "NonZero",
+          "value": 1
+        }
+      ]
+    },
+    {
       "name": "FontWeight",
       "fullName": "Avalonia.Media.FontWeight",
       "values": [
@@ -6527,6 +6842,42 @@
         {
           "name": "Luminosity",
           "value": 27
+        }
+      ]
+    },
+    {
+      "name": "PenLineCap",
+      "fullName": "Avalonia.Media.PenLineCap",
+      "values": [
+        {
+          "name": "Flat",
+          "value": 0
+        },
+        {
+          "name": "Round",
+          "value": 1
+        },
+        {
+          "name": "Square",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "name": "PenLineJoin",
+      "fullName": "Avalonia.Media.PenLineJoin",
+      "values": [
+        {
+          "name": "Bevel",
+          "value": 0
+        },
+        {
+          "name": "Miter",
+          "value": 1
+        },
+        {
+          "name": "Round",
+          "value": 2
         }
       ]
     },
@@ -8234,6 +8585,36 @@
     {
       "owner": "Avalonia.Controls.SelectableTextBlock",
       "member": "ClearSelection()",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Shapes.Polygon",
+      "member": "Points",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Shapes.Polyline",
+      "member": "Points",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Shapes.Shape",
+      "member": "DefiningGeometry",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Shapes.Shape",
+      "member": "RenderedGeometry",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Shapes.Shape",
+      "member": "StrokeDashArray",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Shapes.Shape",
+      "member": "Render(DrawingContext)",
       "reason": "Not included by projection policy"
     },
     {

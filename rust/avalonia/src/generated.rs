@@ -1720,6 +1720,24 @@ impl TryFrom<i32> for BackgroundSizing {
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum FillRule {
+    EvenOdd = 0,
+    NonZero = 1,
+}
+
+impl TryFrom<i32> for FillRule {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::EvenOdd),
+            1 => Ok(Self::NonZero),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum FontWeight {
     Thin = 100,
     ExtraLight = 200,
@@ -1819,6 +1837,46 @@ impl TryFrom<i32> for BitmapBlendingMode {
             25 => Ok(Self::Saturation),
             26 => Ok(Self::Color),
             27 => Ok(Self::Luminosity),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum PenLineCap {
+    Flat = 0,
+    Round = 1,
+    Square = 2,
+}
+
+impl TryFrom<i32> for PenLineCap {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::Flat),
+            1 => Ok(Self::Round),
+            2 => Ok(Self::Square),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum PenLineJoin {
+    Bevel = 0,
+    Miter = 1,
+    Round = 2,
+}
+
+impl TryFrom<i32> for PenLineJoin {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::Bevel),
+            1 => Ok(Self::Miter),
+            2 => Ok(Self::Round),
             _ => Err(crate::Error::InvalidEnumValue(value)),
         }
     }
@@ -17142,6 +17200,2371 @@ impl Separator {
 }
 
 impl AsControl for Separator {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct Arc {
+    pub(crate) raw: sys::ComPtr<sys::IAvnArc>,
+}
+
+impl Arc {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_arc())
+            .map(|raw| Self { raw })
+    }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
+    }
+    pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
+    pub fn set_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_width(value)?)
+    }
+    pub fn width(self, value: f64) -> Result<Self> {
+        self.set_width(value)?;
+        Ok(self)
+    }
+    pub fn get_height(&self) -> Result<f64> { Ok(self.raw.get_height()?) }
+    pub fn set_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_height(value)?)
+    }
+    pub fn height(self, value: f64) -> Result<Self> {
+        self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
+        Ok(self)
+    }
+    pub fn get_fill(&self) -> Result<Option<Brush>> {
+        self.raw.get_fill()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_fill(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_fill(value.as_ref())?)
+    }
+    pub fn fill(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_fill(value)?;
+        Ok(self)
+    }
+    pub fn get_stretch(&self) -> Result<Stretch> {
+        let value = self.raw.get_stretch()?;
+        Stretch::try_from(value)
+    }
+    pub fn set_stretch(&self, value: Stretch) -> Result<()> {
+        Ok(self.raw.set_stretch(value as i32)?)
+    }
+    pub fn stretch(self, value: Stretch) -> Result<Self> {
+        self.set_stretch(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke(&self) -> Result<Option<Brush>> {
+        self.raw.get_stroke()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_stroke(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_stroke(value.as_ref())?)
+    }
+    pub fn stroke(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_stroke(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_dash_offset(&self) -> Result<f64> { Ok(self.raw.get_stroke_dash_offset()?) }
+    pub fn set_stroke_dash_offset(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_dash_offset(value)?)
+    }
+    pub fn stroke_dash_offset(self, value: f64) -> Result<Self> {
+        self.set_stroke_dash_offset(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_thickness(&self) -> Result<f64> { Ok(self.raw.get_stroke_thickness()?) }
+    pub fn set_stroke_thickness(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_thickness(value)?)
+    }
+    pub fn stroke_thickness(self, value: f64) -> Result<Self> {
+        self.set_stroke_thickness(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_line_cap(&self) -> Result<PenLineCap> {
+        let value = self.raw.get_stroke_line_cap()?;
+        PenLineCap::try_from(value)
+    }
+    pub fn set_stroke_line_cap(&self, value: PenLineCap) -> Result<()> {
+        Ok(self.raw.set_stroke_line_cap(value as i32)?)
+    }
+    pub fn stroke_line_cap(self, value: PenLineCap) -> Result<Self> {
+        self.set_stroke_line_cap(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_join(&self) -> Result<PenLineJoin> {
+        let value = self.raw.get_stroke_join()?;
+        PenLineJoin::try_from(value)
+    }
+    pub fn set_stroke_join(&self, value: PenLineJoin) -> Result<()> {
+        Ok(self.raw.set_stroke_join(value as i32)?)
+    }
+    pub fn stroke_join(self, value: PenLineJoin) -> Result<Self> {
+        self.set_stroke_join(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_miter_limit(&self) -> Result<f64> { Ok(self.raw.get_stroke_miter_limit()?) }
+    pub fn set_stroke_miter_limit(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_miter_limit(value)?)
+    }
+    pub fn stroke_miter_limit(self, value: f64) -> Result<Self> {
+        self.set_stroke_miter_limit(value)?;
+        Ok(self)
+    }
+    pub fn get_start_angle(&self) -> Result<f64> { Ok(self.raw.get_start_angle()?) }
+    pub fn set_start_angle(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_start_angle(value)?)
+    }
+    pub fn start_angle(self, value: f64) -> Result<Self> {
+        self.set_start_angle(value)?;
+        Ok(self)
+    }
+    pub fn get_sweep_angle(&self) -> Result<f64> { Ok(self.raw.get_sweep_angle()?) }
+    pub fn set_sweep_angle(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_sweep_angle(value)?)
+    }
+    pub fn sweep_angle(self, value: f64) -> Result<Self> {
+        self.set_sweep_angle(value)?;
+        Ok(self)
+    }
+}
+
+impl AsControl for Arc {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct Ellipse {
+    pub(crate) raw: sys::ComPtr<sys::IAvnEllipse>,
+}
+
+impl Ellipse {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_ellipse())
+            .map(|raw| Self { raw })
+    }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
+    }
+    pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
+    pub fn set_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_width(value)?)
+    }
+    pub fn width(self, value: f64) -> Result<Self> {
+        self.set_width(value)?;
+        Ok(self)
+    }
+    pub fn get_height(&self) -> Result<f64> { Ok(self.raw.get_height()?) }
+    pub fn set_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_height(value)?)
+    }
+    pub fn height(self, value: f64) -> Result<Self> {
+        self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
+        Ok(self)
+    }
+    pub fn get_fill(&self) -> Result<Option<Brush>> {
+        self.raw.get_fill()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_fill(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_fill(value.as_ref())?)
+    }
+    pub fn fill(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_fill(value)?;
+        Ok(self)
+    }
+    pub fn get_stretch(&self) -> Result<Stretch> {
+        let value = self.raw.get_stretch()?;
+        Stretch::try_from(value)
+    }
+    pub fn set_stretch(&self, value: Stretch) -> Result<()> {
+        Ok(self.raw.set_stretch(value as i32)?)
+    }
+    pub fn stretch(self, value: Stretch) -> Result<Self> {
+        self.set_stretch(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke(&self) -> Result<Option<Brush>> {
+        self.raw.get_stroke()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_stroke(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_stroke(value.as_ref())?)
+    }
+    pub fn stroke(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_stroke(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_dash_offset(&self) -> Result<f64> { Ok(self.raw.get_stroke_dash_offset()?) }
+    pub fn set_stroke_dash_offset(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_dash_offset(value)?)
+    }
+    pub fn stroke_dash_offset(self, value: f64) -> Result<Self> {
+        self.set_stroke_dash_offset(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_thickness(&self) -> Result<f64> { Ok(self.raw.get_stroke_thickness()?) }
+    pub fn set_stroke_thickness(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_thickness(value)?)
+    }
+    pub fn stroke_thickness(self, value: f64) -> Result<Self> {
+        self.set_stroke_thickness(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_line_cap(&self) -> Result<PenLineCap> {
+        let value = self.raw.get_stroke_line_cap()?;
+        PenLineCap::try_from(value)
+    }
+    pub fn set_stroke_line_cap(&self, value: PenLineCap) -> Result<()> {
+        Ok(self.raw.set_stroke_line_cap(value as i32)?)
+    }
+    pub fn stroke_line_cap(self, value: PenLineCap) -> Result<Self> {
+        self.set_stroke_line_cap(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_join(&self) -> Result<PenLineJoin> {
+        let value = self.raw.get_stroke_join()?;
+        PenLineJoin::try_from(value)
+    }
+    pub fn set_stroke_join(&self, value: PenLineJoin) -> Result<()> {
+        Ok(self.raw.set_stroke_join(value as i32)?)
+    }
+    pub fn stroke_join(self, value: PenLineJoin) -> Result<Self> {
+        self.set_stroke_join(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_miter_limit(&self) -> Result<f64> { Ok(self.raw.get_stroke_miter_limit()?) }
+    pub fn set_stroke_miter_limit(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_miter_limit(value)?)
+    }
+    pub fn stroke_miter_limit(self, value: f64) -> Result<Self> {
+        self.set_stroke_miter_limit(value)?;
+        Ok(self)
+    }
+}
+
+impl AsControl for Ellipse {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct Line {
+    pub(crate) raw: sys::ComPtr<sys::IAvnLine>,
+}
+
+impl Line {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_line())
+            .map(|raw| Self { raw })
+    }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
+    }
+    pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
+    pub fn set_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_width(value)?)
+    }
+    pub fn width(self, value: f64) -> Result<Self> {
+        self.set_width(value)?;
+        Ok(self)
+    }
+    pub fn get_height(&self) -> Result<f64> { Ok(self.raw.get_height()?) }
+    pub fn set_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_height(value)?)
+    }
+    pub fn height(self, value: f64) -> Result<Self> {
+        self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
+        Ok(self)
+    }
+    pub fn get_fill(&self) -> Result<Option<Brush>> {
+        self.raw.get_fill()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_fill(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_fill(value.as_ref())?)
+    }
+    pub fn fill(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_fill(value)?;
+        Ok(self)
+    }
+    pub fn get_stretch(&self) -> Result<Stretch> {
+        let value = self.raw.get_stretch()?;
+        Stretch::try_from(value)
+    }
+    pub fn set_stretch(&self, value: Stretch) -> Result<()> {
+        Ok(self.raw.set_stretch(value as i32)?)
+    }
+    pub fn stretch(self, value: Stretch) -> Result<Self> {
+        self.set_stretch(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke(&self) -> Result<Option<Brush>> {
+        self.raw.get_stroke()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_stroke(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_stroke(value.as_ref())?)
+    }
+    pub fn stroke(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_stroke(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_dash_offset(&self) -> Result<f64> { Ok(self.raw.get_stroke_dash_offset()?) }
+    pub fn set_stroke_dash_offset(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_dash_offset(value)?)
+    }
+    pub fn stroke_dash_offset(self, value: f64) -> Result<Self> {
+        self.set_stroke_dash_offset(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_thickness(&self) -> Result<f64> { Ok(self.raw.get_stroke_thickness()?) }
+    pub fn set_stroke_thickness(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_thickness(value)?)
+    }
+    pub fn stroke_thickness(self, value: f64) -> Result<Self> {
+        self.set_stroke_thickness(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_line_cap(&self) -> Result<PenLineCap> {
+        let value = self.raw.get_stroke_line_cap()?;
+        PenLineCap::try_from(value)
+    }
+    pub fn set_stroke_line_cap(&self, value: PenLineCap) -> Result<()> {
+        Ok(self.raw.set_stroke_line_cap(value as i32)?)
+    }
+    pub fn stroke_line_cap(self, value: PenLineCap) -> Result<Self> {
+        self.set_stroke_line_cap(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_join(&self) -> Result<PenLineJoin> {
+        let value = self.raw.get_stroke_join()?;
+        PenLineJoin::try_from(value)
+    }
+    pub fn set_stroke_join(&self, value: PenLineJoin) -> Result<()> {
+        Ok(self.raw.set_stroke_join(value as i32)?)
+    }
+    pub fn stroke_join(self, value: PenLineJoin) -> Result<Self> {
+        self.set_stroke_join(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_miter_limit(&self) -> Result<f64> { Ok(self.raw.get_stroke_miter_limit()?) }
+    pub fn set_stroke_miter_limit(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_miter_limit(value)?)
+    }
+    pub fn stroke_miter_limit(self, value: f64) -> Result<Self> {
+        self.set_stroke_miter_limit(value)?;
+        Ok(self)
+    }
+    pub fn get_start_point(&self) -> Result<Point> {
+        Ok(self.raw.get_start_point()?.into())
+    }
+    pub fn set_start_point(&self, value: Point) -> Result<()> {
+        Ok(self.raw.set_start_point(value.into())?)
+    }
+    pub fn start_point(self, value: Point) -> Result<Self> {
+        self.set_start_point(value)?;
+        Ok(self)
+    }
+    pub fn get_end_point(&self) -> Result<Point> {
+        Ok(self.raw.get_end_point()?.into())
+    }
+    pub fn set_end_point(&self, value: Point) -> Result<()> {
+        Ok(self.raw.set_end_point(value.into())?)
+    }
+    pub fn end_point(self, value: Point) -> Result<Self> {
+        self.set_end_point(value)?;
+        Ok(self)
+    }
+}
+
+impl AsControl for Line {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct Path {
+    pub(crate) raw: sys::ComPtr<sys::IAvnPath>,
+}
+
+impl Path {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_path())
+            .map(|raw| Self { raw })
+    }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
+    }
+    pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
+    pub fn set_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_width(value)?)
+    }
+    pub fn width(self, value: f64) -> Result<Self> {
+        self.set_width(value)?;
+        Ok(self)
+    }
+    pub fn get_height(&self) -> Result<f64> { Ok(self.raw.get_height()?) }
+    pub fn set_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_height(value)?)
+    }
+    pub fn height(self, value: f64) -> Result<Self> {
+        self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
+        Ok(self)
+    }
+    pub fn get_fill(&self) -> Result<Option<Brush>> {
+        self.raw.get_fill()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_fill(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_fill(value.as_ref())?)
+    }
+    pub fn fill(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_fill(value)?;
+        Ok(self)
+    }
+    pub fn get_stretch(&self) -> Result<Stretch> {
+        let value = self.raw.get_stretch()?;
+        Stretch::try_from(value)
+    }
+    pub fn set_stretch(&self, value: Stretch) -> Result<()> {
+        Ok(self.raw.set_stretch(value as i32)?)
+    }
+    pub fn stretch(self, value: Stretch) -> Result<Self> {
+        self.set_stretch(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke(&self) -> Result<Option<Brush>> {
+        self.raw.get_stroke()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_stroke(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_stroke(value.as_ref())?)
+    }
+    pub fn stroke(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_stroke(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_dash_offset(&self) -> Result<f64> { Ok(self.raw.get_stroke_dash_offset()?) }
+    pub fn set_stroke_dash_offset(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_dash_offset(value)?)
+    }
+    pub fn stroke_dash_offset(self, value: f64) -> Result<Self> {
+        self.set_stroke_dash_offset(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_thickness(&self) -> Result<f64> { Ok(self.raw.get_stroke_thickness()?) }
+    pub fn set_stroke_thickness(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_thickness(value)?)
+    }
+    pub fn stroke_thickness(self, value: f64) -> Result<Self> {
+        self.set_stroke_thickness(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_line_cap(&self) -> Result<PenLineCap> {
+        let value = self.raw.get_stroke_line_cap()?;
+        PenLineCap::try_from(value)
+    }
+    pub fn set_stroke_line_cap(&self, value: PenLineCap) -> Result<()> {
+        Ok(self.raw.set_stroke_line_cap(value as i32)?)
+    }
+    pub fn stroke_line_cap(self, value: PenLineCap) -> Result<Self> {
+        self.set_stroke_line_cap(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_join(&self) -> Result<PenLineJoin> {
+        let value = self.raw.get_stroke_join()?;
+        PenLineJoin::try_from(value)
+    }
+    pub fn set_stroke_join(&self, value: PenLineJoin) -> Result<()> {
+        Ok(self.raw.set_stroke_join(value as i32)?)
+    }
+    pub fn stroke_join(self, value: PenLineJoin) -> Result<Self> {
+        self.set_stroke_join(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_miter_limit(&self) -> Result<f64> { Ok(self.raw.get_stroke_miter_limit()?) }
+    pub fn set_stroke_miter_limit(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_miter_limit(value)?)
+    }
+    pub fn stroke_miter_limit(self, value: f64) -> Result<Self> {
+        self.set_stroke_miter_limit(value)?;
+        Ok(self)
+    }
+    pub fn get_data(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_data()?)) }
+    }
+    pub fn set_data(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_data(Some(&value))?)
+    }
+    pub fn data(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_data(value)?;
+        Ok(self)
+    }
+}
+
+impl AsControl for Path {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct Polygon {
+    pub(crate) raw: sys::ComPtr<sys::IAvnPolygon>,
+}
+
+impl Polygon {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_polygon())
+            .map(|raw| Self { raw })
+    }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
+    }
+    pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
+    pub fn set_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_width(value)?)
+    }
+    pub fn width(self, value: f64) -> Result<Self> {
+        self.set_width(value)?;
+        Ok(self)
+    }
+    pub fn get_height(&self) -> Result<f64> { Ok(self.raw.get_height()?) }
+    pub fn set_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_height(value)?)
+    }
+    pub fn height(self, value: f64) -> Result<Self> {
+        self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
+        Ok(self)
+    }
+    pub fn get_fill(&self) -> Result<Option<Brush>> {
+        self.raw.get_fill()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_fill(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_fill(value.as_ref())?)
+    }
+    pub fn fill(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_fill(value)?;
+        Ok(self)
+    }
+    pub fn get_stretch(&self) -> Result<Stretch> {
+        let value = self.raw.get_stretch()?;
+        Stretch::try_from(value)
+    }
+    pub fn set_stretch(&self, value: Stretch) -> Result<()> {
+        Ok(self.raw.set_stretch(value as i32)?)
+    }
+    pub fn stretch(self, value: Stretch) -> Result<Self> {
+        self.set_stretch(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke(&self) -> Result<Option<Brush>> {
+        self.raw.get_stroke()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_stroke(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_stroke(value.as_ref())?)
+    }
+    pub fn stroke(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_stroke(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_dash_offset(&self) -> Result<f64> { Ok(self.raw.get_stroke_dash_offset()?) }
+    pub fn set_stroke_dash_offset(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_dash_offset(value)?)
+    }
+    pub fn stroke_dash_offset(self, value: f64) -> Result<Self> {
+        self.set_stroke_dash_offset(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_thickness(&self) -> Result<f64> { Ok(self.raw.get_stroke_thickness()?) }
+    pub fn set_stroke_thickness(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_thickness(value)?)
+    }
+    pub fn stroke_thickness(self, value: f64) -> Result<Self> {
+        self.set_stroke_thickness(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_line_cap(&self) -> Result<PenLineCap> {
+        let value = self.raw.get_stroke_line_cap()?;
+        PenLineCap::try_from(value)
+    }
+    pub fn set_stroke_line_cap(&self, value: PenLineCap) -> Result<()> {
+        Ok(self.raw.set_stroke_line_cap(value as i32)?)
+    }
+    pub fn stroke_line_cap(self, value: PenLineCap) -> Result<Self> {
+        self.set_stroke_line_cap(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_join(&self) -> Result<PenLineJoin> {
+        let value = self.raw.get_stroke_join()?;
+        PenLineJoin::try_from(value)
+    }
+    pub fn set_stroke_join(&self, value: PenLineJoin) -> Result<()> {
+        Ok(self.raw.set_stroke_join(value as i32)?)
+    }
+    pub fn stroke_join(self, value: PenLineJoin) -> Result<Self> {
+        self.set_stroke_join(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_miter_limit(&self) -> Result<f64> { Ok(self.raw.get_stroke_miter_limit()?) }
+    pub fn set_stroke_miter_limit(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_miter_limit(value)?)
+    }
+    pub fn stroke_miter_limit(self, value: f64) -> Result<Self> {
+        self.set_stroke_miter_limit(value)?;
+        Ok(self)
+    }
+    pub fn get_fill_rule(&self) -> Result<FillRule> {
+        let value = self.raw.get_fill_rule()?;
+        FillRule::try_from(value)
+    }
+    pub fn set_fill_rule(&self, value: FillRule) -> Result<()> {
+        Ok(self.raw.set_fill_rule(value as i32)?)
+    }
+    pub fn fill_rule(self, value: FillRule) -> Result<Self> {
+        self.set_fill_rule(value)?;
+        Ok(self)
+    }
+}
+
+impl AsControl for Polygon {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct Polyline {
+    pub(crate) raw: sys::ComPtr<sys::IAvnPolyline>,
+}
+
+impl Polyline {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_polyline())
+            .map(|raw| Self { raw })
+    }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
+    }
+    pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
+    pub fn set_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_width(value)?)
+    }
+    pub fn width(self, value: f64) -> Result<Self> {
+        self.set_width(value)?;
+        Ok(self)
+    }
+    pub fn get_height(&self) -> Result<f64> { Ok(self.raw.get_height()?) }
+    pub fn set_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_height(value)?)
+    }
+    pub fn height(self, value: f64) -> Result<Self> {
+        self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
+        Ok(self)
+    }
+    pub fn get_fill(&self) -> Result<Option<Brush>> {
+        self.raw.get_fill()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_fill(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_fill(value.as_ref())?)
+    }
+    pub fn fill(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_fill(value)?;
+        Ok(self)
+    }
+    pub fn get_stretch(&self) -> Result<Stretch> {
+        let value = self.raw.get_stretch()?;
+        Stretch::try_from(value)
+    }
+    pub fn set_stretch(&self, value: Stretch) -> Result<()> {
+        Ok(self.raw.set_stretch(value as i32)?)
+    }
+    pub fn stretch(self, value: Stretch) -> Result<Self> {
+        self.set_stretch(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke(&self) -> Result<Option<Brush>> {
+        self.raw.get_stroke()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_stroke(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_stroke(value.as_ref())?)
+    }
+    pub fn stroke(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_stroke(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_dash_offset(&self) -> Result<f64> { Ok(self.raw.get_stroke_dash_offset()?) }
+    pub fn set_stroke_dash_offset(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_dash_offset(value)?)
+    }
+    pub fn stroke_dash_offset(self, value: f64) -> Result<Self> {
+        self.set_stroke_dash_offset(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_thickness(&self) -> Result<f64> { Ok(self.raw.get_stroke_thickness()?) }
+    pub fn set_stroke_thickness(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_thickness(value)?)
+    }
+    pub fn stroke_thickness(self, value: f64) -> Result<Self> {
+        self.set_stroke_thickness(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_line_cap(&self) -> Result<PenLineCap> {
+        let value = self.raw.get_stroke_line_cap()?;
+        PenLineCap::try_from(value)
+    }
+    pub fn set_stroke_line_cap(&self, value: PenLineCap) -> Result<()> {
+        Ok(self.raw.set_stroke_line_cap(value as i32)?)
+    }
+    pub fn stroke_line_cap(self, value: PenLineCap) -> Result<Self> {
+        self.set_stroke_line_cap(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_join(&self) -> Result<PenLineJoin> {
+        let value = self.raw.get_stroke_join()?;
+        PenLineJoin::try_from(value)
+    }
+    pub fn set_stroke_join(&self, value: PenLineJoin) -> Result<()> {
+        Ok(self.raw.set_stroke_join(value as i32)?)
+    }
+    pub fn stroke_join(self, value: PenLineJoin) -> Result<Self> {
+        self.set_stroke_join(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_miter_limit(&self) -> Result<f64> { Ok(self.raw.get_stroke_miter_limit()?) }
+    pub fn set_stroke_miter_limit(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_miter_limit(value)?)
+    }
+    pub fn stroke_miter_limit(self, value: f64) -> Result<Self> {
+        self.set_stroke_miter_limit(value)?;
+        Ok(self)
+    }
+    pub fn get_fill_rule(&self) -> Result<FillRule> {
+        let value = self.raw.get_fill_rule()?;
+        FillRule::try_from(value)
+    }
+    pub fn set_fill_rule(&self, value: FillRule) -> Result<()> {
+        Ok(self.raw.set_fill_rule(value as i32)?)
+    }
+    pub fn fill_rule(self, value: FillRule) -> Result<Self> {
+        self.set_fill_rule(value)?;
+        Ok(self)
+    }
+}
+
+impl AsControl for Polyline {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct Rectangle {
+    pub(crate) raw: sys::ComPtr<sys::IAvnRectangle>,
+}
+
+impl Rectangle {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_rectangle())
+            .map(|raw| Self { raw })
+    }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
+    }
+    pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
+    pub fn set_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_width(value)?)
+    }
+    pub fn width(self, value: f64) -> Result<Self> {
+        self.set_width(value)?;
+        Ok(self)
+    }
+    pub fn get_height(&self) -> Result<f64> { Ok(self.raw.get_height()?) }
+    pub fn set_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_height(value)?)
+    }
+    pub fn height(self, value: f64) -> Result<Self> {
+        self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
+        Ok(self)
+    }
+    pub fn get_fill(&self) -> Result<Option<Brush>> {
+        self.raw.get_fill()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_fill(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_fill(value.as_ref())?)
+    }
+    pub fn fill(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_fill(value)?;
+        Ok(self)
+    }
+    pub fn get_stretch(&self) -> Result<Stretch> {
+        let value = self.raw.get_stretch()?;
+        Stretch::try_from(value)
+    }
+    pub fn set_stretch(&self, value: Stretch) -> Result<()> {
+        Ok(self.raw.set_stretch(value as i32)?)
+    }
+    pub fn stretch(self, value: Stretch) -> Result<Self> {
+        self.set_stretch(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke(&self) -> Result<Option<Brush>> {
+        self.raw.get_stroke()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_stroke(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_stroke(value.as_ref())?)
+    }
+    pub fn stroke(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_stroke(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_dash_offset(&self) -> Result<f64> { Ok(self.raw.get_stroke_dash_offset()?) }
+    pub fn set_stroke_dash_offset(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_dash_offset(value)?)
+    }
+    pub fn stroke_dash_offset(self, value: f64) -> Result<Self> {
+        self.set_stroke_dash_offset(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_thickness(&self) -> Result<f64> { Ok(self.raw.get_stroke_thickness()?) }
+    pub fn set_stroke_thickness(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_thickness(value)?)
+    }
+    pub fn stroke_thickness(self, value: f64) -> Result<Self> {
+        self.set_stroke_thickness(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_line_cap(&self) -> Result<PenLineCap> {
+        let value = self.raw.get_stroke_line_cap()?;
+        PenLineCap::try_from(value)
+    }
+    pub fn set_stroke_line_cap(&self, value: PenLineCap) -> Result<()> {
+        Ok(self.raw.set_stroke_line_cap(value as i32)?)
+    }
+    pub fn stroke_line_cap(self, value: PenLineCap) -> Result<Self> {
+        self.set_stroke_line_cap(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_join(&self) -> Result<PenLineJoin> {
+        let value = self.raw.get_stroke_join()?;
+        PenLineJoin::try_from(value)
+    }
+    pub fn set_stroke_join(&self, value: PenLineJoin) -> Result<()> {
+        Ok(self.raw.set_stroke_join(value as i32)?)
+    }
+    pub fn stroke_join(self, value: PenLineJoin) -> Result<Self> {
+        self.set_stroke_join(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_miter_limit(&self) -> Result<f64> { Ok(self.raw.get_stroke_miter_limit()?) }
+    pub fn set_stroke_miter_limit(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_miter_limit(value)?)
+    }
+    pub fn stroke_miter_limit(self, value: f64) -> Result<Self> {
+        self.set_stroke_miter_limit(value)?;
+        Ok(self)
+    }
+    pub fn get_radius_x(&self) -> Result<f64> { Ok(self.raw.get_radius_x()?) }
+    pub fn set_radius_x(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_radius_x(value)?)
+    }
+    pub fn radius_x(self, value: f64) -> Result<Self> {
+        self.set_radius_x(value)?;
+        Ok(self)
+    }
+    pub fn get_radius_y(&self) -> Result<f64> { Ok(self.raw.get_radius_y()?) }
+    pub fn set_radius_y(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_radius_y(value)?)
+    }
+    pub fn radius_y(self, value: f64) -> Result<Self> {
+        self.set_radius_y(value)?;
+        Ok(self)
+    }
+}
+
+impl AsControl for Rectangle {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct Sector {
+    pub(crate) raw: sys::ComPtr<sys::IAvnSector>,
+}
+
+impl Sector {
+    pub fn new() -> Result<Self> {
+        with_factory(|factory| factory.create_sector())
+            .map(|raw| Self { raw })
+    }
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
+    }
+    pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
+    pub fn set_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_width(value)?)
+    }
+    pub fn width(self, value: f64) -> Result<Self> {
+        self.set_width(value)?;
+        Ok(self)
+    }
+    pub fn get_height(&self) -> Result<f64> { Ok(self.raw.get_height()?) }
+    pub fn set_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_height(value)?)
+    }
+    pub fn height(self, value: f64) -> Result<Self> {
+        self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
+        Ok(self)
+    }
+    pub fn get_fill(&self) -> Result<Option<Brush>> {
+        self.raw.get_fill()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_fill(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_fill(value.as_ref())?)
+    }
+    pub fn fill(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_fill(value)?;
+        Ok(self)
+    }
+    pub fn get_stretch(&self) -> Result<Stretch> {
+        let value = self.raw.get_stretch()?;
+        Stretch::try_from(value)
+    }
+    pub fn set_stretch(&self, value: Stretch) -> Result<()> {
+        Ok(self.raw.set_stretch(value as i32)?)
+    }
+    pub fn stretch(self, value: Stretch) -> Result<Self> {
+        self.set_stretch(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke(&self) -> Result<Option<Brush>> {
+        self.raw.get_stroke()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_stroke(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_stroke(value.as_ref())?)
+    }
+    pub fn stroke(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_stroke(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_dash_offset(&self) -> Result<f64> { Ok(self.raw.get_stroke_dash_offset()?) }
+    pub fn set_stroke_dash_offset(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_dash_offset(value)?)
+    }
+    pub fn stroke_dash_offset(self, value: f64) -> Result<Self> {
+        self.set_stroke_dash_offset(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_thickness(&self) -> Result<f64> { Ok(self.raw.get_stroke_thickness()?) }
+    pub fn set_stroke_thickness(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_thickness(value)?)
+    }
+    pub fn stroke_thickness(self, value: f64) -> Result<Self> {
+        self.set_stroke_thickness(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_line_cap(&self) -> Result<PenLineCap> {
+        let value = self.raw.get_stroke_line_cap()?;
+        PenLineCap::try_from(value)
+    }
+    pub fn set_stroke_line_cap(&self, value: PenLineCap) -> Result<()> {
+        Ok(self.raw.set_stroke_line_cap(value as i32)?)
+    }
+    pub fn stroke_line_cap(self, value: PenLineCap) -> Result<Self> {
+        self.set_stroke_line_cap(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_join(&self) -> Result<PenLineJoin> {
+        let value = self.raw.get_stroke_join()?;
+        PenLineJoin::try_from(value)
+    }
+    pub fn set_stroke_join(&self, value: PenLineJoin) -> Result<()> {
+        Ok(self.raw.set_stroke_join(value as i32)?)
+    }
+    pub fn stroke_join(self, value: PenLineJoin) -> Result<Self> {
+        self.set_stroke_join(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_miter_limit(&self) -> Result<f64> { Ok(self.raw.get_stroke_miter_limit()?) }
+    pub fn set_stroke_miter_limit(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_miter_limit(value)?)
+    }
+    pub fn stroke_miter_limit(self, value: f64) -> Result<Self> {
+        self.set_stroke_miter_limit(value)?;
+        Ok(self)
+    }
+    pub fn get_start_angle(&self) -> Result<f64> { Ok(self.raw.get_start_angle()?) }
+    pub fn set_start_angle(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_start_angle(value)?)
+    }
+    pub fn start_angle(self, value: f64) -> Result<Self> {
+        self.set_start_angle(value)?;
+        Ok(self)
+    }
+    pub fn get_sweep_angle(&self) -> Result<f64> { Ok(self.raw.get_sweep_angle()?) }
+    pub fn set_sweep_angle(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_sweep_angle(value)?)
+    }
+    pub fn sweep_angle(self, value: f64) -> Result<Self> {
+        self.set_sweep_angle(value)?;
+        Ok(self)
+    }
+}
+
+impl AsControl for Sector {
+    fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
+        Ok(self.raw.query_interface()?)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct Shape {
+    pub(crate) raw: sys::ComPtr<sys::IAvnShape>,
+}
+
+impl Shape {
+    pub fn get_name(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_name()?)) }
+    }
+    pub fn set_name(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_name(Some(&value))?)
+    }
+    pub fn name(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_name(value)?;
+        Ok(self)
+    }
+    pub fn classes(&self) -> Result<StringList> {
+        Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
+    pub fn set_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_visible(value)?)
+    }
+    pub fn visible(self, value: bool) -> Result<Self> {
+        self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_opacity(&self) -> Result<f64> { Ok(self.raw.get_opacity()?) }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_opacity(value)?)
+    }
+    pub fn opacity(self, value: f64) -> Result<Self> {
+        self.set_opacity(value)?;
+        Ok(self)
+    }
+    pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
+    pub fn set_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_width(value)?)
+    }
+    pub fn width(self, value: f64) -> Result<Self> {
+        self.set_width(value)?;
+        Ok(self)
+    }
+    pub fn get_height(&self) -> Result<f64> { Ok(self.raw.get_height()?) }
+    pub fn set_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_height(value)?)
+    }
+    pub fn height(self, value: f64) -> Result<Self> {
+        self.set_height(value)?;
+        Ok(self)
+    }
+    pub fn get_min_width(&self) -> Result<f64> { Ok(self.raw.get_min_width()?) }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_width(value)?)
+    }
+    pub fn min_width(self, value: f64) -> Result<Self> {
+        self.set_min_width(value)?;
+        Ok(self)
+    }
+    pub fn get_max_width(&self) -> Result<f64> { Ok(self.raw.get_max_width()?) }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_width(value)?)
+    }
+    pub fn max_width(self, value: f64) -> Result<Self> {
+        self.set_max_width(value)?;
+        Ok(self)
+    }
+    pub fn get_min_height(&self) -> Result<f64> { Ok(self.raw.get_min_height()?) }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_min_height(value)?)
+    }
+    pub fn min_height(self, value: f64) -> Result<Self> {
+        self.set_min_height(value)?;
+        Ok(self)
+    }
+    pub fn get_max_height(&self) -> Result<f64> { Ok(self.raw.get_max_height()?) }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_max_height(value)?)
+    }
+    pub fn max_height(self, value: f64) -> Result<Self> {
+        self.set_max_height(value)?;
+        Ok(self)
+    }
+    pub fn get_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_margin()?.into())
+    }
+    pub fn set_margin(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_margin(value.into())?)
+    }
+    pub fn margin(self, value: Thickness) -> Result<Self> {
+        self.set_margin(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_alignment(value as i32)?)
+    }
+    pub fn horizontal_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_alignment(value as i32)?)
+    }
+    pub fn vertical_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_enabled()?) }
+    pub fn set_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_enabled(value)?)
+    }
+    pub fn enabled(self, value: bool) -> Result<Self> {
+        self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_key_down(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_key_down(subscription_id)))
+    }
+    pub fn on_key_down(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_key_down(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_pointer_entered(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_entered_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_entered(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_entered(subscription_id)))
+    }
+    pub fn on_pointer_entered(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_entered(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_pointer_exited(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_pointer_exited_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_pointer_exited(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pointer_exited(subscription_id)))
+    }
+    pub fn on_pointer_exited(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pointer_exited(callback)?);
+        Ok(self)
+    }
+    pub fn get_fill(&self) -> Result<Option<Brush>> {
+        self.raw.get_fill()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_fill(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_fill(value.as_ref())?)
+    }
+    pub fn fill(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_fill(value)?;
+        Ok(self)
+    }
+    pub fn get_stretch(&self) -> Result<Stretch> {
+        let value = self.raw.get_stretch()?;
+        Stretch::try_from(value)
+    }
+    pub fn set_stretch(&self, value: Stretch) -> Result<()> {
+        Ok(self.raw.set_stretch(value as i32)?)
+    }
+    pub fn stretch(self, value: Stretch) -> Result<Self> {
+        self.set_stretch(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke(&self) -> Result<Option<Brush>> {
+        self.raw.get_stroke()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_stroke(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_stroke(value.as_ref())?)
+    }
+    pub fn stroke(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_stroke(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_dash_offset(&self) -> Result<f64> { Ok(self.raw.get_stroke_dash_offset()?) }
+    pub fn set_stroke_dash_offset(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_dash_offset(value)?)
+    }
+    pub fn stroke_dash_offset(self, value: f64) -> Result<Self> {
+        self.set_stroke_dash_offset(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_thickness(&self) -> Result<f64> { Ok(self.raw.get_stroke_thickness()?) }
+    pub fn set_stroke_thickness(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_thickness(value)?)
+    }
+    pub fn stroke_thickness(self, value: f64) -> Result<Self> {
+        self.set_stroke_thickness(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_line_cap(&self) -> Result<PenLineCap> {
+        let value = self.raw.get_stroke_line_cap()?;
+        PenLineCap::try_from(value)
+    }
+    pub fn set_stroke_line_cap(&self, value: PenLineCap) -> Result<()> {
+        Ok(self.raw.set_stroke_line_cap(value as i32)?)
+    }
+    pub fn stroke_line_cap(self, value: PenLineCap) -> Result<Self> {
+        self.set_stroke_line_cap(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_join(&self) -> Result<PenLineJoin> {
+        let value = self.raw.get_stroke_join()?;
+        PenLineJoin::try_from(value)
+    }
+    pub fn set_stroke_join(&self, value: PenLineJoin) -> Result<()> {
+        Ok(self.raw.set_stroke_join(value as i32)?)
+    }
+    pub fn stroke_join(self, value: PenLineJoin) -> Result<Self> {
+        self.set_stroke_join(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_miter_limit(&self) -> Result<f64> { Ok(self.raw.get_stroke_miter_limit()?) }
+    pub fn set_stroke_miter_limit(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_stroke_miter_limit(value)?)
+    }
+    pub fn stroke_miter_limit(self, value: f64) -> Result<Self> {
+        self.set_stroke_miter_limit(value)?;
+        Ok(self)
+    }
+}
+
+impl AsControl for Shape {
     fn as_control(&self) -> Result<sys::ComPtr<sys::IAvnControl>> {
         Ok(self.raw.query_interface()?)
     }

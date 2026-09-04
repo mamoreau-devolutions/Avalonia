@@ -60,8 +60,9 @@ public static class AvaloniaProjectionProfiles
             // and wave D seven more still (RepeatButton, DropDownButton, SplitButton,
             // ToggleSplitButton, HyperlinkButton, ContextMenu, MenuFlyout), so it republishes
             // at version 6, wave E six more (Spinner is abstract) so 7, and wave F two more
-            // (Calendar, CalendarDatePicker) so 8, and wave G seven more so 9.
-            ["Avalonia.Host.Com.IAvnControlFactory"] = 9,
+            // (Calendar, CalendarDatePicker) so 8, wave G seven more so 9, and wave H
+            // eight constructible shapes (Shape is abstract) so 10.
+            ["Avalonia.Host.Com.IAvnControlFactory"] = 10,
         },
         IncludeTypeNames =
         [
@@ -153,6 +154,17 @@ public static class AvaloniaProjectionProfiles
             "Avalonia.Controls.GroupBox",
             "Avalonia.Controls.UserControl",
             "Avalonia.Controls.LayoutTransformControl",
+            // Wave H. Shapes. Fill/Stroke are brushes. Path.Data is Geometry with Parse/ToString.
+            // Points collections stay gaps. Shape is abstract.
+            "Avalonia.Controls.Shapes.Shape",
+            "Avalonia.Controls.Shapes.Rectangle",
+            "Avalonia.Controls.Shapes.Ellipse",
+            "Avalonia.Controls.Shapes.Line",
+            "Avalonia.Controls.Shapes.Path",
+            "Avalonia.Controls.Shapes.Polygon",
+            "Avalonia.Controls.Shapes.Polyline",
+            "Avalonia.Controls.Shapes.Arc",
+            "Avalonia.Controls.Shapes.Sector",
             "Avalonia.Controls.TextBox",
             "Avalonia.Controls.ScrollViewer",
             "Avalonia.Controls.Primitives.RangeBase",
@@ -333,6 +345,19 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.GroupBox"] = [],
             ["Avalonia.Controls.UserControl"] = [],
             ["Avalonia.Controls.LayoutTransformControl"] = ["UseRenderTransform"],
+            ["Avalonia.Controls.Shapes.Shape"] =
+            [
+                "Fill", "Stroke", "StrokeThickness", "Stretch", "StrokeDashOffset",
+                "StrokeLineCap", "StrokeJoin", "StrokeMiterLimit",
+            ],
+            ["Avalonia.Controls.Shapes.Rectangle"] = ["RadiusX", "RadiusY"],
+            ["Avalonia.Controls.Shapes.Ellipse"] = [],
+            ["Avalonia.Controls.Shapes.Line"] = ["StartPoint", "EndPoint"],
+            ["Avalonia.Controls.Shapes.Path"] = ["Data"],
+            ["Avalonia.Controls.Shapes.Polygon"] = ["FillRule"],
+            ["Avalonia.Controls.Shapes.Polyline"] = ["FillRule"],
+            ["Avalonia.Controls.Shapes.Arc"] = ["StartAngle", "SweepAngle"],
+            ["Avalonia.Controls.Shapes.Sector"] = ["StartAngle", "SweepAngle"],
             ["Avalonia.Controls.Primitives.TemplatedControl"] =
             [
                 "Background", "BorderBrush", "BorderThickness", "CornerRadius", "FontSize",
@@ -538,6 +563,12 @@ public static class AvaloniaProjectionProfiles
             {
                 Kind = MarshallingKind.StringUtf16,
                 StringConverterTypeName = "Avalonia.Host.Com.AvnCalendarDate",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.Shapes.Path.Data"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                StringConverterTypeName = "Avalonia.Host.Com.AvnGeometry",
                 IsNullable = true,
             },
             // The projection has no date/time ABI shape, so a date crosses as an ISO-8601

@@ -258,6 +258,12 @@ Avalonia.Controls.SelectableTextBlock.SelectionForegroundBrush: Not included by 
 Avalonia.Controls.SelectableTextBlock.CopyingToClipboard: Not included by projection policy
 Avalonia.Controls.SelectableTextBlock.SelectAll(): Not included by projection policy
 Avalonia.Controls.SelectableTextBlock.ClearSelection(): Not included by projection policy
+Avalonia.Controls.Shapes.Polygon.Points: Not included by projection policy
+Avalonia.Controls.Shapes.Polyline.Points: Not included by projection policy
+Avalonia.Controls.Shapes.Shape.DefiningGeometry: Not included by projection policy
+Avalonia.Controls.Shapes.Shape.RenderedGeometry: Not included by projection policy
+Avalonia.Controls.Shapes.Shape.StrokeDashArray: Not included by projection policy
+Avalonia.Controls.Shapes.Shape.Render(DrawingContext): Not included by projection policy
 Avalonia.Controls.Slider.Ticks: Not included by projection policy
 Avalonia.Controls.Spinner.ValidSpinDirection: Not included by projection policy
 Avalonia.Controls.Spinner.Spin: Not included by projection policy

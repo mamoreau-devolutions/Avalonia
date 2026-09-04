@@ -85,6 +85,15 @@ public class ClrTypeExtractorTests
         typeof(GroupBox),
         typeof(UserControl),
         typeof(LayoutTransformControl),
+        typeof(Avalonia.Controls.Shapes.Shape),
+        typeof(Avalonia.Controls.Shapes.Rectangle),
+        typeof(Avalonia.Controls.Shapes.Ellipse),
+        typeof(Avalonia.Controls.Shapes.Line),
+        typeof(Avalonia.Controls.Shapes.Path),
+        typeof(Avalonia.Controls.Shapes.Polygon),
+        typeof(Avalonia.Controls.Shapes.Polyline),
+        typeof(Avalonia.Controls.Shapes.Arc),
+        typeof(Avalonia.Controls.Shapes.Sector),
         typeof(TextBox),
         typeof(ScrollViewer),
         typeof(RangeBase),
@@ -275,9 +284,9 @@ public class ClrTypeExtractorTests
         // The factory grew a creator per wave A control plus GetToolTipStatics, then one per
         // constructible wave B type, then one per constructible wave C type, so it has moved
         // three times off the version 2 IID it published for CreateSolidColorBrush.
-        Assert.Equal(9, ir.FactoryAbiVersion);
+        Assert.Equal(10, ir.FactoryAbiVersion);
         Assert.Equal(
-            ClrTypeExtractor.CreateDeterministicIid("Avalonia.Host.Com.IAvnControlFactory", 9),
+            ClrTypeExtractor.CreateDeterministicIid("Avalonia.Host.Com.IAvnControlFactory", 10),
             ir.FactoryIid);
     }
 
@@ -1111,7 +1120,7 @@ public class ClrTypeExtractorTests
             property => property.Name is "Above" or "Below" or "LeftOf" or "RightOf"
                 or "AlignLeftWith" or "Order" or "Grow" or "Shrink" or "Basis");
 
-        Assert.Equal(9, ir.FactoryAbiVersion);
+        Assert.Equal(10, ir.FactoryAbiVersion);
     }
 
     [Fact]
@@ -1164,7 +1173,7 @@ public class ClrTypeExtractorTests
         Assert.Equal(MarshallingKind.ComCollection, items.Kind);
         Assert.Equal("Avalonia.Host.Com.IAvnItemList", items.InterfaceName);
 
-        Assert.Equal(9, ir.FactoryAbiVersion);
+        Assert.Equal(10, ir.FactoryAbiVersion);
     }
 
     [Fact]
@@ -1208,7 +1217,7 @@ public class ClrTypeExtractorTests
         Assert.True(selectedText.CanRead);
         Assert.False(selectedText.CanWrite);
 
-        Assert.Equal(9, ir.FactoryAbiVersion);
+        Assert.Equal(10, ir.FactoryAbiVersion);
     }
 
     [Fact]
@@ -1241,7 +1250,7 @@ public class ClrTypeExtractorTests
             Type(ir, "IAvnCalendar").Properties,
             p => p.Name == "SelectedDates");
 
-        Assert.Equal(9, ir.FactoryAbiVersion);
+        Assert.Equal(10, ir.FactoryAbiVersion);
     }
 
     [Fact]
@@ -1266,7 +1275,45 @@ public class ClrTypeExtractorTests
             Type(ir, "IAvnLayoutTransformControl").Properties,
             p => p.Name == "LayoutTransform");
 
-        Assert.Equal(9, ir.FactoryAbiVersion);
+        Assert.Equal(10, ir.FactoryAbiVersion);
+    }
+
+    [Fact]
+    public void Wave_h_shapes_publish_new_interfaces_at_version_one()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+
+        var shape = Type(ir, "IAvnShape");
+        Assert.Equal(1, shape.AbiVersion);
+        Assert.False(shape.IsConstructible);
+        Assert.Equal("Avalonia.Host.Com.IAvnControl", shape.BaseFullName);
+        Assert.All(
+            new[] { "Fill", "Stroke" },
+            name => Assert.Equal(
+                MarshallingKind.Brush,
+                shape.Properties.Single(p => p.Name == name).Kind));
+
+        Assert.All(
+            new[] { "IAvnRectangle", "IAvnEllipse", "IAvnLine", "IAvnPath", "IAvnPolygon",
+                "IAvnPolyline", "IAvnArc", "IAvnSector" },
+            name =>
+            {
+                var type = Type(ir, name);
+                Assert.Equal(1, type.AbiVersion);
+                Assert.True(type.IsConstructible);
+                Assert.Equal("Avalonia.Host.Com.IAvnShape", type.BaseFullName);
+            });
+
+        var start = Type(ir, "IAvnLine").Properties.Single(p => p.Name == "StartPoint");
+        Assert.Equal(MarshallingKind.Point, start.Kind);
+
+        var data = Type(ir, "IAvnPath").Properties.Single(p => p.Name == "Data");
+        Assert.Equal(MarshallingKind.StringUtf16, data.Kind);
+        Assert.Equal("Avalonia.Host.Com.AvnGeometry", data.StringConverterTypeName);
+        Assert.True(data.IsNullable);
+        Assert.DoesNotContain(Type(ir, "IAvnPolygon").Properties, p => p.Name == "Points");
+
+        Assert.Equal(10, ir.FactoryAbiVersion);
     }
 
     [Fact]

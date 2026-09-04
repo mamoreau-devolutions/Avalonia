@@ -29,6 +29,8 @@ back the string the ABI set, or `null` for an image the ABI never set; see
 [Image sources](MARSHALLING.md#image-sources). `ToolTip::set_tip` carries text
 only; a control-valued tip reads back as `null`. See
 [ToolTip](MARSHALLING.md#tooltip) and [Tabs and trees](MARSHALLING.md#tabs-and-trees).
+Shapes (`Rectangle`, `Ellipse`, `Line`, `Path`, `Polygon`, `Polyline`, `Arc`,
+`Sector`) are projected too. Fill/Stroke are brushes; `Path.Data` is path markup.
 `Carousel`, `TransitioningContentControl`, `Label`, `Separator`, `GroupBox`,
 `UserControl` and `LayoutTransformControl` are projected too.
 `Calendar` and `CalendarDatePicker` are projected too. Calendar days cross as

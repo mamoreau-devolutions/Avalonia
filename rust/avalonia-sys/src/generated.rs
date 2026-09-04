@@ -27096,6 +27096,4025 @@ impl ComPtr<IAvnSeparator> {
     }
 }
 
+pub const I_AVN_ARC_IID: Guid = Guid { data1: 0xA01B05C9, data2: 0xE7B5, data3: 0x5E48, data4: [0xAC, 0x6B, 0x03, 0x80, 0xB5, 0x44, 0xD2, 0x5F] };
+
+#[repr(C)]
+struct IAvnArcVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_object_id: unsafe extern "system" fn(*mut IAvnArc, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnArc, *mut i64) -> i32,
+    get_name: unsafe extern "system" fn(*mut IAvnArc, *mut *mut u16) -> i32,
+    set_name: unsafe extern "system" fn(*mut IAvnArc, *mut u16) -> i32,
+    get_classes: unsafe extern "system" fn(*mut IAvnArc, *mut *mut IAvnStringList) -> i32,
+    get_is_visible: unsafe extern "system" fn(*mut IAvnArc, *mut i32) -> i32,
+    set_is_visible: unsafe extern "system" fn(*mut IAvnArc, i32) -> i32,
+    get_opacity: unsafe extern "system" fn(*mut IAvnArc, *mut f64) -> i32,
+    set_opacity: unsafe extern "system" fn(*mut IAvnArc, f64) -> i32,
+    get_width: unsafe extern "system" fn(*mut IAvnArc, *mut f64) -> i32,
+    set_width: unsafe extern "system" fn(*mut IAvnArc, f64) -> i32,
+    get_height: unsafe extern "system" fn(*mut IAvnArc, *mut f64) -> i32,
+    set_height: unsafe extern "system" fn(*mut IAvnArc, f64) -> i32,
+    get_min_width: unsafe extern "system" fn(*mut IAvnArc, *mut f64) -> i32,
+    set_min_width: unsafe extern "system" fn(*mut IAvnArc, f64) -> i32,
+    get_max_width: unsafe extern "system" fn(*mut IAvnArc, *mut f64) -> i32,
+    set_max_width: unsafe extern "system" fn(*mut IAvnArc, f64) -> i32,
+    get_min_height: unsafe extern "system" fn(*mut IAvnArc, *mut f64) -> i32,
+    set_min_height: unsafe extern "system" fn(*mut IAvnArc, f64) -> i32,
+    get_max_height: unsafe extern "system" fn(*mut IAvnArc, *mut f64) -> i32,
+    set_max_height: unsafe extern "system" fn(*mut IAvnArc, f64) -> i32,
+    get_margin: unsafe extern "system" fn(*mut IAvnArc, *mut AvnThickness) -> i32,
+    set_margin: unsafe extern "system" fn(*mut IAvnArc, AvnThickness) -> i32,
+    get_horizontal_alignment: unsafe extern "system" fn(*mut IAvnArc, *mut i32) -> i32,
+    set_horizontal_alignment: unsafe extern "system" fn(*mut IAvnArc, i32) -> i32,
+    get_vertical_alignment: unsafe extern "system" fn(*mut IAvnArc, *mut i32) -> i32,
+    set_vertical_alignment: unsafe extern "system" fn(*mut IAvnArc, i32) -> i32,
+    get_is_enabled: unsafe extern "system" fn(*mut IAvnArc, *mut i32) -> i32,
+    set_is_enabled: unsafe extern "system" fn(*mut IAvnArc, i32) -> i32,
+    advise_key_down: unsafe extern "system" fn(*mut IAvnArc, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
+    unadvise_key_down: unsafe extern "system" fn(*mut IAvnArc, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnArc, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnArc, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnArc, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnArc, i64) -> i32,
+    get_fill: unsafe extern "system" fn(*mut IAvnArc, *mut *mut IAvnBrush) -> i32,
+    set_fill: unsafe extern "system" fn(*mut IAvnArc, *mut IAvnBrush) -> i32,
+    get_stretch: unsafe extern "system" fn(*mut IAvnArc, *mut i32) -> i32,
+    set_stretch: unsafe extern "system" fn(*mut IAvnArc, i32) -> i32,
+    get_stroke: unsafe extern "system" fn(*mut IAvnArc, *mut *mut IAvnBrush) -> i32,
+    set_stroke: unsafe extern "system" fn(*mut IAvnArc, *mut IAvnBrush) -> i32,
+    get_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnArc, *mut f64) -> i32,
+    set_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnArc, f64) -> i32,
+    get_stroke_thickness: unsafe extern "system" fn(*mut IAvnArc, *mut f64) -> i32,
+    set_stroke_thickness: unsafe extern "system" fn(*mut IAvnArc, f64) -> i32,
+    get_stroke_line_cap: unsafe extern "system" fn(*mut IAvnArc, *mut i32) -> i32,
+    set_stroke_line_cap: unsafe extern "system" fn(*mut IAvnArc, i32) -> i32,
+    get_stroke_join: unsafe extern "system" fn(*mut IAvnArc, *mut i32) -> i32,
+    set_stroke_join: unsafe extern "system" fn(*mut IAvnArc, i32) -> i32,
+    get_stroke_miter_limit: unsafe extern "system" fn(*mut IAvnArc, *mut f64) -> i32,
+    set_stroke_miter_limit: unsafe extern "system" fn(*mut IAvnArc, f64) -> i32,
+    get_start_angle: unsafe extern "system" fn(*mut IAvnArc, *mut f64) -> i32,
+    set_start_angle: unsafe extern "system" fn(*mut IAvnArc, f64) -> i32,
+    get_sweep_angle: unsafe extern "system" fn(*mut IAvnArc, *mut f64) -> i32,
+    set_sweep_angle: unsafe extern "system" fn(*mut IAvnArc, f64) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnArc {
+    vtbl: *const IAvnArcVtbl,
+}
+
+unsafe impl ComInterface for IAvnArc {
+    const IID: Guid = I_AVN_ARC_IID;
+}
+
+impl ComPtr<IAvnArc> {
+    pub fn object_id(&self) -> Result<i64> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
+        }
+    }
+    pub fn get_name(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_name)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_name(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_name)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
+        unsafe {
+            let mut value: *mut IAvnStringList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn get_is_visible(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_visible)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_visible(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_visible)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_opacity(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_opacity)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_margin(&self) -> Result<AvnThickness> {
+        unsafe {
+            let mut value: AvnThickness = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_margin)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_margin(&self, value: AvnThickness) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_margin)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_key_down)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_key_down(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_key_down)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_fill(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_fill)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_fill(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_fill)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stretch(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stretch)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stretch(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stretch)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_stroke(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_dash_offset(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_dash_offset)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_dash_offset(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_dash_offset)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_thickness(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_thickness)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_thickness(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_thickness)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_line_cap(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_line_cap)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_line_cap(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_line_cap)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_join(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_join)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_join(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_join)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_miter_limit(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_miter_limit)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_miter_limit(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_miter_limit)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_start_angle(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_start_angle)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_start_angle(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_start_angle)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_sweep_angle(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_sweep_angle)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_sweep_angle(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_sweep_angle)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+}
+
+pub const I_AVN_ELLIPSE_IID: Guid = Guid { data1: 0xFC9264FB, data2: 0x21C6, data3: 0x5DF7, data4: [0xBF, 0x47, 0x22, 0xED, 0x80, 0x4D, 0x4B, 0x49] };
+
+#[repr(C)]
+struct IAvnEllipseVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_object_id: unsafe extern "system" fn(*mut IAvnEllipse, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnEllipse, *mut i64) -> i32,
+    get_name: unsafe extern "system" fn(*mut IAvnEllipse, *mut *mut u16) -> i32,
+    set_name: unsafe extern "system" fn(*mut IAvnEllipse, *mut u16) -> i32,
+    get_classes: unsafe extern "system" fn(*mut IAvnEllipse, *mut *mut IAvnStringList) -> i32,
+    get_is_visible: unsafe extern "system" fn(*mut IAvnEllipse, *mut i32) -> i32,
+    set_is_visible: unsafe extern "system" fn(*mut IAvnEllipse, i32) -> i32,
+    get_opacity: unsafe extern "system" fn(*mut IAvnEllipse, *mut f64) -> i32,
+    set_opacity: unsafe extern "system" fn(*mut IAvnEllipse, f64) -> i32,
+    get_width: unsafe extern "system" fn(*mut IAvnEllipse, *mut f64) -> i32,
+    set_width: unsafe extern "system" fn(*mut IAvnEllipse, f64) -> i32,
+    get_height: unsafe extern "system" fn(*mut IAvnEllipse, *mut f64) -> i32,
+    set_height: unsafe extern "system" fn(*mut IAvnEllipse, f64) -> i32,
+    get_min_width: unsafe extern "system" fn(*mut IAvnEllipse, *mut f64) -> i32,
+    set_min_width: unsafe extern "system" fn(*mut IAvnEllipse, f64) -> i32,
+    get_max_width: unsafe extern "system" fn(*mut IAvnEllipse, *mut f64) -> i32,
+    set_max_width: unsafe extern "system" fn(*mut IAvnEllipse, f64) -> i32,
+    get_min_height: unsafe extern "system" fn(*mut IAvnEllipse, *mut f64) -> i32,
+    set_min_height: unsafe extern "system" fn(*mut IAvnEllipse, f64) -> i32,
+    get_max_height: unsafe extern "system" fn(*mut IAvnEllipse, *mut f64) -> i32,
+    set_max_height: unsafe extern "system" fn(*mut IAvnEllipse, f64) -> i32,
+    get_margin: unsafe extern "system" fn(*mut IAvnEllipse, *mut AvnThickness) -> i32,
+    set_margin: unsafe extern "system" fn(*mut IAvnEllipse, AvnThickness) -> i32,
+    get_horizontal_alignment: unsafe extern "system" fn(*mut IAvnEllipse, *mut i32) -> i32,
+    set_horizontal_alignment: unsafe extern "system" fn(*mut IAvnEllipse, i32) -> i32,
+    get_vertical_alignment: unsafe extern "system" fn(*mut IAvnEllipse, *mut i32) -> i32,
+    set_vertical_alignment: unsafe extern "system" fn(*mut IAvnEllipse, i32) -> i32,
+    get_is_enabled: unsafe extern "system" fn(*mut IAvnEllipse, *mut i32) -> i32,
+    set_is_enabled: unsafe extern "system" fn(*mut IAvnEllipse, i32) -> i32,
+    advise_key_down: unsafe extern "system" fn(*mut IAvnEllipse, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
+    unadvise_key_down: unsafe extern "system" fn(*mut IAvnEllipse, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnEllipse, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnEllipse, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnEllipse, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnEllipse, i64) -> i32,
+    get_fill: unsafe extern "system" fn(*mut IAvnEllipse, *mut *mut IAvnBrush) -> i32,
+    set_fill: unsafe extern "system" fn(*mut IAvnEllipse, *mut IAvnBrush) -> i32,
+    get_stretch: unsafe extern "system" fn(*mut IAvnEllipse, *mut i32) -> i32,
+    set_stretch: unsafe extern "system" fn(*mut IAvnEllipse, i32) -> i32,
+    get_stroke: unsafe extern "system" fn(*mut IAvnEllipse, *mut *mut IAvnBrush) -> i32,
+    set_stroke: unsafe extern "system" fn(*mut IAvnEllipse, *mut IAvnBrush) -> i32,
+    get_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnEllipse, *mut f64) -> i32,
+    set_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnEllipse, f64) -> i32,
+    get_stroke_thickness: unsafe extern "system" fn(*mut IAvnEllipse, *mut f64) -> i32,
+    set_stroke_thickness: unsafe extern "system" fn(*mut IAvnEllipse, f64) -> i32,
+    get_stroke_line_cap: unsafe extern "system" fn(*mut IAvnEllipse, *mut i32) -> i32,
+    set_stroke_line_cap: unsafe extern "system" fn(*mut IAvnEllipse, i32) -> i32,
+    get_stroke_join: unsafe extern "system" fn(*mut IAvnEllipse, *mut i32) -> i32,
+    set_stroke_join: unsafe extern "system" fn(*mut IAvnEllipse, i32) -> i32,
+    get_stroke_miter_limit: unsafe extern "system" fn(*mut IAvnEllipse, *mut f64) -> i32,
+    set_stroke_miter_limit: unsafe extern "system" fn(*mut IAvnEllipse, f64) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnEllipse {
+    vtbl: *const IAvnEllipseVtbl,
+}
+
+unsafe impl ComInterface for IAvnEllipse {
+    const IID: Guid = I_AVN_ELLIPSE_IID;
+}
+
+impl ComPtr<IAvnEllipse> {
+    pub fn object_id(&self) -> Result<i64> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
+        }
+    }
+    pub fn get_name(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_name)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_name(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_name)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
+        unsafe {
+            let mut value: *mut IAvnStringList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn get_is_visible(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_visible)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_visible(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_visible)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_opacity(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_opacity)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_margin(&self) -> Result<AvnThickness> {
+        unsafe {
+            let mut value: AvnThickness = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_margin)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_margin(&self, value: AvnThickness) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_margin)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_key_down)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_key_down(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_key_down)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_fill(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_fill)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_fill(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_fill)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stretch(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stretch)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stretch(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stretch)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_stroke(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_dash_offset(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_dash_offset)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_dash_offset(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_dash_offset)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_thickness(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_thickness)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_thickness(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_thickness)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_line_cap(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_line_cap)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_line_cap(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_line_cap)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_join(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_join)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_join(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_join)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_miter_limit(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_miter_limit)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_miter_limit(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_miter_limit)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+}
+
+pub const I_AVN_LINE_IID: Guid = Guid { data1: 0x0FC92D69, data2: 0x6C41, data3: 0x5CD5, data4: [0x84, 0xC7, 0x12, 0xD2, 0x3C, 0x0A, 0xA9, 0x84] };
+
+#[repr(C)]
+struct IAvnLineVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_object_id: unsafe extern "system" fn(*mut IAvnLine, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnLine, *mut i64) -> i32,
+    get_name: unsafe extern "system" fn(*mut IAvnLine, *mut *mut u16) -> i32,
+    set_name: unsafe extern "system" fn(*mut IAvnLine, *mut u16) -> i32,
+    get_classes: unsafe extern "system" fn(*mut IAvnLine, *mut *mut IAvnStringList) -> i32,
+    get_is_visible: unsafe extern "system" fn(*mut IAvnLine, *mut i32) -> i32,
+    set_is_visible: unsafe extern "system" fn(*mut IAvnLine, i32) -> i32,
+    get_opacity: unsafe extern "system" fn(*mut IAvnLine, *mut f64) -> i32,
+    set_opacity: unsafe extern "system" fn(*mut IAvnLine, f64) -> i32,
+    get_width: unsafe extern "system" fn(*mut IAvnLine, *mut f64) -> i32,
+    set_width: unsafe extern "system" fn(*mut IAvnLine, f64) -> i32,
+    get_height: unsafe extern "system" fn(*mut IAvnLine, *mut f64) -> i32,
+    set_height: unsafe extern "system" fn(*mut IAvnLine, f64) -> i32,
+    get_min_width: unsafe extern "system" fn(*mut IAvnLine, *mut f64) -> i32,
+    set_min_width: unsafe extern "system" fn(*mut IAvnLine, f64) -> i32,
+    get_max_width: unsafe extern "system" fn(*mut IAvnLine, *mut f64) -> i32,
+    set_max_width: unsafe extern "system" fn(*mut IAvnLine, f64) -> i32,
+    get_min_height: unsafe extern "system" fn(*mut IAvnLine, *mut f64) -> i32,
+    set_min_height: unsafe extern "system" fn(*mut IAvnLine, f64) -> i32,
+    get_max_height: unsafe extern "system" fn(*mut IAvnLine, *mut f64) -> i32,
+    set_max_height: unsafe extern "system" fn(*mut IAvnLine, f64) -> i32,
+    get_margin: unsafe extern "system" fn(*mut IAvnLine, *mut AvnThickness) -> i32,
+    set_margin: unsafe extern "system" fn(*mut IAvnLine, AvnThickness) -> i32,
+    get_horizontal_alignment: unsafe extern "system" fn(*mut IAvnLine, *mut i32) -> i32,
+    set_horizontal_alignment: unsafe extern "system" fn(*mut IAvnLine, i32) -> i32,
+    get_vertical_alignment: unsafe extern "system" fn(*mut IAvnLine, *mut i32) -> i32,
+    set_vertical_alignment: unsafe extern "system" fn(*mut IAvnLine, i32) -> i32,
+    get_is_enabled: unsafe extern "system" fn(*mut IAvnLine, *mut i32) -> i32,
+    set_is_enabled: unsafe extern "system" fn(*mut IAvnLine, i32) -> i32,
+    advise_key_down: unsafe extern "system" fn(*mut IAvnLine, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
+    unadvise_key_down: unsafe extern "system" fn(*mut IAvnLine, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnLine, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnLine, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnLine, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnLine, i64) -> i32,
+    get_fill: unsafe extern "system" fn(*mut IAvnLine, *mut *mut IAvnBrush) -> i32,
+    set_fill: unsafe extern "system" fn(*mut IAvnLine, *mut IAvnBrush) -> i32,
+    get_stretch: unsafe extern "system" fn(*mut IAvnLine, *mut i32) -> i32,
+    set_stretch: unsafe extern "system" fn(*mut IAvnLine, i32) -> i32,
+    get_stroke: unsafe extern "system" fn(*mut IAvnLine, *mut *mut IAvnBrush) -> i32,
+    set_stroke: unsafe extern "system" fn(*mut IAvnLine, *mut IAvnBrush) -> i32,
+    get_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnLine, *mut f64) -> i32,
+    set_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnLine, f64) -> i32,
+    get_stroke_thickness: unsafe extern "system" fn(*mut IAvnLine, *mut f64) -> i32,
+    set_stroke_thickness: unsafe extern "system" fn(*mut IAvnLine, f64) -> i32,
+    get_stroke_line_cap: unsafe extern "system" fn(*mut IAvnLine, *mut i32) -> i32,
+    set_stroke_line_cap: unsafe extern "system" fn(*mut IAvnLine, i32) -> i32,
+    get_stroke_join: unsafe extern "system" fn(*mut IAvnLine, *mut i32) -> i32,
+    set_stroke_join: unsafe extern "system" fn(*mut IAvnLine, i32) -> i32,
+    get_stroke_miter_limit: unsafe extern "system" fn(*mut IAvnLine, *mut f64) -> i32,
+    set_stroke_miter_limit: unsafe extern "system" fn(*mut IAvnLine, f64) -> i32,
+    get_start_point: unsafe extern "system" fn(*mut IAvnLine, *mut AvnPoint) -> i32,
+    set_start_point: unsafe extern "system" fn(*mut IAvnLine, AvnPoint) -> i32,
+    get_end_point: unsafe extern "system" fn(*mut IAvnLine, *mut AvnPoint) -> i32,
+    set_end_point: unsafe extern "system" fn(*mut IAvnLine, AvnPoint) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnLine {
+    vtbl: *const IAvnLineVtbl,
+}
+
+unsafe impl ComInterface for IAvnLine {
+    const IID: Guid = I_AVN_LINE_IID;
+}
+
+impl ComPtr<IAvnLine> {
+    pub fn object_id(&self) -> Result<i64> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
+        }
+    }
+    pub fn get_name(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_name)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_name(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_name)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
+        unsafe {
+            let mut value: *mut IAvnStringList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn get_is_visible(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_visible)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_visible(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_visible)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_opacity(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_opacity)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_margin(&self) -> Result<AvnThickness> {
+        unsafe {
+            let mut value: AvnThickness = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_margin)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_margin(&self, value: AvnThickness) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_margin)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_key_down)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_key_down(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_key_down)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_fill(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_fill)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_fill(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_fill)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stretch(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stretch)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stretch(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stretch)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_stroke(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_dash_offset(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_dash_offset)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_dash_offset(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_dash_offset)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_thickness(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_thickness)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_thickness(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_thickness)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_line_cap(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_line_cap)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_line_cap(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_line_cap)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_join(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_join)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_join(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_join)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_miter_limit(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_miter_limit)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_miter_limit(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_miter_limit)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_start_point(&self) -> Result<AvnPoint> {
+        unsafe {
+            let mut value: AvnPoint = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_start_point)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_start_point(&self, value: AvnPoint) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_start_point)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_end_point(&self) -> Result<AvnPoint> {
+        unsafe {
+            let mut value: AvnPoint = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_end_point)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_end_point(&self, value: AvnPoint) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_end_point)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+}
+
+pub const I_AVN_PATH_IID: Guid = Guid { data1: 0x12654CD6, data2: 0x16FC, data3: 0x5B65, data4: [0x9F, 0x01, 0x1B, 0x11, 0xA5, 0xA4, 0x98, 0xB2] };
+
+#[repr(C)]
+struct IAvnPathVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_object_id: unsafe extern "system" fn(*mut IAvnPath, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnPath, *mut i64) -> i32,
+    get_name: unsafe extern "system" fn(*mut IAvnPath, *mut *mut u16) -> i32,
+    set_name: unsafe extern "system" fn(*mut IAvnPath, *mut u16) -> i32,
+    get_classes: unsafe extern "system" fn(*mut IAvnPath, *mut *mut IAvnStringList) -> i32,
+    get_is_visible: unsafe extern "system" fn(*mut IAvnPath, *mut i32) -> i32,
+    set_is_visible: unsafe extern "system" fn(*mut IAvnPath, i32) -> i32,
+    get_opacity: unsafe extern "system" fn(*mut IAvnPath, *mut f64) -> i32,
+    set_opacity: unsafe extern "system" fn(*mut IAvnPath, f64) -> i32,
+    get_width: unsafe extern "system" fn(*mut IAvnPath, *mut f64) -> i32,
+    set_width: unsafe extern "system" fn(*mut IAvnPath, f64) -> i32,
+    get_height: unsafe extern "system" fn(*mut IAvnPath, *mut f64) -> i32,
+    set_height: unsafe extern "system" fn(*mut IAvnPath, f64) -> i32,
+    get_min_width: unsafe extern "system" fn(*mut IAvnPath, *mut f64) -> i32,
+    set_min_width: unsafe extern "system" fn(*mut IAvnPath, f64) -> i32,
+    get_max_width: unsafe extern "system" fn(*mut IAvnPath, *mut f64) -> i32,
+    set_max_width: unsafe extern "system" fn(*mut IAvnPath, f64) -> i32,
+    get_min_height: unsafe extern "system" fn(*mut IAvnPath, *mut f64) -> i32,
+    set_min_height: unsafe extern "system" fn(*mut IAvnPath, f64) -> i32,
+    get_max_height: unsafe extern "system" fn(*mut IAvnPath, *mut f64) -> i32,
+    set_max_height: unsafe extern "system" fn(*mut IAvnPath, f64) -> i32,
+    get_margin: unsafe extern "system" fn(*mut IAvnPath, *mut AvnThickness) -> i32,
+    set_margin: unsafe extern "system" fn(*mut IAvnPath, AvnThickness) -> i32,
+    get_horizontal_alignment: unsafe extern "system" fn(*mut IAvnPath, *mut i32) -> i32,
+    set_horizontal_alignment: unsafe extern "system" fn(*mut IAvnPath, i32) -> i32,
+    get_vertical_alignment: unsafe extern "system" fn(*mut IAvnPath, *mut i32) -> i32,
+    set_vertical_alignment: unsafe extern "system" fn(*mut IAvnPath, i32) -> i32,
+    get_is_enabled: unsafe extern "system" fn(*mut IAvnPath, *mut i32) -> i32,
+    set_is_enabled: unsafe extern "system" fn(*mut IAvnPath, i32) -> i32,
+    advise_key_down: unsafe extern "system" fn(*mut IAvnPath, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
+    unadvise_key_down: unsafe extern "system" fn(*mut IAvnPath, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnPath, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnPath, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnPath, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnPath, i64) -> i32,
+    get_fill: unsafe extern "system" fn(*mut IAvnPath, *mut *mut IAvnBrush) -> i32,
+    set_fill: unsafe extern "system" fn(*mut IAvnPath, *mut IAvnBrush) -> i32,
+    get_stretch: unsafe extern "system" fn(*mut IAvnPath, *mut i32) -> i32,
+    set_stretch: unsafe extern "system" fn(*mut IAvnPath, i32) -> i32,
+    get_stroke: unsafe extern "system" fn(*mut IAvnPath, *mut *mut IAvnBrush) -> i32,
+    set_stroke: unsafe extern "system" fn(*mut IAvnPath, *mut IAvnBrush) -> i32,
+    get_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnPath, *mut f64) -> i32,
+    set_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnPath, f64) -> i32,
+    get_stroke_thickness: unsafe extern "system" fn(*mut IAvnPath, *mut f64) -> i32,
+    set_stroke_thickness: unsafe extern "system" fn(*mut IAvnPath, f64) -> i32,
+    get_stroke_line_cap: unsafe extern "system" fn(*mut IAvnPath, *mut i32) -> i32,
+    set_stroke_line_cap: unsafe extern "system" fn(*mut IAvnPath, i32) -> i32,
+    get_stroke_join: unsafe extern "system" fn(*mut IAvnPath, *mut i32) -> i32,
+    set_stroke_join: unsafe extern "system" fn(*mut IAvnPath, i32) -> i32,
+    get_stroke_miter_limit: unsafe extern "system" fn(*mut IAvnPath, *mut f64) -> i32,
+    set_stroke_miter_limit: unsafe extern "system" fn(*mut IAvnPath, f64) -> i32,
+    get_data: unsafe extern "system" fn(*mut IAvnPath, *mut *mut u16) -> i32,
+    set_data: unsafe extern "system" fn(*mut IAvnPath, *mut u16) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnPath {
+    vtbl: *const IAvnPathVtbl,
+}
+
+unsafe impl ComInterface for IAvnPath {
+    const IID: Guid = I_AVN_PATH_IID;
+}
+
+impl ComPtr<IAvnPath> {
+    pub fn object_id(&self) -> Result<i64> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
+        }
+    }
+    pub fn get_name(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_name)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_name(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_name)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
+        unsafe {
+            let mut value: *mut IAvnStringList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn get_is_visible(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_visible)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_visible(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_visible)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_opacity(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_opacity)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_margin(&self) -> Result<AvnThickness> {
+        unsafe {
+            let mut value: AvnThickness = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_margin)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_margin(&self, value: AvnThickness) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_margin)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_key_down)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_key_down(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_key_down)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_fill(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_fill)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_fill(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_fill)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stretch(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stretch)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stretch(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stretch)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_stroke(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_dash_offset(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_dash_offset)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_dash_offset(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_dash_offset)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_thickness(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_thickness)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_thickness(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_thickness)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_line_cap(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_line_cap)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_line_cap(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_line_cap)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_join(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_join)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_join(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_join)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_miter_limit(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_miter_limit)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_miter_limit(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_miter_limit)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_data(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
+}
+
+pub const I_AVN_POLYGON_IID: Guid = Guid { data1: 0x0E2FEAD9, data2: 0xB930, data3: 0x5825, data4: [0x8E, 0xC7, 0x71, 0x4A, 0xF2, 0xF3, 0x30, 0x2E] };
+
+#[repr(C)]
+struct IAvnPolygonVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_object_id: unsafe extern "system" fn(*mut IAvnPolygon, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnPolygon, *mut i64) -> i32,
+    get_name: unsafe extern "system" fn(*mut IAvnPolygon, *mut *mut u16) -> i32,
+    set_name: unsafe extern "system" fn(*mut IAvnPolygon, *mut u16) -> i32,
+    get_classes: unsafe extern "system" fn(*mut IAvnPolygon, *mut *mut IAvnStringList) -> i32,
+    get_is_visible: unsafe extern "system" fn(*mut IAvnPolygon, *mut i32) -> i32,
+    set_is_visible: unsafe extern "system" fn(*mut IAvnPolygon, i32) -> i32,
+    get_opacity: unsafe extern "system" fn(*mut IAvnPolygon, *mut f64) -> i32,
+    set_opacity: unsafe extern "system" fn(*mut IAvnPolygon, f64) -> i32,
+    get_width: unsafe extern "system" fn(*mut IAvnPolygon, *mut f64) -> i32,
+    set_width: unsafe extern "system" fn(*mut IAvnPolygon, f64) -> i32,
+    get_height: unsafe extern "system" fn(*mut IAvnPolygon, *mut f64) -> i32,
+    set_height: unsafe extern "system" fn(*mut IAvnPolygon, f64) -> i32,
+    get_min_width: unsafe extern "system" fn(*mut IAvnPolygon, *mut f64) -> i32,
+    set_min_width: unsafe extern "system" fn(*mut IAvnPolygon, f64) -> i32,
+    get_max_width: unsafe extern "system" fn(*mut IAvnPolygon, *mut f64) -> i32,
+    set_max_width: unsafe extern "system" fn(*mut IAvnPolygon, f64) -> i32,
+    get_min_height: unsafe extern "system" fn(*mut IAvnPolygon, *mut f64) -> i32,
+    set_min_height: unsafe extern "system" fn(*mut IAvnPolygon, f64) -> i32,
+    get_max_height: unsafe extern "system" fn(*mut IAvnPolygon, *mut f64) -> i32,
+    set_max_height: unsafe extern "system" fn(*mut IAvnPolygon, f64) -> i32,
+    get_margin: unsafe extern "system" fn(*mut IAvnPolygon, *mut AvnThickness) -> i32,
+    set_margin: unsafe extern "system" fn(*mut IAvnPolygon, AvnThickness) -> i32,
+    get_horizontal_alignment: unsafe extern "system" fn(*mut IAvnPolygon, *mut i32) -> i32,
+    set_horizontal_alignment: unsafe extern "system" fn(*mut IAvnPolygon, i32) -> i32,
+    get_vertical_alignment: unsafe extern "system" fn(*mut IAvnPolygon, *mut i32) -> i32,
+    set_vertical_alignment: unsafe extern "system" fn(*mut IAvnPolygon, i32) -> i32,
+    get_is_enabled: unsafe extern "system" fn(*mut IAvnPolygon, *mut i32) -> i32,
+    set_is_enabled: unsafe extern "system" fn(*mut IAvnPolygon, i32) -> i32,
+    advise_key_down: unsafe extern "system" fn(*mut IAvnPolygon, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
+    unadvise_key_down: unsafe extern "system" fn(*mut IAvnPolygon, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnPolygon, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnPolygon, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnPolygon, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnPolygon, i64) -> i32,
+    get_fill: unsafe extern "system" fn(*mut IAvnPolygon, *mut *mut IAvnBrush) -> i32,
+    set_fill: unsafe extern "system" fn(*mut IAvnPolygon, *mut IAvnBrush) -> i32,
+    get_stretch: unsafe extern "system" fn(*mut IAvnPolygon, *mut i32) -> i32,
+    set_stretch: unsafe extern "system" fn(*mut IAvnPolygon, i32) -> i32,
+    get_stroke: unsafe extern "system" fn(*mut IAvnPolygon, *mut *mut IAvnBrush) -> i32,
+    set_stroke: unsafe extern "system" fn(*mut IAvnPolygon, *mut IAvnBrush) -> i32,
+    get_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnPolygon, *mut f64) -> i32,
+    set_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnPolygon, f64) -> i32,
+    get_stroke_thickness: unsafe extern "system" fn(*mut IAvnPolygon, *mut f64) -> i32,
+    set_stroke_thickness: unsafe extern "system" fn(*mut IAvnPolygon, f64) -> i32,
+    get_stroke_line_cap: unsafe extern "system" fn(*mut IAvnPolygon, *mut i32) -> i32,
+    set_stroke_line_cap: unsafe extern "system" fn(*mut IAvnPolygon, i32) -> i32,
+    get_stroke_join: unsafe extern "system" fn(*mut IAvnPolygon, *mut i32) -> i32,
+    set_stroke_join: unsafe extern "system" fn(*mut IAvnPolygon, i32) -> i32,
+    get_stroke_miter_limit: unsafe extern "system" fn(*mut IAvnPolygon, *mut f64) -> i32,
+    set_stroke_miter_limit: unsafe extern "system" fn(*mut IAvnPolygon, f64) -> i32,
+    get_fill_rule: unsafe extern "system" fn(*mut IAvnPolygon, *mut i32) -> i32,
+    set_fill_rule: unsafe extern "system" fn(*mut IAvnPolygon, i32) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnPolygon {
+    vtbl: *const IAvnPolygonVtbl,
+}
+
+unsafe impl ComInterface for IAvnPolygon {
+    const IID: Guid = I_AVN_POLYGON_IID;
+}
+
+impl ComPtr<IAvnPolygon> {
+    pub fn object_id(&self) -> Result<i64> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
+        }
+    }
+    pub fn get_name(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_name)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_name(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_name)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
+        unsafe {
+            let mut value: *mut IAvnStringList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn get_is_visible(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_visible)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_visible(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_visible)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_opacity(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_opacity)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_margin(&self) -> Result<AvnThickness> {
+        unsafe {
+            let mut value: AvnThickness = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_margin)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_margin(&self, value: AvnThickness) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_margin)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_key_down)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_key_down(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_key_down)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_fill(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_fill)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_fill(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_fill)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stretch(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stretch)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stretch(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stretch)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_stroke(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_dash_offset(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_dash_offset)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_dash_offset(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_dash_offset)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_thickness(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_thickness)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_thickness(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_thickness)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_line_cap(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_line_cap)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_line_cap(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_line_cap)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_join(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_join)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_join(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_join)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_miter_limit(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_miter_limit)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_miter_limit(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_miter_limit)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_fill_rule(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_fill_rule)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_fill_rule(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_fill_rule)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+}
+
+pub const I_AVN_POLYLINE_IID: Guid = Guid { data1: 0x82DE2551, data2: 0xBCFC, data3: 0x525A, data4: [0xB1, 0xAC, 0xFF, 0x19, 0x4A, 0xFD, 0x26, 0x51] };
+
+#[repr(C)]
+struct IAvnPolylineVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_object_id: unsafe extern "system" fn(*mut IAvnPolyline, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnPolyline, *mut i64) -> i32,
+    get_name: unsafe extern "system" fn(*mut IAvnPolyline, *mut *mut u16) -> i32,
+    set_name: unsafe extern "system" fn(*mut IAvnPolyline, *mut u16) -> i32,
+    get_classes: unsafe extern "system" fn(*mut IAvnPolyline, *mut *mut IAvnStringList) -> i32,
+    get_is_visible: unsafe extern "system" fn(*mut IAvnPolyline, *mut i32) -> i32,
+    set_is_visible: unsafe extern "system" fn(*mut IAvnPolyline, i32) -> i32,
+    get_opacity: unsafe extern "system" fn(*mut IAvnPolyline, *mut f64) -> i32,
+    set_opacity: unsafe extern "system" fn(*mut IAvnPolyline, f64) -> i32,
+    get_width: unsafe extern "system" fn(*mut IAvnPolyline, *mut f64) -> i32,
+    set_width: unsafe extern "system" fn(*mut IAvnPolyline, f64) -> i32,
+    get_height: unsafe extern "system" fn(*mut IAvnPolyline, *mut f64) -> i32,
+    set_height: unsafe extern "system" fn(*mut IAvnPolyline, f64) -> i32,
+    get_min_width: unsafe extern "system" fn(*mut IAvnPolyline, *mut f64) -> i32,
+    set_min_width: unsafe extern "system" fn(*mut IAvnPolyline, f64) -> i32,
+    get_max_width: unsafe extern "system" fn(*mut IAvnPolyline, *mut f64) -> i32,
+    set_max_width: unsafe extern "system" fn(*mut IAvnPolyline, f64) -> i32,
+    get_min_height: unsafe extern "system" fn(*mut IAvnPolyline, *mut f64) -> i32,
+    set_min_height: unsafe extern "system" fn(*mut IAvnPolyline, f64) -> i32,
+    get_max_height: unsafe extern "system" fn(*mut IAvnPolyline, *mut f64) -> i32,
+    set_max_height: unsafe extern "system" fn(*mut IAvnPolyline, f64) -> i32,
+    get_margin: unsafe extern "system" fn(*mut IAvnPolyline, *mut AvnThickness) -> i32,
+    set_margin: unsafe extern "system" fn(*mut IAvnPolyline, AvnThickness) -> i32,
+    get_horizontal_alignment: unsafe extern "system" fn(*mut IAvnPolyline, *mut i32) -> i32,
+    set_horizontal_alignment: unsafe extern "system" fn(*mut IAvnPolyline, i32) -> i32,
+    get_vertical_alignment: unsafe extern "system" fn(*mut IAvnPolyline, *mut i32) -> i32,
+    set_vertical_alignment: unsafe extern "system" fn(*mut IAvnPolyline, i32) -> i32,
+    get_is_enabled: unsafe extern "system" fn(*mut IAvnPolyline, *mut i32) -> i32,
+    set_is_enabled: unsafe extern "system" fn(*mut IAvnPolyline, i32) -> i32,
+    advise_key_down: unsafe extern "system" fn(*mut IAvnPolyline, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
+    unadvise_key_down: unsafe extern "system" fn(*mut IAvnPolyline, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnPolyline, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnPolyline, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnPolyline, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnPolyline, i64) -> i32,
+    get_fill: unsafe extern "system" fn(*mut IAvnPolyline, *mut *mut IAvnBrush) -> i32,
+    set_fill: unsafe extern "system" fn(*mut IAvnPolyline, *mut IAvnBrush) -> i32,
+    get_stretch: unsafe extern "system" fn(*mut IAvnPolyline, *mut i32) -> i32,
+    set_stretch: unsafe extern "system" fn(*mut IAvnPolyline, i32) -> i32,
+    get_stroke: unsafe extern "system" fn(*mut IAvnPolyline, *mut *mut IAvnBrush) -> i32,
+    set_stroke: unsafe extern "system" fn(*mut IAvnPolyline, *mut IAvnBrush) -> i32,
+    get_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnPolyline, *mut f64) -> i32,
+    set_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnPolyline, f64) -> i32,
+    get_stroke_thickness: unsafe extern "system" fn(*mut IAvnPolyline, *mut f64) -> i32,
+    set_stroke_thickness: unsafe extern "system" fn(*mut IAvnPolyline, f64) -> i32,
+    get_stroke_line_cap: unsafe extern "system" fn(*mut IAvnPolyline, *mut i32) -> i32,
+    set_stroke_line_cap: unsafe extern "system" fn(*mut IAvnPolyline, i32) -> i32,
+    get_stroke_join: unsafe extern "system" fn(*mut IAvnPolyline, *mut i32) -> i32,
+    set_stroke_join: unsafe extern "system" fn(*mut IAvnPolyline, i32) -> i32,
+    get_stroke_miter_limit: unsafe extern "system" fn(*mut IAvnPolyline, *mut f64) -> i32,
+    set_stroke_miter_limit: unsafe extern "system" fn(*mut IAvnPolyline, f64) -> i32,
+    get_fill_rule: unsafe extern "system" fn(*mut IAvnPolyline, *mut i32) -> i32,
+    set_fill_rule: unsafe extern "system" fn(*mut IAvnPolyline, i32) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnPolyline {
+    vtbl: *const IAvnPolylineVtbl,
+}
+
+unsafe impl ComInterface for IAvnPolyline {
+    const IID: Guid = I_AVN_POLYLINE_IID;
+}
+
+impl ComPtr<IAvnPolyline> {
+    pub fn object_id(&self) -> Result<i64> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
+        }
+    }
+    pub fn get_name(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_name)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_name(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_name)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
+        unsafe {
+            let mut value: *mut IAvnStringList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn get_is_visible(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_visible)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_visible(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_visible)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_opacity(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_opacity)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_margin(&self) -> Result<AvnThickness> {
+        unsafe {
+            let mut value: AvnThickness = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_margin)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_margin(&self, value: AvnThickness) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_margin)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_key_down)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_key_down(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_key_down)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_fill(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_fill)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_fill(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_fill)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stretch(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stretch)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stretch(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stretch)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_stroke(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_dash_offset(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_dash_offset)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_dash_offset(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_dash_offset)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_thickness(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_thickness)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_thickness(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_thickness)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_line_cap(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_line_cap)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_line_cap(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_line_cap)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_join(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_join)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_join(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_join)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_miter_limit(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_miter_limit)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_miter_limit(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_miter_limit)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_fill_rule(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_fill_rule)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_fill_rule(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_fill_rule)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+}
+
+pub const I_AVN_RECTANGLE_IID: Guid = Guid { data1: 0xA1B1A0A3, data2: 0x54E4, data3: 0x59E2, data4: [0xA3, 0x16, 0xD2, 0xA3, 0x5B, 0xE8, 0xE0, 0x63] };
+
+#[repr(C)]
+struct IAvnRectangleVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_object_id: unsafe extern "system" fn(*mut IAvnRectangle, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnRectangle, *mut i64) -> i32,
+    get_name: unsafe extern "system" fn(*mut IAvnRectangle, *mut *mut u16) -> i32,
+    set_name: unsafe extern "system" fn(*mut IAvnRectangle, *mut u16) -> i32,
+    get_classes: unsafe extern "system" fn(*mut IAvnRectangle, *mut *mut IAvnStringList) -> i32,
+    get_is_visible: unsafe extern "system" fn(*mut IAvnRectangle, *mut i32) -> i32,
+    set_is_visible: unsafe extern "system" fn(*mut IAvnRectangle, i32) -> i32,
+    get_opacity: unsafe extern "system" fn(*mut IAvnRectangle, *mut f64) -> i32,
+    set_opacity: unsafe extern "system" fn(*mut IAvnRectangle, f64) -> i32,
+    get_width: unsafe extern "system" fn(*mut IAvnRectangle, *mut f64) -> i32,
+    set_width: unsafe extern "system" fn(*mut IAvnRectangle, f64) -> i32,
+    get_height: unsafe extern "system" fn(*mut IAvnRectangle, *mut f64) -> i32,
+    set_height: unsafe extern "system" fn(*mut IAvnRectangle, f64) -> i32,
+    get_min_width: unsafe extern "system" fn(*mut IAvnRectangle, *mut f64) -> i32,
+    set_min_width: unsafe extern "system" fn(*mut IAvnRectangle, f64) -> i32,
+    get_max_width: unsafe extern "system" fn(*mut IAvnRectangle, *mut f64) -> i32,
+    set_max_width: unsafe extern "system" fn(*mut IAvnRectangle, f64) -> i32,
+    get_min_height: unsafe extern "system" fn(*mut IAvnRectangle, *mut f64) -> i32,
+    set_min_height: unsafe extern "system" fn(*mut IAvnRectangle, f64) -> i32,
+    get_max_height: unsafe extern "system" fn(*mut IAvnRectangle, *mut f64) -> i32,
+    set_max_height: unsafe extern "system" fn(*mut IAvnRectangle, f64) -> i32,
+    get_margin: unsafe extern "system" fn(*mut IAvnRectangle, *mut AvnThickness) -> i32,
+    set_margin: unsafe extern "system" fn(*mut IAvnRectangle, AvnThickness) -> i32,
+    get_horizontal_alignment: unsafe extern "system" fn(*mut IAvnRectangle, *mut i32) -> i32,
+    set_horizontal_alignment: unsafe extern "system" fn(*mut IAvnRectangle, i32) -> i32,
+    get_vertical_alignment: unsafe extern "system" fn(*mut IAvnRectangle, *mut i32) -> i32,
+    set_vertical_alignment: unsafe extern "system" fn(*mut IAvnRectangle, i32) -> i32,
+    get_is_enabled: unsafe extern "system" fn(*mut IAvnRectangle, *mut i32) -> i32,
+    set_is_enabled: unsafe extern "system" fn(*mut IAvnRectangle, i32) -> i32,
+    advise_key_down: unsafe extern "system" fn(*mut IAvnRectangle, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
+    unadvise_key_down: unsafe extern "system" fn(*mut IAvnRectangle, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnRectangle, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnRectangle, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnRectangle, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnRectangle, i64) -> i32,
+    get_fill: unsafe extern "system" fn(*mut IAvnRectangle, *mut *mut IAvnBrush) -> i32,
+    set_fill: unsafe extern "system" fn(*mut IAvnRectangle, *mut IAvnBrush) -> i32,
+    get_stretch: unsafe extern "system" fn(*mut IAvnRectangle, *mut i32) -> i32,
+    set_stretch: unsafe extern "system" fn(*mut IAvnRectangle, i32) -> i32,
+    get_stroke: unsafe extern "system" fn(*mut IAvnRectangle, *mut *mut IAvnBrush) -> i32,
+    set_stroke: unsafe extern "system" fn(*mut IAvnRectangle, *mut IAvnBrush) -> i32,
+    get_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnRectangle, *mut f64) -> i32,
+    set_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnRectangle, f64) -> i32,
+    get_stroke_thickness: unsafe extern "system" fn(*mut IAvnRectangle, *mut f64) -> i32,
+    set_stroke_thickness: unsafe extern "system" fn(*mut IAvnRectangle, f64) -> i32,
+    get_stroke_line_cap: unsafe extern "system" fn(*mut IAvnRectangle, *mut i32) -> i32,
+    set_stroke_line_cap: unsafe extern "system" fn(*mut IAvnRectangle, i32) -> i32,
+    get_stroke_join: unsafe extern "system" fn(*mut IAvnRectangle, *mut i32) -> i32,
+    set_stroke_join: unsafe extern "system" fn(*mut IAvnRectangle, i32) -> i32,
+    get_stroke_miter_limit: unsafe extern "system" fn(*mut IAvnRectangle, *mut f64) -> i32,
+    set_stroke_miter_limit: unsafe extern "system" fn(*mut IAvnRectangle, f64) -> i32,
+    get_radius_x: unsafe extern "system" fn(*mut IAvnRectangle, *mut f64) -> i32,
+    set_radius_x: unsafe extern "system" fn(*mut IAvnRectangle, f64) -> i32,
+    get_radius_y: unsafe extern "system" fn(*mut IAvnRectangle, *mut f64) -> i32,
+    set_radius_y: unsafe extern "system" fn(*mut IAvnRectangle, f64) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnRectangle {
+    vtbl: *const IAvnRectangleVtbl,
+}
+
+unsafe impl ComInterface for IAvnRectangle {
+    const IID: Guid = I_AVN_RECTANGLE_IID;
+}
+
+impl ComPtr<IAvnRectangle> {
+    pub fn object_id(&self) -> Result<i64> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
+        }
+    }
+    pub fn get_name(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_name)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_name(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_name)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
+        unsafe {
+            let mut value: *mut IAvnStringList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn get_is_visible(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_visible)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_visible(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_visible)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_opacity(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_opacity)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_margin(&self) -> Result<AvnThickness> {
+        unsafe {
+            let mut value: AvnThickness = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_margin)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_margin(&self, value: AvnThickness) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_margin)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_key_down)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_key_down(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_key_down)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_fill(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_fill)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_fill(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_fill)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stretch(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stretch)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stretch(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stretch)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_stroke(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_dash_offset(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_dash_offset)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_dash_offset(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_dash_offset)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_thickness(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_thickness)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_thickness(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_thickness)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_line_cap(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_line_cap)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_line_cap(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_line_cap)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_join(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_join)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_join(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_join)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_miter_limit(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_miter_limit)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_miter_limit(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_miter_limit)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_radius_x(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_radius_x)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_radius_x(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_radius_x)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_radius_y(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_radius_y)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_radius_y(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_radius_y)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+}
+
+pub const I_AVN_SECTOR_IID: Guid = Guid { data1: 0x62878E00, data2: 0x6F7E, data3: 0x5EA0, data4: [0xA9, 0x4C, 0xD8, 0x57, 0xB6, 0x02, 0x27, 0x34] };
+
+#[repr(C)]
+struct IAvnSectorVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_object_id: unsafe extern "system" fn(*mut IAvnSector, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnSector, *mut i64) -> i32,
+    get_name: unsafe extern "system" fn(*mut IAvnSector, *mut *mut u16) -> i32,
+    set_name: unsafe extern "system" fn(*mut IAvnSector, *mut u16) -> i32,
+    get_classes: unsafe extern "system" fn(*mut IAvnSector, *mut *mut IAvnStringList) -> i32,
+    get_is_visible: unsafe extern "system" fn(*mut IAvnSector, *mut i32) -> i32,
+    set_is_visible: unsafe extern "system" fn(*mut IAvnSector, i32) -> i32,
+    get_opacity: unsafe extern "system" fn(*mut IAvnSector, *mut f64) -> i32,
+    set_opacity: unsafe extern "system" fn(*mut IAvnSector, f64) -> i32,
+    get_width: unsafe extern "system" fn(*mut IAvnSector, *mut f64) -> i32,
+    set_width: unsafe extern "system" fn(*mut IAvnSector, f64) -> i32,
+    get_height: unsafe extern "system" fn(*mut IAvnSector, *mut f64) -> i32,
+    set_height: unsafe extern "system" fn(*mut IAvnSector, f64) -> i32,
+    get_min_width: unsafe extern "system" fn(*mut IAvnSector, *mut f64) -> i32,
+    set_min_width: unsafe extern "system" fn(*mut IAvnSector, f64) -> i32,
+    get_max_width: unsafe extern "system" fn(*mut IAvnSector, *mut f64) -> i32,
+    set_max_width: unsafe extern "system" fn(*mut IAvnSector, f64) -> i32,
+    get_min_height: unsafe extern "system" fn(*mut IAvnSector, *mut f64) -> i32,
+    set_min_height: unsafe extern "system" fn(*mut IAvnSector, f64) -> i32,
+    get_max_height: unsafe extern "system" fn(*mut IAvnSector, *mut f64) -> i32,
+    set_max_height: unsafe extern "system" fn(*mut IAvnSector, f64) -> i32,
+    get_margin: unsafe extern "system" fn(*mut IAvnSector, *mut AvnThickness) -> i32,
+    set_margin: unsafe extern "system" fn(*mut IAvnSector, AvnThickness) -> i32,
+    get_horizontal_alignment: unsafe extern "system" fn(*mut IAvnSector, *mut i32) -> i32,
+    set_horizontal_alignment: unsafe extern "system" fn(*mut IAvnSector, i32) -> i32,
+    get_vertical_alignment: unsafe extern "system" fn(*mut IAvnSector, *mut i32) -> i32,
+    set_vertical_alignment: unsafe extern "system" fn(*mut IAvnSector, i32) -> i32,
+    get_is_enabled: unsafe extern "system" fn(*mut IAvnSector, *mut i32) -> i32,
+    set_is_enabled: unsafe extern "system" fn(*mut IAvnSector, i32) -> i32,
+    advise_key_down: unsafe extern "system" fn(*mut IAvnSector, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
+    unadvise_key_down: unsafe extern "system" fn(*mut IAvnSector, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnSector, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnSector, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnSector, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnSector, i64) -> i32,
+    get_fill: unsafe extern "system" fn(*mut IAvnSector, *mut *mut IAvnBrush) -> i32,
+    set_fill: unsafe extern "system" fn(*mut IAvnSector, *mut IAvnBrush) -> i32,
+    get_stretch: unsafe extern "system" fn(*mut IAvnSector, *mut i32) -> i32,
+    set_stretch: unsafe extern "system" fn(*mut IAvnSector, i32) -> i32,
+    get_stroke: unsafe extern "system" fn(*mut IAvnSector, *mut *mut IAvnBrush) -> i32,
+    set_stroke: unsafe extern "system" fn(*mut IAvnSector, *mut IAvnBrush) -> i32,
+    get_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnSector, *mut f64) -> i32,
+    set_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnSector, f64) -> i32,
+    get_stroke_thickness: unsafe extern "system" fn(*mut IAvnSector, *mut f64) -> i32,
+    set_stroke_thickness: unsafe extern "system" fn(*mut IAvnSector, f64) -> i32,
+    get_stroke_line_cap: unsafe extern "system" fn(*mut IAvnSector, *mut i32) -> i32,
+    set_stroke_line_cap: unsafe extern "system" fn(*mut IAvnSector, i32) -> i32,
+    get_stroke_join: unsafe extern "system" fn(*mut IAvnSector, *mut i32) -> i32,
+    set_stroke_join: unsafe extern "system" fn(*mut IAvnSector, i32) -> i32,
+    get_stroke_miter_limit: unsafe extern "system" fn(*mut IAvnSector, *mut f64) -> i32,
+    set_stroke_miter_limit: unsafe extern "system" fn(*mut IAvnSector, f64) -> i32,
+    get_start_angle: unsafe extern "system" fn(*mut IAvnSector, *mut f64) -> i32,
+    set_start_angle: unsafe extern "system" fn(*mut IAvnSector, f64) -> i32,
+    get_sweep_angle: unsafe extern "system" fn(*mut IAvnSector, *mut f64) -> i32,
+    set_sweep_angle: unsafe extern "system" fn(*mut IAvnSector, f64) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnSector {
+    vtbl: *const IAvnSectorVtbl,
+}
+
+unsafe impl ComInterface for IAvnSector {
+    const IID: Guid = I_AVN_SECTOR_IID;
+}
+
+impl ComPtr<IAvnSector> {
+    pub fn object_id(&self) -> Result<i64> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
+        }
+    }
+    pub fn get_name(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_name)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_name(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_name)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
+        unsafe {
+            let mut value: *mut IAvnStringList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn get_is_visible(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_visible)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_visible(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_visible)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_opacity(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_opacity)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_margin(&self) -> Result<AvnThickness> {
+        unsafe {
+            let mut value: AvnThickness = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_margin)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_margin(&self, value: AvnThickness) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_margin)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_key_down)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_key_down(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_key_down)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_fill(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_fill)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_fill(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_fill)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stretch(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stretch)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stretch(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stretch)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_stroke(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_dash_offset(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_dash_offset)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_dash_offset(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_dash_offset)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_thickness(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_thickness)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_thickness(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_thickness)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_line_cap(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_line_cap)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_line_cap(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_line_cap)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_join(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_join)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_join(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_join)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_miter_limit(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_miter_limit)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_miter_limit(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_miter_limit)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_start_angle(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_start_angle)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_start_angle(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_start_angle)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_sweep_angle(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_sweep_angle)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_sweep_angle(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_sweep_angle)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+}
+
+pub const I_AVN_SHAPE_IID: Guid = Guid { data1: 0x9A7088C5, data2: 0x7AF4, data3: 0x525D, data4: [0x94, 0xF1, 0x99, 0x99, 0x18, 0x33, 0x52, 0x66] };
+
+#[repr(C)]
+struct IAvnShapeVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_object_id: unsafe extern "system" fn(*mut IAvnShape, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnShape, *mut i64) -> i32,
+    get_name: unsafe extern "system" fn(*mut IAvnShape, *mut *mut u16) -> i32,
+    set_name: unsafe extern "system" fn(*mut IAvnShape, *mut u16) -> i32,
+    get_classes: unsafe extern "system" fn(*mut IAvnShape, *mut *mut IAvnStringList) -> i32,
+    get_is_visible: unsafe extern "system" fn(*mut IAvnShape, *mut i32) -> i32,
+    set_is_visible: unsafe extern "system" fn(*mut IAvnShape, i32) -> i32,
+    get_opacity: unsafe extern "system" fn(*mut IAvnShape, *mut f64) -> i32,
+    set_opacity: unsafe extern "system" fn(*mut IAvnShape, f64) -> i32,
+    get_width: unsafe extern "system" fn(*mut IAvnShape, *mut f64) -> i32,
+    set_width: unsafe extern "system" fn(*mut IAvnShape, f64) -> i32,
+    get_height: unsafe extern "system" fn(*mut IAvnShape, *mut f64) -> i32,
+    set_height: unsafe extern "system" fn(*mut IAvnShape, f64) -> i32,
+    get_min_width: unsafe extern "system" fn(*mut IAvnShape, *mut f64) -> i32,
+    set_min_width: unsafe extern "system" fn(*mut IAvnShape, f64) -> i32,
+    get_max_width: unsafe extern "system" fn(*mut IAvnShape, *mut f64) -> i32,
+    set_max_width: unsafe extern "system" fn(*mut IAvnShape, f64) -> i32,
+    get_min_height: unsafe extern "system" fn(*mut IAvnShape, *mut f64) -> i32,
+    set_min_height: unsafe extern "system" fn(*mut IAvnShape, f64) -> i32,
+    get_max_height: unsafe extern "system" fn(*mut IAvnShape, *mut f64) -> i32,
+    set_max_height: unsafe extern "system" fn(*mut IAvnShape, f64) -> i32,
+    get_margin: unsafe extern "system" fn(*mut IAvnShape, *mut AvnThickness) -> i32,
+    set_margin: unsafe extern "system" fn(*mut IAvnShape, AvnThickness) -> i32,
+    get_horizontal_alignment: unsafe extern "system" fn(*mut IAvnShape, *mut i32) -> i32,
+    set_horizontal_alignment: unsafe extern "system" fn(*mut IAvnShape, i32) -> i32,
+    get_vertical_alignment: unsafe extern "system" fn(*mut IAvnShape, *mut i32) -> i32,
+    set_vertical_alignment: unsafe extern "system" fn(*mut IAvnShape, i32) -> i32,
+    get_is_enabled: unsafe extern "system" fn(*mut IAvnShape, *mut i32) -> i32,
+    set_is_enabled: unsafe extern "system" fn(*mut IAvnShape, i32) -> i32,
+    advise_key_down: unsafe extern "system" fn(*mut IAvnShape, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
+    unadvise_key_down: unsafe extern "system" fn(*mut IAvnShape, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnShape, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnShape, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnShape, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnShape, i64) -> i32,
+    get_fill: unsafe extern "system" fn(*mut IAvnShape, *mut *mut IAvnBrush) -> i32,
+    set_fill: unsafe extern "system" fn(*mut IAvnShape, *mut IAvnBrush) -> i32,
+    get_stretch: unsafe extern "system" fn(*mut IAvnShape, *mut i32) -> i32,
+    set_stretch: unsafe extern "system" fn(*mut IAvnShape, i32) -> i32,
+    get_stroke: unsafe extern "system" fn(*mut IAvnShape, *mut *mut IAvnBrush) -> i32,
+    set_stroke: unsafe extern "system" fn(*mut IAvnShape, *mut IAvnBrush) -> i32,
+    get_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnShape, *mut f64) -> i32,
+    set_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnShape, f64) -> i32,
+    get_stroke_thickness: unsafe extern "system" fn(*mut IAvnShape, *mut f64) -> i32,
+    set_stroke_thickness: unsafe extern "system" fn(*mut IAvnShape, f64) -> i32,
+    get_stroke_line_cap: unsafe extern "system" fn(*mut IAvnShape, *mut i32) -> i32,
+    set_stroke_line_cap: unsafe extern "system" fn(*mut IAvnShape, i32) -> i32,
+    get_stroke_join: unsafe extern "system" fn(*mut IAvnShape, *mut i32) -> i32,
+    set_stroke_join: unsafe extern "system" fn(*mut IAvnShape, i32) -> i32,
+    get_stroke_miter_limit: unsafe extern "system" fn(*mut IAvnShape, *mut f64) -> i32,
+    set_stroke_miter_limit: unsafe extern "system" fn(*mut IAvnShape, f64) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnShape {
+    vtbl: *const IAvnShapeVtbl,
+}
+
+unsafe impl ComInterface for IAvnShape {
+    const IID: Guid = I_AVN_SHAPE_IID;
+}
+
+impl ComPtr<IAvnShape> {
+    pub fn object_id(&self) -> Result<i64> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
+        }
+    }
+    pub fn get_name(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_name)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_name(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_name)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
+        unsafe {
+            let mut value: *mut IAvnStringList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn get_is_visible(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_visible)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_visible(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_visible)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_opacity(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_opacity)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_margin(&self) -> Result<AvnThickness> {
+        unsafe {
+            let mut value: AvnThickness = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_margin)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_margin(&self, value: AvnThickness) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_margin)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_key_down)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_key_down(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_key_down)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_fill(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_fill)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_fill(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_fill)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stretch(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stretch)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stretch(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stretch)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_stroke(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_dash_offset(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_dash_offset)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_dash_offset(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_dash_offset)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_thickness(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_thickness)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_thickness(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_thickness)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_line_cap(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_line_cap)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_line_cap(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_line_cap)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_join(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_join)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_join(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_join)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_stroke_miter_limit(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_miter_limit)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_miter_limit(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_miter_limit)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+}
+
 pub const I_AVN_SLIDER_IID: Guid = Guid { data1: 0xBEB1A630, data2: 0x805B, data3: 0x5A11, data4: [0x8F, 0x1C, 0x18, 0x17, 0xBD, 0x9F, 0xE5, 0x15] };
 
 #[repr(C)]
@@ -37347,13 +41366,14 @@ impl ComPtr<IAvnToolTipStatics> {
     }
 }
 
-pub const IAVN_CONTROL_FACTORY_IID: Guid = Guid { data1: 0xE8C61827, data2: 0x3DEA, data3: 0x5DA1, data4: [0xB2, 0xF2, 0xB5, 0x3C, 0x35, 0xB6, 0x7E, 0x65] };
+pub const IAVN_CONTROL_FACTORY_IID: Guid = Guid { data1: 0x56E24666, data2: 0xEFE8, data3: 0x5AB6, data4: [0x97, 0xBD, 0x2A, 0x32, 0xB9, 0xC2, 0x13, 0x95] };
 
 #[repr(C)]
 struct IAvnControlFactoryVtbl {
     query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    create_arc: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnArc) -> i32,
     create_auto_complete_box: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnAutoCompleteBox) -> i32,
     create_avalonia_object: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnAvaloniaObject) -> i32,
     create_border: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnBorder) -> i32,
@@ -37373,6 +41393,7 @@ struct IAvnControlFactoryVtbl {
     create_decorator: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnDecorator) -> i32,
     create_dock_panel: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnDockPanel) -> i32,
     create_drop_down_button: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnDropDownButton) -> i32,
+    create_ellipse: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnEllipse) -> i32,
     create_expander: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnExpander) -> i32,
     create_flex_panel: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnFlexPanel) -> i32,
     create_flyout: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnFlyout) -> i32,
@@ -37387,6 +41408,7 @@ struct IAvnControlFactoryVtbl {
     create_items_control: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnItemsControl) -> i32,
     create_label: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnLabel) -> i32,
     create_layout_transform_control: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnLayoutTransformControl) -> i32,
+    create_line: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnLine) -> i32,
     create_list_box: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnListBox) -> i32,
     create_list_box_item: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnListBoxItem) -> i32,
     create_masked_text_box: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnMaskedTextBox) -> i32,
@@ -37395,11 +41417,16 @@ struct IAvnControlFactoryVtbl {
     create_menu_item: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnMenuItem) -> i32,
     create_numeric_up_down: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnNumericUpDown) -> i32,
     create_panel: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnPanel) -> i32,
+    create_path: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnPath) -> i32,
+    create_polygon: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnPolygon) -> i32,
+    create_polyline: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnPolyline) -> i32,
     create_progress_bar: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnProgressBar) -> i32,
     create_radio_button: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnRadioButton) -> i32,
+    create_rectangle: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnRectangle) -> i32,
     create_relative_panel: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnRelativePanel) -> i32,
     create_repeat_button: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnRepeatButton) -> i32,
     create_scroll_viewer: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnScrollViewer) -> i32,
+    create_sector: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnSector) -> i32,
     create_selectable_text_block: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnSelectableTextBlock) -> i32,
     create_selecting_items_control: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnSelectingItemsControl) -> i32,
     create_separator: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnSeparator) -> i32,
@@ -37445,6 +41472,14 @@ unsafe impl ComInterface for IAvnControlFactory {
 }
 
 impl ComPtr<IAvnControlFactory> {
+    pub fn create_arc(&self) -> Result<ComPtr<IAvnArc>> {
+        unsafe {
+            let mut value = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_arc)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_projected_raw(value)
+        }
+    }
     pub fn create_auto_complete_box(&self) -> Result<ComPtr<IAvnAutoCompleteBox>> {
         unsafe {
             let mut value = ptr::null_mut();
@@ -37597,6 +41632,14 @@ impl ComPtr<IAvnControlFactory> {
             ComPtr::from_projected_raw(value)
         }
     }
+    pub fn create_ellipse(&self) -> Result<ComPtr<IAvnEllipse>> {
+        unsafe {
+            let mut value = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_ellipse)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_projected_raw(value)
+        }
+    }
     pub fn create_expander(&self) -> Result<ComPtr<IAvnExpander>> {
         unsafe {
             let mut value = ptr::null_mut();
@@ -37709,6 +41752,14 @@ impl ComPtr<IAvnControlFactory> {
             ComPtr::from_projected_raw(value)
         }
     }
+    pub fn create_line(&self) -> Result<ComPtr<IAvnLine>> {
+        unsafe {
+            let mut value = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_line)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_projected_raw(value)
+        }
+    }
     pub fn create_list_box(&self) -> Result<ComPtr<IAvnListBox>> {
         unsafe {
             let mut value = ptr::null_mut();
@@ -37773,6 +41824,30 @@ impl ComPtr<IAvnControlFactory> {
             ComPtr::from_projected_raw(value)
         }
     }
+    pub fn create_path(&self) -> Result<ComPtr<IAvnPath>> {
+        unsafe {
+            let mut value = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_path)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_projected_raw(value)
+        }
+    }
+    pub fn create_polygon(&self) -> Result<ComPtr<IAvnPolygon>> {
+        unsafe {
+            let mut value = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_polygon)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_projected_raw(value)
+        }
+    }
+    pub fn create_polyline(&self) -> Result<ComPtr<IAvnPolyline>> {
+        unsafe {
+            let mut value = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_polyline)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_projected_raw(value)
+        }
+    }
     pub fn create_progress_bar(&self) -> Result<ComPtr<IAvnProgressBar>> {
         unsafe {
             let mut value = ptr::null_mut();
@@ -37785,6 +41860,14 @@ impl ComPtr<IAvnControlFactory> {
         unsafe {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_radio_button)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_projected_raw(value)
+        }
+    }
+    pub fn create_rectangle(&self) -> Result<ComPtr<IAvnRectangle>> {
+        unsafe {
+            let mut value = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_rectangle)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_projected_raw(value)
         }
@@ -37809,6 +41892,14 @@ impl ComPtr<IAvnControlFactory> {
         unsafe {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_scroll_viewer)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_projected_raw(value)
+        }
+    }
+    pub fn create_sector(&self) -> Result<ComPtr<IAvnSector>> {
+        unsafe {
+            let mut value = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_sector)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_projected_raw(value)
         }
