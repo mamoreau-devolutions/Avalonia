@@ -6,9 +6,12 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("52F8C005-341C-543D-A12E-BA0EF6A1EBF4")]
+[Guid("CD81B5F3-C8A2-5C69-86E1-DE1A5A47F9A1")]
 public partial interface IAvnProgressBar : IAvnRangeBase
 {
+    [PreserveSig]
+    int GetPercentage(out double value);
+
     [PreserveSig]
     int GetIsIndeterminate(out int value);
 
@@ -1210,6 +1213,22 @@ public sealed partial class AvnProgressBar : IAvnProgressBar
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
             subscription.Unsubscribe();
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetPercentage(out double value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.Percentage;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

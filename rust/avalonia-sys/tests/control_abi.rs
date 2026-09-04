@@ -55,6 +55,11 @@ fn completeness_members_are_published_on_the_type_that_declares_them() {
         "*scroll_to_line_with_int32)(IAvnTextBox* self, int32_t line_index)",
         "*select_all)(IAvnSelectableTextBlock* self)",
         "*set_selection_brush)(IAvnSelectableTextBlock* self, IAvnBrush* value)",
+        "*next)(IAvnCarousel* self)",
+        "*previous)(IAvnCarousel* self)",
+        "*get_percentage)(IAvnProgressBar* self, double* value)",
+        "*get_clip_to_bounds_radius)(IAvnBorder* self, AvnCornerRadius* value)",
+        "*request_refresh)(IAvnRefreshContainer* self)",
         "*set_flyout)(IAvnButton* self, IAvnFlyoutBase* value)",
         "*set_flyout)(IAvnSplitButton* self, IAvnFlyoutBase* value)",
         "*open)(IAvnMenuItem* self)",
@@ -97,7 +102,7 @@ fn widened_interfaces_publish_abi_version_five() {
         "#define I_AVN_TEXT_BOX_ABI_VERSION 7",
         "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 6",
         "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 6",
-        "#define I_AVN_BORDER_ABI_VERSION 4",
+        "#define I_AVN_BORDER_ABI_VERSION 5",
         "#define I_AVN_PANEL_ABI_VERSION 4",
         "#define I_AVN_CONTROL_ABI_VERSION 3",
         "#define I_AVN_AVALONIA_OBJECT_ABI_VERSION 2",
@@ -245,7 +250,7 @@ fn widened_interfaces_republish_under_fresh_iids() {
     );
     assert_eq!(
         format_iid(&I_AVN_BORDER_IID),
-        "A8DE13FB-23AB-59DD-ABD1-000C9EA5693B"
+        "0AEECACB-808C-5572-82FD-56E6D2852470"
     );
     assert_eq!(
         format_iid(&I_AVN_PANEL_IID),

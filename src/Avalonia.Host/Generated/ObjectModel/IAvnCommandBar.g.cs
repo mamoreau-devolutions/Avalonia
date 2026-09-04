@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("C64B34C6-D8FF-5353-8F27-786648308DDF")]
+[Guid("0D3A7C7F-D9CD-58D6-9924-CA8A314E1609")]
 public partial interface IAvnCommandBar : IAvnTemplatedControl
 {
     [PreserveSig]
@@ -62,6 +62,12 @@ public partial interface IAvnCommandBar : IAvnTemplatedControl
 
     [PreserveSig]
     int SetItemWidthCollapsed(double value);
+
+    [PreserveSig]
+    int GetHasSecondaryCommands(out int value);
+
+    [PreserveSig]
+    int GetIsOverflowButtonVisible(out int value);
 
 }
 
@@ -1316,6 +1322,38 @@ public sealed partial class AvnCommandBar : IAvnCommandBar
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.ItemWidthCollapsed = value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetHasSecondaryCommands(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.HasSecondaryCommands ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetIsOverflowButtonVisible(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.IsOverflowButtonVisible ? 1 : 0;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

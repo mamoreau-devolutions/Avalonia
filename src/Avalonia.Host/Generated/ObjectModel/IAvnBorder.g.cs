@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("A8DE13FB-23AB-59DD-ABD1-000C9EA5693B")]
+[Guid("0AEECACB-808C-5572-82FD-56E6D2852470")]
 public partial interface IAvnBorder : IAvnDecorator
 {
     [PreserveSig]
@@ -38,6 +38,9 @@ public partial interface IAvnBorder : IAvnDecorator
 
     [PreserveSig]
     int SetCornerRadius(AvnCornerRadius value);
+
+    [PreserveSig]
+    int GetClipToBoundsRadius(out AvnCornerRadius value);
 
 }
 
@@ -858,6 +861,22 @@ public sealed partial class AvnBorder : IAvnBorder
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.CornerRadius = value.ToAvalonia();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetClipToBoundsRadius(out AvnCornerRadius value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnCornerRadius.FromAvalonia(_value.ClipToBoundsRadius);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

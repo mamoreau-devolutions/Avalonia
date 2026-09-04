@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("D4E6A341-91CD-5AB3-9421-C60F94A397DF")]
+[Guid("75BC20DD-1348-5A06-9015-F8565E44732F")]
 public partial interface IAvnRefreshContainer : IAvnContentControl
 {
     [PreserveSig]
@@ -20,6 +20,9 @@ public partial interface IAvnRefreshContainer : IAvnContentControl
 
     [PreserveSig]
     int SetPullDirection(int value);
+
+    [PreserveSig]
+    int RequestRefresh();
 
 }
 
@@ -1150,6 +1153,21 @@ public sealed partial class AvnRefreshContainer : IAvnRefreshContainer
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.PullDirection = (global::Avalonia.Input.PullDirection)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int RequestRefresh()
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.RequestRefresh();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

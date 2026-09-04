@@ -287,17 +287,23 @@ public class ClrTypeExtractorTests
         // Border and Panel grew slots in the chrome wave and nothing since has moved them,
         // so they stay on their version 4 IIDs. TemplatedControl and TextBlock moved in wave M.
         Assert.All(
-            new[]
-            {
-                "IAvnBorder", "IAvnPanel", "IAvnCanvas", "IAvnDockPanel",
-                "IAvnStackPanel",
-            },
+            new[] { "IAvnPanel", "IAvnCanvas", "IAvnDockPanel" },
             name =>
             {
                 var type = Type(ir, name);
                 Assert.Equal(4, type.AbiVersion);
                 Assert.Equal(
                     ClrTypeExtractor.CreateDeterministicIid(type.FullName, 4),
+                    type.Iid);
+            });
+        Assert.All(
+            new[] { "IAvnBorder", "IAvnStackPanel" },
+            name =>
+            {
+                var type = Type(ir, name);
+                Assert.Equal(5, type.AbiVersion);
+                Assert.Equal(
+                    ClrTypeExtractor.CreateDeterministicIid(type.FullName, 5),
                     type.Iid);
             });
 
@@ -489,13 +495,23 @@ public class ClrTypeExtractorTests
                 Assert.Equal(2, type.AbiVersion);
             });
         Assert.All(
-            new[] { "IAvnSplitView", "IAvnDatePicker", "IAvnTimePicker" },
+            new[] { "IAvnSplitView" },
             name =>
             {
                 var type = Type(ir, name);
                 Assert.Equal(2, type.AbiVersion);
                 Assert.Equal(
                     ClrTypeExtractor.CreateDeterministicIid(type.FullName, 2),
+                    type.Iid);
+            });
+        Assert.All(
+            new[] { "IAvnDatePicker", "IAvnTimePicker" },
+            name =>
+            {
+                var type = Type(ir, name);
+                Assert.Equal(3, type.AbiVersion);
+                Assert.Equal(
+                    ClrTypeExtractor.CreateDeterministicIid(type.FullName, 3),
                     type.Iid);
             });
         Assert.All(
@@ -1472,7 +1488,7 @@ public class ClrTypeExtractorTests
             name => Assert.Contains(textBlock.Properties, p => p.Name == name));
 
         Assert.Equal(3, Type(ir, "IAvnSelectableTextBlock").AbiVersion);
-        Assert.Equal(4, Type(ir, "IAvnBorder").AbiVersion);
+        Assert.Equal(5, Type(ir, "IAvnBorder").AbiVersion);
         Assert.DoesNotContain(textBlock.Properties, p => p.Name == "TextTrimming");
         Assert.Equal(13, ir.FactoryAbiVersion);
     }
@@ -1596,6 +1612,26 @@ public class ClrTypeExtractorTests
         Assert.Equal(7, textBox.AbiVersion);
         Assert.Contains(textBox.Methods, m => m.ManagedName == "ScrollToLine");
         Assert.Equal(4, Type(ir, "IAvnMaskedTextBox").AbiVersion);
+        Assert.Equal(13, ir.FactoryAbiVersion);
+    }
+
+    [Fact]
+    public void Leaf_leftovers_project_marshallable_scalars_and_commands()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+        Assert.Equal(3, Type(ir, "IAvnCommandBar").AbiVersion);
+        Assert.Contains(Type(ir, "IAvnCommandBar").Properties, p => p.Name == "HasSecondaryCommands");
+        Assert.Equal(4, Type(ir, "IAvnCarousel").AbiVersion);
+        Assert.Contains(Type(ir, "IAvnCarousel").Methods, m => m.Name == "Next");
+        Assert.Equal(8, Type(ir, "IAvnComboBox").AbiVersion);
+        Assert.Equal(3, Type(ir, "IAvnDatePicker").AbiVersion);
+        Assert.Contains(Type(ir, "IAvnDatePicker").Properties, p => p.Name == "VerticalContentAlignment");
+        Assert.Equal(4, Type(ir, "IAvnContextMenu").AbiVersion);
+        Assert.Equal(6, Type(ir, "IAvnProgressBar").AbiVersion);
+        Assert.Contains(Type(ir, "IAvnProgressBar").Properties, p => p.Name == "Percentage");
+        Assert.Equal(5, Type(ir, "IAvnStackPanel").AbiVersion);
+        Assert.Equal(5, Type(ir, "IAvnBorder").AbiVersion);
+        Assert.Contains(Type(ir, "IAvnBorder").Properties, p => p.Name == "ClipToBoundsRadius");
         Assert.Equal(13, ir.FactoryAbiVersion);
     }
 

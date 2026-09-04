@@ -52,7 +52,7 @@ fn only_grid_moved_to_abi_version_five_for_the_definitions() {
         "#define I_AVN_PANEL_ABI_VERSION 4",
         "#define I_AVN_CANVAS_ABI_VERSION 4",
         "#define I_AVN_DOCK_PANEL_ABI_VERSION 4",
-        "#define I_AVN_STACK_PANEL_ABI_VERSION 4",
+        "#define I_AVN_STACK_PANEL_ABI_VERSION 5",
         "#define I_AVN_CONTROL_ABI_VERSION 3",
         "#define I_AVN_AVALONIA_OBJECT_ABI_VERSION 2",
         // The factory mints no definition object, but wave A gave it a creator per new control

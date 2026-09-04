@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("171FE267-B5A4-5EF7-88A9-B6B7FEFEACE9")]
+[Guid("050F3CBB-C77D-53AF-928E-E0673E831B99")]
 public partial interface IAvnCarousel : IAvnSelectingItemsControl
 {
     [PreserveSig]
@@ -23,6 +23,12 @@ public partial interface IAvnCarousel : IAvnSelectingItemsControl
 
     [PreserveSig]
     int GetIsSwiping(out int value);
+
+    [PreserveSig]
+    int Next();
+
+    [PreserveSig]
+    int Previous();
 
 }
 
@@ -1295,6 +1301,36 @@ public sealed partial class AvnCarousel : IAvnCarousel
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.IsSwiping ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int Next()
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Next();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int Previous()
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Previous();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

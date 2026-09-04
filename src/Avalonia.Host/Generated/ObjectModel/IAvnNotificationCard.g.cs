@@ -6,9 +6,12 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("C51C5D6B-71B7-5853-B005-EC9EA3BB5EA0")]
+[Guid("7C93FB71-B26B-569D-A8BC-D6CC92FD10FB")]
 public partial interface IAvnNotificationCard : IAvnContentControl
 {
+    [PreserveSig]
+    int GetIsClosing(out int value);
+
     [PreserveSig]
     int GetIsClosed(out int value);
 
@@ -20,6 +23,9 @@ public partial interface IAvnNotificationCard : IAvnContentControl
 
     [PreserveSig]
     int SetNotificationType(int value);
+
+    [PreserveSig]
+    int Close();
 
 }
 
@@ -1096,6 +1102,22 @@ public sealed partial class AvnNotificationCard : IAvnNotificationCard
         }
     }
 
+    public int GetIsClosing(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.IsClosing ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetIsClosed(out int value)
     {
         value = default!;
@@ -1150,6 +1172,21 @@ public sealed partial class AvnNotificationCard : IAvnNotificationCard
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.NotificationType = (global::Avalonia.Controls.Notifications.NotificationType)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int Close()
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Close();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

@@ -233,6 +233,15 @@ SelectAll, ClearSelection and CopyingToClipboard, and `IAvnTextBox` from 6 to 7
 with ScrollToLine. MaskedTextBox republishes 3 to 4. GetLineCount returns int
 so it stays a gap, as do PasswordChar, TextTrimming and Inlines. Factory 13.
 
+Leaf leftovers close marshallable commands and scalars on existing types without
+widening TemplatedControl or Panel. Carousel gains Next/Previous (3 to 4),
+CommandBar overflow bools (2 to 3), DatePicker/TimePicker VerticalContentAlignment (2 to 3), NotificationCard
+IsClosing/Close (2 to 3), ProgressBar Percentage (5 to 6), RefreshContainer
+RequestRefresh (2 to 3), StackPanel snap bools and Border ClipToBoundsRadius
+(4 to 5), TableViewColumn ActualWidth (1 to 2), PipsPager SelectedIndexChanged
+(2 to 3). ComboBox content alignments stay off ComboBox because it redeclares
+them with `new`. Label.Target is IInputElement. Factory 13.
+
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and
 `IAvnNumericUpDown` each move from 2 to 3. Templates, filters, ItemsSource,

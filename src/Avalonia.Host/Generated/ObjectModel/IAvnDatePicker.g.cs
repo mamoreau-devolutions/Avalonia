@@ -6,9 +6,15 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("C44276B6-6605-5B2C-A50F-F4AAC9DF932C")]
+[Guid("A778954D-1F48-586C-B0BC-7CA1CEA647F2")]
 public partial interface IAvnDatePicker : IAvnTemplatedControl
 {
+    [PreserveSig]
+    int GetVerticalContentAlignment(out int value);
+
+    [PreserveSig]
+    int SetVerticalContentAlignment(int value);
+
     [PreserveSig]
     int GetDayFormat(out string value);
 
@@ -1040,6 +1046,37 @@ public sealed partial class AvnDatePicker : IAvnDatePicker
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Padding = value.ToAvalonia();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetVerticalContentAlignment(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.VerticalContentAlignment;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetVerticalContentAlignment(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.VerticalContentAlignment = (global::Avalonia.Layout.VerticalAlignment)value;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("0C9EDC6F-33B2-56A8-9481-85EC28FF7D5A")]
+[Guid("6951F626-1FAF-527B-B379-ADB367886EEF")]
 public partial interface IAvnStackPanel : IAvnPanel
 {
     [PreserveSig]
@@ -20,6 +20,18 @@ public partial interface IAvnStackPanel : IAvnPanel
 
     [PreserveSig]
     int SetOrientation(int value);
+
+    [PreserveSig]
+    int GetAreHorizontalSnapPointsRegular(out int value);
+
+    [PreserveSig]
+    int SetAreHorizontalSnapPointsRegular(int value);
+
+    [PreserveSig]
+    int GetAreVerticalSnapPointsRegular(out int value);
+
+    [PreserveSig]
+    int SetAreVerticalSnapPointsRegular(int value);
 
 }
 
@@ -732,6 +744,68 @@ public sealed partial class AvnStackPanel : IAvnStackPanel
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Orientation = (global::Avalonia.Layout.Orientation)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetAreHorizontalSnapPointsRegular(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.AreHorizontalSnapPointsRegular ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetAreHorizontalSnapPointsRegular(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.AreHorizontalSnapPointsRegular = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetAreVerticalSnapPointsRegular(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.AreVerticalSnapPointsRegular ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetAreVerticalSnapPointsRegular(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.AreVerticalSnapPointsRegular = value != 0;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

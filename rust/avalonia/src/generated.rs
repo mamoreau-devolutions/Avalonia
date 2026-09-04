@@ -3106,6 +3106,9 @@ impl Border {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn clip_to_bounds_radius(&self) -> Result<CornerRadius> {
+        Ok(self.raw.get_clip_to_bounds_radius()?.into())
+    }
 }
 
 impl AsControl for Border {
@@ -5353,6 +5356,8 @@ impl Carousel {
         Ok(self)
     }
     pub fn is_swiping(&self) -> Result<bool> { Ok(self.raw.get_is_swiping()?) }
+    pub fn next(&self) -> Result<()> { Ok(self.raw.next()?) }
+    pub fn previous(&self) -> Result<()> { Ok(self.raw.previous()?) }
 }
 
 impl AsControl for Carousel {
@@ -6910,6 +6915,8 @@ impl CommandBar {
         self.set_item_width_collapsed(value)?;
         Ok(self)
     }
+    pub fn has_secondary_commands(&self) -> Result<bool> { Ok(self.raw.get_has_secondary_commands()?) }
+    pub fn is_overflow_button_visible(&self) -> Result<bool> { Ok(self.raw.get_is_overflow_button_visible()?) }
 }
 
 impl AsControl for CommandBar {
@@ -9324,6 +9331,17 @@ impl DatePicker {
     }
     pub fn padding(self, value: Thickness) -> Result<Self> {
         self.set_padding(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_content_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_content_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_content_alignment(value as i32)?)
+    }
+    pub fn vertical_content_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_content_alignment(value)?;
         Ok(self)
     }
     pub fn get_day_format(&self) -> Result<String> {
@@ -16772,6 +16790,7 @@ impl NotificationCard {
         self.set_vertical_content_alignment(value)?;
         Ok(self)
     }
+    pub fn is_closing(&self) -> Result<bool> { Ok(self.raw.get_is_closing()?) }
     pub fn get_is_closed(&self) -> Result<bool> { Ok(self.raw.get_is_closed()?) }
     pub fn set_closed(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_closed(value)?)
@@ -16791,6 +16810,7 @@ impl NotificationCard {
         self.set_notification_type(value)?;
         Ok(self)
     }
+    pub fn close(&self) -> Result<()> { Ok(self.raw.close()?) }
 }
 
 impl AsControl for NotificationCard {
@@ -18444,6 +18464,19 @@ impl PipsPager {
     }
     pub fn selected_page_index(self, value: i32) -> Result<Self> {
         self.set_selected_page_index(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_selected_index_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::pips_pager_selected_index_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_selected_index_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_selected_index_changed(subscription_id)))
+    }
+    pub fn on_selected_index_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_selected_index_changed(callback)?);
         Ok(self)
     }
 }
@@ -22230,6 +22263,7 @@ impl ProgressBar {
         scope.retain_subscription(self.subscribe_value_changed(callback)?);
         Ok(self)
     }
+    pub fn percentage(&self) -> Result<f64> { Ok(self.raw.get_percentage()?) }
     pub fn get_is_indeterminate(&self) -> Result<bool> { Ok(self.raw.get_is_indeterminate()?) }
     pub fn set_indeterminate(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_indeterminate(value)?)
@@ -23036,6 +23070,7 @@ impl RefreshContainer {
         self.set_pull_direction(value)?;
         Ok(self)
     }
+    pub fn request_refresh(&self) -> Result<()> { Ok(self.raw.request_refresh()?) }
 }
 
 impl AsControl for RefreshContainer {
@@ -28920,6 +28955,22 @@ impl StackPanel {
         self.set_orientation(value)?;
         Ok(self)
     }
+    pub fn get_are_horizontal_snap_points_regular(&self) -> Result<bool> { Ok(self.raw.get_are_horizontal_snap_points_regular()?) }
+    pub fn set_are_horizontal_snap_points_regular(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_are_horizontal_snap_points_regular(value)?)
+    }
+    pub fn are_horizontal_snap_points_regular(self, value: bool) -> Result<Self> {
+        self.set_are_horizontal_snap_points_regular(value)?;
+        Ok(self)
+    }
+    pub fn get_are_vertical_snap_points_regular(&self) -> Result<bool> { Ok(self.raw.get_are_vertical_snap_points_regular()?) }
+    pub fn set_are_vertical_snap_points_regular(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_are_vertical_snap_points_regular(value)?)
+    }
+    pub fn are_vertical_snap_points_regular(self, value: bool) -> Result<Self> {
+        self.set_are_vertical_snap_points_regular(value)?;
+        Ok(self)
+    }
 }
 
 impl AsControl for StackPanel {
@@ -30448,6 +30499,8 @@ impl TableViewColumn {
         self.set_horizontal_content_alignment(value)?;
         Ok(self)
     }
+    pub fn actual_width(&self) -> Result<f64> { Ok(self.raw.get_actual_width()?) }
+    pub fn can_user_effectively_resize(&self) -> Result<bool> { Ok(self.raw.get_can_user_effectively_resize()?) }
 }
 
 
@@ -32242,6 +32295,17 @@ impl TimePicker {
     }
     pub fn padding(self, value: Thickness) -> Result<Self> {
         self.set_padding(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_content_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_content_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_content_alignment(value as i32)?)
+    }
+    pub fn vertical_content_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_content_alignment(value)?;
         Ok(self)
     }
     pub fn get_minute_increment(&self) -> Result<i32> { Ok(self.raw.get_minute_increment()?) }

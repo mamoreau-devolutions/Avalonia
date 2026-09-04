@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("67152819-6C5E-5AEA-9AC1-14FEEFD7A8CF")]
+[Guid("E17F1C8C-CEA3-51A4-8A06-AD8599CDDA0D")]
 public partial interface IAvnTableViewColumn : IAvnStyledElement
 {
     [PreserveSig]
@@ -50,6 +50,12 @@ public partial interface IAvnTableViewColumn : IAvnStyledElement
 
     [PreserveSig]
     int SetHorizontalContentAlignment(int value);
+
+    [PreserveSig]
+    int GetActualWidth(out double value);
+
+    [PreserveSig]
+    int GetCanUserEffectivelyResize(out int value);
 
 }
 
@@ -351,6 +357,38 @@ public sealed partial class AvnTableViewColumn : IAvnTableViewColumn
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.HorizontalContentAlignment = (global::Avalonia.Layout.HorizontalAlignment)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetActualWidth(out double value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.ActualWidth;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetCanUserEffectivelyResize(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.CanUserEffectivelyResize ? 1 : 0;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

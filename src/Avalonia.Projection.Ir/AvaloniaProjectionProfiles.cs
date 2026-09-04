@@ -23,11 +23,12 @@ public static class AvaloniaProjectionProfiles
             // Everything the completeness wave left alone. None of these sits below
             // ContentControl, Button, ToggleButton, ListBox, ComboBox or Grid, so their
             // flattened vtables are byte-identical to version 4.
-            ["Avalonia.Host.Com.IAvnBorder"] = 4,
+            ["Avalonia.Host.Com.IAvnBorder"] = 5,
+            ["Avalonia.Host.Com.IAvnTableViewColumn"] = 2,
             ["Avalonia.Host.Com.IAvnPanel"] = 4,
             ["Avalonia.Host.Com.IAvnCanvas"] = 4,
             ["Avalonia.Host.Com.IAvnDockPanel"] = 4,
-            ["Avalonia.Host.Com.IAvnStackPanel"] = 4,
+            ["Avalonia.Host.Com.IAvnStackPanel"] = 5,
             // Wave M grew TemplatedControl (fonts/padding) and TextBlock (fonts/wrapping).
             // Nano-COM vtables are flattened, so every interface below TemplatedControl
             // republishes. TextBlock is not under TemplatedControl; SelectableTextBlock is.
@@ -39,7 +40,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnTextBox"] = 7,
             ["Avalonia.Host.Com.IAvnRangeBase"] = 5,
             ["Avalonia.Host.Com.IAvnSlider"] = 5,
-            ["Avalonia.Host.Com.IAvnProgressBar"] = 5,
+            ["Avalonia.Host.Com.IAvnProgressBar"] = 6,
             ["Avalonia.Host.Com.IAvnContentControl"] = 6,
             ["Avalonia.Host.Com.IAvnHeaderedContentControl"] = 6,
             ["Avalonia.Host.Com.IAvnExpander"] = 6,
@@ -60,8 +61,8 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnButtonSpinner"] = 2,
             ["Avalonia.Host.Com.IAvnCalendar"] = 3,
             ["Avalonia.Host.Com.IAvnCalendarDatePicker"] = 3,
-            ["Avalonia.Host.Com.IAvnCarousel"] = 3,
-            ["Avalonia.Host.Com.IAvnCommandBar"] = 2,
+            ["Avalonia.Host.Com.IAvnCarousel"] = 4,
+            ["Avalonia.Host.Com.IAvnCommandBar"] = 3,
             ["Avalonia.Host.Com.IAvnCommandBarButton"] = 3,
             ["Avalonia.Host.Com.IAvnCommandBarSeparator"] = 2,
             ["Avalonia.Host.Com.IAvnCommandBarToggleButton"] = 3,
@@ -70,7 +71,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnPopupFlyoutBase"] = 2,
             ["Avalonia.Host.Com.IAvnFlyout"] = 2,
             ["Avalonia.Host.Com.IAvnMenuFlyout"] = 2,
-            ["Avalonia.Host.Com.IAvnDatePicker"] = 2,
+            ["Avalonia.Host.Com.IAvnDatePicker"] = 3,
             ["Avalonia.Host.Com.IAvnDropDownButton"] = 3,
             ["Avalonia.Host.Com.IAvnGridSplitter"] = 2,
             ["Avalonia.Host.Com.IAvnGroupBox"] = 2,
@@ -83,11 +84,11 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnMenu"] = 3,
             ["Avalonia.Host.Com.IAvnMenuBase"] = 3,
             ["Avalonia.Host.Com.IAvnMenuItem"] = 4,
-            ["Avalonia.Host.Com.IAvnNotificationCard"] = 2,
+            ["Avalonia.Host.Com.IAvnNotificationCard"] = 3,
             ["Avalonia.Host.Com.IAvnNumericUpDown"] = 3,
             ["Avalonia.Host.Com.IAvnPathIcon"] = 2,
-            ["Avalonia.Host.Com.IAvnPipsPager"] = 2,
-            ["Avalonia.Host.Com.IAvnRefreshContainer"] = 2,
+            ["Avalonia.Host.Com.IAvnPipsPager"] = 3,
+            ["Avalonia.Host.Com.IAvnRefreshContainer"] = 3,
             ["Avalonia.Host.Com.IAvnRepeatButton"] = 3,
             ["Avalonia.Host.Com.IAvnSeparator"] = 2,
             ["Avalonia.Host.Com.IAvnSpinner"] = 2,
@@ -99,7 +100,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnTableViewCell"] = 2,
             ["Avalonia.Host.Com.IAvnTableViewRow"] = 2,
             ["Avalonia.Host.Com.IAvnThumb"] = 2,
-            ["Avalonia.Host.Com.IAvnTimePicker"] = 2,
+            ["Avalonia.Host.Com.IAvnTimePicker"] = 3,
             ["Avalonia.Host.Com.IAvnToggleSplitButton"] = 3,
             ["Avalonia.Host.Com.IAvnToolTip"] = 2,
             ["Avalonia.Host.Com.IAvnTransitioningContentControl"] = 2,
@@ -272,7 +273,8 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.Primitives.HeaderedSelectingItemsControl"] = ["Header"],
             ["Avalonia.Controls.Decorator"] = ["Child", "Padding"],
             ["Avalonia.Controls.Border"] =
-                ["Background", "BorderBrush", "BorderThickness", "CornerRadius", "BackgroundSizing"],
+                ["Background", "BorderBrush", "BorderThickness", "CornerRadius", "BackgroundSizing",
+                 "ClipToBoundsRadius"],
             ["Avalonia.Controls.Panel"] = ["Background", "Children"],
             ["Avalonia.Controls.Grid"] =
                 ["ShowGridLines", "RowSpacing", "ColumnSpacing", "ColumnDefinitions", "RowDefinitions"],
@@ -287,7 +289,8 @@ public static class AvaloniaProjectionProfiles
                 "ExtendClientAreaTitleBarHeightHint", "IsExtendedIntoWindowDecorations",
                 "WindowDecorationMargin", "OffScreenMargin", "IsDialog", "Closing",
             ],
-            ["Avalonia.Controls.StackPanel"] = ["Orientation", "Spacing"],
+            ["Avalonia.Controls.StackPanel"] =
+                ["Orientation", "Spacing", "AreHorizontalSnapPointsRegular", "AreVerticalSnapPointsRegular"],
             ["Avalonia.Controls.TextBlock"] =
             [
                 "Text", "FontSize", "FontWeight", "FontFamily", "FontStyle", "FontStretch",
@@ -373,11 +376,12 @@ public static class AvaloniaProjectionProfiles
             [
                 "SelectedDate", "MinYear", "MaxYear", "DayVisible", "MonthVisible",
                 "YearVisible", "DayFormat", "MonthFormat", "YearFormat", "Clear",
+                "VerticalContentAlignment",
             ],
             ["Avalonia.Controls.TimePicker"] =
             [
                 "SelectedTime", "MinuteIncrement", "SecondIncrement", "ClockIdentifier",
-                "UseSeconds", "Clear",
+                "UseSeconds", "Clear", "VerticalContentAlignment",
             ],
             ["Avalonia.Controls.WrapPanel"] =
             [
@@ -454,7 +458,8 @@ public static class AvaloniaProjectionProfiles
                 "HorizontalContentAlignment", "VerticalContentAlignment", "WeekNumberRule",
                 "CalendarOpened", "CalendarClosed", "Clear",
             ],
-            ["Avalonia.Controls.Carousel"] = ["IsSwipeEnabled", "ViewportFraction", "IsSwiping"],
+            ["Avalonia.Controls.Carousel"] =
+                ["IsSwipeEnabled", "ViewportFraction", "IsSwiping", "Next", "Previous"],
             ["Avalonia.Controls.TransitioningContentControl"] = ["IsTransitionReversed"],
             ["Avalonia.Controls.Label"] = [],
             ["Avalonia.Controls.Separator"] = [],
@@ -485,13 +490,16 @@ public static class AvaloniaProjectionProfiles
             ],
             ["Avalonia.Controls.TrayIcon"] = ["ToolTipText", "IsVisible"],
             ["Avalonia.Controls.Notifications.WindowNotificationManager"] = ["Position", "MaxItems"],
-            ["Avalonia.Controls.Notifications.NotificationCard"] = ["IsClosed", "NotificationType"],
-            ["Avalonia.Controls.RefreshContainer"] = ["PullDirection", "IsMouseEnabled"],
+            ["Avalonia.Controls.Notifications.NotificationCard"] =
+                ["IsClosed", "NotificationType", "IsClosing", "Close"],
+            ["Avalonia.Controls.RefreshContainer"] =
+                ["PullDirection", "IsMouseEnabled", "RequestRefresh"],
             ["Avalonia.Controls.CommandBar"] =
             [
                 "Content", "DefaultLabelPosition", "IsDynamicOverflowEnabled",
                 "OverflowButtonVisibility", "IsOpen", "IsSticky",
                 "ItemWidthBottom", "ItemWidthRight", "ItemWidthCollapsed",
+                "HasSecondaryCommands", "IsOverflowButtonVisible",
             ],
             ["Avalonia.Controls.CommandBarButton"] =
                 ["Label", "IsCompact", "DynamicOverflowOrder", "LabelPosition", "IsInOverflow"],
@@ -501,7 +509,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.PipsPager"] =
             [
                 "MaxVisiblePips", "NumberOfPages", "SelectedPageIndex", "Orientation",
-                "IsNextButtonVisible", "IsPreviousButtonVisible",
+                "IsNextButtonVisible", "IsPreviousButtonVisible", "SelectedIndexChanged",
             ],
             ["Avalonia.Controls.ThemeVariantScope"] = [],
             ["Avalonia.Controls.IconElement"] = [],
@@ -511,6 +519,7 @@ public static class AvaloniaProjectionProfiles
             [
                 "Header", "Width", "MinWidth", "MaxWidth", "IsVisible",
                 "HorizontalContentAlignment", "CanUserResize",
+                "ActualWidth", "CanUserEffectivelyResize",
             ],
             ["Avalonia.Controls.TableViewRow"] = [],
             ["Avalonia.Controls.TableViewCell"] = [],
@@ -550,7 +559,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.Slider"] =
                 ["Orientation", "IsDirectionReversed", "IsSnapToTickEnabled", "TickFrequency", "TickPlacement"],
             ["Avalonia.Controls.ProgressBar"] =
-                ["IsIndeterminate", "ShowProgressText", "ProgressTextFormat", "Orientation"],
+                ["IsIndeterminate", "ShowProgressText", "ProgressTextFormat", "Orientation", "Percentage"],
         },
         MemberOverrides = new Dictionary<string, MarshallingOverride>(StringComparer.Ordinal)
         {
@@ -938,6 +947,10 @@ public static class AvaloniaProjectionProfiles
                 PayloadKind = EventPayloadKind.None,
             },
             ["Avalonia.Controls.ComboBox.DropDownClosed"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.PipsPager.SelectedIndexChanged"] = new()
             {
                 PayloadKind = EventPayloadKind.None,
             },
