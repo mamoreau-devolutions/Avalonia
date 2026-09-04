@@ -248,6 +248,9 @@ Unloaded. Every Control descendant republishes, including previously unpinned
 v1 types now at 2 (Image, layout panels, shapes). StyledElement, FlyoutBase,
 MenuFlyout and TableViewColumn are unchanged. Factory 13.
 
+Non-void methods project as HRESULT plus an `out` slot. `GetLineCount` is the
+first: `IAvnTextBox` 8 to 9, `IAvnMaskedTextBox` 5 to 6. Factory 13.
+
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and
 `IAvnNumericUpDown` each move from 2 to 3. Templates, filters, ItemsSource,

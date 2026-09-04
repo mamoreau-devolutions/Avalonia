@@ -518,8 +518,17 @@ fn emit_method(ty: &ProjectedType, method: &crate::ir::ProjectedMethod) -> Strin
                 .map(interface_suffix)
                 == Some("Control")
     };
-    let arguments = method
+    let ins: Vec<_> = method
         .parameters
+        .iter()
+        .filter(|parameter| parameter.direction != "Out")
+        .collect();
+    let outs: Vec<_> = method
+        .parameters
+        .iter()
+        .filter(|parameter| parameter.direction == "Out")
+        .collect();
+    let arguments = ins
         .iter()
         .map(|parameter| {
             let parameter_name = to_snake(&parameter.name);
@@ -538,8 +547,7 @@ fn emit_method(ty: &ProjectedType, method: &crate::ir::ProjectedMethod) -> Strin
         })
         .collect::<Vec<_>>()
         .join(", ");
-    let setup = method
-        .parameters
+    let setup = ins
         .iter()
         .filter(|parameter| is_any_control(parameter))
         .map(|parameter| {
@@ -547,8 +555,7 @@ fn emit_method(ty: &ProjectedType, method: &crate::ir::ProjectedMethod) -> Strin
             format!("        let {parameter_name} = {parameter_name}.as_control()?;\n")
         })
         .collect::<String>();
-    let call_arguments = method
-        .parameters
+    let call_arguments = ins
         .iter()
         .map(|parameter| {
             let parameter_name = to_snake(&parameter.name);
@@ -565,14 +572,33 @@ fn emit_method(ty: &ProjectedType, method: &crate::ir::ProjectedMethod) -> Strin
         .collect::<Vec<_>>()
         .join(", ");
     let separator = if arguments.is_empty() { "" } else { ", " };
+    let (result_type, result_expr): (String, String) = match outs.as_slice() {
+        [] => (
+            "()".into(),
+            format!("Ok(self.raw.{name}({call_arguments})?)"),
+        ),
+        [output] if output.kind == "Bool" => (
+            "bool".into(),
+            format!("Ok(self.raw.{name}({call_arguments})? != 0)"),
+        ),
+        [output] if output.kind == "StringUtf16" => (
+            "String".into(),
+            format!("unsafe {{ sys::take_utf16(self.raw.{name}({call_arguments})?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }}"),
+        ),
+        [output] => (
+            rust_scalar_kind(&output.kind).into(),
+            format!("Ok(self.raw.{name}({call_arguments})?)"),
+        ),
+        _ => ("()".into(), format!("Ok(self.raw.{name}({call_arguments})?)")),
+    };
     if setup.is_empty() {
         return format!(
-            "    pub fn {name}(&self{separator}{arguments}) -> Result<()> {{ Ok(self.raw.{name}({call_arguments})?) }}\n"
+            "    pub fn {name}(&self{separator}{arguments}) -> Result<{result_type}> {{ {result_expr} }}\n"
         );
     }
     format!(
-        "    pub fn {name}(&self{separator}{arguments}) -> Result<()> {{\n\
-         {setup}        Ok(self.raw.{name}({call_arguments})?)\n\
+        "    pub fn {name}(&self{separator}{arguments}) -> Result<{result_type}> {{\n\
+         {setup}        {result_expr}\n\
          \x20   }}\n"
     )
 }

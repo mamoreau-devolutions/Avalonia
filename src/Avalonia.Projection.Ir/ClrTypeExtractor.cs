@@ -280,11 +280,6 @@ public static class ClrTypeExtractor
     {
         projected = null!;
         reason = null;
-        if (method.ReturnType != typeof(void))
-        {
-            reason = $"Return type '{method.ReturnType.FullName}' is not supported for projected commands";
-            return false;
-        }
 
         var parameters = new List<ProjectedParameter>();
         foreach (var parameter in method.GetParameters())
@@ -316,6 +311,39 @@ public static class ClrTypeExtractor
                 ManagedTypeName = parameterType.FullName,
                 IsNullable = IsNullable(parameter),
                 Direction = ParameterDirection.In,
+            });
+        }
+
+        if (method.ReturnType != typeof(void))
+        {
+            if (!TryMapType(
+                    method.ReturnType,
+                    projectedNames,
+                    policy,
+                    out var returnKind,
+                    out var returnInterface,
+                    out var returnReason))
+            {
+                reason = $"Return type: {returnReason}";
+                return false;
+            }
+
+            if (returnKind is not (
+                MarshallingKind.I32 or MarshallingKind.I64 or MarshallingKind.F32 or
+                MarshallingKind.F64 or MarshallingKind.Bool or MarshallingKind.StringUtf16))
+            {
+                reason = $"Return type '{method.ReturnType.FullName}' is not supported for projected commands";
+                return false;
+            }
+
+            parameters.Add(new ProjectedParameter
+            {
+                Name = "value",
+                Kind = returnKind,
+                InterfaceName = returnInterface,
+                ManagedTypeName = method.ReturnType.FullName,
+                IsNullable = false,
+                Direction = ParameterDirection.Out,
             });
         }
 

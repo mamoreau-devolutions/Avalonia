@@ -25035,7 +25035,7 @@ impl ComPtr<IAvnListBoxItem> {
     }
 }
 
-pub const I_AVN_MASKED_TEXT_BOX_IID: Guid = Guid { data1: 0x310980AB, data2: 0xCFEB, data3: 0x517B, data4: [0xA6, 0xA2, 0xEA, 0xF5, 0xAF, 0x6D, 0x9E, 0x3F] };
+pub const I_AVN_MASKED_TEXT_BOX_IID: Guid = Guid { data1: 0xA6D66ED1, data2: 0x227B, data3: 0x5902, data4: [0xB2, 0x7D, 0xED, 0x7C, 0x84, 0xA3, 0x51, 0x90] };
 
 #[repr(C)]
 struct IAvnMaskedTextBoxVtbl {
@@ -25176,6 +25176,7 @@ struct IAvnMaskedTextBoxVtbl {
     get_can_undo: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
     get_can_redo: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
     clear_selection: unsafe extern "system" fn(*mut IAvnMaskedTextBox) -> i32,
+    get_line_count: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
     cut: unsafe extern "system" fn(*mut IAvnMaskedTextBox) -> i32,
     copy: unsafe extern "system" fn(*mut IAvnMaskedTextBox) -> i32,
     paste: unsafe extern "system" fn(*mut IAvnMaskedTextBox) -> i32,
@@ -26153,6 +26154,13 @@ impl ComPtr<IAvnMaskedTextBox> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().clear_selection)(self.as_raw());
             hresult::check(hr)
+        }
+    }
+    pub fn get_line_count(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_line_count)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
         }
     }
     pub fn cut(&self) -> Result<()> {
@@ -56681,7 +56689,7 @@ impl ComPtr<IAvnTextBlock> {
     }
 }
 
-pub const I_AVN_TEXT_BOX_IID: Guid = Guid { data1: 0x5FD5A96C, data2: 0x6F7A, data3: 0x51B0, data4: [0x86, 0x09, 0x96, 0x32, 0x84, 0x9C, 0xD3, 0x4F] };
+pub const I_AVN_TEXT_BOX_IID: Guid = Guid { data1: 0xE5C18AAE, data2: 0xFA4A, data3: 0x5829, data4: [0xB6, 0x87, 0xE3, 0x01, 0xBD, 0xAC, 0x15, 0x44] };
 
 #[repr(C)]
 struct IAvnTextBoxVtbl {
@@ -56822,6 +56830,7 @@ struct IAvnTextBoxVtbl {
     get_can_undo: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
     get_can_redo: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
     clear_selection: unsafe extern "system" fn(*mut IAvnTextBox) -> i32,
+    get_line_count: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
     cut: unsafe extern "system" fn(*mut IAvnTextBox) -> i32,
     copy: unsafe extern "system" fn(*mut IAvnTextBox) -> i32,
     paste: unsafe extern "system" fn(*mut IAvnTextBox) -> i32,
@@ -57787,6 +57796,13 @@ impl ComPtr<IAvnTextBox> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().clear_selection)(self.as_raw());
             hresult::check(hr)
+        }
+    }
+    pub fn get_line_count(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_line_count)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
         }
     }
     pub fn cut(&self) -> Result<()> {

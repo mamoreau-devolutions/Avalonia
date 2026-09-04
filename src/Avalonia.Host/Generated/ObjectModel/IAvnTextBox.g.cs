@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("5FD5A96C-6F7A-51B0-8609-9632849CD34F")]
+[Guid("E5C18AAE-FA4A-5829-B687-E301BDAC1544")]
 public partial interface IAvnTextBox : IAvnTemplatedControl
 {
     [PreserveSig]
@@ -206,6 +206,9 @@ public partial interface IAvnTextBox : IAvnTemplatedControl
 
     [PreserveSig]
     int ClearSelection();
+
+    [PreserveSig]
+    int GetLineCount(out int value);
 
     [PreserveSig]
     int Cut();
@@ -2436,6 +2439,22 @@ public sealed partial class AvnTextBox : IAvnTextBox
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.ClearSelection();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetLineCount(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.GetLineCount();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

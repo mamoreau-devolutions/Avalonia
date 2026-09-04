@@ -864,14 +864,22 @@ public static class ComSourceEmitter
 
     private static void EmitImplementationMethod(StringBuilder sb, ProjectedMethod method)
     {
+        var ins = method.Parameters.Where(p => p.Direction != ParameterDirection.Out).ToArray();
+        var outs = method.Parameters.Where(p => p.Direction == ParameterDirection.Out).ToArray();
         sb.AppendLine();
         sb.AppendLine($"    public int {method.Name}({string.Join(", ", method.Parameters.Select(FormatParameter))})");
         sb.AppendLine("    {");
+        foreach (var output in outs)
+            sb.AppendLine($"        {output.Name} = default!;");
         sb.AppendLine("        try");
         sb.AppendLine("        {");
         sb.AppendLine("            using var call = _state.EnterCall();");
         sb.AppendLine("            _value.VerifyAccess();");
-        sb.AppendLine($"            _value.{method.ManagedName ?? method.Name}({string.Join(", ", method.Parameters.Select(MethodArgument))});");
+        var call = $"_value.{method.ManagedName ?? method.Name}({string.Join(", ", ins.Select(MethodArgument))})";
+        if (outs.Length == 1)
+            sb.AppendLine($"            {outs[0].Name} = {MethodReturnExpression(outs[0], call)};");
+        else
+            sb.AppendLine($"            {call};");
         sb.AppendLine("            return global::Avalonia.Host.HResults.S_OK;");
         sb.AppendLine("        }");
         sb.AppendLine("        catch (global::System.Exception e)");
@@ -1009,6 +1017,14 @@ public static class ComSourceEmitter
             MarshallingKind.Brush => $"{SimpleName(property.InterfaceName!)[1..]}.ToBrush(value)",
             _ when GeometryMarshalling.IsGeometry(property.Kind) => "value.ToAvalonia()",
             _ => "value",
+        };
+
+    private static string MethodReturnExpression(ProjectedParameter output, string call) =>
+        output.Kind switch
+        {
+            MarshallingKind.I32 when output.ManagedTypeName is not "System.Int32" => $"(int){call}",
+            MarshallingKind.Bool => $"{call} ? 1 : 0",
+            _ => call,
         };
 
     private static string MethodArgument(ProjectedParameter parameter) =>

@@ -2227,8 +2227,8 @@
       "name": "IAvnMaskedTextBox",
       "fullName": "Avalonia.Host.Com.IAvnMaskedTextBox",
       "kind": "Class",
-      "iid": "310980AB-CFEB-517B-A6A2-EAF5AF6D9E3F",
-      "abiVersion": 5,
+      "iid": "A6D66ED1-227B-5902-B27D-ED7C84A35190",
+      "abiVersion": 6,
       "baseFullName": "Avalonia.Host.Com.IAvnTextBox",
       "managedFullName": "Avalonia.Controls.MaskedTextBox",
       "isConstructible": true,
@@ -5214,8 +5214,8 @@
       "name": "IAvnTextBox",
       "fullName": "Avalonia.Host.Com.IAvnTextBox",
       "kind": "Class",
-      "iid": "5FD5A96C-6F7A-51B0-8609-9632849CD34F",
-      "abiVersion": 8,
+      "iid": "E5C18AAE-FA4A-5829-B687-E301BDAC1544",
+      "abiVersion": 9,
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.TextBox",
       "isConstructible": true,
@@ -5226,6 +5226,21 @@
           "returnKind": "I32",
           "preserveSig": true,
           "parameters": []
+        },
+        {
+          "name": "GetLineCount",
+          "managedName": "GetLineCount",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": [
+            {
+              "name": "value",
+              "kind": "I32",
+              "direction": "Out",
+              "managedTypeName": "System.Int32",
+              "isNullable": false
+            }
+          ]
         },
         {
           "name": "Cut",
@@ -10955,11 +10970,6 @@
     {
       "owner": "Avalonia.Controls.TextBox",
       "member": "TextChanging",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TextBox",
-      "member": "GetLineCount()",
       "reason": "Not included by projection policy"
     },
     {

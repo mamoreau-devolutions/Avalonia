@@ -262,7 +262,6 @@ Avalonia.Controls.TextBox.Watermark: Not included by projection policy
 Avalonia.Controls.TextBox.UseFloatingWatermark: Not included by projection policy
 Avalonia.Controls.TextBox.WatermarkForeground: Not included by projection policy
 Avalonia.Controls.TextBox.TextChanging: Not included by projection policy
-Avalonia.Controls.TextBox.GetLineCount(): Not included by projection policy
 Avalonia.Controls.ThemeVariantScope.RequestedThemeVariant: Not included by projection policy
 Avalonia.Controls.TimePicker.SelectedTimeChanged: Not included by projection policy
 Avalonia.Controls.ToggleSwitch.OffContentPresenter: Not included by projection policy

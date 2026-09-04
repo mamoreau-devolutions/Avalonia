@@ -16703,6 +16703,7 @@ impl MaskedTextBox {
     pub fn can_undo(&self) -> Result<bool> { Ok(self.raw.get_can_undo()?) }
     pub fn can_redo(&self) -> Result<bool> { Ok(self.raw.get_can_redo()?) }
     pub fn clear_selection(&self) -> Result<()> { Ok(self.raw.clear_selection()?) }
+    pub fn get_line_count(&self) -> Result<i32> { Ok(self.raw.get_line_count()?) }
     pub fn cut(&self) -> Result<()> { Ok(self.raw.cut()?) }
     pub fn copy(&self) -> Result<()> { Ok(self.raw.copy()?) }
     pub fn paste(&self) -> Result<()> { Ok(self.raw.paste()?) }
@@ -35695,6 +35696,7 @@ impl TextBox {
     pub fn can_undo(&self) -> Result<bool> { Ok(self.raw.get_can_undo()?) }
     pub fn can_redo(&self) -> Result<bool> { Ok(self.raw.get_can_redo()?) }
     pub fn clear_selection(&self) -> Result<()> { Ok(self.raw.clear_selection()?) }
+    pub fn get_line_count(&self) -> Result<i32> { Ok(self.raw.get_line_count()?) }
     pub fn cut(&self) -> Result<()> { Ok(self.raw.cut()?) }
     pub fn copy(&self) -> Result<()> { Ok(self.raw.copy()?) }
     pub fn paste(&self) -> Result<()> { Ok(self.raw.paste()?) }
