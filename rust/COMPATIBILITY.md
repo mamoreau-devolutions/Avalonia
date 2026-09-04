@@ -199,6 +199,14 @@ from 6 to 7. `IAvnScrollViewer` grows Extent/Viewport (`AvnSize`), Offset
 6 to 7. ComboBoxItem is unchanged. SelectionBoxItem, templates and
 PasswordChar stay gaps. The factory is unmoved at 13.
 
+Wave P projects instance Flyout on `IAvnButton`/`IAvnSplitButton` as
+`IAvnFlyoutBase` (nullable COM). Button and every descendant move one version
+(Button 6 to 7). SplitButton/MenuItem move from 2 to 3 and MenuItem gains
+HasSubMenu, IsTopLevel, Open and Close. Control.ContextMenu, ContextFlyout,
+IsLoaded and Loaded/Unloaded stay gaps: putting them on Control would
+republish every control interface and is a wave of its own. ICommand and
+HotKey stay gaps. The factory is unmoved at 13.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A

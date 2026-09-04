@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("139B0B22-519E-51D2-8745-43BDAD28E3C9")]
+[Guid("C1F07689-8764-57FF-8F22-54BF4A18D504")]
 public partial interface IAvnToggleSplitButton : IAvnSplitButton
 {
     [PreserveSig]
@@ -1092,6 +1092,37 @@ public sealed partial class AvnToggleSplitButton : IAvnToggleSplitButton
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.VerticalContentAlignment = (global::Avalonia.Layout.VerticalAlignment)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetFlyout(out IAvnFlyoutBase? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (IAvnFlyoutBase?)ProjectionRuntime.Wrap(_value.Flyout as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetFlyout(IAvnFlyoutBase? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Flyout = (global::Avalonia.Controls.Primitives.FlyoutBase)ProjectionRuntime.Unwrap(value)!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("E164C024-3AC5-55F1-815E-CE96646E78FD")]
+[Guid("3AE61A8C-AAD4-5B5D-A7AB-70B83264C945")]
 public partial interface IAvnToggleButton : IAvnButton
 {
     [PreserveSig]
@@ -1207,6 +1207,37 @@ public sealed partial class AvnToggleButton : IAvnToggleButton
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.IsPressed ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetFlyout(out IAvnFlyoutBase? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (IAvnFlyoutBase?)ProjectionRuntime.Wrap(_value.Flyout as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetFlyout(IAvnFlyoutBase? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Flyout = (global::Avalonia.Controls.Primitives.FlyoutBase)ProjectionRuntime.Unwrap(value)!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

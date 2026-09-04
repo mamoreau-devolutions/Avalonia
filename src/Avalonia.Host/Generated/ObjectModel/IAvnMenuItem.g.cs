@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("83849DC9-E496-5855-8473-4B41B63BFA84")]
+[Guid("AD60B588-C2E3-590E-A83B-DF9C333BCA9C")]
 public partial interface IAvnMenuItem : IAvnHeaderedSelectingItemsControl
 {
     [PreserveSig]
@@ -50,6 +50,18 @@ public partial interface IAvnMenuItem : IAvnHeaderedSelectingItemsControl
 
     [PreserveSig]
     int SetGroupName(string? value);
+
+    [PreserveSig]
+    int GetHasSubMenu(out int value);
+
+    [PreserveSig]
+    int GetIsTopLevel(out int value);
+
+    [PreserveSig]
+    int Open();
+
+    [PreserveSig]
+    int Close();
 
     [PreserveSig]
     int AdviseClick(IAvnMenuItemClickHandler? handler, out long subscriptionId);
@@ -1384,6 +1396,68 @@ public sealed partial class AvnMenuItem : IAvnMenuItem
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.GroupName = value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetHasSubMenu(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.HasSubMenu ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetIsTopLevel(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.IsTopLevel ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int Open()
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Open();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int Close()
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Close();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

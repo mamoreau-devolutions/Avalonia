@@ -3056,7 +3056,7 @@ impl ComPtr<IAvnBorder> {
     }
 }
 
-pub const I_AVN_BUTTON_IID: Guid = Guid { data1: 0x110589FF, data2: 0x3BB8, data3: 0x50F5, data4: [0xA3, 0x92, 0x41, 0xBB, 0x31, 0x07, 0xD5, 0xF1] };
+pub const I_AVN_BUTTON_IID: Guid = Guid { data1: 0x3CBEB4F4, data2: 0x0444, data3: 0x5905, data4: [0x97, 0xFF, 0x86, 0xB5, 0xD8, 0x2D, 0xFF, 0xFF] };
 
 #[repr(C)]
 struct IAvnButtonVtbl {
@@ -3135,6 +3135,8 @@ struct IAvnButtonVtbl {
     get_is_cancel: unsafe extern "system" fn(*mut IAvnButton, *mut i32) -> i32,
     set_is_cancel: unsafe extern "system" fn(*mut IAvnButton, i32) -> i32,
     get_is_pressed: unsafe extern "system" fn(*mut IAvnButton, *mut i32) -> i32,
+    get_flyout: unsafe extern "system" fn(*mut IAvnButton, *mut *mut IAvnFlyoutBase) -> i32,
+    set_flyout: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnFlyoutBase) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnButtonClickHandler, *mut i64) -> i32,
     unadvise_click: unsafe extern "system" fn(*mut IAvnButton, i64) -> i32,
 }
@@ -3650,6 +3652,20 @@ impl ComPtr<IAvnButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_pressed)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             Ok(value != 0)
+        }
+    }
+    pub fn get_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
         }
     }
     pub fn advise_click(&self, handler: &ComPtr<IAvnButtonClickHandler>) -> Result<i64> {
@@ -6436,7 +6452,7 @@ impl ComPtr<IAvnCarousel> {
     }
 }
 
-pub const I_AVN_CHECK_BOX_IID: Guid = Guid { data1: 0x82D9696E, data2: 0xDC55, data3: 0x524A, data4: [0x9B, 0xF9, 0xF9, 0xB1, 0x6A, 0x5E, 0x56, 0x88] };
+pub const I_AVN_CHECK_BOX_IID: Guid = Guid { data1: 0x9227EE97, data2: 0x3DB5, data3: 0x536B, data4: [0x96, 0x4E, 0x35, 0xC8, 0xC3, 0xF6, 0x60, 0x85] };
 
 #[repr(C)]
 struct IAvnCheckBoxVtbl {
@@ -6515,6 +6531,8 @@ struct IAvnCheckBoxVtbl {
     get_is_cancel: unsafe extern "system" fn(*mut IAvnCheckBox, *mut i32) -> i32,
     set_is_cancel: unsafe extern "system" fn(*mut IAvnCheckBox, i32) -> i32,
     get_is_pressed: unsafe extern "system" fn(*mut IAvnCheckBox, *mut i32) -> i32,
+    get_flyout: unsafe extern "system" fn(*mut IAvnCheckBox, *mut *mut IAvnFlyoutBase) -> i32,
+    set_flyout: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnFlyoutBase) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnButtonClickHandler, *mut i64) -> i32,
     unadvise_click: unsafe extern "system" fn(*mut IAvnCheckBox, i64) -> i32,
     get_is_checked: unsafe extern "system" fn(*mut IAvnCheckBox, *mut i32) -> i32,
@@ -7036,6 +7054,20 @@ impl ComPtr<IAvnCheckBox> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_pressed)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             Ok(value != 0)
+        }
+    }
+    pub fn get_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
         }
     }
     pub fn advise_click(&self, handler: &ComPtr<IAvnButtonClickHandler>) -> Result<i64> {
@@ -8948,7 +8980,7 @@ impl ComPtr<IAvnCommandBar> {
     }
 }
 
-pub const I_AVN_COMMAND_BAR_BUTTON_IID: Guid = Guid { data1: 0xFA581CBE, data2: 0x7E0E, data3: 0x5B82, data4: [0xA4, 0xAC, 0x8D, 0xA2, 0xE6, 0x8C, 0xB1, 0x4A] };
+pub const I_AVN_COMMAND_BAR_BUTTON_IID: Guid = Guid { data1: 0xBD42288B, data2: 0x918B, data3: 0x5038, data4: [0xB3, 0x37, 0xC1, 0x11, 0x25, 0x8C, 0xC3, 0xA1] };
 
 #[repr(C)]
 struct IAvnCommandBarButtonVtbl {
@@ -9027,6 +9059,8 @@ struct IAvnCommandBarButtonVtbl {
     get_is_cancel: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut i32) -> i32,
     set_is_cancel: unsafe extern "system" fn(*mut IAvnCommandBarButton, i32) -> i32,
     get_is_pressed: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut i32) -> i32,
+    get_flyout: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut *mut IAvnFlyoutBase) -> i32,
+    set_flyout: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut IAvnFlyoutBase) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut IAvnButtonClickHandler, *mut i64) -> i32,
     unadvise_click: unsafe extern "system" fn(*mut IAvnCommandBarButton, i64) -> i32,
     get_label: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut *mut u16) -> i32,
@@ -9552,6 +9586,20 @@ impl ComPtr<IAvnCommandBarButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_pressed)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             Ok(value != 0)
+        }
+    }
+    pub fn get_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
         }
     }
     pub fn advise_click(&self, handler: &ComPtr<IAvnButtonClickHandler>) -> Result<i64> {
@@ -10162,7 +10210,7 @@ impl ComPtr<IAvnCommandBarSeparator> {
     }
 }
 
-pub const I_AVN_COMMAND_BAR_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0x2F018BED, data2: 0x476C, data3: 0x521B, data4: [0xBF, 0xA9, 0x32, 0x62, 0x39, 0xD6, 0x39, 0x39] };
+pub const I_AVN_COMMAND_BAR_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0xEF153C47, data2: 0x8A47, data3: 0x5F53, data4: [0xAF, 0xA0, 0xD0, 0xC0, 0x24, 0xF2, 0x9B, 0x59] };
 
 #[repr(C)]
 struct IAvnCommandBarToggleButtonVtbl {
@@ -10241,6 +10289,8 @@ struct IAvnCommandBarToggleButtonVtbl {
     get_is_cancel: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut i32) -> i32,
     set_is_cancel: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, i32) -> i32,
     get_is_pressed: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut i32) -> i32,
+    get_flyout: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut *mut IAvnFlyoutBase) -> i32,
+    set_flyout: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut IAvnFlyoutBase) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut IAvnButtonClickHandler, *mut i64) -> i32,
     unadvise_click: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, i64) -> i32,
     get_is_checked: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut i32) -> i32,
@@ -10772,6 +10822,20 @@ impl ComPtr<IAvnCommandBarToggleButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_pressed)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             Ok(value != 0)
+        }
+    }
+    pub fn get_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
         }
     }
     pub fn advise_click(&self, handler: &ComPtr<IAvnButtonClickHandler>) -> Result<i64> {
@@ -13731,7 +13795,7 @@ impl ComPtr<IAvnDockPanel> {
     }
 }
 
-pub const I_AVN_DROP_DOWN_BUTTON_IID: Guid = Guid { data1: 0xA83E7261, data2: 0x0014, data3: 0x58C9, data4: [0xB3, 0xFD, 0xD8, 0xCA, 0xFD, 0x9D, 0xB7, 0x1A] };
+pub const I_AVN_DROP_DOWN_BUTTON_IID: Guid = Guid { data1: 0x7EA4F3C0, data2: 0xBEA0, data3: 0x592E, data4: [0x8A, 0x5D, 0x52, 0x16, 0xF6, 0xB7, 0x35, 0x5D] };
 
 #[repr(C)]
 struct IAvnDropDownButtonVtbl {
@@ -13810,6 +13874,8 @@ struct IAvnDropDownButtonVtbl {
     get_is_cancel: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut i32) -> i32,
     set_is_cancel: unsafe extern "system" fn(*mut IAvnDropDownButton, i32) -> i32,
     get_is_pressed: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut i32) -> i32,
+    get_flyout: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut *mut IAvnFlyoutBase) -> i32,
+    set_flyout: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut IAvnFlyoutBase) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut IAvnButtonClickHandler, *mut i64) -> i32,
     unadvise_click: unsafe extern "system" fn(*mut IAvnDropDownButton, i64) -> i32,
 }
@@ -14325,6 +14391,20 @@ impl ComPtr<IAvnDropDownButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_pressed)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             Ok(value != 0)
+        }
+    }
+    pub fn get_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
         }
     }
     pub fn advise_click(&self, handler: &ComPtr<IAvnButtonClickHandler>) -> Result<i64> {
@@ -17157,7 +17237,7 @@ impl ComPtr<IAvnGroupBox> {
     }
 }
 
-pub const I_AVN_HYPERLINK_BUTTON_IID: Guid = Guid { data1: 0xD8BC2D72, data2: 0x6657, data3: 0x5211, data4: [0xB7, 0x16, 0xDA, 0x99, 0x41, 0x75, 0x2E, 0xAF] };
+pub const I_AVN_HYPERLINK_BUTTON_IID: Guid = Guid { data1: 0x882F467B, data2: 0x88E2, data3: 0x5339, data4: [0xAD, 0xE0, 0x13, 0xB3, 0xC3, 0x56, 0xCA, 0xBD] };
 
 #[repr(C)]
 struct IAvnHyperlinkButtonVtbl {
@@ -17236,6 +17316,8 @@ struct IAvnHyperlinkButtonVtbl {
     get_is_cancel: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut i32) -> i32,
     set_is_cancel: unsafe extern "system" fn(*mut IAvnHyperlinkButton, i32) -> i32,
     get_is_pressed: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut i32) -> i32,
+    get_flyout: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut *mut IAvnFlyoutBase) -> i32,
+    set_flyout: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut IAvnFlyoutBase) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut IAvnButtonClickHandler, *mut i64) -> i32,
     unadvise_click: unsafe extern "system" fn(*mut IAvnHyperlinkButton, i64) -> i32,
     get_is_visited: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut i32) -> i32,
@@ -17755,6 +17837,20 @@ impl ComPtr<IAvnHyperlinkButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_pressed)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             Ok(value != 0)
+        }
+    }
+    pub fn get_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
         }
     }
     pub fn advise_click(&self, handler: &ComPtr<IAvnButtonClickHandler>) -> Result<i64> {
@@ -23779,7 +23875,7 @@ impl ComPtr<IAvnMenuFlyout> {
     }
 }
 
-pub const I_AVN_MENU_ITEM_IID: Guid = Guid { data1: 0x83849DC9, data2: 0xE496, data3: 0x5855, data4: [0x84, 0x73, 0x4B, 0x41, 0xB6, 0x3B, 0xFA, 0x84] };
+pub const I_AVN_MENU_ITEM_IID: Guid = Guid { data1: 0xAD60B588, data2: 0xC2E3, data3: 0x590E, data4: [0xA8, 0x3B, 0xDF, 0x9C, 0x33, 0x3B, 0xCA, 0x9C] };
 
 #[repr(C)]
 struct IAvnMenuItemVtbl {
@@ -23866,6 +23962,10 @@ struct IAvnMenuItemVtbl {
     set_is_checked: unsafe extern "system" fn(*mut IAvnMenuItem, i32) -> i32,
     get_group_name: unsafe extern "system" fn(*mut IAvnMenuItem, *mut *mut u16) -> i32,
     set_group_name: unsafe extern "system" fn(*mut IAvnMenuItem, *mut u16) -> i32,
+    get_has_sub_menu: unsafe extern "system" fn(*mut IAvnMenuItem, *mut i32) -> i32,
+    get_is_top_level: unsafe extern "system" fn(*mut IAvnMenuItem, *mut i32) -> i32,
+    open: unsafe extern "system" fn(*mut IAvnMenuItem) -> i32,
+    close: unsafe extern "system" fn(*mut IAvnMenuItem) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnMenuItemClickHandler, *mut i64) -> i32,
     unadvise_click: unsafe extern "system" fn(*mut IAvnMenuItem, i64) -> i32,
     advise_submenu_opened: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnMenuItemSubmenuOpenedHandler, *mut i64) -> i32,
@@ -24437,6 +24537,34 @@ impl ComPtr<IAvnMenuItem> {
     pub fn set_group_name(&self, value: Option<&[u16]>) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_group_name)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_has_sub_menu(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_has_sub_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_is_top_level(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_top_level)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn open(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().open)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn close(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().close)(self.as_raw());
             hresult::check(hr)
         }
     }
@@ -32145,7 +32273,7 @@ impl ComPtr<IAvnThumb> {
     }
 }
 
-pub const I_AVN_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0xE164C024, data2: 0x3AC5, data3: 0x55F1, data4: [0x81, 0x5E, 0xCE, 0x96, 0x64, 0x6E, 0x78, 0xFD] };
+pub const I_AVN_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0x3AE61A8C, data2: 0xAAD4, data3: 0x5B5D, data4: [0xA7, 0xAB, 0x70, 0xB8, 0x32, 0x64, 0xC9, 0x45] };
 
 #[repr(C)]
 struct IAvnToggleButtonVtbl {
@@ -32224,6 +32352,8 @@ struct IAvnToggleButtonVtbl {
     get_is_cancel: unsafe extern "system" fn(*mut IAvnToggleButton, *mut i32) -> i32,
     set_is_cancel: unsafe extern "system" fn(*mut IAvnToggleButton, i32) -> i32,
     get_is_pressed: unsafe extern "system" fn(*mut IAvnToggleButton, *mut i32) -> i32,
+    get_flyout: unsafe extern "system" fn(*mut IAvnToggleButton, *mut *mut IAvnFlyoutBase) -> i32,
+    set_flyout: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnFlyoutBase) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnButtonClickHandler, *mut i64) -> i32,
     unadvise_click: unsafe extern "system" fn(*mut IAvnToggleButton, i64) -> i32,
     get_is_checked: unsafe extern "system" fn(*mut IAvnToggleButton, *mut i32) -> i32,
@@ -32745,6 +32875,20 @@ impl ComPtr<IAvnToggleButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_pressed)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             Ok(value != 0)
+        }
+    }
+    pub fn get_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
         }
     }
     pub fn advise_click(&self, handler: &ComPtr<IAvnButtonClickHandler>) -> Result<i64> {
@@ -33857,7 +34001,7 @@ impl ComPtr<IAvnProgressBar> {
     }
 }
 
-pub const I_AVN_RADIO_BUTTON_IID: Guid = Guid { data1: 0xFAA74E74, data2: 0x2290, data3: 0x5BE8, data4: [0xB2, 0xC3, 0xD9, 0x1B, 0x33, 0x95, 0xFC, 0x29] };
+pub const I_AVN_RADIO_BUTTON_IID: Guid = Guid { data1: 0xC8648886, data2: 0x2833, data3: 0x56A3, data4: [0xA4, 0xE3, 0x51, 0x6E, 0x9E, 0x5A, 0xEE, 0x45] };
 
 #[repr(C)]
 struct IAvnRadioButtonVtbl {
@@ -33936,6 +34080,8 @@ struct IAvnRadioButtonVtbl {
     get_is_cancel: unsafe extern "system" fn(*mut IAvnRadioButton, *mut i32) -> i32,
     set_is_cancel: unsafe extern "system" fn(*mut IAvnRadioButton, i32) -> i32,
     get_is_pressed: unsafe extern "system" fn(*mut IAvnRadioButton, *mut i32) -> i32,
+    get_flyout: unsafe extern "system" fn(*mut IAvnRadioButton, *mut *mut IAvnFlyoutBase) -> i32,
+    set_flyout: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnFlyoutBase) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnButtonClickHandler, *mut i64) -> i32,
     unadvise_click: unsafe extern "system" fn(*mut IAvnRadioButton, i64) -> i32,
     get_is_checked: unsafe extern "system" fn(*mut IAvnRadioButton, *mut i32) -> i32,
@@ -34459,6 +34605,20 @@ impl ComPtr<IAvnRadioButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_pressed)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             Ok(value != 0)
+        }
+    }
+    pub fn get_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
         }
     }
     pub fn advise_click(&self, handler: &ComPtr<IAvnButtonClickHandler>) -> Result<i64> {
@@ -35426,7 +35586,7 @@ impl ComPtr<IAvnRelativePanel> {
     }
 }
 
-pub const I_AVN_REPEAT_BUTTON_IID: Guid = Guid { data1: 0x6659AC42, data2: 0xF0BE, data3: 0x547C, data4: [0x8C, 0x2B, 0xD7, 0x34, 0xE9, 0x70, 0x8C, 0x32] };
+pub const I_AVN_REPEAT_BUTTON_IID: Guid = Guid { data1: 0x53F5D584, data2: 0xD592, data3: 0x5655, data4: [0x87, 0xFA, 0xED, 0x70, 0xD3, 0xFB, 0xE0, 0x5B] };
 
 #[repr(C)]
 struct IAvnRepeatButtonVtbl {
@@ -35505,6 +35665,8 @@ struct IAvnRepeatButtonVtbl {
     get_is_cancel: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut i32) -> i32,
     set_is_cancel: unsafe extern "system" fn(*mut IAvnRepeatButton, i32) -> i32,
     get_is_pressed: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut i32) -> i32,
+    get_flyout: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut *mut IAvnFlyoutBase) -> i32,
+    set_flyout: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut IAvnFlyoutBase) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut IAvnButtonClickHandler, *mut i64) -> i32,
     unadvise_click: unsafe extern "system" fn(*mut IAvnRepeatButton, i64) -> i32,
     get_interval: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut i32) -> i32,
@@ -36024,6 +36186,20 @@ impl ComPtr<IAvnRepeatButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_pressed)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             Ok(value != 0)
+        }
+    }
+    pub fn get_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
         }
     }
     pub fn advise_click(&self, handler: &ComPtr<IAvnButtonClickHandler>) -> Result<i64> {
@@ -43225,7 +43401,7 @@ impl ComPtr<IAvnSpinner> {
     }
 }
 
-pub const I_AVN_SPLIT_BUTTON_IID: Guid = Guid { data1: 0x28FF61B6, data2: 0xCE63, data3: 0x5B51, data4: [0xBE, 0x7D, 0x7F, 0x8F, 0xE8, 0x5C, 0xA5, 0x16] };
+pub const I_AVN_SPLIT_BUTTON_IID: Guid = Guid { data1: 0x7AC1640E, data2: 0x1FF0, data3: 0x5D9E, data4: [0x9C, 0x9B, 0xCD, 0x77, 0xA9, 0x94, 0x80, 0x44] };
 
 #[repr(C)]
 struct IAvnSplitButtonVtbl {
@@ -43297,6 +43473,8 @@ struct IAvnSplitButtonVtbl {
     set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnSplitButton, i32) -> i32,
     get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnSplitButton, *mut i32) -> i32,
     set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnSplitButton, i32) -> i32,
+    get_flyout: unsafe extern "system" fn(*mut IAvnSplitButton, *mut *mut IAvnFlyoutBase) -> i32,
+    set_flyout: unsafe extern "system" fn(*mut IAvnSplitButton, *mut IAvnFlyoutBase) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnSplitButton, *mut IAvnSplitButtonClickHandler, *mut i64) -> i32,
     unadvise_click: unsafe extern "system" fn(*mut IAvnSplitButton, i64) -> i32,
 }
@@ -43761,6 +43939,20 @@ impl ComPtr<IAvnSplitButton> {
     pub fn set_vertical_content_alignment(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }
@@ -50391,7 +50583,7 @@ impl ComPtr<IAvnTimePicker> {
     }
 }
 
-pub const I_AVN_TOGGLE_SPLIT_BUTTON_IID: Guid = Guid { data1: 0x139B0B22, data2: 0x519E, data3: 0x51D2, data4: [0x87, 0x45, 0x43, 0xBD, 0xAD, 0x28, 0xE3, 0xC9] };
+pub const I_AVN_TOGGLE_SPLIT_BUTTON_IID: Guid = Guid { data1: 0xC1F07689, data2: 0x8764, data3: 0x57FF, data4: [0x8F, 0x22, 0x54, 0xBF, 0x4A, 0x18, 0xD5, 0x04] };
 
 #[repr(C)]
 struct IAvnToggleSplitButtonVtbl {
@@ -50463,6 +50655,8 @@ struct IAvnToggleSplitButtonVtbl {
     set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnToggleSplitButton, i32) -> i32,
     get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut i32) -> i32,
     set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnToggleSplitButton, i32) -> i32,
+    get_flyout: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut *mut IAvnFlyoutBase) -> i32,
+    set_flyout: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut IAvnFlyoutBase) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut IAvnSplitButtonClickHandler, *mut i64) -> i32,
     unadvise_click: unsafe extern "system" fn(*mut IAvnToggleSplitButton, i64) -> i32,
     get_is_checked: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut i32) -> i32,
@@ -50934,6 +51128,20 @@ impl ComPtr<IAvnToggleSplitButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
     pub fn advise_click(&self, handler: &ComPtr<IAvnSplitButtonClickHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -50976,7 +51184,7 @@ impl ComPtr<IAvnToggleSplitButton> {
     }
 }
 
-pub const I_AVN_TOGGLE_SWITCH_IID: Guid = Guid { data1: 0x4759C8C8, data2: 0x2662, data3: 0x52F9, data4: [0xA0, 0x22, 0xA7, 0x0A, 0x0B, 0x2E, 0x7D, 0xCC] };
+pub const I_AVN_TOGGLE_SWITCH_IID: Guid = Guid { data1: 0xABA6544B, data2: 0x4A3E, data3: 0x5042, data4: [0xBF, 0xB1, 0xBE, 0x9D, 0x9E, 0xB1, 0x36, 0x1C] };
 
 #[repr(C)]
 struct IAvnToggleSwitchVtbl {
@@ -51055,6 +51263,8 @@ struct IAvnToggleSwitchVtbl {
     get_is_cancel: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut i32) -> i32,
     set_is_cancel: unsafe extern "system" fn(*mut IAvnToggleSwitch, i32) -> i32,
     get_is_pressed: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut i32) -> i32,
+    get_flyout: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut *mut IAvnFlyoutBase) -> i32,
+    set_flyout: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnFlyoutBase) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnButtonClickHandler, *mut i64) -> i32,
     unadvise_click: unsafe extern "system" fn(*mut IAvnToggleSwitch, i64) -> i32,
     get_is_checked: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut i32) -> i32,
@@ -51580,6 +51790,20 @@ impl ComPtr<IAvnToggleSwitch> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_pressed)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             Ok(value != 0)
+        }
+    }
+    pub fn get_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
         }
     }
     pub fn advise_click(&self, handler: &ComPtr<IAvnButtonClickHandler>) -> Result<i64> {

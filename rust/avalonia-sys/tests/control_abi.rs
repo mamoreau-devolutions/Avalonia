@@ -50,6 +50,10 @@ fn completeness_members_are_published_on_the_type_that_declares_them() {
         "*select_all)(IAvnTextBox* self)",
         "*clear_selection)(IAvnTextBox* self)",
         "*set_inner_left_content)(IAvnTextBox* self, IAvnControl* value)",
+        "*set_flyout)(IAvnButton* self, IAvnFlyoutBase* value)",
+        "*set_flyout)(IAvnSplitButton* self, IAvnFlyoutBase* value)",
+        "*open)(IAvnMenuItem* self)",
+        "*close)(IAvnMenuItem* self)",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
     }
@@ -67,11 +71,11 @@ fn widened_interfaces_publish_abi_version_five() {
         "#define I_AVN_CONTENT_CONTROL_ABI_VERSION 6",
         "#define I_AVN_HEADERED_CONTENT_CONTROL_ABI_VERSION 6",
         "#define I_AVN_EXPANDER_ABI_VERSION 6",
-        "#define I_AVN_BUTTON_ABI_VERSION 6",
-        "#define I_AVN_TOGGLE_BUTTON_ABI_VERSION 6",
-        "#define I_AVN_CHECK_BOX_ABI_VERSION 6",
-        "#define I_AVN_RADIO_BUTTON_ABI_VERSION 6",
-        "#define I_AVN_TOGGLE_SWITCH_ABI_VERSION 6",
+        "#define I_AVN_BUTTON_ABI_VERSION 7",
+        "#define I_AVN_TOGGLE_BUTTON_ABI_VERSION 7",
+        "#define I_AVN_CHECK_BOX_ABI_VERSION 7",
+        "#define I_AVN_RADIO_BUTTON_ABI_VERSION 7",
+        "#define I_AVN_TOGGLE_SWITCH_ABI_VERSION 7",
         "#define I_AVN_LIST_BOX_ABI_VERSION 6",
         "#define I_AVN_LIST_BOX_ITEM_ABI_VERSION 6",
         "#define I_AVN_COMBO_BOX_ABI_VERSION 7",
@@ -183,12 +187,12 @@ fn widened_interfaces_republish_under_fresh_iids() {
         ),
         (
             "IAvnButton",
-            "110589FF-3BB8-50F5-A392-41BB3107D5F1",
+            "3CBEB4F4-0444-5905-97FF-86B5D82DFFFF",
             I_AVN_BUTTON_IID,
         ),
         (
             "IAvnToggleButton",
-            "E164C024-3AC5-55F1-815E-CE96646E78FD",
+            "3AE61A8C-AAD4-5B5D-A7AB-70B83264C945",
             I_AVN_TOGGLE_BUTTON_IID,
         ),
         (

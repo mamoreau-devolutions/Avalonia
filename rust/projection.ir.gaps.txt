@@ -64,7 +64,6 @@ Avalonia.Controls.Border.Render(DrawingContext): Not included by projection poli
 Avalonia.Controls.Button.Command: Not included by projection policy
 Avalonia.Controls.Button.HotKey: Not included by projection policy
 Avalonia.Controls.Button.CommandParameter: Not included by projection policy
-Avalonia.Controls.Button.Flyout: Not included by projection policy
 Avalonia.Controls.Calendar.HeaderBackground: Not included by projection policy
 Avalonia.Controls.Calendar.IsWeekNumberVisible: Not included by projection policy
 Avalonia.Controls.Calendar.WeekNumberRule: Not included by projection policy
@@ -184,12 +183,8 @@ Avalonia.Controls.MenuItem.Command: Not included by projection policy
 Avalonia.Controls.MenuItem.HotKey: Not included by projection policy
 Avalonia.Controls.MenuItem.CommandParameter: Not included by projection policy
 Avalonia.Controls.MenuItem.InputGesture: Not included by projection policy
-Avalonia.Controls.MenuItem.HasSubMenu: Not included by projection policy
-Avalonia.Controls.MenuItem.IsTopLevel: Not included by projection policy
 Avalonia.Controls.MenuItem.PointerEnteredItem: Not included by projection policy
 Avalonia.Controls.MenuItem.PointerExitedItem: Not included by projection policy
-Avalonia.Controls.MenuItem.Open(): Not included by projection policy
-Avalonia.Controls.MenuItem.Close(): Not included by projection policy
 Avalonia.Controls.Notifications.NotificationCard.IsClosing: Not included by projection policy
 Avalonia.Controls.Notifications.NotificationCard.NotificationClosed: Not included by projection policy
 Avalonia.Controls.Notifications.NotificationCard.Close(): Not included by projection policy
@@ -294,7 +289,6 @@ Avalonia.Controls.Spinner.ValidSpinDirection: Not included by projection policy
 Avalonia.Controls.Spinner.Spin: Not included by projection policy
 Avalonia.Controls.SplitButton.Command: Not included by projection policy
 Avalonia.Controls.SplitButton.CommandParameter: Not included by projection policy
-Avalonia.Controls.SplitButton.Flyout: Not included by projection policy
 Avalonia.Controls.SplitButton.HotKey: Not included by projection policy
 Avalonia.Controls.SplitView.PaneTemplate: Not included by projection policy
 Avalonia.Controls.SplitView.TemplateSettings: Not included by projection policy

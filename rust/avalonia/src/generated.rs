@@ -3356,6 +3356,17 @@ impl Button {
         Ok(self)
     }
     pub fn is_pressed(&self) -> Result<bool> { Ok(self.raw.get_is_pressed()?) }
+    pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_flyout(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_flyout(Some(&value))?)
+    }
+    pub fn flyout(self, value: impl AsControl) -> Result<Self> {
+        self.set_flyout(value)?;
+        Ok(self)
+    }
     pub fn subscribe_click(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::button_click_handler(move || {
             callback(());
@@ -5439,6 +5450,17 @@ impl CheckBox {
         Ok(self)
     }
     pub fn is_pressed(&self) -> Result<bool> { Ok(self.raw.get_is_pressed()?) }
+    pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_flyout(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_flyout(Some(&value))?)
+    }
+    pub fn flyout(self, value: impl AsControl) -> Result<Self> {
+        self.set_flyout(value)?;
+        Ok(self)
+    }
     pub fn subscribe_click(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::button_click_handler(move || {
             callback(());
@@ -6960,6 +6982,17 @@ impl CommandBarButton {
         Ok(self)
     }
     pub fn is_pressed(&self) -> Result<bool> { Ok(self.raw.get_is_pressed()?) }
+    pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_flyout(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_flyout(Some(&value))?)
+    }
+    pub fn flyout(self, value: impl AsControl) -> Result<Self> {
+        self.set_flyout(value)?;
+        Ok(self)
+    }
     pub fn subscribe_click(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::button_click_handler(move || {
             callback(());
@@ -7688,6 +7721,17 @@ impl CommandBarToggleButton {
         Ok(self)
     }
     pub fn is_pressed(&self) -> Result<bool> { Ok(self.raw.get_is_pressed()?) }
+    pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_flyout(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_flyout(Some(&value))?)
+    }
+    pub fn flyout(self, value: impl AsControl) -> Result<Self> {
+        self.set_flyout(value)?;
+        Ok(self)
+    }
     pub fn subscribe_click(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::button_click_handler(move || {
             callback(());
@@ -9828,6 +9872,17 @@ impl DropDownButton {
         Ok(self)
     }
     pub fn is_pressed(&self) -> Result<bool> { Ok(self.raw.get_is_pressed()?) }
+    pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_flyout(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_flyout(Some(&value))?)
+    }
+    pub fn flyout(self, value: impl AsControl) -> Result<Self> {
+        self.set_flyout(value)?;
+        Ok(self)
+    }
     pub fn subscribe_click(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::button_click_handler(move || {
             callback(());
@@ -11945,6 +12000,17 @@ impl HyperlinkButton {
         Ok(self)
     }
     pub fn is_pressed(&self) -> Result<bool> { Ok(self.raw.get_is_pressed()?) }
+    pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_flyout(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_flyout(Some(&value))?)
+    }
+    pub fn flyout(self, value: impl AsControl) -> Result<Self> {
+        self.set_flyout(value)?;
+        Ok(self)
+    }
     pub fn subscribe_click(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::button_click_handler(move || {
             callback(());
@@ -15916,6 +15982,10 @@ impl MenuItem {
         self.set_group_name(value)?;
         Ok(self)
     }
+    pub fn has_sub_menu(&self) -> Result<bool> { Ok(self.raw.get_has_sub_menu()?) }
+    pub fn is_top_level(&self) -> Result<bool> { Ok(self.raw.get_is_top_level()?) }
+    pub fn open(&self) -> Result<()> { Ok(self.raw.open()?) }
+    pub fn close(&self) -> Result<()> { Ok(self.raw.close()?) }
     pub fn subscribe_click(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::menu_item_click_handler(move || {
             callback(());
@@ -20896,6 +20966,17 @@ impl ToggleButton {
         Ok(self)
     }
     pub fn is_pressed(&self) -> Result<bool> { Ok(self.raw.get_is_pressed()?) }
+    pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_flyout(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_flyout(Some(&value))?)
+    }
+    pub fn flyout(self, value: impl AsControl) -> Result<Self> {
+        self.set_flyout(value)?;
+        Ok(self)
+    }
     pub fn subscribe_click(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::button_click_handler(move || {
             callback(());
@@ -21913,6 +21994,17 @@ impl RadioButton {
         Ok(self)
     }
     pub fn is_pressed(&self) -> Result<bool> { Ok(self.raw.get_is_pressed()?) }
+    pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_flyout(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_flyout(Some(&value))?)
+    }
+    pub fn flyout(self, value: impl AsControl) -> Result<Self> {
+        self.set_flyout(value)?;
+        Ok(self)
+    }
     pub fn subscribe_click(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::button_click_handler(move || {
             callback(());
@@ -22916,6 +23008,17 @@ impl RepeatButton {
         Ok(self)
     }
     pub fn is_pressed(&self) -> Result<bool> { Ok(self.raw.get_is_pressed()?) }
+    pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_flyout(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_flyout(Some(&value))?)
+    }
+    pub fn flyout(self, value: impl AsControl) -> Result<Self> {
+        self.set_flyout(value)?;
+        Ok(self)
+    }
     pub fn subscribe_click(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::button_click_handler(move || {
             callback(());
@@ -27471,6 +27574,17 @@ impl SplitButton {
         self.set_vertical_content_alignment(value)?;
         Ok(self)
     }
+    pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_flyout(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_flyout(Some(&value))?)
+    }
+    pub fn flyout(self, value: impl AsControl) -> Result<Self> {
+        self.set_flyout(value)?;
+        Ok(self)
+    }
     pub fn subscribe_click(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::split_button_click_handler(move || {
             callback(());
@@ -31756,6 +31870,17 @@ impl ToggleSplitButton {
         self.set_vertical_content_alignment(value)?;
         Ok(self)
     }
+    pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_flyout(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_flyout(Some(&value))?)
+    }
+    pub fn flyout(self, value: impl AsControl) -> Result<Self> {
+        self.set_flyout(value)?;
+        Ok(self)
+    }
     pub fn subscribe_click(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::split_button_click_handler(move || {
             callback(());
@@ -32147,6 +32272,17 @@ impl ToggleSwitch {
         Ok(self)
     }
     pub fn is_pressed(&self) -> Result<bool> { Ok(self.raw.get_is_pressed()?) }
+    pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_flyout(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_flyout(Some(&value))?)
+    }
+    pub fn flyout(self, value: impl AsControl) -> Result<Self> {
+        self.set_flyout(value)?;
+        Ok(self)
+    }
     pub fn subscribe_click(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::button_click_handler(move || {
             callback(());

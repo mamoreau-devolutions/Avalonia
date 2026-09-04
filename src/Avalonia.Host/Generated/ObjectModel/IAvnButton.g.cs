@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("110589FF-3BB8-50F5-A392-41BB3107D5F1")]
+[Guid("3CBEB4F4-0444-5905-97FF-86B5D82DFFFF")]
 public partial interface IAvnButton : IAvnContentControl
 {
     [PreserveSig]
@@ -29,6 +29,12 @@ public partial interface IAvnButton : IAvnContentControl
 
     [PreserveSig]
     int GetIsPressed(out int value);
+
+    [PreserveSig]
+    int GetFlyout(out IAvnFlyoutBase? value);
+
+    [PreserveSig]
+    int SetFlyout(IAvnFlyoutBase? value);
 
     [PreserveSig]
     int AdviseClick(IAvnButtonClickHandler? handler, out long subscriptionId);
@@ -1214,6 +1220,37 @@ public sealed partial class AvnButton : IAvnButton
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.IsPressed ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetFlyout(out IAvnFlyoutBase? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (IAvnFlyoutBase?)ProjectionRuntime.Wrap(_value.Flyout as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetFlyout(IAvnFlyoutBase? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Flyout = (global::Avalonia.Controls.Primitives.FlyoutBase)ProjectionRuntime.Unwrap(value)!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
