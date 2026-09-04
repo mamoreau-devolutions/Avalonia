@@ -29,6 +29,8 @@ back the string the ABI set, or `null` for an image the ABI never set; see
 [Image sources](MARSHALLING.md#image-sources). `ToolTip::set_tip` carries text
 only; a control-valued tip reads back as `null`. See
 [ToolTip](MARSHALLING.md#tooltip) and [Tabs and trees](MARSHALLING.md#tabs-and-trees).
+`Carousel`, `TransitioningContentControl`, `Label`, `Separator`, `GroupBox`,
+`UserControl` and `LayoutTransformControl` are projected too.
 `Calendar` and `CalendarDatePicker` are projected too. Calendar days cross as
 `yyyy-MM-dd`. `NumericUpDown`, `AutoCompleteBox`, `MaskedTextBox`,
 `SelectableTextBlock` and `ButtonSpinner` are projected too. Decimals cross as

@@ -78,6 +78,13 @@ public class ClrTypeExtractorTests
         typeof(SelectableTextBlock),
         typeof(Calendar),
         typeof(CalendarDatePicker),
+        typeof(Carousel),
+        typeof(TransitioningContentControl),
+        typeof(Label),
+        typeof(Separator),
+        typeof(GroupBox),
+        typeof(UserControl),
+        typeof(LayoutTransformControl),
         typeof(TextBox),
         typeof(ScrollViewer),
         typeof(RangeBase),
@@ -268,9 +275,9 @@ public class ClrTypeExtractorTests
         // The factory grew a creator per wave A control plus GetToolTipStatics, then one per
         // constructible wave B type, then one per constructible wave C type, so it has moved
         // three times off the version 2 IID it published for CreateSolidColorBrush.
-        Assert.Equal(8, ir.FactoryAbiVersion);
+        Assert.Equal(9, ir.FactoryAbiVersion);
         Assert.Equal(
-            ClrTypeExtractor.CreateDeterministicIid("Avalonia.Host.Com.IAvnControlFactory", 8),
+            ClrTypeExtractor.CreateDeterministicIid("Avalonia.Host.Com.IAvnControlFactory", 9),
             ir.FactoryIid);
     }
 
@@ -1104,7 +1111,7 @@ public class ClrTypeExtractorTests
             property => property.Name is "Above" or "Below" or "LeftOf" or "RightOf"
                 or "AlignLeftWith" or "Order" or "Grow" or "Shrink" or "Basis");
 
-        Assert.Equal(8, ir.FactoryAbiVersion);
+        Assert.Equal(9, ir.FactoryAbiVersion);
     }
 
     [Fact]
@@ -1157,7 +1164,7 @@ public class ClrTypeExtractorTests
         Assert.Equal(MarshallingKind.ComCollection, items.Kind);
         Assert.Equal("Avalonia.Host.Com.IAvnItemList", items.InterfaceName);
 
-        Assert.Equal(8, ir.FactoryAbiVersion);
+        Assert.Equal(9, ir.FactoryAbiVersion);
     }
 
     [Fact]
@@ -1201,7 +1208,7 @@ public class ClrTypeExtractorTests
         Assert.True(selectedText.CanRead);
         Assert.False(selectedText.CanWrite);
 
-        Assert.Equal(8, ir.FactoryAbiVersion);
+        Assert.Equal(9, ir.FactoryAbiVersion);
     }
 
     [Fact]
@@ -1234,7 +1241,32 @@ public class ClrTypeExtractorTests
             Type(ir, "IAvnCalendar").Properties,
             p => p.Name == "SelectedDates");
 
-        Assert.Equal(8, ir.FactoryAbiVersion);
+        Assert.Equal(9, ir.FactoryAbiVersion);
+    }
+
+    [Fact]
+    public void Wave_g_content_chrome_publishes_new_interfaces_at_version_one()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+
+        Assert.Equal("Avalonia.Host.Com.IAvnSelectingItemsControl", Type(ir, "IAvnCarousel").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnContentControl", Type(ir, "IAvnTransitioningContentControl").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnContentControl", Type(ir, "IAvnLabel").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnTemplatedControl", Type(ir, "IAvnSeparator").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnHeaderedContentControl", Type(ir, "IAvnGroupBox").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnContentControl", Type(ir, "IAvnUserControl").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnDecorator", Type(ir, "IAvnLayoutTransformControl").BaseFullName);
+
+        var isSwiping = Type(ir, "IAvnCarousel").Properties.Single(p => p.Name == "IsSwiping");
+        Assert.True(isSwiping.CanRead);
+        Assert.False(isSwiping.CanWrite);
+        Assert.DoesNotContain(Type(ir, "IAvnCarousel").Properties, p => p.Name == "PageTransition");
+        Assert.DoesNotContain(Type(ir, "IAvnLabel").Properties, p => p.Name == "Target");
+        Assert.DoesNotContain(
+            Type(ir, "IAvnLayoutTransformControl").Properties,
+            p => p.Name == "LayoutTransform");
+
+        Assert.Equal(9, ir.FactoryAbiVersion);
     }
 
     [Fact]

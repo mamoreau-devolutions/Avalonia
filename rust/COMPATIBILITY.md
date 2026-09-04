@@ -138,6 +138,11 @@ version 1. `IAvnControlFactory` moves from 7 to 8. Calendar days are `DateTime`,
 not `DateTimeOffset`, so they cross as `yyyy-MM-dd` through `AvnCalendarDate`
 rather than the picker `"o"` form. `SelectedDates` stays a gap.
 
+Wave G is the same shape. `IAvnCarousel`, `IAvnTransitioningContentControl`,
+`IAvnLabel`, `IAvnSeparator`, `IAvnGroupBox`, `IAvnUserControl` and
+`IAvnLayoutTransformControl` publish at version 1. `IAvnControlFactory` moves
+from 8 to 9. `PageTransition`, `LayoutTransform` and `Label.Target` stay gaps.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A

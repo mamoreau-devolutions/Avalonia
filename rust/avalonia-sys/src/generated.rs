@@ -5101,6 +5101,482 @@ impl ComPtr<IAvnCanvas> {
     }
 }
 
+pub const I_AVN_CAROUSEL_IID: Guid = Guid { data1: 0xC948947D, data2: 0xF7A0, data3: 0x5EA3, data4: [0xB5, 0x25, 0xE1, 0x8A, 0xE7, 0xE6, 0x5C, 0xD7] };
+
+#[repr(C)]
+struct IAvnCarouselVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_object_id: unsafe extern "system" fn(*mut IAvnCarousel, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnCarousel, *mut i64) -> i32,
+    get_name: unsafe extern "system" fn(*mut IAvnCarousel, *mut *mut u16) -> i32,
+    set_name: unsafe extern "system" fn(*mut IAvnCarousel, *mut u16) -> i32,
+    get_classes: unsafe extern "system" fn(*mut IAvnCarousel, *mut *mut IAvnStringList) -> i32,
+    get_is_visible: unsafe extern "system" fn(*mut IAvnCarousel, *mut i32) -> i32,
+    set_is_visible: unsafe extern "system" fn(*mut IAvnCarousel, i32) -> i32,
+    get_opacity: unsafe extern "system" fn(*mut IAvnCarousel, *mut f64) -> i32,
+    set_opacity: unsafe extern "system" fn(*mut IAvnCarousel, f64) -> i32,
+    get_width: unsafe extern "system" fn(*mut IAvnCarousel, *mut f64) -> i32,
+    set_width: unsafe extern "system" fn(*mut IAvnCarousel, f64) -> i32,
+    get_height: unsafe extern "system" fn(*mut IAvnCarousel, *mut f64) -> i32,
+    set_height: unsafe extern "system" fn(*mut IAvnCarousel, f64) -> i32,
+    get_min_width: unsafe extern "system" fn(*mut IAvnCarousel, *mut f64) -> i32,
+    set_min_width: unsafe extern "system" fn(*mut IAvnCarousel, f64) -> i32,
+    get_max_width: unsafe extern "system" fn(*mut IAvnCarousel, *mut f64) -> i32,
+    set_max_width: unsafe extern "system" fn(*mut IAvnCarousel, f64) -> i32,
+    get_min_height: unsafe extern "system" fn(*mut IAvnCarousel, *mut f64) -> i32,
+    set_min_height: unsafe extern "system" fn(*mut IAvnCarousel, f64) -> i32,
+    get_max_height: unsafe extern "system" fn(*mut IAvnCarousel, *mut f64) -> i32,
+    set_max_height: unsafe extern "system" fn(*mut IAvnCarousel, f64) -> i32,
+    get_margin: unsafe extern "system" fn(*mut IAvnCarousel, *mut AvnThickness) -> i32,
+    set_margin: unsafe extern "system" fn(*mut IAvnCarousel, AvnThickness) -> i32,
+    get_horizontal_alignment: unsafe extern "system" fn(*mut IAvnCarousel, *mut i32) -> i32,
+    set_horizontal_alignment: unsafe extern "system" fn(*mut IAvnCarousel, i32) -> i32,
+    get_vertical_alignment: unsafe extern "system" fn(*mut IAvnCarousel, *mut i32) -> i32,
+    set_vertical_alignment: unsafe extern "system" fn(*mut IAvnCarousel, i32) -> i32,
+    get_is_enabled: unsafe extern "system" fn(*mut IAvnCarousel, *mut i32) -> i32,
+    set_is_enabled: unsafe extern "system" fn(*mut IAvnCarousel, i32) -> i32,
+    advise_key_down: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
+    unadvise_key_down: unsafe extern "system" fn(*mut IAvnCarousel, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnCarousel, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnCarousel, i64) -> i32,
+    get_background: unsafe extern "system" fn(*mut IAvnCarousel, *mut *mut IAvnBrush) -> i32,
+    set_background: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnBrush) -> i32,
+    get_border_brush: unsafe extern "system" fn(*mut IAvnCarousel, *mut *mut IAvnBrush) -> i32,
+    set_border_brush: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnBrush) -> i32,
+    get_border_thickness: unsafe extern "system" fn(*mut IAvnCarousel, *mut AvnThickness) -> i32,
+    set_border_thickness: unsafe extern "system" fn(*mut IAvnCarousel, AvnThickness) -> i32,
+    get_corner_radius: unsafe extern "system" fn(*mut IAvnCarousel, *mut AvnCornerRadius) -> i32,
+    set_corner_radius: unsafe extern "system" fn(*mut IAvnCarousel, AvnCornerRadius) -> i32,
+    get_font_size: unsafe extern "system" fn(*mut IAvnCarousel, *mut f64) -> i32,
+    set_font_size: unsafe extern "system" fn(*mut IAvnCarousel, f64) -> i32,
+    get_foreground: unsafe extern "system" fn(*mut IAvnCarousel, *mut *mut IAvnBrush) -> i32,
+    set_foreground: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnBrush) -> i32,
+    get_items: unsafe extern "system" fn(*mut IAvnCarousel, *mut *mut IAvnItemList) -> i32,
+    get_selected_index: unsafe extern "system" fn(*mut IAvnCarousel, *mut i32) -> i32,
+    set_selected_index: unsafe extern "system" fn(*mut IAvnCarousel, i32) -> i32,
+    advise_selection_changed: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnSelectingItemsControlSelectionChangedHandler, *mut i64) -> i32,
+    unadvise_selection_changed: unsafe extern "system" fn(*mut IAvnCarousel, i64) -> i32,
+    get_is_swipe_enabled: unsafe extern "system" fn(*mut IAvnCarousel, *mut i32) -> i32,
+    set_is_swipe_enabled: unsafe extern "system" fn(*mut IAvnCarousel, i32) -> i32,
+    get_viewport_fraction: unsafe extern "system" fn(*mut IAvnCarousel, *mut f64) -> i32,
+    set_viewport_fraction: unsafe extern "system" fn(*mut IAvnCarousel, f64) -> i32,
+    get_is_swiping: unsafe extern "system" fn(*mut IAvnCarousel, *mut i32) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnCarousel {
+    vtbl: *const IAvnCarouselVtbl,
+}
+
+unsafe impl ComInterface for IAvnCarousel {
+    const IID: Guid = I_AVN_CAROUSEL_IID;
+}
+
+impl ComPtr<IAvnCarousel> {
+    pub fn object_id(&self) -> Result<i64> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
+        }
+    }
+    pub fn get_name(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_name)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_name(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_name)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
+        unsafe {
+            let mut value: *mut IAvnStringList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn get_is_visible(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_visible)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_visible(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_visible)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_opacity(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_opacity)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_margin(&self) -> Result<AvnThickness> {
+        unsafe {
+            let mut value: AvnThickness = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_margin)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_margin(&self, value: AvnThickness) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_margin)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_key_down)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_key_down(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_key_down)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_background(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_background)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_background(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_background)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_border_brush(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_border_brush)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_border_brush(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_border_brush)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_border_thickness(&self) -> Result<AvnThickness> {
+        unsafe {
+            let mut value: AvnThickness = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_border_thickness)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_border_thickness(&self, value: AvnThickness) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_border_thickness)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_corner_radius(&self) -> Result<AvnCornerRadius> {
+        unsafe {
+            let mut value: AvnCornerRadius = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_corner_radius)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_corner_radius(&self, value: AvnCornerRadius) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_corner_radius)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_font_size(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_size)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_size(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_size)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_foreground(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_foreground)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_foreground(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_foreground)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_items(&self) -> Result<ComPtr<IAvnItemList>> {
+        unsafe {
+            let mut value: *mut IAvnItemList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn get_selected_index(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_index)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_index(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_index)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_selection_changed(&self, handler: &ComPtr<IAvnSelectingItemsControlSelectionChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_selection_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_selection_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_selection_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_swipe_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_swipe_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_swipe_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_swipe_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_viewport_fraction(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_viewport_fraction)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_viewport_fraction(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_viewport_fraction)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_swiping(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_swiping)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+}
+
 pub const I_AVN_CHECK_BOX_IID: Guid = Guid { data1: 0x56332928, data2: 0x3A00, data3: 0x552F, data4: [0xAC, 0x0F, 0x33, 0xE4, 0xC4, 0x6A, 0x93, 0x3D] };
 
 #[repr(C)]
@@ -11747,6 +12223,465 @@ impl ComPtr<IAvnGridSplitter> {
     }
 }
 
+pub const I_AVN_GROUP_BOX_IID: Guid = Guid { data1: 0x1744B6BE, data2: 0x1DF4, data3: 0x587E, data4: [0x8D, 0xE6, 0xC0, 0x07, 0xD5, 0xBE, 0xE3, 0xFA] };
+
+#[repr(C)]
+struct IAvnGroupBoxVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_object_id: unsafe extern "system" fn(*mut IAvnGroupBox, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnGroupBox, *mut i64) -> i32,
+    get_name: unsafe extern "system" fn(*mut IAvnGroupBox, *mut *mut u16) -> i32,
+    set_name: unsafe extern "system" fn(*mut IAvnGroupBox, *mut u16) -> i32,
+    get_classes: unsafe extern "system" fn(*mut IAvnGroupBox, *mut *mut IAvnStringList) -> i32,
+    get_is_visible: unsafe extern "system" fn(*mut IAvnGroupBox, *mut i32) -> i32,
+    set_is_visible: unsafe extern "system" fn(*mut IAvnGroupBox, i32) -> i32,
+    get_opacity: unsafe extern "system" fn(*mut IAvnGroupBox, *mut f64) -> i32,
+    set_opacity: unsafe extern "system" fn(*mut IAvnGroupBox, f64) -> i32,
+    get_width: unsafe extern "system" fn(*mut IAvnGroupBox, *mut f64) -> i32,
+    set_width: unsafe extern "system" fn(*mut IAvnGroupBox, f64) -> i32,
+    get_height: unsafe extern "system" fn(*mut IAvnGroupBox, *mut f64) -> i32,
+    set_height: unsafe extern "system" fn(*mut IAvnGroupBox, f64) -> i32,
+    get_min_width: unsafe extern "system" fn(*mut IAvnGroupBox, *mut f64) -> i32,
+    set_min_width: unsafe extern "system" fn(*mut IAvnGroupBox, f64) -> i32,
+    get_max_width: unsafe extern "system" fn(*mut IAvnGroupBox, *mut f64) -> i32,
+    set_max_width: unsafe extern "system" fn(*mut IAvnGroupBox, f64) -> i32,
+    get_min_height: unsafe extern "system" fn(*mut IAvnGroupBox, *mut f64) -> i32,
+    set_min_height: unsafe extern "system" fn(*mut IAvnGroupBox, f64) -> i32,
+    get_max_height: unsafe extern "system" fn(*mut IAvnGroupBox, *mut f64) -> i32,
+    set_max_height: unsafe extern "system" fn(*mut IAvnGroupBox, f64) -> i32,
+    get_margin: unsafe extern "system" fn(*mut IAvnGroupBox, *mut AvnThickness) -> i32,
+    set_margin: unsafe extern "system" fn(*mut IAvnGroupBox, AvnThickness) -> i32,
+    get_horizontal_alignment: unsafe extern "system" fn(*mut IAvnGroupBox, *mut i32) -> i32,
+    set_horizontal_alignment: unsafe extern "system" fn(*mut IAvnGroupBox, i32) -> i32,
+    get_vertical_alignment: unsafe extern "system" fn(*mut IAvnGroupBox, *mut i32) -> i32,
+    set_vertical_alignment: unsafe extern "system" fn(*mut IAvnGroupBox, i32) -> i32,
+    get_is_enabled: unsafe extern "system" fn(*mut IAvnGroupBox, *mut i32) -> i32,
+    set_is_enabled: unsafe extern "system" fn(*mut IAvnGroupBox, i32) -> i32,
+    advise_key_down: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
+    unadvise_key_down: unsafe extern "system" fn(*mut IAvnGroupBox, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnGroupBox, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnGroupBox, i64) -> i32,
+    get_background: unsafe extern "system" fn(*mut IAvnGroupBox, *mut *mut IAvnBrush) -> i32,
+    set_background: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnBrush) -> i32,
+    get_border_brush: unsafe extern "system" fn(*mut IAvnGroupBox, *mut *mut IAvnBrush) -> i32,
+    set_border_brush: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnBrush) -> i32,
+    get_border_thickness: unsafe extern "system" fn(*mut IAvnGroupBox, *mut AvnThickness) -> i32,
+    set_border_thickness: unsafe extern "system" fn(*mut IAvnGroupBox, AvnThickness) -> i32,
+    get_corner_radius: unsafe extern "system" fn(*mut IAvnGroupBox, *mut AvnCornerRadius) -> i32,
+    set_corner_radius: unsafe extern "system" fn(*mut IAvnGroupBox, AvnCornerRadius) -> i32,
+    get_font_size: unsafe extern "system" fn(*mut IAvnGroupBox, *mut f64) -> i32,
+    set_font_size: unsafe extern "system" fn(*mut IAvnGroupBox, f64) -> i32,
+    get_foreground: unsafe extern "system" fn(*mut IAvnGroupBox, *mut *mut IAvnBrush) -> i32,
+    set_foreground: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnBrush) -> i32,
+    get_content: unsafe extern "system" fn(*mut IAvnGroupBox, *mut *mut IAvnControl) -> i32,
+    set_content: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnControl) -> i32,
+    get_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnGroupBox, *mut i32) -> i32,
+    set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnGroupBox, i32) -> i32,
+    get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnGroupBox, *mut i32) -> i32,
+    set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnGroupBox, i32) -> i32,
+    get_header: unsafe extern "system" fn(*mut IAvnGroupBox, *mut *mut IAvnControl) -> i32,
+    set_header: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnControl) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnGroupBox {
+    vtbl: *const IAvnGroupBoxVtbl,
+}
+
+unsafe impl ComInterface for IAvnGroupBox {
+    const IID: Guid = I_AVN_GROUP_BOX_IID;
+}
+
+impl ComPtr<IAvnGroupBox> {
+    pub fn object_id(&self) -> Result<i64> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
+        }
+    }
+    pub fn get_name(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_name)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_name(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_name)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
+        unsafe {
+            let mut value: *mut IAvnStringList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn get_is_visible(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_visible)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_visible(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_visible)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_opacity(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_opacity)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_margin(&self) -> Result<AvnThickness> {
+        unsafe {
+            let mut value: AvnThickness = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_margin)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_margin(&self, value: AvnThickness) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_margin)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_key_down)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_key_down(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_key_down)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_background(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_background)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_background(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_background)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_border_brush(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_border_brush)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_border_brush(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_border_brush)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_border_thickness(&self) -> Result<AvnThickness> {
+        unsafe {
+            let mut value: AvnThickness = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_border_thickness)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_border_thickness(&self, value: AvnThickness) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_border_thickness)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_corner_radius(&self) -> Result<AvnCornerRadius> {
+        unsafe {
+            let mut value: AvnCornerRadius = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_corner_radius)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_corner_radius(&self, value: AvnCornerRadius) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_corner_radius)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_font_size(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_size)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_size(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_size)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_foreground(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_foreground)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_foreground(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_foreground)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_content(&self) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_content)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_content)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_header(&self) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_header)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_header(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_header)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+}
+
 pub const I_AVN_HYPERLINK_BUTTON_IID: Guid = Guid { data1: 0x191FB103, data2: 0x882A, data3: 0x5206, data4: [0x81, 0xA6, 0x9D, 0x91, 0xAD, 0xC0, 0xE7, 0x6B] };
 
 #[repr(C)]
@@ -13057,6 +13992,796 @@ impl ComPtr<IAvnItemsControl> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+}
+
+pub const I_AVN_LABEL_IID: Guid = Guid { data1: 0xDB473F7C, data2: 0x8864, data3: 0x596B, data4: [0x90, 0x1B, 0x6C, 0x48, 0x33, 0x5E, 0x31, 0x38] };
+
+#[repr(C)]
+struct IAvnLabelVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_object_id: unsafe extern "system" fn(*mut IAvnLabel, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnLabel, *mut i64) -> i32,
+    get_name: unsafe extern "system" fn(*mut IAvnLabel, *mut *mut u16) -> i32,
+    set_name: unsafe extern "system" fn(*mut IAvnLabel, *mut u16) -> i32,
+    get_classes: unsafe extern "system" fn(*mut IAvnLabel, *mut *mut IAvnStringList) -> i32,
+    get_is_visible: unsafe extern "system" fn(*mut IAvnLabel, *mut i32) -> i32,
+    set_is_visible: unsafe extern "system" fn(*mut IAvnLabel, i32) -> i32,
+    get_opacity: unsafe extern "system" fn(*mut IAvnLabel, *mut f64) -> i32,
+    set_opacity: unsafe extern "system" fn(*mut IAvnLabel, f64) -> i32,
+    get_width: unsafe extern "system" fn(*mut IAvnLabel, *mut f64) -> i32,
+    set_width: unsafe extern "system" fn(*mut IAvnLabel, f64) -> i32,
+    get_height: unsafe extern "system" fn(*mut IAvnLabel, *mut f64) -> i32,
+    set_height: unsafe extern "system" fn(*mut IAvnLabel, f64) -> i32,
+    get_min_width: unsafe extern "system" fn(*mut IAvnLabel, *mut f64) -> i32,
+    set_min_width: unsafe extern "system" fn(*mut IAvnLabel, f64) -> i32,
+    get_max_width: unsafe extern "system" fn(*mut IAvnLabel, *mut f64) -> i32,
+    set_max_width: unsafe extern "system" fn(*mut IAvnLabel, f64) -> i32,
+    get_min_height: unsafe extern "system" fn(*mut IAvnLabel, *mut f64) -> i32,
+    set_min_height: unsafe extern "system" fn(*mut IAvnLabel, f64) -> i32,
+    get_max_height: unsafe extern "system" fn(*mut IAvnLabel, *mut f64) -> i32,
+    set_max_height: unsafe extern "system" fn(*mut IAvnLabel, f64) -> i32,
+    get_margin: unsafe extern "system" fn(*mut IAvnLabel, *mut AvnThickness) -> i32,
+    set_margin: unsafe extern "system" fn(*mut IAvnLabel, AvnThickness) -> i32,
+    get_horizontal_alignment: unsafe extern "system" fn(*mut IAvnLabel, *mut i32) -> i32,
+    set_horizontal_alignment: unsafe extern "system" fn(*mut IAvnLabel, i32) -> i32,
+    get_vertical_alignment: unsafe extern "system" fn(*mut IAvnLabel, *mut i32) -> i32,
+    set_vertical_alignment: unsafe extern "system" fn(*mut IAvnLabel, i32) -> i32,
+    get_is_enabled: unsafe extern "system" fn(*mut IAvnLabel, *mut i32) -> i32,
+    set_is_enabled: unsafe extern "system" fn(*mut IAvnLabel, i32) -> i32,
+    advise_key_down: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
+    unadvise_key_down: unsafe extern "system" fn(*mut IAvnLabel, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnLabel, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnLabel, i64) -> i32,
+    get_background: unsafe extern "system" fn(*mut IAvnLabel, *mut *mut IAvnBrush) -> i32,
+    set_background: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnBrush) -> i32,
+    get_border_brush: unsafe extern "system" fn(*mut IAvnLabel, *mut *mut IAvnBrush) -> i32,
+    set_border_brush: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnBrush) -> i32,
+    get_border_thickness: unsafe extern "system" fn(*mut IAvnLabel, *mut AvnThickness) -> i32,
+    set_border_thickness: unsafe extern "system" fn(*mut IAvnLabel, AvnThickness) -> i32,
+    get_corner_radius: unsafe extern "system" fn(*mut IAvnLabel, *mut AvnCornerRadius) -> i32,
+    set_corner_radius: unsafe extern "system" fn(*mut IAvnLabel, AvnCornerRadius) -> i32,
+    get_font_size: unsafe extern "system" fn(*mut IAvnLabel, *mut f64) -> i32,
+    set_font_size: unsafe extern "system" fn(*mut IAvnLabel, f64) -> i32,
+    get_foreground: unsafe extern "system" fn(*mut IAvnLabel, *mut *mut IAvnBrush) -> i32,
+    set_foreground: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnBrush) -> i32,
+    get_content: unsafe extern "system" fn(*mut IAvnLabel, *mut *mut IAvnControl) -> i32,
+    set_content: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnControl) -> i32,
+    get_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnLabel, *mut i32) -> i32,
+    set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnLabel, i32) -> i32,
+    get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnLabel, *mut i32) -> i32,
+    set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnLabel, i32) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnLabel {
+    vtbl: *const IAvnLabelVtbl,
+}
+
+unsafe impl ComInterface for IAvnLabel {
+    const IID: Guid = I_AVN_LABEL_IID;
+}
+
+impl ComPtr<IAvnLabel> {
+    pub fn object_id(&self) -> Result<i64> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
+        }
+    }
+    pub fn get_name(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_name)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_name(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_name)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
+        unsafe {
+            let mut value: *mut IAvnStringList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn get_is_visible(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_visible)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_visible(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_visible)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_opacity(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_opacity)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_margin(&self) -> Result<AvnThickness> {
+        unsafe {
+            let mut value: AvnThickness = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_margin)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_margin(&self, value: AvnThickness) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_margin)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_key_down)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_key_down(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_key_down)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_background(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_background)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_background(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_background)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_border_brush(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_border_brush)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_border_brush(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_border_brush)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_border_thickness(&self) -> Result<AvnThickness> {
+        unsafe {
+            let mut value: AvnThickness = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_border_thickness)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_border_thickness(&self, value: AvnThickness) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_border_thickness)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_corner_radius(&self) -> Result<AvnCornerRadius> {
+        unsafe {
+            let mut value: AvnCornerRadius = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_corner_radius)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_corner_radius(&self, value: AvnCornerRadius) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_corner_radius)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_font_size(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_size)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_size(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_size)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_foreground(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_foreground)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_foreground(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_foreground)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_content(&self) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_content)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_content)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+}
+
+pub const I_AVN_LAYOUT_TRANSFORM_CONTROL_IID: Guid = Guid { data1: 0x26BBE2AC, data2: 0xC996, data3: 0x5881, data4: [0x9D, 0x87, 0x8F, 0x22, 0xB9, 0xB9, 0xA3, 0x9D] };
+
+#[repr(C)]
+struct IAvnLayoutTransformControlVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_object_id: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut i64) -> i32,
+    get_name: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut *mut u16) -> i32,
+    set_name: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut u16) -> i32,
+    get_classes: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut *mut IAvnStringList) -> i32,
+    get_is_visible: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut i32) -> i32,
+    set_is_visible: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i32) -> i32,
+    get_opacity: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut f64) -> i32,
+    set_opacity: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, f64) -> i32,
+    get_width: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut f64) -> i32,
+    set_width: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, f64) -> i32,
+    get_height: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut f64) -> i32,
+    set_height: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, f64) -> i32,
+    get_min_width: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut f64) -> i32,
+    set_min_width: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, f64) -> i32,
+    get_max_width: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut f64) -> i32,
+    set_max_width: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, f64) -> i32,
+    get_min_height: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut f64) -> i32,
+    set_min_height: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, f64) -> i32,
+    get_max_height: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut f64) -> i32,
+    set_max_height: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, f64) -> i32,
+    get_margin: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut AvnThickness) -> i32,
+    set_margin: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, AvnThickness) -> i32,
+    get_horizontal_alignment: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut i32) -> i32,
+    set_horizontal_alignment: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i32) -> i32,
+    get_vertical_alignment: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut i32) -> i32,
+    set_vertical_alignment: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i32) -> i32,
+    get_is_enabled: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut i32) -> i32,
+    set_is_enabled: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i32) -> i32,
+    advise_key_down: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
+    unadvise_key_down: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i64) -> i32,
+    get_child: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut *mut IAvnControl) -> i32,
+    set_child: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut IAvnControl) -> i32,
+    get_padding: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut AvnThickness) -> i32,
+    set_padding: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, AvnThickness) -> i32,
+    get_use_render_transform: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut i32) -> i32,
+    set_use_render_transform: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i32) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnLayoutTransformControl {
+    vtbl: *const IAvnLayoutTransformControlVtbl,
+}
+
+unsafe impl ComInterface for IAvnLayoutTransformControl {
+    const IID: Guid = I_AVN_LAYOUT_TRANSFORM_CONTROL_IID;
+}
+
+impl ComPtr<IAvnLayoutTransformControl> {
+    pub fn object_id(&self) -> Result<i64> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
+        }
+    }
+    pub fn get_name(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_name)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_name(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_name)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
+        unsafe {
+            let mut value: *mut IAvnStringList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn get_is_visible(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_visible)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_visible(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_visible)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_opacity(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_opacity)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_margin(&self) -> Result<AvnThickness> {
+        unsafe {
+            let mut value: AvnThickness = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_margin)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_margin(&self, value: AvnThickness) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_margin)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_key_down)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_key_down(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_key_down)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_child(&self) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_child)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_child(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_child)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_padding(&self) -> Result<AvnThickness> {
+        unsafe {
+            let mut value: AvnThickness = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_padding)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_padding(&self, value: AvnThickness) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_padding)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_use_render_transform(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_use_render_transform)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_use_render_transform(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_use_render_transform)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
         }
     }
 }
@@ -24976,6 +26701,401 @@ impl ComPtr<IAvnSelectableTextBlock> {
     }
 }
 
+pub const I_AVN_SEPARATOR_IID: Guid = Guid { data1: 0x2829329D, data2: 0x2594, data3: 0x5918, data4: [0x83, 0xA9, 0xE3, 0x32, 0xCC, 0xC6, 0xCD, 0x11] };
+
+#[repr(C)]
+struct IAvnSeparatorVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_object_id: unsafe extern "system" fn(*mut IAvnSeparator, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnSeparator, *mut i64) -> i32,
+    get_name: unsafe extern "system" fn(*mut IAvnSeparator, *mut *mut u16) -> i32,
+    set_name: unsafe extern "system" fn(*mut IAvnSeparator, *mut u16) -> i32,
+    get_classes: unsafe extern "system" fn(*mut IAvnSeparator, *mut *mut IAvnStringList) -> i32,
+    get_is_visible: unsafe extern "system" fn(*mut IAvnSeparator, *mut i32) -> i32,
+    set_is_visible: unsafe extern "system" fn(*mut IAvnSeparator, i32) -> i32,
+    get_opacity: unsafe extern "system" fn(*mut IAvnSeparator, *mut f64) -> i32,
+    set_opacity: unsafe extern "system" fn(*mut IAvnSeparator, f64) -> i32,
+    get_width: unsafe extern "system" fn(*mut IAvnSeparator, *mut f64) -> i32,
+    set_width: unsafe extern "system" fn(*mut IAvnSeparator, f64) -> i32,
+    get_height: unsafe extern "system" fn(*mut IAvnSeparator, *mut f64) -> i32,
+    set_height: unsafe extern "system" fn(*mut IAvnSeparator, f64) -> i32,
+    get_min_width: unsafe extern "system" fn(*mut IAvnSeparator, *mut f64) -> i32,
+    set_min_width: unsafe extern "system" fn(*mut IAvnSeparator, f64) -> i32,
+    get_max_width: unsafe extern "system" fn(*mut IAvnSeparator, *mut f64) -> i32,
+    set_max_width: unsafe extern "system" fn(*mut IAvnSeparator, f64) -> i32,
+    get_min_height: unsafe extern "system" fn(*mut IAvnSeparator, *mut f64) -> i32,
+    set_min_height: unsafe extern "system" fn(*mut IAvnSeparator, f64) -> i32,
+    get_max_height: unsafe extern "system" fn(*mut IAvnSeparator, *mut f64) -> i32,
+    set_max_height: unsafe extern "system" fn(*mut IAvnSeparator, f64) -> i32,
+    get_margin: unsafe extern "system" fn(*mut IAvnSeparator, *mut AvnThickness) -> i32,
+    set_margin: unsafe extern "system" fn(*mut IAvnSeparator, AvnThickness) -> i32,
+    get_horizontal_alignment: unsafe extern "system" fn(*mut IAvnSeparator, *mut i32) -> i32,
+    set_horizontal_alignment: unsafe extern "system" fn(*mut IAvnSeparator, i32) -> i32,
+    get_vertical_alignment: unsafe extern "system" fn(*mut IAvnSeparator, *mut i32) -> i32,
+    set_vertical_alignment: unsafe extern "system" fn(*mut IAvnSeparator, i32) -> i32,
+    get_is_enabled: unsafe extern "system" fn(*mut IAvnSeparator, *mut i32) -> i32,
+    set_is_enabled: unsafe extern "system" fn(*mut IAvnSeparator, i32) -> i32,
+    advise_key_down: unsafe extern "system" fn(*mut IAvnSeparator, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
+    unadvise_key_down: unsafe extern "system" fn(*mut IAvnSeparator, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnSeparator, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnSeparator, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnSeparator, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnSeparator, i64) -> i32,
+    get_background: unsafe extern "system" fn(*mut IAvnSeparator, *mut *mut IAvnBrush) -> i32,
+    set_background: unsafe extern "system" fn(*mut IAvnSeparator, *mut IAvnBrush) -> i32,
+    get_border_brush: unsafe extern "system" fn(*mut IAvnSeparator, *mut *mut IAvnBrush) -> i32,
+    set_border_brush: unsafe extern "system" fn(*mut IAvnSeparator, *mut IAvnBrush) -> i32,
+    get_border_thickness: unsafe extern "system" fn(*mut IAvnSeparator, *mut AvnThickness) -> i32,
+    set_border_thickness: unsafe extern "system" fn(*mut IAvnSeparator, AvnThickness) -> i32,
+    get_corner_radius: unsafe extern "system" fn(*mut IAvnSeparator, *mut AvnCornerRadius) -> i32,
+    set_corner_radius: unsafe extern "system" fn(*mut IAvnSeparator, AvnCornerRadius) -> i32,
+    get_font_size: unsafe extern "system" fn(*mut IAvnSeparator, *mut f64) -> i32,
+    set_font_size: unsafe extern "system" fn(*mut IAvnSeparator, f64) -> i32,
+    get_foreground: unsafe extern "system" fn(*mut IAvnSeparator, *mut *mut IAvnBrush) -> i32,
+    set_foreground: unsafe extern "system" fn(*mut IAvnSeparator, *mut IAvnBrush) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnSeparator {
+    vtbl: *const IAvnSeparatorVtbl,
+}
+
+unsafe impl ComInterface for IAvnSeparator {
+    const IID: Guid = I_AVN_SEPARATOR_IID;
+}
+
+impl ComPtr<IAvnSeparator> {
+    pub fn object_id(&self) -> Result<i64> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
+        }
+    }
+    pub fn get_name(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_name)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_name(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_name)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
+        unsafe {
+            let mut value: *mut IAvnStringList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn get_is_visible(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_visible)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_visible(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_visible)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_opacity(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_opacity)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_margin(&self) -> Result<AvnThickness> {
+        unsafe {
+            let mut value: AvnThickness = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_margin)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_margin(&self, value: AvnThickness) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_margin)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_key_down)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_key_down(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_key_down)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_background(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_background)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_background(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_background)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_border_brush(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_border_brush)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_border_brush(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_border_brush)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_border_thickness(&self) -> Result<AvnThickness> {
+        unsafe {
+            let mut value: AvnThickness = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_border_thickness)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_border_thickness(&self, value: AvnThickness) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_border_thickness)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_corner_radius(&self) -> Result<AvnCornerRadius> {
+        unsafe {
+            let mut value: AvnCornerRadius = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_corner_radius)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_corner_radius(&self, value: AvnCornerRadius) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_corner_radius)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_font_size(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_size)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_size(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_size)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_foreground(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_foreground)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_foreground(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_foreground)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+}
+
 pub const I_AVN_SLIDER_IID: Guid = Guid { data1: 0xBEB1A630, data2: 0x805B, data3: 0x5A11, data4: [0x8F, 0x1C, 0x18, 0x17, 0xBD, 0x9F, 0xE5, 0x15] };
 
 #[repr(C)]
@@ -31534,6 +33654,465 @@ impl ComPtr<IAvnToolTip> {
     }
 }
 
+pub const I_AVN_TRANSITIONING_CONTENT_CONTROL_IID: Guid = Guid { data1: 0xACF9033D, data2: 0x1B78, data3: 0x5DC3, data4: [0x89, 0x6F, 0xA9, 0x5A, 0x0A, 0x50, 0x4A, 0x01] };
+
+#[repr(C)]
+struct IAvnTransitioningContentControlVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_object_id: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut i64) -> i32,
+    get_name: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut *mut u16) -> i32,
+    set_name: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut u16) -> i32,
+    get_classes: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut *mut IAvnStringList) -> i32,
+    get_is_visible: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut i32) -> i32,
+    set_is_visible: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i32) -> i32,
+    get_opacity: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut f64) -> i32,
+    set_opacity: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, f64) -> i32,
+    get_width: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut f64) -> i32,
+    set_width: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, f64) -> i32,
+    get_height: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut f64) -> i32,
+    set_height: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, f64) -> i32,
+    get_min_width: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut f64) -> i32,
+    set_min_width: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, f64) -> i32,
+    get_max_width: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut f64) -> i32,
+    set_max_width: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, f64) -> i32,
+    get_min_height: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut f64) -> i32,
+    set_min_height: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, f64) -> i32,
+    get_max_height: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut f64) -> i32,
+    set_max_height: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, f64) -> i32,
+    get_margin: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut AvnThickness) -> i32,
+    set_margin: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, AvnThickness) -> i32,
+    get_horizontal_alignment: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut i32) -> i32,
+    set_horizontal_alignment: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i32) -> i32,
+    get_vertical_alignment: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut i32) -> i32,
+    set_vertical_alignment: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i32) -> i32,
+    get_is_enabled: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut i32) -> i32,
+    set_is_enabled: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i32) -> i32,
+    advise_key_down: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
+    unadvise_key_down: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i64) -> i32,
+    get_background: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut *mut IAvnBrush) -> i32,
+    set_background: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnBrush) -> i32,
+    get_border_brush: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut *mut IAvnBrush) -> i32,
+    set_border_brush: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnBrush) -> i32,
+    get_border_thickness: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut AvnThickness) -> i32,
+    set_border_thickness: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, AvnThickness) -> i32,
+    get_corner_radius: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut AvnCornerRadius) -> i32,
+    set_corner_radius: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, AvnCornerRadius) -> i32,
+    get_font_size: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut f64) -> i32,
+    set_font_size: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, f64) -> i32,
+    get_foreground: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut *mut IAvnBrush) -> i32,
+    set_foreground: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnBrush) -> i32,
+    get_content: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut *mut IAvnControl) -> i32,
+    set_content: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnControl) -> i32,
+    get_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut i32) -> i32,
+    set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i32) -> i32,
+    get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut i32) -> i32,
+    set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i32) -> i32,
+    get_is_transition_reversed: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut i32) -> i32,
+    set_is_transition_reversed: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i32) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnTransitioningContentControl {
+    vtbl: *const IAvnTransitioningContentControlVtbl,
+}
+
+unsafe impl ComInterface for IAvnTransitioningContentControl {
+    const IID: Guid = I_AVN_TRANSITIONING_CONTENT_CONTROL_IID;
+}
+
+impl ComPtr<IAvnTransitioningContentControl> {
+    pub fn object_id(&self) -> Result<i64> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
+        }
+    }
+    pub fn get_name(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_name)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_name(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_name)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
+        unsafe {
+            let mut value: *mut IAvnStringList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn get_is_visible(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_visible)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_visible(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_visible)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_opacity(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_opacity)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_margin(&self) -> Result<AvnThickness> {
+        unsafe {
+            let mut value: AvnThickness = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_margin)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_margin(&self, value: AvnThickness) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_margin)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_key_down)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_key_down(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_key_down)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_background(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_background)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_background(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_background)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_border_brush(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_border_brush)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_border_brush(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_border_brush)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_border_thickness(&self) -> Result<AvnThickness> {
+        unsafe {
+            let mut value: AvnThickness = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_border_thickness)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_border_thickness(&self, value: AvnThickness) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_border_thickness)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_corner_radius(&self) -> Result<AvnCornerRadius> {
+        unsafe {
+            let mut value: AvnCornerRadius = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_corner_radius)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_corner_radius(&self, value: AvnCornerRadius) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_corner_radius)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_font_size(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_size)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_size(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_size)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_foreground(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_foreground)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_foreground(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_foreground)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_content(&self) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_content)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_content)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_transition_reversed(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_transition_reversed)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_transition_reversed(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_transition_reversed)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+}
+
 pub const I_AVN_TREE_VIEW_IID: Guid = Guid { data1: 0x2EE8A23D, data2: 0x4558, data3: 0x51C2, data4: [0x84, 0x34, 0x43, 0x86, 0xA2, 0xB7, 0xA2, 0x22] };
 
 #[repr(C)]
@@ -32499,6 +35078,449 @@ impl ComPtr<IAvnTreeViewItem> {
     pub fn unadvise_collapsed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_collapsed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+}
+
+pub const I_AVN_USER_CONTROL_IID: Guid = Guid { data1: 0xCFC3371C, data2: 0xBD9F, data3: 0x5EBF, data4: [0xA9, 0xCA, 0xA7, 0x4B, 0x1C, 0x94, 0xF2, 0x24] };
+
+#[repr(C)]
+struct IAvnUserControlVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_object_id: unsafe extern "system" fn(*mut IAvnUserControl, *mut i64) -> i32,
+    get_lifetime_token: unsafe extern "system" fn(*mut IAvnUserControl, *mut i64) -> i32,
+    get_name: unsafe extern "system" fn(*mut IAvnUserControl, *mut *mut u16) -> i32,
+    set_name: unsafe extern "system" fn(*mut IAvnUserControl, *mut u16) -> i32,
+    get_classes: unsafe extern "system" fn(*mut IAvnUserControl, *mut *mut IAvnStringList) -> i32,
+    get_is_visible: unsafe extern "system" fn(*mut IAvnUserControl, *mut i32) -> i32,
+    set_is_visible: unsafe extern "system" fn(*mut IAvnUserControl, i32) -> i32,
+    get_opacity: unsafe extern "system" fn(*mut IAvnUserControl, *mut f64) -> i32,
+    set_opacity: unsafe extern "system" fn(*mut IAvnUserControl, f64) -> i32,
+    get_width: unsafe extern "system" fn(*mut IAvnUserControl, *mut f64) -> i32,
+    set_width: unsafe extern "system" fn(*mut IAvnUserControl, f64) -> i32,
+    get_height: unsafe extern "system" fn(*mut IAvnUserControl, *mut f64) -> i32,
+    set_height: unsafe extern "system" fn(*mut IAvnUserControl, f64) -> i32,
+    get_min_width: unsafe extern "system" fn(*mut IAvnUserControl, *mut f64) -> i32,
+    set_min_width: unsafe extern "system" fn(*mut IAvnUserControl, f64) -> i32,
+    get_max_width: unsafe extern "system" fn(*mut IAvnUserControl, *mut f64) -> i32,
+    set_max_width: unsafe extern "system" fn(*mut IAvnUserControl, f64) -> i32,
+    get_min_height: unsafe extern "system" fn(*mut IAvnUserControl, *mut f64) -> i32,
+    set_min_height: unsafe extern "system" fn(*mut IAvnUserControl, f64) -> i32,
+    get_max_height: unsafe extern "system" fn(*mut IAvnUserControl, *mut f64) -> i32,
+    set_max_height: unsafe extern "system" fn(*mut IAvnUserControl, f64) -> i32,
+    get_margin: unsafe extern "system" fn(*mut IAvnUserControl, *mut AvnThickness) -> i32,
+    set_margin: unsafe extern "system" fn(*mut IAvnUserControl, AvnThickness) -> i32,
+    get_horizontal_alignment: unsafe extern "system" fn(*mut IAvnUserControl, *mut i32) -> i32,
+    set_horizontal_alignment: unsafe extern "system" fn(*mut IAvnUserControl, i32) -> i32,
+    get_vertical_alignment: unsafe extern "system" fn(*mut IAvnUserControl, *mut i32) -> i32,
+    set_vertical_alignment: unsafe extern "system" fn(*mut IAvnUserControl, i32) -> i32,
+    get_is_enabled: unsafe extern "system" fn(*mut IAvnUserControl, *mut i32) -> i32,
+    set_is_enabled: unsafe extern "system" fn(*mut IAvnUserControl, i32) -> i32,
+    advise_key_down: unsafe extern "system" fn(*mut IAvnUserControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
+    unadvise_key_down: unsafe extern "system" fn(*mut IAvnUserControl, i64) -> i32,
+    advise_pointer_entered: unsafe extern "system" fn(*mut IAvnUserControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
+    unadvise_pointer_entered: unsafe extern "system" fn(*mut IAvnUserControl, i64) -> i32,
+    advise_pointer_exited: unsafe extern "system" fn(*mut IAvnUserControl, *mut IAvnControlPointerExitedHandler, *mut i64) -> i32,
+    unadvise_pointer_exited: unsafe extern "system" fn(*mut IAvnUserControl, i64) -> i32,
+    get_background: unsafe extern "system" fn(*mut IAvnUserControl, *mut *mut IAvnBrush) -> i32,
+    set_background: unsafe extern "system" fn(*mut IAvnUserControl, *mut IAvnBrush) -> i32,
+    get_border_brush: unsafe extern "system" fn(*mut IAvnUserControl, *mut *mut IAvnBrush) -> i32,
+    set_border_brush: unsafe extern "system" fn(*mut IAvnUserControl, *mut IAvnBrush) -> i32,
+    get_border_thickness: unsafe extern "system" fn(*mut IAvnUserControl, *mut AvnThickness) -> i32,
+    set_border_thickness: unsafe extern "system" fn(*mut IAvnUserControl, AvnThickness) -> i32,
+    get_corner_radius: unsafe extern "system" fn(*mut IAvnUserControl, *mut AvnCornerRadius) -> i32,
+    set_corner_radius: unsafe extern "system" fn(*mut IAvnUserControl, AvnCornerRadius) -> i32,
+    get_font_size: unsafe extern "system" fn(*mut IAvnUserControl, *mut f64) -> i32,
+    set_font_size: unsafe extern "system" fn(*mut IAvnUserControl, f64) -> i32,
+    get_foreground: unsafe extern "system" fn(*mut IAvnUserControl, *mut *mut IAvnBrush) -> i32,
+    set_foreground: unsafe extern "system" fn(*mut IAvnUserControl, *mut IAvnBrush) -> i32,
+    get_content: unsafe extern "system" fn(*mut IAvnUserControl, *mut *mut IAvnControl) -> i32,
+    set_content: unsafe extern "system" fn(*mut IAvnUserControl, *mut IAvnControl) -> i32,
+    get_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnUserControl, *mut i32) -> i32,
+    set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnUserControl, i32) -> i32,
+    get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnUserControl, *mut i32) -> i32,
+    set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnUserControl, i32) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnUserControl {
+    vtbl: *const IAvnUserControlVtbl,
+}
+
+unsafe impl ComInterface for IAvnUserControl {
+    const IID: Guid = I_AVN_USER_CONTROL_IID;
+}
+
+impl ComPtr<IAvnUserControl> {
+    pub fn object_id(&self) -> Result<i64> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_object_id)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn lifetime_token(&self) -> Result<*mut IUnknown> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_lifetime_token)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize as *mut IUnknown)
+        }
+    }
+    pub fn get_name(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_name)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_name(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_name)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_classes(&self) -> Result<ComPtr<IAvnStringList>> {
+        unsafe {
+            let mut value: *mut IAvnStringList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn get_is_visible(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_visible)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_visible(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_visible)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_opacity(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_opacity)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_opacity(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_width(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_width)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_width(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_width)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_min_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_min_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_min_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_min_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_margin(&self) -> Result<AvnThickness> {
+        unsafe {
+            let mut value: AvnThickness = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_margin)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_margin(&self, value: AvnThickness) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_margin)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_key_down)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_key_down(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_key_down)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_entered(&self, handler: &ComPtr<IAvnControlPointerEnteredHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_entered)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_entered(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_entered)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_pointer_exited(&self, handler: &ComPtr<IAvnControlPointerExitedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pointer_exited)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pointer_exited(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pointer_exited)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_background(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_background)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_background(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_background)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_border_brush(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_border_brush)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_border_brush(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_border_brush)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_border_thickness(&self) -> Result<AvnThickness> {
+        unsafe {
+            let mut value: AvnThickness = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_border_thickness)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_border_thickness(&self, value: AvnThickness) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_border_thickness)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_corner_radius(&self) -> Result<AvnCornerRadius> {
+        unsafe {
+            let mut value: AvnCornerRadius = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_corner_radius)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_corner_radius(&self, value: AvnCornerRadius) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_corner_radius)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_font_size(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_size)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_size(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_size)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_foreground(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_foreground)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_foreground(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_foreground)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_content(&self) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_content)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_content)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_content_alignment)(self.as_raw(), value);
             hresult::check(hr)
         }
     }
@@ -34325,7 +37347,7 @@ impl ComPtr<IAvnToolTipStatics> {
     }
 }
 
-pub const IAVN_CONTROL_FACTORY_IID: Guid = Guid { data1: 0x2119ECE0, data2: 0xED37, data3: 0x5424, data4: [0xA0, 0x12, 0xA9, 0x19, 0x6D, 0xEE, 0x0C, 0xA5] };
+pub const IAVN_CONTROL_FACTORY_IID: Guid = Guid { data1: 0xE8C61827, data2: 0x3DEA, data3: 0x5DA1, data4: [0xB2, 0xF2, 0xB5, 0x3C, 0x35, 0xB6, 0x7E, 0x65] };
 
 #[repr(C)]
 struct IAvnControlFactoryVtbl {
@@ -34340,6 +37362,7 @@ struct IAvnControlFactoryVtbl {
     create_calendar: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnCalendar) -> i32,
     create_calendar_date_picker: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnCalendarDatePicker) -> i32,
     create_canvas: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnCanvas) -> i32,
+    create_carousel: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnCarousel) -> i32,
     create_check_box: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnCheckBox) -> i32,
     create_combo_box: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnComboBox) -> i32,
     create_combo_box_item: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnComboBoxItem) -> i32,
@@ -34355,12 +37378,15 @@ struct IAvnControlFactoryVtbl {
     create_flyout: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnFlyout) -> i32,
     create_grid: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnGrid) -> i32,
     create_grid_splitter: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnGridSplitter) -> i32,
+    create_group_box: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnGroupBox) -> i32,
     create_headered_content_control: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnHeaderedContentControl) -> i32,
     create_headered_items_control: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnHeaderedItemsControl) -> i32,
     create_headered_selecting_items_control: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnHeaderedSelectingItemsControl) -> i32,
     create_hyperlink_button: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnHyperlinkButton) -> i32,
     create_image: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnImage) -> i32,
     create_items_control: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnItemsControl) -> i32,
+    create_label: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnLabel) -> i32,
+    create_layout_transform_control: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnLayoutTransformControl) -> i32,
     create_list_box: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnListBox) -> i32,
     create_list_box_item: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnListBoxItem) -> i32,
     create_masked_text_box: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnMaskedTextBox) -> i32,
@@ -34376,6 +37402,7 @@ struct IAvnControlFactoryVtbl {
     create_scroll_viewer: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnScrollViewer) -> i32,
     create_selectable_text_block: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnSelectableTextBlock) -> i32,
     create_selecting_items_control: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnSelectingItemsControl) -> i32,
+    create_separator: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnSeparator) -> i32,
     create_slider: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnSlider) -> i32,
     create_split_button: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnSplitButton) -> i32,
     create_split_view: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnSplitView) -> i32,
@@ -34392,9 +37419,11 @@ struct IAvnControlFactoryVtbl {
     create_toggle_split_button: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnToggleSplitButton) -> i32,
     create_toggle_switch: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnToggleSwitch) -> i32,
     create_tool_tip: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnToolTip) -> i32,
+    create_transitioning_content_control: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnTransitioningContentControl) -> i32,
     create_tree_view: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnTreeView) -> i32,
     create_tree_view_item: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnTreeViewItem) -> i32,
     create_uniform_grid: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnUniformGrid) -> i32,
+    create_user_control: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnUserControl) -> i32,
     create_viewbox: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnViewbox) -> i32,
     create_window: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnWindow) -> i32,
     create_wrap_panel: unsafe extern "system" fn(*mut IAvnControlFactory, *mut *mut IAvnWrapPanel) -> i32,
@@ -34476,6 +37505,14 @@ impl ComPtr<IAvnControlFactory> {
         unsafe {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_canvas)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_projected_raw(value)
+        }
+    }
+    pub fn create_carousel(&self) -> Result<ComPtr<IAvnCarousel>> {
+        unsafe {
+            let mut value = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_carousel)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_projected_raw(value)
         }
@@ -34600,6 +37637,14 @@ impl ComPtr<IAvnControlFactory> {
             ComPtr::from_projected_raw(value)
         }
     }
+    pub fn create_group_box(&self) -> Result<ComPtr<IAvnGroupBox>> {
+        unsafe {
+            let mut value = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_group_box)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_projected_raw(value)
+        }
+    }
     pub fn create_headered_content_control(&self) -> Result<ComPtr<IAvnHeaderedContentControl>> {
         unsafe {
             let mut value = ptr::null_mut();
@@ -34644,6 +37689,22 @@ impl ComPtr<IAvnControlFactory> {
         unsafe {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_items_control)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_projected_raw(value)
+        }
+    }
+    pub fn create_label(&self) -> Result<ComPtr<IAvnLabel>> {
+        unsafe {
+            let mut value = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_label)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_projected_raw(value)
+        }
+    }
+    pub fn create_layout_transform_control(&self) -> Result<ComPtr<IAvnLayoutTransformControl>> {
+        unsafe {
+            let mut value = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_layout_transform_control)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_projected_raw(value)
         }
@@ -34764,6 +37825,14 @@ impl ComPtr<IAvnControlFactory> {
         unsafe {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_selecting_items_control)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_projected_raw(value)
+        }
+    }
+    pub fn create_separator(&self) -> Result<ComPtr<IAvnSeparator>> {
+        unsafe {
+            let mut value = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_separator)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_projected_raw(value)
         }
@@ -34896,6 +37965,14 @@ impl ComPtr<IAvnControlFactory> {
             ComPtr::from_projected_raw(value)
         }
     }
+    pub fn create_transitioning_content_control(&self) -> Result<ComPtr<IAvnTransitioningContentControl>> {
+        unsafe {
+            let mut value = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_transitioning_content_control)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_projected_raw(value)
+        }
+    }
     pub fn create_tree_view(&self) -> Result<ComPtr<IAvnTreeView>> {
         unsafe {
             let mut value = ptr::null_mut();
@@ -34916,6 +37993,14 @@ impl ComPtr<IAvnControlFactory> {
         unsafe {
             let mut value = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_uniform_grid)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_projected_raw(value)
+        }
+    }
+    pub fn create_user_control(&self) -> Result<ComPtr<IAvnUserControl>> {
+        unsafe {
+            let mut value = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().create_user_control)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_projected_raw(value)
         }

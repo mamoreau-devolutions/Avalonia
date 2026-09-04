@@ -1,8 +1,8 @@
 {
   "version": 13,
   "sourceAssembly": "Avalonia.Base,Avalonia.Controls",
-  "factoryIid": "2119ECE0-ED37-5424-A012-A9196DEE0CA5",
-  "factoryAbiVersion": 8,
+  "factoryIid": "E8C61827-3DEA-5DA1-B2F2-B53C35B67E65",
+  "factoryAbiVersion": 9,
   "brushInterfaceName": "Avalonia.Host.Com.IAvnBrush",
   "brushInterfaceIid": "FC7CCBAE-ED75-5C6D-8516-DF706E137ED3",
   "brushAbiVersion": 1,
@@ -478,6 +478,47 @@
       "isConstructible": true,
       "methods": [],
       "properties": [],
+      "events": []
+    },
+    {
+      "name": "IAvnCarousel",
+      "fullName": "Avalonia.Host.Com.IAvnCarousel",
+      "kind": "Class",
+      "iid": "C948947D-F7A0-5EA3-B525-E18AE7E65CD7",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnSelectingItemsControl",
+      "managedFullName": "Avalonia.Controls.Carousel",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "IsSwipeEnabled",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "ViewportFraction",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "IsSwiping",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": false,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        }
+      ],
       "events": []
     },
     {
@@ -1298,6 +1339,19 @@
       "events": []
     },
     {
+      "name": "IAvnGroupBox",
+      "fullName": "Avalonia.Host.Com.IAvnGroupBox",
+      "kind": "Class",
+      "iid": "1744B6BE-1DF4-587E-8DE6-C007D5BEE3FA",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnHeaderedContentControl",
+      "managedFullName": "Avalonia.Controls.GroupBox",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [],
+      "events": []
+    },
+    {
       "name": "IAvnHyperlinkButton",
       "fullName": "Avalonia.Host.Com.IAvnHyperlinkButton",
       "kind": "Class",
@@ -1403,6 +1457,42 @@
           "elementInterfaceName": "Avalonia.Host.Com.IAvnControl",
           "elementKind": "ComInterface",
           "managedTypeName": "Avalonia.Controls.ItemCollection",
+          "isNullable": false
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IAvnLabel",
+      "fullName": "Avalonia.Host.Com.IAvnLabel",
+      "kind": "Class",
+      "iid": "DB473F7C-8864-596B-901B-6C48335E3138",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
+      "managedFullName": "Avalonia.Controls.Label",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [],
+      "events": []
+    },
+    {
+      "name": "IAvnLayoutTransformControl",
+      "fullName": "Avalonia.Host.Com.IAvnLayoutTransformControl",
+      "kind": "Class",
+      "iid": "26BBE2AC-C996-5881-9D87-8F22B9B9A39D",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnDecorator",
+      "managedFullName": "Avalonia.Controls.LayoutTransformControl",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "UseRenderTransform",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
           "isNullable": false
         }
       ],
@@ -2754,6 +2844,19 @@
       "events": []
     },
     {
+      "name": "IAvnSeparator",
+      "fullName": "Avalonia.Host.Com.IAvnSeparator",
+      "kind": "Class",
+      "iid": "2829329D-2594-5918-83A9-E332CCC6CD11",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
+      "managedFullName": "Avalonia.Controls.Separator",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [],
+      "events": []
+    },
+    {
       "name": "IAvnSlider",
       "fullName": "Avalonia.Host.Com.IAvnSlider",
       "kind": "Class",
@@ -3536,6 +3639,29 @@
       "events": []
     },
     {
+      "name": "IAvnTransitioningContentControl",
+      "fullName": "Avalonia.Host.Com.IAvnTransitioningContentControl",
+      "kind": "Class",
+      "iid": "ACF9033D-1B78-5DC3-896F-A95A0A504A01",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
+      "managedFullName": "Avalonia.Controls.TransitioningContentControl",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "IsTransitionReversed",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        }
+      ],
+      "events": []
+    },
+    {
       "name": "IAvnTreeView",
       "fullName": "Avalonia.Host.Com.IAvnTreeView",
       "kind": "Class",
@@ -3683,6 +3809,19 @@
           "parameters": []
         }
       ]
+    },
+    {
+      "name": "IAvnUserControl",
+      "fullName": "Avalonia.Host.Com.IAvnUserControl",
+      "kind": "Class",
+      "iid": "CFC3371C-BD9F-5EBF-A9CA-A74B1C94F224",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
+      "managedFullName": "Avalonia.Controls.UserControl",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [],
+      "events": []
     },
     {
       "name": "IAvnViewbox",
@@ -7263,6 +7402,21 @@
       "reason": "Not included by projection policy"
     },
     {
+      "owner": "Avalonia.Controls.Carousel",
+      "member": "PageTransition",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Carousel",
+      "member": "Next()",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Carousel",
+      "member": "Previous()",
+      "reason": "Not included by projection policy"
+    },
+    {
       "owner": "Avalonia.Controls.ComboBox",
       "member": "SelectionBoxItem",
       "reason": "Not included by projection policy"
@@ -7575,6 +7729,21 @@
     {
       "owner": "Avalonia.Controls.ItemsControl",
       "member": "ScrollIntoView(Object)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Label",
+      "member": "Target",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.LayoutTransformControl",
+      "member": "LayoutTransform",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.LayoutTransformControl",
+      "member": "TransformRoot",
       "reason": "Not included by projection policy"
     },
     {
@@ -8445,6 +8614,16 @@
     {
       "owner": "Avalonia.Controls.ToggleSwitch",
       "member": "KnobTransitions",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TransitioningContentControl",
+      "member": "PageTransition",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TransitioningContentControl",
+      "member": "TransitionCompleted",
       "reason": "Not included by projection policy"
     },
     {

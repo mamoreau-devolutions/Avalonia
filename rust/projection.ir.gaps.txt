@@ -91,6 +91,9 @@ Avalonia.Controls.CalendarDatePicker.CalendarOpened: Not included by projection 
 Avalonia.Controls.CalendarDatePicker.DateValidationError: Not included by projection policy
 Avalonia.Controls.CalendarDatePicker.SelectedDateChanged: Not included by projection policy
 Avalonia.Controls.CalendarDatePicker.Clear(): Not included by projection policy
+Avalonia.Controls.Carousel.PageTransition: Not included by projection policy
+Avalonia.Controls.Carousel.Next(): Not included by projection policy
+Avalonia.Controls.Carousel.Previous(): Not included by projection policy
 Avalonia.Controls.ComboBox.SelectionBoxItem: Not included by projection policy
 Avalonia.Controls.ComboBox.PlaceholderForeground: Not included by projection policy
 Avalonia.Controls.ComboBox.HorizontalContentAlignment: Not included by projection policy
@@ -154,6 +157,9 @@ Avalonia.Controls.ItemsControl.ItemFromContainer(Control): Not included by proje
 Avalonia.Controls.ItemsControl.GetRealizedContainers(): Not included by projection policy
 Avalonia.Controls.ItemsControl.ScrollIntoView(Int32): Not included by projection policy
 Avalonia.Controls.ItemsControl.ScrollIntoView(Object): Not included by projection policy
+Avalonia.Controls.Label.Target: Not included by projection policy
+Avalonia.Controls.LayoutTransformControl.LayoutTransform: Not included by projection policy
+Avalonia.Controls.LayoutTransformControl.TransformRoot: Not included by projection policy
 Avalonia.Controls.ListBox.Scroll: Not included by projection policy
 Avalonia.Controls.ListBox.SelectedItems: Not included by projection policy
 Avalonia.Controls.ListBox.Selection: Not included by projection policy
@@ -328,6 +334,8 @@ Avalonia.Controls.ToggleSwitch.OnContentPresenter: Not included by projection po
 Avalonia.Controls.ToggleSwitch.OffContentTemplate: Not included by projection policy
 Avalonia.Controls.ToggleSwitch.OnContentTemplate: Not included by projection policy
 Avalonia.Controls.ToggleSwitch.KnobTransitions: Not included by projection policy
+Avalonia.Controls.TransitioningContentControl.PageTransition: Not included by projection policy
+Avalonia.Controls.TransitioningContentControl.TransitionCompleted: Not included by projection policy
 Avalonia.Controls.TreeView.SelectedItem: Not included by projection policy
 Avalonia.Controls.TreeView.SelectedItems: Not included by projection policy
 Avalonia.Controls.TreeView.GetRealizedTreeContainers(): Not included by projection policy

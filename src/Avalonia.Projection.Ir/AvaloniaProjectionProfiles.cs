@@ -60,8 +60,8 @@ public static class AvaloniaProjectionProfiles
             // and wave D seven more still (RepeatButton, DropDownButton, SplitButton,
             // ToggleSplitButton, HyperlinkButton, ContextMenu, MenuFlyout), so it republishes
             // at version 6, wave E six more (Spinner is abstract) so 7, and wave F two more
-            // (Calendar, CalendarDatePicker) so 8.
-            ["Avalonia.Host.Com.IAvnControlFactory"] = 8,
+            // (Calendar, CalendarDatePicker) so 8, and wave G seven more so 9.
+            ["Avalonia.Host.Com.IAvnControlFactory"] = 9,
         },
         IncludeTypeNames =
         [
@@ -144,6 +144,15 @@ public static class AvaloniaProjectionProfiles
             // yyyy-MM-dd through AvnCalendarDate rather than the picker "o" form.
             "Avalonia.Controls.Calendar",
             "Avalonia.Controls.CalendarDatePicker",
+            // Wave G. Content chrome. PageTransition and LayoutTransform are interfaces
+            // with no ABI shape; Label.Target is IInputElement, not a projected control.
+            "Avalonia.Controls.Carousel",
+            "Avalonia.Controls.TransitioningContentControl",
+            "Avalonia.Controls.Label",
+            "Avalonia.Controls.Separator",
+            "Avalonia.Controls.GroupBox",
+            "Avalonia.Controls.UserControl",
+            "Avalonia.Controls.LayoutTransformControl",
             "Avalonia.Controls.TextBox",
             "Avalonia.Controls.ScrollViewer",
             "Avalonia.Controls.Primitives.RangeBase",
@@ -317,6 +326,13 @@ public static class AvaloniaProjectionProfiles
                 "IsDropDownOpen", "IsTodayHighlighted", "SelectedDateFormat",
                 "CustomDateFormatString", "Text", "PlaceholderText", "IsWeekNumberVisible",
             ],
+            ["Avalonia.Controls.Carousel"] = ["IsSwipeEnabled", "ViewportFraction", "IsSwiping"],
+            ["Avalonia.Controls.TransitioningContentControl"] = ["IsTransitionReversed"],
+            ["Avalonia.Controls.Label"] = [],
+            ["Avalonia.Controls.Separator"] = [],
+            ["Avalonia.Controls.GroupBox"] = [],
+            ["Avalonia.Controls.UserControl"] = [],
+            ["Avalonia.Controls.LayoutTransformControl"] = ["UseRenderTransform"],
             ["Avalonia.Controls.Primitives.TemplatedControl"] =
             [
                 "Background", "BorderBrush", "BorderThickness", "CornerRadius", "FontSize",
