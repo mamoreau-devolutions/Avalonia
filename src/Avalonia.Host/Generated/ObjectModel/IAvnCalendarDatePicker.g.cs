@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("704D1096-5596-589B-B135-338DC97DED0A")]
+[Guid("74390933-2E48-50F2-8AF8-1F796AB526FD")]
 public partial interface IAvnCalendarDatePicker : IAvnTemplatedControl
 {
     [PreserveSig]
@@ -26,6 +26,12 @@ public partial interface IAvnCalendarDatePicker : IAvnTemplatedControl
 
     [PreserveSig]
     int SetDisplayDateEnd(string? value);
+
+    [PreserveSig]
+    int GetFirstDayOfWeek(out int value);
+
+    [PreserveSig]
+    int SetFirstDayOfWeek(int value);
 
     [PreserveSig]
     int GetIsDropDownOpen(out int value);
@@ -70,10 +76,55 @@ public partial interface IAvnCalendarDatePicker : IAvnTemplatedControl
     int SetPlaceholderText(string? value);
 
     [PreserveSig]
+    int GetUseFloatingPlaceholder(out int value);
+
+    [PreserveSig]
+    int SetUseFloatingPlaceholder(int value);
+
+    [PreserveSig]
+    int GetPlaceholderForeground(out IAvnBrush? value);
+
+    [PreserveSig]
+    int SetPlaceholderForeground(IAvnBrush? value);
+
+    [PreserveSig]
+    int GetHorizontalContentAlignment(out int value);
+
+    [PreserveSig]
+    int SetHorizontalContentAlignment(int value);
+
+    [PreserveSig]
+    int GetVerticalContentAlignment(out int value);
+
+    [PreserveSig]
+    int SetVerticalContentAlignment(int value);
+
+    [PreserveSig]
     int GetIsWeekNumberVisible(out int value);
 
     [PreserveSig]
     int SetIsWeekNumberVisible(int value);
+
+    [PreserveSig]
+    int GetWeekNumberRule(out int value);
+
+    [PreserveSig]
+    int SetWeekNumberRule(int value);
+
+    [PreserveSig]
+    int Clear();
+
+    [PreserveSig]
+    int AdviseCalendarClosed(IAvnCalendarDatePickerCalendarClosedHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadviseCalendarClosed(long subscriptionId);
+
+    [PreserveSig]
+    int AdviseCalendarOpened(IAvnCalendarDatePickerCalendarOpenedHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadviseCalendarOpened(long subscriptionId);
 
 }
 
@@ -88,6 +139,10 @@ public sealed partial class AvnCalendarDatePicker : IAvnCalendarDatePicker
     private long _nextPointerEnteredSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnControlPointerExitedHandler Handler, global::System.Action Unsubscribe)> _pointerExitedSubscriptions = new();
     private long _nextPointerExitedSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnCalendarDatePickerCalendarClosedHandler Handler, global::System.Action Unsubscribe)> _calendarClosedSubscriptions = new();
+    private long _nextCalendarClosedSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnCalendarDatePickerCalendarOpenedHandler Handler, global::System.Action Unsubscribe)> _calendarOpenedSubscriptions = new();
+    private long _nextCalendarOpenedSubscriptionId;
 
     internal AvnCalendarDatePicker(global::Avalonia.Controls.CalendarDatePicker value)
     {
@@ -1150,6 +1205,37 @@ public sealed partial class AvnCalendarDatePicker : IAvnCalendarDatePicker
         }
     }
 
+    public int GetFirstDayOfWeek(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.FirstDayOfWeek;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetFirstDayOfWeek(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.FirstDayOfWeek = (global::System.DayOfWeek)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetIsDropDownOpen(out int value)
     {
         value = default!;
@@ -1367,6 +1453,130 @@ public sealed partial class AvnCalendarDatePicker : IAvnCalendarDatePicker
         }
     }
 
+    public int GetUseFloatingPlaceholder(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.UseFloatingPlaceholder ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetUseFloatingPlaceholder(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.UseFloatingPlaceholder = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetPlaceholderForeground(out IAvnBrush? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnBrush.FromBrush(_value.PlaceholderForeground);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetPlaceholderForeground(IAvnBrush? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.PlaceholderForeground = AvnBrush.ToBrush(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetHorizontalContentAlignment(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.HorizontalContentAlignment;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetHorizontalContentAlignment(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.HorizontalContentAlignment = (global::Avalonia.Layout.HorizontalAlignment)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetVerticalContentAlignment(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.VerticalContentAlignment;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetVerticalContentAlignment(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.VerticalContentAlignment = (global::Avalonia.Layout.VerticalAlignment)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetIsWeekNumberVisible(out int value)
     {
         value = default!;
@@ -1398,6 +1608,144 @@ public sealed partial class AvnCalendarDatePicker : IAvnCalendarDatePicker
         }
     }
 
+    public int GetWeekNumberRule(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.WeekNumberRule;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetWeekNumberRule(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.WeekNumberRule = (global::System.Globalization.CalendarWeekRule)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int Clear()
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Clear();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseCalendarClosed(IAvnCalendarDatePickerCalendarClosedHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler((_, eventArgs) =>
+            {
+                var hr = handler.Invoke();
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.CalendarClosed += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextCalendarClosedSubscriptionId);
+            _calendarClosedSubscriptions.Add(subscriptionId, (handler, () => eventSource.CalendarClosed -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseCalendarClosed(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_calendarClosedSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseCalendarOpened(IAvnCalendarDatePickerCalendarOpenedHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler((_, eventArgs) =>
+            {
+                var hr = handler.Invoke();
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.CalendarOpened += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextCalendarOpenedSubscriptionId);
+            _calendarOpenedSubscriptions.Add(subscriptionId, (handler, () => eventSource.CalendarOpened -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseCalendarOpened(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_calendarOpenedSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     private void ReleaseSubscriptions()
     {
         foreach (var subscription in _keyDownSubscriptions.Values)
@@ -1418,5 +1766,17 @@ public sealed partial class AvnCalendarDatePicker : IAvnCalendarDatePicker
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
         }
         _pointerExitedSubscriptions.Clear();
+        foreach (var subscription in _calendarClosedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _calendarClosedSubscriptions.Clear();
+        foreach (var subscription in _calendarOpenedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _calendarOpenedSubscriptions.Clear();
     }
 }

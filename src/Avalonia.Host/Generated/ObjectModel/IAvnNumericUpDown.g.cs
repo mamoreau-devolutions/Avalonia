@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("E6D2CF0A-4637-551E-96DE-E260BB03041C")]
+[Guid("02CB4C9D-71C8-5A6C-B529-A67832ECC9DD")]
 public partial interface IAvnNumericUpDown : IAvnTemplatedControl
 {
     [PreserveSig]
@@ -81,6 +81,48 @@ public partial interface IAvnNumericUpDown : IAvnTemplatedControl
     [PreserveSig]
     int SetPlaceholderText(string? value);
 
+    [PreserveSig]
+    int GetPlaceholderForeground(out IAvnBrush? value);
+
+    [PreserveSig]
+    int SetPlaceholderForeground(IAvnBrush? value);
+
+    [PreserveSig]
+    int GetHorizontalContentAlignment(out int value);
+
+    [PreserveSig]
+    int SetHorizontalContentAlignment(int value);
+
+    [PreserveSig]
+    int GetVerticalContentAlignment(out int value);
+
+    [PreserveSig]
+    int SetVerticalContentAlignment(int value);
+
+    [PreserveSig]
+    int GetTextAlignment(out int value);
+
+    [PreserveSig]
+    int SetTextAlignment(int value);
+
+    [PreserveSig]
+    int GetInnerLeftContent(out IAvnControl? value);
+
+    [PreserveSig]
+    int SetInnerLeftContent(IAvnControl? value);
+
+    [PreserveSig]
+    int GetInnerRightContent(out IAvnControl? value);
+
+    [PreserveSig]
+    int SetInnerRightContent(IAvnControl? value);
+
+    [PreserveSig]
+    int AdviseValueChanged(IAvnNumericUpDownValueChangedHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadviseValueChanged(long subscriptionId);
+
 }
 
 [GeneratedComClass]
@@ -94,6 +136,8 @@ public sealed partial class AvnNumericUpDown : IAvnNumericUpDown
     private long _nextPointerEnteredSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnControlPointerExitedHandler Handler, global::System.Action Unsubscribe)> _pointerExitedSubscriptions = new();
     private long _nextPointerExitedSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnNumericUpDownValueChangedHandler Handler, global::System.Action Unsubscribe)> _valueChangedSubscriptions = new();
+    private long _nextValueChangedSubscriptionId;
 
     internal AvnNumericUpDown(global::Avalonia.Controls.NumericUpDown value)
     {
@@ -1435,6 +1479,238 @@ public sealed partial class AvnNumericUpDown : IAvnNumericUpDown
         }
     }
 
+    public int GetPlaceholderForeground(out IAvnBrush? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnBrush.FromBrush(_value.PlaceholderForeground);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetPlaceholderForeground(IAvnBrush? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.PlaceholderForeground = AvnBrush.ToBrush(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetHorizontalContentAlignment(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.HorizontalContentAlignment;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetHorizontalContentAlignment(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.HorizontalContentAlignment = (global::Avalonia.Layout.HorizontalAlignment)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetVerticalContentAlignment(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.VerticalContentAlignment;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetVerticalContentAlignment(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.VerticalContentAlignment = (global::Avalonia.Layout.VerticalAlignment)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetTextAlignment(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.TextAlignment;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetTextAlignment(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.TextAlignment = (global::Avalonia.Media.TextAlignment)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetInnerLeftContent(out IAvnControl? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (IAvnControl?)ProjectionRuntime.Wrap(_value.InnerLeftContent as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetInnerLeftContent(IAvnControl? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.InnerLeftContent = (global::System.Object)ProjectionRuntime.Unwrap(value)!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetInnerRightContent(out IAvnControl? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (IAvnControl?)ProjectionRuntime.Wrap(_value.InnerRightContent as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetInnerRightContent(IAvnControl? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.InnerRightContent = (global::System.Object)ProjectionRuntime.Unwrap(value)!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseValueChanged(IAvnNumericUpDownValueChangedHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<Avalonia.Controls.NumericUpDownValueChangedEventArgs>((_, eventArgs) =>
+            {
+                var hr = handler.Invoke();
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.ValueChanged += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextValueChangedSubscriptionId);
+            _valueChangedSubscriptions.Add(subscriptionId, (handler, () => eventSource.ValueChanged -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseValueChanged(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_valueChangedSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     private void ReleaseSubscriptions()
     {
         foreach (var subscription in _keyDownSubscriptions.Values)
@@ -1455,5 +1731,11 @@ public sealed partial class AvnNumericUpDown : IAvnNumericUpDown
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
         }
         _pointerExitedSubscriptions.Clear();
+        foreach (var subscription in _valueChangedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _valueChangedSubscriptions.Clear();
     }
 }

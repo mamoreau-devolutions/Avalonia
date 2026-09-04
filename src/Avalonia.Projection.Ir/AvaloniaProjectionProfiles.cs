@@ -56,10 +56,10 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnWindow"] = 7,
             ["Avalonia.Host.Com.IAvnGrid"] = 5,
             // Previously version-1 templated types inherit the TemplatedControl bump.
-            ["Avalonia.Host.Com.IAvnAutoCompleteBox"] = 2,
+            ["Avalonia.Host.Com.IAvnAutoCompleteBox"] = 3,
             ["Avalonia.Host.Com.IAvnButtonSpinner"] = 2,
-            ["Avalonia.Host.Com.IAvnCalendar"] = 2,
-            ["Avalonia.Host.Com.IAvnCalendarDatePicker"] = 2,
+            ["Avalonia.Host.Com.IAvnCalendar"] = 3,
+            ["Avalonia.Host.Com.IAvnCalendarDatePicker"] = 3,
             ["Avalonia.Host.Com.IAvnCarousel"] = 2,
             ["Avalonia.Host.Com.IAvnCommandBar"] = 2,
             ["Avalonia.Host.Com.IAvnCommandBarButton"] = 3,
@@ -80,7 +80,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnMenuBase"] = 2,
             ["Avalonia.Host.Com.IAvnMenuItem"] = 3,
             ["Avalonia.Host.Com.IAvnNotificationCard"] = 2,
-            ["Avalonia.Host.Com.IAvnNumericUpDown"] = 2,
+            ["Avalonia.Host.Com.IAvnNumericUpDown"] = 3,
             ["Avalonia.Host.Com.IAvnPathIcon"] = 2,
             ["Avalonia.Host.Com.IAvnPipsPager"] = 2,
             ["Avalonia.Host.Com.IAvnRefreshContainer"] = 2,
@@ -405,11 +405,16 @@ public static class AvaloniaProjectionProfiles
                 "Value", "Minimum", "Maximum", "Increment", "Text", "PlaceholderText",
                 "IsReadOnly", "ClipValueToMinMax", "AllowSpin", "ShowButtonSpinner",
                 "ButtonSpinnerLocation", "FormatString",
+                "PlaceholderForeground", "HorizontalContentAlignment", "VerticalContentAlignment",
+                "TextAlignment", "InnerLeftContent", "InnerRightContent", "ValueChanged",
             ],
             ["Avalonia.Controls.AutoCompleteBox"] =
             [
                 "Text", "PlaceholderText", "MinimumPrefixLength", "MaxDropDownHeight",
                 "IsDropDownOpen", "FilterMode", "IsTextCompletionEnabled",
+                "CaretIndex", "ClearSelectionOnLostFocus", "SearchText", "MaxLength",
+                "PlaceholderForeground", "InnerLeftContent", "InnerRightContent",
+                "PopulateComplete", "DropDownOpened", "DropDownClosed",
             ],
             ["Avalonia.Controls.MaskedTextBox"] =
                 ["Mask", "AsciiOnly", "HidePromptOnLeave", "ResetOnPrompt", "ResetOnSpace",
@@ -420,12 +425,17 @@ public static class AvaloniaProjectionProfiles
             [
                 "SelectedDate", "DisplayDate", "DisplayDateStart", "DisplayDateEnd",
                 "DisplayMode", "SelectionMode", "IsTodayHighlighted", "FirstDayOfWeek",
+                "HeaderBackground", "IsWeekNumberVisible", "WeekNumberRule",
+                "AllowTapRangeSelection",
             ],
             ["Avalonia.Controls.CalendarDatePicker"] =
             [
                 "SelectedDate", "DisplayDate", "DisplayDateStart", "DisplayDateEnd",
                 "IsDropDownOpen", "IsTodayHighlighted", "SelectedDateFormat",
                 "CustomDateFormatString", "Text", "PlaceholderText", "IsWeekNumberVisible",
+                "FirstDayOfWeek", "UseFloatingPlaceholder", "PlaceholderForeground",
+                "HorizontalContentAlignment", "VerticalContentAlignment", "WeekNumberRule",
+                "CalendarOpened", "CalendarClosed", "Clear",
             ],
             ["Avalonia.Controls.Carousel"] = ["IsSwipeEnabled", "ViewportFraction", "IsSwiping"],
             ["Avalonia.Controls.TransitioningContentControl"] = ["IsTransitionReversed"],
@@ -574,6 +584,30 @@ public static class AvaloniaProjectionProfiles
                 IsNullable = true,
             },
             ["Avalonia.Controls.TextBox.InnerRightContent"] = new()
+            {
+                Kind = MarshallingKind.ComInterface,
+                InterfaceName = "Avalonia.Host.Com.IAvnControl",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.AutoCompleteBox.InnerLeftContent"] = new()
+            {
+                Kind = MarshallingKind.ComInterface,
+                InterfaceName = "Avalonia.Host.Com.IAvnControl",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.AutoCompleteBox.InnerRightContent"] = new()
+            {
+                Kind = MarshallingKind.ComInterface,
+                InterfaceName = "Avalonia.Host.Com.IAvnControl",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.NumericUpDown.InnerLeftContent"] = new()
+            {
+                Kind = MarshallingKind.ComInterface,
+                InterfaceName = "Avalonia.Host.Com.IAvnControl",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.NumericUpDown.InnerRightContent"] = new()
             {
                 Kind = MarshallingKind.ComInterface,
                 InterfaceName = "Avalonia.Host.Com.IAvnControl",
@@ -862,6 +896,26 @@ public static class AvaloniaProjectionProfiles
                 PayloadKind = EventPayloadKind.None,
             },
             ["Avalonia.Controls.ComboBox.DropDownClosed"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.AutoCompleteBox.DropDownOpened"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.AutoCompleteBox.DropDownClosed"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.NumericUpDown.ValueChanged"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.CalendarDatePicker.CalendarOpened"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.CalendarDatePicker.CalendarClosed"] = new()
             {
                 PayloadKind = EventPayloadKind.None,
             },

@@ -2313,6 +2313,26 @@ impl TryFrom<i32> for DayOfWeek {
     }
 }
 
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum CalendarWeekRule {
+    FirstDay = 0,
+    FirstFullWeek = 1,
+    FirstFourDayWeek = 2,
+}
+
+impl TryFrom<i32> for CalendarWeekRule {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::FirstDay),
+            1 => Ok(Self::FirstFullWeek),
+            2 => Ok(Self::FirstFourDayWeek),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
 pub use sys::ControlKeyDownEventArgs;
 pub use sys::PopupFlyoutBaseClosingEventArgs;
 
@@ -2687,6 +2707,14 @@ impl AutoCompleteBox {
         self.set_padding(value)?;
         Ok(self)
     }
+    pub fn get_caret_index(&self) -> Result<i32> { Ok(self.raw.get_caret_index()?) }
+    pub fn set_caret_index(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_caret_index(value)?)
+    }
+    pub fn caret_index(self, value: i32) -> Result<Self> {
+        self.set_caret_index(value)?;
+        Ok(self)
+    }
     pub fn get_minimum_prefix_length(&self) -> Result<i32> { Ok(self.raw.get_minimum_prefix_length()?) }
     pub fn set_minimum_prefix_length(&self, value: i32) -> Result<()> {
         Ok(self.raw.set_minimum_prefix_length(value)?)
@@ -2719,6 +2747,14 @@ impl AutoCompleteBox {
         self.set_drop_down_open(value)?;
         Ok(self)
     }
+    pub fn get_clear_selection_on_lost_focus(&self) -> Result<bool> { Ok(self.raw.get_clear_selection_on_lost_focus()?) }
+    pub fn set_clear_selection_on_lost_focus(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_clear_selection_on_lost_focus(value)?)
+    }
+    pub fn clear_selection_on_lost_focus(self, value: bool) -> Result<Self> {
+        self.set_clear_selection_on_lost_focus(value)?;
+        Ok(self)
+    }
     pub fn get_text(&self) -> Result<Option<String>> {
         unsafe { Ok(sys::take_utf16(self.raw.get_text()?)) }
     }
@@ -2729,6 +2765,9 @@ impl AutoCompleteBox {
     pub fn text(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_text(value)?;
         Ok(self)
+    }
+    pub fn search_text(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_search_text()?)) }
     }
     pub fn get_filter_mode(&self) -> Result<AutoCompleteFilterMode> {
         let value = self.raw.get_filter_mode()?;
@@ -2750,6 +2789,74 @@ impl AutoCompleteBox {
     }
     pub fn placeholder_text(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_placeholder_text(value)?;
+        Ok(self)
+    }
+    pub fn get_placeholder_foreground(&self) -> Result<Option<Brush>> {
+        self.raw.get_placeholder_foreground()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_placeholder_foreground(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_placeholder_foreground(value.as_ref())?)
+    }
+    pub fn placeholder_foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_placeholder_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_max_length(&self) -> Result<i32> { Ok(self.raw.get_max_length()?) }
+    pub fn set_max_length(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_max_length(value)?)
+    }
+    pub fn max_length(self, value: i32) -> Result<Self> {
+        self.set_max_length(value)?;
+        Ok(self)
+    }
+    pub fn get_inner_left_content(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_inner_left_content()?.map(|raw| Control { raw }))
+    }
+    pub fn set_inner_left_content(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_inner_left_content(Some(&value))?)
+    }
+    pub fn inner_left_content(self, value: impl AsControl) -> Result<Self> {
+        self.set_inner_left_content(value)?;
+        Ok(self)
+    }
+    pub fn get_inner_right_content(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_inner_right_content()?.map(|raw| Control { raw }))
+    }
+    pub fn set_inner_right_content(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_inner_right_content(Some(&value))?)
+    }
+    pub fn inner_right_content(self, value: impl AsControl) -> Result<Self> {
+        self.set_inner_right_content(value)?;
+        Ok(self)
+    }
+    pub fn populate_complete(&self) -> Result<()> { Ok(self.raw.populate_complete()?) }
+    pub fn subscribe_drop_down_opened(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::auto_complete_box_drop_down_opened_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_drop_down_opened(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_drop_down_opened(subscription_id)))
+    }
+    pub fn on_drop_down_opened(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_drop_down_opened(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_drop_down_closed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::auto_complete_box_drop_down_closed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_drop_down_closed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_drop_down_closed(subscription_id)))
+    }
+    pub fn on_drop_down_closed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_drop_down_closed(callback)?);
         Ok(self)
     }
 }
@@ -4051,6 +4158,36 @@ impl Calendar {
         self.set_today_highlighted(value)?;
         Ok(self)
     }
+    pub fn get_header_background(&self) -> Result<Option<Brush>> {
+        self.raw.get_header_background()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_header_background(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_header_background(value.as_ref())?)
+    }
+    pub fn header_background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_header_background(value)?;
+        Ok(self)
+    }
+    pub fn get_is_week_number_visible(&self) -> Result<bool> { Ok(self.raw.get_is_week_number_visible()?) }
+    pub fn set_week_number_visible(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_week_number_visible(value)?)
+    }
+    pub fn week_number_visible(self, value: bool) -> Result<Self> {
+        self.set_week_number_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_week_number_rule(&self) -> Result<CalendarWeekRule> {
+        let value = self.raw.get_week_number_rule()?;
+        CalendarWeekRule::try_from(value)
+    }
+    pub fn set_week_number_rule(&self, value: CalendarWeekRule) -> Result<()> {
+        Ok(self.raw.set_week_number_rule(value as i32)?)
+    }
+    pub fn week_number_rule(self, value: CalendarWeekRule) -> Result<Self> {
+        self.set_week_number_rule(value)?;
+        Ok(self)
+    }
     pub fn get_display_mode(&self) -> Result<CalendarMode> {
         let value = self.raw.get_display_mode()?;
         CalendarMode::try_from(value)
@@ -4071,6 +4208,14 @@ impl Calendar {
     }
     pub fn selection_mode(self, value: CalendarSelectionMode) -> Result<Self> {
         self.set_selection_mode(value)?;
+        Ok(self)
+    }
+    pub fn get_allow_tap_range_selection(&self) -> Result<bool> { Ok(self.raw.get_allow_tap_range_selection()?) }
+    pub fn set_allow_tap_range_selection(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_allow_tap_range_selection(value)?)
+    }
+    pub fn allow_tap_range_selection(self, value: bool) -> Result<Self> {
+        self.set_allow_tap_range_selection(value)?;
         Ok(self)
     }
     pub fn get_selected_date(&self) -> Result<Option<String>> {
@@ -4446,6 +4591,17 @@ impl CalendarDatePicker {
         self.set_display_date_end(value)?;
         Ok(self)
     }
+    pub fn get_first_day_of_week(&self) -> Result<DayOfWeek> {
+        let value = self.raw.get_first_day_of_week()?;
+        DayOfWeek::try_from(value)
+    }
+    pub fn set_first_day_of_week(&self, value: DayOfWeek) -> Result<()> {
+        Ok(self.raw.set_first_day_of_week(value as i32)?)
+    }
+    pub fn first_day_of_week(self, value: DayOfWeek) -> Result<Self> {
+        self.set_first_day_of_week(value)?;
+        Ok(self)
+    }
     pub fn get_is_drop_down_open(&self) -> Result<bool> { Ok(self.raw.get_is_drop_down_open()?) }
     pub fn set_drop_down_open(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_drop_down_open(value)?)
@@ -4517,12 +4673,91 @@ impl CalendarDatePicker {
         self.set_placeholder_text(value)?;
         Ok(self)
     }
+    pub fn get_use_floating_placeholder(&self) -> Result<bool> { Ok(self.raw.get_use_floating_placeholder()?) }
+    pub fn set_use_floating_placeholder(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_use_floating_placeholder(value)?)
+    }
+    pub fn use_floating_placeholder(self, value: bool) -> Result<Self> {
+        self.set_use_floating_placeholder(value)?;
+        Ok(self)
+    }
+    pub fn get_placeholder_foreground(&self) -> Result<Option<Brush>> {
+        self.raw.get_placeholder_foreground()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_placeholder_foreground(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_placeholder_foreground(value.as_ref())?)
+    }
+    pub fn placeholder_foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_placeholder_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_content_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_content_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_content_alignment(value as i32)?)
+    }
+    pub fn horizontal_content_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_content_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_content_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_content_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_content_alignment(value as i32)?)
+    }
+    pub fn vertical_content_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_content_alignment(value)?;
+        Ok(self)
+    }
     pub fn get_is_week_number_visible(&self) -> Result<bool> { Ok(self.raw.get_is_week_number_visible()?) }
     pub fn set_week_number_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_week_number_visible(value)?)
     }
     pub fn week_number_visible(self, value: bool) -> Result<Self> {
         self.set_week_number_visible(value)?;
+        Ok(self)
+    }
+    pub fn get_week_number_rule(&self) -> Result<CalendarWeekRule> {
+        let value = self.raw.get_week_number_rule()?;
+        CalendarWeekRule::try_from(value)
+    }
+    pub fn set_week_number_rule(&self, value: CalendarWeekRule) -> Result<()> {
+        Ok(self.raw.set_week_number_rule(value as i32)?)
+    }
+    pub fn week_number_rule(self, value: CalendarWeekRule) -> Result<Self> {
+        self.set_week_number_rule(value)?;
+        Ok(self)
+    }
+    pub fn clear(&self) -> Result<()> { Ok(self.raw.clear()?) }
+    pub fn subscribe_calendar_closed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::calendar_date_picker_calendar_closed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_calendar_closed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_calendar_closed(subscription_id)))
+    }
+    pub fn on_calendar_closed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_calendar_closed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_calendar_opened(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::calendar_date_picker_calendar_opened_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_calendar_opened(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_calendar_opened(subscription_id)))
+    }
+    pub fn on_calendar_opened(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_calendar_opened(callback)?);
         Ok(self)
     }
 }
@@ -17089,6 +17324,85 @@ impl NumericUpDown {
     }
     pub fn placeholder_text(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_placeholder_text(value)?;
+        Ok(self)
+    }
+    pub fn get_placeholder_foreground(&self) -> Result<Option<Brush>> {
+        self.raw.get_placeholder_foreground()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_placeholder_foreground(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_placeholder_foreground(value.as_ref())?)
+    }
+    pub fn placeholder_foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_placeholder_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
+        let value = self.raw.get_horizontal_content_alignment()?;
+        HorizontalAlignment::try_from(value)
+    }
+    pub fn set_horizontal_content_alignment(&self, value: HorizontalAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_content_alignment(value as i32)?)
+    }
+    pub fn horizontal_content_alignment(self, value: HorizontalAlignment) -> Result<Self> {
+        self.set_horizontal_content_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<VerticalAlignment> {
+        let value = self.raw.get_vertical_content_alignment()?;
+        VerticalAlignment::try_from(value)
+    }
+    pub fn set_vertical_content_alignment(&self, value: VerticalAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_content_alignment(value as i32)?)
+    }
+    pub fn vertical_content_alignment(self, value: VerticalAlignment) -> Result<Self> {
+        self.set_vertical_content_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_text_alignment(&self) -> Result<TextAlignment> {
+        let value = self.raw.get_text_alignment()?;
+        TextAlignment::try_from(value)
+    }
+    pub fn set_text_alignment(&self, value: TextAlignment) -> Result<()> {
+        Ok(self.raw.set_text_alignment(value as i32)?)
+    }
+    pub fn text_alignment(self, value: TextAlignment) -> Result<Self> {
+        self.set_text_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_inner_left_content(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_inner_left_content()?.map(|raw| Control { raw }))
+    }
+    pub fn set_inner_left_content(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_inner_left_content(Some(&value))?)
+    }
+    pub fn inner_left_content(self, value: impl AsControl) -> Result<Self> {
+        self.set_inner_left_content(value)?;
+        Ok(self)
+    }
+    pub fn get_inner_right_content(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_inner_right_content()?.map(|raw| Control { raw }))
+    }
+    pub fn set_inner_right_content(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_inner_right_content(Some(&value))?)
+    }
+    pub fn inner_right_content(self, value: impl AsControl) -> Result<Self> {
+        self.set_inner_right_content(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_value_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::numeric_up_down_value_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_value_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_value_changed(subscription_id)))
+    }
+    pub fn on_value_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_value_changed(callback)?);
         Ok(self)
     }
 }

@@ -23,13 +23,30 @@
       "name": "IAvnAutoCompleteBox",
       "fullName": "Avalonia.Host.Com.IAvnAutoCompleteBox",
       "kind": "Class",
-      "iid": "60CD2151-32D8-5FB8-B53D-4F47A11BCB14",
-      "abiVersion": 2,
+      "iid": "4CC317ED-001E-5729-9B81-90881DF7460F",
+      "abiVersion": 3,
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.AutoCompleteBox",
       "isConstructible": true,
-      "methods": [],
+      "methods": [
+        {
+          "name": "PopulateComplete",
+          "managedName": "PopulateComplete",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": []
+        }
+      ],
       "properties": [
+        {
+          "name": "CaretIndex",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Int32",
+          "isNullable": false
+        },
         {
           "name": "MinimumPrefixLength",
           "kind": "I32",
@@ -67,10 +84,28 @@
           "isNullable": false
         },
         {
+          "name": "ClearSelectionOnLostFocus",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
           "name": "Text",
           "kind": "StringUtf16",
           "canRead": true,
           "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.String",
+          "isNullable": true
+        },
+        {
+          "name": "SearchText",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": false,
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.String",
           "isNullable": true
@@ -92,9 +127,68 @@
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.String",
           "isNullable": true
+        },
+        {
+          "name": "PlaceholderForeground",
+          "kind": "Brush",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnBrush",
+          "interfaceIid": "FC7CCBAE-ED75-5C6D-8516-DF706E137ED3",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.IBrush",
+          "isNullable": true
+        },
+        {
+          "name": "MaxLength",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Int32",
+          "isNullable": false
+        },
+        {
+          "name": "InnerLeftContent",
+          "kind": "ComInterface",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnControl",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Object",
+          "isNullable": true
+        },
+        {
+          "name": "InnerRightContent",
+          "kind": "ComInterface",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnControl",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Object",
+          "isNullable": true
         }
       ],
-      "events": []
+      "events": [
+        {
+          "name": "DropDownOpened",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnAutoCompleteBoxDropDownOpenedHandler",
+          "handlerInterfaceIid": "48E353BF-246E-5FC7-9CF4-DE082CE30ED8",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler",
+          "parameters": []
+        },
+        {
+          "name": "DropDownClosed",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnAutoCompleteBoxDropDownClosedHandler",
+          "handlerInterfaceIid": "338294B4-2E9E-5494-B784-A3E01CA0732D",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler",
+          "parameters": []
+        }
+      ]
     },
     {
       "name": "IAvnBorder",
@@ -274,8 +368,8 @@
       "name": "IAvnCalendar",
       "fullName": "Avalonia.Host.Com.IAvnCalendar",
       "kind": "Class",
-      "iid": "F748D073-977D-5F1D-A4A6-4C5E0F3D592C",
-      "abiVersion": 2,
+      "iid": "F1691230-57FB-5336-8845-68DCDB117E8B",
+      "abiVersion": 3,
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.Calendar",
       "isConstructible": true,
@@ -300,6 +394,35 @@
           "isNullable": false
         },
         {
+          "name": "HeaderBackground",
+          "kind": "Brush",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnBrush",
+          "interfaceIid": "FC7CCBAE-ED75-5C6D-8516-DF706E137ED3",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.IBrush",
+          "isNullable": true
+        },
+        {
+          "name": "IsWeekNumberVisible",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "WeekNumberRule",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Globalization.CalendarWeekRule",
+          "isNullable": false
+        },
+        {
           "name": "DisplayMode",
           "kind": "I32",
           "canRead": true,
@@ -315,6 +438,15 @@
           "canWrite": true,
           "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Controls.CalendarSelectionMode",
+          "isNullable": false
+        },
+        {
+          "name": "AllowTapRangeSelection",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
           "isNullable": false
         },
         {
@@ -364,12 +496,20 @@
       "name": "IAvnCalendarDatePicker",
       "fullName": "Avalonia.Host.Com.IAvnCalendarDatePicker",
       "kind": "Class",
-      "iid": "704D1096-5596-589B-B135-338DC97DED0A",
-      "abiVersion": 2,
+      "iid": "74390933-2E48-50F2-8AF8-1F796AB526FD",
+      "abiVersion": 3,
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.CalendarDatePicker",
       "isConstructible": true,
-      "methods": [],
+      "methods": [
+        {
+          "name": "Clear",
+          "managedName": "Clear",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": []
+        }
+      ],
       "properties": [
         {
           "name": "DisplayDate",
@@ -400,6 +540,15 @@
           "managedTypeName": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
           "isNullable": true,
           "stringConverterTypeName": "Avalonia.Host.Com.AvnCalendarDate"
+        },
+        {
+          "name": "FirstDayOfWeek",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.DayOfWeek",
+          "isNullable": false
         },
         {
           "name": "IsDropDownOpen",
@@ -466,6 +615,44 @@
           "isNullable": true
         },
         {
+          "name": "UseFloatingPlaceholder",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "PlaceholderForeground",
+          "kind": "Brush",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnBrush",
+          "interfaceIid": "FC7CCBAE-ED75-5C6D-8516-DF706E137ED3",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.IBrush",
+          "isNullable": true
+        },
+        {
+          "name": "HorizontalContentAlignment",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Layout.HorizontalAlignment",
+          "isNullable": false
+        },
+        {
+          "name": "VerticalContentAlignment",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Layout.VerticalAlignment",
+          "isNullable": false
+        },
+        {
           "name": "IsWeekNumberVisible",
           "kind": "Bool",
           "canRead": true,
@@ -473,9 +660,37 @@
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
+        },
+        {
+          "name": "WeekNumberRule",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Globalization.CalendarWeekRule",
+          "isNullable": false
         }
       ],
-      "events": []
+      "events": [
+        {
+          "name": "CalendarClosed",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnCalendarDatePickerCalendarClosedHandler",
+          "handlerInterfaceIid": "BE1A8386-E73B-5FC4-84AA-92AD4F0D79DC",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler",
+          "parameters": []
+        },
+        {
+          "name": "CalendarOpened",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnCalendarDatePickerCalendarOpenedHandler",
+          "handlerInterfaceIid": "BAA74040-A700-5736-B43B-C397859863E7",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler",
+          "parameters": []
+        }
+      ]
     },
     {
       "name": "IAvnCanvas",
@@ -2247,8 +2462,8 @@
       "name": "IAvnNumericUpDown",
       "fullName": "Avalonia.Host.Com.IAvnNumericUpDown",
       "kind": "Class",
-      "iid": "E6D2CF0A-4637-551E-96DE-E260BB03041C",
-      "abiVersion": 2,
+      "iid": "02CB4C9D-71C8-5A6C-B529-A67832ECC9DD",
+      "abiVersion": 3,
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.NumericUpDown",
       "isConstructible": true,
@@ -2365,9 +2580,77 @@
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.String",
           "isNullable": true
+        },
+        {
+          "name": "PlaceholderForeground",
+          "kind": "Brush",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnBrush",
+          "interfaceIid": "FC7CCBAE-ED75-5C6D-8516-DF706E137ED3",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.IBrush",
+          "isNullable": true
+        },
+        {
+          "name": "HorizontalContentAlignment",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Layout.HorizontalAlignment",
+          "isNullable": false
+        },
+        {
+          "name": "VerticalContentAlignment",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Layout.VerticalAlignment",
+          "isNullable": false
+        },
+        {
+          "name": "TextAlignment",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.TextAlignment",
+          "isNullable": false
+        },
+        {
+          "name": "InnerLeftContent",
+          "kind": "ComInterface",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnControl",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Object",
+          "isNullable": true
+        },
+        {
+          "name": "InnerRightContent",
+          "kind": "ComInterface",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnControl",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Object",
+          "isNullable": true
         }
       ],
-      "events": []
+      "events": [
+        {
+          "name": "ValueChanged",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnNumericUpDownValueChangedHandler",
+          "handlerInterfaceIid": "68A72F63-B469-5312-925F-F7FCCF35A0DF",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Controls.NumericUpDownValueChangedEventArgs\u003E",
+          "parameters": []
+        }
+      ]
     },
     {
       "name": "IAvnPanel",
@@ -8574,6 +8857,24 @@
           "value": 6
         }
       ]
+    },
+    {
+      "name": "CalendarWeekRule",
+      "fullName": "System.Globalization.CalendarWeekRule",
+      "values": [
+        {
+          "name": "FirstDay",
+          "value": 0
+        },
+        {
+          "name": "FirstFullWeek",
+          "value": 1
+        },
+        {
+          "name": "FirstFourDayWeek",
+          "value": 2
+        }
+      ]
     }
   ],
   "attachedProperties": [
@@ -9017,22 +9318,12 @@
     },
     {
       "owner": "Avalonia.Controls.AutoCompleteBox",
-      "member": "CaretIndex",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.AutoCompleteBox",
       "member": "ItemTemplate",
       "reason": "Not included by projection policy"
     },
     {
       "owner": "Avalonia.Controls.AutoCompleteBox",
       "member": "MinimumPopulateDelay",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.AutoCompleteBox",
-      "member": "ClearSelectionOnLostFocus",
       "reason": "Not included by projection policy"
     },
     {
@@ -9047,17 +9338,7 @@
     },
     {
       "owner": "Avalonia.Controls.AutoCompleteBox",
-      "member": "SearchText",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.AutoCompleteBox",
       "member": "Watermark",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.AutoCompleteBox",
-      "member": "PlaceholderForeground",
       "reason": "Not included by projection policy"
     },
     {
@@ -9097,21 +9378,6 @@
     },
     {
       "owner": "Avalonia.Controls.AutoCompleteBox",
-      "member": "MaxLength",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.AutoCompleteBox",
-      "member": "InnerLeftContent",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.AutoCompleteBox",
-      "member": "InnerRightContent",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.AutoCompleteBox",
       "member": "TextChanged",
       "reason": "Not included by projection policy"
     },
@@ -9132,27 +9398,12 @@
     },
     {
       "owner": "Avalonia.Controls.AutoCompleteBox",
-      "member": "DropDownOpened",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.AutoCompleteBox",
       "member": "DropDownClosing",
       "reason": "Not included by projection policy"
     },
     {
       "owner": "Avalonia.Controls.AutoCompleteBox",
-      "member": "DropDownClosed",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.AutoCompleteBox",
       "member": "SelectionChanged",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.AutoCompleteBox",
-      "member": "PopulateComplete()",
       "reason": "Not included by projection policy"
     },
     {
@@ -9183,26 +9434,6 @@
     {
       "owner": "Avalonia.Controls.Button",
       "member": "CommandParameter",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Calendar",
-      "member": "HeaderBackground",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Calendar",
-      "member": "IsWeekNumberVisible",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Calendar",
-      "member": "WeekNumberRule",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Calendar",
-      "member": "AllowTapRangeSelection",
       "reason": "Not included by projection policy"
     },
     {
@@ -9242,11 +9473,6 @@
     },
     {
       "owner": "Avalonia.Controls.CalendarDatePicker",
-      "member": "FirstDayOfWeek",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.CalendarDatePicker",
       "member": "TextConverter",
       "reason": "Not included by projection policy"
     },
@@ -9257,47 +9483,12 @@
     },
     {
       "owner": "Avalonia.Controls.CalendarDatePicker",
-      "member": "UseFloatingPlaceholder",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.CalendarDatePicker",
       "member": "UseFloatingWatermark",
       "reason": "Not included by projection policy"
     },
     {
       "owner": "Avalonia.Controls.CalendarDatePicker",
-      "member": "PlaceholderForeground",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.CalendarDatePicker",
       "member": "WatermarkForeground",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.CalendarDatePicker",
-      "member": "HorizontalContentAlignment",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.CalendarDatePicker",
-      "member": "VerticalContentAlignment",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.CalendarDatePicker",
-      "member": "WeekNumberRule",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.CalendarDatePicker",
-      "member": "CalendarClosed",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.CalendarDatePicker",
-      "member": "CalendarOpened",
       "reason": "Not included by projection policy"
     },
     {
@@ -9308,11 +9499,6 @@
     {
       "owner": "Avalonia.Controls.CalendarDatePicker",
       "member": "SelectedDateChanged",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.CalendarDatePicker",
-      "member": "Clear()",
       "reason": "Not included by projection policy"
     },
     {
@@ -9857,47 +10043,12 @@
     },
     {
       "owner": "Avalonia.Controls.NumericUpDown",
-      "member": "PlaceholderForeground",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.NumericUpDown",
       "member": "WatermarkForeground",
       "reason": "Not included by projection policy"
     },
     {
       "owner": "Avalonia.Controls.NumericUpDown",
-      "member": "HorizontalContentAlignment",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.NumericUpDown",
-      "member": "VerticalContentAlignment",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.NumericUpDown",
-      "member": "TextAlignment",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.NumericUpDown",
-      "member": "InnerLeftContent",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.NumericUpDown",
-      "member": "InnerRightContent",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.NumericUpDown",
       "member": "Spinned",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.NumericUpDown",
-      "member": "ValueChanged",
       "reason": "Not included by projection policy"
     },
     {

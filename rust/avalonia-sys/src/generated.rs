@@ -110,6 +110,116 @@ impl ComPtr<IAvnBrush> {
     }
 }
 
+pub const I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_OPENED_HANDLER_IID: Guid = Guid { data1: 0x48E353BF, data2: 0x246E, data3: 0x5FC7, data4: [0x9C, 0xF4, 0xDE, 0x08, 0x2C, 0xE3, 0x0E, 0xD8] };
+
+#[repr(C)]
+struct IAvnAutoCompleteBoxDropDownOpenedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnAutoCompleteBoxDropDownOpenedHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnAutoCompleteBoxDropDownOpenedHandler {
+    vtbl: *const IAvnAutoCompleteBoxDropDownOpenedHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnAutoCompleteBoxDropDownOpenedHandler {
+    const IID: Guid = I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_OPENED_HANDLER_IID;
+}
+
+impl ComPtr<IAvnAutoCompleteBoxDropDownOpenedHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_OPENED_HANDLER_VTBL: IAvnAutoCompleteBoxDropDownOpenedHandlerVtbl = IAvnAutoCompleteBoxDropDownOpenedHandlerVtbl {
+    query_interface: i_avn_auto_complete_box_drop_down_opened_handler_query_interface,
+    add_ref: i_avn_auto_complete_box_drop_down_opened_handler_add_ref,
+    release: i_avn_auto_complete_box_drop_down_opened_handler_release,
+    invoke: i_avn_auto_complete_box_drop_down_opened_handler_invoke,
+};
+
+pub fn auto_complete_box_drop_down_opened_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnAutoCompleteBoxDropDownOpenedHandler> {
+    crate::event_callback::create::<IAvnAutoCompleteBoxDropDownOpenedHandler, ()>(IAvnAutoCompleteBoxDropDownOpenedHandler { vtbl: &I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_OPENED_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_drop_down_opened_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnAutoCompleteBoxDropDownOpenedHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_drop_down_opened_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnAutoCompleteBoxDropDownOpenedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_drop_down_opened_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnAutoCompleteBoxDropDownOpenedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_drop_down_opened_handler_invoke(this: *mut IAvnAutoCompleteBoxDropDownOpenedHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnAutoCompleteBoxDropDownOpenedHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_CLOSED_HANDLER_IID: Guid = Guid { data1: 0x338294B4, data2: 0x2E9E, data3: 0x5494, data4: [0xB7, 0x84, 0xA3, 0xE0, 0x1C, 0xA0, 0x73, 0x2D] };
+
+#[repr(C)]
+struct IAvnAutoCompleteBoxDropDownClosedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnAutoCompleteBoxDropDownClosedHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnAutoCompleteBoxDropDownClosedHandler {
+    vtbl: *const IAvnAutoCompleteBoxDropDownClosedHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnAutoCompleteBoxDropDownClosedHandler {
+    const IID: Guid = I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_CLOSED_HANDLER_IID;
+}
+
+impl ComPtr<IAvnAutoCompleteBoxDropDownClosedHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_CLOSED_HANDLER_VTBL: IAvnAutoCompleteBoxDropDownClosedHandlerVtbl = IAvnAutoCompleteBoxDropDownClosedHandlerVtbl {
+    query_interface: i_avn_auto_complete_box_drop_down_closed_handler_query_interface,
+    add_ref: i_avn_auto_complete_box_drop_down_closed_handler_add_ref,
+    release: i_avn_auto_complete_box_drop_down_closed_handler_release,
+    invoke: i_avn_auto_complete_box_drop_down_closed_handler_invoke,
+};
+
+pub fn auto_complete_box_drop_down_closed_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnAutoCompleteBoxDropDownClosedHandler> {
+    crate::event_callback::create::<IAvnAutoCompleteBoxDropDownClosedHandler, ()>(IAvnAutoCompleteBoxDropDownClosedHandler { vtbl: &I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_CLOSED_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_drop_down_closed_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnAutoCompleteBoxDropDownClosedHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_drop_down_closed_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnAutoCompleteBoxDropDownClosedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_drop_down_closed_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnAutoCompleteBoxDropDownClosedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_drop_down_closed_handler_invoke(this: *mut IAvnAutoCompleteBoxDropDownClosedHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnAutoCompleteBoxDropDownClosedHandler, ()>(this, &mut ())
+}
+
 pub const I_AVN_BUTTON_CLICK_HANDLER_IID: Guid = Guid { data1: 0x4D76B167, data2: 0xC926, data3: 0x5DBD, data4: [0x86, 0xF0, 0xEF, 0x35, 0x2D, 0x9C, 0xBF, 0x9B] };
 
 #[repr(C)]
@@ -163,6 +273,116 @@ unsafe extern "system" fn i_avn_button_click_handler_release(this: *mut IUnknown
 
 unsafe extern "system" fn i_avn_button_click_handler_invoke(this: *mut IAvnButtonClickHandler) -> i32 {
     crate::event_callback::invoke::<IAvnButtonClickHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_CALENDAR_DATE_PICKER_CALENDAR_CLOSED_HANDLER_IID: Guid = Guid { data1: 0xBE1A8386, data2: 0xE73B, data3: 0x5FC4, data4: [0x84, 0xAA, 0x92, 0xAD, 0x4F, 0x0D, 0x79, 0xDC] };
+
+#[repr(C)]
+struct IAvnCalendarDatePickerCalendarClosedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnCalendarDatePickerCalendarClosedHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnCalendarDatePickerCalendarClosedHandler {
+    vtbl: *const IAvnCalendarDatePickerCalendarClosedHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnCalendarDatePickerCalendarClosedHandler {
+    const IID: Guid = I_AVN_CALENDAR_DATE_PICKER_CALENDAR_CLOSED_HANDLER_IID;
+}
+
+impl ComPtr<IAvnCalendarDatePickerCalendarClosedHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_CALENDAR_DATE_PICKER_CALENDAR_CLOSED_HANDLER_VTBL: IAvnCalendarDatePickerCalendarClosedHandlerVtbl = IAvnCalendarDatePickerCalendarClosedHandlerVtbl {
+    query_interface: i_avn_calendar_date_picker_calendar_closed_handler_query_interface,
+    add_ref: i_avn_calendar_date_picker_calendar_closed_handler_add_ref,
+    release: i_avn_calendar_date_picker_calendar_closed_handler_release,
+    invoke: i_avn_calendar_date_picker_calendar_closed_handler_invoke,
+};
+
+pub fn calendar_date_picker_calendar_closed_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnCalendarDatePickerCalendarClosedHandler> {
+    crate::event_callback::create::<IAvnCalendarDatePickerCalendarClosedHandler, ()>(IAvnCalendarDatePickerCalendarClosedHandler { vtbl: &I_AVN_CALENDAR_DATE_PICKER_CALENDAR_CLOSED_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_calendar_date_picker_calendar_closed_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnCalendarDatePickerCalendarClosedHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_calendar_date_picker_calendar_closed_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnCalendarDatePickerCalendarClosedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_calendar_date_picker_calendar_closed_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnCalendarDatePickerCalendarClosedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_calendar_date_picker_calendar_closed_handler_invoke(this: *mut IAvnCalendarDatePickerCalendarClosedHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnCalendarDatePickerCalendarClosedHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_CALENDAR_DATE_PICKER_CALENDAR_OPENED_HANDLER_IID: Guid = Guid { data1: 0xBAA74040, data2: 0xA700, data3: 0x5736, data4: [0xB4, 0x3B, 0xC3, 0x97, 0x85, 0x98, 0x63, 0xE7] };
+
+#[repr(C)]
+struct IAvnCalendarDatePickerCalendarOpenedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnCalendarDatePickerCalendarOpenedHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnCalendarDatePickerCalendarOpenedHandler {
+    vtbl: *const IAvnCalendarDatePickerCalendarOpenedHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnCalendarDatePickerCalendarOpenedHandler {
+    const IID: Guid = I_AVN_CALENDAR_DATE_PICKER_CALENDAR_OPENED_HANDLER_IID;
+}
+
+impl ComPtr<IAvnCalendarDatePickerCalendarOpenedHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_CALENDAR_DATE_PICKER_CALENDAR_OPENED_HANDLER_VTBL: IAvnCalendarDatePickerCalendarOpenedHandlerVtbl = IAvnCalendarDatePickerCalendarOpenedHandlerVtbl {
+    query_interface: i_avn_calendar_date_picker_calendar_opened_handler_query_interface,
+    add_ref: i_avn_calendar_date_picker_calendar_opened_handler_add_ref,
+    release: i_avn_calendar_date_picker_calendar_opened_handler_release,
+    invoke: i_avn_calendar_date_picker_calendar_opened_handler_invoke,
+};
+
+pub fn calendar_date_picker_calendar_opened_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnCalendarDatePickerCalendarOpenedHandler> {
+    crate::event_callback::create::<IAvnCalendarDatePickerCalendarOpenedHandler, ()>(IAvnCalendarDatePickerCalendarOpenedHandler { vtbl: &I_AVN_CALENDAR_DATE_PICKER_CALENDAR_OPENED_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_calendar_date_picker_calendar_opened_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnCalendarDatePickerCalendarOpenedHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_calendar_date_picker_calendar_opened_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnCalendarDatePickerCalendarOpenedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_calendar_date_picker_calendar_opened_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnCalendarDatePickerCalendarOpenedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_calendar_date_picker_calendar_opened_handler_invoke(this: *mut IAvnCalendarDatePickerCalendarOpenedHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnCalendarDatePickerCalendarOpenedHandler, ()>(this, &mut ())
 }
 
 pub const I_AVN_COMBO_BOX_DROP_DOWN_CLOSED_HANDLER_IID: Guid = Guid { data1: 0x954838EF, data2: 0x2A9F, data3: 0x5383, data4: [0x9E, 0xEF, 0x54, 0x49, 0xFD, 0xE8, 0x98, 0x34] };
@@ -776,6 +996,61 @@ unsafe extern "system" fn i_avn_menu_item_submenu_opened_handler_release(this: *
 
 unsafe extern "system" fn i_avn_menu_item_submenu_opened_handler_invoke(this: *mut IAvnMenuItemSubmenuOpenedHandler) -> i32 {
     crate::event_callback::invoke::<IAvnMenuItemSubmenuOpenedHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_NUMERIC_UP_DOWN_VALUE_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x68A72F63, data2: 0xB469, data3: 0x5312, data4: [0x92, 0x5F, 0xF7, 0xFC, 0xCF, 0x35, 0xA0, 0xDF] };
+
+#[repr(C)]
+struct IAvnNumericUpDownValueChangedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnNumericUpDownValueChangedHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnNumericUpDownValueChangedHandler {
+    vtbl: *const IAvnNumericUpDownValueChangedHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnNumericUpDownValueChangedHandler {
+    const IID: Guid = I_AVN_NUMERIC_UP_DOWN_VALUE_CHANGED_HANDLER_IID;
+}
+
+impl ComPtr<IAvnNumericUpDownValueChangedHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_NUMERIC_UP_DOWN_VALUE_CHANGED_HANDLER_VTBL: IAvnNumericUpDownValueChangedHandlerVtbl = IAvnNumericUpDownValueChangedHandlerVtbl {
+    query_interface: i_avn_numeric_up_down_value_changed_handler_query_interface,
+    add_ref: i_avn_numeric_up_down_value_changed_handler_add_ref,
+    release: i_avn_numeric_up_down_value_changed_handler_release,
+    invoke: i_avn_numeric_up_down_value_changed_handler_invoke,
+};
+
+pub fn numeric_up_down_value_changed_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnNumericUpDownValueChangedHandler> {
+    crate::event_callback::create::<IAvnNumericUpDownValueChangedHandler, ()>(IAvnNumericUpDownValueChangedHandler { vtbl: &I_AVN_NUMERIC_UP_DOWN_VALUE_CHANGED_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_numeric_up_down_value_changed_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnNumericUpDownValueChangedHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_numeric_up_down_value_changed_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnNumericUpDownValueChangedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_numeric_up_down_value_changed_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnNumericUpDownValueChangedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_numeric_up_down_value_changed_handler_invoke(this: *mut IAvnNumericUpDownValueChangedHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnNumericUpDownValueChangedHandler, ()>(this, &mut ())
 }
 
 pub const I_AVN_FLYOUT_BASE_OPENED_HANDLER_IID: Guid = Guid { data1: 0x41A6074D, data2: 0xDE1C, data3: 0x5B5E, data4: [0x8B, 0xE6, 0x50, 0x32, 0x6C, 0xB7, 0xEA, 0x31] };
@@ -2042,7 +2317,7 @@ impl ComPtr<IAvnAvaloniaObject> {
     }
 }
 
-pub const I_AVN_AUTO_COMPLETE_BOX_IID: Guid = Guid { data1: 0x60CD2151, data2: 0x32D8, data3: 0x5FB8, data4: [0xB5, 0x3D, 0x4F, 0x47, 0xA1, 0x1B, 0xCB, 0x14] };
+pub const I_AVN_AUTO_COMPLETE_BOX_IID: Guid = Guid { data1: 0x4CC317ED, data2: 0x001E, data3: 0x5729, data4: [0x9B, 0x81, 0x90, 0x88, 0x1D, 0xF7, 0x46, 0x0F] };
 
 #[repr(C)]
 struct IAvnAutoCompleteBoxVtbl {
@@ -2108,6 +2383,8 @@ struct IAvnAutoCompleteBoxVtbl {
     set_letter_spacing: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, f64) -> i32,
     get_padding: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut AvnThickness) -> i32,
     set_padding: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, AvnThickness) -> i32,
+    get_caret_index: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut i32) -> i32,
+    set_caret_index: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i32) -> i32,
     get_minimum_prefix_length: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut i32) -> i32,
     set_minimum_prefix_length: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i32) -> i32,
     get_is_text_completion_enabled: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut i32) -> i32,
@@ -2116,12 +2393,28 @@ struct IAvnAutoCompleteBoxVtbl {
     set_max_drop_down_height: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, f64) -> i32,
     get_is_drop_down_open: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut i32) -> i32,
     set_is_drop_down_open: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i32) -> i32,
+    get_clear_selection_on_lost_focus: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut i32) -> i32,
+    set_clear_selection_on_lost_focus: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i32) -> i32,
     get_text: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut u16) -> i32,
     set_text: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut u16) -> i32,
+    get_search_text: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut u16) -> i32,
     get_filter_mode: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut i32) -> i32,
     set_filter_mode: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i32) -> i32,
     get_placeholder_text: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut u16) -> i32,
     set_placeholder_text: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut u16) -> i32,
+    get_placeholder_foreground: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut IAvnBrush) -> i32,
+    set_placeholder_foreground: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnBrush) -> i32,
+    get_max_length: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut i32) -> i32,
+    set_max_length: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i32) -> i32,
+    get_inner_left_content: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut IAvnControl) -> i32,
+    set_inner_left_content: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnControl) -> i32,
+    get_inner_right_content: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut IAvnControl) -> i32,
+    set_inner_right_content: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnControl) -> i32,
+    populate_complete: unsafe extern "system" fn(*mut IAvnAutoCompleteBox) -> i32,
+    advise_drop_down_opened: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnAutoCompleteBoxDropDownOpenedHandler, *mut i64) -> i32,
+    unadvise_drop_down_opened: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
+    advise_drop_down_closed: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnAutoCompleteBoxDropDownClosedHandler, *mut i64) -> i32,
+    unadvise_drop_down_closed: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
 }
 
 #[repr(C)]
@@ -2545,6 +2838,20 @@ impl ComPtr<IAvnAutoCompleteBox> {
             hresult::check(hr)
         }
     }
+    pub fn get_caret_index(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_caret_index)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_caret_index(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_caret_index)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
     pub fn get_minimum_prefix_length(&self) -> Result<i32> {
         unsafe {
             let mut value: i32 = 0;
@@ -2601,6 +2908,20 @@ impl ComPtr<IAvnAutoCompleteBox> {
             hresult::check(hr)
         }
     }
+    pub fn get_clear_selection_on_lost_focus(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_clear_selection_on_lost_focus)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_clear_selection_on_lost_focus(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_clear_selection_on_lost_focus)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
     pub fn get_text(&self) -> Result<*mut u16> {
         unsafe {
             let mut value: *mut u16 = ptr::null_mut();
@@ -2613,6 +2934,14 @@ impl ComPtr<IAvnAutoCompleteBox> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_text)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
             hresult::check(hr)
+        }
+    }
+    pub fn get_search_text(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_search_text)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn get_filter_mode(&self) -> Result<i32> {
@@ -2640,6 +2969,94 @@ impl ComPtr<IAvnAutoCompleteBox> {
     pub fn set_placeholder_text(&self, value: Option<&[u16]>) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placeholder_text)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_placeholder_foreground(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_placeholder_foreground)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_placeholder_foreground(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placeholder_foreground)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_max_length(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_max_length)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_max_length(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_length)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_inner_left_content(&self) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_inner_left_content)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_inner_left_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_inner_left_content)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_inner_right_content(&self) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_inner_right_content)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_inner_right_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_inner_right_content)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn populate_complete(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().populate_complete)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_drop_down_opened(&self, handler: &ComPtr<IAvnAutoCompleteBoxDropDownOpenedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_drop_down_opened)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_drop_down_opened(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_drop_down_opened)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_drop_down_closed(&self, handler: &ComPtr<IAvnAutoCompleteBoxDropDownClosedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_drop_down_closed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_drop_down_closed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_drop_down_closed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -4270,7 +4687,7 @@ impl ComPtr<IAvnButtonSpinner> {
     }
 }
 
-pub const I_AVN_CALENDAR_IID: Guid = Guid { data1: 0xF748D073, data2: 0x977D, data3: 0x5F1D, data4: [0xA4, 0xA6, 0x4C, 0x5E, 0x0F, 0x3D, 0x59, 0x2C] };
+pub const I_AVN_CALENDAR_IID: Guid = Guid { data1: 0xF1691230, data2: 0x57FB, data3: 0x5336, data4: [0x88, 0x45, 0x68, 0xDC, 0xDB, 0x11, 0x7E, 0x8B] };
 
 #[repr(C)]
 struct IAvnCalendarVtbl {
@@ -4340,10 +4757,18 @@ struct IAvnCalendarVtbl {
     set_first_day_of_week: unsafe extern "system" fn(*mut IAvnCalendar, i32) -> i32,
     get_is_today_highlighted: unsafe extern "system" fn(*mut IAvnCalendar, *mut i32) -> i32,
     set_is_today_highlighted: unsafe extern "system" fn(*mut IAvnCalendar, i32) -> i32,
+    get_header_background: unsafe extern "system" fn(*mut IAvnCalendar, *mut *mut IAvnBrush) -> i32,
+    set_header_background: unsafe extern "system" fn(*mut IAvnCalendar, *mut IAvnBrush) -> i32,
+    get_is_week_number_visible: unsafe extern "system" fn(*mut IAvnCalendar, *mut i32) -> i32,
+    set_is_week_number_visible: unsafe extern "system" fn(*mut IAvnCalendar, i32) -> i32,
+    get_week_number_rule: unsafe extern "system" fn(*mut IAvnCalendar, *mut i32) -> i32,
+    set_week_number_rule: unsafe extern "system" fn(*mut IAvnCalendar, i32) -> i32,
     get_display_mode: unsafe extern "system" fn(*mut IAvnCalendar, *mut i32) -> i32,
     set_display_mode: unsafe extern "system" fn(*mut IAvnCalendar, i32) -> i32,
     get_selection_mode: unsafe extern "system" fn(*mut IAvnCalendar, *mut i32) -> i32,
     set_selection_mode: unsafe extern "system" fn(*mut IAvnCalendar, i32) -> i32,
+    get_allow_tap_range_selection: unsafe extern "system" fn(*mut IAvnCalendar, *mut i32) -> i32,
+    set_allow_tap_range_selection: unsafe extern "system" fn(*mut IAvnCalendar, i32) -> i32,
     get_selected_date: unsafe extern "system" fn(*mut IAvnCalendar, *mut *mut u16) -> i32,
     set_selected_date: unsafe extern "system" fn(*mut IAvnCalendar, *mut u16) -> i32,
     get_display_date: unsafe extern "system" fn(*mut IAvnCalendar, *mut *mut u16) -> i32,
@@ -4803,6 +5228,48 @@ impl ComPtr<IAvnCalendar> {
             hresult::check(hr)
         }
     }
+    pub fn get_header_background(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_header_background)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_header_background(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_header_background)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_week_number_visible(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_week_number_visible)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_week_number_visible(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_week_number_visible)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_week_number_rule(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_week_number_rule)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_week_number_rule(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_week_number_rule)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
     pub fn get_display_mode(&self) -> Result<i32> {
         unsafe {
             let mut value: i32 = 0;
@@ -4828,6 +5295,20 @@ impl ComPtr<IAvnCalendar> {
     pub fn set_selection_mode(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selection_mode)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_allow_tap_range_selection(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_allow_tap_range_selection)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_allow_tap_range_selection(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_allow_tap_range_selection)(self.as_raw(), i32::from(value));
             hresult::check(hr)
         }
     }
@@ -4889,7 +5370,7 @@ impl ComPtr<IAvnCalendar> {
     }
 }
 
-pub const I_AVN_CALENDAR_DATE_PICKER_IID: Guid = Guid { data1: 0x704D1096, data2: 0x5596, data3: 0x589B, data4: [0xB1, 0x35, 0x33, 0x8D, 0xC9, 0x7D, 0xED, 0x0A] };
+pub const I_AVN_CALENDAR_DATE_PICKER_IID: Guid = Guid { data1: 0x74390933, data2: 0x2E48, data3: 0x50F2, data4: [0x8A, 0xF8, 0x1F, 0x79, 0x6A, 0xB5, 0x26, 0xFD] };
 
 #[repr(C)]
 struct IAvnCalendarDatePickerVtbl {
@@ -4961,6 +5442,8 @@ struct IAvnCalendarDatePickerVtbl {
     set_display_date_start: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut u16) -> i32,
     get_display_date_end: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut *mut u16) -> i32,
     set_display_date_end: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut u16) -> i32,
+    get_first_day_of_week: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut i32) -> i32,
+    set_first_day_of_week: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i32) -> i32,
     get_is_drop_down_open: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut i32) -> i32,
     set_is_drop_down_open: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i32) -> i32,
     get_is_today_highlighted: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut i32) -> i32,
@@ -4975,8 +5458,23 @@ struct IAvnCalendarDatePickerVtbl {
     set_text: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut u16) -> i32,
     get_placeholder_text: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut *mut u16) -> i32,
     set_placeholder_text: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut u16) -> i32,
+    get_use_floating_placeholder: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut i32) -> i32,
+    set_use_floating_placeholder: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i32) -> i32,
+    get_placeholder_foreground: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut *mut IAvnBrush) -> i32,
+    set_placeholder_foreground: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut IAvnBrush) -> i32,
+    get_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut i32) -> i32,
+    set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i32) -> i32,
+    get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut i32) -> i32,
+    set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i32) -> i32,
     get_is_week_number_visible: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut i32) -> i32,
     set_is_week_number_visible: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i32) -> i32,
+    get_week_number_rule: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut i32) -> i32,
+    set_week_number_rule: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i32) -> i32,
+    clear: unsafe extern "system" fn(*mut IAvnCalendarDatePicker) -> i32,
+    advise_calendar_closed: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut IAvnCalendarDatePickerCalendarClosedHandler, *mut i64) -> i32,
+    unadvise_calendar_closed: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i64) -> i32,
+    advise_calendar_opened: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut IAvnCalendarDatePickerCalendarOpenedHandler, *mut i64) -> i32,
+    unadvise_calendar_opened: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i64) -> i32,
 }
 
 #[repr(C)]
@@ -5442,6 +5940,20 @@ impl ComPtr<IAvnCalendarDatePicker> {
             hresult::check(hr)
         }
     }
+    pub fn get_first_day_of_week(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_first_day_of_week)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_first_day_of_week(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_first_day_of_week)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
     pub fn get_is_drop_down_open(&self) -> Result<bool> {
         unsafe {
             let mut value: i32 = 0;
@@ -5540,6 +6052,62 @@ impl ComPtr<IAvnCalendarDatePicker> {
             hresult::check(hr)
         }
     }
+    pub fn get_use_floating_placeholder(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_use_floating_placeholder)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_use_floating_placeholder(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_use_floating_placeholder)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_placeholder_foreground(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_placeholder_foreground)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_placeholder_foreground(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placeholder_foreground)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
     pub fn get_is_week_number_visible(&self) -> Result<bool> {
         unsafe {
             let mut value: i32 = 0;
@@ -5551,6 +6119,52 @@ impl ComPtr<IAvnCalendarDatePicker> {
     pub fn set_is_week_number_visible(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_week_number_visible)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_week_number_rule(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_week_number_rule)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_week_number_rule(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_week_number_rule)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn clear(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().clear)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_calendar_closed(&self, handler: &ComPtr<IAvnCalendarDatePickerCalendarClosedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_calendar_closed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_calendar_closed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_calendar_closed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_calendar_opened(&self, handler: &ComPtr<IAvnCalendarDatePickerCalendarOpenedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_calendar_opened)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_calendar_opened(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_calendar_opened)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -25690,7 +26304,7 @@ impl ComPtr<IAvnWindowNotificationManager> {
     }
 }
 
-pub const I_AVN_NUMERIC_UP_DOWN_IID: Guid = Guid { data1: 0xE6D2CF0A, data2: 0x4637, data3: 0x551E, data4: [0x96, 0xDE, 0xE2, 0x60, 0xBB, 0x03, 0x04, 0x1C] };
+pub const I_AVN_NUMERIC_UP_DOWN_IID: Guid = Guid { data1: 0x02CB4C9D, data2: 0x71C8, data3: 0x5A6C, data4: [0xB5, 0x29, 0xA6, 0x78, 0x32, 0xEC, 0xC9, 0xDD] };
 
 #[repr(C)]
 struct IAvnNumericUpDownVtbl {
@@ -25780,6 +26394,20 @@ struct IAvnNumericUpDownVtbl {
     set_value: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut u16) -> i32,
     get_placeholder_text: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut *mut u16) -> i32,
     set_placeholder_text: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut u16) -> i32,
+    get_placeholder_foreground: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut *mut IAvnBrush) -> i32,
+    set_placeholder_foreground: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnBrush) -> i32,
+    get_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut i32) -> i32,
+    set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnNumericUpDown, i32) -> i32,
+    get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut i32) -> i32,
+    set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnNumericUpDown, i32) -> i32,
+    get_text_alignment: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut i32) -> i32,
+    set_text_alignment: unsafe extern "system" fn(*mut IAvnNumericUpDown, i32) -> i32,
+    get_inner_left_content: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut *mut IAvnControl) -> i32,
+    set_inner_left_content: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnControl) -> i32,
+    get_inner_right_content: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut *mut IAvnControl) -> i32,
+    set_inner_right_content: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnControl) -> i32,
+    advise_value_changed: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnNumericUpDownValueChangedHandler, *mut i64) -> i32,
+    unadvise_value_changed: unsafe extern "system" fn(*mut IAvnNumericUpDown, i64) -> i32,
 }
 
 #[repr(C)]
@@ -26368,6 +26996,103 @@ impl ComPtr<IAvnNumericUpDown> {
     pub fn set_placeholder_text(&self, value: Option<&[u16]>) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placeholder_text)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_placeholder_foreground(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_placeholder_foreground)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_placeholder_foreground(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placeholder_foreground)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_content_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_content_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_content_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_content_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_text_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_text_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_text_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_text_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_inner_left_content(&self) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_inner_left_content)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_inner_left_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_inner_left_content)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_inner_right_content(&self) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_inner_right_content)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_inner_right_content(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_inner_right_content)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_value_changed(&self, handler: &ComPtr<IAvnNumericUpDownValueChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_value_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_value_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_value_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }

@@ -207,6 +207,12 @@ IsLoaded and Loaded/Unloaded stay gaps: putting them on Control would
 republish every control interface and is a wave of its own. ICommand and
 HotKey stay gaps. The factory is unmoved at 13.
 
+Wave Q sweeps leftover marshallable scalars on leaf input types.
+`IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and
+`IAvnNumericUpDown` each move from 2 to 3. Templates, filters, ItemsSource,
+SelectedDates, NumberFormat and obsolete Watermark aliases stay gaps.
+The factory is unmoved at 13.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A

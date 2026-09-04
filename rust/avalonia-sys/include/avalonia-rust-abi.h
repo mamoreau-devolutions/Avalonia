@@ -69,6 +69,10 @@ typedef struct IAvnArc IAvnArc;
 typedef struct IAvnArcVtbl IAvnArcVtbl;
 typedef struct IAvnAutoCompleteBox IAvnAutoCompleteBox;
 typedef struct IAvnAutoCompleteBoxVtbl IAvnAutoCompleteBoxVtbl;
+typedef struct IAvnAutoCompleteBoxDropDownClosedHandler IAvnAutoCompleteBoxDropDownClosedHandler;
+typedef struct IAvnAutoCompleteBoxDropDownClosedHandlerVtbl IAvnAutoCompleteBoxDropDownClosedHandlerVtbl;
+typedef struct IAvnAutoCompleteBoxDropDownOpenedHandler IAvnAutoCompleteBoxDropDownOpenedHandler;
+typedef struct IAvnAutoCompleteBoxDropDownOpenedHandlerVtbl IAvnAutoCompleteBoxDropDownOpenedHandlerVtbl;
 typedef struct IAvnAvaloniaObject IAvnAvaloniaObject;
 typedef struct IAvnAvaloniaObjectVtbl IAvnAvaloniaObjectVtbl;
 typedef struct IAvnBorder IAvnBorder;
@@ -85,6 +89,10 @@ typedef struct IAvnCalendar IAvnCalendar;
 typedef struct IAvnCalendarVtbl IAvnCalendarVtbl;
 typedef struct IAvnCalendarDatePicker IAvnCalendarDatePicker;
 typedef struct IAvnCalendarDatePickerVtbl IAvnCalendarDatePickerVtbl;
+typedef struct IAvnCalendarDatePickerCalendarClosedHandler IAvnCalendarDatePickerCalendarClosedHandler;
+typedef struct IAvnCalendarDatePickerCalendarClosedHandlerVtbl IAvnCalendarDatePickerCalendarClosedHandlerVtbl;
+typedef struct IAvnCalendarDatePickerCalendarOpenedHandler IAvnCalendarDatePickerCalendarOpenedHandler;
+typedef struct IAvnCalendarDatePickerCalendarOpenedHandlerVtbl IAvnCalendarDatePickerCalendarOpenedHandlerVtbl;
 typedef struct IAvnCanvas IAvnCanvas;
 typedef struct IAvnCanvasVtbl IAvnCanvasVtbl;
 typedef struct IAvnCanvasStatics IAvnCanvasStatics;
@@ -209,6 +217,8 @@ typedef struct IAvnNotificationCard IAvnNotificationCard;
 typedef struct IAvnNotificationCardVtbl IAvnNotificationCardVtbl;
 typedef struct IAvnNumericUpDown IAvnNumericUpDown;
 typedef struct IAvnNumericUpDownVtbl IAvnNumericUpDownVtbl;
+typedef struct IAvnNumericUpDownValueChangedHandler IAvnNumericUpDownValueChangedHandler;
+typedef struct IAvnNumericUpDownValueChangedHandlerVtbl IAvnNumericUpDownValueChangedHandlerVtbl;
 typedef struct IAvnPanel IAvnPanel;
 typedef struct IAvnPanelVtbl IAvnPanelVtbl;
 typedef struct IAvnPath IAvnPath;
@@ -356,6 +366,38 @@ typedef struct IAvnWindowNotificationManagerVtbl IAvnWindowNotificationManagerVt
 typedef struct IAvnWrapPanel IAvnWrapPanel;
 typedef struct IAvnWrapPanelVtbl IAvnWrapPanelVtbl;
 
+static const AvnGuid I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_CLOSED_HANDLER_IID = {
+    0x338294B4,
+    0x2E9E,
+    0x5494,
+    { 0xB7, 0x84, 0xA3, 0xE0, 0x1C, 0xA0, 0x73, 0x2D }
+};
+#define I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_CLOSED_HANDLER_ABI_VERSION 1
+struct IAvnAutoCompleteBoxDropDownClosedHandlerVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnAutoCompleteBoxDropDownClosedHandler* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnAutoCompleteBoxDropDownClosedHandler* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnAutoCompleteBoxDropDownClosedHandler* self); /* slot 2 */
+    AvnHResult (AVN_CALL *invoke)(IAvnAutoCompleteBoxDropDownClosedHandler* self); /* slot 3 */
+};
+struct IAvnAutoCompleteBoxDropDownClosedHandler { const IAvnAutoCompleteBoxDropDownClosedHandlerVtbl* vtbl; };
+#define I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_CLOSED_HANDLER_VTABLE_SLOTS 4
+
+static const AvnGuid I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_OPENED_HANDLER_IID = {
+    0x48E353BF,
+    0x246E,
+    0x5FC7,
+    { 0x9C, 0xF4, 0xDE, 0x08, 0x2C, 0xE3, 0x0E, 0xD8 }
+};
+#define I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_OPENED_HANDLER_ABI_VERSION 1
+struct IAvnAutoCompleteBoxDropDownOpenedHandlerVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnAutoCompleteBoxDropDownOpenedHandler* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnAutoCompleteBoxDropDownOpenedHandler* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnAutoCompleteBoxDropDownOpenedHandler* self); /* slot 2 */
+    AvnHResult (AVN_CALL *invoke)(IAvnAutoCompleteBoxDropDownOpenedHandler* self); /* slot 3 */
+};
+struct IAvnAutoCompleteBoxDropDownOpenedHandler { const IAvnAutoCompleteBoxDropDownOpenedHandlerVtbl* vtbl; };
+#define I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_OPENED_HANDLER_VTABLE_SLOTS 4
+
 static const AvnGuid I_AVN_BUTTON_CLICK_HANDLER_IID = {
     0x4D76B167,
     0xC926,
@@ -371,6 +413,38 @@ struct IAvnButtonClickHandlerVtbl {
 };
 struct IAvnButtonClickHandler { const IAvnButtonClickHandlerVtbl* vtbl; };
 #define I_AVN_BUTTON_CLICK_HANDLER_VTABLE_SLOTS 4
+
+static const AvnGuid I_AVN_CALENDAR_DATE_PICKER_CALENDAR_CLOSED_HANDLER_IID = {
+    0xBE1A8386,
+    0xE73B,
+    0x5FC4,
+    { 0x84, 0xAA, 0x92, 0xAD, 0x4F, 0x0D, 0x79, 0xDC }
+};
+#define I_AVN_CALENDAR_DATE_PICKER_CALENDAR_CLOSED_HANDLER_ABI_VERSION 1
+struct IAvnCalendarDatePickerCalendarClosedHandlerVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnCalendarDatePickerCalendarClosedHandler* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnCalendarDatePickerCalendarClosedHandler* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnCalendarDatePickerCalendarClosedHandler* self); /* slot 2 */
+    AvnHResult (AVN_CALL *invoke)(IAvnCalendarDatePickerCalendarClosedHandler* self); /* slot 3 */
+};
+struct IAvnCalendarDatePickerCalendarClosedHandler { const IAvnCalendarDatePickerCalendarClosedHandlerVtbl* vtbl; };
+#define I_AVN_CALENDAR_DATE_PICKER_CALENDAR_CLOSED_HANDLER_VTABLE_SLOTS 4
+
+static const AvnGuid I_AVN_CALENDAR_DATE_PICKER_CALENDAR_OPENED_HANDLER_IID = {
+    0xBAA74040,
+    0xA700,
+    0x5736,
+    { 0xB4, 0x3B, 0xC3, 0x97, 0x85, 0x98, 0x63, 0xE7 }
+};
+#define I_AVN_CALENDAR_DATE_PICKER_CALENDAR_OPENED_HANDLER_ABI_VERSION 1
+struct IAvnCalendarDatePickerCalendarOpenedHandlerVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnCalendarDatePickerCalendarOpenedHandler* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnCalendarDatePickerCalendarOpenedHandler* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnCalendarDatePickerCalendarOpenedHandler* self); /* slot 2 */
+    AvnHResult (AVN_CALL *invoke)(IAvnCalendarDatePickerCalendarOpenedHandler* self); /* slot 3 */
+};
+struct IAvnCalendarDatePickerCalendarOpenedHandler { const IAvnCalendarDatePickerCalendarOpenedHandlerVtbl* vtbl; };
+#define I_AVN_CALENDAR_DATE_PICKER_CALENDAR_OPENED_HANDLER_VTABLE_SLOTS 4
 
 static const AvnGuid I_AVN_COMBO_BOX_DROP_DOWN_CLOSED_HANDLER_IID = {
     0x954838EF,
@@ -579,6 +653,22 @@ struct IAvnMenuItemSubmenuOpenedHandlerVtbl {
 };
 struct IAvnMenuItemSubmenuOpenedHandler { const IAvnMenuItemSubmenuOpenedHandlerVtbl* vtbl; };
 #define I_AVN_MENU_ITEM_SUBMENU_OPENED_HANDLER_VTABLE_SLOTS 4
+
+static const AvnGuid I_AVN_NUMERIC_UP_DOWN_VALUE_CHANGED_HANDLER_IID = {
+    0x68A72F63,
+    0xB469,
+    0x5312,
+    { 0x92, 0x5F, 0xF7, 0xFC, 0xCF, 0x35, 0xA0, 0xDF }
+};
+#define I_AVN_NUMERIC_UP_DOWN_VALUE_CHANGED_HANDLER_ABI_VERSION 1
+struct IAvnNumericUpDownValueChangedHandlerVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnNumericUpDownValueChangedHandler* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnNumericUpDownValueChangedHandler* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnNumericUpDownValueChangedHandler* self); /* slot 2 */
+    AvnHResult (AVN_CALL *invoke)(IAvnNumericUpDownValueChangedHandler* self); /* slot 3 */
+};
+struct IAvnNumericUpDownValueChangedHandler { const IAvnNumericUpDownValueChangedHandlerVtbl* vtbl; };
+#define I_AVN_NUMERIC_UP_DOWN_VALUE_CHANGED_HANDLER_VTABLE_SLOTS 4
 
 static const AvnGuid I_AVN_POPUP_FLYOUT_BASE_CLOSING_HANDLER_IID = {
     0xEAE8EE53,
@@ -1003,12 +1093,12 @@ struct IAvnArc { const IAvnArcVtbl* vtbl; };
 #define I_AVN_ARC_VTABLE_SLOTS 58
 
 static const AvnGuid I_AVN_AUTO_COMPLETE_BOX_IID = {
-    0x60CD2151,
-    0x32D8,
-    0x5FB8,
-    { 0xB5, 0x3D, 0x4F, 0x47, 0xA1, 0x1B, 0xCB, 0x14 }
+    0x4CC317ED,
+    0x001E,
+    0x5729,
+    { 0x9B, 0x81, 0x90, 0x88, 0x1D, 0xF7, 0x46, 0x0F }
 };
-#define I_AVN_AUTO_COMPLETE_BOX_ABI_VERSION 2
+#define I_AVN_AUTO_COMPLETE_BOX_ABI_VERSION 3
 struct IAvnAutoCompleteBoxVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnAutoCompleteBox* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnAutoCompleteBox* self); /* slot 1 */
@@ -1072,23 +1162,41 @@ struct IAvnAutoCompleteBoxVtbl {
     AvnHResult (AVN_CALL *set_letter_spacing)(IAvnAutoCompleteBox* self, double value); /* slot 59 */
     AvnHResult (AVN_CALL *get_padding)(IAvnAutoCompleteBox* self, AvnThickness* value); /* slot 60 */
     AvnHResult (AVN_CALL *set_padding)(IAvnAutoCompleteBox* self, AvnThickness value); /* slot 61 */
-    AvnHResult (AVN_CALL *get_minimum_prefix_length)(IAvnAutoCompleteBox* self, int32_t* value); /* slot 62 */
-    AvnHResult (AVN_CALL *set_minimum_prefix_length)(IAvnAutoCompleteBox* self, int32_t value); /* slot 63 */
-    AvnHResult (AVN_CALL *get_is_text_completion_enabled)(IAvnAutoCompleteBox* self, int32_t* value); /* slot 64 */
-    AvnHResult (AVN_CALL *set_is_text_completion_enabled)(IAvnAutoCompleteBox* self, int32_t value); /* slot 65 */
-    AvnHResult (AVN_CALL *get_max_drop_down_height)(IAvnAutoCompleteBox* self, double* value); /* slot 66 */
-    AvnHResult (AVN_CALL *set_max_drop_down_height)(IAvnAutoCompleteBox* self, double value); /* slot 67 */
-    AvnHResult (AVN_CALL *get_is_drop_down_open)(IAvnAutoCompleteBox* self, int32_t* value); /* slot 68 */
-    AvnHResult (AVN_CALL *set_is_drop_down_open)(IAvnAutoCompleteBox* self, int32_t value); /* slot 69 */
-    AvnHResult (AVN_CALL *get_text)(IAvnAutoCompleteBox* self, uint16_t** value); /* slot 70 */
-    AvnHResult (AVN_CALL *set_text)(IAvnAutoCompleteBox* self, const uint16_t* value); /* slot 71 */
-    AvnHResult (AVN_CALL *get_filter_mode)(IAvnAutoCompleteBox* self, int32_t* value); /* slot 72 */
-    AvnHResult (AVN_CALL *set_filter_mode)(IAvnAutoCompleteBox* self, int32_t value); /* slot 73 */
-    AvnHResult (AVN_CALL *get_placeholder_text)(IAvnAutoCompleteBox* self, uint16_t** value); /* slot 74 */
-    AvnHResult (AVN_CALL *set_placeholder_text)(IAvnAutoCompleteBox* self, const uint16_t* value); /* slot 75 */
+    AvnHResult (AVN_CALL *get_caret_index)(IAvnAutoCompleteBox* self, int32_t* value); /* slot 62 */
+    AvnHResult (AVN_CALL *set_caret_index)(IAvnAutoCompleteBox* self, int32_t value); /* slot 63 */
+    AvnHResult (AVN_CALL *get_minimum_prefix_length)(IAvnAutoCompleteBox* self, int32_t* value); /* slot 64 */
+    AvnHResult (AVN_CALL *set_minimum_prefix_length)(IAvnAutoCompleteBox* self, int32_t value); /* slot 65 */
+    AvnHResult (AVN_CALL *get_is_text_completion_enabled)(IAvnAutoCompleteBox* self, int32_t* value); /* slot 66 */
+    AvnHResult (AVN_CALL *set_is_text_completion_enabled)(IAvnAutoCompleteBox* self, int32_t value); /* slot 67 */
+    AvnHResult (AVN_CALL *get_max_drop_down_height)(IAvnAutoCompleteBox* self, double* value); /* slot 68 */
+    AvnHResult (AVN_CALL *set_max_drop_down_height)(IAvnAutoCompleteBox* self, double value); /* slot 69 */
+    AvnHResult (AVN_CALL *get_is_drop_down_open)(IAvnAutoCompleteBox* self, int32_t* value); /* slot 70 */
+    AvnHResult (AVN_CALL *set_is_drop_down_open)(IAvnAutoCompleteBox* self, int32_t value); /* slot 71 */
+    AvnHResult (AVN_CALL *get_clear_selection_on_lost_focus)(IAvnAutoCompleteBox* self, int32_t* value); /* slot 72 */
+    AvnHResult (AVN_CALL *set_clear_selection_on_lost_focus)(IAvnAutoCompleteBox* self, int32_t value); /* slot 73 */
+    AvnHResult (AVN_CALL *get_text)(IAvnAutoCompleteBox* self, uint16_t** value); /* slot 74 */
+    AvnHResult (AVN_CALL *set_text)(IAvnAutoCompleteBox* self, const uint16_t* value); /* slot 75 */
+    AvnHResult (AVN_CALL *get_search_text)(IAvnAutoCompleteBox* self, uint16_t** value); /* slot 76 */
+    AvnHResult (AVN_CALL *get_filter_mode)(IAvnAutoCompleteBox* self, int32_t* value); /* slot 77 */
+    AvnHResult (AVN_CALL *set_filter_mode)(IAvnAutoCompleteBox* self, int32_t value); /* slot 78 */
+    AvnHResult (AVN_CALL *get_placeholder_text)(IAvnAutoCompleteBox* self, uint16_t** value); /* slot 79 */
+    AvnHResult (AVN_CALL *set_placeholder_text)(IAvnAutoCompleteBox* self, const uint16_t* value); /* slot 80 */
+    AvnHResult (AVN_CALL *get_placeholder_foreground)(IAvnAutoCompleteBox* self, IAvnBrush** value); /* slot 81 */
+    AvnHResult (AVN_CALL *set_placeholder_foreground)(IAvnAutoCompleteBox* self, IAvnBrush* value); /* slot 82 */
+    AvnHResult (AVN_CALL *get_max_length)(IAvnAutoCompleteBox* self, int32_t* value); /* slot 83 */
+    AvnHResult (AVN_CALL *set_max_length)(IAvnAutoCompleteBox* self, int32_t value); /* slot 84 */
+    AvnHResult (AVN_CALL *get_inner_left_content)(IAvnAutoCompleteBox* self, IAvnControl** value); /* slot 85 */
+    AvnHResult (AVN_CALL *set_inner_left_content)(IAvnAutoCompleteBox* self, IAvnControl* value); /* slot 86 */
+    AvnHResult (AVN_CALL *get_inner_right_content)(IAvnAutoCompleteBox* self, IAvnControl** value); /* slot 87 */
+    AvnHResult (AVN_CALL *set_inner_right_content)(IAvnAutoCompleteBox* self, IAvnControl* value); /* slot 88 */
+    AvnHResult (AVN_CALL *populate_complete)(IAvnAutoCompleteBox* self); /* slot 89 */
+    AvnHResult (AVN_CALL *advise_drop_down_opened)(IAvnAutoCompleteBox* self, IAvnAutoCompleteBoxDropDownOpenedHandler* handler, int64_t* subscription_id); /* slot 90 */
+    AvnHResult (AVN_CALL *unadvise_drop_down_opened)(IAvnAutoCompleteBox* self, int64_t subscription_id); /* slot 91 */
+    AvnHResult (AVN_CALL *advise_drop_down_closed)(IAvnAutoCompleteBox* self, IAvnAutoCompleteBoxDropDownClosedHandler* handler, int64_t* subscription_id); /* slot 92 */
+    AvnHResult (AVN_CALL *unadvise_drop_down_closed)(IAvnAutoCompleteBox* self, int64_t subscription_id); /* slot 93 */
 };
 struct IAvnAutoCompleteBox { const IAvnAutoCompleteBoxVtbl* vtbl; };
-#define I_AVN_AUTO_COMPLETE_BOX_VTABLE_SLOTS 76
+#define I_AVN_AUTO_COMPLETE_BOX_VTABLE_SLOTS 94
 
 static const AvnGuid I_AVN_AVALONIA_OBJECT_IID = {
     0xFA7F2E03,
@@ -1349,12 +1457,12 @@ struct IAvnButtonSpinner { const IAvnButtonSpinnerVtbl* vtbl; };
 #define I_AVN_BUTTON_SPINNER_VTABLE_SLOTS 74
 
 static const AvnGuid I_AVN_CALENDAR_IID = {
-    0xF748D073,
-    0x977D,
-    0x5F1D,
-    { 0xA4, 0xA6, 0x4C, 0x5E, 0x0F, 0x3D, 0x59, 0x2C }
+    0xF1691230,
+    0x57FB,
+    0x5336,
+    { 0x88, 0x45, 0x68, 0xDC, 0xDB, 0x11, 0x7E, 0x8B }
 };
-#define I_AVN_CALENDAR_ABI_VERSION 2
+#define I_AVN_CALENDAR_ABI_VERSION 3
 struct IAvnCalendarVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnCalendar* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnCalendar* self); /* slot 1 */
@@ -1422,29 +1530,37 @@ struct IAvnCalendarVtbl {
     AvnHResult (AVN_CALL *set_first_day_of_week)(IAvnCalendar* self, int32_t value); /* slot 63 */
     AvnHResult (AVN_CALL *get_is_today_highlighted)(IAvnCalendar* self, int32_t* value); /* slot 64 */
     AvnHResult (AVN_CALL *set_is_today_highlighted)(IAvnCalendar* self, int32_t value); /* slot 65 */
-    AvnHResult (AVN_CALL *get_display_mode)(IAvnCalendar* self, int32_t* value); /* slot 66 */
-    AvnHResult (AVN_CALL *set_display_mode)(IAvnCalendar* self, int32_t value); /* slot 67 */
-    AvnHResult (AVN_CALL *get_selection_mode)(IAvnCalendar* self, int32_t* value); /* slot 68 */
-    AvnHResult (AVN_CALL *set_selection_mode)(IAvnCalendar* self, int32_t value); /* slot 69 */
-    AvnHResult (AVN_CALL *get_selected_date)(IAvnCalendar* self, uint16_t** value); /* slot 70 */
-    AvnHResult (AVN_CALL *set_selected_date)(IAvnCalendar* self, const uint16_t* value); /* slot 71 */
-    AvnHResult (AVN_CALL *get_display_date)(IAvnCalendar* self, uint16_t** value); /* slot 72 */
-    AvnHResult (AVN_CALL *set_display_date)(IAvnCalendar* self, const uint16_t* value); /* slot 73 */
-    AvnHResult (AVN_CALL *get_display_date_start)(IAvnCalendar* self, uint16_t** value); /* slot 74 */
-    AvnHResult (AVN_CALL *set_display_date_start)(IAvnCalendar* self, const uint16_t* value); /* slot 75 */
-    AvnHResult (AVN_CALL *get_display_date_end)(IAvnCalendar* self, uint16_t** value); /* slot 76 */
-    AvnHResult (AVN_CALL *set_display_date_end)(IAvnCalendar* self, const uint16_t* value); /* slot 77 */
+    AvnHResult (AVN_CALL *get_header_background)(IAvnCalendar* self, IAvnBrush** value); /* slot 66 */
+    AvnHResult (AVN_CALL *set_header_background)(IAvnCalendar* self, IAvnBrush* value); /* slot 67 */
+    AvnHResult (AVN_CALL *get_is_week_number_visible)(IAvnCalendar* self, int32_t* value); /* slot 68 */
+    AvnHResult (AVN_CALL *set_is_week_number_visible)(IAvnCalendar* self, int32_t value); /* slot 69 */
+    AvnHResult (AVN_CALL *get_week_number_rule)(IAvnCalendar* self, int32_t* value); /* slot 70 */
+    AvnHResult (AVN_CALL *set_week_number_rule)(IAvnCalendar* self, int32_t value); /* slot 71 */
+    AvnHResult (AVN_CALL *get_display_mode)(IAvnCalendar* self, int32_t* value); /* slot 72 */
+    AvnHResult (AVN_CALL *set_display_mode)(IAvnCalendar* self, int32_t value); /* slot 73 */
+    AvnHResult (AVN_CALL *get_selection_mode)(IAvnCalendar* self, int32_t* value); /* slot 74 */
+    AvnHResult (AVN_CALL *set_selection_mode)(IAvnCalendar* self, int32_t value); /* slot 75 */
+    AvnHResult (AVN_CALL *get_allow_tap_range_selection)(IAvnCalendar* self, int32_t* value); /* slot 76 */
+    AvnHResult (AVN_CALL *set_allow_tap_range_selection)(IAvnCalendar* self, int32_t value); /* slot 77 */
+    AvnHResult (AVN_CALL *get_selected_date)(IAvnCalendar* self, uint16_t** value); /* slot 78 */
+    AvnHResult (AVN_CALL *set_selected_date)(IAvnCalendar* self, const uint16_t* value); /* slot 79 */
+    AvnHResult (AVN_CALL *get_display_date)(IAvnCalendar* self, uint16_t** value); /* slot 80 */
+    AvnHResult (AVN_CALL *set_display_date)(IAvnCalendar* self, const uint16_t* value); /* slot 81 */
+    AvnHResult (AVN_CALL *get_display_date_start)(IAvnCalendar* self, uint16_t** value); /* slot 82 */
+    AvnHResult (AVN_CALL *set_display_date_start)(IAvnCalendar* self, const uint16_t* value); /* slot 83 */
+    AvnHResult (AVN_CALL *get_display_date_end)(IAvnCalendar* self, uint16_t** value); /* slot 84 */
+    AvnHResult (AVN_CALL *set_display_date_end)(IAvnCalendar* self, const uint16_t* value); /* slot 85 */
 };
 struct IAvnCalendar { const IAvnCalendarVtbl* vtbl; };
-#define I_AVN_CALENDAR_VTABLE_SLOTS 78
+#define I_AVN_CALENDAR_VTABLE_SLOTS 86
 
 static const AvnGuid I_AVN_CALENDAR_DATE_PICKER_IID = {
-    0x704D1096,
-    0x5596,
-    0x589B,
-    { 0xB1, 0x35, 0x33, 0x8D, 0xC9, 0x7D, 0xED, 0x0A }
+    0x74390933,
+    0x2E48,
+    0x50F2,
+    { 0x8A, 0xF8, 0x1F, 0x79, 0x6A, 0xB5, 0x26, 0xFD }
 };
-#define I_AVN_CALENDAR_DATE_PICKER_ABI_VERSION 2
+#define I_AVN_CALENDAR_DATE_PICKER_ABI_VERSION 3
 struct IAvnCalendarDatePickerVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnCalendarDatePicker* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnCalendarDatePicker* self); /* slot 1 */
@@ -1514,25 +1630,42 @@ struct IAvnCalendarDatePickerVtbl {
     AvnHResult (AVN_CALL *set_display_date_start)(IAvnCalendarDatePicker* self, const uint16_t* value); /* slot 65 */
     AvnHResult (AVN_CALL *get_display_date_end)(IAvnCalendarDatePicker* self, uint16_t** value); /* slot 66 */
     AvnHResult (AVN_CALL *set_display_date_end)(IAvnCalendarDatePicker* self, const uint16_t* value); /* slot 67 */
-    AvnHResult (AVN_CALL *get_is_drop_down_open)(IAvnCalendarDatePicker* self, int32_t* value); /* slot 68 */
-    AvnHResult (AVN_CALL *set_is_drop_down_open)(IAvnCalendarDatePicker* self, int32_t value); /* slot 69 */
-    AvnHResult (AVN_CALL *get_is_today_highlighted)(IAvnCalendarDatePicker* self, int32_t* value); /* slot 70 */
-    AvnHResult (AVN_CALL *set_is_today_highlighted)(IAvnCalendarDatePicker* self, int32_t value); /* slot 71 */
-    AvnHResult (AVN_CALL *get_selected_date)(IAvnCalendarDatePicker* self, uint16_t** value); /* slot 72 */
-    AvnHResult (AVN_CALL *set_selected_date)(IAvnCalendarDatePicker* self, const uint16_t* value); /* slot 73 */
-    AvnHResult (AVN_CALL *get_selected_date_format)(IAvnCalendarDatePicker* self, int32_t* value); /* slot 74 */
-    AvnHResult (AVN_CALL *set_selected_date_format)(IAvnCalendarDatePicker* self, int32_t value); /* slot 75 */
-    AvnHResult (AVN_CALL *get_custom_date_format_string)(IAvnCalendarDatePicker* self, uint16_t** value); /* slot 76 */
-    AvnHResult (AVN_CALL *set_custom_date_format_string)(IAvnCalendarDatePicker* self, const uint16_t* value); /* slot 77 */
-    AvnHResult (AVN_CALL *get_text)(IAvnCalendarDatePicker* self, uint16_t** value); /* slot 78 */
-    AvnHResult (AVN_CALL *set_text)(IAvnCalendarDatePicker* self, const uint16_t* value); /* slot 79 */
-    AvnHResult (AVN_CALL *get_placeholder_text)(IAvnCalendarDatePicker* self, uint16_t** value); /* slot 80 */
-    AvnHResult (AVN_CALL *set_placeholder_text)(IAvnCalendarDatePicker* self, const uint16_t* value); /* slot 81 */
-    AvnHResult (AVN_CALL *get_is_week_number_visible)(IAvnCalendarDatePicker* self, int32_t* value); /* slot 82 */
-    AvnHResult (AVN_CALL *set_is_week_number_visible)(IAvnCalendarDatePicker* self, int32_t value); /* slot 83 */
+    AvnHResult (AVN_CALL *get_first_day_of_week)(IAvnCalendarDatePicker* self, int32_t* value); /* slot 68 */
+    AvnHResult (AVN_CALL *set_first_day_of_week)(IAvnCalendarDatePicker* self, int32_t value); /* slot 69 */
+    AvnHResult (AVN_CALL *get_is_drop_down_open)(IAvnCalendarDatePicker* self, int32_t* value); /* slot 70 */
+    AvnHResult (AVN_CALL *set_is_drop_down_open)(IAvnCalendarDatePicker* self, int32_t value); /* slot 71 */
+    AvnHResult (AVN_CALL *get_is_today_highlighted)(IAvnCalendarDatePicker* self, int32_t* value); /* slot 72 */
+    AvnHResult (AVN_CALL *set_is_today_highlighted)(IAvnCalendarDatePicker* self, int32_t value); /* slot 73 */
+    AvnHResult (AVN_CALL *get_selected_date)(IAvnCalendarDatePicker* self, uint16_t** value); /* slot 74 */
+    AvnHResult (AVN_CALL *set_selected_date)(IAvnCalendarDatePicker* self, const uint16_t* value); /* slot 75 */
+    AvnHResult (AVN_CALL *get_selected_date_format)(IAvnCalendarDatePicker* self, int32_t* value); /* slot 76 */
+    AvnHResult (AVN_CALL *set_selected_date_format)(IAvnCalendarDatePicker* self, int32_t value); /* slot 77 */
+    AvnHResult (AVN_CALL *get_custom_date_format_string)(IAvnCalendarDatePicker* self, uint16_t** value); /* slot 78 */
+    AvnHResult (AVN_CALL *set_custom_date_format_string)(IAvnCalendarDatePicker* self, const uint16_t* value); /* slot 79 */
+    AvnHResult (AVN_CALL *get_text)(IAvnCalendarDatePicker* self, uint16_t** value); /* slot 80 */
+    AvnHResult (AVN_CALL *set_text)(IAvnCalendarDatePicker* self, const uint16_t* value); /* slot 81 */
+    AvnHResult (AVN_CALL *get_placeholder_text)(IAvnCalendarDatePicker* self, uint16_t** value); /* slot 82 */
+    AvnHResult (AVN_CALL *set_placeholder_text)(IAvnCalendarDatePicker* self, const uint16_t* value); /* slot 83 */
+    AvnHResult (AVN_CALL *get_use_floating_placeholder)(IAvnCalendarDatePicker* self, int32_t* value); /* slot 84 */
+    AvnHResult (AVN_CALL *set_use_floating_placeholder)(IAvnCalendarDatePicker* self, int32_t value); /* slot 85 */
+    AvnHResult (AVN_CALL *get_placeholder_foreground)(IAvnCalendarDatePicker* self, IAvnBrush** value); /* slot 86 */
+    AvnHResult (AVN_CALL *set_placeholder_foreground)(IAvnCalendarDatePicker* self, IAvnBrush* value); /* slot 87 */
+    AvnHResult (AVN_CALL *get_horizontal_content_alignment)(IAvnCalendarDatePicker* self, int32_t* value); /* slot 88 */
+    AvnHResult (AVN_CALL *set_horizontal_content_alignment)(IAvnCalendarDatePicker* self, int32_t value); /* slot 89 */
+    AvnHResult (AVN_CALL *get_vertical_content_alignment)(IAvnCalendarDatePicker* self, int32_t* value); /* slot 90 */
+    AvnHResult (AVN_CALL *set_vertical_content_alignment)(IAvnCalendarDatePicker* self, int32_t value); /* slot 91 */
+    AvnHResult (AVN_CALL *get_is_week_number_visible)(IAvnCalendarDatePicker* self, int32_t* value); /* slot 92 */
+    AvnHResult (AVN_CALL *set_is_week_number_visible)(IAvnCalendarDatePicker* self, int32_t value); /* slot 93 */
+    AvnHResult (AVN_CALL *get_week_number_rule)(IAvnCalendarDatePicker* self, int32_t* value); /* slot 94 */
+    AvnHResult (AVN_CALL *set_week_number_rule)(IAvnCalendarDatePicker* self, int32_t value); /* slot 95 */
+    AvnHResult (AVN_CALL *clear)(IAvnCalendarDatePicker* self); /* slot 96 */
+    AvnHResult (AVN_CALL *advise_calendar_closed)(IAvnCalendarDatePicker* self, IAvnCalendarDatePickerCalendarClosedHandler* handler, int64_t* subscription_id); /* slot 97 */
+    AvnHResult (AVN_CALL *unadvise_calendar_closed)(IAvnCalendarDatePicker* self, int64_t subscription_id); /* slot 98 */
+    AvnHResult (AVN_CALL *advise_calendar_opened)(IAvnCalendarDatePicker* self, IAvnCalendarDatePickerCalendarOpenedHandler* handler, int64_t* subscription_id); /* slot 99 */
+    AvnHResult (AVN_CALL *unadvise_calendar_opened)(IAvnCalendarDatePicker* self, int64_t subscription_id); /* slot 100 */
 };
 struct IAvnCalendarDatePicker { const IAvnCalendarDatePickerVtbl* vtbl; };
-#define I_AVN_CALENDAR_DATE_PICKER_VTABLE_SLOTS 84
+#define I_AVN_CALENDAR_DATE_PICKER_VTABLE_SLOTS 101
 
 static const AvnGuid I_AVN_CANVAS_IID = {
     0x88515BBD,
@@ -4846,12 +4979,12 @@ struct IAvnNotificationCard { const IAvnNotificationCardVtbl* vtbl; };
 #define I_AVN_NOTIFICATION_CARD_VTABLE_SLOTS 72
 
 static const AvnGuid I_AVN_NUMERIC_UP_DOWN_IID = {
-    0xE6D2CF0A,
-    0x4637,
-    0x551E,
-    { 0x96, 0xDE, 0xE2, 0x60, 0xBB, 0x03, 0x04, 0x1C }
+    0x02CB4C9D,
+    0x71C8,
+    0x5A6C,
+    { 0xB5, 0x29, 0xA6, 0x78, 0x32, 0xEC, 0xC9, 0xDD }
 };
-#define I_AVN_NUMERIC_UP_DOWN_ABI_VERSION 2
+#define I_AVN_NUMERIC_UP_DOWN_ABI_VERSION 3
 struct IAvnNumericUpDownVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnNumericUpDown* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnNumericUpDown* self); /* slot 1 */
@@ -4939,9 +5072,23 @@ struct IAvnNumericUpDownVtbl {
     AvnHResult (AVN_CALL *set_value)(IAvnNumericUpDown* self, const uint16_t* value); /* slot 83 */
     AvnHResult (AVN_CALL *get_placeholder_text)(IAvnNumericUpDown* self, uint16_t** value); /* slot 84 */
     AvnHResult (AVN_CALL *set_placeholder_text)(IAvnNumericUpDown* self, const uint16_t* value); /* slot 85 */
+    AvnHResult (AVN_CALL *get_placeholder_foreground)(IAvnNumericUpDown* self, IAvnBrush** value); /* slot 86 */
+    AvnHResult (AVN_CALL *set_placeholder_foreground)(IAvnNumericUpDown* self, IAvnBrush* value); /* slot 87 */
+    AvnHResult (AVN_CALL *get_horizontal_content_alignment)(IAvnNumericUpDown* self, int32_t* value); /* slot 88 */
+    AvnHResult (AVN_CALL *set_horizontal_content_alignment)(IAvnNumericUpDown* self, int32_t value); /* slot 89 */
+    AvnHResult (AVN_CALL *get_vertical_content_alignment)(IAvnNumericUpDown* self, int32_t* value); /* slot 90 */
+    AvnHResult (AVN_CALL *set_vertical_content_alignment)(IAvnNumericUpDown* self, int32_t value); /* slot 91 */
+    AvnHResult (AVN_CALL *get_text_alignment)(IAvnNumericUpDown* self, int32_t* value); /* slot 92 */
+    AvnHResult (AVN_CALL *set_text_alignment)(IAvnNumericUpDown* self, int32_t value); /* slot 93 */
+    AvnHResult (AVN_CALL *get_inner_left_content)(IAvnNumericUpDown* self, IAvnControl** value); /* slot 94 */
+    AvnHResult (AVN_CALL *set_inner_left_content)(IAvnNumericUpDown* self, IAvnControl* value); /* slot 95 */
+    AvnHResult (AVN_CALL *get_inner_right_content)(IAvnNumericUpDown* self, IAvnControl** value); /* slot 96 */
+    AvnHResult (AVN_CALL *set_inner_right_content)(IAvnNumericUpDown* self, IAvnControl* value); /* slot 97 */
+    AvnHResult (AVN_CALL *advise_value_changed)(IAvnNumericUpDown* self, IAvnNumericUpDownValueChangedHandler* handler, int64_t* subscription_id); /* slot 98 */
+    AvnHResult (AVN_CALL *unadvise_value_changed)(IAvnNumericUpDown* self, int64_t subscription_id); /* slot 99 */
 };
 struct IAvnNumericUpDown { const IAvnNumericUpDownVtbl* vtbl; };
-#define I_AVN_NUMERIC_UP_DOWN_VTABLE_SLOTS 86
+#define I_AVN_NUMERIC_UP_DOWN_VTABLE_SLOTS 100
 
 static const AvnGuid I_AVN_PANEL_IID = {
     0xBD97617A,

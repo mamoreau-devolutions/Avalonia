@@ -1217,17 +1217,15 @@ public class ClrTypeExtractorTests
         Assert.Equal("Avalonia.Host.Com.IAvnContentControl", spinner.BaseFullName);
 
         Assert.All(
-            new[]
-            {
-                "IAvnButtonSpinner", "IAvnNumericUpDown", "IAvnAutoCompleteBox",
-                "IAvnSelectableTextBlock",
-            },
+            new[] { "IAvnButtonSpinner", "IAvnSelectableTextBlock" },
             name =>
             {
                 var type = Type(ir, name);
                 Assert.Equal(2, type.AbiVersion);
                 Assert.True(type.IsConstructible);
             });
+        Assert.Equal(3, Type(ir, "IAvnNumericUpDown").AbiVersion);
+        Assert.Equal(3, Type(ir, "IAvnAutoCompleteBox").AbiVersion);
         Assert.Equal(3, Type(ir, "IAvnMaskedTextBox").AbiVersion);
 
         Assert.Equal("Avalonia.Host.Com.IAvnSpinner", Type(ir, "IAvnButtonSpinner").BaseFullName);
@@ -1261,7 +1259,7 @@ public class ClrTypeExtractorTests
             name =>
             {
                 var type = Type(ir, name);
-                Assert.Equal(2, type.AbiVersion);
+                Assert.Equal(3, type.AbiVersion);
                 Assert.True(type.IsConstructible);
                 Assert.Equal("Avalonia.Host.Com.IAvnTemplatedControl", type.BaseFullName);
             });
@@ -1518,6 +1516,21 @@ public class ClrTypeExtractorTests
         Assert.Contains(menu.Methods, m => m.Name == "Open");
         Assert.Contains(menu.Methods, m => m.Name == "Close");
         Assert.Equal(6, Type(ir, "IAvnContentControl").AbiVersion);
+        Assert.Equal(13, ir.FactoryAbiVersion);
+    }
+
+    [Fact]
+    public void Wave_q_sweeps_leaf_input_scalars()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+        Assert.Equal(3, Type(ir, "IAvnAutoCompleteBox").AbiVersion);
+        Assert.Contains(Type(ir, "IAvnAutoCompleteBox").Properties, p => p.Name == "SearchText");
+        Assert.Equal(3, Type(ir, "IAvnCalendar").AbiVersion);
+        Assert.Contains(Type(ir, "IAvnCalendar").Properties, p => p.Name == "IsWeekNumberVisible");
+        Assert.Equal(3, Type(ir, "IAvnCalendarDatePicker").AbiVersion);
+        Assert.Contains(Type(ir, "IAvnCalendarDatePicker").Methods, m => m.Name == "Clear");
+        Assert.Equal(3, Type(ir, "IAvnNumericUpDown").AbiVersion);
+        Assert.Contains(Type(ir, "IAvnNumericUpDown").Properties, p => p.Name == "TextAlignment");
         Assert.Equal(13, ir.FactoryAbiVersion);
     }
 
