@@ -34,6 +34,12 @@ public enum MarshallingKind
     /// Two doubles, identical in layout to <see cref="Point"/>.
     /// </summary>
     Vector,
+
+    /// <summary>
+    /// Appended after Vector so every previously published ordinal stays put.
+    /// A single UTF-16 code unit (<see cref="char"/> / <c>uint16_t</c>).
+    /// </summary>
+    CharUtf16,
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]

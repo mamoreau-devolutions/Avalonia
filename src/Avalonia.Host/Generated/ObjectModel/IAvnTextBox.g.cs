@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("E5C18AAE-FA4A-5829-B687-E301BDAC1544")]
+[Guid("BED2F9C1-483B-5D76-8F75-5BF2306CFB67")]
 public partial interface IAvnTextBox : IAvnTemplatedControl
 {
     [PreserveSig]
@@ -44,6 +44,12 @@ public partial interface IAvnTextBox : IAvnTemplatedControl
 
     [PreserveSig]
     int SetIsReadOnly(int value);
+
+    [PreserveSig]
+    int GetPasswordChar(out ushort value);
+
+    [PreserveSig]
+    int SetPasswordChar(ushort value);
 
     [PreserveSig]
     int GetSelectionBrush(out IAvnBrush? value);
@@ -1600,6 +1606,37 @@ public sealed partial class AvnTextBox : IAvnTextBox
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.IsReadOnly = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetPasswordChar(out ushort value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (ushort)_value.PasswordChar;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetPasswordChar(ushort value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.PasswordChar = (char)value;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

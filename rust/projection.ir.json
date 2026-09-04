@@ -2227,8 +2227,8 @@
       "name": "IAvnMaskedTextBox",
       "fullName": "Avalonia.Host.Com.IAvnMaskedTextBox",
       "kind": "Class",
-      "iid": "A6D66ED1-227B-5902-B27D-ED7C84A35190",
-      "abiVersion": 6,
+      "iid": "5EC5632E-068C-5B66-B1BD-4F93B4741BB6",
+      "abiVersion": 7,
       "baseFullName": "Avalonia.Host.Com.IAvnTextBox",
       "managedFullName": "Avalonia.Controls.MaskedTextBox",
       "isConstructible": true,
@@ -2278,6 +2278,15 @@
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.Nullable\u00601[[System.Boolean, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
           "isNullable": true
+        },
+        {
+          "name": "PromptChar",
+          "kind": "CharUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Char",
+          "isNullable": false
         },
         {
           "name": "ResetOnPrompt",
@@ -5214,8 +5223,8 @@
       "name": "IAvnTextBox",
       "fullName": "Avalonia.Host.Com.IAvnTextBox",
       "kind": "Class",
-      "iid": "E5C18AAE-FA4A-5829-B687-E301BDAC1544",
-      "abiVersion": 9,
+      "iid": "BED2F9C1-483B-5D76-8F75-5BF2306CFB67",
+      "abiVersion": 10,
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.TextBox",
       "isConstructible": true,
@@ -5360,6 +5369,15 @@
           "canWrite": true,
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "PasswordChar",
+          "kind": "CharUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Char",
           "isNullable": false
         },
         {
@@ -10333,11 +10351,6 @@
       "reason": "Not included by projection policy"
     },
     {
-      "owner": "Avalonia.Controls.MaskedTextBox",
-      "member": "PromptChar",
-      "reason": "Not included by projection policy"
-    },
-    {
       "owner": "Avalonia.Controls.Menu",
       "member": "Close()",
       "reason": "Not included by projection policy"
@@ -10940,11 +10953,6 @@
     {
       "owner": "Avalonia.Controls.TextBlock",
       "member": "Render(DrawingContext)",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TextBox",
-      "member": "PasswordChar",
       "reason": "Not included by projection policy"
     },
     {

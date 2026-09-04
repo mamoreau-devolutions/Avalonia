@@ -961,6 +961,7 @@ public static class ComSourceEmitter
                 property.IsNullable
                     ? $"_value.{property.Name}?.ToString()"
                     : $"_value.{property.Name}.ToString()",
+            MarshallingKind.CharUtf16 => $"(ushort)_value.{property.Name}",
             MarshallingKind.Bool => $"_value.{property.Name} ? 1 : 0",
             MarshallingKind.NullableBool =>
                 $"!_value.{property.Name}.HasValue ? -1 : _value.{property.Name}.Value ? 1 : 0",
@@ -1009,6 +1010,7 @@ public static class ComSourceEmitter
                 $"global::{converter}.FromAbi(value)",
             MarshallingKind.StringUtf16 when property.ManagedTypeName is not "System.String" =>
                 $"global::{property.ManagedTypeName}.Parse(value)",
+            MarshallingKind.CharUtf16 => "(char)value",
             MarshallingKind.Bool => "value != 0",
             MarshallingKind.NullableBool =>
                 "value switch { -1 => null, 0 => false, 1 => true, _ => throw new global::System.ArgumentOutOfRangeException(nameof(value)) }",
@@ -1095,6 +1097,7 @@ public static class ComSourceEmitter
             MarshallingKind.I64 => "long",
             MarshallingKind.F32 => "float",
             MarshallingKind.F64 => "double",
+            MarshallingKind.CharUtf16 => "ushort",
             MarshallingKind.Bool => "int",
             MarshallingKind.NullableBool => "int",
             MarshallingKind.StringUtf16 => nullable ? "string?" : "string",

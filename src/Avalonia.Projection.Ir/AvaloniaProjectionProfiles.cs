@@ -36,7 +36,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnTemplatedControl"] = 6,
             ["Avalonia.Host.Com.IAvnItemsControl"] = 7,
             ["Avalonia.Host.Com.IAvnSelectingItemsControl"] = 7,
-            ["Avalonia.Host.Com.IAvnTextBox"] = 9,
+            ["Avalonia.Host.Com.IAvnTextBox"] = 10,
             ["Avalonia.Host.Com.IAvnRangeBase"] = 6,
             ["Avalonia.Host.Com.IAvnSlider"] = 6,
             ["Avalonia.Host.Com.IAvnProgressBar"] = 7,
@@ -79,7 +79,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnHyperlinkButton"] = 4,
             ["Avalonia.Host.Com.IAvnIconElement"] = 3,
             ["Avalonia.Host.Com.IAvnLabel"] = 3,
-            ["Avalonia.Host.Com.IAvnMaskedTextBox"] = 6,
+            ["Avalonia.Host.Com.IAvnMaskedTextBox"] = 7,
             ["Avalonia.Host.Com.IAvnMenu"] = 4,
             ["Avalonia.Host.Com.IAvnMenuBase"] = 4,
             ["Avalonia.Host.Com.IAvnMenuItem"] = 5,
@@ -452,7 +452,7 @@ public static class AvaloniaProjectionProfiles
             ],
             ["Avalonia.Controls.MaskedTextBox"] =
                 ["Mask", "AsciiOnly", "HidePromptOnLeave", "ResetOnPrompt", "ResetOnSpace",
-                 "MaskCompleted", "MaskFull"],
+                 "MaskCompleted", "MaskFull", "PromptChar"],
             ["Avalonia.Controls.SelectableTextBlock"] =
             [
                 "SelectionStart", "SelectionEnd", "SelectedText", "CanCopy", "Copy",
@@ -558,6 +558,7 @@ public static class AvaloniaProjectionProfiles
                 "IsInactiveSelectionHighlightEnabled", "ClearSelectionOnLostFocus",
                 "UseFloatingPlaceholder", "PlaceholderForeground", "InnerLeftContent",
                 "InnerRightContent", "SelectAll", "ClearSelection", "ScrollToLine", "GetLineCount",
+                "PasswordChar",
                 "CopyingToClipboard", "CuttingToClipboard", "PastingFromClipboard",
             ],
             ["Avalonia.Controls.ScrollViewer"] =

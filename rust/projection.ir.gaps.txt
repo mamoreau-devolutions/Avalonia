@@ -134,7 +134,6 @@ Avalonia.Controls.ListBox.SelectedItems: Not included by projection policy
 Avalonia.Controls.ListBox.Selection: Not included by projection policy
 Avalonia.Controls.MaskedTextBox.Culture: Not included by projection policy
 Avalonia.Controls.MaskedTextBox.MaskProvider: Not included by projection policy
-Avalonia.Controls.MaskedTextBox.PromptChar: Not included by projection policy
 Avalonia.Controls.Menu.Close(): Not included by projection policy
 Avalonia.Controls.Menu.Open(): Not included by projection policy
 Avalonia.Controls.MenuFlyout.FlyoutPresenterClasses: Not included by projection policy
@@ -256,7 +255,6 @@ Avalonia.Controls.TextBlock.TextDecorations: Not included by projection policy
 Avalonia.Controls.TextBlock.FontFeatures: Not included by projection policy
 Avalonia.Controls.TextBlock.Inlines: Not included by projection policy
 Avalonia.Controls.TextBlock.Render(DrawingContext): Not included by projection policy
-Avalonia.Controls.TextBox.PasswordChar: Not included by projection policy
 Avalonia.Controls.TextBox.CaretBlinkInterval: Not included by projection policy
 Avalonia.Controls.TextBox.Watermark: Not included by projection policy
 Avalonia.Controls.TextBox.UseFloatingWatermark: Not included by projection policy

@@ -28,7 +28,7 @@ fn remaining_input_controls_publish_at_version_one() {
         "*create_button_spinner)(IAvnControlFactory* self, IAvnButtonSpinner** value)",
         "*create_auto_complete_box)(IAvnControlFactory* self, IAvnAutoCompleteBox** value)",
         "#define I_AVN_SPINNER_ABI_VERSION 3",
-        "#define I_AVN_MASKED_TEXT_BOX_ABI_VERSION 6",
+        "#define I_AVN_MASKED_TEXT_BOX_ABI_VERSION 7",
         "#define I_AVN_SELECTABLE_TEXT_BLOCK_ABI_VERSION 4",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");

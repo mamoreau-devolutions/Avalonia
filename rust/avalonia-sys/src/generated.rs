@@ -25035,7 +25035,7 @@ impl ComPtr<IAvnListBoxItem> {
     }
 }
 
-pub const I_AVN_MASKED_TEXT_BOX_IID: Guid = Guid { data1: 0xA6D66ED1, data2: 0x227B, data3: 0x5902, data4: [0xB2, 0x7D, 0xED, 0x7C, 0x84, 0xA3, 0x51, 0x90] };
+pub const I_AVN_MASKED_TEXT_BOX_IID: Guid = Guid { data1: 0x5EC5632E, data2: 0x068C, data3: 0x5B66, data4: [0xB1, 0xBD, 0x4F, 0x93, 0xB4, 0x74, 0x1B, 0xB6] };
 
 #[repr(C)]
 struct IAvnMaskedTextBoxVtbl {
@@ -25122,6 +25122,8 @@ struct IAvnMaskedTextBoxVtbl {
     set_caret_index: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i32) -> i32,
     get_is_read_only: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
     set_is_read_only: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i32) -> i32,
+    get_password_char: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut u16) -> i32,
+    set_password_char: unsafe extern "system" fn(*mut IAvnMaskedTextBox, u16) -> i32,
     get_selection_brush: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut *mut IAvnBrush) -> i32,
     set_selection_brush: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnBrush) -> i32,
     get_selection_foreground_brush: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut *mut IAvnBrush) -> i32,
@@ -25201,6 +25203,8 @@ struct IAvnMaskedTextBoxVtbl {
     set_mask: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut u16) -> i32,
     get_mask_completed: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
     get_mask_full: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
+    get_prompt_char: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut u16) -> i32,
+    set_prompt_char: unsafe extern "system" fn(*mut IAvnMaskedTextBox, u16) -> i32,
     get_reset_on_prompt: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
     set_reset_on_prompt: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i32) -> i32,
     get_reset_on_space: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
@@ -25774,6 +25778,20 @@ impl ComPtr<IAvnMaskedTextBox> {
             hresult::check(hr)
         }
     }
+    pub fn get_password_char(&self) -> Result<u16> {
+        unsafe {
+            let mut value: u16 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_password_char)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_password_char(&self, value: u16) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_password_char)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
     pub fn get_selection_brush(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
         unsafe {
             let mut value: *mut IAvnBrush = ptr::null_mut();
@@ -26319,6 +26337,20 @@ impl ComPtr<IAvnMaskedTextBox> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_mask_full)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             match value { -1 => Ok(None), 0 => Ok(Some(false)), 1 => Ok(Some(true)), _ => Err(Error(hresult::E_INVALIDARG)) }
+        }
+    }
+    pub fn get_prompt_char(&self) -> Result<u16> {
+        unsafe {
+            let mut value: u16 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_prompt_char)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_prompt_char(&self, value: u16) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_prompt_char)(self.as_raw(), value);
+            hresult::check(hr)
         }
     }
     pub fn get_reset_on_prompt(&self) -> Result<bool> {
@@ -56689,7 +56721,7 @@ impl ComPtr<IAvnTextBlock> {
     }
 }
 
-pub const I_AVN_TEXT_BOX_IID: Guid = Guid { data1: 0xE5C18AAE, data2: 0xFA4A, data3: 0x5829, data4: [0xB6, 0x87, 0xE3, 0x01, 0xBD, 0xAC, 0x15, 0x44] };
+pub const I_AVN_TEXT_BOX_IID: Guid = Guid { data1: 0xBED2F9C1, data2: 0x483B, data3: 0x5D76, data4: [0x8F, 0x75, 0x5B, 0xF2, 0x30, 0x6C, 0xFB, 0x67] };
 
 #[repr(C)]
 struct IAvnTextBoxVtbl {
@@ -56776,6 +56808,8 @@ struct IAvnTextBoxVtbl {
     set_caret_index: unsafe extern "system" fn(*mut IAvnTextBox, i32) -> i32,
     get_is_read_only: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
     set_is_read_only: unsafe extern "system" fn(*mut IAvnTextBox, i32) -> i32,
+    get_password_char: unsafe extern "system" fn(*mut IAvnTextBox, *mut u16) -> i32,
+    set_password_char: unsafe extern "system" fn(*mut IAvnTextBox, u16) -> i32,
     get_selection_brush: unsafe extern "system" fn(*mut IAvnTextBox, *mut *mut IAvnBrush) -> i32,
     set_selection_brush: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnBrush) -> i32,
     get_selection_foreground_brush: unsafe extern "system" fn(*mut IAvnTextBox, *mut *mut IAvnBrush) -> i32,
@@ -57413,6 +57447,20 @@ impl ComPtr<IAvnTextBox> {
     pub fn set_is_read_only(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_read_only)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_password_char(&self) -> Result<u16> {
+        unsafe {
+            let mut value: u16 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_password_char)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_password_char(&self, value: u16) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_password_char)(self.as_raw(), value);
             hresult::check(hr)
         }
     }

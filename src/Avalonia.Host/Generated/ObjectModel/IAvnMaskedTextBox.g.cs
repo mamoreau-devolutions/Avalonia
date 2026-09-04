@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("A6D66ED1-227B-5902-B27D-ED7C84A35190")]
+[Guid("5EC5632E-068C-5B66-B1BD-4F93B4741BB6")]
 public partial interface IAvnMaskedTextBox : IAvnTextBox
 {
     [PreserveSig]
@@ -32,6 +32,12 @@ public partial interface IAvnMaskedTextBox : IAvnTextBox
 
     [PreserveSig]
     int GetMaskFull(out int value);
+
+    [PreserveSig]
+    int GetPromptChar(out ushort value);
+
+    [PreserveSig]
+    int SetPromptChar(ushort value);
 
     [PreserveSig]
     int GetResetOnPrompt(out int value);
@@ -1395,6 +1401,37 @@ public sealed partial class AvnMaskedTextBox : IAvnMaskedTextBox
         }
     }
 
+    public int GetPasswordChar(out ushort value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (ushort)_value.PasswordChar;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetPasswordChar(ushort value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.PasswordChar = (char)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetSelectionBrush(out IAvnBrush? value)
     {
         value = default!;
@@ -2671,6 +2708,37 @@ public sealed partial class AvnMaskedTextBox : IAvnMaskedTextBox
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = !_value.MaskFull.HasValue ? -1 : _value.MaskFull.Value ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetPromptChar(out ushort value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (ushort)_value.PromptChar;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetPromptChar(ushort value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.PromptChar = (char)value;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

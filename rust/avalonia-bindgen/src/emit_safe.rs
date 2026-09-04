@@ -678,6 +678,7 @@ fn safe_scalar_type(property: &ProjectedProperty) -> String {
 
 fn rust_scalar_kind(kind: &str) -> &str {
     match kind {
+        "CharUtf16" => "u16",
         "I32" => "i32",
         "I64" => "i64",
         "F32" => "f32",

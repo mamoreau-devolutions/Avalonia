@@ -343,6 +343,7 @@ public static class NativeHeaderEmitter
         bool pointerForInterface) =>
         kind switch
         {
+            MarshallingKind.CharUtf16 => "uint16_t",
             MarshallingKind.I32 or MarshallingKind.Bool or MarshallingKind.NullableBool => "int32_t",
             MarshallingKind.I64 => "int64_t",
             MarshallingKind.F32 => "float",

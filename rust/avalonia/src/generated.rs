@@ -16463,6 +16463,14 @@ impl MaskedTextBox {
         self.set_read_only(value)?;
         Ok(self)
     }
+    pub fn get_password_char(&self) -> Result<u16> { Ok(self.raw.get_password_char()?) }
+    pub fn set_password_char(&self, value: u16) -> Result<()> {
+        Ok(self.raw.set_password_char(value)?)
+    }
+    pub fn password_char(self, value: u16) -> Result<Self> {
+        self.set_password_char(value)?;
+        Ok(self)
+    }
     pub fn get_selection_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_selection_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -16793,6 +16801,14 @@ impl MaskedTextBox {
     }
     pub fn mask_completed(&self) -> Result<Option<bool>> { Ok(self.raw.get_mask_completed()?) }
     pub fn mask_full(&self) -> Result<Option<bool>> { Ok(self.raw.get_mask_full()?) }
+    pub fn get_prompt_char(&self) -> Result<u16> { Ok(self.raw.get_prompt_char()?) }
+    pub fn set_prompt_char(&self, value: u16) -> Result<()> {
+        Ok(self.raw.set_prompt_char(value)?)
+    }
+    pub fn prompt_char(self, value: u16) -> Result<Self> {
+        self.set_prompt_char(value)?;
+        Ok(self)
+    }
     pub fn get_reset_on_prompt(&self) -> Result<bool> { Ok(self.raw.get_reset_on_prompt()?) }
     pub fn set_reset_on_prompt(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_reset_on_prompt(value)?)
@@ -35454,6 +35470,14 @@ impl TextBox {
     }
     pub fn read_only(self, value: bool) -> Result<Self> {
         self.set_read_only(value)?;
+        Ok(self)
+    }
+    pub fn get_password_char(&self) -> Result<u16> { Ok(self.raw.get_password_char()?) }
+    pub fn set_password_char(&self, value: u16) -> Result<()> {
+        Ok(self.raw.set_password_char(value)?)
+    }
+    pub fn password_char(self, value: u16) -> Result<Self> {
+        self.set_password_char(value)?;
         Ok(self)
     }
     pub fn get_selection_brush(&self) -> Result<Option<Brush>> {

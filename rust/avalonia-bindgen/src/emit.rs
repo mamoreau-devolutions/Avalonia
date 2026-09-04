@@ -884,6 +884,7 @@ fn rust_abi_type(kind: &str, interface_name: Option<&str>) -> String {
         return geometry.abi_name.into();
     }
     match kind {
+        "CharUtf16" => "u16".into(),
         "I32" | "Bool" | "NullableBool" => "i32".into(),
         "I64" => "i64".into(),
         "F32" => "f32".into(),
@@ -905,7 +906,7 @@ fn rust_abi_default(kind: &str) -> &'static str {
     }
     match kind {
         "F32" | "F64" => "0.0",
-        "I32" | "I64" | "Bool" | "NullableBool" => "0",
+        "I32" | "I64" | "Bool" | "NullableBool" | "CharUtf16" => "0",
         _ => "ptr::null_mut()",
     }
 }
@@ -915,6 +916,7 @@ fn rust_property_type(property: &ProjectedProperty) -> String {
         return geometry.abi_name.into();
     }
     match property.kind.as_str() {
+        "CharUtf16" => "u16".into(),
         "I32" => "i32".into(),
         "I64" => "i64".into(),
         "F32" => "f32".into(),

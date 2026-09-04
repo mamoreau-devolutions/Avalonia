@@ -251,6 +251,9 @@ MenuFlyout and TableViewColumn are unchanged. Factory 13.
 Non-void methods project as HRESULT plus an `out` slot. `GetLineCount` is the
 first: `IAvnTextBox` 8 to 9, `IAvnMaskedTextBox` 5 to 6. Factory 13.
 
+`MarshallingKind.CharUtf16` is a UTF-16 code unit (`uint16_t`). PasswordChar and
+PromptChar project on TextBox (9 to 10) and MaskedTextBox (6 to 7). Factory 13.
+
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and
 `IAvnNumericUpDown` each move from 2 to 3. Templates, filters, ItemsSource,
