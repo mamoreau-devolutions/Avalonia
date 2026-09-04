@@ -50,6 +50,11 @@ fn completeness_members_are_published_on_the_type_that_declares_them() {
         "*select_all)(IAvnTextBox* self)",
         "*clear_selection)(IAvnTextBox* self)",
         "*set_inner_left_content)(IAvnTextBox* self, IAvnControl* value)",
+        "*set_line_height)(IAvnTextBlock* self, double value)",
+        "*set_baseline_offset)(IAvnTextBlock* self, double value)",
+        "*scroll_to_line_with_int32)(IAvnTextBox* self, int32_t line_index)",
+        "*select_all)(IAvnSelectableTextBlock* self)",
+        "*set_selection_brush)(IAvnSelectableTextBlock* self, IAvnBrush* value)",
         "*set_flyout)(IAvnButton* self, IAvnFlyoutBase* value)",
         "*set_flyout)(IAvnSplitButton* self, IAvnFlyoutBase* value)",
         "*open)(IAvnMenuItem* self)",
@@ -88,8 +93,8 @@ fn widened_interfaces_publish_abi_version_five() {
         "#define I_AVN_SCROLL_VIEWER_ABI_VERSION 7",
         "#define I_AVN_WINDOW_ABI_VERSION 8",
         "#define I_AVN_TEMPLATED_CONTROL_ABI_VERSION 5",
-        "#define I_AVN_TEXT_BLOCK_ABI_VERSION 5",
-        "#define I_AVN_TEXT_BOX_ABI_VERSION 6",
+        "#define I_AVN_TEXT_BLOCK_ABI_VERSION 6",
+        "#define I_AVN_TEXT_BOX_ABI_VERSION 7",
         "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 6",
         "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 6",
         "#define I_AVN_BORDER_ABI_VERSION 4",
@@ -252,7 +257,7 @@ fn widened_interfaces_republish_under_fresh_iids() {
     );
     assert_eq!(
         format_iid(&I_AVN_TEXT_BLOCK_IID),
-        "74662671-AA6E-568D-89E2-4569829F35A8"
+        "991802B9-BF9B-5BAE-B9A7-5076F148CF98"
     );
 }
 

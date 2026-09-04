@@ -269,6 +269,8 @@ typedef struct IAvnSector IAvnSector;
 typedef struct IAvnSectorVtbl IAvnSectorVtbl;
 typedef struct IAvnSelectableTextBlock IAvnSelectableTextBlock;
 typedef struct IAvnSelectableTextBlockVtbl IAvnSelectableTextBlockVtbl;
+typedef struct IAvnSelectableTextBlockCopyingToClipboardHandler IAvnSelectableTextBlockCopyingToClipboardHandler;
+typedef struct IAvnSelectableTextBlockCopyingToClipboardHandlerVtbl IAvnSelectableTextBlockCopyingToClipboardHandlerVtbl;
 typedef struct IAvnSelectingItemsControl IAvnSelectingItemsControl;
 typedef struct IAvnSelectingItemsControlVtbl IAvnSelectingItemsControlVtbl;
 typedef struct IAvnSelectingItemsControlSelectionChangedHandler IAvnSelectingItemsControlSelectionChangedHandler;
@@ -769,6 +771,22 @@ struct IAvnScrollViewerScrollChangedHandlerVtbl {
 };
 struct IAvnScrollViewerScrollChangedHandler { const IAvnScrollViewerScrollChangedHandlerVtbl* vtbl; };
 #define I_AVN_SCROLL_VIEWER_SCROLL_CHANGED_HANDLER_VTABLE_SLOTS 4
+
+static const AvnGuid I_AVN_SELECTABLE_TEXT_BLOCK_COPYING_TO_CLIPBOARD_HANDLER_IID = {
+    0xCB10B16D,
+    0xD8FC,
+    0x53DE,
+    { 0xA8, 0xB0, 0x10, 0x08, 0xB8, 0x21, 0x55, 0x01 }
+};
+#define I_AVN_SELECTABLE_TEXT_BLOCK_COPYING_TO_CLIPBOARD_HANDLER_ABI_VERSION 1
+struct IAvnSelectableTextBlockCopyingToClipboardHandlerVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnSelectableTextBlockCopyingToClipboardHandler* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnSelectableTextBlockCopyingToClipboardHandler* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnSelectableTextBlockCopyingToClipboardHandler* self); /* slot 2 */
+    AvnHResult (AVN_CALL *invoke)(IAvnSelectableTextBlockCopyingToClipboardHandler* self); /* slot 3 */
+};
+struct IAvnSelectableTextBlockCopyingToClipboardHandler { const IAvnSelectableTextBlockCopyingToClipboardHandlerVtbl* vtbl; };
+#define I_AVN_SELECTABLE_TEXT_BLOCK_COPYING_TO_CLIPBOARD_HANDLER_VTABLE_SLOTS 4
 
 static const AvnGuid I_AVN_SELECTING_ITEMS_CONTROL_SELECTION_CHANGED_HANDLER_IID = {
     0x80E817ED,
@@ -4495,12 +4513,12 @@ struct IAvnListBoxItem { const IAvnListBoxItemVtbl* vtbl; };
 #define I_AVN_LIST_BOX_ITEM_VTABLE_SLOTS 70
 
 static const AvnGuid I_AVN_MASKED_TEXT_BOX_IID = {
-    0xDDBA5432,
-    0x2E90,
-    0x5ECD,
-    { 0xA4, 0x02, 0x38, 0x6F, 0x32, 0x2F, 0x05, 0xD3 }
+    0x792FE230,
+    0xE153,
+    0x58BF,
+    { 0x94, 0x64, 0xBA, 0xBA, 0xC8, 0x87, 0x0A, 0x8C }
 };
-#define I_AVN_MASKED_TEXT_BOX_ABI_VERSION 3
+#define I_AVN_MASKED_TEXT_BOX_ABI_VERSION 4
 struct IAvnMaskedTextBoxVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnMaskedTextBox* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnMaskedTextBox* self); /* slot 1 */
@@ -4634,32 +4652,33 @@ struct IAvnMaskedTextBoxVtbl {
     AvnHResult (AVN_CALL *copy)(IAvnMaskedTextBox* self); /* slot 129 */
     AvnHResult (AVN_CALL *paste)(IAvnMaskedTextBox* self); /* slot 130 */
     AvnHResult (AVN_CALL *clear)(IAvnMaskedTextBox* self); /* slot 131 */
-    AvnHResult (AVN_CALL *select_all)(IAvnMaskedTextBox* self); /* slot 132 */
-    AvnHResult (AVN_CALL *undo)(IAvnMaskedTextBox* self); /* slot 133 */
-    AvnHResult (AVN_CALL *redo)(IAvnMaskedTextBox* self); /* slot 134 */
-    AvnHResult (AVN_CALL *advise_copying_to_clipboard)(IAvnMaskedTextBox* self, IAvnTextBoxCopyingToClipboardHandler* handler, int64_t* subscription_id); /* slot 135 */
-    AvnHResult (AVN_CALL *unadvise_copying_to_clipboard)(IAvnMaskedTextBox* self, int64_t subscription_id); /* slot 136 */
-    AvnHResult (AVN_CALL *advise_cutting_to_clipboard)(IAvnMaskedTextBox* self, IAvnTextBoxCuttingToClipboardHandler* handler, int64_t* subscription_id); /* slot 137 */
-    AvnHResult (AVN_CALL *unadvise_cutting_to_clipboard)(IAvnMaskedTextBox* self, int64_t subscription_id); /* slot 138 */
-    AvnHResult (AVN_CALL *advise_pasting_from_clipboard)(IAvnMaskedTextBox* self, IAvnTextBoxPastingFromClipboardHandler* handler, int64_t* subscription_id); /* slot 139 */
-    AvnHResult (AVN_CALL *unadvise_pasting_from_clipboard)(IAvnMaskedTextBox* self, int64_t subscription_id); /* slot 140 */
-    AvnHResult (AVN_CALL *advise_text_changed)(IAvnMaskedTextBox* self, IAvnTextBoxTextChangedHandler* handler, int64_t* subscription_id); /* slot 141 */
-    AvnHResult (AVN_CALL *unadvise_text_changed)(IAvnMaskedTextBox* self, int64_t subscription_id); /* slot 142 */
-    AvnHResult (AVN_CALL *get_ascii_only)(IAvnMaskedTextBox* self, int32_t* value); /* slot 143 */
-    AvnHResult (AVN_CALL *set_ascii_only)(IAvnMaskedTextBox* self, int32_t value); /* slot 144 */
-    AvnHResult (AVN_CALL *get_hide_prompt_on_leave)(IAvnMaskedTextBox* self, int32_t* value); /* slot 145 */
-    AvnHResult (AVN_CALL *set_hide_prompt_on_leave)(IAvnMaskedTextBox* self, int32_t value); /* slot 146 */
-    AvnHResult (AVN_CALL *get_mask)(IAvnMaskedTextBox* self, uint16_t** value); /* slot 147 */
-    AvnHResult (AVN_CALL *set_mask)(IAvnMaskedTextBox* self, const uint16_t* value); /* slot 148 */
-    AvnHResult (AVN_CALL *get_mask_completed)(IAvnMaskedTextBox* self, int32_t* value); /* slot 149 */
-    AvnHResult (AVN_CALL *get_mask_full)(IAvnMaskedTextBox* self, int32_t* value); /* slot 150 */
-    AvnHResult (AVN_CALL *get_reset_on_prompt)(IAvnMaskedTextBox* self, int32_t* value); /* slot 151 */
-    AvnHResult (AVN_CALL *set_reset_on_prompt)(IAvnMaskedTextBox* self, int32_t value); /* slot 152 */
-    AvnHResult (AVN_CALL *get_reset_on_space)(IAvnMaskedTextBox* self, int32_t* value); /* slot 153 */
-    AvnHResult (AVN_CALL *set_reset_on_space)(IAvnMaskedTextBox* self, int32_t value); /* slot 154 */
+    AvnHResult (AVN_CALL *scroll_to_line_with_int32)(IAvnMaskedTextBox* self, int32_t line_index); /* slot 132 */
+    AvnHResult (AVN_CALL *select_all)(IAvnMaskedTextBox* self); /* slot 133 */
+    AvnHResult (AVN_CALL *undo)(IAvnMaskedTextBox* self); /* slot 134 */
+    AvnHResult (AVN_CALL *redo)(IAvnMaskedTextBox* self); /* slot 135 */
+    AvnHResult (AVN_CALL *advise_copying_to_clipboard)(IAvnMaskedTextBox* self, IAvnTextBoxCopyingToClipboardHandler* handler, int64_t* subscription_id); /* slot 136 */
+    AvnHResult (AVN_CALL *unadvise_copying_to_clipboard)(IAvnMaskedTextBox* self, int64_t subscription_id); /* slot 137 */
+    AvnHResult (AVN_CALL *advise_cutting_to_clipboard)(IAvnMaskedTextBox* self, IAvnTextBoxCuttingToClipboardHandler* handler, int64_t* subscription_id); /* slot 138 */
+    AvnHResult (AVN_CALL *unadvise_cutting_to_clipboard)(IAvnMaskedTextBox* self, int64_t subscription_id); /* slot 139 */
+    AvnHResult (AVN_CALL *advise_pasting_from_clipboard)(IAvnMaskedTextBox* self, IAvnTextBoxPastingFromClipboardHandler* handler, int64_t* subscription_id); /* slot 140 */
+    AvnHResult (AVN_CALL *unadvise_pasting_from_clipboard)(IAvnMaskedTextBox* self, int64_t subscription_id); /* slot 141 */
+    AvnHResult (AVN_CALL *advise_text_changed)(IAvnMaskedTextBox* self, IAvnTextBoxTextChangedHandler* handler, int64_t* subscription_id); /* slot 142 */
+    AvnHResult (AVN_CALL *unadvise_text_changed)(IAvnMaskedTextBox* self, int64_t subscription_id); /* slot 143 */
+    AvnHResult (AVN_CALL *get_ascii_only)(IAvnMaskedTextBox* self, int32_t* value); /* slot 144 */
+    AvnHResult (AVN_CALL *set_ascii_only)(IAvnMaskedTextBox* self, int32_t value); /* slot 145 */
+    AvnHResult (AVN_CALL *get_hide_prompt_on_leave)(IAvnMaskedTextBox* self, int32_t* value); /* slot 146 */
+    AvnHResult (AVN_CALL *set_hide_prompt_on_leave)(IAvnMaskedTextBox* self, int32_t value); /* slot 147 */
+    AvnHResult (AVN_CALL *get_mask)(IAvnMaskedTextBox* self, uint16_t** value); /* slot 148 */
+    AvnHResult (AVN_CALL *set_mask)(IAvnMaskedTextBox* self, const uint16_t* value); /* slot 149 */
+    AvnHResult (AVN_CALL *get_mask_completed)(IAvnMaskedTextBox* self, int32_t* value); /* slot 150 */
+    AvnHResult (AVN_CALL *get_mask_full)(IAvnMaskedTextBox* self, int32_t* value); /* slot 151 */
+    AvnHResult (AVN_CALL *get_reset_on_prompt)(IAvnMaskedTextBox* self, int32_t* value); /* slot 152 */
+    AvnHResult (AVN_CALL *set_reset_on_prompt)(IAvnMaskedTextBox* self, int32_t value); /* slot 153 */
+    AvnHResult (AVN_CALL *get_reset_on_space)(IAvnMaskedTextBox* self, int32_t* value); /* slot 154 */
+    AvnHResult (AVN_CALL *set_reset_on_space)(IAvnMaskedTextBox* self, int32_t value); /* slot 155 */
 };
 struct IAvnMaskedTextBox { const IAvnMaskedTextBoxVtbl* vtbl; };
-#define I_AVN_MASKED_TEXT_BOX_VTABLE_SLOTS 155
+#define I_AVN_MASKED_TEXT_BOX_VTABLE_SLOTS 156
 
 static const AvnGuid I_AVN_MENU_IID = {
     0x66864BEC,
@@ -6515,12 +6534,12 @@ struct IAvnSector { const IAvnSectorVtbl* vtbl; };
 #define I_AVN_SECTOR_VTABLE_SLOTS 58
 
 static const AvnGuid I_AVN_SELECTABLE_TEXT_BLOCK_IID = {
-    0xBD18F627,
-    0xFE50,
-    0x51F7,
-    { 0xB9, 0x9E, 0x00, 0x90, 0x5B, 0x58, 0x89, 0x2C }
+    0x0B5F5059,
+    0x2BDC,
+    0x54BF,
+    { 0xA0, 0xA0, 0x40, 0x93, 0xEB, 0x13, 0xEB, 0x07 }
 };
-#define I_AVN_SELECTABLE_TEXT_BLOCK_ABI_VERSION 2
+#define I_AVN_SELECTABLE_TEXT_BLOCK_ABI_VERSION 3
 struct IAvnSelectableTextBlockVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnSelectableTextBlock* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnSelectableTextBlock* self); /* slot 1 */
@@ -6578,26 +6597,38 @@ struct IAvnSelectableTextBlockVtbl {
     AvnHResult (AVN_CALL *set_font_stretch)(IAvnSelectableTextBlock* self, int32_t value); /* slot 53 */
     AvnHResult (AVN_CALL *get_foreground)(IAvnSelectableTextBlock* self, IAvnBrush** value); /* slot 54 */
     AvnHResult (AVN_CALL *set_foreground)(IAvnSelectableTextBlock* self, IAvnBrush* value); /* slot 55 */
-    AvnHResult (AVN_CALL *get_line_spacing)(IAvnSelectableTextBlock* self, double* value); /* slot 56 */
-    AvnHResult (AVN_CALL *set_line_spacing)(IAvnSelectableTextBlock* self, double value); /* slot 57 */
-    AvnHResult (AVN_CALL *get_letter_spacing)(IAvnSelectableTextBlock* self, double* value); /* slot 58 */
-    AvnHResult (AVN_CALL *set_letter_spacing)(IAvnSelectableTextBlock* self, double value); /* slot 59 */
-    AvnHResult (AVN_CALL *get_max_lines)(IAvnSelectableTextBlock* self, int32_t* value); /* slot 60 */
-    AvnHResult (AVN_CALL *set_max_lines)(IAvnSelectableTextBlock* self, int32_t value); /* slot 61 */
-    AvnHResult (AVN_CALL *get_text_wrapping)(IAvnSelectableTextBlock* self, int32_t* value); /* slot 62 */
-    AvnHResult (AVN_CALL *set_text_wrapping)(IAvnSelectableTextBlock* self, int32_t value); /* slot 63 */
-    AvnHResult (AVN_CALL *get_text_alignment)(IAvnSelectableTextBlock* self, int32_t* value); /* slot 64 */
-    AvnHResult (AVN_CALL *set_text_alignment)(IAvnSelectableTextBlock* self, int32_t value); /* slot 65 */
-    AvnHResult (AVN_CALL *get_selection_start)(IAvnSelectableTextBlock* self, int32_t* value); /* slot 66 */
-    AvnHResult (AVN_CALL *set_selection_start)(IAvnSelectableTextBlock* self, int32_t value); /* slot 67 */
-    AvnHResult (AVN_CALL *get_selection_end)(IAvnSelectableTextBlock* self, int32_t* value); /* slot 68 */
-    AvnHResult (AVN_CALL *set_selection_end)(IAvnSelectableTextBlock* self, int32_t value); /* slot 69 */
-    AvnHResult (AVN_CALL *get_selected_text)(IAvnSelectableTextBlock* self, uint16_t** value); /* slot 70 */
-    AvnHResult (AVN_CALL *get_can_copy)(IAvnSelectableTextBlock* self, int32_t* value); /* slot 71 */
-    AvnHResult (AVN_CALL *copy)(IAvnSelectableTextBlock* self); /* slot 72 */
+    AvnHResult (AVN_CALL *get_line_height)(IAvnSelectableTextBlock* self, double* value); /* slot 56 */
+    AvnHResult (AVN_CALL *set_line_height)(IAvnSelectableTextBlock* self, double value); /* slot 57 */
+    AvnHResult (AVN_CALL *get_line_spacing)(IAvnSelectableTextBlock* self, double* value); /* slot 58 */
+    AvnHResult (AVN_CALL *set_line_spacing)(IAvnSelectableTextBlock* self, double value); /* slot 59 */
+    AvnHResult (AVN_CALL *get_letter_spacing)(IAvnSelectableTextBlock* self, double* value); /* slot 60 */
+    AvnHResult (AVN_CALL *set_letter_spacing)(IAvnSelectableTextBlock* self, double value); /* slot 61 */
+    AvnHResult (AVN_CALL *get_max_lines)(IAvnSelectableTextBlock* self, int32_t* value); /* slot 62 */
+    AvnHResult (AVN_CALL *set_max_lines)(IAvnSelectableTextBlock* self, int32_t value); /* slot 63 */
+    AvnHResult (AVN_CALL *get_text_wrapping)(IAvnSelectableTextBlock* self, int32_t* value); /* slot 64 */
+    AvnHResult (AVN_CALL *set_text_wrapping)(IAvnSelectableTextBlock* self, int32_t value); /* slot 65 */
+    AvnHResult (AVN_CALL *get_text_alignment)(IAvnSelectableTextBlock* self, int32_t* value); /* slot 66 */
+    AvnHResult (AVN_CALL *set_text_alignment)(IAvnSelectableTextBlock* self, int32_t value); /* slot 67 */
+    AvnHResult (AVN_CALL *get_baseline_offset)(IAvnSelectableTextBlock* self, double* value); /* slot 68 */
+    AvnHResult (AVN_CALL *set_baseline_offset)(IAvnSelectableTextBlock* self, double value); /* slot 69 */
+    AvnHResult (AVN_CALL *get_selection_brush)(IAvnSelectableTextBlock* self, IAvnBrush** value); /* slot 70 */
+    AvnHResult (AVN_CALL *set_selection_brush)(IAvnSelectableTextBlock* self, IAvnBrush* value); /* slot 71 */
+    AvnHResult (AVN_CALL *get_selection_foreground_brush)(IAvnSelectableTextBlock* self, IAvnBrush** value); /* slot 72 */
+    AvnHResult (AVN_CALL *set_selection_foreground_brush)(IAvnSelectableTextBlock* self, IAvnBrush* value); /* slot 73 */
+    AvnHResult (AVN_CALL *get_selection_start)(IAvnSelectableTextBlock* self, int32_t* value); /* slot 74 */
+    AvnHResult (AVN_CALL *set_selection_start)(IAvnSelectableTextBlock* self, int32_t value); /* slot 75 */
+    AvnHResult (AVN_CALL *get_selection_end)(IAvnSelectableTextBlock* self, int32_t* value); /* slot 76 */
+    AvnHResult (AVN_CALL *set_selection_end)(IAvnSelectableTextBlock* self, int32_t value); /* slot 77 */
+    AvnHResult (AVN_CALL *get_selected_text)(IAvnSelectableTextBlock* self, uint16_t** value); /* slot 78 */
+    AvnHResult (AVN_CALL *get_can_copy)(IAvnSelectableTextBlock* self, int32_t* value); /* slot 79 */
+    AvnHResult (AVN_CALL *copy)(IAvnSelectableTextBlock* self); /* slot 80 */
+    AvnHResult (AVN_CALL *select_all)(IAvnSelectableTextBlock* self); /* slot 81 */
+    AvnHResult (AVN_CALL *clear_selection)(IAvnSelectableTextBlock* self); /* slot 82 */
+    AvnHResult (AVN_CALL *advise_copying_to_clipboard)(IAvnSelectableTextBlock* self, IAvnSelectableTextBlockCopyingToClipboardHandler* handler, int64_t* subscription_id); /* slot 83 */
+    AvnHResult (AVN_CALL *unadvise_copying_to_clipboard)(IAvnSelectableTextBlock* self, int64_t subscription_id); /* slot 84 */
 };
 struct IAvnSelectableTextBlock { const IAvnSelectableTextBlockVtbl* vtbl; };
-#define I_AVN_SELECTABLE_TEXT_BLOCK_VTABLE_SLOTS 73
+#define I_AVN_SELECTABLE_TEXT_BLOCK_VTABLE_SLOTS 85
 
 static const AvnGuid I_AVN_SELECTING_ITEMS_CONTROL_IID = {
     0x5F901899,
@@ -7804,12 +7835,12 @@ struct IAvnTemplatedControl { const IAvnTemplatedControlVtbl* vtbl; };
 #define I_AVN_TEMPLATED_CONTROL_VTABLE_SLOTS 62
 
 static const AvnGuid I_AVN_TEXT_BLOCK_IID = {
-    0x74662671,
-    0xAA6E,
-    0x568D,
-    { 0x89, 0xE2, 0x45, 0x69, 0x82, 0x9F, 0x35, 0xA8 }
+    0x991802B9,
+    0xBF9B,
+    0x5BAE,
+    { 0xB9, 0xA7, 0x50, 0x76, 0xF1, 0x48, 0xCF, 0x98 }
 };
-#define I_AVN_TEXT_BLOCK_ABI_VERSION 5
+#define I_AVN_TEXT_BLOCK_ABI_VERSION 6
 struct IAvnTextBlockVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnTextBlock* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnTextBlock* self); /* slot 1 */
@@ -7867,27 +7898,31 @@ struct IAvnTextBlockVtbl {
     AvnHResult (AVN_CALL *set_font_stretch)(IAvnTextBlock* self, int32_t value); /* slot 53 */
     AvnHResult (AVN_CALL *get_foreground)(IAvnTextBlock* self, IAvnBrush** value); /* slot 54 */
     AvnHResult (AVN_CALL *set_foreground)(IAvnTextBlock* self, IAvnBrush* value); /* slot 55 */
-    AvnHResult (AVN_CALL *get_line_spacing)(IAvnTextBlock* self, double* value); /* slot 56 */
-    AvnHResult (AVN_CALL *set_line_spacing)(IAvnTextBlock* self, double value); /* slot 57 */
-    AvnHResult (AVN_CALL *get_letter_spacing)(IAvnTextBlock* self, double* value); /* slot 58 */
-    AvnHResult (AVN_CALL *set_letter_spacing)(IAvnTextBlock* self, double value); /* slot 59 */
-    AvnHResult (AVN_CALL *get_max_lines)(IAvnTextBlock* self, int32_t* value); /* slot 60 */
-    AvnHResult (AVN_CALL *set_max_lines)(IAvnTextBlock* self, int32_t value); /* slot 61 */
-    AvnHResult (AVN_CALL *get_text_wrapping)(IAvnTextBlock* self, int32_t* value); /* slot 62 */
-    AvnHResult (AVN_CALL *set_text_wrapping)(IAvnTextBlock* self, int32_t value); /* slot 63 */
-    AvnHResult (AVN_CALL *get_text_alignment)(IAvnTextBlock* self, int32_t* value); /* slot 64 */
-    AvnHResult (AVN_CALL *set_text_alignment)(IAvnTextBlock* self, int32_t value); /* slot 65 */
+    AvnHResult (AVN_CALL *get_line_height)(IAvnTextBlock* self, double* value); /* slot 56 */
+    AvnHResult (AVN_CALL *set_line_height)(IAvnTextBlock* self, double value); /* slot 57 */
+    AvnHResult (AVN_CALL *get_line_spacing)(IAvnTextBlock* self, double* value); /* slot 58 */
+    AvnHResult (AVN_CALL *set_line_spacing)(IAvnTextBlock* self, double value); /* slot 59 */
+    AvnHResult (AVN_CALL *get_letter_spacing)(IAvnTextBlock* self, double* value); /* slot 60 */
+    AvnHResult (AVN_CALL *set_letter_spacing)(IAvnTextBlock* self, double value); /* slot 61 */
+    AvnHResult (AVN_CALL *get_max_lines)(IAvnTextBlock* self, int32_t* value); /* slot 62 */
+    AvnHResult (AVN_CALL *set_max_lines)(IAvnTextBlock* self, int32_t value); /* slot 63 */
+    AvnHResult (AVN_CALL *get_text_wrapping)(IAvnTextBlock* self, int32_t* value); /* slot 64 */
+    AvnHResult (AVN_CALL *set_text_wrapping)(IAvnTextBlock* self, int32_t value); /* slot 65 */
+    AvnHResult (AVN_CALL *get_text_alignment)(IAvnTextBlock* self, int32_t* value); /* slot 66 */
+    AvnHResult (AVN_CALL *set_text_alignment)(IAvnTextBlock* self, int32_t value); /* slot 67 */
+    AvnHResult (AVN_CALL *get_baseline_offset)(IAvnTextBlock* self, double* value); /* slot 68 */
+    AvnHResult (AVN_CALL *set_baseline_offset)(IAvnTextBlock* self, double value); /* slot 69 */
 };
 struct IAvnTextBlock { const IAvnTextBlockVtbl* vtbl; };
-#define I_AVN_TEXT_BLOCK_VTABLE_SLOTS 66
+#define I_AVN_TEXT_BLOCK_VTABLE_SLOTS 70
 
 static const AvnGuid I_AVN_TEXT_BOX_IID = {
-    0x0A134107,
-    0xC133,
-    0x5FA2,
-    { 0x91, 0xFD, 0xBB, 0x3A, 0x90, 0x17, 0xA9, 0xF2 }
+    0x007AACD5,
+    0x4D3D,
+    0x5EC0,
+    { 0xBC, 0xA7, 0xA1, 0x65, 0x77, 0xA2, 0x88, 0x38 }
 };
-#define I_AVN_TEXT_BOX_ABI_VERSION 6
+#define I_AVN_TEXT_BOX_ABI_VERSION 7
 struct IAvnTextBoxVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnTextBox* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnTextBox* self); /* slot 1 */
@@ -8021,20 +8056,21 @@ struct IAvnTextBoxVtbl {
     AvnHResult (AVN_CALL *copy)(IAvnTextBox* self); /* slot 129 */
     AvnHResult (AVN_CALL *paste)(IAvnTextBox* self); /* slot 130 */
     AvnHResult (AVN_CALL *clear)(IAvnTextBox* self); /* slot 131 */
-    AvnHResult (AVN_CALL *select_all)(IAvnTextBox* self); /* slot 132 */
-    AvnHResult (AVN_CALL *undo)(IAvnTextBox* self); /* slot 133 */
-    AvnHResult (AVN_CALL *redo)(IAvnTextBox* self); /* slot 134 */
-    AvnHResult (AVN_CALL *advise_copying_to_clipboard)(IAvnTextBox* self, IAvnTextBoxCopyingToClipboardHandler* handler, int64_t* subscription_id); /* slot 135 */
-    AvnHResult (AVN_CALL *unadvise_copying_to_clipboard)(IAvnTextBox* self, int64_t subscription_id); /* slot 136 */
-    AvnHResult (AVN_CALL *advise_cutting_to_clipboard)(IAvnTextBox* self, IAvnTextBoxCuttingToClipboardHandler* handler, int64_t* subscription_id); /* slot 137 */
-    AvnHResult (AVN_CALL *unadvise_cutting_to_clipboard)(IAvnTextBox* self, int64_t subscription_id); /* slot 138 */
-    AvnHResult (AVN_CALL *advise_pasting_from_clipboard)(IAvnTextBox* self, IAvnTextBoxPastingFromClipboardHandler* handler, int64_t* subscription_id); /* slot 139 */
-    AvnHResult (AVN_CALL *unadvise_pasting_from_clipboard)(IAvnTextBox* self, int64_t subscription_id); /* slot 140 */
-    AvnHResult (AVN_CALL *advise_text_changed)(IAvnTextBox* self, IAvnTextBoxTextChangedHandler* handler, int64_t* subscription_id); /* slot 141 */
-    AvnHResult (AVN_CALL *unadvise_text_changed)(IAvnTextBox* self, int64_t subscription_id); /* slot 142 */
+    AvnHResult (AVN_CALL *scroll_to_line_with_int32)(IAvnTextBox* self, int32_t line_index); /* slot 132 */
+    AvnHResult (AVN_CALL *select_all)(IAvnTextBox* self); /* slot 133 */
+    AvnHResult (AVN_CALL *undo)(IAvnTextBox* self); /* slot 134 */
+    AvnHResult (AVN_CALL *redo)(IAvnTextBox* self); /* slot 135 */
+    AvnHResult (AVN_CALL *advise_copying_to_clipboard)(IAvnTextBox* self, IAvnTextBoxCopyingToClipboardHandler* handler, int64_t* subscription_id); /* slot 136 */
+    AvnHResult (AVN_CALL *unadvise_copying_to_clipboard)(IAvnTextBox* self, int64_t subscription_id); /* slot 137 */
+    AvnHResult (AVN_CALL *advise_cutting_to_clipboard)(IAvnTextBox* self, IAvnTextBoxCuttingToClipboardHandler* handler, int64_t* subscription_id); /* slot 138 */
+    AvnHResult (AVN_CALL *unadvise_cutting_to_clipboard)(IAvnTextBox* self, int64_t subscription_id); /* slot 139 */
+    AvnHResult (AVN_CALL *advise_pasting_from_clipboard)(IAvnTextBox* self, IAvnTextBoxPastingFromClipboardHandler* handler, int64_t* subscription_id); /* slot 140 */
+    AvnHResult (AVN_CALL *unadvise_pasting_from_clipboard)(IAvnTextBox* self, int64_t subscription_id); /* slot 141 */
+    AvnHResult (AVN_CALL *advise_text_changed)(IAvnTextBox* self, IAvnTextBoxTextChangedHandler* handler, int64_t* subscription_id); /* slot 142 */
+    AvnHResult (AVN_CALL *unadvise_text_changed)(IAvnTextBox* self, int64_t subscription_id); /* slot 143 */
 };
 struct IAvnTextBox { const IAvnTextBoxVtbl* vtbl; };
-#define I_AVN_TEXT_BOX_VTABLE_SLOTS 143
+#define I_AVN_TEXT_BOX_VTABLE_SLOTS 144
 
 static const AvnGuid I_AVN_THEME_VARIANT_SCOPE_IID = {
     0x3D34A21E,

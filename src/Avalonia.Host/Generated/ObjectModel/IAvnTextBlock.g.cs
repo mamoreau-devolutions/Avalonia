@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("74662671-AA6E-568D-89E2-4569829F35A8")]
+[Guid("991802B9-BF9B-5BAE-B9A7-5076F148CF98")]
 public partial interface IAvnTextBlock : IAvnControl
 {
     [PreserveSig]
@@ -64,6 +64,12 @@ public partial interface IAvnTextBlock : IAvnControl
     int SetForeground(IAvnBrush? value);
 
     [PreserveSig]
+    int GetLineHeight(out double value);
+
+    [PreserveSig]
+    int SetLineHeight(double value);
+
+    [PreserveSig]
     int GetLineSpacing(out double value);
 
     [PreserveSig]
@@ -92,6 +98,12 @@ public partial interface IAvnTextBlock : IAvnControl
 
     [PreserveSig]
     int SetTextAlignment(int value);
+
+    [PreserveSig]
+    int GetBaselineOffset(out double value);
+
+    [PreserveSig]
+    int SetBaselineOffset(double value);
 
 }
 
@@ -982,6 +994,37 @@ public sealed partial class AvnTextBlock : IAvnTextBlock
         }
     }
 
+    public int GetLineHeight(out double value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.LineHeight;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetLineHeight(double value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.LineHeight = value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetLineSpacing(out double value)
     {
         value = default!;
@@ -1129,6 +1172,37 @@ public sealed partial class AvnTextBlock : IAvnTextBlock
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.TextAlignment = (global::Avalonia.Media.TextAlignment)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetBaselineOffset(out double value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.BaselineOffset;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetBaselineOffset(double value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.BaselineOffset = value;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

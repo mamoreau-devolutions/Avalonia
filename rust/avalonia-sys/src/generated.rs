@@ -1603,6 +1603,61 @@ unsafe extern "system" fn i_avn_scroll_viewer_scroll_changed_handler_invoke(this
     crate::event_callback::invoke::<IAvnScrollViewerScrollChangedHandler, ()>(this, &mut ())
 }
 
+pub const I_AVN_SELECTABLE_TEXT_BLOCK_COPYING_TO_CLIPBOARD_HANDLER_IID: Guid = Guid { data1: 0xCB10B16D, data2: 0xD8FC, data3: 0x53DE, data4: [0xA8, 0xB0, 0x10, 0x08, 0xB8, 0x21, 0x55, 0x01] };
+
+#[repr(C)]
+struct IAvnSelectableTextBlockCopyingToClipboardHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnSelectableTextBlockCopyingToClipboardHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnSelectableTextBlockCopyingToClipboardHandler {
+    vtbl: *const IAvnSelectableTextBlockCopyingToClipboardHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnSelectableTextBlockCopyingToClipboardHandler {
+    const IID: Guid = I_AVN_SELECTABLE_TEXT_BLOCK_COPYING_TO_CLIPBOARD_HANDLER_IID;
+}
+
+impl ComPtr<IAvnSelectableTextBlockCopyingToClipboardHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_SELECTABLE_TEXT_BLOCK_COPYING_TO_CLIPBOARD_HANDLER_VTBL: IAvnSelectableTextBlockCopyingToClipboardHandlerVtbl = IAvnSelectableTextBlockCopyingToClipboardHandlerVtbl {
+    query_interface: i_avn_selectable_text_block_copying_to_clipboard_handler_query_interface,
+    add_ref: i_avn_selectable_text_block_copying_to_clipboard_handler_add_ref,
+    release: i_avn_selectable_text_block_copying_to_clipboard_handler_release,
+    invoke: i_avn_selectable_text_block_copying_to_clipboard_handler_invoke,
+};
+
+pub fn selectable_text_block_copying_to_clipboard_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnSelectableTextBlockCopyingToClipboardHandler> {
+    crate::event_callback::create::<IAvnSelectableTextBlockCopyingToClipboardHandler, ()>(IAvnSelectableTextBlockCopyingToClipboardHandler { vtbl: &I_AVN_SELECTABLE_TEXT_BLOCK_COPYING_TO_CLIPBOARD_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_selectable_text_block_copying_to_clipboard_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnSelectableTextBlockCopyingToClipboardHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_selectable_text_block_copying_to_clipboard_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnSelectableTextBlockCopyingToClipboardHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_selectable_text_block_copying_to_clipboard_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnSelectableTextBlockCopyingToClipboardHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_selectable_text_block_copying_to_clipboard_handler_invoke(this: *mut IAvnSelectableTextBlockCopyingToClipboardHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnSelectableTextBlockCopyingToClipboardHandler, ()>(this, &mut ())
+}
+
 pub const I_AVN_SPLIT_BUTTON_CLICK_HANDLER_IID: Guid = Guid { data1: 0x257AD223, data2: 0xD656, data3: 0x551A, data4: [0xAC, 0x83, 0xE4, 0xD4, 0xF3, 0xB5, 0x90, 0xE6] };
 
 #[repr(C)]
@@ -22273,7 +22328,7 @@ impl ComPtr<IAvnListBoxItem> {
     }
 }
 
-pub const I_AVN_MASKED_TEXT_BOX_IID: Guid = Guid { data1: 0xDDBA5432, data2: 0x2E90, data3: 0x5ECD, data4: [0xA4, 0x02, 0x38, 0x6F, 0x32, 0x2F, 0x05, 0xD3] };
+pub const I_AVN_MASKED_TEXT_BOX_IID: Guid = Guid { data1: 0x792FE230, data2: 0xE153, data3: 0x58BF, data4: [0x94, 0x64, 0xBA, 0xBA, 0xC8, 0x87, 0x0A, 0x8C] };
 
 #[repr(C)]
 struct IAvnMaskedTextBoxVtbl {
@@ -22409,6 +22464,7 @@ struct IAvnMaskedTextBoxVtbl {
     copy: unsafe extern "system" fn(*mut IAvnMaskedTextBox) -> i32,
     paste: unsafe extern "system" fn(*mut IAvnMaskedTextBox) -> i32,
     clear: unsafe extern "system" fn(*mut IAvnMaskedTextBox) -> i32,
+    scroll_to_line_with_int32: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i32) -> i32,
     select_all: unsafe extern "system" fn(*mut IAvnMaskedTextBox) -> i32,
     undo: unsafe extern "system" fn(*mut IAvnMaskedTextBox) -> i32,
     redo: unsafe extern "system" fn(*mut IAvnMaskedTextBox) -> i32,
@@ -23342,6 +23398,12 @@ impl ComPtr<IAvnMaskedTextBox> {
     pub fn clear(&self) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().clear)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn scroll_to_line_with_int32(&self, line_index: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_to_line_with_int32)(self.as_raw(), line_index);
             hresult::check(hr)
         }
     }
@@ -38718,7 +38780,7 @@ impl ComPtr<IAvnScrollViewer> {
     }
 }
 
-pub const I_AVN_SELECTABLE_TEXT_BLOCK_IID: Guid = Guid { data1: 0xBD18F627, data2: 0xFE50, data3: 0x51F7, data4: [0xB9, 0x9E, 0x00, 0x90, 0x5B, 0x58, 0x89, 0x2C] };
+pub const I_AVN_SELECTABLE_TEXT_BLOCK_IID: Guid = Guid { data1: 0x0B5F5059, data2: 0x2BDC, data3: 0x54BF, data4: [0xA0, 0xA0, 0x40, 0x93, 0xEB, 0x13, 0xEB, 0x07] };
 
 #[repr(C)]
 struct IAvnSelectableTextBlockVtbl {
@@ -38778,6 +38840,8 @@ struct IAvnSelectableTextBlockVtbl {
     set_font_stretch: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i32) -> i32,
     get_foreground: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut *mut IAvnBrush) -> i32,
     set_foreground: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut IAvnBrush) -> i32,
+    get_line_height: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut f64) -> i32,
+    set_line_height: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, f64) -> i32,
     get_line_spacing: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut f64) -> i32,
     set_line_spacing: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, f64) -> i32,
     get_letter_spacing: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut f64) -> i32,
@@ -38788,6 +38852,12 @@ struct IAvnSelectableTextBlockVtbl {
     set_text_wrapping: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i32) -> i32,
     get_text_alignment: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut i32) -> i32,
     set_text_alignment: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i32) -> i32,
+    get_baseline_offset: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut f64) -> i32,
+    set_baseline_offset: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, f64) -> i32,
+    get_selection_brush: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut *mut IAvnBrush) -> i32,
+    set_selection_brush: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut IAvnBrush) -> i32,
+    get_selection_foreground_brush: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut *mut IAvnBrush) -> i32,
+    set_selection_foreground_brush: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut IAvnBrush) -> i32,
     get_selection_start: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut i32) -> i32,
     set_selection_start: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i32) -> i32,
     get_selection_end: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut i32) -> i32,
@@ -38795,6 +38865,10 @@ struct IAvnSelectableTextBlockVtbl {
     get_selected_text: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut *mut u16) -> i32,
     get_can_copy: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut i32) -> i32,
     copy: unsafe extern "system" fn(*mut IAvnSelectableTextBlock) -> i32,
+    select_all: unsafe extern "system" fn(*mut IAvnSelectableTextBlock) -> i32,
+    clear_selection: unsafe extern "system" fn(*mut IAvnSelectableTextBlock) -> i32,
+    advise_copying_to_clipboard: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut IAvnSelectableTextBlockCopyingToClipboardHandler, *mut i64) -> i32,
+    unadvise_copying_to_clipboard: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i64) -> i32,
 }
 
 #[repr(C)]
@@ -39176,6 +39250,20 @@ impl ComPtr<IAvnSelectableTextBlock> {
             hresult::check(hr)
         }
     }
+    pub fn get_line_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_line_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_line_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_line_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
     pub fn get_line_spacing(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -39246,6 +39334,48 @@ impl ComPtr<IAvnSelectableTextBlock> {
             hresult::check(hr)
         }
     }
+    pub fn get_baseline_offset(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_baseline_offset)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_baseline_offset(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_baseline_offset)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selection_brush(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selection_brush)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_selection_brush(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selection_brush)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selection_foreground_brush(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selection_foreground_brush)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_selection_foreground_brush(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selection_foreground_brush)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
     pub fn get_selection_start(&self) -> Result<i32> {
         unsafe {
             let mut value: i32 = 0;
@@ -39293,6 +39423,31 @@ impl ComPtr<IAvnSelectableTextBlock> {
     pub fn copy(&self) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().copy)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn select_all(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().select_all)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn clear_selection(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().clear_selection)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_copying_to_clipboard(&self, handler: &ComPtr<IAvnSelectableTextBlockCopyingToClipboardHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_copying_to_clipboard)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_copying_to_clipboard(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_copying_to_clipboard)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -49759,7 +49914,7 @@ impl ComPtr<IAvnTableViewRow> {
     }
 }
 
-pub const I_AVN_TEXT_BLOCK_IID: Guid = Guid { data1: 0x74662671, data2: 0xAA6E, data3: 0x568D, data4: [0x89, 0xE2, 0x45, 0x69, 0x82, 0x9F, 0x35, 0xA8] };
+pub const I_AVN_TEXT_BLOCK_IID: Guid = Guid { data1: 0x991802B9, data2: 0xBF9B, data3: 0x5BAE, data4: [0xB9, 0xA7, 0x50, 0x76, 0xF1, 0x48, 0xCF, 0x98] };
 
 #[repr(C)]
 struct IAvnTextBlockVtbl {
@@ -49819,6 +49974,8 @@ struct IAvnTextBlockVtbl {
     set_font_stretch: unsafe extern "system" fn(*mut IAvnTextBlock, i32) -> i32,
     get_foreground: unsafe extern "system" fn(*mut IAvnTextBlock, *mut *mut IAvnBrush) -> i32,
     set_foreground: unsafe extern "system" fn(*mut IAvnTextBlock, *mut IAvnBrush) -> i32,
+    get_line_height: unsafe extern "system" fn(*mut IAvnTextBlock, *mut f64) -> i32,
+    set_line_height: unsafe extern "system" fn(*mut IAvnTextBlock, f64) -> i32,
     get_line_spacing: unsafe extern "system" fn(*mut IAvnTextBlock, *mut f64) -> i32,
     set_line_spacing: unsafe extern "system" fn(*mut IAvnTextBlock, f64) -> i32,
     get_letter_spacing: unsafe extern "system" fn(*mut IAvnTextBlock, *mut f64) -> i32,
@@ -49829,6 +49986,8 @@ struct IAvnTextBlockVtbl {
     set_text_wrapping: unsafe extern "system" fn(*mut IAvnTextBlock, i32) -> i32,
     get_text_alignment: unsafe extern "system" fn(*mut IAvnTextBlock, *mut i32) -> i32,
     set_text_alignment: unsafe extern "system" fn(*mut IAvnTextBlock, i32) -> i32,
+    get_baseline_offset: unsafe extern "system" fn(*mut IAvnTextBlock, *mut f64) -> i32,
+    set_baseline_offset: unsafe extern "system" fn(*mut IAvnTextBlock, f64) -> i32,
 }
 
 #[repr(C)]
@@ -50210,6 +50369,20 @@ impl ComPtr<IAvnTextBlock> {
             hresult::check(hr)
         }
     }
+    pub fn get_line_height(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_line_height)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_line_height(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_line_height)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
     pub fn get_line_spacing(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -50280,9 +50453,23 @@ impl ComPtr<IAvnTextBlock> {
             hresult::check(hr)
         }
     }
+    pub fn get_baseline_offset(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_baseline_offset)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_baseline_offset(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_baseline_offset)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
 }
 
-pub const I_AVN_TEXT_BOX_IID: Guid = Guid { data1: 0x0A134107, data2: 0xC133, data3: 0x5FA2, data4: [0x91, 0xFD, 0xBB, 0x3A, 0x90, 0x17, 0xA9, 0xF2] };
+pub const I_AVN_TEXT_BOX_IID: Guid = Guid { data1: 0x007AACD5, data2: 0x4D3D, data3: 0x5EC0, data4: [0xBC, 0xA7, 0xA1, 0x65, 0x77, 0xA2, 0x88, 0x38] };
 
 #[repr(C)]
 struct IAvnTextBoxVtbl {
@@ -50418,6 +50605,7 @@ struct IAvnTextBoxVtbl {
     copy: unsafe extern "system" fn(*mut IAvnTextBox) -> i32,
     paste: unsafe extern "system" fn(*mut IAvnTextBox) -> i32,
     clear: unsafe extern "system" fn(*mut IAvnTextBox) -> i32,
+    scroll_to_line_with_int32: unsafe extern "system" fn(*mut IAvnTextBox, i32) -> i32,
     select_all: unsafe extern "system" fn(*mut IAvnTextBox) -> i32,
     undo: unsafe extern "system" fn(*mut IAvnTextBox) -> i32,
     redo: unsafe extern "system" fn(*mut IAvnTextBox) -> i32,
@@ -51339,6 +51527,12 @@ impl ComPtr<IAvnTextBox> {
     pub fn clear(&self) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().clear)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn scroll_to_line_with_int32(&self, line_index: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_to_line_with_int32)(self.as_raw(), line_index);
             hresult::check(hr)
         }
     }

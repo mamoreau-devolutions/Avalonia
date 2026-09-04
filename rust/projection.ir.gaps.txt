@@ -226,11 +226,6 @@ Avalonia.Controls.ScrollViewer.CurrentAnchor: Not included by projection policy
 Avalonia.Controls.ScrollViewer.ScrollBarMaximum: Not included by projection policy
 Avalonia.Controls.ScrollViewer.RegisterAnchorCandidate(Control): Not included by projection policy
 Avalonia.Controls.ScrollViewer.UnregisterAnchorCandidate(Control): Not included by projection policy
-Avalonia.Controls.SelectableTextBlock.SelectionBrush: Not included by projection policy
-Avalonia.Controls.SelectableTextBlock.SelectionForegroundBrush: Not included by projection policy
-Avalonia.Controls.SelectableTextBlock.CopyingToClipboard: Not included by projection policy
-Avalonia.Controls.SelectableTextBlock.SelectAll(): Not included by projection policy
-Avalonia.Controls.SelectableTextBlock.ClearSelection(): Not included by projection policy
 Avalonia.Controls.Shapes.Polygon.Points: Not included by projection policy
 Avalonia.Controls.Shapes.Polyline.Points: Not included by projection policy
 Avalonia.Controls.Shapes.Shape.DefiningGeometry: Not included by projection policy
@@ -276,12 +271,10 @@ Avalonia.Controls.TableViewColumn.TableView: Not included by projection policy
 Avalonia.Controls.TableViewColumn.ActualWidth: Not included by projection policy
 Avalonia.Controls.TableViewColumn.CanUserEffectivelyResize: Not included by projection policy
 Avalonia.Controls.TextBlock.TextLayout: Not included by projection policy
-Avalonia.Controls.TextBlock.LineHeight: Not included by projection policy
 Avalonia.Controls.TextBlock.TextTrimming: Not included by projection policy
 Avalonia.Controls.TextBlock.TextDecorations: Not included by projection policy
 Avalonia.Controls.TextBlock.FontFeatures: Not included by projection policy
 Avalonia.Controls.TextBlock.Inlines: Not included by projection policy
-Avalonia.Controls.TextBlock.BaselineOffset: Not included by projection policy
 Avalonia.Controls.TextBlock.Render(DrawingContext): Not included by projection policy
 Avalonia.Controls.TextBox.PasswordChar: Not included by projection policy
 Avalonia.Controls.TextBox.CaretBlinkInterval: Not included by projection policy
@@ -290,7 +283,6 @@ Avalonia.Controls.TextBox.UseFloatingWatermark: Not included by projection polic
 Avalonia.Controls.TextBox.WatermarkForeground: Not included by projection policy
 Avalonia.Controls.TextBox.TextChanging: Not included by projection policy
 Avalonia.Controls.TextBox.GetLineCount(): Not included by projection policy
-Avalonia.Controls.TextBox.ScrollToLine(Int32): Not included by projection policy
 Avalonia.Controls.ThemeVariantScope.RequestedThemeVariant: Not included by projection policy
 Avalonia.Controls.TimePicker.VerticalContentAlignment: Not included by projection policy
 Avalonia.Controls.TimePicker.SelectedTimeChanged: Not included by projection policy

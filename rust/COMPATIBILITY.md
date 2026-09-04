@@ -227,6 +227,12 @@ of ScrollIntoView, templates and ItemsSource stay gaps. Factory 13.
 Safe bindgen keeps the `is_` prefix on a bool builder when stripping it would
 collide with a method on the same type (`Popup.IsOpen` vs `Open()`).
 
+Text leftovers grow `IAvnTextBlock` from 5 to 6 with LineHeight and
+BaselineOffset, `IAvnSelectableTextBlock` from 2 to 3 with selection brushes,
+SelectAll, ClearSelection and CopyingToClipboard, and `IAvnTextBox` from 6 to 7
+with ScrollToLine. MaskedTextBox republishes 3 to 4. GetLineCount returns int
+so it stays a gap, as do PasswordChar, TextTrimming and Inlines. Factory 13.
+
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and
 `IAvnNumericUpDown` each move from 2 to 3. Templates, filters, ItemsSource,

@@ -14997,6 +14997,7 @@ impl MaskedTextBox {
     pub fn copy(&self) -> Result<()> { Ok(self.raw.copy()?) }
     pub fn paste(&self) -> Result<()> { Ok(self.raw.paste()?) }
     pub fn clear(&self) -> Result<()> { Ok(self.raw.clear()?) }
+    pub fn scroll_to_line_with_int32(&self, line_index: i32) -> Result<()> { Ok(self.raw.scroll_to_line_with_int32(line_index)?) }
     pub fn select_all(&self) -> Result<()> { Ok(self.raw.select_all()?) }
     pub fn undo(&self) -> Result<()> { Ok(self.raw.undo()?) }
     pub fn redo(&self) -> Result<()> { Ok(self.raw.redo()?) }
@@ -24425,6 +24426,14 @@ impl SelectableTextBlock {
         self.set_foreground(value)?;
         Ok(self)
     }
+    pub fn get_line_height(&self) -> Result<f64> { Ok(self.raw.get_line_height()?) }
+    pub fn set_line_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_line_height(value)?)
+    }
+    pub fn line_height(self, value: f64) -> Result<Self> {
+        self.set_line_height(value)?;
+        Ok(self)
+    }
     pub fn get_line_spacing(&self) -> Result<f64> { Ok(self.raw.get_line_spacing()?) }
     pub fn set_line_spacing(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_line_spacing(value)?)
@@ -24471,6 +24480,36 @@ impl SelectableTextBlock {
         self.set_text_alignment(value)?;
         Ok(self)
     }
+    pub fn get_baseline_offset(&self) -> Result<f64> { Ok(self.raw.get_baseline_offset()?) }
+    pub fn set_baseline_offset(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_baseline_offset(value)?)
+    }
+    pub fn baseline_offset(self, value: f64) -> Result<Self> {
+        self.set_baseline_offset(value)?;
+        Ok(self)
+    }
+    pub fn get_selection_brush(&self) -> Result<Option<Brush>> {
+        self.raw.get_selection_brush()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_selection_brush(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_selection_brush(value.as_ref())?)
+    }
+    pub fn selection_brush(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_selection_brush(value)?;
+        Ok(self)
+    }
+    pub fn get_selection_foreground_brush(&self) -> Result<Option<Brush>> {
+        self.raw.get_selection_foreground_brush()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_selection_foreground_brush(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_selection_foreground_brush(value.as_ref())?)
+    }
+    pub fn selection_foreground_brush(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_selection_foreground_brush(value)?;
+        Ok(self)
+    }
     pub fn get_selection_start(&self) -> Result<i32> { Ok(self.raw.get_selection_start()?) }
     pub fn set_selection_start(&self, value: i32) -> Result<()> {
         Ok(self.raw.set_selection_start(value)?)
@@ -24492,6 +24531,21 @@ impl SelectableTextBlock {
     }
     pub fn can_copy(&self) -> Result<bool> { Ok(self.raw.get_can_copy()?) }
     pub fn copy(&self) -> Result<()> { Ok(self.raw.copy()?) }
+    pub fn select_all(&self) -> Result<()> { Ok(self.raw.select_all()?) }
+    pub fn clear_selection(&self) -> Result<()> { Ok(self.raw.clear_selection()?) }
+    pub fn subscribe_copying_to_clipboard(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::selectable_text_block_copying_to_clipboard_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_copying_to_clipboard(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_copying_to_clipboard(subscription_id)))
+    }
+    pub fn on_copying_to_clipboard(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_copying_to_clipboard(callback)?);
+        Ok(self)
+    }
 }
 
 impl AsControl for SelectableTextBlock {
@@ -30994,6 +31048,14 @@ impl TextBlock {
         self.set_foreground(value)?;
         Ok(self)
     }
+    pub fn get_line_height(&self) -> Result<f64> { Ok(self.raw.get_line_height()?) }
+    pub fn set_line_height(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_line_height(value)?)
+    }
+    pub fn line_height(self, value: f64) -> Result<Self> {
+        self.set_line_height(value)?;
+        Ok(self)
+    }
     pub fn get_line_spacing(&self) -> Result<f64> { Ok(self.raw.get_line_spacing()?) }
     pub fn set_line_spacing(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_line_spacing(value)?)
@@ -31038,6 +31100,14 @@ impl TextBlock {
     }
     pub fn text_alignment(self, value: TextAlignment) -> Result<Self> {
         self.set_text_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_baseline_offset(&self) -> Result<f64> { Ok(self.raw.get_baseline_offset()?) }
+    pub fn set_baseline_offset(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_baseline_offset(value)?)
+    }
+    pub fn baseline_offset(self, value: f64) -> Result<Self> {
+        self.set_baseline_offset(value)?;
         Ok(self)
     }
 }
@@ -31628,6 +31698,7 @@ impl TextBox {
     pub fn copy(&self) -> Result<()> { Ok(self.raw.copy()?) }
     pub fn paste(&self) -> Result<()> { Ok(self.raw.paste()?) }
     pub fn clear(&self) -> Result<()> { Ok(self.raw.clear()?) }
+    pub fn scroll_to_line_with_int32(&self, line_index: i32) -> Result<()> { Ok(self.raw.scroll_to_line_with_int32(line_index)?) }
     pub fn select_all(&self) -> Result<()> { Ok(self.raw.select_all()?) }
     pub fn undo(&self) -> Result<()> { Ok(self.raw.undo()?) }
     pub fn redo(&self) -> Result<()> { Ok(self.raw.redo()?) }

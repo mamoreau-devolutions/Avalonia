@@ -31,12 +31,12 @@ public static class AvaloniaProjectionProfiles
             // Wave M grew TemplatedControl (fonts/padding) and TextBlock (fonts/wrapping).
             // Nano-COM vtables are flattened, so every interface below TemplatedControl
             // republishes. TextBlock is not under TemplatedControl; SelectableTextBlock is.
-            ["Avalonia.Host.Com.IAvnTextBlock"] = 5,
-            ["Avalonia.Host.Com.IAvnSelectableTextBlock"] = 2,
+            ["Avalonia.Host.Com.IAvnTextBlock"] = 6,
+            ["Avalonia.Host.Com.IAvnSelectableTextBlock"] = 3,
             ["Avalonia.Host.Com.IAvnTemplatedControl"] = 5,
             ["Avalonia.Host.Com.IAvnItemsControl"] = 6,
             ["Avalonia.Host.Com.IAvnSelectingItemsControl"] = 6,
-            ["Avalonia.Host.Com.IAvnTextBox"] = 6,
+            ["Avalonia.Host.Com.IAvnTextBox"] = 7,
             ["Avalonia.Host.Com.IAvnRangeBase"] = 5,
             ["Avalonia.Host.Com.IAvnSlider"] = 5,
             ["Avalonia.Host.Com.IAvnProgressBar"] = 5,
@@ -79,7 +79,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnHyperlinkButton"] = 3,
             ["Avalonia.Host.Com.IAvnIconElement"] = 2,
             ["Avalonia.Host.Com.IAvnLabel"] = 2,
-            ["Avalonia.Host.Com.IAvnMaskedTextBox"] = 3,
+            ["Avalonia.Host.Com.IAvnMaskedTextBox"] = 4,
             ["Avalonia.Host.Com.IAvnMenu"] = 3,
             ["Avalonia.Host.Com.IAvnMenuBase"] = 3,
             ["Avalonia.Host.Com.IAvnMenuItem"] = 4,
@@ -292,7 +292,7 @@ public static class AvaloniaProjectionProfiles
             [
                 "Text", "FontSize", "FontWeight", "FontFamily", "FontStyle", "FontStretch",
                 "Foreground", "Background", "Padding", "TextAlignment", "LetterSpacing",
-                "LineSpacing", "MaxLines", "TextWrapping",
+                "LineSpacing", "LineHeight", "BaselineOffset", "MaxLines", "TextWrapping",
             ],
             ["Avalonia.Controls.Image"] =
                 ["Source", "Stretch", "StretchDirection", "BlendMode"],
@@ -433,7 +433,11 @@ public static class AvaloniaProjectionProfiles
                 ["Mask", "AsciiOnly", "HidePromptOnLeave", "ResetOnPrompt", "ResetOnSpace",
                  "MaskCompleted", "MaskFull"],
             ["Avalonia.Controls.SelectableTextBlock"] =
-                ["SelectionStart", "SelectionEnd", "SelectedText", "CanCopy", "Copy"],
+            [
+                "SelectionStart", "SelectionEnd", "SelectedText", "CanCopy", "Copy",
+                "SelectionBrush", "SelectionForegroundBrush", "SelectAll", "ClearSelection",
+                "CopyingToClipboard",
+            ],
             ["Avalonia.Controls.Calendar"] =
             [
                 "SelectedDate", "DisplayDate", "DisplayDateStart", "DisplayDateEnd",
@@ -527,7 +531,7 @@ public static class AvaloniaProjectionProfiles
                 "TextAlignment", "SelectionBrush", "SelectionForegroundBrush", "CaretBrush",
                 "IsInactiveSelectionHighlightEnabled", "ClearSelectionOnLostFocus",
                 "UseFloatingPlaceholder", "PlaceholderForeground", "InnerLeftContent",
-                "InnerRightContent", "SelectAll", "ClearSelection",
+                "InnerRightContent", "SelectAll", "ClearSelection", "ScrollToLine",
                 "CopyingToClipboard", "CuttingToClipboard", "PastingFromClipboard",
             ],
             ["Avalonia.Controls.ScrollViewer"] =
@@ -918,6 +922,10 @@ public static class AvaloniaProjectionProfiles
                 PayloadKind = EventPayloadKind.None,
             },
             ["Avalonia.Controls.TextBox.PastingFromClipboard"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.SelectableTextBlock.CopyingToClipboard"] = new()
             {
                 PayloadKind = EventPayloadKind.None,
             },

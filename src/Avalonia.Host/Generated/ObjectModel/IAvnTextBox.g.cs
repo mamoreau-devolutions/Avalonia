@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("0A134107-C133-5FA2-91FD-BB3A9017A9F2")]
+[Guid("007AACD5-4D3D-5EC0-BCA7-A16577A28838")]
 public partial interface IAvnTextBox : IAvnTemplatedControl
 {
     [PreserveSig]
@@ -218,6 +218,9 @@ public partial interface IAvnTextBox : IAvnTemplatedControl
 
     [PreserveSig]
     int Clear();
+
+    [PreserveSig]
+    int ScrollToLineWithInt32(int lineIndex);
 
     [PreserveSig]
     int SelectAll();
@@ -2319,6 +2322,21 @@ public sealed partial class AvnTextBox : IAvnTextBox
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Clear();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int ScrollToLineWithInt32(int lineIndex)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ScrollToLine(lineIndex);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

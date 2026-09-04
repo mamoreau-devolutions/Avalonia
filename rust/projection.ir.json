@@ -2129,8 +2129,8 @@
       "name": "IAvnMaskedTextBox",
       "fullName": "Avalonia.Host.Com.IAvnMaskedTextBox",
       "kind": "Class",
-      "iid": "DDBA5432-2E90-5ECD-A402-386F322F05D3",
-      "abiVersion": 3,
+      "iid": "792FE230-E153-58BF-9464-BABAC8870A8C",
+      "abiVersion": 4,
       "baseFullName": "Avalonia.Host.Com.IAvnTextBox",
       "managedFullName": "Avalonia.Controls.MaskedTextBox",
       "isConstructible": true,
@@ -4019,8 +4019,8 @@
       "name": "IAvnSelectableTextBlock",
       "fullName": "Avalonia.Host.Com.IAvnSelectableTextBlock",
       "kind": "Class",
-      "iid": "BD18F627-FE50-51F7-B99E-00905B58892C",
-      "abiVersion": 2,
+      "iid": "0B5F5059-2BDC-54BF-A0A0-4093EB13EB07",
+      "abiVersion": 3,
       "baseFullName": "Avalonia.Host.Com.IAvnTextBlock",
       "managedFullName": "Avalonia.Controls.SelectableTextBlock",
       "isConstructible": true,
@@ -4031,9 +4031,45 @@
           "returnKind": "I32",
           "preserveSig": true,
           "parameters": []
+        },
+        {
+          "name": "SelectAll",
+          "managedName": "SelectAll",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": []
+        },
+        {
+          "name": "ClearSelection",
+          "managedName": "ClearSelection",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": []
         }
       ],
       "properties": [
+        {
+          "name": "SelectionBrush",
+          "kind": "Brush",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnBrush",
+          "interfaceIid": "FC7CCBAE-ED75-5C6D-8516-DF706E137ED3",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.IBrush",
+          "isNullable": true
+        },
+        {
+          "name": "SelectionForegroundBrush",
+          "kind": "Brush",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnBrush",
+          "interfaceIid": "FC7CCBAE-ED75-5C6D-8516-DF706E137ED3",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.IBrush",
+          "isNullable": true
+        },
         {
           "name": "SelectionStart",
           "kind": "I32",
@@ -4071,7 +4107,17 @@
           "isNullable": false
         }
       ],
-      "events": []
+      "events": [
+        {
+          "name": "CopyingToClipboard",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnSelectableTextBlockCopyingToClipboardHandler",
+          "handlerInterfaceIid": "CB10B16D-D8FC-53DE-A8B0-1008B8215501",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E",
+          "parameters": []
+        }
+      ]
     },
     {
       "name": "IAvnSeparator",
@@ -4828,8 +4874,8 @@
       "name": "IAvnTextBlock",
       "fullName": "Avalonia.Host.Com.IAvnTextBlock",
       "kind": "Class",
-      "iid": "74662671-AA6E-568D-89E2-4569829F35A8",
-      "abiVersion": 5,
+      "iid": "991802B9-BF9B-5BAE-B9A7-5076F148CF98",
+      "abiVersion": 6,
       "baseFullName": "Avalonia.Host.Com.IAvnControl",
       "managedFullName": "Avalonia.Controls.TextBlock",
       "isConstructible": true,
@@ -4921,6 +4967,15 @@
           "isNullable": true
         },
         {
+          "name": "LineHeight",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
           "name": "LineSpacing",
           "kind": "F64",
           "canRead": true,
@@ -4964,6 +5019,15 @@
           "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Media.TextAlignment",
           "isNullable": false
+        },
+        {
+          "name": "BaselineOffset",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
         }
       ],
       "events": []
@@ -4972,8 +5036,8 @@
       "name": "IAvnTextBox",
       "fullName": "Avalonia.Host.Com.IAvnTextBox",
       "kind": "Class",
-      "iid": "0A134107-C133-5FA2-91FD-BB3A9017A9F2",
-      "abiVersion": 6,
+      "iid": "007AACD5-4D3D-5EC0-BCA7-A16577A28838",
+      "abiVersion": 7,
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.TextBox",
       "isConstructible": true,
@@ -5012,6 +5076,21 @@
           "returnKind": "I32",
           "preserveSig": true,
           "parameters": []
+        },
+        {
+          "name": "ScrollToLineWithInt32",
+          "managedName": "ScrollToLine",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": [
+            {
+              "name": "lineIndex",
+              "kind": "I32",
+              "direction": "In",
+              "managedTypeName": "System.Int32",
+              "isNullable": false
+            }
+          ]
         },
         {
           "name": "SelectAll",
@@ -10512,31 +10591,6 @@
       "reason": "Not included by projection policy"
     },
     {
-      "owner": "Avalonia.Controls.SelectableTextBlock",
-      "member": "SelectionBrush",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.SelectableTextBlock",
-      "member": "SelectionForegroundBrush",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.SelectableTextBlock",
-      "member": "CopyingToClipboard",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.SelectableTextBlock",
-      "member": "SelectAll()",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.SelectableTextBlock",
-      "member": "ClearSelection()",
-      "reason": "Not included by projection policy"
-    },
-    {
       "owner": "Avalonia.Controls.Shapes.Polygon",
       "member": "Points",
       "reason": "Not included by projection policy"
@@ -10763,11 +10817,6 @@
     },
     {
       "owner": "Avalonia.Controls.TextBlock",
-      "member": "LineHeight",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TextBlock",
       "member": "TextTrimming",
       "reason": "Not included by projection policy"
     },
@@ -10784,11 +10833,6 @@
     {
       "owner": "Avalonia.Controls.TextBlock",
       "member": "Inlines",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TextBlock",
-      "member": "BaselineOffset",
       "reason": "Not included by projection policy"
     },
     {
@@ -10829,11 +10873,6 @@
     {
       "owner": "Avalonia.Controls.TextBox",
       "member": "GetLineCount()",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TextBox",
-      "member": "ScrollToLine(Int32)",
       "reason": "Not included by projection policy"
     },
     {
