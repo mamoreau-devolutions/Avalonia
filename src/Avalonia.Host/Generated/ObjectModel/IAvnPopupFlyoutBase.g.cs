@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("C804908E-9834-53CA-9B84-6F45DC6EEC15")]
+[Guid("8E367D08-0CD3-55F1-AF3E-52764EE0FD1D")]
 public partial interface IAvnPopupFlyoutBase : IAvnFlyoutBase
 {
     [PreserveSig]
@@ -17,6 +17,18 @@ public partial interface IAvnPopupFlyoutBase : IAvnFlyoutBase
 
     [PreserveSig]
     int SetPlacement(int value);
+
+    [PreserveSig]
+    int GetPlacementGravity(out int value);
+
+    [PreserveSig]
+    int SetPlacementGravity(int value);
+
+    [PreserveSig]
+    int GetPlacementAnchor(out int value);
+
+    [PreserveSig]
+    int SetPlacementAnchor(int value);
 
     [PreserveSig]
     int GetHorizontalOffset(out double value);
@@ -41,6 +53,12 @@ public partial interface IAvnPopupFlyoutBase : IAvnFlyoutBase
 
     [PreserveSig]
     int SetOverlayDismissEventPassThrough(int value);
+
+    [PreserveSig]
+    int GetPlacementConstraintAdjustment(out int value);
+
+    [PreserveSig]
+    int SetPlacementConstraintAdjustment(int value);
 
     [PreserveSig]
     int AdviseClosing(IAvnPopupFlyoutBaseClosingHandler? handler, out long subscriptionId);
@@ -323,6 +341,68 @@ public sealed partial class AvnPopupFlyoutBase : IAvnPopupFlyoutBase
         }
     }
 
+    public int GetPlacementGravity(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.PlacementGravity;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetPlacementGravity(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.PlacementGravity = (global::Avalonia.Controls.Primitives.PopupPositioning.PopupGravity)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetPlacementAnchor(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.PlacementAnchor;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetPlacementAnchor(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.PlacementAnchor = (global::Avalonia.Controls.Primitives.PopupPositioning.PopupAnchor)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetHorizontalOffset(out double value)
     {
         value = default!;
@@ -439,6 +519,37 @@ public sealed partial class AvnPopupFlyoutBase : IAvnPopupFlyoutBase
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.OverlayDismissEventPassThrough = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetPlacementConstraintAdjustment(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.PlacementConstraintAdjustment;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetPlacementConstraintAdjustment(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.PlacementConstraintAdjustment = (global::Avalonia.Controls.Primitives.PopupPositioning.PopupPositionerConstraintAdjustment)value;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

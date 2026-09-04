@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
@@ -566,6 +567,7 @@ public static class ClrTypeExtractor
             {
                 Name = type.Name,
                 FullName = type.FullName ?? type.Name,
+                IsFlags = type.IsDefined(typeof(FlagsAttribute), inherit: false),
                 Values = Enum.GetNames(type)
                     .Zip(Enum.GetValues(type).Cast<object>())
                     .Select(pair => new ProjectedEnumValue

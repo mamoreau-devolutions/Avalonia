@@ -1,11 +1,11 @@
 use avalonia::{
-    App, Border, Brush, Button, ClickMode, Color, ComboBox, ComboBoxItem, ContextMenu,
-    CornerRadius, DatePicker, Dock, DockPanel, DropDownButton, ExpandDirection, Expander,
-    FlexAlignItems, FlexDirection, FlexJustifyContent, FlexPanel, FlexWrap, Flyout, FlyoutShowMode,
-    FontWeight, Grid, GridResizeBehavior, GridResizeDirection, GridSplitter, HorizontalAlignment,
-    HyperlinkButton, Image, ListBox, ListBoxItem, Menu, MenuFlyout, MenuItem, MenuItemToggleType,
-    Orientation, PlacementMode, ProgressBar, RadioButton, RelativePanel, RepeatButton,
-    ScrollViewer, SelectionMode, SplitButton, SplitView, SplitViewDisplayMode,
+    selection_mode, App, Border, Brush, Button, ClickMode, Color, ComboBox, ComboBoxItem,
+    ContextMenu, CornerRadius, DatePicker, Dock, DockPanel, DropDownButton, ExpandDirection,
+    Expander, FlexAlignItems, FlexDirection, FlexJustifyContent, FlexPanel, FlexWrap, Flyout,
+    FlyoutShowMode, FontWeight, Grid, GridResizeBehavior, GridResizeDirection, GridSplitter,
+    HorizontalAlignment, HyperlinkButton, Image, ListBox, ListBoxItem, Menu, MenuFlyout, MenuItem,
+    MenuItemToggleType, Orientation, PlacementMode, ProgressBar, RadioButton, RelativePanel,
+    RepeatButton, ScrollViewer, SplitButton, SplitView, SplitViewDisplayMode,
     SplitViewPanePlacement, StackPanel, Stretch, StretchDirection, TabControl, TabItem,
     TextAlignment, TextBlock, TextBox, ThemeVariant, Thickness, TimePicker, ToggleSplitButton,
     ToggleSwitch, ToolTip, TreeView, TreeViewItem, UniformGrid, VerticalAlignment, Viewbox, Window,
@@ -216,14 +216,14 @@ fn builders_create_a_real_window_through_nativeaot() {
         let combo_box_for_post = combo_box.clone();
 
         let list_box = ListBox::new()?
-            .selection_mode(SelectionMode::Multiple)?
+            .selection_mode(selection_mode::MULTIPLE)?
             .item(ListBoxItem::new()?.content(TextBlock::new()?.text("First")?)?)?
             .item(ListBoxItem::new()?.content(TextBlock::new()?.text("Second")?)?)?
             .on_selection_changed(scope, move |_| {
                 list_changed_from_handler.store(true, Ordering::SeqCst);
             })?;
         assert_eq!(list_box.items()?.len()?, 2);
-        assert_eq!(list_box.get_selection_mode()?, SelectionMode::Multiple);
+        assert_eq!(list_box.get_selection_mode()?, selection_mode::MULTIPLE);
         let list_box_for_post = list_box.clone();
 
         let hover_panel = Border::new()?.child(TextBlock::new()?.text("Hover")?)?;
@@ -396,11 +396,11 @@ fn builders_create_a_real_window_through_nativeaot() {
             tree_collapsed_from_handler.store(true, Ordering::SeqCst);
         })?;
         let tree = TreeView::new()?
-            .selection_mode(SelectionMode::Single)?
+            .selection_mode(selection_mode::SINGLE)?
             .auto_scroll_to_selected_item(false)?
             .item(branch.clone())?;
         assert_eq!(tree.items()?.len()?, 1);
-        assert_eq!(tree.get_selection_mode()?, SelectionMode::Single);
+        assert_eq!(tree.get_selection_mode()?, selection_mode::SINGLE);
         assert!(!tree.get_auto_scroll_to_selected_item()?);
         tree.subscribe_selection_changed(|_| {})?.unsubscribe()?;
         tree.collapse_sub_tree_with_tree_view_item(&branch)?;

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("C95E2696-101A-5F36-B5DD-E81DFB8250E8")]
+[Guid("E500A22B-B91E-56BB-9C91-F2481DA72727")]
 public partial interface IAvnPopup : IAvnControl
 {
     [PreserveSig]
@@ -38,6 +38,24 @@ public partial interface IAvnPopup : IAvnControl
 
     [PreserveSig]
     int SetIsOpen(int value);
+
+    [PreserveSig]
+    int GetPlacementAnchor(out int value);
+
+    [PreserveSig]
+    int SetPlacementAnchor(int value);
+
+    [PreserveSig]
+    int GetPlacementConstraintAdjustment(out int value);
+
+    [PreserveSig]
+    int SetPlacementConstraintAdjustment(int value);
+
+    [PreserveSig]
+    int GetPlacementGravity(out int value);
+
+    [PreserveSig]
+    int SetPlacementGravity(int value);
 
     [PreserveSig]
     int GetPlacement(out int value);
@@ -1046,6 +1064,99 @@ public sealed partial class AvnPopup : IAvnPopup
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.IsOpen = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetPlacementAnchor(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.PlacementAnchor;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetPlacementAnchor(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.PlacementAnchor = (global::Avalonia.Controls.Primitives.PopupPositioning.PopupAnchor)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetPlacementConstraintAdjustment(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.PlacementConstraintAdjustment;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetPlacementConstraintAdjustment(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.PlacementConstraintAdjustment = (global::Avalonia.Controls.Primitives.PopupPositioning.PopupPositionerConstraintAdjustment)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetPlacementGravity(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.PlacementGravity;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetPlacementGravity(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.PlacementGravity = (global::Avalonia.Controls.Primitives.PopupPositioning.PopupGravity)value;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

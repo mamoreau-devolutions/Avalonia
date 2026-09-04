@@ -13752,7 +13752,7 @@ impl ComPtr<IAvnContentControl> {
     }
 }
 
-pub const I_AVN_CONTEXT_MENU_IID: Guid = Guid { data1: 0xDC4D26E4, data2: 0x82D6, data3: 0x50B9, data4: [0x99, 0x92, 0x76, 0x7F, 0x22, 0x3F, 0xE8, 0x32] };
+pub const I_AVN_CONTEXT_MENU_IID: Guid = Guid { data1: 0x519F1FAC, data2: 0x5B53, data3: 0x56BD, data4: [0xAC, 0x3F, 0x02, 0x25, 0x0C, 0x15, 0x84, 0x3B] };
 
 #[repr(C)]
 struct IAvnContextMenuVtbl {
@@ -13851,6 +13851,12 @@ struct IAvnContextMenuVtbl {
     set_horizontal_offset: unsafe extern "system" fn(*mut IAvnContextMenu, f64) -> i32,
     get_vertical_offset: unsafe extern "system" fn(*mut IAvnContextMenu, *mut f64) -> i32,
     set_vertical_offset: unsafe extern "system" fn(*mut IAvnContextMenu, f64) -> i32,
+    get_placement_anchor: unsafe extern "system" fn(*mut IAvnContextMenu, *mut i32) -> i32,
+    set_placement_anchor: unsafe extern "system" fn(*mut IAvnContextMenu, i32) -> i32,
+    get_placement_constraint_adjustment: unsafe extern "system" fn(*mut IAvnContextMenu, *mut i32) -> i32,
+    set_placement_constraint_adjustment: unsafe extern "system" fn(*mut IAvnContextMenu, i32) -> i32,
+    get_placement_gravity: unsafe extern "system" fn(*mut IAvnContextMenu, *mut i32) -> i32,
+    set_placement_gravity: unsafe extern "system" fn(*mut IAvnContextMenu, i32) -> i32,
     get_placement: unsafe extern "system" fn(*mut IAvnContextMenu, *mut i32) -> i32,
     set_placement: unsafe extern "system" fn(*mut IAvnContextMenu, i32) -> i32,
     get_window_manager_add_shadow_hint: unsafe extern "system" fn(*mut IAvnContextMenu, *mut i32) -> i32,
@@ -14504,6 +14510,48 @@ impl ComPtr<IAvnContextMenu> {
     pub fn set_vertical_offset(&self, value: f64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_offset)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_placement_anchor(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_placement_anchor)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_placement_anchor(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placement_anchor)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_placement_constraint_adjustment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_placement_constraint_adjustment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_placement_constraint_adjustment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placement_constraint_adjustment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_placement_gravity(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_placement_gravity)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_placement_gravity(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placement_gravity)(self.as_raw(), value);
             hresult::check(hr)
         }
     }
@@ -18388,7 +18436,7 @@ impl ComPtr<IAvnFlexPanel> {
     }
 }
 
-pub const I_AVN_FLYOUT_IID: Guid = Guid { data1: 0xE0AC8C18, data2: 0x8A66, data3: 0x5364, data4: [0xAD, 0xCA, 0x27, 0x73, 0x95, 0x47, 0x2F, 0xA4] };
+pub const I_AVN_FLYOUT_IID: Guid = Guid { data1: 0x16283CAB, data2: 0xDD33, data3: 0x5D3F, data4: [0xB9, 0x80, 0x0E, 0xE0, 0x49, 0x39, 0xCF, 0x2A] };
 
 #[repr(C)]
 struct IAvnFlyoutVtbl {
@@ -18409,6 +18457,10 @@ struct IAvnFlyoutVtbl {
     get_popup: unsafe extern "system" fn(*mut IAvnFlyout, *mut *mut IAvnPopup) -> i32,
     get_placement: unsafe extern "system" fn(*mut IAvnFlyout, *mut i32) -> i32,
     set_placement: unsafe extern "system" fn(*mut IAvnFlyout, i32) -> i32,
+    get_placement_gravity: unsafe extern "system" fn(*mut IAvnFlyout, *mut i32) -> i32,
+    set_placement_gravity: unsafe extern "system" fn(*mut IAvnFlyout, i32) -> i32,
+    get_placement_anchor: unsafe extern "system" fn(*mut IAvnFlyout, *mut i32) -> i32,
+    set_placement_anchor: unsafe extern "system" fn(*mut IAvnFlyout, i32) -> i32,
     get_horizontal_offset: unsafe extern "system" fn(*mut IAvnFlyout, *mut f64) -> i32,
     set_horizontal_offset: unsafe extern "system" fn(*mut IAvnFlyout, f64) -> i32,
     get_vertical_offset: unsafe extern "system" fn(*mut IAvnFlyout, *mut f64) -> i32,
@@ -18417,6 +18469,8 @@ struct IAvnFlyoutVtbl {
     set_show_mode: unsafe extern "system" fn(*mut IAvnFlyout, i32) -> i32,
     get_overlay_dismiss_event_pass_through: unsafe extern "system" fn(*mut IAvnFlyout, *mut i32) -> i32,
     set_overlay_dismiss_event_pass_through: unsafe extern "system" fn(*mut IAvnFlyout, i32) -> i32,
+    get_placement_constraint_adjustment: unsafe extern "system" fn(*mut IAvnFlyout, *mut i32) -> i32,
+    set_placement_constraint_adjustment: unsafe extern "system" fn(*mut IAvnFlyout, i32) -> i32,
     advise_closing: unsafe extern "system" fn(*mut IAvnFlyout, *mut IAvnPopupFlyoutBaseClosingHandler, *mut i64) -> i32,
     unadvise_closing: unsafe extern "system" fn(*mut IAvnFlyout, i64) -> i32,
     advise_opening: unsafe extern "system" fn(*mut IAvnFlyout, *mut IAvnPopupFlyoutBaseOpeningHandler, *mut i64) -> i32,
@@ -18531,6 +18585,34 @@ impl ComPtr<IAvnFlyout> {
             hresult::check(hr)
         }
     }
+    pub fn get_placement_gravity(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_placement_gravity)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_placement_gravity(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placement_gravity)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_placement_anchor(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_placement_anchor)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_placement_anchor(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placement_anchor)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
     pub fn get_horizontal_offset(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -18584,6 +18666,20 @@ impl ComPtr<IAvnFlyout> {
     pub fn set_overlay_dismiss_event_pass_through(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_overlay_dismiss_event_pass_through)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_placement_constraint_adjustment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_placement_constraint_adjustment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_placement_constraint_adjustment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placement_constraint_adjustment)(self.as_raw(), value);
             hresult::check(hr)
         }
     }
@@ -27821,7 +27917,7 @@ impl ComPtr<IAvnMenuBase> {
     }
 }
 
-pub const I_AVN_MENU_FLYOUT_IID: Guid = Guid { data1: 0x9980B9F3, data2: 0x355C, data3: 0x5575, data4: [0xAB, 0xE3, 0x04, 0x66, 0x52, 0xBF, 0xCD, 0xC8] };
+pub const I_AVN_MENU_FLYOUT_IID: Guid = Guid { data1: 0x56421EC0, data2: 0x482F, data3: 0x51EF, data4: [0xB5, 0x02, 0x58, 0xEF, 0x0D, 0xF9, 0x17, 0x26] };
 
 #[repr(C)]
 struct IAvnMenuFlyoutVtbl {
@@ -27842,6 +27938,10 @@ struct IAvnMenuFlyoutVtbl {
     get_popup: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut *mut IAvnPopup) -> i32,
     get_placement: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut i32) -> i32,
     set_placement: unsafe extern "system" fn(*mut IAvnMenuFlyout, i32) -> i32,
+    get_placement_gravity: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut i32) -> i32,
+    set_placement_gravity: unsafe extern "system" fn(*mut IAvnMenuFlyout, i32) -> i32,
+    get_placement_anchor: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut i32) -> i32,
+    set_placement_anchor: unsafe extern "system" fn(*mut IAvnMenuFlyout, i32) -> i32,
     get_horizontal_offset: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut f64) -> i32,
     set_horizontal_offset: unsafe extern "system" fn(*mut IAvnMenuFlyout, f64) -> i32,
     get_vertical_offset: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut f64) -> i32,
@@ -27850,6 +27950,8 @@ struct IAvnMenuFlyoutVtbl {
     set_show_mode: unsafe extern "system" fn(*mut IAvnMenuFlyout, i32) -> i32,
     get_overlay_dismiss_event_pass_through: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut i32) -> i32,
     set_overlay_dismiss_event_pass_through: unsafe extern "system" fn(*mut IAvnMenuFlyout, i32) -> i32,
+    get_placement_constraint_adjustment: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut i32) -> i32,
+    set_placement_constraint_adjustment: unsafe extern "system" fn(*mut IAvnMenuFlyout, i32) -> i32,
     advise_closing: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut IAvnPopupFlyoutBaseClosingHandler, *mut i64) -> i32,
     unadvise_closing: unsafe extern "system" fn(*mut IAvnMenuFlyout, i64) -> i32,
     advise_opening: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut IAvnPopupFlyoutBaseOpeningHandler, *mut i64) -> i32,
@@ -27963,6 +28065,34 @@ impl ComPtr<IAvnMenuFlyout> {
             hresult::check(hr)
         }
     }
+    pub fn get_placement_gravity(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_placement_gravity)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_placement_gravity(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placement_gravity)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_placement_anchor(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_placement_anchor)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_placement_anchor(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placement_anchor)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
     pub fn get_horizontal_offset(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -28016,6 +28146,20 @@ impl ComPtr<IAvnMenuFlyout> {
     pub fn set_overlay_dismiss_event_pass_through(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_overlay_dismiss_event_pass_through)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_placement_constraint_adjustment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_placement_constraint_adjustment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_placement_constraint_adjustment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placement_constraint_adjustment)(self.as_raw(), value);
             hresult::check(hr)
         }
     }
@@ -34691,7 +34835,7 @@ impl ComPtr<IAvnHeaderedSelectingItemsControl> {
     }
 }
 
-pub const I_AVN_POPUP_IID: Guid = Guid { data1: 0xC95E2696, data2: 0x101A, data3: 0x5F36, data4: [0xB5, 0xDD, 0xE8, 0x1D, 0xFB, 0x82, 0x50, 0xE8] };
+pub const I_AVN_POPUP_IID: Guid = Guid { data1: 0xE500A22B, data2: 0xB91E, data3: 0x56BB, data4: [0x9C, 0x91, 0xF2, 0x48, 0x1D, 0xA7, 0x27, 0x27] };
 
 #[repr(C)]
 struct IAvnPopupVtbl {
@@ -34752,6 +34896,12 @@ struct IAvnPopupVtbl {
     set_is_light_dismiss_enabled: unsafe extern "system" fn(*mut IAvnPopup, i32) -> i32,
     get_is_open: unsafe extern "system" fn(*mut IAvnPopup, *mut i32) -> i32,
     set_is_open: unsafe extern "system" fn(*mut IAvnPopup, i32) -> i32,
+    get_placement_anchor: unsafe extern "system" fn(*mut IAvnPopup, *mut i32) -> i32,
+    set_placement_anchor: unsafe extern "system" fn(*mut IAvnPopup, i32) -> i32,
+    get_placement_constraint_adjustment: unsafe extern "system" fn(*mut IAvnPopup, *mut i32) -> i32,
+    set_placement_constraint_adjustment: unsafe extern "system" fn(*mut IAvnPopup, i32) -> i32,
+    get_placement_gravity: unsafe extern "system" fn(*mut IAvnPopup, *mut i32) -> i32,
+    set_placement_gravity: unsafe extern "system" fn(*mut IAvnPopup, i32) -> i32,
     get_placement: unsafe extern "system" fn(*mut IAvnPopup, *mut i32) -> i32,
     set_placement: unsafe extern "system" fn(*mut IAvnPopup, i32) -> i32,
     get_placement_target: unsafe extern "system" fn(*mut IAvnPopup, *mut *mut IAvnControl) -> i32,
@@ -35163,6 +35313,48 @@ impl ComPtr<IAvnPopup> {
             hresult::check(hr)
         }
     }
+    pub fn get_placement_anchor(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_placement_anchor)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_placement_anchor(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placement_anchor)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_placement_constraint_adjustment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_placement_constraint_adjustment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_placement_constraint_adjustment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placement_constraint_adjustment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_placement_gravity(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_placement_gravity)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_placement_gravity(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placement_gravity)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
     pub fn get_placement(&self) -> Result<i32> {
         unsafe {
             let mut value: i32 = 0;
@@ -35331,7 +35523,7 @@ impl ComPtr<IAvnPopup> {
     }
 }
 
-pub const I_AVN_POPUP_FLYOUT_BASE_IID: Guid = Guid { data1: 0xC804908E, data2: 0x9834, data3: 0x53CA, data4: [0x9B, 0x84, 0x6F, 0x45, 0xDC, 0x6E, 0xEC, 0x15] };
+pub const I_AVN_POPUP_FLYOUT_BASE_IID: Guid = Guid { data1: 0x8E367D08, data2: 0x0CD3, data3: 0x55F1, data4: [0xAF, 0x3E, 0x52, 0x76, 0x4E, 0xE0, 0xFD, 0x1D] };
 
 #[repr(C)]
 struct IAvnPopupFlyoutBaseVtbl {
@@ -35352,6 +35544,10 @@ struct IAvnPopupFlyoutBaseVtbl {
     get_popup: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, *mut *mut IAvnPopup) -> i32,
     get_placement: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, *mut i32) -> i32,
     set_placement: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, i32) -> i32,
+    get_placement_gravity: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, *mut i32) -> i32,
+    set_placement_gravity: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, i32) -> i32,
+    get_placement_anchor: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, *mut i32) -> i32,
+    set_placement_anchor: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, i32) -> i32,
     get_horizontal_offset: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, *mut f64) -> i32,
     set_horizontal_offset: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, f64) -> i32,
     get_vertical_offset: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, *mut f64) -> i32,
@@ -35360,6 +35556,8 @@ struct IAvnPopupFlyoutBaseVtbl {
     set_show_mode: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, i32) -> i32,
     get_overlay_dismiss_event_pass_through: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, *mut i32) -> i32,
     set_overlay_dismiss_event_pass_through: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, i32) -> i32,
+    get_placement_constraint_adjustment: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, *mut i32) -> i32,
+    set_placement_constraint_adjustment: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, i32) -> i32,
     advise_closing: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, *mut IAvnPopupFlyoutBaseClosingHandler, *mut i64) -> i32,
     unadvise_closing: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, i64) -> i32,
     advise_opening: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, *mut IAvnPopupFlyoutBaseOpeningHandler, *mut i64) -> i32,
@@ -35472,6 +35670,34 @@ impl ComPtr<IAvnPopupFlyoutBase> {
             hresult::check(hr)
         }
     }
+    pub fn get_placement_gravity(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_placement_gravity)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_placement_gravity(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placement_gravity)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_placement_anchor(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_placement_anchor)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_placement_anchor(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placement_anchor)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
     pub fn get_horizontal_offset(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -35525,6 +35751,20 @@ impl ComPtr<IAvnPopupFlyoutBase> {
     pub fn set_overlay_dismiss_event_pass_through(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_overlay_dismiss_event_pass_through)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_placement_constraint_adjustment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_placement_constraint_adjustment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_placement_constraint_adjustment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placement_constraint_adjustment)(self.as_raw(), value);
             hresult::check(hr)
         }
     }

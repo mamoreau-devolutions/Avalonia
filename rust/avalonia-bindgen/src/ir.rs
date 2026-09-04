@@ -38,6 +38,8 @@ pub struct ProjectedEnum {
     pub name: String,
     pub full_name: String,
     #[serde(default)]
+    pub is_flags: bool,
+    #[serde(default)]
     pub values: Vec<ProjectedEnumValue>,
 }
 

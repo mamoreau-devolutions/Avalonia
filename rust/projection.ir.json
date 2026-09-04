@@ -1203,8 +1203,8 @@
       "name": "IAvnContextMenu",
       "fullName": "Avalonia.Host.Com.IAvnContextMenu",
       "kind": "Class",
-      "iid": "DC4D26E4-82D6-50B9-9992-767F223FE832",
-      "abiVersion": 5,
+      "iid": "519F1FAC-5B53-56BD-AC3F-02250C15843B",
+      "abiVersion": 6,
       "baseFullName": "Avalonia.Host.Com.IAvnMenuBase",
       "managedFullName": "Avalonia.Controls.ContextMenu",
       "isConstructible": true,
@@ -1226,6 +1226,33 @@
           "canWrite": true,
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "PlacementAnchor",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Primitives.PopupPositioning.PopupAnchor",
+          "isNullable": false
+        },
+        {
+          "name": "PlacementConstraintAdjustment",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Primitives.PopupPositioning.PopupPositionerConstraintAdjustment",
+          "isNullable": false
+        },
+        {
+          "name": "PlacementGravity",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Primitives.PopupPositioning.PopupGravity",
           "isNullable": false
         },
         {
@@ -1826,8 +1853,8 @@
       "name": "IAvnFlyout",
       "fullName": "Avalonia.Host.Com.IAvnFlyout",
       "kind": "Class",
-      "iid": "E0AC8C18-8A66-5364-ADCA-277395472FA4",
-      "abiVersion": 2,
+      "iid": "16283CAB-DD33-5D3F-B980-0EE04939CF2A",
+      "abiVersion": 3,
       "baseFullName": "Avalonia.Host.Com.IAvnPopupFlyoutBase",
       "managedFullName": "Avalonia.Controls.Flyout",
       "isConstructible": true,
@@ -2383,8 +2410,8 @@
       "name": "IAvnMenuFlyout",
       "fullName": "Avalonia.Host.Com.IAvnMenuFlyout",
       "kind": "Class",
-      "iid": "9980B9F3-355C-5575-ABE3-046652BFCDC8",
-      "abiVersion": 2,
+      "iid": "56421EC0-482F-51EF-B502-58EF0DF91726",
+      "abiVersion": 3,
       "baseFullName": "Avalonia.Host.Com.IAvnPopupFlyoutBase",
       "managedFullName": "Avalonia.Controls.MenuFlyout",
       "isConstructible": true,
@@ -3103,8 +3130,8 @@
       "name": "IAvnPopup",
       "fullName": "Avalonia.Host.Com.IAvnPopup",
       "kind": "Class",
-      "iid": "C95E2696-101A-5F36-B5DD-E81DFB8250E8",
-      "abiVersion": 3,
+      "iid": "E500A22B-B91E-56BB-9C91-F2481DA72727",
+      "abiVersion": 4,
       "baseFullName": "Avalonia.Host.Com.IAvnControl",
       "managedFullName": "Avalonia.Controls.Primitives.Popup",
       "isConstructible": true,
@@ -3169,6 +3196,33 @@
           "canWrite": true,
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "PlacementAnchor",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Primitives.PopupPositioning.PopupAnchor",
+          "isNullable": false
+        },
+        {
+          "name": "PlacementConstraintAdjustment",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Primitives.PopupPositioning.PopupPositionerConstraintAdjustment",
+          "isNullable": false
+        },
+        {
+          "name": "PlacementGravity",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Primitives.PopupPositioning.PopupGravity",
           "isNullable": false
         },
         {
@@ -3288,8 +3342,8 @@
       "name": "IAvnPopupFlyoutBase",
       "fullName": "Avalonia.Host.Com.IAvnPopupFlyoutBase",
       "kind": "Class",
-      "iid": "C804908E-9834-53CA-9B84-6F45DC6EEC15",
-      "abiVersion": 2,
+      "iid": "8E367D08-0CD3-55F1-AF3E-52764EE0FD1D",
+      "abiVersion": 3,
       "baseFullName": "Avalonia.Host.Com.IAvnFlyoutBase",
       "managedFullName": "Avalonia.Controls.Primitives.PopupFlyoutBase",
       "isConstructible": false,
@@ -3312,6 +3366,24 @@
           "canWrite": true,
           "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Controls.PlacementMode",
+          "isNullable": false
+        },
+        {
+          "name": "PlacementGravity",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Primitives.PopupPositioning.PopupGravity",
+          "isNullable": false
+        },
+        {
+          "name": "PlacementAnchor",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Primitives.PopupPositioning.PopupAnchor",
           "isNullable": false
         },
         {
@@ -3348,6 +3420,15 @@
           "canWrite": true,
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "PlacementConstraintAdjustment",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Primitives.PopupPositioning.PopupPositionerConstraintAdjustment",
           "isNullable": false
         }
       ],
@@ -6433,6 +6514,7 @@
     {
       "name": "AutoCompleteFilterMode",
       "fullName": "Avalonia.Controls.AutoCompleteFilterMode",
+      "isFlags": false,
       "values": [
         {
           "name": "None",
@@ -6495,6 +6577,7 @@
     {
       "name": "CalendarDatePickerFormat",
       "fullName": "Avalonia.Controls.CalendarDatePickerFormat",
+      "isFlags": false,
       "values": [
         {
           "name": "Long",
@@ -6513,6 +6596,7 @@
     {
       "name": "CalendarMode",
       "fullName": "Avalonia.Controls.CalendarMode",
+      "isFlags": false,
       "values": [
         {
           "name": "Month",
@@ -6531,6 +6615,7 @@
     {
       "name": "CalendarSelectionMode",
       "fullName": "Avalonia.Controls.CalendarSelectionMode",
+      "isFlags": false,
       "values": [
         {
           "name": "SingleDate",
@@ -6553,6 +6638,7 @@
     {
       "name": "ClickMode",
       "fullName": "Avalonia.Controls.ClickMode",
+      "isFlags": false,
       "values": [
         {
           "name": "Release",
@@ -6567,6 +6653,7 @@
     {
       "name": "CommandBarDefaultLabelPosition",
       "fullName": "Avalonia.Controls.CommandBarDefaultLabelPosition",
+      "isFlags": false,
       "values": [
         {
           "name": "Bottom",
@@ -6585,6 +6672,7 @@
     {
       "name": "CommandBarOverflowButtonVisibility",
       "fullName": "Avalonia.Controls.CommandBarOverflowButtonVisibility",
+      "isFlags": false,
       "values": [
         {
           "name": "Auto",
@@ -6603,6 +6691,7 @@
     {
       "name": "Dock",
       "fullName": "Avalonia.Controls.Dock",
+      "isFlags": false,
       "values": [
         {
           "name": "Left",
@@ -6625,6 +6714,7 @@
     {
       "name": "ExpandDirection",
       "fullName": "Avalonia.Controls.ExpandDirection",
+      "isFlags": false,
       "values": [
         {
           "name": "Down",
@@ -6647,6 +6737,7 @@
     {
       "name": "FlexAlignContent",
       "fullName": "Avalonia.Controls.FlexAlignContent",
+      "isFlags": false,
       "values": [
         {
           "name": "FlexStart",
@@ -6681,6 +6772,7 @@
     {
       "name": "FlexAlignItems",
       "fullName": "Avalonia.Controls.FlexAlignItems",
+      "isFlags": false,
       "values": [
         {
           "name": "FlexStart",
@@ -6703,6 +6795,7 @@
     {
       "name": "FlexDirection",
       "fullName": "Avalonia.Controls.FlexDirection",
+      "isFlags": false,
       "values": [
         {
           "name": "Row",
@@ -6725,6 +6818,7 @@
     {
       "name": "FlexJustifyContent",
       "fullName": "Avalonia.Controls.FlexJustifyContent",
+      "isFlags": false,
       "values": [
         {
           "name": "FlexStart",
@@ -6755,6 +6849,7 @@
     {
       "name": "FlexWrap",
       "fullName": "Avalonia.Controls.FlexWrap",
+      "isFlags": false,
       "values": [
         {
           "name": "NoWrap",
@@ -6773,6 +6868,7 @@
     {
       "name": "FlyoutShowMode",
       "fullName": "Avalonia.Controls.FlyoutShowMode",
+      "isFlags": false,
       "values": [
         {
           "name": "Standard",
@@ -6791,6 +6887,7 @@
     {
       "name": "GridResizeBehavior",
       "fullName": "Avalonia.Controls.GridResizeBehavior",
+      "isFlags": false,
       "values": [
         {
           "name": "BasedOnAlignment",
@@ -6813,6 +6910,7 @@
     {
       "name": "GridResizeDirection",
       "fullName": "Avalonia.Controls.GridResizeDirection",
+      "isFlags": false,
       "values": [
         {
           "name": "Auto",
@@ -6831,6 +6929,7 @@
     {
       "name": "Location",
       "fullName": "Avalonia.Controls.Location",
+      "isFlags": false,
       "values": [
         {
           "name": "Left",
@@ -6845,6 +6944,7 @@
     {
       "name": "MenuItemToggleType",
       "fullName": "Avalonia.Controls.MenuItemToggleType",
+      "isFlags": false,
       "values": [
         {
           "name": "None",
@@ -6863,6 +6963,7 @@
     {
       "name": "NotificationPosition",
       "fullName": "Avalonia.Controls.Notifications.NotificationPosition",
+      "isFlags": false,
       "values": [
         {
           "name": "TopLeft",
@@ -6893,6 +6994,7 @@
     {
       "name": "NotificationType",
       "fullName": "Avalonia.Controls.Notifications.NotificationType",
+      "isFlags": false,
       "values": [
         {
           "name": "Information",
@@ -6915,6 +7017,7 @@
     {
       "name": "PlacementMode",
       "fullName": "Avalonia.Controls.PlacementMode",
+      "isFlags": false,
       "values": [
         {
           "name": "Pointer",
@@ -6983,8 +7086,146 @@
       ]
     },
     {
+      "name": "PopupAnchor",
+      "fullName": "Avalonia.Controls.Primitives.PopupPositioning.PopupAnchor",
+      "isFlags": true,
+      "values": [
+        {
+          "name": "None",
+          "value": 0
+        },
+        {
+          "name": "Top",
+          "value": 1
+        },
+        {
+          "name": "Bottom",
+          "value": 2
+        },
+        {
+          "name": "VerticalMask",
+          "value": 3
+        },
+        {
+          "name": "Left",
+          "value": 4
+        },
+        {
+          "name": "TopLeft",
+          "value": 5
+        },
+        {
+          "name": "BottomLeft",
+          "value": 6
+        },
+        {
+          "name": "Right",
+          "value": 8
+        },
+        {
+          "name": "TopRight",
+          "value": 9
+        },
+        {
+          "name": "BottomRight",
+          "value": 10
+        },
+        {
+          "name": "HorizontalMask",
+          "value": 12
+        },
+        {
+          "name": "AllMask",
+          "value": 15
+        }
+      ]
+    },
+    {
+      "name": "PopupGravity",
+      "fullName": "Avalonia.Controls.Primitives.PopupPositioning.PopupGravity",
+      "isFlags": true,
+      "values": [
+        {
+          "name": "None",
+          "value": 0
+        },
+        {
+          "name": "Top",
+          "value": 1
+        },
+        {
+          "name": "Bottom",
+          "value": 2
+        },
+        {
+          "name": "Left",
+          "value": 4
+        },
+        {
+          "name": "TopLeft",
+          "value": 5
+        },
+        {
+          "name": "BottomLeft",
+          "value": 6
+        },
+        {
+          "name": "Right",
+          "value": 8
+        },
+        {
+          "name": "TopRight",
+          "value": 9
+        },
+        {
+          "name": "BottomRight",
+          "value": 10
+        }
+      ]
+    },
+    {
+      "name": "PopupPositionerConstraintAdjustment",
+      "fullName": "Avalonia.Controls.Primitives.PopupPositioning.PopupPositionerConstraintAdjustment",
+      "isFlags": true,
+      "values": [
+        {
+          "name": "None",
+          "value": 0
+        },
+        {
+          "name": "SlideX",
+          "value": 1
+        },
+        {
+          "name": "SlideY",
+          "value": 2
+        },
+        {
+          "name": "FlipX",
+          "value": 4
+        },
+        {
+          "name": "FlipY",
+          "value": 8
+        },
+        {
+          "name": "ResizeX",
+          "value": 16
+        },
+        {
+          "name": "ResizeY",
+          "value": 32
+        },
+        {
+          "name": "All",
+          "value": 63
+        }
+      ]
+    },
+    {
       "name": "ScrollBarVisibility",
       "fullName": "Avalonia.Controls.Primitives.ScrollBarVisibility",
+      "isFlags": false,
       "values": [
         {
           "name": "Disabled",
@@ -7007,6 +7248,7 @@
     {
       "name": "SnapPointsAlignment",
       "fullName": "Avalonia.Controls.Primitives.SnapPointsAlignment",
+      "isFlags": false,
       "values": [
         {
           "name": "Near",
@@ -7025,6 +7267,7 @@
     {
       "name": "SnapPointsType",
       "fullName": "Avalonia.Controls.Primitives.SnapPointsType",
+      "isFlags": false,
       "values": [
         {
           "name": "None",
@@ -7043,6 +7286,7 @@
     {
       "name": "SelectionMode",
       "fullName": "Avalonia.Controls.SelectionMode",
+      "isFlags": true,
       "values": [
         {
           "name": "Single",
@@ -7065,6 +7309,7 @@
     {
       "name": "SizeToContent",
       "fullName": "Avalonia.Controls.SizeToContent",
+      "isFlags": true,
       "values": [
         {
           "name": "Manual",
@@ -7087,6 +7332,7 @@
     {
       "name": "SplitViewDisplayMode",
       "fullName": "Avalonia.Controls.SplitViewDisplayMode",
+      "isFlags": false,
       "values": [
         {
           "name": "Inline",
@@ -7109,6 +7355,7 @@
     {
       "name": "SplitViewPanePlacement",
       "fullName": "Avalonia.Controls.SplitViewPanePlacement",
+      "isFlags": false,
       "values": [
         {
           "name": "Left",
@@ -7131,6 +7378,7 @@
     {
       "name": "TickPlacement",
       "fullName": "Avalonia.Controls.TickPlacement",
+      "isFlags": false,
       "values": [
         {
           "name": "None",
@@ -7153,6 +7401,7 @@
     {
       "name": "WindowClosingBehavior",
       "fullName": "Avalonia.Controls.WindowClosingBehavior",
+      "isFlags": false,
       "values": [
         {
           "name": "OwnerAndChildWindows",
@@ -7167,6 +7416,7 @@
     {
       "name": "WindowDecorations",
       "fullName": "Avalonia.Controls.WindowDecorations",
+      "isFlags": false,
       "values": [
         {
           "name": "None",
@@ -7185,6 +7435,7 @@
     {
       "name": "WindowStartupLocation",
       "fullName": "Avalonia.Controls.WindowStartupLocation",
+      "isFlags": false,
       "values": [
         {
           "name": "Manual",
@@ -7203,6 +7454,7 @@
     {
       "name": "WindowState",
       "fullName": "Avalonia.Controls.WindowState",
+      "isFlags": false,
       "values": [
         {
           "name": "Normal",
@@ -7225,6 +7477,7 @@
     {
       "name": "WrapPanelItemsAlignment",
       "fullName": "Avalonia.Controls.WrapPanelItemsAlignment",
+      "isFlags": false,
       "values": [
         {
           "name": "Start",
@@ -7255,6 +7508,7 @@
     {
       "name": "Key",
       "fullName": "Avalonia.Input.Key",
+      "isFlags": false,
       "values": [
         {
           "name": "None",
@@ -8153,6 +8407,7 @@
     {
       "name": "KeyModifiers",
       "fullName": "Avalonia.Input.KeyModifiers",
+      "isFlags": true,
       "values": [
         {
           "name": "None",
@@ -8179,6 +8434,7 @@
     {
       "name": "PhysicalKey",
       "fullName": "Avalonia.Input.PhysicalKey",
+      "isFlags": false,
       "values": [
         {
           "name": "None",
@@ -8845,6 +9101,7 @@
     {
       "name": "PullDirection",
       "fullName": "Avalonia.Input.PullDirection",
+      "isFlags": false,
       "values": [
         {
           "name": "TopToBottom",
@@ -8867,6 +9124,7 @@
     {
       "name": "HorizontalAlignment",
       "fullName": "Avalonia.Layout.HorizontalAlignment",
+      "isFlags": false,
       "values": [
         {
           "name": "Stretch",
@@ -8889,6 +9147,7 @@
     {
       "name": "Orientation",
       "fullName": "Avalonia.Layout.Orientation",
+      "isFlags": false,
       "values": [
         {
           "name": "Horizontal",
@@ -8903,6 +9162,7 @@
     {
       "name": "VerticalAlignment",
       "fullName": "Avalonia.Layout.VerticalAlignment",
+      "isFlags": false,
       "values": [
         {
           "name": "Stretch",
@@ -8925,6 +9185,7 @@
     {
       "name": "BackgroundSizing",
       "fullName": "Avalonia.Media.BackgroundSizing",
+      "isFlags": false,
       "values": [
         {
           "name": "InnerBorderEdge",
@@ -8943,6 +9204,7 @@
     {
       "name": "FillRule",
       "fullName": "Avalonia.Media.FillRule",
+      "isFlags": false,
       "values": [
         {
           "name": "EvenOdd",
@@ -8957,6 +9219,7 @@
     {
       "name": "FontStretch",
       "fullName": "Avalonia.Media.FontStretch",
+      "isFlags": false,
       "values": [
         {
           "name": "UltraCondensed",
@@ -8999,6 +9262,7 @@
     {
       "name": "FontStyle",
       "fullName": "Avalonia.Media.FontStyle",
+      "isFlags": false,
       "values": [
         {
           "name": "Normal",
@@ -9017,6 +9281,7 @@
     {
       "name": "FontWeight",
       "fullName": "Avalonia.Media.FontWeight",
+      "isFlags": false,
       "values": [
         {
           "name": "Thin",
@@ -9095,6 +9360,7 @@
     {
       "name": "BitmapBlendingMode",
       "fullName": "Avalonia.Media.Imaging.BitmapBlendingMode",
+      "isFlags": false,
       "values": [
         {
           "name": "Unspecified",
@@ -9213,6 +9479,7 @@
     {
       "name": "PenLineCap",
       "fullName": "Avalonia.Media.PenLineCap",
+      "isFlags": false,
       "values": [
         {
           "name": "Flat",
@@ -9231,6 +9498,7 @@
     {
       "name": "PenLineJoin",
       "fullName": "Avalonia.Media.PenLineJoin",
+      "isFlags": false,
       "values": [
         {
           "name": "Bevel",
@@ -9249,6 +9517,7 @@
     {
       "name": "Stretch",
       "fullName": "Avalonia.Media.Stretch",
+      "isFlags": false,
       "values": [
         {
           "name": "None",
@@ -9271,6 +9540,7 @@
     {
       "name": "StretchDirection",
       "fullName": "Avalonia.Media.StretchDirection",
+      "isFlags": false,
       "values": [
         {
           "name": "UpOnly",
@@ -9289,6 +9559,7 @@
     {
       "name": "TextAlignment",
       "fullName": "Avalonia.Media.TextAlignment",
+      "isFlags": false,
       "values": [
         {
           "name": "Left",
@@ -9323,6 +9594,7 @@
     {
       "name": "TextWrapping",
       "fullName": "Avalonia.Media.TextWrapping",
+      "isFlags": false,
       "values": [
         {
           "name": "NoWrap",
@@ -9341,6 +9613,7 @@
     {
       "name": "DayOfWeek",
       "fullName": "System.DayOfWeek",
+      "isFlags": false,
       "values": [
         {
           "name": "Sunday",
@@ -9375,6 +9648,7 @@
     {
       "name": "CalendarWeekRule",
       "fullName": "System.Globalization.CalendarWeekRule",
+      "isFlags": false,
       "values": [
         {
           "name": "FirstDay",
@@ -10102,21 +10376,6 @@
     },
     {
       "owner": "Avalonia.Controls.ContextMenu",
-      "member": "PlacementAnchor",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ContextMenu",
-      "member": "PlacementConstraintAdjustment",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ContextMenu",
-      "member": "PlacementGravity",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ContextMenu",
       "member": "PlacementRect",
       "reason": "Not included by projection policy"
     },
@@ -10547,21 +10806,6 @@
     },
     {
       "owner": "Avalonia.Controls.Primitives.Popup",
-      "member": "PlacementAnchor",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Primitives.Popup",
-      "member": "PlacementConstraintAdjustment",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Primitives.Popup",
-      "member": "PlacementGravity",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Primitives.Popup",
       "member": "PlacementRect",
       "reason": "Not included by projection policy"
     },
@@ -10582,27 +10826,12 @@
     },
     {
       "owner": "Avalonia.Controls.Primitives.PopupFlyoutBase",
-      "member": "PlacementGravity",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Primitives.PopupFlyoutBase",
-      "member": "PlacementAnchor",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Primitives.PopupFlyoutBase",
       "member": "CustomPopupPlacementCallback",
       "reason": "Not included by projection policy"
     },
     {
       "owner": "Avalonia.Controls.Primitives.PopupFlyoutBase",
       "member": "OverlayInputPassThroughElement",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Primitives.PopupFlyoutBase",
-      "member": "PlacementConstraintAdjustment",
       "reason": "Not included by projection policy"
     },
     {

@@ -13,6 +13,12 @@ pub fn emit_safe_module(ir: &ProjectionIr) -> String {
         out.push_str(&emit_brush());
     }
 
+    let flags_enums: std::collections::HashSet<&str> = ir
+        .enums
+        .iter()
+        .filter(|projected_enum| projected_enum.is_flags)
+        .map(|projected_enum| projected_enum.full_name.as_str())
+        .collect();
     for projected_enum in &ir.enums {
         let mut values = Vec::new();
         for value in &projected_enum.values {
@@ -22,6 +28,22 @@ pub fn emit_safe_module(ir: &ProjectionIr) -> String {
             {
                 values.push(value);
             }
+        }
+        if projected_enum.is_flags {
+            out.push_str(&format!(
+                "/// [Flags] ABI bits for `{}`. Combined values are valid.\n",
+                projected_enum.name
+            ));
+            out.push_str(&format!("pub mod {} {{\n", to_snake(&projected_enum.name)));
+            for value in &values {
+                out.push_str(&format!(
+                    "    pub const {}: i32 = {};\n",
+                    value.name.to_ascii_uppercase(),
+                    value.value
+                ));
+            }
+            out.push_str("}\n\n");
+            continue;
         }
         out.push_str("#[repr(i32)]\n#[derive(Clone, Copy, Debug, PartialEq, Eq)]\n");
         out.push_str(&format!("pub enum {} {{\n", projected_enum.name));
@@ -67,7 +89,7 @@ pub fn emit_safe_module(ir: &ProjectionIr) -> String {
     }
 
     for ty in ir.types.iter().filter(|ty| ty.kind == "Class") {
-        out.push_str(&emit_type(ir, ty));
+        out.push_str(&emit_type(ir, ty, &flags_enums));
         out.push('\n');
     }
     out.truncate(out.trim_end().len());
@@ -186,7 +208,11 @@ fn emit_collection(property: &ProjectedProperty) -> String {
     out
 }
 
-fn emit_type(ir: &ProjectionIr, ty: &ProjectedType) -> String {
+fn emit_type(
+    ir: &ProjectionIr,
+    ty: &ProjectedType,
+    flags_enums: &std::collections::HashSet<&str>,
+) -> String {
     let safe_name = interface_suffix(&ty.name);
     let mut out = format!(
         "#[derive(Clone, Debug)]\n\
@@ -213,7 +239,7 @@ fn emit_type(ir: &ProjectionIr, ty: &ProjectedType) -> String {
         .collect();
     for owner in lineage(ir, ty) {
         for property in &owner.properties {
-            out.push_str(&emit_property(property, &reserved_methods));
+            out.push_str(&emit_property(property, &reserved_methods, flags_enums));
             if property.kind == "ComCollection" && property.name == "Children" {
                 out.push_str(
                     "    pub fn child(self, value: impl AsControl) -> Result<Self> {\n\
@@ -335,6 +361,7 @@ fn emit_type(ir: &ProjectionIr, ty: &ProjectedType) -> String {
 fn emit_property(
     property: &ProjectedProperty,
     reserved_methods: &std::collections::HashSet<String>,
+    flags_enums: &std::collections::HashSet<&str>,
 ) -> String {
     let snake = to_snake(&property.name);
     let getter = if property.can_write {
@@ -399,7 +426,7 @@ fn emit_property(
                  \x20       self.raw.get_{snake}()?.as_ref().map(Brush::from_raw).transpose()\n\
                  \x20   }}\n"
             )),
-            "I32" if is_enum_property(property) => {
+            "I32" if is_enum_property(property, flags_enums) => {
                 let enum_name = simple_name(property.managed_type_name.as_deref().unwrap());
                 out.push_str(&format!(
                     "    pub fn {getter}(&self) -> Result<{enum_name}> {{\n\
@@ -418,13 +445,13 @@ fn emit_property(
             }
             _ => out.push_str(&format!(
                 "    pub fn {getter}(&self) -> Result<{}> {{ Ok(self.raw.get_{snake}()?) }}\n",
-                safe_scalar_type(property)
+                safe_scalar_type(property, flags_enums)
             )),
         }
     }
 
     if property.can_write {
-        let (argument, setup, value) = safe_property_input(property);
+        let (argument, setup, value) = safe_property_input(property, flags_enums);
         out.push_str(&format!(
             "    pub fn set_{builder}(&self, value: {argument}) -> Result<()> {{\n{setup}        Ok(self.raw.set_{snake}({value})?)\n    }}\n\
              \x20   pub fn {builder}(self, value: {argument}) -> Result<Self> {{\n\
@@ -603,7 +630,10 @@ fn emit_method(ty: &ProjectedType, method: &crate::ir::ProjectedMethod) -> Strin
     )
 }
 
-fn safe_property_input(property: &ProjectedProperty) -> (String, String, String) {
+fn safe_property_input(
+    property: &ProjectedProperty,
+    flags_enums: &std::collections::HashSet<&str>,
+) -> (String, String, String) {
     if let Some(geometry) = geometry::find(&property.kind) {
         return (
             geometry.safe_name.into(),
@@ -653,23 +683,26 @@ fn safe_property_input(property: &ProjectedProperty) -> (String, String, String)
             "        let value = value.into().map(Brush::to_raw).transpose()?;\n".into(),
             "value.as_ref()".into(),
         ),
-        "I32" if is_enum_property(property) => (
+        "I32" if is_enum_property(property, flags_enums) => (
             simple_name(property.managed_type_name.as_deref().unwrap()).into(),
             String::new(),
             "value as i32".into(),
         ),
         _ => (
-            safe_scalar_type(property),
+            safe_scalar_type(property, flags_enums),
             String::new(),
             "value".into(),
         ),
     }
 }
 
-fn safe_scalar_type(property: &ProjectedProperty) -> String {
+fn safe_scalar_type(
+    property: &ProjectedProperty,
+    flags_enums: &std::collections::HashSet<&str>,
+) -> String {
     if let Some(geometry) = geometry::find(&property.kind) {
         geometry.safe_name.into()
-    } else if property.kind == "I32" && is_enum_property(property) {
+    } else if property.kind == "I32" && is_enum_property(property, flags_enums) {
         simple_name(property.managed_type_name.as_deref().unwrap()).into()
     } else {
         rust_scalar_kind(&property.kind).into()
@@ -689,8 +722,16 @@ fn rust_scalar_kind(kind: &str) -> &str {
     }
 }
 
-fn is_enum_property(property: &ProjectedProperty) -> bool {
-    property.kind == "I32" && property.managed_type_name.as_deref() != Some("System.Int32")
+fn is_enum_property(
+    property: &ProjectedProperty,
+    flags_enums: &std::collections::HashSet<&str>,
+) -> bool {
+    property.kind == "I32"
+        && property.managed_type_name.as_deref() != Some("System.Int32")
+        && !property
+            .managed_type_name
+            .as_deref()
+            .is_some_and(|name| flags_enums.contains(name))
 }
 
 fn is_control(ir: &ProjectionIr, ty: &ProjectedType) -> bool {

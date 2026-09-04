@@ -254,6 +254,11 @@ first: `IAvnTextBox` 8 to 9, `IAvnMaskedTextBox` 5 to 6. Factory 13.
 `MarshallingKind.CharUtf16` is a UTF-16 code unit (`uint16_t`). PasswordChar and
 PromptChar project on TextBox (9 to 10) and MaskedTextBox (6 to 7). Factory 13.
 
+`[Flags]` enums project as `I32` bitmasks with named constants, not closed Rust
+enums. PlacementAnchor, PlacementGravity and PlacementConstraintAdjustment
+append on Popup (3 to 4), ContextMenu (5 to 6), and PopupFlyoutBase plus
+descendants Flyout and MenuFlyout (2 to 3). Factory 13.
+
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and
 `IAvnNumericUpDown` each move from 2 to 3. Templates, filters, ItemsSource,

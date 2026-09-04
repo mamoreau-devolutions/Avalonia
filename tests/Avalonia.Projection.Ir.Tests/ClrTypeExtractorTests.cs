@@ -492,7 +492,7 @@ public class ClrTypeExtractorTests
             name =>
             {
                 var type = Type(ir, name);
-                Assert.Equal(2, type.AbiVersion);
+                Assert.Equal(3, type.AbiVersion);
             });
         Assert.All(
             new[] { "IAvnSplitView" },
@@ -584,13 +584,14 @@ public class ClrTypeExtractorTests
                 MarshallingKind.I32,
                 popupFlyoutBase.Properties.Single(property => property.Name == name).Kind));
 
-        // The [Flags] placement members have no single-value name for a combined value, so they
-        // stay in the gap report rather than crossing as an enum that cannot round trip.
         Assert.All(
             new[] { "PlacementAnchor", "PlacementGravity", "PlacementConstraintAdjustment" },
-            name => Assert.DoesNotContain(
-                popupFlyoutBase.Properties,
-                property => property.Name == name));
+            name =>
+            {
+                var property = popupFlyoutBase.Properties.Single(p => p.Name == name);
+                Assert.Equal(MarshallingKind.I32, property.Kind);
+            });
+        Assert.Contains(ir.Enums, e => e.Name == "PopupAnchor" && e.IsFlags);
 
         // Closing is the one wave B event with a payload, and Cancel is written back.
         var closing = popupFlyoutBase.Events.Single(@event => @event.Name == "Closing");
@@ -1187,8 +1188,8 @@ public class ClrTypeExtractorTests
     {
         var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
 
-        Assert.Equal(2, Type(ir, "IAvnMenuFlyout").AbiVersion);
-        Assert.Equal(5, Type(ir, "IAvnContextMenu").AbiVersion);
+        Assert.Equal(3, Type(ir, "IAvnMenuFlyout").AbiVersion);
+        Assert.Equal(6, Type(ir, "IAvnContextMenu").AbiVersion);
         Assert.All(
             new[]
             {
@@ -1629,7 +1630,7 @@ public class ClrTypeExtractorTests
         Assert.Equal(9, Type(ir, "IAvnComboBox").AbiVersion);
         Assert.Equal(4, Type(ir, "IAvnDatePicker").AbiVersion);
         Assert.Contains(Type(ir, "IAvnDatePicker").Properties, p => p.Name == "VerticalContentAlignment");
-        Assert.Equal(5, Type(ir, "IAvnContextMenu").AbiVersion);
+        Assert.Equal(6, Type(ir, "IAvnContextMenu").AbiVersion);
         Assert.Equal(7, Type(ir, "IAvnProgressBar").AbiVersion);
         Assert.Contains(Type(ir, "IAvnProgressBar").Properties, p => p.Name == "Percentage");
         Assert.Equal(6, Type(ir, "IAvnStackPanel").AbiVersion);
@@ -1643,21 +1644,22 @@ public class ClrTypeExtractorTests
     {
         var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
         var popup = Type(ir, "IAvnPopup");
-        Assert.Equal(3, popup.AbiVersion);
+        Assert.Equal(4, popup.AbiVersion);
         Assert.Contains(popup.Methods, m => m.Name == "Open");
         Assert.Contains(popup.Methods, m => m.Name == "Close");
         Assert.Contains(popup.Events, e => e.Name == "Opened");
         var target = popup.Properties.Single(p => p.Name == "PlacementTarget");
         Assert.Equal(MarshallingKind.ComInterface, target.Kind);
         Assert.Equal("Avalonia.Host.Com.IAvnControl", target.InterfaceName);
-        Assert.DoesNotContain(popup.Properties, p => p.Name is "PlacementRect" or "PlacementAnchor");
+        Assert.DoesNotContain(popup.Properties, p => p.Name == "PlacementRect");
+        Assert.Contains(popup.Properties, p => p.Name == "PlacementAnchor");
 
         var flyoutBase = Type(ir, "IAvnPopupFlyoutBase");
-        Assert.Equal(2, flyoutBase.AbiVersion);
+        Assert.Equal(3, flyoutBase.AbiVersion);
         var popupProp = flyoutBase.Properties.Single(p => p.Name == "Popup");
         Assert.Equal("Avalonia.Host.Com.IAvnPopup", popupProp.InterfaceName);
 
-        Assert.Equal(5, Type(ir, "IAvnContextMenu").AbiVersion);
+        Assert.Equal(6, Type(ir, "IAvnContextMenu").AbiVersion);
         Assert.Contains(Type(ir, "IAvnContextMenu").Properties, p => p.Name == "PlacementTarget");
         Assert.Equal(13, ir.FactoryAbiVersion);
     }
@@ -1679,7 +1681,7 @@ public class ClrTypeExtractorTests
         Assert.Contains(control.Events, e => e.Name == "Unloaded");
         Assert.Equal(3, Type(ir, "IAvnStyledElement").AbiVersion);
         Assert.Equal(8, Type(ir, "IAvnButton").AbiVersion);
-        Assert.Equal(2, Type(ir, "IAvnFlyout").AbiVersion);
+        Assert.Equal(3, Type(ir, "IAvnFlyout").AbiVersion);
         Assert.Equal(13, ir.FactoryAbiVersion);
     }
 

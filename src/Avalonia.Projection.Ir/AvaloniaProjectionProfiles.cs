@@ -65,11 +65,11 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnCommandBarButton"] = 4,
             ["Avalonia.Host.Com.IAvnCommandBarSeparator"] = 3,
             ["Avalonia.Host.Com.IAvnCommandBarToggleButton"] = 4,
-            ["Avalonia.Host.Com.IAvnContextMenu"] = 5,
-            ["Avalonia.Host.Com.IAvnPopup"] = 3,
-            ["Avalonia.Host.Com.IAvnPopupFlyoutBase"] = 2,
-            ["Avalonia.Host.Com.IAvnFlyout"] = 2,
-            ["Avalonia.Host.Com.IAvnMenuFlyout"] = 2,
+            ["Avalonia.Host.Com.IAvnContextMenu"] = 6,
+            ["Avalonia.Host.Com.IAvnPopup"] = 4,
+            ["Avalonia.Host.Com.IAvnPopupFlyoutBase"] = 3,
+            ["Avalonia.Host.Com.IAvnFlyout"] = 3,
+            ["Avalonia.Host.Com.IAvnMenuFlyout"] = 3,
             ["Avalonia.Host.Com.IAvnDatePicker"] = 4,
             ["Avalonia.Host.Com.IAvnDropDownButton"] = 4,
             ["Avalonia.Host.Com.IAvnGridSplitter"] = 3,
@@ -358,14 +358,13 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.Primitives.FlyoutBase"] =
                 ["IsOpen", "Target", "ShowAt", "Hide", "Opened", "Closed"],
             // PopupFlyoutBase re-declares ShowAt/Hide as sealed overrides; they are inherited
-            // from IAvnFlyoutBase rather than published twice. PlacementAnchor,
-            // PlacementGravity and PlacementConstraintAdjustment are [Flags] enums whose
-            // combined values have no name, so they stay out.
+            // from IAvnFlyoutBase rather than published twice. Placement flags cross as I32.
             ["Avalonia.Controls.Primitives.PopupFlyoutBase"] =
             [
                 "Placement", "ShowMode", "HorizontalOffset", "VerticalOffset",
                 "OverlayDismissEventPassThrough", "Opening", "Closing",
                 "Popup",
+                "PlacementAnchor", "PlacementGravity", "PlacementConstraintAdjustment",
             ],
             ["Avalonia.Controls.Flyout"] = ["Content"],
             // Menu is imperative, unlike the view-model NativeMenu: MenuBase owns the open
@@ -429,6 +428,7 @@ public static class AvaloniaProjectionProfiles
             [
                 "HorizontalOffset", "VerticalOffset", "Placement", "WindowManagerAddShadowHint",
                 "PlacementTarget",
+                "PlacementAnchor", "PlacementGravity", "PlacementConstraintAdjustment",
             ],
             ["Avalonia.Controls.MenuFlyout"] = ["Items"],
             ["Avalonia.Controls.Spinner"] = [],
@@ -504,6 +504,7 @@ public static class AvaloniaProjectionProfiles
                 "InheritsTransform", "PlacementTarget", "TakesFocusFromNativeControl",
                 "ShouldUseOverlayLayer", "IsUsingOverlayLayer", "IsPointerOverPopup",
                 "Opened", "Closed", "Open", "Close",
+                "PlacementAnchor", "PlacementGravity", "PlacementConstraintAdjustment",
             ],
             ["Avalonia.Controls.TrayIcon"] = ["ToolTipText", "IsVisible"],
             ["Avalonia.Controls.Notifications.WindowNotificationManager"] = ["Position", "MaxItems"],

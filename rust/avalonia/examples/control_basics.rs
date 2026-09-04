@@ -1,11 +1,11 @@
 use avalonia::{
-    App, Border, Brush, Button, ClickMode, Color, ComboBox, ComboBoxItem, CornerRadius, DatePicker,
-    Dock, ExpandDirection, Expander, Flyout, FlyoutShowMode, FontWeight, Grid, HorizontalAlignment,
-    Image, ListBox, ListBoxItem, Menu, MenuItem, MenuItemToggleType, Orientation, PlacementMode,
-    RadioButton, SelectionMode, Slider, SplitView, SplitViewDisplayMode, SplitViewPanePlacement,
-    StackPanel, Stretch, StretchDirection, TabControl, TabItem, TextAlignment, TextBlock, TextBox,
-    Thickness, TimePicker, ToggleSwitch, ToolTip, TreeView, TreeViewItem, VerticalAlignment,
-    Window,
+    selection_mode, App, Border, Brush, Button, ClickMode, Color, ComboBox, ComboBoxItem,
+    CornerRadius, DatePicker, Dock, ExpandDirection, Expander, Flyout, FlyoutShowMode, FontWeight,
+    Grid, HorizontalAlignment, Image, ListBox, ListBoxItem, Menu, MenuItem, MenuItemToggleType,
+    Orientation, PlacementMode, RadioButton, Slider, SplitView, SplitViewDisplayMode,
+    SplitViewPanePlacement, StackPanel, Stretch, StretchDirection, TabControl, TabItem,
+    TextAlignment, TextBlock, TextBox, Thickness, TimePicker, ToggleSwitch, ToolTip, TreeView,
+    TreeViewItem, VerticalAlignment, Window,
 };
 
 fn main() -> avalonia::Result<()> {
@@ -147,7 +147,7 @@ fn main() -> avalonia::Result<()> {
         let list_status = TextBlock::new()?.text("ListBox: Item 2")?;
         let list_status_for_handler = list_status.clone();
         let list_box = ListBox::new()?
-            .selection_mode(SelectionMode::Multiple)?
+            .selection_mode(selection_mode::MULTIPLE)?
             .item(ListBoxItem::new()?.content(TextBlock::new()?.text("Item 1")?)?)?
             .item(ListBoxItem::new()?.content(TextBlock::new()?.text("Item 2")?)?)?
             .item(ListBoxItem::new()?.content(TextBlock::new()?.text("Item 3")?)?)?
@@ -371,7 +371,7 @@ fn main() -> avalonia::Result<()> {
 
         // A TreeViewItem is an ItemsControl, so its children go into the inherited Items slot.
         let tree = TreeView::new()?
-            .selection_mode(SelectionMode::Single)?
+            .selection_mode(selection_mode::SINGLE)?
             .item(
                 TreeViewItem::new()?
                     .header(TextBlock::new()?.text("Projected controls")?)?

@@ -827,6 +827,47 @@ impl TryFrom<i32> for PlacementMode {
     }
 }
 
+/// [Flags] ABI bits for `PopupAnchor`. Combined values are valid.
+pub mod popup_anchor {
+    pub const NONE: i32 = 0;
+    pub const TOP: i32 = 1;
+    pub const BOTTOM: i32 = 2;
+    pub const VERTICALMASK: i32 = 3;
+    pub const LEFT: i32 = 4;
+    pub const TOPLEFT: i32 = 5;
+    pub const BOTTOMLEFT: i32 = 6;
+    pub const RIGHT: i32 = 8;
+    pub const TOPRIGHT: i32 = 9;
+    pub const BOTTOMRIGHT: i32 = 10;
+    pub const HORIZONTALMASK: i32 = 12;
+    pub const ALLMASK: i32 = 15;
+}
+
+/// [Flags] ABI bits for `PopupGravity`. Combined values are valid.
+pub mod popup_gravity {
+    pub const NONE: i32 = 0;
+    pub const TOP: i32 = 1;
+    pub const BOTTOM: i32 = 2;
+    pub const LEFT: i32 = 4;
+    pub const TOPLEFT: i32 = 5;
+    pub const BOTTOMLEFT: i32 = 6;
+    pub const RIGHT: i32 = 8;
+    pub const TOPRIGHT: i32 = 9;
+    pub const BOTTOMRIGHT: i32 = 10;
+}
+
+/// [Flags] ABI bits for `PopupPositionerConstraintAdjustment`. Combined values are valid.
+pub mod popup_positioner_constraint_adjustment {
+    pub const NONE: i32 = 0;
+    pub const SLIDEX: i32 = 1;
+    pub const SLIDEY: i32 = 2;
+    pub const FLIPX: i32 = 4;
+    pub const FLIPY: i32 = 8;
+    pub const RESIZEX: i32 = 16;
+    pub const RESIZEY: i32 = 32;
+    pub const ALL: i32 = 63;
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ScrollBarVisibility {
@@ -889,48 +930,20 @@ impl TryFrom<i32> for SnapPointsType {
     }
 }
 
-#[repr(i32)]
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum SelectionMode {
-    Single = 0,
-    Multiple = 1,
-    Toggle = 2,
-    AlwaysSelected = 4,
+/// [Flags] ABI bits for `SelectionMode`. Combined values are valid.
+pub mod selection_mode {
+    pub const SINGLE: i32 = 0;
+    pub const MULTIPLE: i32 = 1;
+    pub const TOGGLE: i32 = 2;
+    pub const ALWAYSSELECTED: i32 = 4;
 }
 
-impl TryFrom<i32> for SelectionMode {
-    type Error = crate::Error;
-    fn try_from(value: i32) -> Result<Self> {
-        match value {
-            0 => Ok(Self::Single),
-            1 => Ok(Self::Multiple),
-            2 => Ok(Self::Toggle),
-            4 => Ok(Self::AlwaysSelected),
-            _ => Err(crate::Error::InvalidEnumValue(value)),
-        }
-    }
-}
-
-#[repr(i32)]
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum SizeToContent {
-    Manual = 0,
-    Width = 1,
-    Height = 2,
-    WidthAndHeight = 3,
-}
-
-impl TryFrom<i32> for SizeToContent {
-    type Error = crate::Error;
-    fn try_from(value: i32) -> Result<Self> {
-        match value {
-            0 => Ok(Self::Manual),
-            1 => Ok(Self::Width),
-            2 => Ok(Self::Height),
-            3 => Ok(Self::WidthAndHeight),
-            _ => Err(crate::Error::InvalidEnumValue(value)),
-        }
-    }
+/// [Flags] ABI bits for `SizeToContent`. Combined values are valid.
+pub mod size_to_content {
+    pub const MANUAL: i32 = 0;
+    pub const WIDTH: i32 = 1;
+    pub const HEIGHT: i32 = 2;
+    pub const WIDTHANDHEIGHT: i32 = 3;
 }
 
 #[repr(i32)]
@@ -1507,28 +1520,13 @@ impl TryFrom<i32> for Key {
     }
 }
 
-#[repr(i32)]
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum KeyModifiers {
-    None = 0,
-    Alt = 1,
-    Control = 2,
-    Shift = 4,
-    Meta = 8,
-}
-
-impl TryFrom<i32> for KeyModifiers {
-    type Error = crate::Error;
-    fn try_from(value: i32) -> Result<Self> {
-        match value {
-            0 => Ok(Self::None),
-            1 => Ok(Self::Alt),
-            2 => Ok(Self::Control),
-            4 => Ok(Self::Shift),
-            8 => Ok(Self::Meta),
-            _ => Err(crate::Error::InvalidEnumValue(value)),
-        }
-    }
+/// [Flags] ABI bits for `KeyModifiers`. Combined values are valid.
+pub mod key_modifiers {
+    pub const NONE: i32 = 0;
+    pub const ALT: i32 = 1;
+    pub const CONTROL: i32 = 2;
+    pub const SHIFT: i32 = 4;
+    pub const META: i32 = 8;
 }
 
 #[repr(i32)]
@@ -9633,6 +9631,30 @@ impl ContextMenu {
         self.set_vertical_offset(value)?;
         Ok(self)
     }
+    pub fn get_placement_anchor(&self) -> Result<i32> { Ok(self.raw.get_placement_anchor()?) }
+    pub fn set_placement_anchor(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_placement_anchor(value)?)
+    }
+    pub fn placement_anchor(self, value: i32) -> Result<Self> {
+        self.set_placement_anchor(value)?;
+        Ok(self)
+    }
+    pub fn get_placement_constraint_adjustment(&self) -> Result<i32> { Ok(self.raw.get_placement_constraint_adjustment()?) }
+    pub fn set_placement_constraint_adjustment(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_placement_constraint_adjustment(value)?)
+    }
+    pub fn placement_constraint_adjustment(self, value: i32) -> Result<Self> {
+        self.set_placement_constraint_adjustment(value)?;
+        Ok(self)
+    }
+    pub fn get_placement_gravity(&self) -> Result<i32> { Ok(self.raw.get_placement_gravity()?) }
+    pub fn set_placement_gravity(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_placement_gravity(value)?)
+    }
+    pub fn placement_gravity(self, value: i32) -> Result<Self> {
+        self.set_placement_gravity(value)?;
+        Ok(self)
+    }
     pub fn get_placement(&self) -> Result<PlacementMode> {
         let value = self.raw.get_placement()?;
         PlacementMode::try_from(value)
@@ -12082,6 +12104,22 @@ impl Flyout {
         self.set_placement(value)?;
         Ok(self)
     }
+    pub fn get_placement_gravity(&self) -> Result<i32> { Ok(self.raw.get_placement_gravity()?) }
+    pub fn set_placement_gravity(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_placement_gravity(value)?)
+    }
+    pub fn placement_gravity(self, value: i32) -> Result<Self> {
+        self.set_placement_gravity(value)?;
+        Ok(self)
+    }
+    pub fn get_placement_anchor(&self) -> Result<i32> { Ok(self.raw.get_placement_anchor()?) }
+    pub fn set_placement_anchor(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_placement_anchor(value)?)
+    }
+    pub fn placement_anchor(self, value: i32) -> Result<Self> {
+        self.set_placement_anchor(value)?;
+        Ok(self)
+    }
     pub fn get_horizontal_offset(&self) -> Result<f64> { Ok(self.raw.get_horizontal_offset()?) }
     pub fn set_horizontal_offset(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_horizontal_offset(value)?)
@@ -12115,6 +12153,14 @@ impl Flyout {
     }
     pub fn overlay_dismiss_event_pass_through(self, value: bool) -> Result<Self> {
         self.set_overlay_dismiss_event_pass_through(value)?;
+        Ok(self)
+    }
+    pub fn get_placement_constraint_adjustment(&self) -> Result<i32> { Ok(self.raw.get_placement_constraint_adjustment()?) }
+    pub fn set_placement_constraint_adjustment(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_placement_constraint_adjustment(value)?)
+    }
+    pub fn placement_constraint_adjustment(self, value: i32) -> Result<Self> {
+        self.set_placement_constraint_adjustment(value)?;
         Ok(self)
     }
     pub fn subscribe_closing(&self, callback: impl FnMut(&mut PopupFlyoutBaseClosingEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -15675,14 +15721,11 @@ impl ListBox {
         scope.retain_subscription(self.subscribe_selection_changed(callback)?);
         Ok(self)
     }
-    pub fn get_selection_mode(&self) -> Result<SelectionMode> {
-        let value = self.raw.get_selection_mode()?;
-        SelectionMode::try_from(value)
+    pub fn get_selection_mode(&self) -> Result<i32> { Ok(self.raw.get_selection_mode()?) }
+    pub fn set_selection_mode(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_selection_mode(value)?)
     }
-    pub fn set_selection_mode(&self, value: SelectionMode) -> Result<()> {
-        Ok(self.raw.set_selection_mode(value as i32)?)
-    }
-    pub fn selection_mode(self, value: SelectionMode) -> Result<Self> {
+    pub fn selection_mode(self, value: i32) -> Result<Self> {
         self.set_selection_mode(value)?;
         Ok(self)
     }
@@ -17747,6 +17790,22 @@ impl MenuFlyout {
         self.set_placement(value)?;
         Ok(self)
     }
+    pub fn get_placement_gravity(&self) -> Result<i32> { Ok(self.raw.get_placement_gravity()?) }
+    pub fn set_placement_gravity(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_placement_gravity(value)?)
+    }
+    pub fn placement_gravity(self, value: i32) -> Result<Self> {
+        self.set_placement_gravity(value)?;
+        Ok(self)
+    }
+    pub fn get_placement_anchor(&self) -> Result<i32> { Ok(self.raw.get_placement_anchor()?) }
+    pub fn set_placement_anchor(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_placement_anchor(value)?)
+    }
+    pub fn placement_anchor(self, value: i32) -> Result<Self> {
+        self.set_placement_anchor(value)?;
+        Ok(self)
+    }
     pub fn get_horizontal_offset(&self) -> Result<f64> { Ok(self.raw.get_horizontal_offset()?) }
     pub fn set_horizontal_offset(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_horizontal_offset(value)?)
@@ -17780,6 +17839,14 @@ impl MenuFlyout {
     }
     pub fn overlay_dismiss_event_pass_through(self, value: bool) -> Result<Self> {
         self.set_overlay_dismiss_event_pass_through(value)?;
+        Ok(self)
+    }
+    pub fn get_placement_constraint_adjustment(&self) -> Result<i32> { Ok(self.raw.get_placement_constraint_adjustment()?) }
+    pub fn set_placement_constraint_adjustment(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_placement_constraint_adjustment(value)?)
+    }
+    pub fn placement_constraint_adjustment(self, value: i32) -> Result<Self> {
+        self.set_placement_constraint_adjustment(value)?;
         Ok(self)
     }
     pub fn subscribe_closing(&self, callback: impl FnMut(&mut PopupFlyoutBaseClosingEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -22083,6 +22150,30 @@ impl Popup {
         self.set_is_open(value)?;
         Ok(self)
     }
+    pub fn get_placement_anchor(&self) -> Result<i32> { Ok(self.raw.get_placement_anchor()?) }
+    pub fn set_placement_anchor(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_placement_anchor(value)?)
+    }
+    pub fn placement_anchor(self, value: i32) -> Result<Self> {
+        self.set_placement_anchor(value)?;
+        Ok(self)
+    }
+    pub fn get_placement_constraint_adjustment(&self) -> Result<i32> { Ok(self.raw.get_placement_constraint_adjustment()?) }
+    pub fn set_placement_constraint_adjustment(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_placement_constraint_adjustment(value)?)
+    }
+    pub fn placement_constraint_adjustment(self, value: i32) -> Result<Self> {
+        self.set_placement_constraint_adjustment(value)?;
+        Ok(self)
+    }
+    pub fn get_placement_gravity(&self) -> Result<i32> { Ok(self.raw.get_placement_gravity()?) }
+    pub fn set_placement_gravity(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_placement_gravity(value)?)
+    }
+    pub fn placement_gravity(self, value: i32) -> Result<Self> {
+        self.set_placement_gravity(value)?;
+        Ok(self)
+    }
     pub fn get_placement(&self) -> Result<PlacementMode> {
         let value = self.raw.get_placement()?;
         PlacementMode::try_from(value)
@@ -22253,6 +22344,22 @@ impl PopupFlyoutBase {
         self.set_placement(value)?;
         Ok(self)
     }
+    pub fn get_placement_gravity(&self) -> Result<i32> { Ok(self.raw.get_placement_gravity()?) }
+    pub fn set_placement_gravity(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_placement_gravity(value)?)
+    }
+    pub fn placement_gravity(self, value: i32) -> Result<Self> {
+        self.set_placement_gravity(value)?;
+        Ok(self)
+    }
+    pub fn get_placement_anchor(&self) -> Result<i32> { Ok(self.raw.get_placement_anchor()?) }
+    pub fn set_placement_anchor(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_placement_anchor(value)?)
+    }
+    pub fn placement_anchor(self, value: i32) -> Result<Self> {
+        self.set_placement_anchor(value)?;
+        Ok(self)
+    }
     pub fn get_horizontal_offset(&self) -> Result<f64> { Ok(self.raw.get_horizontal_offset()?) }
     pub fn set_horizontal_offset(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_horizontal_offset(value)?)
@@ -22286,6 +22393,14 @@ impl PopupFlyoutBase {
     }
     pub fn overlay_dismiss_event_pass_through(self, value: bool) -> Result<Self> {
         self.set_overlay_dismiss_event_pass_through(value)?;
+        Ok(self)
+    }
+    pub fn get_placement_constraint_adjustment(&self) -> Result<i32> { Ok(self.raw.get_placement_constraint_adjustment()?) }
+    pub fn set_placement_constraint_adjustment(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_placement_constraint_adjustment(value)?)
+    }
+    pub fn placement_constraint_adjustment(self, value: i32) -> Result<Self> {
+        self.set_placement_constraint_adjustment(value)?;
         Ok(self)
     }
     pub fn subscribe_closing(&self, callback: impl FnMut(&mut PopupFlyoutBaseClosingEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -33829,14 +33944,11 @@ impl TableView {
         scope.retain_subscription(self.subscribe_selection_changed(callback)?);
         Ok(self)
     }
-    pub fn get_selection_mode(&self) -> Result<SelectionMode> {
-        let value = self.raw.get_selection_mode()?;
-        SelectionMode::try_from(value)
+    pub fn get_selection_mode(&self) -> Result<i32> { Ok(self.raw.get_selection_mode()?) }
+    pub fn set_selection_mode(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_selection_mode(value)?)
     }
-    pub fn set_selection_mode(&self, value: SelectionMode) -> Result<()> {
-        Ok(self.raw.set_selection_mode(value as i32)?)
-    }
-    pub fn selection_mode(self, value: SelectionMode) -> Result<Self> {
+    pub fn selection_mode(self, value: i32) -> Result<Self> {
         self.set_selection_mode(value)?;
         Ok(self)
     }
@@ -38555,14 +38667,11 @@ impl TreeView {
         self.set_auto_scroll_to_selected_item(value)?;
         Ok(self)
     }
-    pub fn get_selection_mode(&self) -> Result<SelectionMode> {
-        let value = self.raw.get_selection_mode()?;
-        SelectionMode::try_from(value)
+    pub fn get_selection_mode(&self) -> Result<i32> { Ok(self.raw.get_selection_mode()?) }
+    pub fn set_selection_mode(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_selection_mode(value)?)
     }
-    pub fn set_selection_mode(&self, value: SelectionMode) -> Result<()> {
-        Ok(self.raw.set_selection_mode(value as i32)?)
-    }
-    pub fn selection_mode(self, value: SelectionMode) -> Result<Self> {
+    pub fn selection_mode(self, value: i32) -> Result<Self> {
         self.set_selection_mode(value)?;
         Ok(self)
     }
@@ -39994,14 +40103,11 @@ impl Window {
         self.set_vertical_content_alignment(value)?;
         Ok(self)
     }
-    pub fn get_size_to_content(&self) -> Result<SizeToContent> {
-        let value = self.raw.get_size_to_content()?;
-        SizeToContent::try_from(value)
+    pub fn get_size_to_content(&self) -> Result<i32> { Ok(self.raw.get_size_to_content()?) }
+    pub fn set_size_to_content(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_size_to_content(value)?)
     }
-    pub fn set_size_to_content(&self, value: SizeToContent) -> Result<()> {
-        Ok(self.raw.set_size_to_content(value as i32)?)
-    }
-    pub fn size_to_content(self, value: SizeToContent) -> Result<Self> {
+    pub fn size_to_content(self, value: i32) -> Result<Self> {
         self.set_size_to_content(value)?;
         Ok(self)
     }

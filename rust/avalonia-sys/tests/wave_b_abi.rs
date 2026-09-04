@@ -29,6 +29,7 @@ fn a_flyout_is_shown_through_a_method_rather_than_an_attached_property() {
         "*get_target)(IAvnFlyoutBase* self, IAvnControl** value)",
         "*set_is_open)(IAvnFlyoutBase* self, int32_t value)",
         "*set_placement)(IAvnPopupFlyoutBase* self, int32_t value)",
+        "*set_placement_anchor)(IAvnPopupFlyoutBase* self, int32_t value)",
         "*set_show_mode)(IAvnPopupFlyoutBase* self, int32_t value)",
         "*set_content)(IAvnFlyout* self, IAvnControl* value)",
     ] {
@@ -167,8 +168,8 @@ fn the_factory_gains_a_creator_per_constructible_wave_b_type() {
 fn wave_b_interfaces_publish_abi_version_one_and_nothing_else_moved() {
     for expected in [
         "#define I_AVN_FLYOUT_BASE_ABI_VERSION 1",
-        "#define I_AVN_POPUP_FLYOUT_BASE_ABI_VERSION 2",
-        "#define I_AVN_FLYOUT_ABI_VERSION 2",
+        "#define I_AVN_POPUP_FLYOUT_BASE_ABI_VERSION 3",
+        "#define I_AVN_FLYOUT_ABI_VERSION 3",
         "#define I_AVN_MENU_BASE_ABI_VERSION 4",
         "#define I_AVN_MENU_ABI_VERSION 4",
         "#define I_AVN_MENU_ITEM_ABI_VERSION 5",
