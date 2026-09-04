@@ -35,9 +35,7 @@ fn split_button_carries_click_and_no_icommand() {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
     }
 
-    for forbidden in [
-        "*set_command)(IAvnSplitButton",
-    ] {
+    for forbidden in ["*set_command)(IAvnSplitButton"] {
         assert!(
             !HEADER.contains(forbidden),
             "header must not declare `{forbidden}`"

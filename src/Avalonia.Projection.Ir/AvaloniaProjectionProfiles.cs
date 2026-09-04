@@ -53,7 +53,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnListBoxItem"] = 6,
             ["Avalonia.Host.Com.IAvnComboBoxItem"] = 6,
             ["Avalonia.Host.Com.IAvnScrollViewer"] = 7,
-            ["Avalonia.Host.Com.IAvnWindow"] = 7,
+            ["Avalonia.Host.Com.IAvnWindow"] = 8,
             ["Avalonia.Host.Com.IAvnGrid"] = 5,
             // Previously version-1 templated types inherit the TemplatedControl bump.
             ["Avalonia.Host.Com.IAvnAutoCompleteBox"] = 3,
@@ -280,7 +280,9 @@ public static class AvaloniaProjectionProfiles
                 "Title", "CanResize", "WindowState", "Show", "Close", "Hide",
                 "SizeToContent", "ShowActivated", "ShowInTaskbar", "CanMinimize",
                 "CanMaximize", "WindowStartupLocation", "WindowDecorations",
-                "ClosingBehavior",
+                "ClosingBehavior", "ExtendClientAreaToDecorationsHint",
+                "ExtendClientAreaTitleBarHeightHint", "IsExtendedIntoWindowDecorations",
+                "WindowDecorationMargin", "OffScreenMargin", "IsDialog", "Closing",
             ],
             ["Avalonia.Controls.StackPanel"] = ["Orientation", "Spacing"],
             ["Avalonia.Controls.TextBlock"] =

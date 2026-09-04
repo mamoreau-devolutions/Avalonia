@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("C75C263D-AE39-51E4-8F2D-2A65812965EE")]
+[Guid("A3C6E6F8-2067-5C29-9C7F-6037274D6844")]
 public partial interface IAvnWindow : IAvnContentControl
 {
     [PreserveSig]
@@ -20,6 +20,27 @@ public partial interface IAvnWindow : IAvnContentControl
 
     [PreserveSig]
     int SetTitle(string? value);
+
+    [PreserveSig]
+    int GetExtendClientAreaToDecorationsHint(out int value);
+
+    [PreserveSig]
+    int SetExtendClientAreaToDecorationsHint(int value);
+
+    [PreserveSig]
+    int GetExtendClientAreaTitleBarHeightHint(out double value);
+
+    [PreserveSig]
+    int SetExtendClientAreaTitleBarHeightHint(double value);
+
+    [PreserveSig]
+    int GetIsExtendedIntoWindowDecorations(out int value);
+
+    [PreserveSig]
+    int GetWindowDecorationMargin(out AvnThickness value);
+
+    [PreserveSig]
+    int GetOffScreenMargin(out AvnThickness value);
 
     [PreserveSig]
     int GetWindowDecorations(out int value);
@@ -74,6 +95,9 @@ public partial interface IAvnWindow : IAvnContentControl
 
     [PreserveSig]
     int SetWindowStartupLocation(int value);
+
+    [PreserveSig]
+    int GetIsDialog(out int value);
 
     [PreserveSig]
     int Close();
@@ -1224,6 +1248,116 @@ public sealed partial class AvnWindow : IAvnWindow
         }
     }
 
+    public int GetExtendClientAreaToDecorationsHint(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.ExtendClientAreaToDecorationsHint ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetExtendClientAreaToDecorationsHint(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ExtendClientAreaToDecorationsHint = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetExtendClientAreaTitleBarHeightHint(out double value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.ExtendClientAreaTitleBarHeightHint;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetExtendClientAreaTitleBarHeightHint(double value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ExtendClientAreaTitleBarHeightHint = value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetIsExtendedIntoWindowDecorations(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.IsExtendedIntoWindowDecorations ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetWindowDecorationMargin(out AvnThickness value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnThickness.FromAvalonia(_value.WindowDecorationMargin);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetOffScreenMargin(out AvnThickness value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnThickness.FromAvalonia(_value.OffScreenMargin);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetWindowDecorations(out int value)
     {
         value = default!;
@@ -1495,6 +1629,22 @@ public sealed partial class AvnWindow : IAvnWindow
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.WindowStartupLocation = (global::Avalonia.Controls.WindowStartupLocation)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetIsDialog(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.IsDialog ? 1 : 0;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

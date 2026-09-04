@@ -136,6 +136,12 @@ public class ClrTypeExtractorTests
         var window = Type(ir, "IAvnWindow");
         Assert.Equal("Avalonia.Host.Com.IAvnContentControl", window.BaseFullName);
         Assert.Contains(window.Properties, p => p.Name == nameof(Window.Title));
+        Assert.Contains(window.Properties, p => p.Name == nameof(Window.ExtendClientAreaToDecorationsHint));
+        Assert.Contains(window.Properties, p => p.Name == nameof(Window.IsExtendedIntoWindowDecorations));
+        Assert.Contains(window.Properties, p => p.Name == nameof(Window.WindowDecorationMargin));
+        Assert.Contains(window.Properties, p => p.Name == nameof(Window.OffScreenMargin));
+        Assert.Contains(window.Properties, p => p.Name == nameof(Window.IsDialog));
+        Assert.DoesNotContain(window.Events, e => e.Name == nameof(Window.Closing));
         Assert.Contains(window.Methods, m => m.Name == nameof(Window.Show) && m.Parameters.Count == 0);
         Assert.Contains(window.Methods, m => m.Name == nameof(Window.Close) && m.Parameters.Count == 0);
 
@@ -332,6 +338,13 @@ public class ClrTypeExtractorTests
                     ClrTypeExtractor.CreateDeterministicIid(type.FullName, 6),
                     type.Iid);
             });
+
+        var window = Type(ir, "IAvnWindow");
+        Assert.Equal(8, window.AbiVersion);
+        Assert.Equal(
+            ClrTypeExtractor.CreateDeterministicIid(window.FullName, 8),
+            window.Iid);
+        Assert.Equal(6, Type(ir, "IAvnContentControl").AbiVersion);
     }
 
     [Fact]
@@ -1414,13 +1427,20 @@ public class ClrTypeExtractorTests
     {
         var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
         var window = Type(ir, "IAvnWindow");
-        Assert.Equal(7, window.AbiVersion);
+        Assert.Equal(8, window.AbiVersion);
         Assert.Contains(window.Methods, m => m.Name == "Hide");
         Assert.All(
-            new[] { "SizeToContent", "ShowActivated", "ShowInTaskbar", "CanMinimize",
-                "CanMaximize", "WindowStartupLocation", "WindowDecorations", "ClosingBehavior" },
+            new[]
+            {
+                "SizeToContent", "ShowActivated", "ShowInTaskbar", "CanMinimize",
+                "CanMaximize", "WindowStartupLocation", "WindowDecorations", "ClosingBehavior",
+                "ExtendClientAreaToDecorationsHint", "ExtendClientAreaTitleBarHeightHint",
+                "IsExtendedIntoWindowDecorations", "WindowDecorationMargin", "OffScreenMargin",
+                "IsDialog",
+            },
             name => Assert.Contains(window.Properties, p => p.Name == name));
         Assert.DoesNotContain(window.Properties, p => p.Name is "Icon" or "Position");
+        Assert.DoesNotContain(window.Events, e => e.Name == "Closing");
         Assert.Equal(6, Type(ir, "IAvnContentControl").AbiVersion);
     }
 

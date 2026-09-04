@@ -43,8 +43,9 @@ fn widened_interfaces_publish_their_layout_abi_version() {
         "#define I_AVN_CONTROL_ABI_VERSION 3",
         "#define I_AVN_DECORATOR_ABI_VERSION 3",
         // Window and Button sit under ContentControl, which the completeness wave widened,
-        // so they moved on to 5.
-        "#define I_AVN_WINDOW_ABI_VERSION 7",
+        // and the window overlay-chrome pass widened the leaf to 8 without disturbing
+        // the content control or factory ABI.
+        "#define I_AVN_WINDOW_ABI_VERSION 8",
         "#define I_AVN_BUTTON_ABI_VERSION 7",
         // AvaloniaObject projects no members, so its vtable never moved.
         "#define I_AVN_AVALONIA_OBJECT_ABI_VERSION 2",

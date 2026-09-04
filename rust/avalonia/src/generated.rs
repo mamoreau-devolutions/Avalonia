@@ -35096,6 +35096,29 @@ impl Window {
         self.set_title(value)?;
         Ok(self)
     }
+    pub fn get_extend_client_area_to_decorations_hint(&self) -> Result<bool> { Ok(self.raw.get_extend_client_area_to_decorations_hint()?) }
+    pub fn set_extend_client_area_to_decorations_hint(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_extend_client_area_to_decorations_hint(value)?)
+    }
+    pub fn extend_client_area_to_decorations_hint(self, value: bool) -> Result<Self> {
+        self.set_extend_client_area_to_decorations_hint(value)?;
+        Ok(self)
+    }
+    pub fn get_extend_client_area_title_bar_height_hint(&self) -> Result<f64> { Ok(self.raw.get_extend_client_area_title_bar_height_hint()?) }
+    pub fn set_extend_client_area_title_bar_height_hint(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_extend_client_area_title_bar_height_hint(value)?)
+    }
+    pub fn extend_client_area_title_bar_height_hint(self, value: f64) -> Result<Self> {
+        self.set_extend_client_area_title_bar_height_hint(value)?;
+        Ok(self)
+    }
+    pub fn is_extended_into_window_decorations(&self) -> Result<bool> { Ok(self.raw.get_is_extended_into_window_decorations()?) }
+    pub fn window_decoration_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_window_decoration_margin()?.into())
+    }
+    pub fn off_screen_margin(&self) -> Result<Thickness> {
+        Ok(self.raw.get_off_screen_margin()?.into())
+    }
     pub fn get_window_decorations(&self) -> Result<WindowDecorations> {
         let value = self.raw.get_window_decorations()?;
         WindowDecorations::try_from(value)
@@ -35180,6 +35203,7 @@ impl Window {
         self.set_window_startup_location(value)?;
         Ok(self)
     }
+    pub fn is_dialog(&self) -> Result<bool> { Ok(self.raw.get_is_dialog()?) }
     pub fn close(&self) -> Result<()> { Ok(self.raw.close()?) }
     pub fn hide(&self) -> Result<()> { Ok(self.raw.hide()?) }
     pub fn show_with_window(&self, owner: &Window) -> Result<()> { Ok(self.raw.show_with_window(&owner.raw)?) }

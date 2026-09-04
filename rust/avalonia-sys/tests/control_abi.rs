@@ -81,7 +81,7 @@ fn widened_interfaces_publish_abi_version_five() {
         "#define I_AVN_COMBO_BOX_ABI_VERSION 7",
         "#define I_AVN_COMBO_BOX_ITEM_ABI_VERSION 6",
         "#define I_AVN_SCROLL_VIEWER_ABI_VERSION 7",
-        "#define I_AVN_WINDOW_ABI_VERSION 7",
+        "#define I_AVN_WINDOW_ABI_VERSION 8",
         "#define I_AVN_TEMPLATED_CONTROL_ABI_VERSION 5",
         "#define I_AVN_TEXT_BLOCK_ABI_VERSION 5",
         "#define I_AVN_TEXT_BOX_ABI_VERSION 6",
@@ -207,7 +207,7 @@ fn widened_interfaces_republish_under_fresh_iids() {
         ),
         (
             "IAvnWindow",
-            "C75C263D-AE39-51E4-8F2D-2A65812965EE",
+            "A3C6E6F8-2067-5C29-9C7F-6037274D6844",
             I_AVN_WINDOW_IID,
         ),
     ] {

@@ -5773,8 +5773,8 @@
       "name": "IAvnWindow",
       "fullName": "Avalonia.Host.Com.IAvnWindow",
       "kind": "Class",
-      "iid": "C75C263D-AE39-51E4-8F2D-2A65812965EE",
-      "abiVersion": 7,
+      "iid": "A3C6E6F8-2067-5C29-9C7F-6037274D6844",
+      "abiVersion": 8,
       "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
       "managedFullName": "Avalonia.Controls.Window",
       "isConstructible": true,
@@ -5835,6 +5835,51 @@
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.String",
           "isNullable": true
+        },
+        {
+          "name": "ExtendClientAreaToDecorationsHint",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "ExtendClientAreaTitleBarHeightHint",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "IsExtendedIntoWindowDecorations",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": false,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "WindowDecorationMargin",
+          "kind": "Thickness",
+          "canRead": true,
+          "canWrite": false,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Thickness",
+          "isNullable": false
+        },
+        {
+          "name": "OffScreenMargin",
+          "kind": "Thickness",
+          "canRead": true,
+          "canWrite": false,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Thickness",
+          "isNullable": false
         },
         {
           "name": "WindowDecorations",
@@ -5915,6 +5960,15 @@
           "canWrite": true,
           "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Controls.WindowStartupLocation",
+          "isNullable": false
+        },
+        {
+          "name": "IsDialog",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": false,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
           "isNullable": false
         }
       ],
@@ -10882,31 +10936,6 @@
     },
     {
       "owner": "Avalonia.Controls.Window",
-      "member": "ExtendClientAreaToDecorationsHint",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Window",
-      "member": "ExtendClientAreaTitleBarHeightHint",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Window",
-      "member": "IsExtendedIntoWindowDecorations",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Window",
-      "member": "WindowDecorationMargin",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Window",
-      "member": "OffScreenMargin",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Window",
       "member": "WindowDecorationsTheme",
       "reason": "Not included by projection policy"
     },
@@ -10927,13 +10956,8 @@
     },
     {
       "owner": "Avalonia.Controls.Window",
-      "member": "IsDialog",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Window",
       "member": "Closing",
-      "reason": "Not included by projection policy"
+      "reason": "Included event requires an explicit event projection"
     },
     {
       "owner": "Avalonia.Controls.Window",

@@ -56105,7 +56105,7 @@ impl ComPtr<IAvnViewbox> {
     }
 }
 
-pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0xC75C263D, data2: 0xAE39, data3: 0x51E4, data4: [0x8F, 0x2D, 0x2A, 0x65, 0x81, 0x29, 0x65, 0xEE] };
+pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0xA3C6E6F8, data2: 0x2067, data3: 0x5C29, data4: [0x9C, 0x7F, 0x60, 0x37, 0x27, 0x4D, 0x68, 0x44] };
 
 #[repr(C)]
 struct IAvnWindowVtbl {
@@ -56181,6 +56181,13 @@ struct IAvnWindowVtbl {
     set_size_to_content: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
     get_title: unsafe extern "system" fn(*mut IAvnWindow, *mut *mut u16) -> i32,
     set_title: unsafe extern "system" fn(*mut IAvnWindow, *mut u16) -> i32,
+    get_extend_client_area_to_decorations_hint: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
+    set_extend_client_area_to_decorations_hint: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
+    get_extend_client_area_title_bar_height_hint: unsafe extern "system" fn(*mut IAvnWindow, *mut f64) -> i32,
+    set_extend_client_area_title_bar_height_hint: unsafe extern "system" fn(*mut IAvnWindow, f64) -> i32,
+    get_is_extended_into_window_decorations: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
+    get_window_decoration_margin: unsafe extern "system" fn(*mut IAvnWindow, *mut AvnThickness) -> i32,
+    get_off_screen_margin: unsafe extern "system" fn(*mut IAvnWindow, *mut AvnThickness) -> i32,
     get_window_decorations: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
     set_window_decorations: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
     get_show_activated: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
@@ -56199,6 +56206,7 @@ struct IAvnWindowVtbl {
     set_can_maximize: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
     get_window_startup_location: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
     set_window_startup_location: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
+    get_is_dialog: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
     close: unsafe extern "system" fn(*mut IAvnWindow) -> i32,
     hide: unsafe extern "system" fn(*mut IAvnWindow) -> i32,
     show: unsafe extern "system" fn(*mut IAvnWindow) -> i32,
@@ -56696,6 +56704,58 @@ impl ComPtr<IAvnWindow> {
             hresult::check(hr)
         }
     }
+    pub fn get_extend_client_area_to_decorations_hint(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_extend_client_area_to_decorations_hint)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_extend_client_area_to_decorations_hint(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_extend_client_area_to_decorations_hint)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_extend_client_area_title_bar_height_hint(&self) -> Result<f64> {
+        unsafe {
+            let mut value: f64 = 0.0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_extend_client_area_title_bar_height_hint)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_extend_client_area_title_bar_height_hint(&self, value: f64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_extend_client_area_title_bar_height_hint)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_extended_into_window_decorations(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_extended_into_window_decorations)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_window_decoration_margin(&self) -> Result<AvnThickness> {
+        unsafe {
+            let mut value: AvnThickness = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_window_decoration_margin)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn get_off_screen_margin(&self) -> Result<AvnThickness> {
+        unsafe {
+            let mut value: AvnThickness = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_off_screen_margin)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
     pub fn get_window_decorations(&self) -> Result<i32> {
         unsafe {
             let mut value: i32 = 0;
@@ -56820,6 +56880,14 @@ impl ComPtr<IAvnWindow> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_window_startup_location)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_is_dialog(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_dialog)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn close(&self) -> Result<()> {
