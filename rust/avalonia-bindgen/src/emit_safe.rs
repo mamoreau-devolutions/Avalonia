@@ -584,15 +584,32 @@ fn safe_property_input(property: &ProjectedProperty) -> (String, String, String)
                 "&value".into()
             },
         ),
-        "ComInterface" => (
-            "impl AsControl".into(),
-            "        let value = value.as_control()?;\n".into(),
-            if property.is_nullable {
-                "Some(&value)".into()
+        "ComInterface" => {
+            let safe = interface_suffix(simple_name(
+                property.interface_name.as_deref().expect("interfaceName"),
+            ));
+            if safe == "Control" {
+                (
+                    "impl AsControl".into(),
+                    "        let value = value.as_control()?;\n".into(),
+                    if property.is_nullable {
+                        "Some(&value)".into()
+                    } else {
+                        "&value".into()
+                    },
+                )
             } else {
-                "&value".into()
-            },
-        ),
+                (
+                    format!("&{safe}"),
+                    String::new(),
+                    if property.is_nullable {
+                        "Some(&value.raw)".into()
+                    } else {
+                        "&value.raw".into()
+                    },
+                )
+            }
+        }
         "Brush" => (
             "impl Into<Option<Brush>>".into(),
             "        let value = value.into().map(Brush::to_raw).transpose()?;\n".into(),

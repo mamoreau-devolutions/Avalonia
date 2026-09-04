@@ -3466,11 +3466,10 @@ impl Button {
     pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
         Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
     }
-    pub fn set_flyout(&self, value: impl AsControl) -> Result<()> {
-        let value = value.as_control()?;
-        Ok(self.raw.set_flyout(Some(&value))?)
+    pub fn set_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_flyout(Some(&value.raw))?)
     }
-    pub fn flyout(self, value: impl AsControl) -> Result<Self> {
+    pub fn flyout(self, value: &FlyoutBase) -> Result<Self> {
         self.set_flyout(value)?;
         Ok(self)
     }
@@ -5688,11 +5687,10 @@ impl CheckBox {
     pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
         Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
     }
-    pub fn set_flyout(&self, value: impl AsControl) -> Result<()> {
-        let value = value.as_control()?;
-        Ok(self.raw.set_flyout(Some(&value))?)
+    pub fn set_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_flyout(Some(&value.raw))?)
     }
-    pub fn flyout(self, value: impl AsControl) -> Result<Self> {
+    pub fn flyout(self, value: &FlyoutBase) -> Result<Self> {
         self.set_flyout(value)?;
         Ok(self)
     }
@@ -7220,11 +7218,10 @@ impl CommandBarButton {
     pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
         Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
     }
-    pub fn set_flyout(&self, value: impl AsControl) -> Result<()> {
-        let value = value.as_control()?;
-        Ok(self.raw.set_flyout(Some(&value))?)
+    pub fn set_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_flyout(Some(&value.raw))?)
     }
-    pub fn flyout(self, value: impl AsControl) -> Result<Self> {
+    pub fn flyout(self, value: &FlyoutBase) -> Result<Self> {
         self.set_flyout(value)?;
         Ok(self)
     }
@@ -7959,11 +7956,10 @@ impl CommandBarToggleButton {
     pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
         Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
     }
-    pub fn set_flyout(&self, value: impl AsControl) -> Result<()> {
-        let value = value.as_control()?;
-        Ok(self.raw.set_flyout(Some(&value))?)
+    pub fn set_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_flyout(Some(&value.raw))?)
     }
-    pub fn flyout(self, value: impl AsControl) -> Result<Self> {
+    pub fn flyout(self, value: &FlyoutBase) -> Result<Self> {
         self.set_flyout(value)?;
         Ok(self)
     }
@@ -10110,11 +10106,10 @@ impl DropDownButton {
     pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
         Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
     }
-    pub fn set_flyout(&self, value: impl AsControl) -> Result<()> {
-        let value = value.as_control()?;
-        Ok(self.raw.set_flyout(Some(&value))?)
+    pub fn set_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_flyout(Some(&value.raw))?)
     }
-    pub fn flyout(self, value: impl AsControl) -> Result<Self> {
+    pub fn flyout(self, value: &FlyoutBase) -> Result<Self> {
         self.set_flyout(value)?;
         Ok(self)
     }
@@ -12238,11 +12233,10 @@ impl HyperlinkButton {
     pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
         Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
     }
-    pub fn set_flyout(&self, value: impl AsControl) -> Result<()> {
-        let value = value.as_control()?;
-        Ok(self.raw.set_flyout(Some(&value))?)
+    pub fn set_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_flyout(Some(&value.raw))?)
     }
-    pub fn flyout(self, value: impl AsControl) -> Result<Self> {
+    pub fn flyout(self, value: &FlyoutBase) -> Result<Self> {
         self.set_flyout(value)?;
         Ok(self)
     }
@@ -21283,11 +21277,10 @@ impl ToggleButton {
     pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
         Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
     }
-    pub fn set_flyout(&self, value: impl AsControl) -> Result<()> {
-        let value = value.as_control()?;
-        Ok(self.raw.set_flyout(Some(&value))?)
+    pub fn set_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_flyout(Some(&value.raw))?)
     }
-    pub fn flyout(self, value: impl AsControl) -> Result<Self> {
+    pub fn flyout(self, value: &FlyoutBase) -> Result<Self> {
         self.set_flyout(value)?;
         Ok(self)
     }
@@ -22311,11 +22304,10 @@ impl RadioButton {
     pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
         Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
     }
-    pub fn set_flyout(&self, value: impl AsControl) -> Result<()> {
-        let value = value.as_control()?;
-        Ok(self.raw.set_flyout(Some(&value))?)
+    pub fn set_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_flyout(Some(&value.raw))?)
     }
-    pub fn flyout(self, value: impl AsControl) -> Result<Self> {
+    pub fn flyout(self, value: &FlyoutBase) -> Result<Self> {
         self.set_flyout(value)?;
         Ok(self)
     }
@@ -23325,11 +23317,10 @@ impl RepeatButton {
     pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
         Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
     }
-    pub fn set_flyout(&self, value: impl AsControl) -> Result<()> {
-        let value = value.as_control()?;
-        Ok(self.raw.set_flyout(Some(&value))?)
+    pub fn set_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_flyout(Some(&value.raw))?)
     }
-    pub fn flyout(self, value: impl AsControl) -> Result<Self> {
+    pub fn flyout(self, value: &FlyoutBase) -> Result<Self> {
         self.set_flyout(value)?;
         Ok(self)
     }
@@ -27891,11 +27882,10 @@ impl SplitButton {
     pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
         Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
     }
-    pub fn set_flyout(&self, value: impl AsControl) -> Result<()> {
-        let value = value.as_control()?;
-        Ok(self.raw.set_flyout(Some(&value))?)
+    pub fn set_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_flyout(Some(&value.raw))?)
     }
-    pub fn flyout(self, value: impl AsControl) -> Result<Self> {
+    pub fn flyout(self, value: &FlyoutBase) -> Result<Self> {
         self.set_flyout(value)?;
         Ok(self)
     }
@@ -32187,11 +32177,10 @@ impl ToggleSplitButton {
     pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
         Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
     }
-    pub fn set_flyout(&self, value: impl AsControl) -> Result<()> {
-        let value = value.as_control()?;
-        Ok(self.raw.set_flyout(Some(&value))?)
+    pub fn set_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_flyout(Some(&value.raw))?)
     }
-    pub fn flyout(self, value: impl AsControl) -> Result<Self> {
+    pub fn flyout(self, value: &FlyoutBase) -> Result<Self> {
         self.set_flyout(value)?;
         Ok(self)
     }
@@ -32589,11 +32578,10 @@ impl ToggleSwitch {
     pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
         Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
     }
-    pub fn set_flyout(&self, value: impl AsControl) -> Result<()> {
-        let value = value.as_control()?;
-        Ok(self.raw.set_flyout(Some(&value))?)
+    pub fn set_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_flyout(Some(&value.raw))?)
     }
-    pub fn flyout(self, value: impl AsControl) -> Result<Self> {
+    pub fn flyout(self, value: &FlyoutBase) -> Result<Self> {
         self.set_flyout(value)?;
         Ok(self)
     }
