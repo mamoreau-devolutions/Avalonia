@@ -6,14 +6,32 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("51330355-E035-5B22-8AAA-49909B8DE523")]
+[Guid("5F901899-E71F-503E-9DF5-95C167014353")]
 public partial interface IAvnSelectingItemsControl : IAvnItemsControl
 {
+    [PreserveSig]
+    int GetAutoScrollToSelectedItem(out int value);
+
+    [PreserveSig]
+    int SetAutoScrollToSelectedItem(int value);
+
     [PreserveSig]
     int GetSelectedIndex(out int value);
 
     [PreserveSig]
     int SetSelectedIndex(int value);
+
+    [PreserveSig]
+    int GetIsTextSearchEnabled(out int value);
+
+    [PreserveSig]
+    int SetIsTextSearchEnabled(int value);
+
+    [PreserveSig]
+    int GetWrapSelection(out int value);
+
+    [PreserveSig]
+    int SetWrapSelection(int value);
 
     [PreserveSig]
     int AdviseSelectionChanged(IAvnSelectingItemsControlSelectionChangedHandler? handler, out long subscriptionId);
@@ -1021,6 +1039,68 @@ public sealed partial class AvnSelectingItemsControl : IAvnSelectingItemsControl
         }
     }
 
+    public int GetItemCount(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.ItemCount;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int ScrollIntoViewWithInt32(int index)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ScrollIntoView(index);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetAutoScrollToSelectedItem(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.AutoScrollToSelectedItem ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetAutoScrollToSelectedItem(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.AutoScrollToSelectedItem = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetSelectedIndex(out int value)
     {
         value = default!;
@@ -1044,6 +1124,68 @@ public sealed partial class AvnSelectingItemsControl : IAvnSelectingItemsControl
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.SelectedIndex = value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetIsTextSearchEnabled(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.IsTextSearchEnabled ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetIsTextSearchEnabled(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.IsTextSearchEnabled = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetWrapSelection(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.WrapSelection ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetWrapSelection(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.WrapSelection = value != 0;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

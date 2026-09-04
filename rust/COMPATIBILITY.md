@@ -216,6 +216,17 @@ and move from 1 to 2. `IAvnContextMenu` grows PlacementTarget and moves from
 2 to 3. PlacementRect is nullable geometry; PlacementAnchor/Gravity/ConstraintAdjustment
 are flags enums whose combined values have no name — both stay gaps. Factory 13.
 
+ItemsControl leftovers keep `Items`, `SelectedIndex` and `SelectionChanged` and
+append `ItemCount` plus `ScrollIntoView(int)` on `IAvnItemsControl` (5 to 6).
+`IAvnSelectingItemsControl` grows AutoScrollToSelectedItem, IsTextSearchEnabled
+and WrapSelection (5 to 6). Every ItemsControl descendant republishes:
+ComboBox 7 to 8, ListBox 6 to 7, ContextMenu 3 to 4, MenuItem 3 to 4,
+Menu/MenuBase/Headered* 2 to 3, TabControl/TableView/TreeView/TreeViewItem/
+Carousel 2 to 3. ContentControl and Window are unchanged. The object overload
+of ScrollIntoView, templates and ItemsSource stay gaps. Factory 13.
+Safe bindgen keeps the `is_` prefix on a bool builder when stripping it would
+collide with a method on the same type (`Popup.IsOpen` vs `Open()`).
+
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and
 `IAvnNumericUpDown` each move from 2 to 3. Templates, filters, ItemsSource,

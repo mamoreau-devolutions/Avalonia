@@ -54,6 +54,11 @@ fn completeness_members_are_published_on_the_type_that_declares_them() {
         "*set_flyout)(IAvnSplitButton* self, IAvnFlyoutBase* value)",
         "*open)(IAvnMenuItem* self)",
         "*close)(IAvnMenuItem* self)",
+        "*get_item_count)(IAvnItemsControl* self, int32_t* value)",
+        "*scroll_into_view_with_int32)(IAvnItemsControl* self, int32_t index)",
+        "*set_auto_scroll_to_selected_item)(IAvnSelectingItemsControl* self, int32_t value)",
+        "*set_is_text_search_enabled)(IAvnSelectingItemsControl* self, int32_t value)",
+        "*set_wrap_selection)(IAvnSelectingItemsControl* self, int32_t value)",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
     }
@@ -76,17 +81,17 @@ fn widened_interfaces_publish_abi_version_five() {
         "#define I_AVN_CHECK_BOX_ABI_VERSION 7",
         "#define I_AVN_RADIO_BUTTON_ABI_VERSION 7",
         "#define I_AVN_TOGGLE_SWITCH_ABI_VERSION 7",
-        "#define I_AVN_LIST_BOX_ABI_VERSION 6",
+        "#define I_AVN_LIST_BOX_ABI_VERSION 7",
         "#define I_AVN_LIST_BOX_ITEM_ABI_VERSION 6",
-        "#define I_AVN_COMBO_BOX_ABI_VERSION 7",
+        "#define I_AVN_COMBO_BOX_ABI_VERSION 8",
         "#define I_AVN_COMBO_BOX_ITEM_ABI_VERSION 6",
         "#define I_AVN_SCROLL_VIEWER_ABI_VERSION 7",
         "#define I_AVN_WINDOW_ABI_VERSION 8",
         "#define I_AVN_TEMPLATED_CONTROL_ABI_VERSION 5",
         "#define I_AVN_TEXT_BLOCK_ABI_VERSION 5",
         "#define I_AVN_TEXT_BOX_ABI_VERSION 6",
-        "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 5",
-        "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 5",
+        "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 6",
+        "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 6",
         "#define I_AVN_BORDER_ABI_VERSION 4",
         "#define I_AVN_PANEL_ABI_VERSION 4",
         "#define I_AVN_CONTROL_ABI_VERSION 3",
@@ -174,6 +179,16 @@ fn widened_interfaces_republish_under_fresh_iids() {
             "1BFD4CC7-0C79-53D7-845D-CC6801697EAD",
             I_AVN_COMBO_BOX_IID,
         ),
+        (
+            "IAvnListBox",
+            "887C3BB0-59E1-57DD-848F-366B137BA3D1",
+            I_AVN_LIST_BOX_IID,
+        ),
+        (
+            "IAvnComboBox",
+            "ACF92675-F4CB-553B-9700-58360FEE0232",
+            I_AVN_COMBO_BOX_IID,
+        ),
     ] {
         assert_ne!(format_iid(&current), retired, "{name} reused a retired IID");
     }
@@ -197,12 +212,12 @@ fn widened_interfaces_republish_under_fresh_iids() {
         ),
         (
             "IAvnListBox",
-            "887C3BB0-59E1-57DD-848F-366B137BA3D1",
+            "311C3392-8A78-5745-AFC8-8629DA8BDC06",
             I_AVN_LIST_BOX_IID,
         ),
         (
             "IAvnComboBox",
-            "ACF92675-F4CB-553B-9700-58360FEE0232",
+            "3CD1C9E9-F6B2-5FB6-9B4E-37DD0EFD6674",
             I_AVN_COMBO_BOX_IID,
         ),
         (

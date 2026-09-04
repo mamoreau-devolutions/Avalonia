@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("C340FB81-D387-503E-8FCC-90C6E366E8D3")]
+[Guid("9BE2C6EA-FA90-542F-8B61-D1DEF357F025")]
 public partial interface IAvnTreeViewItem : IAvnHeaderedItemsControl
 {
     [PreserveSig]
@@ -1030,6 +1030,37 @@ public sealed partial class AvnTreeViewItem : IAvnTreeViewItem
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = new AvnItemList(_value.Items);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetItemCount(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.ItemCount;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int ScrollIntoViewWithInt32(int index)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ScrollIntoView(index);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

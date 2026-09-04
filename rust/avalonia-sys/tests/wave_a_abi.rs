@@ -64,18 +64,18 @@ fn tool_tip_tip_is_a_string_attached_property_beside_the_scalar_ones() {
 fn wave_a_interfaces_publish_abi_version_one_and_nothing_else_moved() {
     for expected in [
         "#define I_AVN_IMAGE_ABI_VERSION 1",
-        "#define I_AVN_HEADERED_ITEMS_CONTROL_ABI_VERSION 1",
-        "#define I_AVN_TAB_CONTROL_ABI_VERSION 1",
+        "#define I_AVN_HEADERED_ITEMS_CONTROL_ABI_VERSION 3",
+        "#define I_AVN_TAB_CONTROL_ABI_VERSION 3",
         "#define I_AVN_TAB_ITEM_ABI_VERSION 1",
-        "#define I_AVN_TREE_VIEW_ABI_VERSION 1",
-        "#define I_AVN_TREE_VIEW_ITEM_ABI_VERSION 1",
+        "#define I_AVN_TREE_VIEW_ABI_VERSION 3",
+        "#define I_AVN_TREE_VIEW_ITEM_ABI_VERSION 3",
         "#define I_AVN_TOOL_TIP_ABI_VERSION 1",
         // Every base the new interfaces sit on kept the version whose flattened vtable it
         // still matches, so no shipped consumer has to requery anything but the factory.
         "#define I_AVN_AVALONIA_OBJECT_ABI_VERSION 2",
         "#define I_AVN_CONTROL_ABI_VERSION 3",
-        "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 4",
-        "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 4",
+        "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 6",
+        "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 6",
         "#define I_AVN_CONTENT_CONTROL_ABI_VERSION 5",
         "#define I_AVN_HEADERED_CONTENT_CONTROL_ABI_VERSION 5",
         // Only the factory grew slots. Wave B moved it again, from 3 to 4, for its own
@@ -103,12 +103,12 @@ fn wave_a_iids_are_fresh_and_distinct_from_every_shipped_one() {
         ),
         (
             "IAvnItemsControl",
-            "95D1FA77-96F7-5F24-BE8A-362E530CCBD9",
+            "AD06A856-E8AF-5AC5-9105-A81F3AE12D4D",
             I_AVN_ITEMS_CONTROL_IID,
         ),
         (
             "IAvnSelectingItemsControl",
-            "4D40F605-0330-573F-9C4E-06B1CC3CF5A3",
+            "5F901899-E71F-503E-9DF5-95C167014353",
             I_AVN_SELECTING_ITEMS_CONTROL_IID,
         ),
         (

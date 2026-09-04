@@ -5289,12 +5289,38 @@ impl Carousel {
         self.items()?.add(value)?;
         Ok(self)
     }
+    pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
+    pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
+    pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_auto_scroll_to_selected_item(value)?)
+    }
+    pub fn auto_scroll_to_selected_item(self, value: bool) -> Result<Self> {
+        self.set_auto_scroll_to_selected_item(value)?;
+        Ok(self)
+    }
     pub fn get_selected_index(&self) -> Result<i32> { Ok(self.raw.get_selected_index()?) }
     pub fn set_selected_index(&self, value: i32) -> Result<()> {
         Ok(self.raw.set_selected_index(value)?)
     }
     pub fn selected_index(self, value: i32) -> Result<Self> {
         self.set_selected_index(value)?;
+        Ok(self)
+    }
+    pub fn get_is_text_search_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_text_search_enabled()?) }
+    pub fn set_text_search_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_text_search_enabled(value)?)
+    }
+    pub fn text_search_enabled(self, value: bool) -> Result<Self> {
+        self.set_text_search_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_wrap_selection(&self) -> Result<bool> { Ok(self.raw.get_wrap_selection()?) }
+    pub fn set_wrap_selection(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_wrap_selection(value)?)
+    }
+    pub fn wrap_selection(self, value: bool) -> Result<Self> {
+        self.set_wrap_selection(value)?;
         Ok(self)
     }
     pub fn subscribe_selection_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -6039,12 +6065,38 @@ impl ComboBox {
         self.items()?.add(value)?;
         Ok(self)
     }
+    pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
+    pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
+    pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_auto_scroll_to_selected_item(value)?)
+    }
+    pub fn auto_scroll_to_selected_item(self, value: bool) -> Result<Self> {
+        self.set_auto_scroll_to_selected_item(value)?;
+        Ok(self)
+    }
     pub fn get_selected_index(&self) -> Result<i32> { Ok(self.raw.get_selected_index()?) }
     pub fn set_selected_index(&self, value: i32) -> Result<()> {
         Ok(self.raw.set_selected_index(value)?)
     }
     pub fn selected_index(self, value: i32) -> Result<Self> {
         self.set_selected_index(value)?;
+        Ok(self)
+    }
+    pub fn get_is_text_search_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_text_search_enabled()?) }
+    pub fn set_text_search_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_text_search_enabled(value)?)
+    }
+    pub fn text_search_enabled(self, value: bool) -> Result<Self> {
+        self.set_text_search_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_wrap_selection(&self) -> Result<bool> { Ok(self.raw.get_wrap_selection()?) }
+    pub fn set_wrap_selection(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_wrap_selection(value)?)
+    }
+    pub fn wrap_selection(self, value: bool) -> Result<Self> {
+        self.set_wrap_selection(value)?;
         Ok(self)
     }
     pub fn subscribe_selection_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -8683,12 +8735,38 @@ impl ContextMenu {
         self.items()?.add(value)?;
         Ok(self)
     }
+    pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
+    pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
+    pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_auto_scroll_to_selected_item(value)?)
+    }
+    pub fn auto_scroll_to_selected_item(self, value: bool) -> Result<Self> {
+        self.set_auto_scroll_to_selected_item(value)?;
+        Ok(self)
+    }
     pub fn get_selected_index(&self) -> Result<i32> { Ok(self.raw.get_selected_index()?) }
     pub fn set_selected_index(&self, value: i32) -> Result<()> {
         Ok(self.raw.set_selected_index(value)?)
     }
     pub fn selected_index(self, value: i32) -> Result<Self> {
         self.set_selected_index(value)?;
+        Ok(self)
+    }
+    pub fn get_is_text_search_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_text_search_enabled()?) }
+    pub fn set_text_search_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_text_search_enabled(value)?)
+    }
+    pub fn text_search_enabled(self, value: bool) -> Result<Self> {
+        self.set_text_search_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_wrap_selection(&self) -> Result<bool> { Ok(self.raw.get_wrap_selection()?) }
+    pub fn set_wrap_selection(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_wrap_selection(value)?)
+    }
+    pub fn wrap_selection(self, value: bool) -> Result<Self> {
+        self.set_wrap_selection(value)?;
         Ok(self)
     }
     pub fn subscribe_selection_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -13098,6 +13176,8 @@ impl ItemsControl {
         self.items()?.add(value)?;
         Ok(self)
     }
+    pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
 }
 
 impl AsControl for ItemsControl {
@@ -13932,12 +14012,38 @@ impl ListBox {
         self.items()?.add(value)?;
         Ok(self)
     }
+    pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
+    pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
+    pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_auto_scroll_to_selected_item(value)?)
+    }
+    pub fn auto_scroll_to_selected_item(self, value: bool) -> Result<Self> {
+        self.set_auto_scroll_to_selected_item(value)?;
+        Ok(self)
+    }
     pub fn get_selected_index(&self) -> Result<i32> { Ok(self.raw.get_selected_index()?) }
     pub fn set_selected_index(&self, value: i32) -> Result<()> {
         Ok(self.raw.set_selected_index(value)?)
     }
     pub fn selected_index(self, value: i32) -> Result<Self> {
         self.set_selected_index(value)?;
+        Ok(self)
+    }
+    pub fn get_is_text_search_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_text_search_enabled()?) }
+    pub fn set_text_search_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_text_search_enabled(value)?)
+    }
+    pub fn text_search_enabled(self, value: bool) -> Result<Self> {
+        self.set_text_search_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_wrap_selection(&self) -> Result<bool> { Ok(self.raw.get_wrap_selection()?) }
+    pub fn set_wrap_selection(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_wrap_selection(value)?)
+    }
+    pub fn wrap_selection(self, value: bool) -> Result<Self> {
+        self.set_wrap_selection(value)?;
         Ok(self)
     }
     pub fn subscribe_selection_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -15294,12 +15400,38 @@ impl Menu {
         self.items()?.add(value)?;
         Ok(self)
     }
+    pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
+    pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
+    pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_auto_scroll_to_selected_item(value)?)
+    }
+    pub fn auto_scroll_to_selected_item(self, value: bool) -> Result<Self> {
+        self.set_auto_scroll_to_selected_item(value)?;
+        Ok(self)
+    }
     pub fn get_selected_index(&self) -> Result<i32> { Ok(self.raw.get_selected_index()?) }
     pub fn set_selected_index(&self, value: i32) -> Result<()> {
         Ok(self.raw.set_selected_index(value)?)
     }
     pub fn selected_index(self, value: i32) -> Result<Self> {
         self.set_selected_index(value)?;
+        Ok(self)
+    }
+    pub fn get_is_text_search_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_text_search_enabled()?) }
+    pub fn set_text_search_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_text_search_enabled(value)?)
+    }
+    pub fn text_search_enabled(self, value: bool) -> Result<Self> {
+        self.set_text_search_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_wrap_selection(&self) -> Result<bool> { Ok(self.raw.get_wrap_selection()?) }
+    pub fn set_wrap_selection(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_wrap_selection(value)?)
+    }
+    pub fn wrap_selection(self, value: bool) -> Result<Self> {
+        self.set_wrap_selection(value)?;
         Ok(self)
     }
     pub fn subscribe_selection_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -15643,12 +15775,38 @@ impl MenuBase {
         self.items()?.add(value)?;
         Ok(self)
     }
+    pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
+    pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
+    pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_auto_scroll_to_selected_item(value)?)
+    }
+    pub fn auto_scroll_to_selected_item(self, value: bool) -> Result<Self> {
+        self.set_auto_scroll_to_selected_item(value)?;
+        Ok(self)
+    }
     pub fn get_selected_index(&self) -> Result<i32> { Ok(self.raw.get_selected_index()?) }
     pub fn set_selected_index(&self, value: i32) -> Result<()> {
         Ok(self.raw.set_selected_index(value)?)
     }
     pub fn selected_index(self, value: i32) -> Result<Self> {
         self.set_selected_index(value)?;
+        Ok(self)
+    }
+    pub fn get_is_text_search_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_text_search_enabled()?) }
+    pub fn set_text_search_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_text_search_enabled(value)?)
+    }
+    pub fn text_search_enabled(self, value: bool) -> Result<Self> {
+        self.set_text_search_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_wrap_selection(&self) -> Result<bool> { Ok(self.raw.get_wrap_selection()?) }
+    pub fn set_wrap_selection(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_wrap_selection(value)?)
+    }
+    pub fn wrap_selection(self, value: bool) -> Result<Self> {
+        self.set_wrap_selection(value)?;
         Ok(self)
     }
     pub fn subscribe_selection_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -16131,12 +16289,38 @@ impl MenuItem {
         self.items()?.add(value)?;
         Ok(self)
     }
+    pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
+    pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
+    pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_auto_scroll_to_selected_item(value)?)
+    }
+    pub fn auto_scroll_to_selected_item(self, value: bool) -> Result<Self> {
+        self.set_auto_scroll_to_selected_item(value)?;
+        Ok(self)
+    }
     pub fn get_selected_index(&self) -> Result<i32> { Ok(self.raw.get_selected_index()?) }
     pub fn set_selected_index(&self, value: i32) -> Result<()> {
         Ok(self.raw.set_selected_index(value)?)
     }
     pub fn selected_index(self, value: i32) -> Result<Self> {
         self.set_selected_index(value)?;
+        Ok(self)
+    }
+    pub fn get_is_text_search_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_text_search_enabled()?) }
+    pub fn set_text_search_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_text_search_enabled(value)?)
+    }
+    pub fn text_search_enabled(self, value: bool) -> Result<Self> {
+        self.set_text_search_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_wrap_selection(&self) -> Result<bool> { Ok(self.raw.get_wrap_selection()?) }
+    pub fn set_wrap_selection(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_wrap_selection(value)?)
+    }
+    pub fn wrap_selection(self, value: bool) -> Result<Self> {
+        self.set_wrap_selection(value)?;
         Ok(self)
     }
     pub fn subscribe_selection_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -18955,6 +19139,8 @@ impl HeaderedItemsControl {
         self.items()?.add(value)?;
         Ok(self)
     }
+    pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
     pub fn get_header(&self) -> Result<Option<Control>> {
         Ok(self.raw.get_header()?.map(|raw| Control { raw }))
     }
@@ -19269,12 +19455,38 @@ impl HeaderedSelectingItemsControl {
         self.items()?.add(value)?;
         Ok(self)
     }
+    pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
+    pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
+    pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_auto_scroll_to_selected_item(value)?)
+    }
+    pub fn auto_scroll_to_selected_item(self, value: bool) -> Result<Self> {
+        self.set_auto_scroll_to_selected_item(value)?;
+        Ok(self)
+    }
     pub fn get_selected_index(&self) -> Result<i32> { Ok(self.raw.get_selected_index()?) }
     pub fn set_selected_index(&self, value: i32) -> Result<()> {
         Ok(self.raw.set_selected_index(value)?)
     }
     pub fn selected_index(self, value: i32) -> Result<Self> {
         self.set_selected_index(value)?;
+        Ok(self)
+    }
+    pub fn get_is_text_search_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_text_search_enabled()?) }
+    pub fn set_text_search_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_text_search_enabled(value)?)
+    }
+    pub fn text_search_enabled(self, value: bool) -> Result<Self> {
+        self.set_text_search_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_wrap_selection(&self) -> Result<bool> { Ok(self.raw.get_wrap_selection()?) }
+    pub fn set_wrap_selection(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_wrap_selection(value)?)
+    }
+    pub fn wrap_selection(self, value: bool) -> Result<Self> {
+        self.set_wrap_selection(value)?;
         Ok(self)
     }
     pub fn subscribe_selection_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -19510,11 +19722,11 @@ impl Popup {
         Ok(self)
     }
     pub fn get_is_open(&self) -> Result<bool> { Ok(self.raw.get_is_open()?) }
-    pub fn set_open(&self, value: bool) -> Result<()> {
+    pub fn set_is_open(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_open(value)?)
     }
-    pub fn open(self, value: bool) -> Result<Self> {
-        self.set_open(value)?;
+    pub fn is_open(self, value: bool) -> Result<Self> {
+        self.set_is_open(value)?;
         Ok(self)
     }
     pub fn get_placement(&self) -> Result<PlacementMode> {
@@ -20389,12 +20601,38 @@ impl SelectingItemsControl {
         self.items()?.add(value)?;
         Ok(self)
     }
+    pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
+    pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
+    pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_auto_scroll_to_selected_item(value)?)
+    }
+    pub fn auto_scroll_to_selected_item(self, value: bool) -> Result<Self> {
+        self.set_auto_scroll_to_selected_item(value)?;
+        Ok(self)
+    }
     pub fn get_selected_index(&self) -> Result<i32> { Ok(self.raw.get_selected_index()?) }
     pub fn set_selected_index(&self, value: i32) -> Result<()> {
         Ok(self.raw.set_selected_index(value)?)
     }
     pub fn selected_index(self, value: i32) -> Result<Self> {
         self.set_selected_index(value)?;
+        Ok(self)
+    }
+    pub fn get_is_text_search_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_text_search_enabled()?) }
+    pub fn set_text_search_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_text_search_enabled(value)?)
+    }
+    pub fn text_search_enabled(self, value: bool) -> Result<Self> {
+        self.set_text_search_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_wrap_selection(&self) -> Result<bool> { Ok(self.raw.get_wrap_selection()?) }
+    pub fn set_wrap_selection(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_wrap_selection(value)?)
+    }
+    pub fn wrap_selection(self, value: bool) -> Result<Self> {
+        self.set_wrap_selection(value)?;
         Ok(self)
     }
     pub fn subscribe_selection_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -28931,12 +29169,38 @@ impl TabControl {
         self.items()?.add(value)?;
         Ok(self)
     }
+    pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
+    pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
+    pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_auto_scroll_to_selected_item(value)?)
+    }
+    pub fn auto_scroll_to_selected_item(self, value: bool) -> Result<Self> {
+        self.set_auto_scroll_to_selected_item(value)?;
+        Ok(self)
+    }
     pub fn get_selected_index(&self) -> Result<i32> { Ok(self.raw.get_selected_index()?) }
     pub fn set_selected_index(&self, value: i32) -> Result<()> {
         Ok(self.raw.set_selected_index(value)?)
     }
     pub fn selected_index(self, value: i32) -> Result<Self> {
         self.set_selected_index(value)?;
+        Ok(self)
+    }
+    pub fn get_is_text_search_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_text_search_enabled()?) }
+    pub fn set_text_search_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_text_search_enabled(value)?)
+    }
+    pub fn text_search_enabled(self, value: bool) -> Result<Self> {
+        self.set_text_search_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_wrap_selection(&self) -> Result<bool> { Ok(self.raw.get_wrap_selection()?) }
+    pub fn set_wrap_selection(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_wrap_selection(value)?)
+    }
+    pub fn wrap_selection(self, value: bool) -> Result<Self> {
+        self.set_wrap_selection(value)?;
         Ok(self)
     }
     pub fn subscribe_selection_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -29636,12 +29900,38 @@ impl TableView {
         self.items()?.add(value)?;
         Ok(self)
     }
+    pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
+    pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
+    pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_auto_scroll_to_selected_item(value)?)
+    }
+    pub fn auto_scroll_to_selected_item(self, value: bool) -> Result<Self> {
+        self.set_auto_scroll_to_selected_item(value)?;
+        Ok(self)
+    }
     pub fn get_selected_index(&self) -> Result<i32> { Ok(self.raw.get_selected_index()?) }
     pub fn set_selected_index(&self, value: i32) -> Result<()> {
         Ok(self.raw.set_selected_index(value)?)
     }
     pub fn selected_index(self, value: i32) -> Result<Self> {
         self.set_selected_index(value)?;
+        Ok(self)
+    }
+    pub fn get_is_text_search_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_text_search_enabled()?) }
+    pub fn set_text_search_enabled(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_is_text_search_enabled(value)?)
+    }
+    pub fn text_search_enabled(self, value: bool) -> Result<Self> {
+        self.set_text_search_enabled(value)?;
+        Ok(self)
+    }
+    pub fn get_wrap_selection(&self) -> Result<bool> { Ok(self.raw.get_wrap_selection()?) }
+    pub fn set_wrap_selection(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_wrap_selection(value)?)
+    }
+    pub fn wrap_selection(self, value: bool) -> Result<Self> {
+        self.set_wrap_selection(value)?;
         Ok(self)
     }
     pub fn subscribe_selection_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
@@ -33817,6 +34107,8 @@ impl TreeView {
         self.items()?.add(value)?;
         Ok(self)
     }
+    pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
     pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
     pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_auto_scroll_to_selected_item(value)?)
@@ -34156,6 +34448,8 @@ impl TreeViewItem {
         self.items()?.add(value)?;
         Ok(self)
     }
+    pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
     pub fn get_header(&self) -> Result<Option<Control>> {
         Ok(self.raw.get_header()?.map(|raw| Control { raw }))
     }

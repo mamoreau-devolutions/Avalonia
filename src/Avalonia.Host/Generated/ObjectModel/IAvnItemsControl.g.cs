@@ -6,11 +6,17 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("738DB538-4A67-59B5-BED2-2DAB54B1E741")]
+[Guid("AD06A856-E8AF-5AC5-9105-A81F3AE12D4D")]
 public partial interface IAvnItemsControl : IAvnTemplatedControl
 {
     [PreserveSig]
     int GetItems(out IAvnItemList value);
+
+    [PreserveSig]
+    int GetItemCount(out int value);
+
+    [PreserveSig]
+    int ScrollIntoViewWithInt32(int index);
 
 }
 
@@ -1002,6 +1008,37 @@ public sealed partial class AvnItemsControl : IAvnItemsControl
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = new AvnItemList(_value.Items);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetItemCount(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.ItemCount;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int ScrollIntoViewWithInt32(int index)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ScrollIntoView(index);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

@@ -121,7 +121,6 @@ Avalonia.Controls.Image.Render(DrawingContext): Not included by projection polic
 Avalonia.Controls.ItemsControl.DisplayMemberBinding: Not included by projection policy
 Avalonia.Controls.ItemsControl.ItemContainerGenerator: Not included by projection policy
 Avalonia.Controls.ItemsControl.ItemContainerTheme: Not included by projection policy
-Avalonia.Controls.ItemsControl.ItemCount: Not included by projection policy
 Avalonia.Controls.ItemsControl.ItemsPanel: Not included by projection policy
 Avalonia.Controls.ItemsControl.ItemsSource: Not included by projection policy
 Avalonia.Controls.ItemsControl.ItemTemplate: Not included by projection policy
@@ -137,8 +136,7 @@ Avalonia.Controls.ItemsControl.ContainerFromItem(Object): Not included by projec
 Avalonia.Controls.ItemsControl.IndexFromContainer(Control): Not included by projection policy
 Avalonia.Controls.ItemsControl.ItemFromContainer(Control): Not included by projection policy
 Avalonia.Controls.ItemsControl.GetRealizedContainers(): Not included by projection policy
-Avalonia.Controls.ItemsControl.ScrollIntoView(Int32): Not included by projection policy
-Avalonia.Controls.ItemsControl.ScrollIntoView(Object): Not included by projection policy
+Avalonia.Controls.ItemsControl.ScrollIntoView(Object): Parameter 'item': Type 'System.Object' is not marshallable
 Avalonia.Controls.Label.Target: Not included by projection policy
 Avalonia.Controls.LayoutTransformControl.LayoutTransform: Not included by projection policy
 Avalonia.Controls.LayoutTransformControl.TransformRoot: Not included by projection policy
@@ -205,12 +203,9 @@ Avalonia.Controls.Primitives.PopupFlyoutBase.PlacementConstraintAdjustment: Not 
 Avalonia.Controls.Primitives.PopupFlyoutBase.ShowAt(Control): Not included by projection policy
 Avalonia.Controls.Primitives.PopupFlyoutBase.ShowAt(Control, Boolean): Not included by projection policy
 Avalonia.Controls.Primitives.PopupFlyoutBase.Hide(): Not included by projection policy
-Avalonia.Controls.Primitives.SelectingItemsControl.AutoScrollToSelectedItem: Not included by projection policy
 Avalonia.Controls.Primitives.SelectingItemsControl.SelectedItem: Not included by projection policy
 Avalonia.Controls.Primitives.SelectingItemsControl.SelectedValueBinding: Not included by projection policy
 Avalonia.Controls.Primitives.SelectingItemsControl.SelectedValue: Not included by projection policy
-Avalonia.Controls.Primitives.SelectingItemsControl.IsTextSearchEnabled: Not included by projection policy
-Avalonia.Controls.Primitives.SelectingItemsControl.WrapSelection: Not included by projection policy
 Avalonia.Controls.Primitives.SelectingItemsControl.BeginInit(): Not included by projection policy
 Avalonia.Controls.Primitives.SelectingItemsControl.EndInit(): Not included by projection policy
 Avalonia.Controls.Primitives.SelectingItemsControl.UpdateSelectionFromEvent(Control, RoutedEventArgs): Not included by projection policy

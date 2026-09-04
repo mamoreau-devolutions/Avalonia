@@ -207,9 +207,13 @@ fn emit_type(ir: &ProjectionIr, ty: &ProjectedType) -> String {
         ));
     }
 
+    let reserved_methods: std::collections::HashSet<String> = lineage(ir, ty)
+        .iter()
+        .flat_map(|owner| owner.methods.iter().map(|method| to_snake(&method.name)))
+        .collect();
     for owner in lineage(ir, ty) {
         for property in &owner.properties {
-            out.push_str(&emit_property(property));
+            out.push_str(&emit_property(property, &reserved_methods));
             if property.kind == "ComCollection" && property.name == "Children" {
                 out.push_str(
                     "    pub fn child(self, value: impl AsControl) -> Result<Self> {\n\
@@ -328,17 +332,25 @@ fn emit_type(ir: &ProjectionIr, ty: &ProjectedType) -> String {
     out
 }
 
-fn emit_property(property: &ProjectedProperty) -> String {
+fn emit_property(
+    property: &ProjectedProperty,
+    reserved_methods: &std::collections::HashSet<String>,
+) -> String {
     let snake = to_snake(&property.name);
     let getter = if property.can_write {
         format!("get_{snake}")
     } else {
         snake.clone()
     };
+    // Bool builders drop the `is_` prefix (`IsEnabled` → `enabled`) unless that
+    // collides with a method on the same type (`IsOpen` vs `Open()`).
     let builder = if property.kind == "Bool" || property.kind == "NullableBool" {
-        snake.strip_prefix("is_").unwrap_or(&snake)
+        match snake.strip_prefix("is_") {
+            Some(stripped) if !reserved_methods.contains(stripped) => stripped,
+            _ => snake.as_str(),
+        }
     } else {
-        &snake
+        snake.as_str()
     };
     let mut out = String::new();
 

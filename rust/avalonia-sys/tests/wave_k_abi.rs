@@ -12,7 +12,7 @@ fn icons_and_table_view_publish_at_version_one() {
         "*create_table_view)(IAvnControlFactory* self, IAvnTableView** value)",
         "*create_table_view_column)(IAvnControlFactory* self, IAvnTableViewColumn** value)",
         "#define I_AVN_PATH_ICON_ABI_VERSION 1",
-        "#define I_AVN_TABLE_VIEW_ABI_VERSION 1",
+        "#define I_AVN_TABLE_VIEW_ABI_VERSION 3",
         "#define I_AVN_CONTROL_FACTORY_ABI_VERSION 13",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
