@@ -2,8 +2,8 @@
 //!
 //! `ContentControl`, `Button`, `ToggleButton`, `ListBox` and `ComboBox` each grew slots, and
 //! nano-COM vtables are flattened, so every interface at or below one of them republishes
-//! under a version 5 IID. This pins the generated header, the fresh IIDs, and the retired
-//! ones that must never come back.
+//! under a fresh IID. The item-control allowlist also widened the `ItemsControl` subtree, so
+//! the generated header pins the current version 6 values for those flattened vtables.
 
 use avalonia_sys::{
     I_AVN_AVALONIA_OBJECT_IID, I_AVN_BORDER_IID, I_AVN_BUTTON_IID, I_AVN_COMBO_BOX_IID,
@@ -66,7 +66,7 @@ fn completeness_members_are_published_on_the_type_that_declares_them() {
 }
 
 #[test]
-fn widened_interfaces_publish_abi_version_five() {
+fn widened_interfaces_publish_abi_version_six() {
     for expected in [
         "#define I_AVN_CONTENT_CONTROL_ABI_VERSION 6",
         "#define I_AVN_HEADERED_CONTENT_CONTROL_ABI_VERSION 6",
@@ -76,17 +76,17 @@ fn widened_interfaces_publish_abi_version_five() {
         "#define I_AVN_CHECK_BOX_ABI_VERSION 7",
         "#define I_AVN_RADIO_BUTTON_ABI_VERSION 7",
         "#define I_AVN_TOGGLE_SWITCH_ABI_VERSION 7",
-        "#define I_AVN_LIST_BOX_ABI_VERSION 6",
+        "#define I_AVN_LIST_BOX_ABI_VERSION 7",
         "#define I_AVN_LIST_BOX_ITEM_ABI_VERSION 6",
-        "#define I_AVN_COMBO_BOX_ABI_VERSION 7",
+        "#define I_AVN_COMBO_BOX_ABI_VERSION 8",
         "#define I_AVN_COMBO_BOX_ITEM_ABI_VERSION 6",
         "#define I_AVN_SCROLL_VIEWER_ABI_VERSION 7",
         "#define I_AVN_WINDOW_ABI_VERSION 8",
         "#define I_AVN_TEMPLATED_CONTROL_ABI_VERSION 5",
         "#define I_AVN_TEXT_BLOCK_ABI_VERSION 5",
         "#define I_AVN_TEXT_BOX_ABI_VERSION 6",
-        "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 5",
-        "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 5",
+        "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 6",
+        "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 6",
         "#define I_AVN_BORDER_ABI_VERSION 4",
         "#define I_AVN_PANEL_ABI_VERSION 4",
         "#define I_AVN_CONTROL_ABI_VERSION 3",
@@ -197,12 +197,12 @@ fn widened_interfaces_republish_under_fresh_iids() {
         ),
         (
             "IAvnListBox",
-            "887C3BB0-59E1-57DD-848F-366B137BA3D1",
+            "311C3392-8A78-5745-AFC8-8629DA8BDC06",
             I_AVN_LIST_BOX_IID,
         ),
         (
             "IAvnComboBox",
-            "ACF92675-F4CB-553B-9700-58360FEE0232",
+            "3CD1C9E9-F6B2-5FB6-9B4E-37DD0EFD6674",
             I_AVN_COMBO_BOX_IID,
         ),
         (

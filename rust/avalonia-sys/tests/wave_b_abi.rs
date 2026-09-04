@@ -1,11 +1,11 @@
 //! ABI guarantees for the wave B controls: the flyout trio, the imperative menu pair,
 //! `SplitView`, `HeaderedSelectingItemsControl` and the two date/time pickers.
 //!
-//! Like wave A, wave B only *adds* interfaces. A flyout is an `AvaloniaObject` rather than a
-//! `Control`, so `IAvnFlyoutBase` hangs directly off `IAvnAvaloniaObject` and inserts no slot
-//! into anything that shipped; every interface published before keeps the exact IID it last
-//! published, and the ten new ones publish at version 1. The one thing that moves is the
-//! factory, which gains a creator per constructible wave B type and goes from 3 to 4.
+//! Like wave A, wave B adds new interfaces, but the item-control allowlist widened the flattened
+//! vtable of the selecting-items subtree. A flyout remains an `AvaloniaObject` rather than a
+//! `Control`, so `IAvnFlyoutBase` still hangs directly off `IAvnAvaloniaObject` and inserts no
+//! slot into anything that shipped; the widened item-control chain republishes under fresh IIDs,
+//! while the factory still gains a creator per constructible wave B type.
 
 use avalonia_sys::{
     I_AVN_AVALONIA_OBJECT_IID, I_AVN_CONTENT_CONTROL_IID, I_AVN_CONTROL_IID, I_AVN_DATE_PICKER_IID,
@@ -169,21 +169,21 @@ fn wave_b_interfaces_publish_abi_version_one_and_nothing_else_moved() {
         "#define I_AVN_FLYOUT_BASE_ABI_VERSION 1",
         "#define I_AVN_POPUP_FLYOUT_BASE_ABI_VERSION 2",
         "#define I_AVN_FLYOUT_ABI_VERSION 2",
-        "#define I_AVN_MENU_BASE_ABI_VERSION 2",
-        "#define I_AVN_MENU_ABI_VERSION 2",
-        "#define I_AVN_MENU_ITEM_ABI_VERSION 3",
-        "#define I_AVN_HEADERED_SELECTING_ITEMS_CONTROL_ABI_VERSION 2",
+        "#define I_AVN_MENU_BASE_ABI_VERSION 3",
+        "#define I_AVN_MENU_ABI_VERSION 3",
+        "#define I_AVN_MENU_ITEM_ABI_VERSION 4",
+        "#define I_AVN_HEADERED_SELECTING_ITEMS_CONTROL_ABI_VERSION 3",
         "#define I_AVN_SPLIT_VIEW_ABI_VERSION 2",
         "#define I_AVN_DATE_PICKER_ABI_VERSION 2",
         "#define I_AVN_TIME_PICKER_ABI_VERSION 2",
         "#define I_AVN_AVALONIA_OBJECT_ABI_VERSION 2",
         "#define I_AVN_CONTROL_ABI_VERSION 3",
-        "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 5",
-        "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 5",
+        "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 6",
+        "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 6",
         "#define I_AVN_TEMPLATED_CONTROL_ABI_VERSION 5",
         "#define I_AVN_CONTENT_CONTROL_ABI_VERSION 6",
-        "#define I_AVN_HEADERED_ITEMS_CONTROL_ABI_VERSION 2",
-        "#define I_AVN_TREE_VIEW_ABI_VERSION 2",
+        "#define I_AVN_HEADERED_ITEMS_CONTROL_ABI_VERSION 3",
+        "#define I_AVN_TREE_VIEW_ABI_VERSION 3",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
     }
@@ -207,12 +207,12 @@ fn wave_b_iids_are_fresh_and_distinct_from_every_shipped_one() {
         ),
         (
             "IAvnItemsControl",
-            "738DB538-4A67-59B5-BED2-2DAB54B1E741",
+            "AD06A856-E8AF-5AC5-9105-A81F3AE12D4D",
             I_AVN_ITEMS_CONTROL_IID,
         ),
         (
             "IAvnSelectingItemsControl",
-            "51330355-E035-5B22-8AAA-49909B8DE523",
+            "5F901899-E71F-503E-9DF5-95C167014353",
             I_AVN_SELECTING_ITEMS_CONTROL_IID,
         ),
         (

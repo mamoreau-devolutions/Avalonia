@@ -1,10 +1,10 @@
 //! ABI guarantees for the wave A controls: `Image`, the tab pair, the tree pair,
 //! `HeaderedItemsControl` and the `ToolTip` attached properties.
 //!
-//! Wave A only *adds* interfaces. Nothing above or beside the new types gained a slot, so every
-//! interface that shipped before keeps the exact IID it last published and the seven new ones
-//! publish at version 1. The one thing that does move is the factory, which gains a creator per
-//! new control plus `get_tool_tip_statics`.
+//! Wave A adds new interfaces, but the item-control subtree widened when the allowlist exposed
+//! `ItemCount`/`ScrollIntoView(Int32)` and the selecting-item toggles, so the interfaces under
+//! that flattened vtable republish under fresh IIDs. The new interfaces that remain outside that
+//! subtree keep their version-1 contract, and the factory still gains the new creators.
 
 use avalonia_sys::{
     I_AVN_AVALONIA_OBJECT_IID, I_AVN_CONTENT_CONTROL_IID, I_AVN_CONTROL_IID,
@@ -64,22 +64,23 @@ fn tool_tip_tip_is_a_string_attached_property_beside_the_scalar_ones() {
 fn wave_a_interfaces_publish_abi_version_one_and_nothing_else_moved() {
     for expected in [
         "#define I_AVN_IMAGE_ABI_VERSION 1",
-        "#define I_AVN_HEADERED_ITEMS_CONTROL_ABI_VERSION 1",
-        "#define I_AVN_TAB_CONTROL_ABI_VERSION 1",
-        "#define I_AVN_TAB_ITEM_ABI_VERSION 1",
-        "#define I_AVN_TREE_VIEW_ABI_VERSION 1",
-        "#define I_AVN_TREE_VIEW_ITEM_ABI_VERSION 1",
-        "#define I_AVN_TOOL_TIP_ABI_VERSION 1",
-        // Every base the new interfaces sit on kept the version whose flattened vtable it
-        // still matches, so no shipped consumer has to requery anything but the factory.
+        "#define I_AVN_HEADERED_ITEMS_CONTROL_ABI_VERSION 3",
+        "#define I_AVN_TAB_CONTROL_ABI_VERSION 3",
+        "#define I_AVN_TAB_ITEM_ABI_VERSION 2",
+        "#define I_AVN_TREE_VIEW_ABI_VERSION 3",
+        "#define I_AVN_TREE_VIEW_ITEM_ABI_VERSION 3",
+        "#define I_AVN_TOOL_TIP_ABI_VERSION 2",
+        // The item-control allowlist widened the flattened vtable for its descendants, so the
+        // bases and the descended controls republish together while unrelated wave-A interfaces
+        // keep the version whose flattened vtable they still match.
         "#define I_AVN_AVALONIA_OBJECT_ABI_VERSION 2",
         "#define I_AVN_CONTROL_ABI_VERSION 3",
-        "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 4",
-        "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 4",
-        "#define I_AVN_CONTENT_CONTROL_ABI_VERSION 5",
-        "#define I_AVN_HEADERED_CONTENT_CONTROL_ABI_VERSION 5",
+        "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 6",
+        "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 6",
+        "#define I_AVN_CONTENT_CONTROL_ABI_VERSION 6",
+        "#define I_AVN_HEADERED_CONTENT_CONTROL_ABI_VERSION 6",
         // Only the factory grew slots. Wave B moved it again, from 3 to 4, for its own
-        // creators; every wave A interface still publishes at version 1.
+        // creators; the item-control subtree instead republished under its new flattened vtable.
         "#define I_AVN_CONTROL_FACTORY_ABI_VERSION 13",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
@@ -103,22 +104,22 @@ fn wave_a_iids_are_fresh_and_distinct_from_every_shipped_one() {
         ),
         (
             "IAvnItemsControl",
-            "95D1FA77-96F7-5F24-BE8A-362E530CCBD9",
+            "AD06A856-E8AF-5AC5-9105-A81F3AE12D4D",
             I_AVN_ITEMS_CONTROL_IID,
         ),
         (
             "IAvnSelectingItemsControl",
-            "4D40F605-0330-573F-9C4E-06B1CC3CF5A3",
+            "5F901899-E71F-503E-9DF5-95C167014353",
             I_AVN_SELECTING_ITEMS_CONTROL_IID,
         ),
         (
             "IAvnContentControl",
-            "2C4557A2-537C-5683-9E30-C3AE87D7614C",
+            "35C15BC0-F6CD-51D5-868A-9A391D7EF443",
             I_AVN_CONTENT_CONTROL_IID,
         ),
         (
             "IAvnHeaderedContentControl",
-            "EF77B5CB-D25B-5F21-99AB-C345E7CE2C30",
+            "FEF87661-E67A-5C14-A8B6-A3BD6D47EACA",
             I_AVN_HEADERED_CONTENT_CONTROL_IID,
         ),
     ] {

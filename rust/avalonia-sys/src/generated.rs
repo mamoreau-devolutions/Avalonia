@@ -1438,61 +1438,6 @@ unsafe extern "system" fn i_avn_range_base_value_changed_handler_invoke(this: *m
     crate::event_callback::invoke::<IAvnRangeBaseValueChangedHandler, ()>(this, &mut ())
 }
 
-pub const I_AVN_SELECTING_ITEMS_CONTROL_SELECTION_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x80E817ED, data2: 0x8F0E, data3: 0x5208, data4: [0x9E, 0xFD, 0xEC, 0xBD, 0xEB, 0xC5, 0x6A, 0x46] };
-
-#[repr(C)]
-struct IAvnSelectingItemsControlSelectionChangedHandlerVtbl {
-    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
-    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
-    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
-    invoke: unsafe extern "system" fn(*mut IAvnSelectingItemsControlSelectionChangedHandler) -> i32,
-}
-
-#[repr(C)]
-pub struct IAvnSelectingItemsControlSelectionChangedHandler {
-    vtbl: *const IAvnSelectingItemsControlSelectionChangedHandlerVtbl,
-}
-
-unsafe impl ComInterface for IAvnSelectingItemsControlSelectionChangedHandler {
-    const IID: Guid = I_AVN_SELECTING_ITEMS_CONTROL_SELECTION_CHANGED_HANDLER_IID;
-}
-
-impl ComPtr<IAvnSelectingItemsControlSelectionChangedHandler> {
-    pub fn invoke(&self) -> Result<()> {
-        unsafe {
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
-            hresult::check(hr)
-        }
-    }
-}
-
-static I_AVN_SELECTING_ITEMS_CONTROL_SELECTION_CHANGED_HANDLER_VTBL: IAvnSelectingItemsControlSelectionChangedHandlerVtbl = IAvnSelectingItemsControlSelectionChangedHandlerVtbl {
-    query_interface: i_avn_selecting_items_control_selection_changed_handler_query_interface,
-    add_ref: i_avn_selecting_items_control_selection_changed_handler_add_ref,
-    release: i_avn_selecting_items_control_selection_changed_handler_release,
-    invoke: i_avn_selecting_items_control_selection_changed_handler_invoke,
-};
-
-pub fn selecting_items_control_selection_changed_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnSelectingItemsControlSelectionChangedHandler> {
-    crate::event_callback::create::<IAvnSelectingItemsControlSelectionChangedHandler, ()>(IAvnSelectingItemsControlSelectionChangedHandler { vtbl: &I_AVN_SELECTING_ITEMS_CONTROL_SELECTION_CHANGED_HANDLER_VTBL }, move |_| callback())
-}
-
-unsafe extern "system" fn i_avn_selecting_items_control_selection_changed_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
-    crate::event_callback::query_interface::<IAvnSelectingItemsControlSelectionChangedHandler, ()>(this, iid, result)
-}
-
-unsafe extern "system" fn i_avn_selecting_items_control_selection_changed_handler_add_ref(this: *mut IUnknown) -> u32 {
-    crate::event_callback::add_ref::<IAvnSelectingItemsControlSelectionChangedHandler, ()>(this)
-}
-
-unsafe extern "system" fn i_avn_selecting_items_control_selection_changed_handler_release(this: *mut IUnknown) -> u32 {
-    crate::event_callback::release::<IAvnSelectingItemsControlSelectionChangedHandler, ()>(this)
-}
-
-unsafe extern "system" fn i_avn_selecting_items_control_selection_changed_handler_invoke(this: *mut IAvnSelectingItemsControlSelectionChangedHandler) -> i32 {
-    crate::event_callback::invoke::<IAvnSelectingItemsControlSelectionChangedHandler, ()>(this, &mut ())
-}
-
 pub const I_AVN_TOGGLE_BUTTON_IS_CHECKED_CHANGED_HANDLER_IID: Guid = Guid { data1: 0xFF444C66, data2: 0x8E6C, data3: 0x5B93, data4: [0x9D, 0xB3, 0xA7, 0xD9, 0x43, 0x49, 0x10, 0x3C] };
 
 #[repr(C)]
@@ -6670,11 +6615,16 @@ struct IAvnCarouselVtbl {
     set_letter_spacing: unsafe extern "system" fn(*mut IAvnCarousel, f64) -> i32,
     get_padding: unsafe extern "system" fn(*mut IAvnCarousel, *mut AvnThickness) -> i32,
     set_padding: unsafe extern "system" fn(*mut IAvnCarousel, AvnThickness) -> i32,
-    get_items: unsafe extern "system" fn(*mut IAvnCarousel, *mut *mut IAvnItemList) -> i32,
-    get_selected_index: unsafe extern "system" fn(*mut IAvnCarousel, *mut i32) -> i32,
-    set_selected_index: unsafe extern "system" fn(*mut IAvnCarousel, i32) -> i32,
-    advise_selection_changed: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnSelectingItemsControlSelectionChangedHandler, *mut i64) -> i32,
-    unadvise_selection_changed: unsafe extern "system" fn(*mut IAvnCarousel, i64) -> i32,
+    get_item_count: unsafe extern "system" fn(*mut IAvnCarousel, *mut i32) -> i32,
+    scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnCarousel, i32) -> i32,
+    get_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnCarousel, *mut i32) -> i32,
+    set_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnCarousel, i32) -> i32,
+    get_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnCarousel, *mut i32) -> i32,
+    set_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnCarousel, i32) -> i32,
+    get_wrap_selection: unsafe extern "system" fn(*mut IAvnCarousel, *mut i32) -> i32,
+    set_wrap_selection: unsafe extern "system" fn(*mut IAvnCarousel, i32) -> i32,
+    begin_init: unsafe extern "system" fn(*mut IAvnCarousel) -> i32,
+    end_init: unsafe extern "system" fn(*mut IAvnCarousel) -> i32,
     get_is_swipe_enabled: unsafe extern "system" fn(*mut IAvnCarousel, *mut i32) -> i32,
     set_is_swipe_enabled: unsafe extern "system" fn(*mut IAvnCarousel, i32) -> i32,
     get_viewport_fraction: unsafe extern "system" fn(*mut IAvnCarousel, *mut f64) -> i32,
@@ -7103,38 +7053,71 @@ impl ComPtr<IAvnCarousel> {
             hresult::check(hr)
         }
     }
-    pub fn get_items(&self) -> Result<ComPtr<IAvnItemList>> {
-        unsafe {
-            let mut value: *mut IAvnItemList = ptr::null_mut();
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items)(self.as_raw(), &mut value);
-            hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
-        }
-    }
-    pub fn get_selected_index(&self) -> Result<i32> {
+    pub fn get_item_count(&self) -> Result<i32> {
         unsafe {
             let mut value: i32 = 0;
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_index)(self.as_raw(), &mut value);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_item_count)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             Ok(value)
         }
     }
-    pub fn set_selected_index(&self, value: i32) -> Result<()> {
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
         unsafe {
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_index)(self.as_raw(), value);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
             hresult::check(hr)
         }
     }
-    pub fn advise_selection_changed(&self, handler: &ComPtr<IAvnSelectingItemsControlSelectionChangedHandler>) -> Result<i64> {
+    pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> {
         unsafe {
-            let mut subscription_id = 0;
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_selection_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
-            hresult::check(hr).map(|_| subscription_id)
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_auto_scroll_to_selected_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
-    pub fn unadvise_selection_changed(&self, subscription_id: i64) -> Result<()> {
+    pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
         unsafe {
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_selection_changed)(self.as_raw(), subscription_id);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_auto_scroll_to_selected_item)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_text_search_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_text_search_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_text_search_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_text_search_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_wrap_selection(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_wrap_selection)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_wrap_selection(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_wrap_selection)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn begin_init(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().begin_init)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn end_init(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().end_init)(self.as_raw());
             hresult::check(hr)
         }
     }
@@ -7850,7 +7833,7 @@ impl ComPtr<IAvnCheckBox> {
     }
 }
 
-pub const I_AVN_COMBO_BOX_IID: Guid = Guid { data1: 0xACF92675, data2: 0xF4CB, data3: 0x553B, data4: [0x97, 0x00, 0x58, 0x36, 0x0F, 0xEE, 0x02, 0x32] };
+pub const I_AVN_COMBO_BOX_IID: Guid = Guid { data1: 0x3CD1C9E9, data2: 0xF6B2, data3: 0x5FB6, data4: [0x9B, 0x4E, 0x37, 0xDD, 0x0E, 0xFD, 0x66, 0x74] };
 
 #[repr(C)]
 struct IAvnComboBoxVtbl {
@@ -7916,11 +7899,16 @@ struct IAvnComboBoxVtbl {
     set_letter_spacing: unsafe extern "system" fn(*mut IAvnComboBox, f64) -> i32,
     get_padding: unsafe extern "system" fn(*mut IAvnComboBox, *mut AvnThickness) -> i32,
     set_padding: unsafe extern "system" fn(*mut IAvnComboBox, AvnThickness) -> i32,
-    get_items: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut IAvnItemList) -> i32,
-    get_selected_index: unsafe extern "system" fn(*mut IAvnComboBox, *mut i32) -> i32,
-    set_selected_index: unsafe extern "system" fn(*mut IAvnComboBox, i32) -> i32,
-    advise_selection_changed: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnSelectingItemsControlSelectionChangedHandler, *mut i64) -> i32,
-    unadvise_selection_changed: unsafe extern "system" fn(*mut IAvnComboBox, i64) -> i32,
+    get_item_count: unsafe extern "system" fn(*mut IAvnComboBox, *mut i32) -> i32,
+    scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnComboBox, i32) -> i32,
+    get_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnComboBox, *mut i32) -> i32,
+    set_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnComboBox, i32) -> i32,
+    get_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnComboBox, *mut i32) -> i32,
+    set_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnComboBox, i32) -> i32,
+    get_wrap_selection: unsafe extern "system" fn(*mut IAvnComboBox, *mut i32) -> i32,
+    set_wrap_selection: unsafe extern "system" fn(*mut IAvnComboBox, i32) -> i32,
+    begin_init: unsafe extern "system" fn(*mut IAvnComboBox) -> i32,
+    end_init: unsafe extern "system" fn(*mut IAvnComboBox) -> i32,
     get_is_drop_down_open: unsafe extern "system" fn(*mut IAvnComboBox, *mut i32) -> i32,
     set_is_drop_down_open: unsafe extern "system" fn(*mut IAvnComboBox, i32) -> i32,
     get_is_editable: unsafe extern "system" fn(*mut IAvnComboBox, *mut i32) -> i32,
@@ -8361,38 +8349,71 @@ impl ComPtr<IAvnComboBox> {
             hresult::check(hr)
         }
     }
-    pub fn get_items(&self) -> Result<ComPtr<IAvnItemList>> {
-        unsafe {
-            let mut value: *mut IAvnItemList = ptr::null_mut();
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items)(self.as_raw(), &mut value);
-            hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
-        }
-    }
-    pub fn get_selected_index(&self) -> Result<i32> {
+    pub fn get_item_count(&self) -> Result<i32> {
         unsafe {
             let mut value: i32 = 0;
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_index)(self.as_raw(), &mut value);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_item_count)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             Ok(value)
         }
     }
-    pub fn set_selected_index(&self, value: i32) -> Result<()> {
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
         unsafe {
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_index)(self.as_raw(), value);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
             hresult::check(hr)
         }
     }
-    pub fn advise_selection_changed(&self, handler: &ComPtr<IAvnSelectingItemsControlSelectionChangedHandler>) -> Result<i64> {
+    pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> {
         unsafe {
-            let mut subscription_id = 0;
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_selection_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
-            hresult::check(hr).map(|_| subscription_id)
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_auto_scroll_to_selected_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
-    pub fn unadvise_selection_changed(&self, subscription_id: i64) -> Result<()> {
+    pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
         unsafe {
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_selection_changed)(self.as_raw(), subscription_id);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_auto_scroll_to_selected_item)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_text_search_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_text_search_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_text_search_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_text_search_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_wrap_selection(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_wrap_selection)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_wrap_selection(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_wrap_selection)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn begin_init(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().begin_init)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn end_init(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().end_init)(self.as_raw());
             hresult::check(hr)
         }
     }
@@ -12293,11 +12314,16 @@ struct IAvnContextMenuVtbl {
     set_letter_spacing: unsafe extern "system" fn(*mut IAvnContextMenu, f64) -> i32,
     get_padding: unsafe extern "system" fn(*mut IAvnContextMenu, *mut AvnThickness) -> i32,
     set_padding: unsafe extern "system" fn(*mut IAvnContextMenu, AvnThickness) -> i32,
-    get_items: unsafe extern "system" fn(*mut IAvnContextMenu, *mut *mut IAvnItemList) -> i32,
-    get_selected_index: unsafe extern "system" fn(*mut IAvnContextMenu, *mut i32) -> i32,
-    set_selected_index: unsafe extern "system" fn(*mut IAvnContextMenu, i32) -> i32,
-    advise_selection_changed: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnSelectingItemsControlSelectionChangedHandler, *mut i64) -> i32,
-    unadvise_selection_changed: unsafe extern "system" fn(*mut IAvnContextMenu, i64) -> i32,
+    get_item_count: unsafe extern "system" fn(*mut IAvnContextMenu, *mut i32) -> i32,
+    scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnContextMenu, i32) -> i32,
+    get_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnContextMenu, *mut i32) -> i32,
+    set_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnContextMenu, i32) -> i32,
+    get_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnContextMenu, *mut i32) -> i32,
+    set_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnContextMenu, i32) -> i32,
+    get_wrap_selection: unsafe extern "system" fn(*mut IAvnContextMenu, *mut i32) -> i32,
+    set_wrap_selection: unsafe extern "system" fn(*mut IAvnContextMenu, i32) -> i32,
+    begin_init: unsafe extern "system" fn(*mut IAvnContextMenu) -> i32,
+    end_init: unsafe extern "system" fn(*mut IAvnContextMenu) -> i32,
     get_is_open: unsafe extern "system" fn(*mut IAvnContextMenu, *mut i32) -> i32,
     close: unsafe extern "system" fn(*mut IAvnContextMenu) -> i32,
     open: unsafe extern "system" fn(*mut IAvnContextMenu) -> i32,
@@ -12738,38 +12764,71 @@ impl ComPtr<IAvnContextMenu> {
             hresult::check(hr)
         }
     }
-    pub fn get_items(&self) -> Result<ComPtr<IAvnItemList>> {
-        unsafe {
-            let mut value: *mut IAvnItemList = ptr::null_mut();
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items)(self.as_raw(), &mut value);
-            hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
-        }
-    }
-    pub fn get_selected_index(&self) -> Result<i32> {
+    pub fn get_item_count(&self) -> Result<i32> {
         unsafe {
             let mut value: i32 = 0;
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_index)(self.as_raw(), &mut value);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_item_count)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             Ok(value)
         }
     }
-    pub fn set_selected_index(&self, value: i32) -> Result<()> {
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
         unsafe {
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_index)(self.as_raw(), value);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
             hresult::check(hr)
         }
     }
-    pub fn advise_selection_changed(&self, handler: &ComPtr<IAvnSelectingItemsControlSelectionChangedHandler>) -> Result<i64> {
+    pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> {
         unsafe {
-            let mut subscription_id = 0;
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_selection_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
-            hresult::check(hr).map(|_| subscription_id)
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_auto_scroll_to_selected_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
-    pub fn unadvise_selection_changed(&self, subscription_id: i64) -> Result<()> {
+    pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
         unsafe {
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_selection_changed)(self.as_raw(), subscription_id);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_auto_scroll_to_selected_item)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_text_search_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_text_search_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_text_search_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_text_search_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_wrap_selection(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_wrap_selection)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_wrap_selection(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_wrap_selection)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn begin_init(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().begin_init)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn end_init(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().end_init)(self.as_raw());
             hresult::check(hr)
         }
     }
@@ -19499,7 +19558,7 @@ impl ComPtr<IAvnImage> {
     }
 }
 
-pub const I_AVN_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x738DB538, data2: 0x4A67, data3: 0x59B5, data4: [0xBE, 0xD2, 0x2D, 0xAB, 0x54, 0xB1, 0xE7, 0x41] };
+pub const I_AVN_ITEMS_CONTROL_IID: Guid = Guid { data1: 0xAD06A856, data2: 0xE8AF, data3: 0x5AC5, data4: [0x91, 0x05, 0xA8, 0x1F, 0x3A, 0xE1, 0x2D, 0x4D] };
 
 #[repr(C)]
 struct IAvnItemsControlVtbl {
@@ -19565,7 +19624,8 @@ struct IAvnItemsControlVtbl {
     set_letter_spacing: unsafe extern "system" fn(*mut IAvnItemsControl, f64) -> i32,
     get_padding: unsafe extern "system" fn(*mut IAvnItemsControl, *mut AvnThickness) -> i32,
     set_padding: unsafe extern "system" fn(*mut IAvnItemsControl, AvnThickness) -> i32,
-    get_items: unsafe extern "system" fn(*mut IAvnItemsControl, *mut *mut IAvnItemList) -> i32,
+    get_item_count: unsafe extern "system" fn(*mut IAvnItemsControl, *mut i32) -> i32,
+    scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnItemsControl, i32) -> i32,
 }
 
 #[repr(C)]
@@ -19989,12 +20049,18 @@ impl ComPtr<IAvnItemsControl> {
             hresult::check(hr)
         }
     }
-    pub fn get_items(&self) -> Result<ComPtr<IAvnItemList>> {
+    pub fn get_item_count(&self) -> Result<i32> {
         unsafe {
-            let mut value: *mut IAvnItemList = ptr::null_mut();
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items)(self.as_raw(), &mut value);
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_item_count)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            Ok(value)
+        }
+    }
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
+            hresult::check(hr)
         }
     }
 }
@@ -20885,7 +20951,7 @@ impl ComPtr<IAvnLayoutTransformControl> {
     }
 }
 
-pub const I_AVN_LIST_BOX_IID: Guid = Guid { data1: 0x887C3BB0, data2: 0x59E1, data3: 0x57DD, data4: [0x84, 0x8F, 0x36, 0x6B, 0x13, 0x7B, 0xA3, 0xD1] };
+pub const I_AVN_LIST_BOX_IID: Guid = Guid { data1: 0x311C3392, data2: 0x8A78, data3: 0x5745, data4: [0xAF, 0xC8, 0x86, 0x29, 0xDA, 0x8B, 0xDC, 0x06] };
 
 #[repr(C)]
 struct IAvnListBoxVtbl {
@@ -20951,11 +21017,16 @@ struct IAvnListBoxVtbl {
     set_letter_spacing: unsafe extern "system" fn(*mut IAvnListBox, f64) -> i32,
     get_padding: unsafe extern "system" fn(*mut IAvnListBox, *mut AvnThickness) -> i32,
     set_padding: unsafe extern "system" fn(*mut IAvnListBox, AvnThickness) -> i32,
-    get_items: unsafe extern "system" fn(*mut IAvnListBox, *mut *mut IAvnItemList) -> i32,
-    get_selected_index: unsafe extern "system" fn(*mut IAvnListBox, *mut i32) -> i32,
-    set_selected_index: unsafe extern "system" fn(*mut IAvnListBox, i32) -> i32,
-    advise_selection_changed: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnSelectingItemsControlSelectionChangedHandler, *mut i64) -> i32,
-    unadvise_selection_changed: unsafe extern "system" fn(*mut IAvnListBox, i64) -> i32,
+    get_item_count: unsafe extern "system" fn(*mut IAvnListBox, *mut i32) -> i32,
+    scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnListBox, i32) -> i32,
+    get_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnListBox, *mut i32) -> i32,
+    set_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnListBox, i32) -> i32,
+    get_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnListBox, *mut i32) -> i32,
+    set_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnListBox, i32) -> i32,
+    get_wrap_selection: unsafe extern "system" fn(*mut IAvnListBox, *mut i32) -> i32,
+    set_wrap_selection: unsafe extern "system" fn(*mut IAvnListBox, i32) -> i32,
+    begin_init: unsafe extern "system" fn(*mut IAvnListBox) -> i32,
+    end_init: unsafe extern "system" fn(*mut IAvnListBox) -> i32,
     get_selection_mode: unsafe extern "system" fn(*mut IAvnListBox, *mut i32) -> i32,
     set_selection_mode: unsafe extern "system" fn(*mut IAvnListBox, i32) -> i32,
     select_all: unsafe extern "system" fn(*mut IAvnListBox) -> i32,
@@ -21383,38 +21454,71 @@ impl ComPtr<IAvnListBox> {
             hresult::check(hr)
         }
     }
-    pub fn get_items(&self) -> Result<ComPtr<IAvnItemList>> {
-        unsafe {
-            let mut value: *mut IAvnItemList = ptr::null_mut();
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items)(self.as_raw(), &mut value);
-            hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
-        }
-    }
-    pub fn get_selected_index(&self) -> Result<i32> {
+    pub fn get_item_count(&self) -> Result<i32> {
         unsafe {
             let mut value: i32 = 0;
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_index)(self.as_raw(), &mut value);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_item_count)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             Ok(value)
         }
     }
-    pub fn set_selected_index(&self, value: i32) -> Result<()> {
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
         unsafe {
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_index)(self.as_raw(), value);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
             hresult::check(hr)
         }
     }
-    pub fn advise_selection_changed(&self, handler: &ComPtr<IAvnSelectingItemsControlSelectionChangedHandler>) -> Result<i64> {
+    pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> {
         unsafe {
-            let mut subscription_id = 0;
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_selection_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
-            hresult::check(hr).map(|_| subscription_id)
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_auto_scroll_to_selected_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
-    pub fn unadvise_selection_changed(&self, subscription_id: i64) -> Result<()> {
+    pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
         unsafe {
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_selection_changed)(self.as_raw(), subscription_id);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_auto_scroll_to_selected_item)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_text_search_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_text_search_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_text_search_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_text_search_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_wrap_selection(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_wrap_selection)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_wrap_selection(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_wrap_selection)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn begin_init(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().begin_init)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn end_init(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().end_init)(self.as_raw());
             hresult::check(hr)
         }
     }
@@ -23231,7 +23335,7 @@ impl ComPtr<IAvnMaskedTextBox> {
     }
 }
 
-pub const I_AVN_MENU_IID: Guid = Guid { data1: 0xE6CE975A, data2: 0xC251, data3: 0x5130, data4: [0xBB, 0xFA, 0x99, 0x55, 0x80, 0xC6, 0x38, 0x6B] };
+pub const I_AVN_MENU_IID: Guid = Guid { data1: 0x66864BEC, data2: 0x42C8, data3: 0x5B9E, data4: [0xB3, 0x56, 0x5E, 0x28, 0xE1, 0xAC, 0xFF, 0xDA] };
 
 #[repr(C)]
 struct IAvnMenuVtbl {
@@ -23297,11 +23401,16 @@ struct IAvnMenuVtbl {
     set_letter_spacing: unsafe extern "system" fn(*mut IAvnMenu, f64) -> i32,
     get_padding: unsafe extern "system" fn(*mut IAvnMenu, *mut AvnThickness) -> i32,
     set_padding: unsafe extern "system" fn(*mut IAvnMenu, AvnThickness) -> i32,
-    get_items: unsafe extern "system" fn(*mut IAvnMenu, *mut *mut IAvnItemList) -> i32,
-    get_selected_index: unsafe extern "system" fn(*mut IAvnMenu, *mut i32) -> i32,
-    set_selected_index: unsafe extern "system" fn(*mut IAvnMenu, i32) -> i32,
-    advise_selection_changed: unsafe extern "system" fn(*mut IAvnMenu, *mut IAvnSelectingItemsControlSelectionChangedHandler, *mut i64) -> i32,
-    unadvise_selection_changed: unsafe extern "system" fn(*mut IAvnMenu, i64) -> i32,
+    get_item_count: unsafe extern "system" fn(*mut IAvnMenu, *mut i32) -> i32,
+    scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnMenu, i32) -> i32,
+    get_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnMenu, *mut i32) -> i32,
+    set_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnMenu, i32) -> i32,
+    get_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnMenu, *mut i32) -> i32,
+    set_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnMenu, i32) -> i32,
+    get_wrap_selection: unsafe extern "system" fn(*mut IAvnMenu, *mut i32) -> i32,
+    set_wrap_selection: unsafe extern "system" fn(*mut IAvnMenu, i32) -> i32,
+    begin_init: unsafe extern "system" fn(*mut IAvnMenu) -> i32,
+    end_init: unsafe extern "system" fn(*mut IAvnMenu) -> i32,
     get_is_open: unsafe extern "system" fn(*mut IAvnMenu, *mut i32) -> i32,
     close: unsafe extern "system" fn(*mut IAvnMenu) -> i32,
     open: unsafe extern "system" fn(*mut IAvnMenu) -> i32,
@@ -23732,38 +23841,71 @@ impl ComPtr<IAvnMenu> {
             hresult::check(hr)
         }
     }
-    pub fn get_items(&self) -> Result<ComPtr<IAvnItemList>> {
-        unsafe {
-            let mut value: *mut IAvnItemList = ptr::null_mut();
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items)(self.as_raw(), &mut value);
-            hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
-        }
-    }
-    pub fn get_selected_index(&self) -> Result<i32> {
+    pub fn get_item_count(&self) -> Result<i32> {
         unsafe {
             let mut value: i32 = 0;
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_index)(self.as_raw(), &mut value);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_item_count)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             Ok(value)
         }
     }
-    pub fn set_selected_index(&self, value: i32) -> Result<()> {
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
         unsafe {
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_index)(self.as_raw(), value);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
             hresult::check(hr)
         }
     }
-    pub fn advise_selection_changed(&self, handler: &ComPtr<IAvnSelectingItemsControlSelectionChangedHandler>) -> Result<i64> {
+    pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> {
         unsafe {
-            let mut subscription_id = 0;
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_selection_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
-            hresult::check(hr).map(|_| subscription_id)
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_auto_scroll_to_selected_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
-    pub fn unadvise_selection_changed(&self, subscription_id: i64) -> Result<()> {
+    pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
         unsafe {
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_selection_changed)(self.as_raw(), subscription_id);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_auto_scroll_to_selected_item)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_text_search_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_text_search_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_text_search_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_text_search_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_wrap_selection(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_wrap_selection)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_wrap_selection(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_wrap_selection)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn begin_init(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().begin_init)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn end_init(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().end_init)(self.as_raw());
             hresult::check(hr)
         }
     }
@@ -23815,7 +23957,7 @@ impl ComPtr<IAvnMenu> {
     }
 }
 
-pub const I_AVN_MENU_BASE_IID: Guid = Guid { data1: 0xB2D1F098, data2: 0xCB13, data3: 0x546B, data4: [0x8D, 0xC6, 0x1B, 0x72, 0xDD, 0x00, 0x81, 0x4A] };
+pub const I_AVN_MENU_BASE_IID: Guid = Guid { data1: 0xDDB93890, data2: 0xC139, data3: 0x51E6, data4: [0x8B, 0x85, 0xFB, 0x7B, 0x31, 0x3A, 0x0C, 0xB3] };
 
 #[repr(C)]
 struct IAvnMenuBaseVtbl {
@@ -23881,11 +24023,16 @@ struct IAvnMenuBaseVtbl {
     set_letter_spacing: unsafe extern "system" fn(*mut IAvnMenuBase, f64) -> i32,
     get_padding: unsafe extern "system" fn(*mut IAvnMenuBase, *mut AvnThickness) -> i32,
     set_padding: unsafe extern "system" fn(*mut IAvnMenuBase, AvnThickness) -> i32,
-    get_items: unsafe extern "system" fn(*mut IAvnMenuBase, *mut *mut IAvnItemList) -> i32,
-    get_selected_index: unsafe extern "system" fn(*mut IAvnMenuBase, *mut i32) -> i32,
-    set_selected_index: unsafe extern "system" fn(*mut IAvnMenuBase, i32) -> i32,
-    advise_selection_changed: unsafe extern "system" fn(*mut IAvnMenuBase, *mut IAvnSelectingItemsControlSelectionChangedHandler, *mut i64) -> i32,
-    unadvise_selection_changed: unsafe extern "system" fn(*mut IAvnMenuBase, i64) -> i32,
+    get_item_count: unsafe extern "system" fn(*mut IAvnMenuBase, *mut i32) -> i32,
+    scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnMenuBase, i32) -> i32,
+    get_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnMenuBase, *mut i32) -> i32,
+    set_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnMenuBase, i32) -> i32,
+    get_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnMenuBase, *mut i32) -> i32,
+    set_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnMenuBase, i32) -> i32,
+    get_wrap_selection: unsafe extern "system" fn(*mut IAvnMenuBase, *mut i32) -> i32,
+    set_wrap_selection: unsafe extern "system" fn(*mut IAvnMenuBase, i32) -> i32,
+    begin_init: unsafe extern "system" fn(*mut IAvnMenuBase) -> i32,
+    end_init: unsafe extern "system" fn(*mut IAvnMenuBase) -> i32,
     get_is_open: unsafe extern "system" fn(*mut IAvnMenuBase, *mut i32) -> i32,
     close: unsafe extern "system" fn(*mut IAvnMenuBase) -> i32,
     open: unsafe extern "system" fn(*mut IAvnMenuBase) -> i32,
@@ -24316,38 +24463,71 @@ impl ComPtr<IAvnMenuBase> {
             hresult::check(hr)
         }
     }
-    pub fn get_items(&self) -> Result<ComPtr<IAvnItemList>> {
-        unsafe {
-            let mut value: *mut IAvnItemList = ptr::null_mut();
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items)(self.as_raw(), &mut value);
-            hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
-        }
-    }
-    pub fn get_selected_index(&self) -> Result<i32> {
+    pub fn get_item_count(&self) -> Result<i32> {
         unsafe {
             let mut value: i32 = 0;
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_index)(self.as_raw(), &mut value);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_item_count)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             Ok(value)
         }
     }
-    pub fn set_selected_index(&self, value: i32) -> Result<()> {
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
         unsafe {
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_index)(self.as_raw(), value);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
             hresult::check(hr)
         }
     }
-    pub fn advise_selection_changed(&self, handler: &ComPtr<IAvnSelectingItemsControlSelectionChangedHandler>) -> Result<i64> {
+    pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> {
         unsafe {
-            let mut subscription_id = 0;
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_selection_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
-            hresult::check(hr).map(|_| subscription_id)
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_auto_scroll_to_selected_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
-    pub fn unadvise_selection_changed(&self, subscription_id: i64) -> Result<()> {
+    pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
         unsafe {
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_selection_changed)(self.as_raw(), subscription_id);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_auto_scroll_to_selected_item)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_text_search_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_text_search_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_text_search_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_text_search_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_wrap_selection(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_wrap_selection)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_wrap_selection(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_wrap_selection)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn begin_init(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().begin_init)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn end_init(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().end_init)(self.as_raw());
             hresult::check(hr)
         }
     }
@@ -24633,7 +24813,7 @@ impl ComPtr<IAvnMenuFlyout> {
     }
 }
 
-pub const I_AVN_MENU_ITEM_IID: Guid = Guid { data1: 0xAD60B588, data2: 0xC2E3, data3: 0x590E, data4: [0xA8, 0x3B, 0xDF, 0x9C, 0x33, 0x3B, 0xCA, 0x9C] };
+pub const I_AVN_MENU_ITEM_IID: Guid = Guid { data1: 0xA39514AD, data2: 0x7AE6, data3: 0x5B7F, data4: [0xA8, 0xAB, 0x46, 0x1E, 0x6E, 0x3D, 0xE6, 0xAB] };
 
 #[repr(C)]
 struct IAvnMenuItemVtbl {
@@ -24699,11 +24879,16 @@ struct IAvnMenuItemVtbl {
     set_letter_spacing: unsafe extern "system" fn(*mut IAvnMenuItem, f64) -> i32,
     get_padding: unsafe extern "system" fn(*mut IAvnMenuItem, *mut AvnThickness) -> i32,
     set_padding: unsafe extern "system" fn(*mut IAvnMenuItem, AvnThickness) -> i32,
-    get_items: unsafe extern "system" fn(*mut IAvnMenuItem, *mut *mut IAvnItemList) -> i32,
-    get_selected_index: unsafe extern "system" fn(*mut IAvnMenuItem, *mut i32) -> i32,
-    set_selected_index: unsafe extern "system" fn(*mut IAvnMenuItem, i32) -> i32,
-    advise_selection_changed: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnSelectingItemsControlSelectionChangedHandler, *mut i64) -> i32,
-    unadvise_selection_changed: unsafe extern "system" fn(*mut IAvnMenuItem, i64) -> i32,
+    get_item_count: unsafe extern "system" fn(*mut IAvnMenuItem, *mut i32) -> i32,
+    scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnMenuItem, i32) -> i32,
+    get_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnMenuItem, *mut i32) -> i32,
+    set_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnMenuItem, i32) -> i32,
+    get_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnMenuItem, *mut i32) -> i32,
+    set_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnMenuItem, i32) -> i32,
+    get_wrap_selection: unsafe extern "system" fn(*mut IAvnMenuItem, *mut i32) -> i32,
+    set_wrap_selection: unsafe extern "system" fn(*mut IAvnMenuItem, i32) -> i32,
+    begin_init: unsafe extern "system" fn(*mut IAvnMenuItem) -> i32,
+    end_init: unsafe extern "system" fn(*mut IAvnMenuItem) -> i32,
     get_header: unsafe extern "system" fn(*mut IAvnMenuItem, *mut *mut IAvnControl) -> i32,
     set_header: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnControl) -> i32,
     get_icon: unsafe extern "system" fn(*mut IAvnMenuItem, *mut *mut IAvnControl) -> i32,
@@ -25151,38 +25336,71 @@ impl ComPtr<IAvnMenuItem> {
             hresult::check(hr)
         }
     }
-    pub fn get_items(&self) -> Result<ComPtr<IAvnItemList>> {
-        unsafe {
-            let mut value: *mut IAvnItemList = ptr::null_mut();
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items)(self.as_raw(), &mut value);
-            hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
-        }
-    }
-    pub fn get_selected_index(&self) -> Result<i32> {
+    pub fn get_item_count(&self) -> Result<i32> {
         unsafe {
             let mut value: i32 = 0;
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_index)(self.as_raw(), &mut value);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_item_count)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             Ok(value)
         }
     }
-    pub fn set_selected_index(&self, value: i32) -> Result<()> {
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
         unsafe {
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_index)(self.as_raw(), value);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
             hresult::check(hr)
         }
     }
-    pub fn advise_selection_changed(&self, handler: &ComPtr<IAvnSelectingItemsControlSelectionChangedHandler>) -> Result<i64> {
+    pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> {
         unsafe {
-            let mut subscription_id = 0;
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_selection_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
-            hresult::check(hr).map(|_| subscription_id)
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_auto_scroll_to_selected_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
-    pub fn unadvise_selection_changed(&self, subscription_id: i64) -> Result<()> {
+    pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
         unsafe {
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_selection_changed)(self.as_raw(), subscription_id);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_auto_scroll_to_selected_item)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_text_search_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_text_search_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_text_search_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_text_search_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_wrap_selection(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_wrap_selection)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_wrap_selection(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_wrap_selection)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn begin_init(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().begin_init)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn end_init(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().end_init)(self.as_raw());
             hresult::check(hr)
         }
     }
@@ -29321,7 +29539,7 @@ impl ComPtr<IAvnHeaderedContentControl> {
     }
 }
 
-pub const I_AVN_HEADERED_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x818736A5, data2: 0xD3E0, data3: 0x5E67, data4: [0x95, 0x82, 0xDD, 0xB6, 0x12, 0x4B, 0x4B, 0xF9] };
+pub const I_AVN_HEADERED_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x0201471B, data2: 0xB875, data3: 0x5EBB, data4: [0xA3, 0x9E, 0x20, 0x73, 0x1E, 0xAA, 0x8C, 0x19] };
 
 #[repr(C)]
 struct IAvnHeaderedItemsControlVtbl {
@@ -29387,7 +29605,8 @@ struct IAvnHeaderedItemsControlVtbl {
     set_letter_spacing: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, f64) -> i32,
     get_padding: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut AvnThickness) -> i32,
     set_padding: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, AvnThickness) -> i32,
-    get_items: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut *mut IAvnItemList) -> i32,
+    get_item_count: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut i32) -> i32,
+    scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, i32) -> i32,
     get_header: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut *mut IAvnControl) -> i32,
     set_header: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut IAvnControl) -> i32,
 }
@@ -29813,12 +30032,18 @@ impl ComPtr<IAvnHeaderedItemsControl> {
             hresult::check(hr)
         }
     }
-    pub fn get_items(&self) -> Result<ComPtr<IAvnItemList>> {
+    pub fn get_item_count(&self) -> Result<i32> {
         unsafe {
-            let mut value: *mut IAvnItemList = ptr::null_mut();
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items)(self.as_raw(), &mut value);
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_item_count)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            Ok(value)
+        }
+    }
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
+            hresult::check(hr)
         }
     }
     pub fn get_header(&self) -> Result<Option<ComPtr<IAvnControl>>> {
@@ -29837,7 +30062,7 @@ impl ComPtr<IAvnHeaderedItemsControl> {
     }
 }
 
-pub const I_AVN_HEADERED_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x5FF37F33, data2: 0x3D83, data3: 0x5F59, data4: [0x81, 0xE6, 0x89, 0xBA, 0x9A, 0x0D, 0xA6, 0x1A] };
+pub const I_AVN_HEADERED_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x77052FE6, data2: 0xDFAD, data3: 0x5129, data4: [0x9C, 0xDA, 0xB2, 0x98, 0xD2, 0xA0, 0x1B, 0xC2] };
 
 #[repr(C)]
 struct IAvnHeaderedSelectingItemsControlVtbl {
@@ -29903,11 +30128,16 @@ struct IAvnHeaderedSelectingItemsControlVtbl {
     set_letter_spacing: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, f64) -> i32,
     get_padding: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut AvnThickness) -> i32,
     set_padding: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, AvnThickness) -> i32,
-    get_items: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut *mut IAvnItemList) -> i32,
-    get_selected_index: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut i32) -> i32,
-    set_selected_index: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i32) -> i32,
-    advise_selection_changed: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut IAvnSelectingItemsControlSelectionChangedHandler, *mut i64) -> i32,
-    unadvise_selection_changed: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i64) -> i32,
+    get_item_count: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut i32) -> i32,
+    scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i32) -> i32,
+    get_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut i32) -> i32,
+    set_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i32) -> i32,
+    get_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut i32) -> i32,
+    set_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i32) -> i32,
+    get_wrap_selection: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut i32) -> i32,
+    set_wrap_selection: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i32) -> i32,
+    begin_init: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl) -> i32,
+    end_init: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl) -> i32,
     get_header: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut *mut IAvnControl) -> i32,
     set_header: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut IAvnControl) -> i32,
 }
@@ -30333,38 +30563,71 @@ impl ComPtr<IAvnHeaderedSelectingItemsControl> {
             hresult::check(hr)
         }
     }
-    pub fn get_items(&self) -> Result<ComPtr<IAvnItemList>> {
-        unsafe {
-            let mut value: *mut IAvnItemList = ptr::null_mut();
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items)(self.as_raw(), &mut value);
-            hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
-        }
-    }
-    pub fn get_selected_index(&self) -> Result<i32> {
+    pub fn get_item_count(&self) -> Result<i32> {
         unsafe {
             let mut value: i32 = 0;
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_index)(self.as_raw(), &mut value);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_item_count)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             Ok(value)
         }
     }
-    pub fn set_selected_index(&self, value: i32) -> Result<()> {
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
         unsafe {
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_index)(self.as_raw(), value);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
             hresult::check(hr)
         }
     }
-    pub fn advise_selection_changed(&self, handler: &ComPtr<IAvnSelectingItemsControlSelectionChangedHandler>) -> Result<i64> {
+    pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> {
         unsafe {
-            let mut subscription_id = 0;
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_selection_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
-            hresult::check(hr).map(|_| subscription_id)
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_auto_scroll_to_selected_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
-    pub fn unadvise_selection_changed(&self, subscription_id: i64) -> Result<()> {
+    pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
         unsafe {
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_selection_changed)(self.as_raw(), subscription_id);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_auto_scroll_to_selected_item)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_text_search_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_text_search_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_text_search_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_text_search_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_wrap_selection(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_wrap_selection)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_wrap_selection(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_wrap_selection)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn begin_init(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().begin_init)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn end_init(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().end_init)(self.as_raw());
             hresult::check(hr)
         }
     }
@@ -31764,7 +32027,7 @@ impl ComPtr<IAvnRangeBase> {
     }
 }
 
-pub const I_AVN_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x51330355, data2: 0xE035, data3: 0x5B22, data4: [0x8A, 0xAA, 0x49, 0x90, 0x9B, 0x8D, 0xE5, 0x23] };
+pub const I_AVN_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x5F901899, data2: 0xE71F, data3: 0x503E, data4: [0x9D, 0xF5, 0x95, 0xC1, 0x67, 0x01, 0x43, 0x53] };
 
 #[repr(C)]
 struct IAvnSelectingItemsControlVtbl {
@@ -31830,11 +32093,16 @@ struct IAvnSelectingItemsControlVtbl {
     set_letter_spacing: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, f64) -> i32,
     get_padding: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut AvnThickness) -> i32,
     set_padding: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, AvnThickness) -> i32,
-    get_items: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut *mut IAvnItemList) -> i32,
-    get_selected_index: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut i32) -> i32,
-    set_selected_index: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i32) -> i32,
-    advise_selection_changed: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnSelectingItemsControlSelectionChangedHandler, *mut i64) -> i32,
-    unadvise_selection_changed: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i64) -> i32,
+    get_item_count: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut i32) -> i32,
+    scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i32) -> i32,
+    get_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut i32) -> i32,
+    set_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i32) -> i32,
+    get_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut i32) -> i32,
+    set_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i32) -> i32,
+    get_wrap_selection: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut i32) -> i32,
+    set_wrap_selection: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i32) -> i32,
+    begin_init: unsafe extern "system" fn(*mut IAvnSelectingItemsControl) -> i32,
+    end_init: unsafe extern "system" fn(*mut IAvnSelectingItemsControl) -> i32,
 }
 
 #[repr(C)]
@@ -32258,38 +32526,71 @@ impl ComPtr<IAvnSelectingItemsControl> {
             hresult::check(hr)
         }
     }
-    pub fn get_items(&self) -> Result<ComPtr<IAvnItemList>> {
-        unsafe {
-            let mut value: *mut IAvnItemList = ptr::null_mut();
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items)(self.as_raw(), &mut value);
-            hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
-        }
-    }
-    pub fn get_selected_index(&self) -> Result<i32> {
+    pub fn get_item_count(&self) -> Result<i32> {
         unsafe {
             let mut value: i32 = 0;
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_index)(self.as_raw(), &mut value);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_item_count)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             Ok(value)
         }
     }
-    pub fn set_selected_index(&self, value: i32) -> Result<()> {
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
         unsafe {
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_index)(self.as_raw(), value);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
             hresult::check(hr)
         }
     }
-    pub fn advise_selection_changed(&self, handler: &ComPtr<IAvnSelectingItemsControlSelectionChangedHandler>) -> Result<i64> {
+    pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> {
         unsafe {
-            let mut subscription_id = 0;
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_selection_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
-            hresult::check(hr).map(|_| subscription_id)
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_auto_scroll_to_selected_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
-    pub fn unadvise_selection_changed(&self, subscription_id: i64) -> Result<()> {
+    pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
         unsafe {
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_selection_changed)(self.as_raw(), subscription_id);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_auto_scroll_to_selected_item)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_text_search_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_text_search_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_text_search_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_text_search_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_wrap_selection(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_wrap_selection)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_wrap_selection(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_wrap_selection)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn begin_init(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().begin_init)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn end_init(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().end_init)(self.as_raw());
             hresult::check(hr)
         }
     }
@@ -46028,7 +46329,7 @@ impl ComPtr<IAvnStackPanel> {
     }
 }
 
-pub const I_AVN_TAB_CONTROL_IID: Guid = Guid { data1: 0xC38904F4, data2: 0x66E8, data3: 0x59D6, data4: [0xA7, 0x9D, 0xB3, 0xC2, 0x81, 0x19, 0x55, 0x26] };
+pub const I_AVN_TAB_CONTROL_IID: Guid = Guid { data1: 0x5E487A00, data2: 0x92DC, data3: 0x5C45, data4: [0x83, 0xEF, 0x06, 0x1F, 0x43, 0xFC, 0x2E, 0x34] };
 
 #[repr(C)]
 struct IAvnTabControlVtbl {
@@ -46094,11 +46395,16 @@ struct IAvnTabControlVtbl {
     set_letter_spacing: unsafe extern "system" fn(*mut IAvnTabControl, f64) -> i32,
     get_padding: unsafe extern "system" fn(*mut IAvnTabControl, *mut AvnThickness) -> i32,
     set_padding: unsafe extern "system" fn(*mut IAvnTabControl, AvnThickness) -> i32,
-    get_items: unsafe extern "system" fn(*mut IAvnTabControl, *mut *mut IAvnItemList) -> i32,
-    get_selected_index: unsafe extern "system" fn(*mut IAvnTabControl, *mut i32) -> i32,
-    set_selected_index: unsafe extern "system" fn(*mut IAvnTabControl, i32) -> i32,
-    advise_selection_changed: unsafe extern "system" fn(*mut IAvnTabControl, *mut IAvnSelectingItemsControlSelectionChangedHandler, *mut i64) -> i32,
-    unadvise_selection_changed: unsafe extern "system" fn(*mut IAvnTabControl, i64) -> i32,
+    get_item_count: unsafe extern "system" fn(*mut IAvnTabControl, *mut i32) -> i32,
+    scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnTabControl, i32) -> i32,
+    get_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnTabControl, *mut i32) -> i32,
+    set_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnTabControl, i32) -> i32,
+    get_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnTabControl, *mut i32) -> i32,
+    set_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnTabControl, i32) -> i32,
+    get_wrap_selection: unsafe extern "system" fn(*mut IAvnTabControl, *mut i32) -> i32,
+    set_wrap_selection: unsafe extern "system" fn(*mut IAvnTabControl, i32) -> i32,
+    begin_init: unsafe extern "system" fn(*mut IAvnTabControl) -> i32,
+    end_init: unsafe extern "system" fn(*mut IAvnTabControl) -> i32,
     get_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnTabControl, *mut i32) -> i32,
     set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnTabControl, i32) -> i32,
     get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnTabControl, *mut i32) -> i32,
@@ -46528,38 +46834,71 @@ impl ComPtr<IAvnTabControl> {
             hresult::check(hr)
         }
     }
-    pub fn get_items(&self) -> Result<ComPtr<IAvnItemList>> {
-        unsafe {
-            let mut value: *mut IAvnItemList = ptr::null_mut();
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items)(self.as_raw(), &mut value);
-            hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
-        }
-    }
-    pub fn get_selected_index(&self) -> Result<i32> {
+    pub fn get_item_count(&self) -> Result<i32> {
         unsafe {
             let mut value: i32 = 0;
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_index)(self.as_raw(), &mut value);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_item_count)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             Ok(value)
         }
     }
-    pub fn set_selected_index(&self, value: i32) -> Result<()> {
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
         unsafe {
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_index)(self.as_raw(), value);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
             hresult::check(hr)
         }
     }
-    pub fn advise_selection_changed(&self, handler: &ComPtr<IAvnSelectingItemsControlSelectionChangedHandler>) -> Result<i64> {
+    pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> {
         unsafe {
-            let mut subscription_id = 0;
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_selection_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
-            hresult::check(hr).map(|_| subscription_id)
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_auto_scroll_to_selected_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
-    pub fn unadvise_selection_changed(&self, subscription_id: i64) -> Result<()> {
+    pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
         unsafe {
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_selection_changed)(self.as_raw(), subscription_id);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_auto_scroll_to_selected_item)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_text_search_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_text_search_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_text_search_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_text_search_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_wrap_selection(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_wrap_selection)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_wrap_selection(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_wrap_selection)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn begin_init(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().begin_init)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn end_init(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().end_init)(self.as_raw());
             hresult::check(hr)
         }
     }
@@ -47244,11 +47583,16 @@ struct IAvnTableViewVtbl {
     set_letter_spacing: unsafe extern "system" fn(*mut IAvnTableView, f64) -> i32,
     get_padding: unsafe extern "system" fn(*mut IAvnTableView, *mut AvnThickness) -> i32,
     set_padding: unsafe extern "system" fn(*mut IAvnTableView, AvnThickness) -> i32,
-    get_items: unsafe extern "system" fn(*mut IAvnTableView, *mut *mut IAvnItemList) -> i32,
-    get_selected_index: unsafe extern "system" fn(*mut IAvnTableView, *mut i32) -> i32,
-    set_selected_index: unsafe extern "system" fn(*mut IAvnTableView, i32) -> i32,
-    advise_selection_changed: unsafe extern "system" fn(*mut IAvnTableView, *mut IAvnSelectingItemsControlSelectionChangedHandler, *mut i64) -> i32,
-    unadvise_selection_changed: unsafe extern "system" fn(*mut IAvnTableView, i64) -> i32,
+    get_item_count: unsafe extern "system" fn(*mut IAvnTableView, *mut i32) -> i32,
+    scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnTableView, i32) -> i32,
+    get_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnTableView, *mut i32) -> i32,
+    set_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnTableView, i32) -> i32,
+    get_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnTableView, *mut i32) -> i32,
+    set_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnTableView, i32) -> i32,
+    get_wrap_selection: unsafe extern "system" fn(*mut IAvnTableView, *mut i32) -> i32,
+    set_wrap_selection: unsafe extern "system" fn(*mut IAvnTableView, i32) -> i32,
+    begin_init: unsafe extern "system" fn(*mut IAvnTableView) -> i32,
+    end_init: unsafe extern "system" fn(*mut IAvnTableView) -> i32,
     get_selection_mode: unsafe extern "system" fn(*mut IAvnTableView, *mut i32) -> i32,
     set_selection_mode: unsafe extern "system" fn(*mut IAvnTableView, i32) -> i32,
     select_all: unsafe extern "system" fn(*mut IAvnTableView) -> i32,
@@ -47678,38 +48022,71 @@ impl ComPtr<IAvnTableView> {
             hresult::check(hr)
         }
     }
-    pub fn get_items(&self) -> Result<ComPtr<IAvnItemList>> {
-        unsafe {
-            let mut value: *mut IAvnItemList = ptr::null_mut();
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items)(self.as_raw(), &mut value);
-            hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
-        }
-    }
-    pub fn get_selected_index(&self) -> Result<i32> {
+    pub fn get_item_count(&self) -> Result<i32> {
         unsafe {
             let mut value: i32 = 0;
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_index)(self.as_raw(), &mut value);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_item_count)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             Ok(value)
         }
     }
-    pub fn set_selected_index(&self, value: i32) -> Result<()> {
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
         unsafe {
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_index)(self.as_raw(), value);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
             hresult::check(hr)
         }
     }
-    pub fn advise_selection_changed(&self, handler: &ComPtr<IAvnSelectingItemsControlSelectionChangedHandler>) -> Result<i64> {
+    pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> {
         unsafe {
-            let mut subscription_id = 0;
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_selection_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
-            hresult::check(hr).map(|_| subscription_id)
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_auto_scroll_to_selected_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
-    pub fn unadvise_selection_changed(&self, subscription_id: i64) -> Result<()> {
+    pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
         unsafe {
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_selection_changed)(self.as_raw(), subscription_id);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_auto_scroll_to_selected_item)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_text_search_enabled(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_text_search_enabled)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_is_text_search_enabled(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_text_search_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_wrap_selection(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_wrap_selection)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_wrap_selection(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_wrap_selection)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn begin_init(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().begin_init)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn end_init(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().end_init)(self.as_raw());
             hresult::check(hr)
         }
     }
@@ -54057,7 +54434,7 @@ impl ComPtr<IAvnTrayIcon> {
     }
 }
 
-pub const I_AVN_TREE_VIEW_IID: Guid = Guid { data1: 0x3BB3CDC6, data2: 0x0953, data3: 0x521A, data4: [0x98, 0xCB, 0x48, 0x32, 0x61, 0x6B, 0x40, 0xE2] };
+pub const I_AVN_TREE_VIEW_IID: Guid = Guid { data1: 0x638C4442, data2: 0x77A6, data3: 0x5E2D, data4: [0x9E, 0xB1, 0xA1, 0x57, 0x75, 0xF1, 0xB7, 0x8D] };
 
 #[repr(C)]
 struct IAvnTreeViewVtbl {
@@ -54123,7 +54500,8 @@ struct IAvnTreeViewVtbl {
     set_letter_spacing: unsafe extern "system" fn(*mut IAvnTreeView, f64) -> i32,
     get_padding: unsafe extern "system" fn(*mut IAvnTreeView, *mut AvnThickness) -> i32,
     set_padding: unsafe extern "system" fn(*mut IAvnTreeView, AvnThickness) -> i32,
-    get_items: unsafe extern "system" fn(*mut IAvnTreeView, *mut *mut IAvnItemList) -> i32,
+    get_item_count: unsafe extern "system" fn(*mut IAvnTreeView, *mut i32) -> i32,
+    scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnTreeView, i32) -> i32,
     get_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnTreeView, *mut i32) -> i32,
     set_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnTreeView, i32) -> i32,
     get_selection_mode: unsafe extern "system" fn(*mut IAvnTreeView, *mut i32) -> i32,
@@ -54557,12 +54935,18 @@ impl ComPtr<IAvnTreeView> {
             hresult::check(hr)
         }
     }
-    pub fn get_items(&self) -> Result<ComPtr<IAvnItemList>> {
+    pub fn get_item_count(&self) -> Result<i32> {
         unsafe {
-            let mut value: *mut IAvnItemList = ptr::null_mut();
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items)(self.as_raw(), &mut value);
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_item_count)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            Ok(value)
+        }
+    }
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
+            hresult::check(hr)
         }
     }
     pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> {
@@ -54632,7 +55016,7 @@ impl ComPtr<IAvnTreeView> {
     }
 }
 
-pub const I_AVN_TREE_VIEW_ITEM_IID: Guid = Guid { data1: 0xC340FB81, data2: 0xD387, data3: 0x503E, data4: [0x8F, 0xCC, 0x90, 0xC6, 0xE3, 0x66, 0xE8, 0xD3] };
+pub const I_AVN_TREE_VIEW_ITEM_IID: Guid = Guid { data1: 0x9BE2C6EA, data2: 0xFA90, data3: 0x542F, data4: [0x8B, 0x61, 0xD1, 0xDE, 0xF3, 0x57, 0xF0, 0x25] };
 
 #[repr(C)]
 struct IAvnTreeViewItemVtbl {
@@ -54698,7 +55082,8 @@ struct IAvnTreeViewItemVtbl {
     set_letter_spacing: unsafe extern "system" fn(*mut IAvnTreeViewItem, f64) -> i32,
     get_padding: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut AvnThickness) -> i32,
     set_padding: unsafe extern "system" fn(*mut IAvnTreeViewItem, AvnThickness) -> i32,
-    get_items: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut *mut IAvnItemList) -> i32,
+    get_item_count: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut i32) -> i32,
+    scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnTreeViewItem, i32) -> i32,
     get_header: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut *mut IAvnControl) -> i32,
     set_header: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut IAvnControl) -> i32,
     get_is_expanded: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut i32) -> i32,
@@ -55133,12 +55518,18 @@ impl ComPtr<IAvnTreeViewItem> {
             hresult::check(hr)
         }
     }
-    pub fn get_items(&self) -> Result<ComPtr<IAvnItemList>> {
+    pub fn get_item_count(&self) -> Result<i32> {
         unsafe {
-            let mut value: *mut IAvnItemList = ptr::null_mut();
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items)(self.as_raw(), &mut value);
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_item_count)(self.as_raw(), &mut value);
             hresult::check(hr)?;
-            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+            Ok(value)
+        }
+    }
+    pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
+            hresult::check(hr)
         }
     }
     pub fn get_header(&self) -> Result<Option<ComPtr<IAvnControl>>> {

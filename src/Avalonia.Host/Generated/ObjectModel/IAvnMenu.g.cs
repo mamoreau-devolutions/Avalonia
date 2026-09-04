@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("E6CE975A-C251-5130-BBFA-995580C6386B")]
+[Guid("66864BEC-42C8-5B9E-B356-5E28E1ACFFDA")]
 public partial interface IAvnMenu : IAvnMenuBase
 {
 }
@@ -22,8 +22,6 @@ public sealed partial class AvnMenu : IAvnMenu
     private long _nextPointerEnteredSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnControlPointerExitedHandler Handler, global::System.Action Unsubscribe)> _pointerExitedSubscriptions = new();
     private long _nextPointerExitedSubscriptionId;
-    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnSelectingItemsControlSelectionChangedHandler Handler, global::System.Action Unsubscribe)> _selectionChangedSubscriptions = new();
-    private long _nextSelectionChangedSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnMenuBaseOpenedHandler Handler, global::System.Action Unsubscribe)> _openedSubscriptions = new();
     private long _nextOpenedSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnMenuBaseClosedHandler Handler, global::System.Action Unsubscribe)> _closedSubscriptions = new();
@@ -997,14 +995,14 @@ public sealed partial class AvnMenu : IAvnMenu
         }
     }
 
-    public int GetItems(out IAvnItemList value)
+    public int GetItemCount(out int value)
     {
         value = default!;
         try
         {
             using var call = _state.EnterCall();
             _value.VerifyAccess();
-            value = new AvnItemList(_value.Items);
+            value = _value.ItemCount;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -1013,14 +1011,29 @@ public sealed partial class AvnMenu : IAvnMenu
         }
     }
 
-    public int GetSelectedIndex(out int value)
+    public int ScrollIntoViewWithInt32(int index)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ScrollIntoView(index);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetAutoScrollToSelectedItem(out int value)
     {
         value = default!;
         try
         {
             using var call = _state.EnterCall();
             _value.VerifyAccess();
-            value = _value.SelectedIndex;
+            value = _value.AutoScrollToSelectedItem ? 1 : 0;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -1029,13 +1042,13 @@ public sealed partial class AvnMenu : IAvnMenu
         }
     }
 
-    public int SetSelectedIndex(int value)
+    public int SetAutoScrollToSelectedItem(int value)
     {
         try
         {
             using var call = _state.EnterCall();
             _value.VerifyAccess();
-            _value.SelectedIndex = value;
+            _value.AutoScrollToSelectedItem = value != 0;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -1044,26 +1057,14 @@ public sealed partial class AvnMenu : IAvnMenu
         }
     }
 
-    public int AdviseSelectionChanged(IAvnSelectingItemsControlSelectionChangedHandler? handler, out long subscriptionId)
+    public int GetIsTextSearchEnabled(out int value)
     {
-        subscriptionId = 0;
-        if (handler is null)
-            return global::Avalonia.Host.HResults.E_POINTER;
+        value = default!;
         try
         {
             using var call = _state.EnterCall();
             _value.VerifyAccess();
-            var eventSource = _value;
-            var callback = new global::System.EventHandler<Avalonia.Controls.SelectionChangedEventArgs>((_, eventArgs) =>
-            {
-                var hr = handler.Invoke();
-                if (hr < 0)
-                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
-            });
-            eventSource.SelectionChanged += callback;
-            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextSelectionChangedSubscriptionId);
-            _selectionChangedSubscriptions.Add(subscriptionId, (handler, () => eventSource.SelectionChanged -= callback));
-            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            value = _value.IsTextSearchEnabled ? 1 : 0;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -1072,16 +1073,74 @@ public sealed partial class AvnMenu : IAvnMenu
         }
     }
 
-    public int UnadviseSelectionChanged(long subscriptionId)
+    public int SetIsTextSearchEnabled(int value)
     {
         try
         {
             using var call = _state.EnterCall();
             _value.VerifyAccess();
-            if (!_selectionChangedSubscriptions.Remove(subscriptionId, out var subscription))
-                return global::Avalonia.Host.HResults.E_INVALIDARG;
-            subscription.Unsubscribe();
-            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            _value.IsTextSearchEnabled = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetWrapSelection(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.WrapSelection ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetWrapSelection(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.WrapSelection = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int BeginInit()
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.BeginInit();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int EndInit()
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.EndInit();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -1248,12 +1307,6 @@ public sealed partial class AvnMenu : IAvnMenu
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
         }
         _pointerExitedSubscriptions.Clear();
-        foreach (var subscription in _selectionChangedSubscriptions.Values)
-        {
-            subscription.Unsubscribe();
-            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
-        }
-        _selectionChangedSubscriptions.Clear();
         foreach (var subscription in _openedSubscriptions.Values)
         {
             subscription.Unsubscribe();

@@ -1,5 +1,6 @@
 use crate::geometry;
 use crate::ir::{ProjectedEvent, ProjectedProperty, ProjectedType, ProjectionIr};
+use std::collections::HashSet;
 
 pub fn emit_safe_module(ir: &ProjectionIr) -> String {
     let mut out = String::from(
@@ -207,31 +208,53 @@ fn emit_type(ir: &ProjectionIr, ty: &ProjectedType) -> String {
         ));
     }
 
-    for owner in lineage(ir, ty) {
+    let mut emitted_names = HashSet::new();
+    for owner in lineage(ir, ty).iter().rev() {
         for property in &owner.properties {
-            out.push_str(&emit_property(property));
-            if property.kind == "ComCollection" && property.name == "Children" {
-                out.push_str(
-                    "    pub fn child(self, value: impl AsControl) -> Result<Self> {\n\
-                     \x20       self.children()?.add(value)?;\n\
-                     \x20       Ok(self)\n\
-                     \x20   }\n",
-                );
-            }
-            if property.kind == "ComCollection" && property.name == "Items" {
-                out.push_str(
-                    "    pub fn item(self, value: impl AsControl) -> Result<Self> {\n\
-                      \x20       self.items()?.add(value)?;\n\
-                      \x20       Ok(self)\n\
-                      \x20   }\n",
-                );
+            let property_names = property_member_names(property);
+            if property_names
+                .iter()
+                .all(|name| !emitted_names.contains(name))
+            {
+                for name in &property_names {
+                    emitted_names.insert(name.clone());
+                }
+                out.push_str(&emit_property(property));
+                if property.kind == "ComCollection" && property.name == "Children" {
+                    out.push_str(
+                        "    pub fn child(self, value: impl AsControl) -> Result<Self> {\n\
+                         \x20       self.children()?.add(value)?;\n\
+                         \x20       Ok(self)\n\
+                         \x20   }\n",
+                    );
+                }
+                if property.kind == "ComCollection" && property.name == "Items" {
+                    out.push_str(
+                        "    pub fn item(self, value: impl AsControl) -> Result<Self> {\n\
+                          \x20       self.items()?.add(value)?;\n\
+                          \x20       Ok(self)\n\
+                          \x20   }\n",
+                    );
+                }
             }
         }
         for method in &owner.methods {
-            out.push_str(&emit_method(ty, method));
+            let name = to_snake(&method.name);
+            if emitted_names.insert(name.clone()) {
+                out.push_str(&emit_method(ty, method));
+            }
         }
         for event in &owner.events {
-            out.push_str(&emit_event(event));
+            let event_names = vec![
+                format!("subscribe_{}", to_snake(&event.name)),
+                format!("on_{}", to_snake(&event.name)),
+            ];
+            if event_names.iter().all(|name| !emitted_names.contains(name)) {
+                for name in &event_names {
+                    emitted_names.insert(name.clone());
+                }
+                out.push_str(&emit_event(event));
+            }
         }
     }
     for property in ir
@@ -563,6 +586,28 @@ fn emit_method(ty: &ProjectedType, method: &crate::ir::ProjectedMethod) -> Strin
          {setup}        Ok(self.raw.{name}({call_arguments})?)\n\
          \x20   }}\n"
     )
+}
+
+fn property_member_names(property: &ProjectedProperty) -> Vec<String> {
+    let snake = to_snake(&property.name);
+    let mut names = Vec::new();
+    if property.can_read {
+        if property.can_write {
+            names.push(format!("get_{snake}"));
+        } else {
+            names.push(snake.clone());
+        }
+    }
+    if property.can_write {
+        let builder = if property.kind == "Bool" || property.kind == "NullableBool" {
+            snake.strip_prefix("is_").unwrap_or(&snake)
+        } else {
+            &snake
+        };
+        names.push(format!("set_{builder}"));
+        names.push(builder.to_string());
+    }
+    names
 }
 
 fn safe_property_input(property: &ProjectedProperty) -> (String, String, String) {

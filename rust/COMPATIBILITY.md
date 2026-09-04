@@ -52,6 +52,8 @@ with a host from another.
 
 The overlay-chrome pass widens the leaf `IAvnWindow` ABI from 7 to 8 to expose only the safe, non-nullable window work-area and dialog members. This stays local to the window leaf: `IAvnContentControl` remains at 6 and the factory remains at 13, while blockers such as `Icon`, `Position`, nullable geometry, and cancelable `Closing` payloads stay out of scope.
 
+The item-control allowlist stays intentionally narrow: only `ItemCount`, `ScrollIntoView(Int32)`, `AutoScrollToSelectedItem`, `IsTextSearchEnabled`, `WrapSelection`, and public `BeginInit`/`EndInit` are projected. Because Nano-COM vtables are flattened, those additions move every interface under `IAvnItemsControl` and `IAvnSelectingItemsControl` together and require a fresh IID for each affected interface, while unrelated controls such as `Window` and `Button` remain on their earlier ABI versions and IIDs.
+
 Published interface IIDs, vtable slot order, method signatures, calling
 conventions, ownership rules, and error semantics are immutable. Never reuse an
 IID for a changed interface and never insert a slot into an existing vtable.
