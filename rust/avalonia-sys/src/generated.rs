@@ -1714,6 +1714,165 @@ unsafe extern "system" fn i_avn_selecting_items_control_selection_changed_handle
     crate::event_callback::invoke::<IAvnSelectingItemsControlSelectionChangedHandler, ()>(this, &mut ())
 }
 
+pub const I_AVN_THUMB_DRAG_STARTED_HANDLER_IID: Guid = Guid { data1: 0xBCA61CC5, data2: 0x8334, data3: 0x5A1E, data4: [0xA6, 0xF1, 0xD9, 0xA3, 0x1D, 0x1E, 0xE5, 0x02] };
+
+#[derive(Debug)]
+pub struct ThumbDragStartedEventArgs {
+    pub vector: AvnVector,
+}
+
+#[repr(C)]
+struct IAvnThumbDragStartedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnThumbDragStartedHandler, vector: AvnVector) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnThumbDragStartedHandler { vtbl: *const IAvnThumbDragStartedHandlerVtbl }
+
+unsafe impl ComInterface for IAvnThumbDragStartedHandler { const IID: Guid = I_AVN_THUMB_DRAG_STARTED_HANDLER_IID; }
+
+static I_AVN_THUMB_DRAG_STARTED_HANDLER_VTBL: IAvnThumbDragStartedHandlerVtbl = IAvnThumbDragStartedHandlerVtbl {
+    query_interface: i_avn_thumb_drag_started_handler_query_interface,
+    add_ref: i_avn_thumb_drag_started_handler_add_ref,
+    release: i_avn_thumb_drag_started_handler_release,
+    invoke: i_avn_thumb_drag_started_handler_invoke,
+};
+
+pub fn thumb_drag_started_handler(callback: impl FnMut(&mut ThumbDragStartedEventArgs) -> Result<()> + Send + 'static) -> ComPtr<IAvnThumbDragStartedHandler> {
+    crate::event_callback::create(IAvnThumbDragStartedHandler { vtbl: &I_AVN_THUMB_DRAG_STARTED_HANDLER_VTBL }, callback)
+}
+
+unsafe extern "system" fn i_avn_thumb_drag_started_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnThumbDragStartedHandler, ThumbDragStartedEventArgs>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_thumb_drag_started_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnThumbDragStartedHandler, ThumbDragStartedEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_thumb_drag_started_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnThumbDragStartedHandler, ThumbDragStartedEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_thumb_drag_started_handler_invoke(this: *mut IAvnThumbDragStartedHandler, vector: AvnVector) -> i32 {
+    let mut arguments = ThumbDragStartedEventArgs {
+        vector,
+    };
+    let hr = crate::event_callback::invoke::<IAvnThumbDragStartedHandler, ThumbDragStartedEventArgs>(this, &mut arguments);
+    if hr >= 0 {
+    }
+    hr
+}
+
+pub const I_AVN_THUMB_DRAG_DELTA_HANDLER_IID: Guid = Guid { data1: 0x213AA2C1, data2: 0x763B, data3: 0x5196, data4: [0x99, 0xD1, 0x2F, 0x07, 0x0C, 0x0D, 0xBE, 0xA0] };
+
+#[derive(Debug)]
+pub struct ThumbDragDeltaEventArgs {
+    pub vector: AvnVector,
+}
+
+#[repr(C)]
+struct IAvnThumbDragDeltaHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnThumbDragDeltaHandler, vector: AvnVector) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnThumbDragDeltaHandler { vtbl: *const IAvnThumbDragDeltaHandlerVtbl }
+
+unsafe impl ComInterface for IAvnThumbDragDeltaHandler { const IID: Guid = I_AVN_THUMB_DRAG_DELTA_HANDLER_IID; }
+
+static I_AVN_THUMB_DRAG_DELTA_HANDLER_VTBL: IAvnThumbDragDeltaHandlerVtbl = IAvnThumbDragDeltaHandlerVtbl {
+    query_interface: i_avn_thumb_drag_delta_handler_query_interface,
+    add_ref: i_avn_thumb_drag_delta_handler_add_ref,
+    release: i_avn_thumb_drag_delta_handler_release,
+    invoke: i_avn_thumb_drag_delta_handler_invoke,
+};
+
+pub fn thumb_drag_delta_handler(callback: impl FnMut(&mut ThumbDragDeltaEventArgs) -> Result<()> + Send + 'static) -> ComPtr<IAvnThumbDragDeltaHandler> {
+    crate::event_callback::create(IAvnThumbDragDeltaHandler { vtbl: &I_AVN_THUMB_DRAG_DELTA_HANDLER_VTBL }, callback)
+}
+
+unsafe extern "system" fn i_avn_thumb_drag_delta_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnThumbDragDeltaHandler, ThumbDragDeltaEventArgs>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_thumb_drag_delta_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnThumbDragDeltaHandler, ThumbDragDeltaEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_thumb_drag_delta_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnThumbDragDeltaHandler, ThumbDragDeltaEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_thumb_drag_delta_handler_invoke(this: *mut IAvnThumbDragDeltaHandler, vector: AvnVector) -> i32 {
+    let mut arguments = ThumbDragDeltaEventArgs {
+        vector,
+    };
+    let hr = crate::event_callback::invoke::<IAvnThumbDragDeltaHandler, ThumbDragDeltaEventArgs>(this, &mut arguments);
+    if hr >= 0 {
+    }
+    hr
+}
+
+pub const I_AVN_THUMB_DRAG_COMPLETED_HANDLER_IID: Guid = Guid { data1: 0x913B0E1C, data2: 0xAF04, data3: 0x556E, data4: [0xB2, 0xAE, 0x60, 0xD6, 0x19, 0xC9, 0x83, 0x3C] };
+
+#[derive(Debug)]
+pub struct ThumbDragCompletedEventArgs {
+    pub vector: AvnVector,
+}
+
+#[repr(C)]
+struct IAvnThumbDragCompletedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnThumbDragCompletedHandler, vector: AvnVector) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnThumbDragCompletedHandler { vtbl: *const IAvnThumbDragCompletedHandlerVtbl }
+
+unsafe impl ComInterface for IAvnThumbDragCompletedHandler { const IID: Guid = I_AVN_THUMB_DRAG_COMPLETED_HANDLER_IID; }
+
+static I_AVN_THUMB_DRAG_COMPLETED_HANDLER_VTBL: IAvnThumbDragCompletedHandlerVtbl = IAvnThumbDragCompletedHandlerVtbl {
+    query_interface: i_avn_thumb_drag_completed_handler_query_interface,
+    add_ref: i_avn_thumb_drag_completed_handler_add_ref,
+    release: i_avn_thumb_drag_completed_handler_release,
+    invoke: i_avn_thumb_drag_completed_handler_invoke,
+};
+
+pub fn thumb_drag_completed_handler(callback: impl FnMut(&mut ThumbDragCompletedEventArgs) -> Result<()> + Send + 'static) -> ComPtr<IAvnThumbDragCompletedHandler> {
+    crate::event_callback::create(IAvnThumbDragCompletedHandler { vtbl: &I_AVN_THUMB_DRAG_COMPLETED_HANDLER_VTBL }, callback)
+}
+
+unsafe extern "system" fn i_avn_thumb_drag_completed_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnThumbDragCompletedHandler, ThumbDragCompletedEventArgs>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_thumb_drag_completed_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnThumbDragCompletedHandler, ThumbDragCompletedEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_thumb_drag_completed_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnThumbDragCompletedHandler, ThumbDragCompletedEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_thumb_drag_completed_handler_invoke(this: *mut IAvnThumbDragCompletedHandler, vector: AvnVector) -> i32 {
+    let mut arguments = ThumbDragCompletedEventArgs {
+        vector,
+    };
+    let hr = crate::event_callback::invoke::<IAvnThumbDragCompletedHandler, ThumbDragCompletedEventArgs>(this, &mut arguments);
+    if hr >= 0 {
+    }
+    hr
+}
+
 pub const I_AVN_TOGGLE_BUTTON_IS_CHECKED_CHANGED_HANDLER_IID: Guid = Guid { data1: 0xFF444C66, data2: 0x8E6C, data3: 0x5B93, data4: [0x9D, 0xB3, 0xA7, 0xD9, 0x43, 0x49, 0x10, 0x3C] };
 
 #[repr(C)]
@@ -19331,7 +19490,7 @@ impl ComPtr<IAvnGrid> {
     }
 }
 
-pub const I_AVN_GRID_SPLITTER_IID: Guid = Guid { data1: 0xD2AB8534, data2: 0x6906, data3: 0x5EAD, data4: [0x9F, 0xFF, 0xAF, 0xF3, 0x00, 0xFC, 0x23, 0xA0] };
+pub const I_AVN_GRID_SPLITTER_IID: Guid = Guid { data1: 0xFB7311EE, data2: 0xA6E2, data3: 0x5F6C, data4: [0xB3, 0x1F, 0x2C, 0x60, 0x6E, 0xF4, 0x18, 0x78] };
 
 #[repr(C)]
 struct IAvnGridSplitterVtbl {
@@ -19406,6 +19565,12 @@ struct IAvnGridSplitterVtbl {
     set_letter_spacing: unsafe extern "system" fn(*mut IAvnGridSplitter, f64) -> i32,
     get_padding: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut AvnThickness) -> i32,
     set_padding: unsafe extern "system" fn(*mut IAvnGridSplitter, AvnThickness) -> i32,
+    advise_drag_started: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut IAvnThumbDragStartedHandler, *mut i64) -> i32,
+    unadvise_drag_started: unsafe extern "system" fn(*mut IAvnGridSplitter, i64) -> i32,
+    advise_drag_delta: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut IAvnThumbDragDeltaHandler, *mut i64) -> i32,
+    unadvise_drag_delta: unsafe extern "system" fn(*mut IAvnGridSplitter, i64) -> i32,
+    advise_drag_completed: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut IAvnThumbDragCompletedHandler, *mut i64) -> i32,
+    unadvise_drag_completed: unsafe extern "system" fn(*mut IAvnGridSplitter, i64) -> i32,
     get_resize_direction: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut i32) -> i32,
     set_resize_direction: unsafe extern "system" fn(*mut IAvnGridSplitter, i32) -> i32,
     get_resize_behavior: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut i32) -> i32,
@@ -19898,6 +20063,45 @@ impl ComPtr<IAvnGridSplitter> {
     pub fn set_padding(&self, value: AvnThickness) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_padding)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_drag_started(&self, handler: &ComPtr<IAvnThumbDragStartedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_drag_started)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_drag_started(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_drag_started)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_drag_delta(&self, handler: &ComPtr<IAvnThumbDragDeltaHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_drag_delta)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_drag_delta(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_drag_delta)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_drag_completed(&self, handler: &ComPtr<IAvnThumbDragCompletedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_drag_completed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_drag_completed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_drag_completed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -37828,7 +38032,7 @@ impl ComPtr<IAvnTemplatedControl> {
     }
 }
 
-pub const I_AVN_THUMB_IID: Guid = Guid { data1: 0xD658EE9F, data2: 0x60C2, data3: 0x5502, data4: [0x8D, 0x55, 0xE7, 0x48, 0x3F, 0x94, 0x7F, 0x88] };
+pub const I_AVN_THUMB_IID: Guid = Guid { data1: 0x76FE925F, data2: 0xC530, data3: 0x5A8D, data4: [0x9A, 0xBC, 0x2C, 0x91, 0x5C, 0x6B, 0xCF, 0x9C] };
 
 #[repr(C)]
 struct IAvnThumbVtbl {
@@ -37903,6 +38107,12 @@ struct IAvnThumbVtbl {
     set_letter_spacing: unsafe extern "system" fn(*mut IAvnThumb, f64) -> i32,
     get_padding: unsafe extern "system" fn(*mut IAvnThumb, *mut AvnThickness) -> i32,
     set_padding: unsafe extern "system" fn(*mut IAvnThumb, AvnThickness) -> i32,
+    advise_drag_started: unsafe extern "system" fn(*mut IAvnThumb, *mut IAvnThumbDragStartedHandler, *mut i64) -> i32,
+    unadvise_drag_started: unsafe extern "system" fn(*mut IAvnThumb, i64) -> i32,
+    advise_drag_delta: unsafe extern "system" fn(*mut IAvnThumb, *mut IAvnThumbDragDeltaHandler, *mut i64) -> i32,
+    unadvise_drag_delta: unsafe extern "system" fn(*mut IAvnThumb, i64) -> i32,
+    advise_drag_completed: unsafe extern "system" fn(*mut IAvnThumb, *mut IAvnThumbDragCompletedHandler, *mut i64) -> i32,
+    unadvise_drag_completed: unsafe extern "system" fn(*mut IAvnThumb, i64) -> i32,
 }
 
 #[repr(C)]
@@ -38385,6 +38595,45 @@ impl ComPtr<IAvnThumb> {
     pub fn set_padding(&self, value: AvnThickness) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_padding)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_drag_started(&self, handler: &ComPtr<IAvnThumbDragStartedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_drag_started)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_drag_started(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_drag_started)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_drag_delta(&self, handler: &ComPtr<IAvnThumbDragDeltaHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_drag_delta)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_drag_delta(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_drag_delta)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_drag_completed(&self, handler: &ComPtr<IAvnThumbDragCompletedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_drag_completed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_drag_completed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_drag_completed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }

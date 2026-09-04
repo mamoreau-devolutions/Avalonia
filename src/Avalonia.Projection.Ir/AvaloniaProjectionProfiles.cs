@@ -72,7 +72,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnMenuFlyout"] = 3,
             ["Avalonia.Host.Com.IAvnDatePicker"] = 4,
             ["Avalonia.Host.Com.IAvnDropDownButton"] = 4,
-            ["Avalonia.Host.Com.IAvnGridSplitter"] = 3,
+            ["Avalonia.Host.Com.IAvnGridSplitter"] = 4,
             ["Avalonia.Host.Com.IAvnGroupBox"] = 3,
             ["Avalonia.Host.Com.IAvnHeaderedItemsControl"] = 4,
             ["Avalonia.Host.Com.IAvnHeaderedSelectingItemsControl"] = 4,
@@ -98,7 +98,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnTableView"] = 4,
             ["Avalonia.Host.Com.IAvnTableViewCell"] = 3,
             ["Avalonia.Host.Com.IAvnTableViewRow"] = 3,
-            ["Avalonia.Host.Com.IAvnThumb"] = 3,
+            ["Avalonia.Host.Com.IAvnThumb"] = 4,
             ["Avalonia.Host.Com.IAvnTimePicker"] = 4,
             ["Avalonia.Host.Com.IAvnToggleSplitButton"] = 4,
             ["Avalonia.Host.Com.IAvnToolTip"] = 3,
@@ -413,7 +413,8 @@ public static class AvaloniaProjectionProfiles
                 "Direction", "JustifyContent", "AlignItems", "AlignContent", "Wrap",
                 "ColumnSpacing", "RowSpacing",
             ],
-            ["Avalonia.Controls.Primitives.Thumb"] = [],
+            ["Avalonia.Controls.Primitives.Thumb"] =
+                ["DragStarted", "DragDelta", "DragCompleted"],
             ["Avalonia.Controls.GridSplitter"] =
             [
                 "ResizeDirection", "ResizeBehavior", "ShowsPreview", "KeyboardIncrement",
@@ -1065,6 +1066,21 @@ public static class AvaloniaProjectionProfiles
                     new() { Name = "CloseReason" },
                     new() { Name = "IsProgrammatic" },
                 ],
+            },
+            ["Avalonia.Controls.Primitives.Thumb.DragStarted"] = new()
+            {
+                PayloadKind = EventPayloadKind.Fields,
+                Parameters = [new() { Name = "Vector" }],
+            },
+            ["Avalonia.Controls.Primitives.Thumb.DragDelta"] = new()
+            {
+                PayloadKind = EventPayloadKind.Fields,
+                Parameters = [new() { Name = "Vector" }],
+            },
+            ["Avalonia.Controls.Primitives.Thumb.DragCompleted"] = new()
+            {
+                PayloadKind = EventPayloadKind.Fields,
+                Parameters = [new() { Name = "Vector" }],
             },
             ["Avalonia.Controls.Primitives.Popup.Opened"] = new()
             {

@@ -188,9 +188,6 @@ Avalonia.Controls.Primitives.TemplatedControl.FontFeatures: Not included by proj
 Avalonia.Controls.Primitives.TemplatedControl.Template: Not included by projection policy
 Avalonia.Controls.Primitives.TemplatedControl.TemplateApplied: Not included by projection policy
 Avalonia.Controls.Primitives.TemplatedControl.ApplyTemplate(): Not included by projection policy
-Avalonia.Controls.Primitives.Thumb.DragStarted: Not included by projection policy
-Avalonia.Controls.Primitives.Thumb.DragDelta: Not included by projection policy
-Avalonia.Controls.Primitives.Thumb.DragCompleted: Not included by projection policy
 Avalonia.Controls.ProgressBar.TemplateSettings: Not included by projection policy
 Avalonia.Controls.RefreshContainer.Visualizer: Not included by projection policy
 Avalonia.Controls.RefreshContainer.RefreshRequested: Not included by projection policy

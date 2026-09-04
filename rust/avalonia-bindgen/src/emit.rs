@@ -515,16 +515,23 @@ fn emit_field_event_handler(event: &ProjectedEvent) -> String {
     )
 }
 
-fn event_argument_type(parameter: &ProjectedParameter) -> &'static str {
+fn event_argument_type(parameter: &ProjectedParameter) -> String {
+    if let Some(geometry) = geometry::find(&parameter.kind) {
+        return if parameter.is_nullable {
+            geometry.optional_abi_name()
+        } else {
+            geometry.abi_name.into()
+        };
+    }
     match parameter.kind.as_str() {
-        "I32" => "i32",
-        "I64" => "i64",
-        "F32" => "f32",
-        "F64" => "f64",
-        "Bool" => "bool",
-        "NullableBool" => "Option<bool>",
-        "StringUtf16" if parameter.is_nullable => "Option<String>",
-        "StringUtf16" => "String",
+        "I32" => "i32".into(),
+        "I64" => "i64".into(),
+        "F32" => "f32".into(),
+        "F64" => "f64".into(),
+        "Bool" => "bool".into(),
+        "NullableBool" => "Option<bool>".into(),
+        "StringUtf16" if parameter.is_nullable => "Option<String>".into(),
+        "StringUtf16" => "String".into(),
         _ => panic!("unsupported event argument kind {}", parameter.kind),
     }
 }

@@ -266,6 +266,9 @@ blittable struct). PlacementRect appends on Popup (4 to 5) and ContextMenu
 Window.Closing projects as a field payload: Cancel is in/out, CloseReason and
 IsProgrammatic are inbound. `IAvnWindow` 9 to 10. Factory 13.
 
+Thumb drag events carry `AvnVector` by value. `IAvnThumb` and `IAvnGridSplitter`
+3 to 4. Factory 13.
+
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and
 `IAvnNumericUpDown` each move from 2 to 3. Templates, filters, ItemsSource,

@@ -1101,7 +1101,7 @@ public class ClrTypeExtractorTests
             name =>
             {
                 var type = Type(ir, name);
-                Assert.Equal(3, type.AbiVersion);
+                Assert.Equal(4, type.AbiVersion);
                 Assert.True(type.IsConstructible);
             });
 
@@ -1112,6 +1112,17 @@ public class ClrTypeExtractorTests
         Assert.Equal("Avalonia.Host.Com.IAvnControl", Type(ir, "IAvnViewbox").BaseFullName);
         Assert.Equal("Avalonia.Host.Com.IAvnTemplatedControl", Type(ir, "IAvnThumb").BaseFullName);
         Assert.Equal("Avalonia.Host.Com.IAvnThumb", Type(ir, "IAvnGridSplitter").BaseFullName);
+        var thumb = Type(ir, "IAvnThumb");
+        Assert.All(
+            new[] { "DragStarted", "DragDelta", "DragCompleted" },
+            name =>
+            {
+                var ev = thumb.Events.Single(e => e.Name == name);
+                Assert.Equal(EventPayloadKind.Fields, ev.PayloadKind);
+                var vector = Assert.Single(ev.Parameters);
+                Assert.Equal("Vector", vector.Name);
+                Assert.Equal(MarshallingKind.Vector, vector.Kind);
+            });
 
         var wrap = Type(ir, "IAvnWrapPanel");
         Assert.All(

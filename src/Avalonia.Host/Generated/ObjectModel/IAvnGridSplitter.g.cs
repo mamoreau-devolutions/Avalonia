@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("D2AB8534-6906-5EAD-9FFF-AFF300FC23A0")]
+[Guid("FB7311EE-A6E2-5F6C-B31F-2C606EF41878")]
 public partial interface IAvnGridSplitter : IAvnThumb
 {
     [PreserveSig]
@@ -56,6 +56,12 @@ public sealed partial class AvnGridSplitter : IAvnGridSplitter
     private long _nextPointerEnteredSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnControlPointerExitedHandler Handler, global::System.Action Unsubscribe)> _pointerExitedSubscriptions = new();
     private long _nextPointerExitedSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnThumbDragStartedHandler Handler, global::System.Action Unsubscribe)> _dragStartedSubscriptions = new();
+    private long _nextDragStartedSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnThumbDragDeltaHandler Handler, global::System.Action Unsubscribe)> _dragDeltaSubscriptions = new();
+    private long _nextDragDeltaSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnThumbDragCompletedHandler Handler, global::System.Action Unsubscribe)> _dragCompletedSubscriptions = new();
+    private long _nextDragCompletedSubscriptionId;
 
     internal AvnGridSplitter(global::Avalonia.Controls.GridSplitter value)
     {
@@ -1195,6 +1201,144 @@ public sealed partial class AvnGridSplitter : IAvnGridSplitter
         }
     }
 
+    public int AdviseDragStarted(IAvnThumbDragStartedHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<Avalonia.Input.VectorEventArgs>((_, eventArgs) =>
+            {
+                var hr = handler.Invoke(AvnVector.FromAvalonia(eventArgs.Vector));
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.DragStarted += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextDragStartedSubscriptionId);
+            _dragStartedSubscriptions.Add(subscriptionId, (handler, () => eventSource.DragStarted -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseDragStarted(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_dragStartedSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseDragDelta(IAvnThumbDragDeltaHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<Avalonia.Input.VectorEventArgs>((_, eventArgs) =>
+            {
+                var hr = handler.Invoke(AvnVector.FromAvalonia(eventArgs.Vector));
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.DragDelta += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextDragDeltaSubscriptionId);
+            _dragDeltaSubscriptions.Add(subscriptionId, (handler, () => eventSource.DragDelta -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseDragDelta(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_dragDeltaSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseDragCompleted(IAvnThumbDragCompletedHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<Avalonia.Input.VectorEventArgs>((_, eventArgs) =>
+            {
+                var hr = handler.Invoke(AvnVector.FromAvalonia(eventArgs.Vector));
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.DragCompleted += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextDragCompletedSubscriptionId);
+            _dragCompletedSubscriptions.Add(subscriptionId, (handler, () => eventSource.DragCompleted -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseDragCompleted(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_dragCompletedSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetResizeDirection(out int value)
     {
         value = default!;
@@ -1382,5 +1526,23 @@ public sealed partial class AvnGridSplitter : IAvnGridSplitter
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
         }
         _pointerExitedSubscriptions.Clear();
+        foreach (var subscription in _dragStartedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _dragStartedSubscriptions.Clear();
+        foreach (var subscription in _dragDeltaSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _dragDeltaSubscriptions.Clear();
+        foreach (var subscription in _dragCompletedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _dragCompletedSubscriptions.Clear();
     }
 }

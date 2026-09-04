@@ -1945,8 +1945,8 @@
       "name": "IAvnGridSplitter",
       "fullName": "Avalonia.Host.Com.IAvnGridSplitter",
       "kind": "Class",
-      "iid": "D2AB8534-6906-5EAD-9FFF-AFF300FC23A0",
-      "abiVersion": 3,
+      "iid": "FB7311EE-A6E2-5F6C-B31F-2C606EF41878",
+      "abiVersion": 4,
       "baseFullName": "Avalonia.Host.Com.IAvnThumb",
       "managedFullName": "Avalonia.Controls.GridSplitter",
       "isConstructible": true,
@@ -3740,14 +3740,66 @@
       "name": "IAvnThumb",
       "fullName": "Avalonia.Host.Com.IAvnThumb",
       "kind": "Class",
-      "iid": "D658EE9F-60C2-5502-8D55-E7483F947F88",
-      "abiVersion": 3,
+      "iid": "76FE925F-C530-5A8D-9ABC-2C915C6BCF9C",
+      "abiVersion": 4,
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.Primitives.Thumb",
       "isConstructible": true,
       "methods": [],
       "properties": [],
-      "events": []
+      "events": [
+        {
+          "name": "DragStarted",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnThumbDragStartedHandler",
+          "handlerInterfaceIid": "BCA61CC5-8334-5A1E-A6F1-D9A31D1EE502",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "Fields",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Input.VectorEventArgs\u003E",
+          "parameters": [
+            {
+              "name": "Vector",
+              "kind": "Vector",
+              "direction": "In",
+              "managedTypeName": "Avalonia.Vector",
+              "isNullable": false
+            }
+          ]
+        },
+        {
+          "name": "DragDelta",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnThumbDragDeltaHandler",
+          "handlerInterfaceIid": "213AA2C1-763B-5196-99D1-2F070C0DBEA0",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "Fields",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Input.VectorEventArgs\u003E",
+          "parameters": [
+            {
+              "name": "Vector",
+              "kind": "Vector",
+              "direction": "In",
+              "managedTypeName": "Avalonia.Vector",
+              "isNullable": false
+            }
+          ]
+        },
+        {
+          "name": "DragCompleted",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnThumbDragCompletedHandler",
+          "handlerInterfaceIid": "913B0E1C-AF04-556E-B2AE-60D619C9833C",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "Fields",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Input.VectorEventArgs\u003E",
+          "parameters": [
+            {
+              "name": "Vector",
+              "kind": "Vector",
+              "direction": "In",
+              "managedTypeName": "Avalonia.Vector",
+              "isNullable": false
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "IAvnToggleButton",
@@ -10969,21 +11021,6 @@
     {
       "owner": "Avalonia.Controls.Primitives.TemplatedControl",
       "member": "ApplyTemplate()",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Primitives.Thumb",
-      "member": "DragStarted",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Primitives.Thumb",
-      "member": "DragDelta",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Primitives.Thumb",
-      "member": "DragCompleted",
       "reason": "Not included by projection policy"
     },
     {

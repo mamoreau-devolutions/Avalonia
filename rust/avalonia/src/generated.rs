@@ -2448,6 +2448,9 @@ impl TryFrom<i32> for CalendarWeekRule {
 
 pub use sys::ControlKeyDownEventArgs;
 pub use sys::PopupFlyoutBaseClosingEventArgs;
+pub use sys::ThumbDragStartedEventArgs;
+pub use sys::ThumbDragDeltaEventArgs;
+pub use sys::ThumbDragCompletedEventArgs;
 pub use sys::WindowClosingEventArgs;
 
 #[derive(Clone, Debug)]
@@ -12989,6 +12992,39 @@ impl GridSplitter {
     }
     pub fn padding(self, value: Thickness) -> Result<Self> {
         self.set_padding(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_drag_started(&self, callback: impl FnMut(&mut ThumbDragStartedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::thumb_drag_started_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_drag_started(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_drag_started(subscription_id)))
+    }
+    pub fn on_drag_started(self, scope: &crate::AppScope, callback: impl FnMut(&mut ThumbDragStartedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_drag_started(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_drag_delta(&self, callback: impl FnMut(&mut ThumbDragDeltaEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::thumb_drag_delta_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_drag_delta(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_drag_delta(subscription_id)))
+    }
+    pub fn on_drag_delta(self, scope: &crate::AppScope, callback: impl FnMut(&mut ThumbDragDeltaEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_drag_delta(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_drag_completed(&self, callback: impl FnMut(&mut ThumbDragCompletedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::thumb_drag_completed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_drag_completed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_drag_completed(subscription_id)))
+    }
+    pub fn on_drag_completed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ThumbDragCompletedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_drag_completed(callback)?);
         Ok(self)
     }
     pub fn get_resize_direction(&self) -> Result<GridResizeDirection> {
@@ -24031,6 +24067,39 @@ impl Thumb {
     }
     pub fn padding(self, value: Thickness) -> Result<Self> {
         self.set_padding(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_drag_started(&self, callback: impl FnMut(&mut ThumbDragStartedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::thumb_drag_started_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_drag_started(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_drag_started(subscription_id)))
+    }
+    pub fn on_drag_started(self, scope: &crate::AppScope, callback: impl FnMut(&mut ThumbDragStartedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_drag_started(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_drag_delta(&self, callback: impl FnMut(&mut ThumbDragDeltaEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::thumb_drag_delta_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_drag_delta(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_drag_delta(subscription_id)))
+    }
+    pub fn on_drag_delta(self, scope: &crate::AppScope, callback: impl FnMut(&mut ThumbDragDeltaEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_drag_delta(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_drag_completed(&self, callback: impl FnMut(&mut ThumbDragCompletedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::thumb_drag_completed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_drag_completed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_drag_completed(subscription_id)))
+    }
+    pub fn on_drag_completed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ThumbDragCompletedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_drag_completed(callback)?);
         Ok(self)
     }
 }
