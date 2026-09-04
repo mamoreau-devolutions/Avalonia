@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("F497C1F5-24CC-5DA0-AFA9-05F0A97B9A15")]
+[Guid("5969C5F1-E409-5B18-9FE7-9E7198718B7A")]
 public partial interface IAvnPathIcon : IAvnIconElement
 {
     [PreserveSig]
@@ -22,6 +22,10 @@ public sealed partial class AvnPathIcon : IAvnPathIcon
 {
     private readonly global::Avalonia.Host.Ownership.ProjectionObjectState _state;
     private global::Avalonia.Controls.PathIcon _value => _state.GetTarget<global::Avalonia.Controls.PathIcon>();
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnControlLoadedHandler Handler, global::System.Action Unsubscribe)> _loadedSubscriptions = new();
+    private long _nextLoadedSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnControlUnloadedHandler Handler, global::System.Action Unsubscribe)> _unloadedSubscriptions = new();
+    private long _nextUnloadedSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnControlKeyDownHandler Handler, global::System.Action Unsubscribe)> _keyDownSubscriptions = new();
     private long _nextKeyDownSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnControlPointerEnteredHandler Handler, global::System.Action Unsubscribe)> _pointerEnteredSubscriptions = new();
@@ -167,6 +171,84 @@ public sealed partial class AvnPathIcon : IAvnPathIcon
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Opacity = value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetContextMenu(out IAvnContextMenu? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (IAvnContextMenu?)ProjectionRuntime.Wrap(_value.ContextMenu as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetContextMenu(IAvnContextMenu? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ContextMenu = (global::Avalonia.Controls.ContextMenu)ProjectionRuntime.Unwrap(value)!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetContextFlyout(out IAvnFlyoutBase? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (IAvnFlyoutBase?)ProjectionRuntime.Wrap(_value.ContextFlyout as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetContextFlyout(IAvnFlyoutBase? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ContextFlyout = (global::Avalonia.Controls.Primitives.FlyoutBase)ProjectionRuntime.Unwrap(value)!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetIsLoaded(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.IsLoaded ? 1 : 0;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -477,6 +559,98 @@ public sealed partial class AvnPathIcon : IAvnPathIcon
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.IsEnabled = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseLoaded(IAvnControlLoadedHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<Avalonia.Interactivity.RoutedEventArgs>((_, eventArgs) =>
+            {
+                var hr = handler.Invoke();
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.Loaded += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextLoadedSubscriptionId);
+            _loadedSubscriptions.Add(subscriptionId, (handler, () => eventSource.Loaded -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseLoaded(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_loadedSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseUnloaded(IAvnControlUnloadedHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<Avalonia.Interactivity.RoutedEventArgs>((_, eventArgs) =>
+            {
+                var hr = handler.Invoke();
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.Unloaded += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextUnloadedSubscriptionId);
+            _unloadedSubscriptions.Add(subscriptionId, (handler, () => eventSource.Unloaded -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseUnloaded(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_unloadedSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -1030,6 +1204,18 @@ public sealed partial class AvnPathIcon : IAvnPathIcon
 
     private void ReleaseSubscriptions()
     {
+        foreach (var subscription in _loadedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _loadedSubscriptions.Clear();
+        foreach (var subscription in _unloadedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _unloadedSubscriptions.Clear();
         foreach (var subscription in _keyDownSubscriptions.Values)
         {
             subscription.Unsubscribe();

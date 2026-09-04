@@ -2459,6 +2459,27 @@ impl AutoCompleteBox {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -2545,6 +2566,32 @@ impl AutoCompleteBox {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -2907,6 +2954,27 @@ impl Border {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -2993,6 +3061,32 @@ impl Border {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -3157,6 +3251,27 @@ impl Button {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -3243,6 +3358,32 @@ impl Button {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -3537,6 +3678,27 @@ impl ButtonSpinner {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -3623,6 +3785,32 @@ impl ButtonSpinner {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -3893,6 +4081,27 @@ impl Calendar {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -3979,6 +4188,32 @@ impl Calendar {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -4312,6 +4547,27 @@ impl CalendarDatePicker {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -4398,6 +4654,32 @@ impl CalendarDatePicker {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -4810,6 +5092,27 @@ impl Canvas {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -4896,6 +5199,32 @@ impl Canvas {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -5037,6 +5366,27 @@ impl Carousel {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -5123,6 +5473,32 @@ impl Carousel {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -5406,6 +5782,27 @@ impl CheckBox {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -5492,6 +5889,32 @@ impl CheckBox {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -5815,6 +6238,27 @@ impl ComboBox {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -5901,6 +6345,32 @@ impl ComboBox {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -6249,6 +6719,27 @@ impl ComboBoxItem {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -6335,6 +6826,32 @@ impl ComboBoxItem {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -6586,6 +7103,27 @@ impl CommandBar {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -6672,6 +7210,32 @@ impl CommandBar {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -6965,6 +7529,27 @@ impl CommandBarButton {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -7051,6 +7636,32 @@ impl CommandBarButton {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -7391,6 +8002,27 @@ impl CommandBarSeparator {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -7477,6 +8109,32 @@ impl CommandBarSeparator {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -7703,6 +8361,27 @@ impl CommandBarToggleButton {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -7789,6 +8468,32 @@ impl CommandBarToggleButton {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -8158,6 +8863,27 @@ impl ContentControl {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -8244,6 +8970,32 @@ impl ContentControl {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -8487,6 +9239,27 @@ impl ContextMenu {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -8573,6 +9346,32 @@ impl ContextMenu {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -8912,6 +9711,27 @@ impl Control {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -8998,6 +9818,32 @@ impl Control {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -9085,6 +9931,27 @@ impl DatePicker {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -9171,6 +10038,32 @@ impl DatePicker {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -9483,6 +10376,27 @@ impl Decorator {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -9569,6 +10483,32 @@ impl Decorator {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -9677,6 +10617,27 @@ impl DockPanel {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -9763,6 +10724,32 @@ impl DockPanel {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -9901,6 +10888,27 @@ impl DropDownButton {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -9987,6 +10995,32 @@ impl DropDownButton {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -10281,6 +11315,27 @@ impl Expander {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -10367,6 +11422,32 @@ impl Expander {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -10666,6 +11747,27 @@ impl FlexPanel {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -10752,6 +11854,32 @@ impl FlexPanel {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -11067,6 +12195,27 @@ impl Grid {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -11153,6 +12302,32 @@ impl Grid {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -11349,6 +12524,27 @@ impl GridSplitter {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -11435,6 +12631,32 @@ impl GridSplitter {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -11691,6 +12913,27 @@ impl GroupBox {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -11777,6 +13020,32 @@ impl GroupBox {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -12031,6 +13300,27 @@ impl HyperlinkButton {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -12117,6 +13407,32 @@ impl HyperlinkButton {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -12426,6 +13742,27 @@ impl IconElement {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -12512,6 +13849,32 @@ impl IconElement {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -12722,6 +14085,27 @@ impl Image {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -12808,6 +14192,32 @@ impl Image {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -12939,6 +14349,27 @@ impl ItemsControl {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -13025,6 +14456,32 @@ impl ItemsControl {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -13244,6 +14701,27 @@ impl Label {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -13330,6 +14808,32 @@ impl Label {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -13573,6 +15077,27 @@ impl LayoutTransformControl {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -13659,6 +15184,32 @@ impl LayoutTransformControl {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -13775,6 +15326,27 @@ impl ListBox {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -13861,6 +15433,32 @@ impl ListBox {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -14138,6 +15736,27 @@ impl ListBoxItem {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -14224,6 +15843,32 @@ impl ListBoxItem {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -14475,6 +16120,27 @@ impl MaskedTextBox {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -14561,6 +16227,32 @@ impl MaskedTextBox {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -15164,6 +16856,27 @@ impl Menu {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -15250,6 +16963,32 @@ impl Menu {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -15539,6 +17278,27 @@ impl MenuBase {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -15625,6 +17385,32 @@ impl MenuBase {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -16053,6 +17839,27 @@ impl MenuItem {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -16139,6 +17946,32 @@ impl MenuItem {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -16509,6 +18342,27 @@ impl NotificationCard {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -16595,6 +18449,32 @@ impl NotificationCard {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -16859,6 +18739,27 @@ impl WindowNotificationManager {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -16945,6 +18846,32 @@ impl WindowNotificationManager {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -17174,6 +19101,27 @@ impl NumericUpDown {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -17260,6 +19208,32 @@ impl NumericUpDown {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -17669,6 +19643,27 @@ impl Panel {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -17755,6 +19750,32 @@ impl Panel {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -17860,6 +19881,27 @@ impl PathIcon {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -17946,6 +19988,32 @@ impl PathIcon {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -18167,6 +20235,27 @@ impl PipsPager {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -18253,6 +20342,32 @@ impl PipsPager {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -18578,6 +20693,27 @@ impl HeaderedContentControl {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -18664,6 +20800,32 @@ impl HeaderedContentControl {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -18918,6 +21080,27 @@ impl HeaderedItemsControl {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -19004,6 +21187,32 @@ impl HeaderedItemsControl {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -19234,6 +21443,27 @@ impl HeaderedSelectingItemsControl {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -19320,6 +21550,32 @@ impl HeaderedSelectingItemsControl {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -19595,6 +21851,27 @@ impl Popup {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -19681,6 +21958,32 @@ impl Popup {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -20031,6 +22334,27 @@ impl RangeBase {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -20117,6 +22441,32 @@ impl RangeBase {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -20380,6 +22730,27 @@ impl SelectingItemsControl {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -20466,6 +22837,32 @@ impl SelectingItemsControl {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -20730,6 +23127,27 @@ impl TemplatedControl {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -20816,6 +23234,32 @@ impl TemplatedControl {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -21026,6 +23470,27 @@ impl Thumb {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -21112,6 +23577,32 @@ impl Thumb {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -21322,6 +23813,27 @@ impl ToggleButton {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -21408,6 +23920,32 @@ impl ToggleButton {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -21731,6 +24269,27 @@ impl UniformGrid {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -21817,6 +24376,32 @@ impl UniformGrid {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -21962,6 +24547,27 @@ impl ProgressBar {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -22048,6 +24654,32 @@ impl ProgressBar {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -22350,6 +24982,27 @@ impl RadioButton {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -22436,6 +25089,32 @@ impl RadioButton {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -22770,6 +25449,27 @@ impl RefreshContainer {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -22856,6 +25556,32 @@ impl RefreshContainer {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -23119,6 +25845,27 @@ impl RelativePanel {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -23205,6 +25952,32 @@ impl RelativePanel {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -23364,6 +26137,27 @@ impl RepeatButton {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -23450,6 +26244,32 @@ impl RepeatButton {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -23760,6 +26580,27 @@ impl ScrollViewer {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -23846,6 +26687,32 @@ impl ScrollViewer {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -24241,6 +27108,27 @@ impl SelectableTextBlock {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -24327,6 +27215,32 @@ impl SelectableTextBlock {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -24629,6 +27543,27 @@ impl Separator {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -24715,6 +27650,32 @@ impl Separator {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -24925,6 +27886,27 @@ impl Arc {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -25011,6 +27993,32 @@ impl Arc {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -25193,6 +28201,27 @@ impl Ellipse {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -25279,6 +28308,32 @@ impl Ellipse {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -25445,6 +28500,27 @@ impl Line {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -25531,6 +28607,32 @@ impl Line {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -25717,6 +28819,27 @@ impl Path {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -25803,6 +28926,32 @@ impl Path {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -25980,6 +29129,27 @@ impl Polygon {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -26066,6 +29236,32 @@ impl Polygon {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -26243,6 +29439,27 @@ impl Polyline {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -26329,6 +29546,32 @@ impl Polyline {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -26506,6 +29749,27 @@ impl Rectangle {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -26592,6 +29856,32 @@ impl Rectangle {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -26774,6 +30064,27 @@ impl Sector {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -26860,6 +30171,32 @@ impl Sector {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -27038,6 +30375,27 @@ impl Shape {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -27124,6 +30482,32 @@ impl Shape {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -27290,6 +30674,27 @@ impl Slider {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -27376,6 +30781,32 @@ impl Slider {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -27681,6 +31112,27 @@ impl Spinner {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -27767,6 +31219,32 @@ impl Spinner {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -28010,6 +31488,27 @@ impl SplitButton {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -28096,6 +31595,32 @@ impl SplitButton {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -28362,6 +31887,27 @@ impl SplitView {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -28448,6 +31994,32 @@ impl SplitView {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -28793,6 +32365,27 @@ impl StackPanel {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -28879,6 +32472,32 @@ impl StackPanel {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -29019,6 +32638,27 @@ impl TabControl {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -29105,6 +32745,32 @@ impl TabControl {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -29402,6 +33068,27 @@ impl TabItem {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -29488,6 +33175,32 @@ impl TabItem {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -29750,6 +33463,27 @@ impl TableView {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -29836,6 +33570,32 @@ impl TableView {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -30121,6 +33881,27 @@ impl TableViewCell {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -30207,6 +33988,32 @@ impl TableViewCell {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -30544,6 +34351,27 @@ impl TableViewRow {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -30630,6 +34458,32 @@ impl TableViewRow {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -30881,6 +34735,27 @@ impl TextBlock {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -30967,6 +34842,32 @@ impl TextBlock {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -31211,6 +35112,27 @@ impl TextBox {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -31297,6 +35219,32 @@ impl TextBox {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -31855,6 +35803,27 @@ impl ThemeVariantScope {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -31941,6 +35910,32 @@ impl ThemeVariantScope {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -32049,6 +36044,27 @@ impl TimePicker {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -32135,6 +36151,32 @@ impl TimePicker {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -32403,6 +36445,27 @@ impl ToggleSplitButton {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -32489,6 +36552,32 @@ impl ToggleSplitButton {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -32776,6 +36865,27 @@ impl ToggleSwitch {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -32862,6 +36972,32 @@ impl ToggleSwitch {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -33207,6 +37343,27 @@ impl ToolTip {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -33293,6 +37450,32 @@ impl ToolTip {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -33618,6 +37801,27 @@ impl TransitioningContentControl {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -33704,6 +37908,32 @@ impl TransitioningContentControl {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -33987,6 +38217,27 @@ impl TreeView {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -34073,6 +38324,32 @@ impl TreeView {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -34328,6 +38605,27 @@ impl TreeViewItem {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -34414,6 +38712,32 @@ impl TreeViewItem {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -34687,6 +39011,27 @@ impl UserControl {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -34773,6 +39118,32 @@ impl UserControl {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -35016,6 +39387,27 @@ impl Viewbox {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -35102,6 +39494,32 @@ impl Viewbox {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -35222,6 +39640,27 @@ impl Window {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -35308,6 +39747,32 @@ impl Window {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -35684,6 +40149,27 @@ impl WrapPanel {
         self.set_opacity(value)?;
         Ok(self)
     }
+    pub fn get_context_menu(&self) -> Result<Option<ContextMenu>> {
+        Ok(self.raw.get_context_menu()?.map(|raw| ContextMenu { raw }))
+    }
+    pub fn set_context_menu(&self, value: &ContextMenu) -> Result<()> {
+        Ok(self.raw.set_context_menu(Some(&value.raw))?)
+    }
+    pub fn context_menu(self, value: &ContextMenu) -> Result<Self> {
+        self.set_context_menu(value)?;
+        Ok(self)
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<FlyoutBase>> {
+        Ok(self.raw.get_context_flyout()?.map(|raw| FlyoutBase { raw }))
+    }
+    pub fn set_context_flyout(&self, value: &FlyoutBase) -> Result<()> {
+        Ok(self.raw.set_context_flyout(Some(&value.raw))?)
+    }
+    pub fn context_flyout(self, value: &FlyoutBase) -> Result<Self> {
+        self.set_context_flyout(value)?;
+        Ok(self)
+    }
+    pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -35770,6 +40256,32 @@ impl WrapPanel {
     }
     pub fn enabled(self, value: bool) -> Result<Self> {
         self.set_enabled(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_loaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_loaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_loaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_loaded(subscription_id)))
+    }
+    pub fn on_loaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_loaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_unloaded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::control_unloaded_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_unloaded(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_unloaded(subscription_id)))
+    }
+    pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {

@@ -60,6 +60,9 @@ fn completeness_members_are_published_on_the_type_that_declares_them() {
         "*get_percentage)(IAvnProgressBar* self, double* value)",
         "*get_clip_to_bounds_radius)(IAvnBorder* self, AvnCornerRadius* value)",
         "*request_refresh)(IAvnRefreshContainer* self)",
+        "*set_context_menu)(IAvnControl* self, IAvnContextMenu* value)",
+        "*set_context_flyout)(IAvnControl* self, IAvnFlyoutBase* value)",
+        "*get_is_loaded)(IAvnControl* self, int32_t* value)",
         "*set_flyout)(IAvnButton* self, IAvnFlyoutBase* value)",
         "*set_flyout)(IAvnSplitButton* self, IAvnFlyoutBase* value)",
         "*open)(IAvnMenuItem* self)",
@@ -83,28 +86,28 @@ fn completeness_members_are_published_on_the_type_that_declares_them() {
 #[test]
 fn widened_interfaces_publish_abi_version_five() {
     for expected in [
-        "#define I_AVN_CONTENT_CONTROL_ABI_VERSION 6",
-        "#define I_AVN_HEADERED_CONTENT_CONTROL_ABI_VERSION 6",
-        "#define I_AVN_EXPANDER_ABI_VERSION 6",
-        "#define I_AVN_BUTTON_ABI_VERSION 7",
-        "#define I_AVN_TOGGLE_BUTTON_ABI_VERSION 7",
-        "#define I_AVN_CHECK_BOX_ABI_VERSION 7",
-        "#define I_AVN_RADIO_BUTTON_ABI_VERSION 7",
-        "#define I_AVN_TOGGLE_SWITCH_ABI_VERSION 7",
-        "#define I_AVN_LIST_BOX_ABI_VERSION 7",
-        "#define I_AVN_LIST_BOX_ITEM_ABI_VERSION 6",
-        "#define I_AVN_COMBO_BOX_ABI_VERSION 8",
-        "#define I_AVN_COMBO_BOX_ITEM_ABI_VERSION 6",
-        "#define I_AVN_SCROLL_VIEWER_ABI_VERSION 7",
-        "#define I_AVN_WINDOW_ABI_VERSION 8",
-        "#define I_AVN_TEMPLATED_CONTROL_ABI_VERSION 5",
-        "#define I_AVN_TEXT_BLOCK_ABI_VERSION 6",
-        "#define I_AVN_TEXT_BOX_ABI_VERSION 7",
-        "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 6",
-        "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 6",
-        "#define I_AVN_BORDER_ABI_VERSION 5",
-        "#define I_AVN_PANEL_ABI_VERSION 4",
-        "#define I_AVN_CONTROL_ABI_VERSION 3",
+        "#define I_AVN_CONTENT_CONTROL_ABI_VERSION 7",
+        "#define I_AVN_HEADERED_CONTENT_CONTROL_ABI_VERSION 7",
+        "#define I_AVN_EXPANDER_ABI_VERSION 7",
+        "#define I_AVN_BUTTON_ABI_VERSION 8",
+        "#define I_AVN_TOGGLE_BUTTON_ABI_VERSION 8",
+        "#define I_AVN_CHECK_BOX_ABI_VERSION 8",
+        "#define I_AVN_RADIO_BUTTON_ABI_VERSION 8",
+        "#define I_AVN_TOGGLE_SWITCH_ABI_VERSION 8",
+        "#define I_AVN_LIST_BOX_ABI_VERSION 8",
+        "#define I_AVN_LIST_BOX_ITEM_ABI_VERSION 7",
+        "#define I_AVN_COMBO_BOX_ABI_VERSION 9",
+        "#define I_AVN_COMBO_BOX_ITEM_ABI_VERSION 7",
+        "#define I_AVN_SCROLL_VIEWER_ABI_VERSION 8",
+        "#define I_AVN_WINDOW_ABI_VERSION 9",
+        "#define I_AVN_TEMPLATED_CONTROL_ABI_VERSION 6",
+        "#define I_AVN_TEXT_BLOCK_ABI_VERSION 7",
+        "#define I_AVN_TEXT_BOX_ABI_VERSION 8",
+        "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 7",
+        "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 7",
+        "#define I_AVN_BORDER_ABI_VERSION 6",
+        "#define I_AVN_PANEL_ABI_VERSION 5",
+        "#define I_AVN_CONTROL_ABI_VERSION 4",
         "#define I_AVN_AVALONIA_OBJECT_ABI_VERSION 2",
         // The factory gained a creator per wave A control plus get_tool_tip_statics at version
         // 3, and a creator per constructible wave B type at version 4.
@@ -207,32 +210,32 @@ fn widened_interfaces_republish_under_fresh_iids() {
     for (name, expected, current) in [
         (
             "IAvnContentControl",
-            "35C15BC0-F6CD-51D5-868A-9A391D7EF443",
+            "2D229F2A-B6EE-5835-A8EC-BA98838E1EF5",
             I_AVN_CONTENT_CONTROL_IID,
         ),
         (
             "IAvnButton",
-            "3CBEB4F4-0444-5905-97FF-86B5D82DFFFF",
+            "6145E298-C66D-5A68-8AD1-F829C9773DB5",
             I_AVN_BUTTON_IID,
         ),
         (
             "IAvnToggleButton",
-            "3AE61A8C-AAD4-5B5D-A7AB-70B83264C945",
+            "ED70AAF8-5651-5844-BA09-078F9EB9B7D1",
             I_AVN_TOGGLE_BUTTON_IID,
         ),
         (
             "IAvnListBox",
-            "311C3392-8A78-5745-AFC8-8629DA8BDC06",
+            "6355CFDF-4550-570A-ADDD-A5D5AA0B2D2E",
             I_AVN_LIST_BOX_IID,
         ),
         (
             "IAvnComboBox",
-            "3CD1C9E9-F6B2-5FB6-9B4E-37DD0EFD6674",
+            "151EDFBA-D25F-5E3D-864F-572B91C048F8",
             I_AVN_COMBO_BOX_IID,
         ),
         (
             "IAvnWindow",
-            "A3C6E6F8-2067-5C29-9C7F-6037274D6844",
+            "4E237A63-4083-5704-8B9E-1C6CAFC4172A",
             I_AVN_WINDOW_IID,
         ),
     ] {
@@ -246,23 +249,23 @@ fn widened_interfaces_republish_under_fresh_iids() {
     );
     assert_eq!(
         format_iid(&I_AVN_CONTROL_IID),
-        "7CF51B18-C500-5D06-8FFA-D97EF7BC6487"
+        "82E7495D-EC39-5401-8EB6-862A4FD2C6B7"
     );
     assert_eq!(
         format_iid(&I_AVN_BORDER_IID),
-        "0AEECACB-808C-5572-82FD-56E6D2852470"
+        "8CBDF7CD-7FB0-5E65-97A7-CDA1A791C122"
     );
     assert_eq!(
         format_iid(&I_AVN_PANEL_IID),
-        "BD97617A-EEDC-5695-88C1-E30E6673B286"
+        "A66DB44C-3C52-5E8F-8D94-8C6C322E744B"
     );
     assert_eq!(
         format_iid(&I_AVN_TEMPLATED_CONTROL_IID),
-        "A3893721-54B6-511D-B171-F8D6817F450A"
+        "1778CB20-C613-5979-86D6-A215F6B05E2D"
     );
     assert_eq!(
         format_iid(&I_AVN_TEXT_BLOCK_IID),
-        "991802B9-BF9B-5BAE-B9A7-5076F148CF98"
+        "3975D6B6-4298-59DE-B380-7C20DAA0DF27"
     );
 }
 

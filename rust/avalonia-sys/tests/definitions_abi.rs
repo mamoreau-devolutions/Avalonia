@@ -21,9 +21,9 @@ fn definitions_are_published_as_utf16_string_slots_on_grid() {
         "*get_row_definitions)(IAvnGrid* self, uint16_t** value)",
         "*set_row_definitions)(IAvnGrid* self, const uint16_t* value)",
         // They are appended after the members Grid already published, so no existing slot moved.
-        "*set_column_spacing)(IAvnGrid* self, double value); /* slot 46 */",
-        "*get_column_definitions)(IAvnGrid* self, uint16_t** value); /* slot 47 */",
-        "#define I_AVN_GRID_VTABLE_SLOTS 51",
+        "*set_column_spacing)(IAvnGrid* self, double value); /* slot 55 */",
+        "*get_column_definitions)(IAvnGrid* self, uint16_t** value); /* slot 56 */",
+        "#define I_AVN_GRID_VTABLE_SLOTS 60",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
     }
@@ -46,14 +46,14 @@ fn definitions_are_published_as_utf16_string_slots_on_grid() {
 #[test]
 fn only_grid_moved_to_abi_version_five_for_the_definitions() {
     for expected in [
-        "#define I_AVN_GRID_ABI_VERSION 5",
+        "#define I_AVN_GRID_ABI_VERSION 6",
         // Grid's base and its sibling panels gained nothing, so their flattened vtables are
         // byte-identical and they keep the version they already published.
-        "#define I_AVN_PANEL_ABI_VERSION 4",
-        "#define I_AVN_CANVAS_ABI_VERSION 4",
-        "#define I_AVN_DOCK_PANEL_ABI_VERSION 4",
-        "#define I_AVN_STACK_PANEL_ABI_VERSION 5",
-        "#define I_AVN_CONTROL_ABI_VERSION 3",
+        "#define I_AVN_PANEL_ABI_VERSION 5",
+        "#define I_AVN_CANVAS_ABI_VERSION 5",
+        "#define I_AVN_DOCK_PANEL_ABI_VERSION 5",
+        "#define I_AVN_STACK_PANEL_ABI_VERSION 6",
+        "#define I_AVN_CONTROL_ABI_VERSION 4",
         "#define I_AVN_AVALONIA_OBJECT_ABI_VERSION 2",
         // The factory mints no definition object, but wave A gave it a creator per new control
         // and get_tool_tip_statics and wave B gave it seven more, so it now publishes at
@@ -68,7 +68,7 @@ fn only_grid_moved_to_abi_version_five_for_the_definitions() {
 fn grid_republishes_under_a_fresh_iid_and_never_reuses_a_retired_one() {
     assert_eq!(
         format_iid(&I_AVN_GRID_IID),
-        "50725F62-E6AC-5B40-A6CF-152F9D29E20E"
+        "2A6D0A68-FF32-559F-A5B0-871C53702180"
     );
 
     // Every IID Grid has ever published is retired for good: reusing one for a longer vtable
@@ -99,12 +99,12 @@ fn grid_republishes_under_a_fresh_iid_and_never_reuses_a_retired_one() {
         ),
         (
             "IAvnControl",
-            "7CF51B18-C500-5D06-8FFA-D97EF7BC6487",
+            "82E7495D-EC39-5401-8EB6-862A4FD2C6B7",
             I_AVN_CONTROL_IID,
         ),
         (
             "IAvnPanel",
-            "BD97617A-EEDC-5695-88C1-E30E6673B286",
+            "A66DB44C-3C52-5E8F-8D94-8C6C322E744B",
             I_AVN_PANEL_IID,
         ),
     ] {

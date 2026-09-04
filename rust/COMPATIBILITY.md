@@ -242,6 +242,12 @@ RequestRefresh (2 to 3), StackPanel snap bools and Border ClipToBoundsRadius
 (2 to 3). ComboBox content alignments stay off ComboBox because it redeclares
 them with `new`. Label.Target is IInputElement. Factory 13.
 
+Control leftovers grow `IAvnControl` from 3 to 4 with ContextMenu
+(`IAvnContextMenu`), ContextFlyout (`IAvnFlyoutBase`), IsLoaded, Loaded and
+Unloaded. Every Control descendant republishes, including previously unpinned
+v1 types now at 2 (Image, layout panels, shapes). StyledElement, FlyoutBase,
+MenuFlyout and TableViewColumn are unchanged. Factory 13.
+
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and
 `IAvnNumericUpDown` each move from 2 to 3. Templates, filters, ItemsSource,

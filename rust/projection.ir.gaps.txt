@@ -96,12 +96,7 @@ Avalonia.Controls.ContextMenu.Open(Control): Not included by projection policy
 Avalonia.Controls.ContextMenu.Close(): Not included by projection policy
 Avalonia.Controls.Control.FocusAdorner: Not included by projection policy
 Avalonia.Controls.Control.DataTemplates: Not included by projection policy
-Avalonia.Controls.Control.ContextMenu: Not included by projection policy
-Avalonia.Controls.Control.ContextFlyout: Not included by projection policy
-Avalonia.Controls.Control.IsLoaded: Not included by projection policy
 Avalonia.Controls.Control.Tag: Not included by projection policy
-Avalonia.Controls.Control.Loaded: Not included by projection policy
-Avalonia.Controls.Control.Unloaded: Not included by projection policy
 Avalonia.Controls.Control.SizeChanged: Not included by projection policy
 Avalonia.Controls.DatePicker.SelectedDateChanged: Not included by projection policy
 Avalonia.Controls.Expander.ContentTransition: Not included by projection policy

@@ -495,6 +495,116 @@ unsafe extern "system" fn i_avn_combo_box_drop_down_opened_handler_invoke(this: 
     crate::event_callback::invoke::<IAvnComboBoxDropDownOpenedHandler, ()>(this, &mut ())
 }
 
+pub const I_AVN_CONTROL_LOADED_HANDLER_IID: Guid = Guid { data1: 0x02529698, data2: 0xA53B, data3: 0x5691, data4: [0x93, 0xB1, 0x92, 0x0B, 0x19, 0x36, 0x4C, 0x5E] };
+
+#[repr(C)]
+struct IAvnControlLoadedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnControlLoadedHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnControlLoadedHandler {
+    vtbl: *const IAvnControlLoadedHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnControlLoadedHandler {
+    const IID: Guid = I_AVN_CONTROL_LOADED_HANDLER_IID;
+}
+
+impl ComPtr<IAvnControlLoadedHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_CONTROL_LOADED_HANDLER_VTBL: IAvnControlLoadedHandlerVtbl = IAvnControlLoadedHandlerVtbl {
+    query_interface: i_avn_control_loaded_handler_query_interface,
+    add_ref: i_avn_control_loaded_handler_add_ref,
+    release: i_avn_control_loaded_handler_release,
+    invoke: i_avn_control_loaded_handler_invoke,
+};
+
+pub fn control_loaded_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnControlLoadedHandler> {
+    crate::event_callback::create::<IAvnControlLoadedHandler, ()>(IAvnControlLoadedHandler { vtbl: &I_AVN_CONTROL_LOADED_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_control_loaded_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnControlLoadedHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_control_loaded_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnControlLoadedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_control_loaded_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnControlLoadedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_control_loaded_handler_invoke(this: *mut IAvnControlLoadedHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnControlLoadedHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_CONTROL_UNLOADED_HANDLER_IID: Guid = Guid { data1: 0x1118D172, data2: 0x21C3, data3: 0x5D89, data4: [0x8B, 0x7E, 0x3F, 0xFF, 0xF7, 0xB5, 0xE1, 0xAC] };
+
+#[repr(C)]
+struct IAvnControlUnloadedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnControlUnloadedHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnControlUnloadedHandler {
+    vtbl: *const IAvnControlUnloadedHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnControlUnloadedHandler {
+    const IID: Guid = I_AVN_CONTROL_UNLOADED_HANDLER_IID;
+}
+
+impl ComPtr<IAvnControlUnloadedHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_CONTROL_UNLOADED_HANDLER_VTBL: IAvnControlUnloadedHandlerVtbl = IAvnControlUnloadedHandlerVtbl {
+    query_interface: i_avn_control_unloaded_handler_query_interface,
+    add_ref: i_avn_control_unloaded_handler_add_ref,
+    release: i_avn_control_unloaded_handler_release,
+    invoke: i_avn_control_unloaded_handler_invoke,
+};
+
+pub fn control_unloaded_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnControlUnloadedHandler> {
+    crate::event_callback::create::<IAvnControlUnloadedHandler, ()>(IAvnControlUnloadedHandler { vtbl: &I_AVN_CONTROL_UNLOADED_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_control_unloaded_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnControlUnloadedHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_control_unloaded_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnControlUnloadedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_control_unloaded_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnControlUnloadedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_control_unloaded_handler_invoke(this: *mut IAvnControlUnloadedHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnControlUnloadedHandler, ()>(this, &mut ())
+}
+
 pub const I_AVN_CONTROL_KEY_DOWN_HANDLER_IID: Guid = Guid { data1: 0x9232F26F, data2: 0x2F3B, data3: 0x5BA2, data4: [0xB0, 0x98, 0xE4, 0xCB, 0x6B, 0x26, 0xBD, 0xA3] };
 
 #[derive(Debug)]
@@ -2537,7 +2647,7 @@ impl ComPtr<IAvnAvaloniaObject> {
     }
 }
 
-pub const I_AVN_AUTO_COMPLETE_BOX_IID: Guid = Guid { data1: 0x4CC317ED, data2: 0x001E, data3: 0x5729, data4: [0x9B, 0x81, 0x90, 0x88, 0x1D, 0xF7, 0x46, 0x0F] };
+pub const I_AVN_AUTO_COMPLETE_BOX_IID: Guid = Guid { data1: 0x3283B102, data2: 0x3833, data3: 0x57BC, data4: [0xBA, 0x4E, 0xFC, 0x71, 0xDF, 0x45, 0x04, 0xA0] };
 
 #[repr(C)]
 struct IAvnAutoCompleteBoxVtbl {
@@ -2553,6 +2663,11 @@ struct IAvnAutoCompleteBoxVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut f64) -> i32,
@@ -2573,6 +2688,10 @@ struct IAvnAutoCompleteBoxVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -2709,6 +2828,42 @@ impl ComPtr<IAvnAutoCompleteBox> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -2848,6 +3003,32 @@ impl ComPtr<IAvnAutoCompleteBox> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -3282,7 +3463,7 @@ impl ComPtr<IAvnAutoCompleteBox> {
     }
 }
 
-pub const I_AVN_BORDER_IID: Guid = Guid { data1: 0x0AEECACB, data2: 0x808C, data3: 0x5572, data4: [0x82, 0xFD, 0x56, 0xE6, 0xD2, 0x85, 0x24, 0x70] };
+pub const I_AVN_BORDER_IID: Guid = Guid { data1: 0x8CBDF7CD, data2: 0x7FB0, data3: 0x5E65, data4: [0x97, 0xA7, 0xCD, 0xA1, 0xA7, 0x91, 0xC1, 0x22] };
 
 #[repr(C)]
 struct IAvnBorderVtbl {
@@ -3298,6 +3479,11 @@ struct IAvnBorderVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnBorder, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnBorder, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnBorder, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnBorder, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnBorder, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnBorder, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnBorder, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnBorder, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnBorder, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnBorder, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnBorder, *mut f64) -> i32,
@@ -3318,6 +3504,10 @@ struct IAvnBorderVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnBorder, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnBorder, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnBorder, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnBorder, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnBorder, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnBorder, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnBorder, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnBorder, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnBorder, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnBorder, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -3413,6 +3603,42 @@ impl ComPtr<IAvnBorder> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -3552,6 +3778,32 @@ impl ComPtr<IAvnBorder> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -3702,7 +3954,7 @@ impl ComPtr<IAvnBorder> {
     }
 }
 
-pub const I_AVN_BUTTON_IID: Guid = Guid { data1: 0x3CBEB4F4, data2: 0x0444, data3: 0x5905, data4: [0x97, 0xFF, 0x86, 0xB5, 0xD8, 0x2D, 0xFF, 0xFF] };
+pub const I_AVN_BUTTON_IID: Guid = Guid { data1: 0x6145E298, data2: 0xC66D, data3: 0x5A68, data4: [0x8A, 0xD1, 0xF8, 0x29, 0xC9, 0x77, 0x3D, 0xB5] };
 
 #[repr(C)]
 struct IAvnButtonVtbl {
@@ -3718,6 +3970,11 @@ struct IAvnButtonVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnButton, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnButton, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnButton, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnButton, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnButton, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnButton, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnButton, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnButton, *mut f64) -> i32,
@@ -3738,6 +3995,10 @@ struct IAvnButtonVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnButton, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnButton, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnButton, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnButton, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnButton, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnButton, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -3859,6 +4120,42 @@ impl ComPtr<IAvnButton> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -3998,6 +4295,32 @@ impl ComPtr<IAvnButton> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -4329,7 +4652,7 @@ impl ComPtr<IAvnButton> {
     }
 }
 
-pub const I_AVN_BUTTON_SPINNER_IID: Guid = Guid { data1: 0x183EA768, data2: 0x8448, data3: 0x5A6C, data4: [0x8B, 0x40, 0x50, 0xF1, 0x0A, 0x1C, 0xAE, 0x9E] };
+pub const I_AVN_BUTTON_SPINNER_IID: Guid = Guid { data1: 0x6A6BE978, data2: 0x6ACE, data3: 0x539E, data4: [0x84, 0xF2, 0x89, 0x75, 0x7C, 0x0F, 0xCF, 0xEB] };
 
 #[repr(C)]
 struct IAvnButtonSpinnerVtbl {
@@ -4345,6 +4668,11 @@ struct IAvnButtonSpinnerVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnButtonSpinner, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnButtonSpinner, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnButtonSpinner, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut f64) -> i32,
@@ -4365,6 +4693,10 @@ struct IAvnButtonSpinnerVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnButtonSpinner, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnButtonSpinner, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnButtonSpinner, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnButtonSpinner, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnButtonSpinner, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -4481,6 +4813,42 @@ impl ComPtr<IAvnButtonSpinner> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -4620,6 +4988,32 @@ impl ComPtr<IAvnButtonSpinner> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -4916,7 +5310,7 @@ impl ComPtr<IAvnButtonSpinner> {
     }
 }
 
-pub const I_AVN_CALENDAR_IID: Guid = Guid { data1: 0xF1691230, data2: 0x57FB, data3: 0x5336, data4: [0x88, 0x45, 0x68, 0xDC, 0xDB, 0x11, 0x7E, 0x8B] };
+pub const I_AVN_CALENDAR_IID: Guid = Guid { data1: 0x11C507E4, data2: 0x134D, data3: 0x5CDD, data4: [0xA6, 0x84, 0x38, 0x66, 0x45, 0xEB, 0x8F, 0x5E] };
 
 #[repr(C)]
 struct IAvnCalendarVtbl {
@@ -4932,6 +5326,11 @@ struct IAvnCalendarVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnCalendar, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCalendar, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnCalendar, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnCalendar, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnCalendar, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnCalendar, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnCalendar, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnCalendar, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnCalendar, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnCalendar, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnCalendar, *mut f64) -> i32,
@@ -4952,6 +5351,10 @@ struct IAvnCalendarVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnCalendar, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnCalendar, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnCalendar, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnCalendar, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnCalendar, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnCalendar, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnCalendar, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnCalendar, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnCalendar, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnCalendar, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -5080,6 +5483,42 @@ impl ComPtr<IAvnCalendar> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -5219,6 +5658,32 @@ impl ComPtr<IAvnCalendar> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -5599,7 +6064,7 @@ impl ComPtr<IAvnCalendar> {
     }
 }
 
-pub const I_AVN_CALENDAR_DATE_PICKER_IID: Guid = Guid { data1: 0x74390933, data2: 0x2E48, data3: 0x50F2, data4: [0x8A, 0xF8, 0x1F, 0x79, 0x6A, 0xB5, 0x26, 0xFD] };
+pub const I_AVN_CALENDAR_DATE_PICKER_IID: Guid = Guid { data1: 0x0C4CEE73, data2: 0x1939, data3: 0x512D, data4: [0x8A, 0x6A, 0x56, 0x03, 0x8F, 0x96, 0x9C, 0x80] };
 
 #[repr(C)]
 struct IAvnCalendarDatePickerVtbl {
@@ -5615,6 +6080,11 @@ struct IAvnCalendarDatePickerVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut f64) -> i32,
@@ -5635,6 +6105,10 @@ struct IAvnCalendarDatePickerVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -5780,6 +6254,42 @@ impl ComPtr<IAvnCalendarDatePicker> {
             hresult::check(hr)
         }
     }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn get_width(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -5917,6 +6427,32 @@ impl ComPtr<IAvnCalendarDatePicker> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -6399,7 +6935,7 @@ impl ComPtr<IAvnCalendarDatePicker> {
     }
 }
 
-pub const I_AVN_CANVAS_IID: Guid = Guid { data1: 0x88515BBD, data2: 0x2133, data3: 0x5232, data4: [0xA7, 0x2C, 0x0F, 0x8D, 0x34, 0x8E, 0x58, 0x4E] };
+pub const I_AVN_CANVAS_IID: Guid = Guid { data1: 0x3FCDAC92, data2: 0x9070, data3: 0x5460, data4: [0x99, 0xF7, 0xBF, 0x91, 0x61, 0x15, 0x50, 0x79] };
 
 #[repr(C)]
 struct IAvnCanvasVtbl {
@@ -6415,6 +6951,11 @@ struct IAvnCanvasVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnCanvas, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCanvas, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnCanvas, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnCanvas, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnCanvas, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnCanvas, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnCanvas, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnCanvas, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnCanvas, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnCanvas, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnCanvas, *mut f64) -> i32,
@@ -6435,6 +6976,10 @@ struct IAvnCanvasVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnCanvas, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnCanvas, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnCanvas, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnCanvas, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnCanvas, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnCanvas, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnCanvas, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnCanvas, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnCanvas, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnCanvas, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -6518,6 +7063,42 @@ impl ComPtr<IAvnCanvas> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -6660,6 +7241,32 @@ impl ComPtr<IAvnCanvas> {
             hresult::check(hr)
         }
     }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -6723,7 +7330,7 @@ impl ComPtr<IAvnCanvas> {
     }
 }
 
-pub const I_AVN_CAROUSEL_IID: Guid = Guid { data1: 0x050F3CBB, data2: 0xC77D, data3: 0x53AF, data4: [0x92, 0x8E, 0xE0, 0x67, 0x3E, 0x83, 0x1B, 0x99] };
+pub const I_AVN_CAROUSEL_IID: Guid = Guid { data1: 0xB3A6F28E, data2: 0x71B6, data3: 0x5043, data4: [0xA9, 0x0C, 0xBF, 0x9B, 0x42, 0xCA, 0x23, 0x12] };
 
 #[repr(C)]
 struct IAvnCarouselVtbl {
@@ -6739,6 +7346,11 @@ struct IAvnCarouselVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnCarousel, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCarousel, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnCarousel, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnCarousel, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnCarousel, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnCarousel, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnCarousel, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnCarousel, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnCarousel, *mut f64) -> i32,
@@ -6759,6 +7371,10 @@ struct IAvnCarouselVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnCarousel, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnCarousel, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnCarousel, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnCarousel, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnCarousel, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnCarousel, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -6885,6 +7501,42 @@ impl ComPtr<IAvnCarousel> {
             hresult::check(hr)
         }
     }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn get_width(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -7022,6 +7674,32 @@ impl ComPtr<IAvnCarousel> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -7373,7 +8051,7 @@ impl ComPtr<IAvnCarousel> {
     }
 }
 
-pub const I_AVN_CHECK_BOX_IID: Guid = Guid { data1: 0x9227EE97, data2: 0x3DB5, data3: 0x536B, data4: [0x96, 0x4E, 0x35, 0xC8, 0xC3, 0xF6, 0x60, 0x85] };
+pub const I_AVN_CHECK_BOX_IID: Guid = Guid { data1: 0xB66D924E, data2: 0xA325, data3: 0x5931, data4: [0x89, 0xCB, 0xBD, 0x9B, 0xDE, 0x14, 0x11, 0xF2] };
 
 #[repr(C)]
 struct IAvnCheckBoxVtbl {
@@ -7389,6 +8067,11 @@ struct IAvnCheckBoxVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnCheckBox, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCheckBox, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnCheckBox, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnCheckBox, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnCheckBox, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnCheckBox, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnCheckBox, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnCheckBox, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnCheckBox, *mut f64) -> i32,
@@ -7409,6 +8092,10 @@ struct IAvnCheckBoxVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnCheckBox, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnCheckBox, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnCheckBox, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnCheckBox, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnCheckBox, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnCheckBox, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -7536,6 +8223,42 @@ impl ComPtr<IAvnCheckBox> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -7675,6 +8398,32 @@ impl ComPtr<IAvnCheckBox> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -8047,7 +8796,7 @@ impl ComPtr<IAvnCheckBox> {
     }
 }
 
-pub const I_AVN_COMBO_BOX_IID: Guid = Guid { data1: 0x3CD1C9E9, data2: 0xF6B2, data3: 0x5FB6, data4: [0x9B, 0x4E, 0x37, 0xDD, 0x0E, 0xFD, 0x66, 0x74] };
+pub const I_AVN_COMBO_BOX_IID: Guid = Guid { data1: 0x151EDFBA, data2: 0xD25F, data3: 0x5E3D, data4: [0x86, 0x4F, 0x57, 0x2B, 0x91, 0xC0, 0x48, 0xF8] };
 
 #[repr(C)]
 struct IAvnComboBoxVtbl {
@@ -8063,6 +8812,11 @@ struct IAvnComboBoxVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnComboBox, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnComboBox, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnComboBox, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnComboBox, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnComboBox, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnComboBox, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnComboBox, *mut f64) -> i32,
@@ -8083,6 +8837,10 @@ struct IAvnComboBoxVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnComboBox, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnComboBox, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnComboBox, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnComboBox, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnComboBox, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnComboBox, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -8217,6 +8975,42 @@ impl ComPtr<IAvnComboBox> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -8356,6 +9150,32 @@ impl ComPtr<IAvnComboBox> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -8775,7 +9595,7 @@ impl ComPtr<IAvnComboBox> {
     }
 }
 
-pub const I_AVN_COMBO_BOX_ITEM_IID: Guid = Guid { data1: 0x7A30B105, data2: 0x79F9, data3: 0x5DD7, data4: [0x83, 0x00, 0xE7, 0x3A, 0xA1, 0x5D, 0x38, 0x7D] };
+pub const I_AVN_COMBO_BOX_ITEM_IID: Guid = Guid { data1: 0xBA6A6174, data2: 0x31FB, data3: 0x529F, data4: [0xB3, 0xD4, 0xE2, 0xD5, 0xAC, 0x81, 0x90, 0x06] };
 
 #[repr(C)]
 struct IAvnComboBoxItemVtbl {
@@ -8791,6 +9611,11 @@ struct IAvnComboBoxItemVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnComboBoxItem, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnComboBoxItem, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnComboBoxItem, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut f64) -> i32,
@@ -8811,6 +9636,10 @@ struct IAvnComboBoxItemVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnComboBoxItem, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnComboBoxItem, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnComboBoxItem, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnComboBoxItem, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnComboBoxItem, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -8923,6 +9752,42 @@ impl ComPtr<IAvnComboBoxItem> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -9062,6 +9927,32 @@ impl ComPtr<IAvnComboBoxItem> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -9330,7 +10221,7 @@ impl ComPtr<IAvnComboBoxItem> {
     }
 }
 
-pub const I_AVN_COMMAND_BAR_IID: Guid = Guid { data1: 0x0D3A7C7F, data2: 0xD9CD, data3: 0x58D6, data4: [0x99, 0x24, 0xCA, 0x8A, 0x31, 0x4E, 0x16, 0x09] };
+pub const I_AVN_COMMAND_BAR_IID: Guid = Guid { data1: 0xB8A756C6, data2: 0xE090, data3: 0x5DB2, data4: [0x95, 0xE4, 0x2F, 0xD1, 0x88, 0xDB, 0x6B, 0x42] };
 
 #[repr(C)]
 struct IAvnCommandBarVtbl {
@@ -9346,6 +10237,11 @@ struct IAvnCommandBarVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnCommandBar, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCommandBar, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnCommandBar, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnCommandBar, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnCommandBar, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnCommandBar, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnCommandBar, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnCommandBar, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnCommandBar, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnCommandBar, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnCommandBar, *mut f64) -> i32,
@@ -9366,6 +10262,10 @@ struct IAvnCommandBarVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnCommandBar, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnCommandBar, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnCommandBar, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnCommandBar, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnCommandBar, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnCommandBar, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnCommandBar, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnCommandBar, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnCommandBar, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnCommandBar, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -9490,6 +10390,42 @@ impl ComPtr<IAvnCommandBar> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -9629,6 +10565,32 @@ impl ComPtr<IAvnCommandBar> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -9983,7 +10945,7 @@ impl ComPtr<IAvnCommandBar> {
     }
 }
 
-pub const I_AVN_COMMAND_BAR_BUTTON_IID: Guid = Guid { data1: 0xBD42288B, data2: 0x918B, data3: 0x5038, data4: [0xB3, 0x37, 0xC1, 0x11, 0x25, 0x8C, 0xC3, 0xA1] };
+pub const I_AVN_COMMAND_BAR_BUTTON_IID: Guid = Guid { data1: 0xD3C9F301, data2: 0x6E8D, data3: 0x5B8E, data4: [0xAD, 0x6F, 0x29, 0xC8, 0x5D, 0x64, 0x01, 0x6A] };
 
 #[repr(C)]
 struct IAvnCommandBarButtonVtbl {
@@ -9999,6 +10961,11 @@ struct IAvnCommandBarButtonVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnCommandBarButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnCommandBarButton, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnCommandBarButton, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut f64) -> i32,
@@ -10019,6 +10986,10 @@ struct IAvnCommandBarButtonVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnCommandBarButton, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnCommandBarButton, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnCommandBarButton, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnCommandBarButton, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnCommandBarButton, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -10150,6 +11121,42 @@ impl ComPtr<IAvnCommandBarButton> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -10289,6 +11296,32 @@ impl ComPtr<IAvnCommandBarButton> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -10690,7 +11723,7 @@ impl ComPtr<IAvnCommandBarButton> {
     }
 }
 
-pub const I_AVN_COMMAND_BAR_SEPARATOR_IID: Guid = Guid { data1: 0x2C77DCEF, data2: 0x116A, data3: 0x565A, data4: [0x82, 0x38, 0xBB, 0x4D, 0xCF, 0xC6, 0x1A, 0xD5] };
+pub const I_AVN_COMMAND_BAR_SEPARATOR_IID: Guid = Guid { data1: 0x5859273F, data2: 0x9C0D, data3: 0x5630, data4: [0xB2, 0xE1, 0x97, 0x0A, 0x3C, 0x5C, 0xC5, 0xC8] };
 
 #[repr(C)]
 struct IAvnCommandBarSeparatorVtbl {
@@ -10706,6 +11739,11 @@ struct IAvnCommandBarSeparatorVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut f64) -> i32,
@@ -10726,6 +11764,10 @@ struct IAvnCommandBarSeparatorVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -10834,6 +11876,42 @@ impl ComPtr<IAvnCommandBarSeparator> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -10973,6 +12051,32 @@ impl ComPtr<IAvnCommandBarSeparator> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -11213,7 +12317,7 @@ impl ComPtr<IAvnCommandBarSeparator> {
     }
 }
 
-pub const I_AVN_COMMAND_BAR_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0xEF153C47, data2: 0x8A47, data3: 0x5F53, data4: [0xAF, 0xA0, 0xD0, 0xC0, 0x24, 0xF2, 0x9B, 0x59] };
+pub const I_AVN_COMMAND_BAR_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0x4B6A6D38, data2: 0x0B41, data3: 0x508B, data4: [0xAC, 0x6E, 0x3A, 0x47, 0xFF, 0x2F, 0xD8, 0x2F] };
 
 #[repr(C)]
 struct IAvnCommandBarToggleButtonVtbl {
@@ -11229,6 +12333,11 @@ struct IAvnCommandBarToggleButtonVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut f64) -> i32,
@@ -11249,6 +12358,10 @@ struct IAvnCommandBarToggleButtonVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -11388,6 +12501,42 @@ impl ComPtr<IAvnCommandBarToggleButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn get_width(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -11525,6 +12674,32 @@ impl ComPtr<IAvnCommandBarToggleButton> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -11967,7 +13142,7 @@ impl ComPtr<IAvnCommandBarToggleButton> {
     }
 }
 
-pub const I_AVN_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x35C15BC0, data2: 0xF6CD, data3: 0x51D5, data4: [0x86, 0x8A, 0x9A, 0x39, 0x1D, 0x7E, 0xF4, 0x43] };
+pub const I_AVN_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x2D229F2A, data2: 0xB6EE, data3: 0x5835, data4: [0xA8, 0xEC, 0xBA, 0x98, 0x83, 0x8E, 0x1E, 0xF5] };
 
 #[repr(C)]
 struct IAvnContentControlVtbl {
@@ -11983,6 +13158,11 @@ struct IAvnContentControlVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnContentControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnContentControl, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnContentControl, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnContentControl, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnContentControl, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnContentControl, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnContentControl, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnContentControl, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnContentControl, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnContentControl, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnContentControl, *mut f64) -> i32,
@@ -12003,6 +13183,10 @@ struct IAvnContentControlVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnContentControl, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnContentControl, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnContentControl, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnContentControl, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnContentControl, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnContentControl, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnContentControl, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnContentControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnContentControl, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnContentControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -12113,6 +13297,42 @@ impl ComPtr<IAvnContentControl> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -12252,6 +13472,32 @@ impl ComPtr<IAvnContentControl> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -12506,7 +13752,7 @@ impl ComPtr<IAvnContentControl> {
     }
 }
 
-pub const I_AVN_CONTEXT_MENU_IID: Guid = Guid { data1: 0xF3AAD5D7, data2: 0xDFC2, data3: 0x5BDB, data4: [0x8C, 0x2E, 0x84, 0xEC, 0x84, 0x02, 0x37, 0xE9] };
+pub const I_AVN_CONTEXT_MENU_IID: Guid = Guid { data1: 0xDC4D26E4, data2: 0x82D6, data3: 0x50B9, data4: [0x99, 0x92, 0x76, 0x7F, 0x22, 0x3F, 0xE8, 0x32] };
 
 #[repr(C)]
 struct IAvnContextMenuVtbl {
@@ -12522,6 +13768,11 @@ struct IAvnContextMenuVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnContextMenu, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnContextMenu, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnContextMenu, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnContextMenu, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnContextMenu, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnContextMenu, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnContextMenu, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnContextMenu, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnContextMenu, *mut f64) -> i32,
@@ -12542,6 +13793,10 @@ struct IAvnContextMenuVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnContextMenu, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnContextMenu, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnContextMenu, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnContextMenu, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnContextMenu, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnContextMenu, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -12676,6 +13931,42 @@ impl ComPtr<IAvnContextMenu> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -12815,6 +14106,32 @@ impl ComPtr<IAvnContextMenu> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -13234,7 +14551,7 @@ impl ComPtr<IAvnContextMenu> {
     }
 }
 
-pub const I_AVN_CONTROL_IID: Guid = Guid { data1: 0x7CF51B18, data2: 0xC500, data3: 0x5D06, data4: [0x8F, 0xFA, 0xD9, 0x7E, 0xF7, 0xBC, 0x64, 0x87] };
+pub const I_AVN_CONTROL_IID: Guid = Guid { data1: 0x82E7495D, data2: 0xEC39, data3: 0x5401, data4: [0x8E, 0xB6, 0x86, 0x2A, 0x4F, 0xD2, 0xC6, 0xB7] };
 
 #[repr(C)]
 struct IAvnControlVtbl {
@@ -13250,6 +14567,11 @@ struct IAvnControlVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnControl, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnControl, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnControl, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnControl, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnControl, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnControl, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnControl, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnControl, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnControl, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnControl, *mut f64) -> i32,
@@ -13270,6 +14592,10 @@ struct IAvnControlVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnControl, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnControl, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnControl, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnControl, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnControl, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnControl, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnControl, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnControl, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -13350,6 +14676,42 @@ impl ComPtr<IAvnControl> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -13492,6 +14854,32 @@ impl ComPtr<IAvnControl> {
             hresult::check(hr)
         }
     }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -13533,7 +14921,7 @@ impl ComPtr<IAvnControl> {
     }
 }
 
-pub const I_AVN_DATE_PICKER_IID: Guid = Guid { data1: 0xA778954D, data2: 0x1F48, data3: 0x586C, data4: [0xB0, 0xBC, 0x7C, 0xA1, 0xCE, 0xA6, 0x47, 0xF2] };
+pub const I_AVN_DATE_PICKER_IID: Guid = Guid { data1: 0x7F06AD94, data2: 0x0BD6, data3: 0x52B0, data4: [0x81, 0x38, 0x16, 0xA7, 0x46, 0xF0, 0xFE, 0xAD] };
 
 #[repr(C)]
 struct IAvnDatePickerVtbl {
@@ -13549,6 +14937,11 @@ struct IAvnDatePickerVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnDatePicker, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnDatePicker, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnDatePicker, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnDatePicker, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnDatePicker, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnDatePicker, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnDatePicker, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnDatePicker, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnDatePicker, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnDatePicker, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnDatePicker, *mut f64) -> i32,
@@ -13569,6 +14962,10 @@ struct IAvnDatePickerVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnDatePicker, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnDatePicker, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnDatePicker, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnDatePicker, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnDatePicker, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnDatePicker, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnDatePicker, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnDatePicker, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnDatePicker, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnDatePicker, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -13696,6 +15093,42 @@ impl ComPtr<IAvnDatePicker> {
             hresult::check(hr)
         }
     }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn get_width(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -13833,6 +15266,32 @@ impl ComPtr<IAvnDatePicker> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -14191,7 +15650,7 @@ impl ComPtr<IAvnDatePicker> {
     }
 }
 
-pub const I_AVN_DECORATOR_IID: Guid = Guid { data1: 0x32A420CD, data2: 0x730F, data3: 0x5FC4, data4: [0x91, 0x48, 0x18, 0xB4, 0x97, 0xAE, 0x91, 0xA7] };
+pub const I_AVN_DECORATOR_IID: Guid = Guid { data1: 0xE926933F, data2: 0xDA8E, data3: 0x51DC, data4: [0xB5, 0x04, 0x9B, 0x17, 0x9F, 0xBC, 0xF1, 0x7F] };
 
 #[repr(C)]
 struct IAvnDecoratorVtbl {
@@ -14207,6 +15666,11 @@ struct IAvnDecoratorVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnDecorator, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnDecorator, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnDecorator, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnDecorator, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnDecorator, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnDecorator, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnDecorator, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnDecorator, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnDecorator, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnDecorator, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnDecorator, *mut f64) -> i32,
@@ -14227,6 +15691,10 @@ struct IAvnDecoratorVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnDecorator, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnDecorator, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnDecorator, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnDecorator, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnDecorator, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnDecorator, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnDecorator, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnDecorator, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnDecorator, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnDecorator, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -14311,6 +15779,42 @@ impl ComPtr<IAvnDecorator> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -14453,6 +15957,32 @@ impl ComPtr<IAvnDecorator> {
             hresult::check(hr)
         }
     }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -14522,7 +16052,7 @@ impl ComPtr<IAvnDecorator> {
     }
 }
 
-pub const I_AVN_DOCK_PANEL_IID: Guid = Guid { data1: 0xF698353A, data2: 0x6DB0, data3: 0x5552, data4: [0x9B, 0x3C, 0xCE, 0x09, 0x00, 0x3E, 0x6F, 0x27] };
+pub const I_AVN_DOCK_PANEL_IID: Guid = Guid { data1: 0xC91C1A41, data2: 0x750C, data3: 0x577F, data4: [0xBB, 0x06, 0x65, 0xBA, 0x41, 0x9C, 0xE1, 0x95] };
 
 #[repr(C)]
 struct IAvnDockPanelVtbl {
@@ -14538,6 +16068,11 @@ struct IAvnDockPanelVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnDockPanel, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnDockPanel, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnDockPanel, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnDockPanel, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnDockPanel, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnDockPanel, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnDockPanel, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnDockPanel, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnDockPanel, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnDockPanel, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnDockPanel, *mut f64) -> i32,
@@ -14558,6 +16093,10 @@ struct IAvnDockPanelVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnDockPanel, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnDockPanel, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnDockPanel, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnDockPanel, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnDockPanel, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnDockPanel, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnDockPanel, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnDockPanel, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnDockPanel, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnDockPanel, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -14649,6 +16188,42 @@ impl ComPtr<IAvnDockPanel> {
             hresult::check(hr)
         }
     }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn get_width(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -14786,6 +16361,32 @@ impl ComPtr<IAvnDockPanel> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -14894,7 +16495,7 @@ impl ComPtr<IAvnDockPanel> {
     }
 }
 
-pub const I_AVN_DROP_DOWN_BUTTON_IID: Guid = Guid { data1: 0x7EA4F3C0, data2: 0xBEA0, data3: 0x592E, data4: [0x8A, 0x5D, 0x52, 0x16, 0xF6, 0xB7, 0x35, 0x5D] };
+pub const I_AVN_DROP_DOWN_BUTTON_IID: Guid = Guid { data1: 0x3430F414, data2: 0xD1E9, data3: 0x5AC6, data4: [0x82, 0x55, 0x3B, 0x78, 0x51, 0x73, 0x09, 0xDF] };
 
 #[repr(C)]
 struct IAvnDropDownButtonVtbl {
@@ -14910,6 +16511,11 @@ struct IAvnDropDownButtonVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnDropDownButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnDropDownButton, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnDropDownButton, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut f64) -> i32,
@@ -14930,6 +16536,10 @@ struct IAvnDropDownButtonVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnDropDownButton, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnDropDownButton, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnDropDownButton, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnDropDownButton, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnDropDownButton, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -15053,6 +16663,42 @@ impl ComPtr<IAvnDropDownButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn get_width(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -15190,6 +16836,32 @@ impl ComPtr<IAvnDropDownButton> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -15521,7 +17193,7 @@ impl ComPtr<IAvnDropDownButton> {
     }
 }
 
-pub const I_AVN_EXPANDER_IID: Guid = Guid { data1: 0x1CD800FE, data2: 0xE278, data3: 0x58D6, data4: [0xBE, 0xE9, 0x19, 0xF0, 0x4E, 0x33, 0x38, 0x49] };
+pub const I_AVN_EXPANDER_IID: Guid = Guid { data1: 0x9E2809BA, data2: 0x34CB, data3: 0x5720, data4: [0xB7, 0x6D, 0x2D, 0xA4, 0x8D, 0x5E, 0xB8, 0xBB] };
 
 #[repr(C)]
 struct IAvnExpanderVtbl {
@@ -15537,6 +17209,11 @@ struct IAvnExpanderVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnExpander, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnExpander, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnExpander, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnExpander, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnExpander, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnExpander, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnExpander, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnExpander, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnExpander, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnExpander, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnExpander, *mut f64) -> i32,
@@ -15557,6 +17234,10 @@ struct IAvnExpanderVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnExpander, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnExpander, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnExpander, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnExpander, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnExpander, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnExpander, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnExpander, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnExpander, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnExpander, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnExpander, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -15677,6 +17358,42 @@ impl ComPtr<IAvnExpander> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -15816,6 +17533,32 @@ impl ComPtr<IAvnExpander> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -16138,7 +17881,7 @@ impl ComPtr<IAvnExpander> {
     }
 }
 
-pub const I_AVN_FLEX_PANEL_IID: Guid = Guid { data1: 0xD75BC9D6, data2: 0x5B67, data3: 0x5039, data4: [0xAE, 0xF9, 0xE3, 0x87, 0x5B, 0xCD, 0x98, 0xE7] };
+pub const I_AVN_FLEX_PANEL_IID: Guid = Guid { data1: 0xD891A45A, data2: 0x220E, data3: 0x508D, data4: [0xB3, 0xE6, 0xE7, 0x7B, 0xEE, 0xC4, 0x84, 0x8E] };
 
 #[repr(C)]
 struct IAvnFlexPanelVtbl {
@@ -16154,6 +17897,11 @@ struct IAvnFlexPanelVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnFlexPanel, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnFlexPanel, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnFlexPanel, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut f64) -> i32,
@@ -16174,6 +17922,10 @@ struct IAvnFlexPanelVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnFlexPanel, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnFlexPanel, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnFlexPanel, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnFlexPanel, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnFlexPanel, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -16271,6 +18023,42 @@ impl ComPtr<IAvnFlexPanel> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -16410,6 +18198,32 @@ impl ComPtr<IAvnFlexPanel> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -16815,7 +18629,7 @@ impl ComPtr<IAvnFlyout> {
     }
 }
 
-pub const I_AVN_GRID_IID: Guid = Guid { data1: 0x50725F62, data2: 0xE6AC, data3: 0x5B40, data4: [0xA6, 0xCF, 0x15, 0x2F, 0x9D, 0x29, 0xE2, 0x0E] };
+pub const I_AVN_GRID_IID: Guid = Guid { data1: 0x2A6D0A68, data2: 0xFF32, data3: 0x559F, data4: [0xA5, 0xB0, 0x87, 0x1C, 0x53, 0x70, 0x21, 0x80] };
 
 #[repr(C)]
 struct IAvnGridVtbl {
@@ -16831,6 +18645,11 @@ struct IAvnGridVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnGrid, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnGrid, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnGrid, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnGrid, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnGrid, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnGrid, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnGrid, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnGrid, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnGrid, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnGrid, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnGrid, *mut f64) -> i32,
@@ -16851,6 +18670,10 @@ struct IAvnGridVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnGrid, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnGrid, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnGrid, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnGrid, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnGrid, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnGrid, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnGrid, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnGrid, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnGrid, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnGrid, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -16944,6 +18767,42 @@ impl ComPtr<IAvnGrid> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -17083,6 +18942,32 @@ impl ComPtr<IAvnGrid> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -17219,7 +19104,7 @@ impl ComPtr<IAvnGrid> {
     }
 }
 
-pub const I_AVN_GRID_SPLITTER_IID: Guid = Guid { data1: 0x67EF91C9, data2: 0x78CC, data3: 0x515B, data4: [0xA9, 0x48, 0x1C, 0xFD, 0x78, 0x7C, 0x7B, 0x3C] };
+pub const I_AVN_GRID_SPLITTER_IID: Guid = Guid { data1: 0xD2AB8534, data2: 0x6906, data3: 0x5EAD, data4: [0x9F, 0xFF, 0xAF, 0xF3, 0x00, 0xFC, 0x23, 0xA0] };
 
 #[repr(C)]
 struct IAvnGridSplitterVtbl {
@@ -17235,6 +19120,11 @@ struct IAvnGridSplitterVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnGridSplitter, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnGridSplitter, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnGridSplitter, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut f64) -> i32,
@@ -17255,6 +19145,10 @@ struct IAvnGridSplitterVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnGridSplitter, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnGridSplitter, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnGridSplitter, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnGridSplitter, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnGridSplitter, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -17369,6 +19263,42 @@ impl ComPtr<IAvnGridSplitter> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -17508,6 +19438,32 @@ impl ComPtr<IAvnGridSplitter> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -17790,7 +19746,7 @@ impl ComPtr<IAvnGridSplitter> {
     }
 }
 
-pub const I_AVN_GROUP_BOX_IID: Guid = Guid { data1: 0xEE7B2AD5, data2: 0x50C0, data3: 0x5F19, data4: [0x9D, 0xD2, 0xBF, 0x8C, 0xBF, 0xB4, 0x0F, 0x9D] };
+pub const I_AVN_GROUP_BOX_IID: Guid = Guid { data1: 0x487BC2E6, data2: 0xEF6F, data3: 0x5D6F, data4: [0x8B, 0x01, 0xDB, 0x2D, 0x88, 0xD7, 0xC3, 0xC5] };
 
 #[repr(C)]
 struct IAvnGroupBoxVtbl {
@@ -17806,6 +19762,11 @@ struct IAvnGroupBoxVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnGroupBox, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnGroupBox, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnGroupBox, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnGroupBox, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnGroupBox, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnGroupBox, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnGroupBox, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnGroupBox, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnGroupBox, *mut f64) -> i32,
@@ -17826,6 +19787,10 @@ struct IAvnGroupBoxVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnGroupBox, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnGroupBox, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnGroupBox, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnGroupBox, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnGroupBox, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnGroupBox, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -17938,6 +19903,42 @@ impl ComPtr<IAvnGroupBox> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -18077,6 +20078,32 @@ impl ComPtr<IAvnGroupBox> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -18345,7 +20372,7 @@ impl ComPtr<IAvnGroupBox> {
     }
 }
 
-pub const I_AVN_HYPERLINK_BUTTON_IID: Guid = Guid { data1: 0x882F467B, data2: 0x88E2, data3: 0x5339, data4: [0xAD, 0xE0, 0x13, 0xB3, 0xC3, 0x56, 0xCA, 0xBD] };
+pub const I_AVN_HYPERLINK_BUTTON_IID: Guid = Guid { data1: 0x0524F2D5, data2: 0x3491, data3: 0x599B, data4: [0xB5, 0x45, 0x9B, 0xC8, 0x07, 0x22, 0x5C, 0x35] };
 
 #[repr(C)]
 struct IAvnHyperlinkButtonVtbl {
@@ -18361,6 +20388,11 @@ struct IAvnHyperlinkButtonVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnHyperlinkButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnHyperlinkButton, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnHyperlinkButton, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut f64) -> i32,
@@ -18381,6 +20413,10 @@ struct IAvnHyperlinkButtonVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnHyperlinkButton, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnHyperlinkButton, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnHyperlinkButton, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnHyperlinkButton, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnHyperlinkButton, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -18506,6 +20542,42 @@ impl ComPtr<IAvnHyperlinkButton> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -18645,6 +20717,32 @@ impl ComPtr<IAvnHyperlinkButton> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -19004,7 +21102,7 @@ impl ComPtr<IAvnHyperlinkButton> {
     }
 }
 
-pub const I_AVN_ICON_ELEMENT_IID: Guid = Guid { data1: 0x02403DC8, data2: 0x1F72, data3: 0x5B97, data4: [0x8F, 0x84, 0x20, 0xF4, 0xB0, 0x95, 0xED, 0x90] };
+pub const I_AVN_ICON_ELEMENT_IID: Guid = Guid { data1: 0x685141CE, data2: 0xD115, data3: 0x53BB, data4: [0x8C, 0xBA, 0x0E, 0xFC, 0xF8, 0x9D, 0xE8, 0x71] };
 
 #[repr(C)]
 struct IAvnIconElementVtbl {
@@ -19020,6 +21118,11 @@ struct IAvnIconElementVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnIconElement, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnIconElement, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnIconElement, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnIconElement, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnIconElement, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnIconElement, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnIconElement, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnIconElement, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnIconElement, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnIconElement, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnIconElement, *mut f64) -> i32,
@@ -19040,6 +21143,10 @@ struct IAvnIconElementVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnIconElement, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnIconElement, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnIconElement, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnIconElement, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnIconElement, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnIconElement, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnIconElement, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnIconElement, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnIconElement, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnIconElement, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -19144,6 +21251,42 @@ impl ComPtr<IAvnIconElement> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -19283,6 +21426,32 @@ impl ComPtr<IAvnIconElement> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -19495,7 +21664,7 @@ impl ComPtr<IAvnIconElement> {
     }
 }
 
-pub const I_AVN_IMAGE_IID: Guid = Guid { data1: 0x29B83AC7, data2: 0xF56D, data3: 0x57D6, data4: [0xA4, 0x6E, 0xF9, 0xF1, 0x86, 0x18, 0xA1, 0xFE] };
+pub const I_AVN_IMAGE_IID: Guid = Guid { data1: 0x471FA068, data2: 0x6C69, data3: 0x5AAB, data4: [0x96, 0xC0, 0x29, 0x07, 0x3F, 0xFB, 0x3C, 0x89] };
 
 #[repr(C)]
 struct IAvnImageVtbl {
@@ -19511,6 +21680,11 @@ struct IAvnImageVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnImage, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnImage, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnImage, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnImage, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnImage, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnImage, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnImage, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnImage, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnImage, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnImage, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnImage, *mut f64) -> i32,
@@ -19531,6 +21705,10 @@ struct IAvnImageVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnImage, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnImage, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnImage, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnImage, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnImage, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnImage, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnImage, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnImage, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnImage, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnImage, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -19619,6 +21797,42 @@ impl ComPtr<IAvnImage> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -19761,6 +21975,32 @@ impl ComPtr<IAvnImage> {
             hresult::check(hr)
         }
     }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -19858,7 +22098,7 @@ impl ComPtr<IAvnImage> {
     }
 }
 
-pub const I_AVN_ITEMS_CONTROL_IID: Guid = Guid { data1: 0xAD06A856, data2: 0xE8AF, data3: 0x5AC5, data4: [0x91, 0x05, 0xA8, 0x1F, 0x3A, 0xE1, 0x2D, 0x4D] };
+pub const I_AVN_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x266FAE15, data2: 0xE701, data3: 0x5220, data4: [0xAA, 0x28, 0xFF, 0xEA, 0xB6, 0x1E, 0xD3, 0xF7] };
 
 #[repr(C)]
 struct IAvnItemsControlVtbl {
@@ -19874,6 +22114,11 @@ struct IAvnItemsControlVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnItemsControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnItemsControl, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnItemsControl, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnItemsControl, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnItemsControl, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnItemsControl, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnItemsControl, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnItemsControl, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnItemsControl, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnItemsControl, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnItemsControl, *mut f64) -> i32,
@@ -19894,6 +22139,10 @@ struct IAvnItemsControlVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnItemsControl, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnItemsControl, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnItemsControl, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnItemsControl, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnItemsControl, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnItemsControl, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnItemsControl, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnItemsControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnItemsControl, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnItemsControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -20003,6 +22252,42 @@ impl ComPtr<IAvnItemsControl> {
             hresult::check(hr)
         }
     }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn get_width(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -20140,6 +22425,32 @@ impl ComPtr<IAvnItemsControl> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -20374,7 +22685,7 @@ impl ComPtr<IAvnItemsControl> {
     }
 }
 
-pub const I_AVN_LABEL_IID: Guid = Guid { data1: 0xA267BD34, data2: 0xAE18, data3: 0x5D58, data4: [0xBA, 0xE7, 0x7B, 0x53, 0x56, 0x86, 0x6B, 0xE1] };
+pub const I_AVN_LABEL_IID: Guid = Guid { data1: 0x96FF4F16, data2: 0x9BDF, data3: 0x5DCB, data4: [0xB0, 0xA2, 0xB6, 0xF0, 0x52, 0x68, 0x68, 0x71] };
 
 #[repr(C)]
 struct IAvnLabelVtbl {
@@ -20390,6 +22701,11 @@ struct IAvnLabelVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnLabel, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnLabel, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnLabel, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnLabel, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnLabel, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnLabel, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnLabel, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnLabel, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnLabel, *mut f64) -> i32,
@@ -20410,6 +22726,10 @@ struct IAvnLabelVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnLabel, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnLabel, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnLabel, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnLabel, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnLabel, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnLabel, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -20520,6 +22840,42 @@ impl ComPtr<IAvnLabel> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -20659,6 +23015,32 @@ impl ComPtr<IAvnLabel> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -20913,7 +23295,7 @@ impl ComPtr<IAvnLabel> {
     }
 }
 
-pub const I_AVN_LAYOUT_TRANSFORM_CONTROL_IID: Guid = Guid { data1: 0x26BBE2AC, data2: 0xC996, data3: 0x5881, data4: [0x9D, 0x87, 0x8F, 0x22, 0xB9, 0xB9, 0xA3, 0x9D] };
+pub const I_AVN_LAYOUT_TRANSFORM_CONTROL_IID: Guid = Guid { data1: 0xFCA3934D, data2: 0x99C5, data3: 0x5CDC, data4: [0xAC, 0x44, 0xF2, 0x25, 0xE4, 0xE2, 0xEF, 0x3D] };
 
 #[repr(C)]
 struct IAvnLayoutTransformControlVtbl {
@@ -20929,6 +23311,11 @@ struct IAvnLayoutTransformControlVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut f64) -> i32,
@@ -20949,6 +23336,10 @@ struct IAvnLayoutTransformControlVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -21035,6 +23426,42 @@ impl ComPtr<IAvnLayoutTransformControl> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -21177,6 +23604,32 @@ impl ComPtr<IAvnLayoutTransformControl> {
             hresult::check(hr)
         }
     }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -21260,7 +23713,7 @@ impl ComPtr<IAvnLayoutTransformControl> {
     }
 }
 
-pub const I_AVN_LIST_BOX_IID: Guid = Guid { data1: 0x311C3392, data2: 0x8A78, data3: 0x5745, data4: [0xAF, 0xC8, 0x86, 0x29, 0xDA, 0x8B, 0xDC, 0x06] };
+pub const I_AVN_LIST_BOX_IID: Guid = Guid { data1: 0x6355CFDF, data2: 0x4550, data3: 0x570A, data4: [0xAD, 0xDD, 0xA5, 0xD5, 0xAA, 0x0B, 0x2D, 0x2E] };
 
 #[repr(C)]
 struct IAvnListBoxVtbl {
@@ -21276,6 +23729,11 @@ struct IAvnListBoxVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnListBox, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnListBox, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnListBox, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnListBox, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnListBox, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnListBox, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnListBox, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnListBox, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnListBox, *mut f64) -> i32,
@@ -21296,6 +23754,10 @@ struct IAvnListBoxVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnListBox, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnListBox, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnListBox, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnListBox, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnListBox, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnListBox, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -21419,6 +23881,42 @@ impl ComPtr<IAvnListBox> {
             hresult::check(hr)
         }
     }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn get_width(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -21556,6 +24054,32 @@ impl ComPtr<IAvnListBox> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -21885,7 +24409,7 @@ impl ComPtr<IAvnListBox> {
     }
 }
 
-pub const I_AVN_LIST_BOX_ITEM_IID: Guid = Guid { data1: 0xB667388B, data2: 0x657E, data3: 0x5E49, data4: [0x95, 0x2C, 0xD3, 0x20, 0x0F, 0x0F, 0x32, 0xAB] };
+pub const I_AVN_LIST_BOX_ITEM_IID: Guid = Guid { data1: 0x0A9448A4, data2: 0xC789, data3: 0x57E2, data4: [0x95, 0x55, 0x60, 0x6A, 0x08, 0xC0, 0x92, 0xCF] };
 
 #[repr(C)]
 struct IAvnListBoxItemVtbl {
@@ -21901,6 +24425,11 @@ struct IAvnListBoxItemVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnListBoxItem, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnListBoxItem, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnListBoxItem, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut f64) -> i32,
@@ -21921,6 +24450,10 @@ struct IAvnListBoxItemVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnListBoxItem, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnListBoxItem, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnListBoxItem, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnListBoxItem, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnListBoxItem, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -22033,6 +24566,42 @@ impl ComPtr<IAvnListBoxItem> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -22172,6 +24741,32 @@ impl ComPtr<IAvnListBoxItem> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -22440,7 +25035,7 @@ impl ComPtr<IAvnListBoxItem> {
     }
 }
 
-pub const I_AVN_MASKED_TEXT_BOX_IID: Guid = Guid { data1: 0x792FE230, data2: 0xE153, data3: 0x58BF, data4: [0x94, 0x64, 0xBA, 0xBA, 0xC8, 0x87, 0x0A, 0x8C] };
+pub const I_AVN_MASKED_TEXT_BOX_IID: Guid = Guid { data1: 0x310980AB, data2: 0xCFEB, data3: 0x517B, data4: [0xA6, 0xA2, 0xEA, 0xF5, 0xAF, 0x6D, 0x9E, 0x3F] };
 
 #[repr(C)]
 struct IAvnMaskedTextBoxVtbl {
@@ -22456,6 +25051,11 @@ struct IAvnMaskedTextBoxVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnMaskedTextBox, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnMaskedTextBox, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut f64) -> i32,
@@ -22476,6 +25076,10 @@ struct IAvnMaskedTextBoxVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -22676,6 +25280,42 @@ impl ComPtr<IAvnMaskedTextBox> {
             hresult::check(hr)
         }
     }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn get_width(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -22813,6 +25453,32 @@ impl ComPtr<IAvnMaskedTextBox> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -23677,7 +26343,7 @@ impl ComPtr<IAvnMaskedTextBox> {
     }
 }
 
-pub const I_AVN_MENU_IID: Guid = Guid { data1: 0x66864BEC, data2: 0x42C8, data3: 0x5B9E, data4: [0xB3, 0x56, 0x5E, 0x28, 0xE1, 0xAC, 0xFF, 0xDA] };
+pub const I_AVN_MENU_IID: Guid = Guid { data1: 0x3AE47AF3, data2: 0xBBC0, data3: 0x55D9, data4: [0x91, 0x3F, 0x07, 0x6B, 0x7C, 0x9A, 0x56, 0xE8] };
 
 #[repr(C)]
 struct IAvnMenuVtbl {
@@ -23693,6 +26359,11 @@ struct IAvnMenuVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnMenu, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnMenu, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnMenu, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnMenu, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnMenu, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnMenu, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnMenu, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnMenu, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnMenu, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnMenu, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnMenu, *mut f64) -> i32,
@@ -23713,6 +26384,10 @@ struct IAvnMenuVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnMenu, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnMenu, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnMenu, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnMenu, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnMenu, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnMenu, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnMenu, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnMenu, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnMenu, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnMenu, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -23837,6 +26512,42 @@ impl ComPtr<IAvnMenu> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -23976,6 +26687,32 @@ impl ComPtr<IAvnMenu> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -24325,7 +27062,7 @@ impl ComPtr<IAvnMenu> {
     }
 }
 
-pub const I_AVN_MENU_BASE_IID: Guid = Guid { data1: 0xDDB93890, data2: 0xC139, data3: 0x51E6, data4: [0x8B, 0x85, 0xFB, 0x7B, 0x31, 0x3A, 0x0C, 0xB3] };
+pub const I_AVN_MENU_BASE_IID: Guid = Guid { data1: 0xCEAF4CFD, data2: 0x0A4C, data3: 0x5481, data4: [0x86, 0x73, 0x50, 0xF0, 0x78, 0xE7, 0x35, 0x73] };
 
 #[repr(C)]
 struct IAvnMenuBaseVtbl {
@@ -24341,6 +27078,11 @@ struct IAvnMenuBaseVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnMenuBase, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnMenuBase, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnMenuBase, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnMenuBase, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnMenuBase, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnMenuBase, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnMenuBase, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnMenuBase, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnMenuBase, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnMenuBase, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnMenuBase, *mut f64) -> i32,
@@ -24361,6 +27103,10 @@ struct IAvnMenuBaseVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnMenuBase, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnMenuBase, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnMenuBase, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnMenuBase, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnMenuBase, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnMenuBase, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnMenuBase, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnMenuBase, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnMenuBase, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnMenuBase, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -24485,6 +27231,42 @@ impl ComPtr<IAvnMenuBase> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -24624,6 +27406,32 @@ impl ComPtr<IAvnMenuBase> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -25207,7 +28015,7 @@ impl ComPtr<IAvnMenuFlyout> {
     }
 }
 
-pub const I_AVN_MENU_ITEM_IID: Guid = Guid { data1: 0xA39514AD, data2: 0x7AE6, data3: 0x5B7F, data4: [0xA8, 0xAB, 0x46, 0x1E, 0x6E, 0x3D, 0xE6, 0xAB] };
+pub const I_AVN_MENU_ITEM_IID: Guid = Guid { data1: 0x50125360, data2: 0x3E04, data3: 0x5B86, data4: [0xA0, 0xAF, 0x3B, 0x3E, 0xA3, 0xFD, 0x31, 0x34] };
 
 #[repr(C)]
 struct IAvnMenuItemVtbl {
@@ -25223,6 +28031,11 @@ struct IAvnMenuItemVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnMenuItem, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnMenuItem, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnMenuItem, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnMenuItem, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnMenuItem, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnMenuItem, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnMenuItem, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnMenuItem, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnMenuItem, *mut f64) -> i32,
@@ -25243,6 +28056,10 @@ struct IAvnMenuItemVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnMenuItem, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnMenuItem, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnMenuItem, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnMenuItem, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnMenuItem, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnMenuItem, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -25386,6 +28203,42 @@ impl ComPtr<IAvnMenuItem> {
             hresult::check(hr)
         }
     }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn get_width(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -25523,6 +28376,32 @@ impl ComPtr<IAvnMenuItem> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -25992,7 +28871,7 @@ impl ComPtr<IAvnMenuItem> {
     }
 }
 
-pub const I_AVN_NOTIFICATION_CARD_IID: Guid = Guid { data1: 0x7C93FB71, data2: 0xB26B, data3: 0x569D, data4: [0xA8, 0xBC, 0xD6, 0xCC, 0x92, 0xFD, 0x10, 0xFB] };
+pub const I_AVN_NOTIFICATION_CARD_IID: Guid = Guid { data1: 0xBEDB9BA8, data2: 0x3CBC, data3: 0x5D58, data4: [0x8A, 0xDB, 0x96, 0x55, 0x8A, 0xE3, 0xC9, 0x69] };
 
 #[repr(C)]
 struct IAvnNotificationCardVtbl {
@@ -26008,6 +28887,11 @@ struct IAvnNotificationCardVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnNotificationCard, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnNotificationCard, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnNotificationCard, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut f64) -> i32,
@@ -26028,6 +28912,10 @@ struct IAvnNotificationCardVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnNotificationCard, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnNotificationCard, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnNotificationCard, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnNotificationCard, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnNotificationCard, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -26144,6 +29032,42 @@ impl ComPtr<IAvnNotificationCard> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -26283,6 +29207,32 @@ impl ComPtr<IAvnNotificationCard> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -26579,7 +29529,7 @@ impl ComPtr<IAvnNotificationCard> {
     }
 }
 
-pub const I_AVN_WINDOW_NOTIFICATION_MANAGER_IID: Guid = Guid { data1: 0x57317090, data2: 0x1133, data3: 0x53C2, data4: [0x93, 0x6C, 0xAD, 0xE1, 0x90, 0x48, 0xE2, 0x38] };
+pub const I_AVN_WINDOW_NOTIFICATION_MANAGER_IID: Guid = Guid { data1: 0x4F5B9E71, data2: 0x475C, data3: 0x5297, data4: [0x89, 0xDE, 0x55, 0xE0, 0x79, 0xBB, 0xF4, 0xD9] };
 
 #[repr(C)]
 struct IAvnWindowNotificationManagerVtbl {
@@ -26595,6 +29545,11 @@ struct IAvnWindowNotificationManagerVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut f64) -> i32,
@@ -26615,6 +29570,10 @@ struct IAvnWindowNotificationManagerVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -26723,6 +29682,42 @@ impl ComPtr<IAvnWindowNotificationManager> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -26862,6 +29857,32 @@ impl ComPtr<IAvnWindowNotificationManager> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -27102,7 +30123,7 @@ impl ComPtr<IAvnWindowNotificationManager> {
     }
 }
 
-pub const I_AVN_NUMERIC_UP_DOWN_IID: Guid = Guid { data1: 0x02CB4C9D, data2: 0x71C8, data3: 0x5A6C, data4: [0xB5, 0x29, 0xA6, 0x78, 0x32, 0xEC, 0xC9, 0xDD] };
+pub const I_AVN_NUMERIC_UP_DOWN_IID: Guid = Guid { data1: 0xC486FD9B, data2: 0x9743, data3: 0x5403, data4: [0xA4, 0x35, 0x3A, 0xBC, 0x83, 0x32, 0x0F, 0x98] };
 
 #[repr(C)]
 struct IAvnNumericUpDownVtbl {
@@ -27118,6 +30139,11 @@ struct IAvnNumericUpDownVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnNumericUpDown, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnNumericUpDown, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnNumericUpDown, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut f64) -> i32,
@@ -27138,6 +30164,10 @@ struct IAvnNumericUpDownVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnNumericUpDown, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnNumericUpDown, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnNumericUpDown, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnNumericUpDown, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnNumericUpDown, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -27282,6 +30312,42 @@ impl ComPtr<IAvnNumericUpDown> {
             hresult::check(hr)
         }
     }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn get_width(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -27419,6 +30485,32 @@ impl ComPtr<IAvnNumericUpDown> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -27896,7 +30988,7 @@ impl ComPtr<IAvnNumericUpDown> {
     }
 }
 
-pub const I_AVN_PANEL_IID: Guid = Guid { data1: 0xBD97617A, data2: 0xEEDC, data3: 0x5695, data4: [0x88, 0xC1, 0xE3, 0x0E, 0x66, 0x73, 0xB2, 0x86] };
+pub const I_AVN_PANEL_IID: Guid = Guid { data1: 0xA66DB44C, data2: 0x3C52, data3: 0x5E8F, data4: [0x8D, 0x94, 0x8C, 0x6C, 0x32, 0x2E, 0x74, 0x4B] };
 
 #[repr(C)]
 struct IAvnPanelVtbl {
@@ -27912,6 +31004,11 @@ struct IAvnPanelVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnPanel, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnPanel, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnPanel, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnPanel, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnPanel, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnPanel, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnPanel, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnPanel, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnPanel, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnPanel, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnPanel, *mut f64) -> i32,
@@ -27932,6 +31029,10 @@ struct IAvnPanelVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnPanel, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnPanel, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnPanel, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnPanel, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnPanel, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnPanel, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnPanel, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnPanel, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnPanel, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnPanel, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -28015,6 +31116,42 @@ impl ComPtr<IAvnPanel> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -28157,6 +31294,32 @@ impl ComPtr<IAvnPanel> {
             hresult::check(hr)
         }
     }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -28220,7 +31383,7 @@ impl ComPtr<IAvnPanel> {
     }
 }
 
-pub const I_AVN_PATH_ICON_IID: Guid = Guid { data1: 0xF497C1F5, data2: 0x24CC, data3: 0x5DA0, data4: [0xAF, 0xA9, 0x05, 0xF0, 0xA9, 0x7B, 0x9A, 0x15] };
+pub const I_AVN_PATH_ICON_IID: Guid = Guid { data1: 0x5969C5F1, data2: 0xE409, data3: 0x5B18, data4: [0x9F, 0xE7, 0x9E, 0x71, 0x98, 0x71, 0x8B, 0x7A] };
 
 #[repr(C)]
 struct IAvnPathIconVtbl {
@@ -28236,6 +31399,11 @@ struct IAvnPathIconVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnPathIcon, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnPathIcon, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnPathIcon, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnPathIcon, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnPathIcon, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnPathIcon, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnPathIcon, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnPathIcon, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnPathIcon, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnPathIcon, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnPathIcon, *mut f64) -> i32,
@@ -28256,6 +31424,10 @@ struct IAvnPathIconVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnPathIcon, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnPathIcon, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnPathIcon, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnPathIcon, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnPathIcon, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnPathIcon, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnPathIcon, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnPathIcon, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnPathIcon, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnPathIcon, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -28364,6 +31536,42 @@ impl ComPtr<IAvnPathIcon> {
             hresult::check(hr)
         }
     }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn get_width(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -28501,6 +31709,32 @@ impl ComPtr<IAvnPathIcon> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -28727,7 +31961,7 @@ impl ComPtr<IAvnPathIcon> {
     }
 }
 
-pub const I_AVN_PIPS_PAGER_IID: Guid = Guid { data1: 0xCADA3806, data2: 0xB54C, data3: 0x503A, data4: [0x9C, 0xD7, 0xF8, 0x94, 0x36, 0xCC, 0x90, 0x7F] };
+pub const I_AVN_PIPS_PAGER_IID: Guid = Guid { data1: 0x2D66F914, data2: 0xFCAA, data3: 0x5FBD, data4: [0xAD, 0x94, 0xA5, 0x47, 0x17, 0xFF, 0xB3, 0xB8] };
 
 #[repr(C)]
 struct IAvnPipsPagerVtbl {
@@ -28743,6 +31977,11 @@ struct IAvnPipsPagerVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnPipsPager, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnPipsPager, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnPipsPager, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnPipsPager, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnPipsPager, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnPipsPager, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnPipsPager, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnPipsPager, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnPipsPager, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnPipsPager, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnPipsPager, *mut f64) -> i32,
@@ -28763,6 +32002,10 @@ struct IAvnPipsPagerVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnPipsPager, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnPipsPager, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnPipsPager, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnPipsPager, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnPipsPager, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnPipsPager, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnPipsPager, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnPipsPager, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnPipsPager, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnPipsPager, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -28881,6 +32124,42 @@ impl ComPtr<IAvnPipsPager> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -29020,6 +32299,32 @@ impl ComPtr<IAvnPipsPager> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -29435,7 +32740,7 @@ impl ComPtr<IAvnFlyoutBase> {
     }
 }
 
-pub const I_AVN_HEADERED_CONTENT_CONTROL_IID: Guid = Guid { data1: 0xFEF87661, data2: 0xE67A, data3: 0x5C14, data4: [0xA8, 0xB6, 0xA3, 0xBD, 0x6D, 0x47, 0xEA, 0xCA] };
+pub const I_AVN_HEADERED_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x070EFA6A, data2: 0x7C6E, data3: 0x5A69, data4: [0xB9, 0xED, 0x48, 0x50, 0x1E, 0x7F, 0xAE, 0xF8] };
 
 #[repr(C)]
 struct IAvnHeaderedContentControlVtbl {
@@ -29451,6 +32756,11 @@ struct IAvnHeaderedContentControlVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut f64) -> i32,
@@ -29471,6 +32781,10 @@ struct IAvnHeaderedContentControlVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -29583,6 +32897,42 @@ impl ComPtr<IAvnHeaderedContentControl> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -29722,6 +33072,32 @@ impl ComPtr<IAvnHeaderedContentControl> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -29990,7 +33366,7 @@ impl ComPtr<IAvnHeaderedContentControl> {
     }
 }
 
-pub const I_AVN_HEADERED_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x0201471B, data2: 0xB875, data3: 0x5EBB, data4: [0xA3, 0x9E, 0x20, 0x73, 0x1E, 0xAA, 0x8C, 0x19] };
+pub const I_AVN_HEADERED_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x5702F481, data2: 0x00DC, data3: 0x5E0F, data4: [0xB4, 0xF2, 0xF3, 0x68, 0x7F, 0xA6, 0xCD, 0xB3] };
 
 #[repr(C)]
 struct IAvnHeaderedItemsControlVtbl {
@@ -30006,6 +33382,11 @@ struct IAvnHeaderedItemsControlVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut f64) -> i32,
@@ -30026,6 +33407,10 @@ struct IAvnHeaderedItemsControlVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -30135,6 +33520,42 @@ impl ComPtr<IAvnHeaderedItemsControl> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -30274,6 +33695,32 @@ impl ComPtr<IAvnHeaderedItemsControl> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -30522,7 +33969,7 @@ impl ComPtr<IAvnHeaderedItemsControl> {
     }
 }
 
-pub const I_AVN_HEADERED_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x77052FE6, data2: 0xDFAD, data3: 0x5129, data4: [0x9C, 0xDA, 0xB2, 0x98, 0xD2, 0xA0, 0x1B, 0xC2] };
+pub const I_AVN_HEADERED_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x00E6E8A1, data2: 0xBF08, data3: 0x5CA9, data4: [0x9C, 0x29, 0xCC, 0x62, 0x5E, 0x3D, 0x25, 0x6C] };
 
 #[repr(C)]
 struct IAvnHeaderedSelectingItemsControlVtbl {
@@ -30538,6 +33985,11 @@ struct IAvnHeaderedSelectingItemsControlVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut f64) -> i32,
@@ -30558,6 +34010,10 @@ struct IAvnHeaderedSelectingItemsControlVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -30677,6 +34133,42 @@ impl ComPtr<IAvnHeaderedSelectingItemsControl> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -30816,6 +34308,32 @@ impl ComPtr<IAvnHeaderedSelectingItemsControl> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -31133,7 +34651,7 @@ impl ComPtr<IAvnHeaderedSelectingItemsControl> {
     }
 }
 
-pub const I_AVN_POPUP_IID: Guid = Guid { data1: 0x43264105, data2: 0x562E, data3: 0x530E, data4: [0x9D, 0x96, 0xC2, 0x75, 0x82, 0xFE, 0x18, 0xA7] };
+pub const I_AVN_POPUP_IID: Guid = Guid { data1: 0xC95E2696, data2: 0x101A, data3: 0x5F36, data4: [0xB5, 0xDD, 0xE8, 0x1D, 0xFB, 0x82, 0x50, 0xE8] };
 
 #[repr(C)]
 struct IAvnPopupVtbl {
@@ -31149,6 +34667,11 @@ struct IAvnPopupVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnPopup, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnPopup, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnPopup, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnPopup, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnPopup, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnPopup, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnPopup, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnPopup, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnPopup, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnPopup, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnPopup, *mut f64) -> i32,
@@ -31169,6 +34692,10 @@ struct IAvnPopupVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnPopup, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnPopup, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnPopup, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnPopup, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnPopup, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnPopup, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnPopup, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnPopup, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnPopup, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnPopup, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -31283,6 +34810,42 @@ impl ComPtr<IAvnPopup> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -31422,6 +34985,32 @@ impl ComPtr<IAvnPopup> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -31927,7 +35516,7 @@ impl ComPtr<IAvnPopupFlyoutBase> {
     }
 }
 
-pub const I_AVN_RANGE_BASE_IID: Guid = Guid { data1: 0x467C6371, data2: 0x5D12, data3: 0x52FC, data4: [0xA6, 0xCD, 0x71, 0x2B, 0x27, 0x3B, 0xC0, 0x4D] };
+pub const I_AVN_RANGE_BASE_IID: Guid = Guid { data1: 0x697D205C, data2: 0xBCD7, data3: 0x5235, data4: [0xA2, 0xA7, 0x0D, 0x9E, 0xF5, 0xC0, 0xF9, 0xD5] };
 
 #[repr(C)]
 struct IAvnRangeBaseVtbl {
@@ -31943,6 +35532,11 @@ struct IAvnRangeBaseVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnRangeBase, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnRangeBase, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnRangeBase, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnRangeBase, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnRangeBase, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnRangeBase, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnRangeBase, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnRangeBase, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnRangeBase, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnRangeBase, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnRangeBase, *mut f64) -> i32,
@@ -31963,6 +35557,10 @@ struct IAvnRangeBaseVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnRangeBase, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnRangeBase, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnRangeBase, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnRangeBase, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnRangeBase, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnRangeBase, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnRangeBase, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnRangeBase, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnRangeBase, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnRangeBase, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -32079,6 +35677,42 @@ impl ComPtr<IAvnRangeBase> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -32218,6 +35852,32 @@ impl ComPtr<IAvnRangeBase> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -32513,7 +36173,7 @@ impl ComPtr<IAvnRangeBase> {
     }
 }
 
-pub const I_AVN_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x5F901899, data2: 0xE71F, data3: 0x503E, data4: [0x9D, 0xF5, 0x95, 0xC1, 0x67, 0x01, 0x43, 0x53] };
+pub const I_AVN_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x9E0E63B7, data2: 0x6A89, data3: 0x5073, data4: [0x8D, 0xC9, 0x1B, 0x5A, 0x43, 0x5E, 0x4F, 0x22] };
 
 #[repr(C)]
 struct IAvnSelectingItemsControlVtbl {
@@ -32529,6 +36189,11 @@ struct IAvnSelectingItemsControlVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut f64) -> i32,
@@ -32549,6 +36214,10 @@ struct IAvnSelectingItemsControlVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -32666,6 +36335,42 @@ impl ComPtr<IAvnSelectingItemsControl> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -32805,6 +36510,32 @@ impl ComPtr<IAvnSelectingItemsControl> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -33108,7 +36839,7 @@ impl ComPtr<IAvnSelectingItemsControl> {
     }
 }
 
-pub const I_AVN_TEMPLATED_CONTROL_IID: Guid = Guid { data1: 0xA3893721, data2: 0x54B6, data3: 0x511D, data4: [0xB1, 0x71, 0xF8, 0xD6, 0x81, 0x7F, 0x45, 0x0A] };
+pub const I_AVN_TEMPLATED_CONTROL_IID: Guid = Guid { data1: 0x1778CB20, data2: 0xC613, data3: 0x5979, data4: [0x86, 0xD6, 0xA2, 0x15, 0xF6, 0xB0, 0x5E, 0x2D] };
 
 #[repr(C)]
 struct IAvnTemplatedControlVtbl {
@@ -33124,6 +36855,11 @@ struct IAvnTemplatedControlVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnTemplatedControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnTemplatedControl, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnTemplatedControl, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut f64) -> i32,
@@ -33144,6 +36880,10 @@ struct IAvnTemplatedControlVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnTemplatedControl, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnTemplatedControl, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnTemplatedControl, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnTemplatedControl, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTemplatedControl, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -33250,6 +36990,42 @@ impl ComPtr<IAvnTemplatedControl> {
             hresult::check(hr)
         }
     }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn get_width(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -33387,6 +37163,32 @@ impl ComPtr<IAvnTemplatedControl> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -33599,7 +37401,7 @@ impl ComPtr<IAvnTemplatedControl> {
     }
 }
 
-pub const I_AVN_THUMB_IID: Guid = Guid { data1: 0x93192290, data2: 0xB59C, data3: 0x5B57, data4: [0x88, 0x74, 0x4B, 0x6D, 0x69, 0xFF, 0x9C, 0x35] };
+pub const I_AVN_THUMB_IID: Guid = Guid { data1: 0xD658EE9F, data2: 0x60C2, data3: 0x5502, data4: [0x8D, 0x55, 0xE7, 0x48, 0x3F, 0x94, 0x7F, 0x88] };
 
 #[repr(C)]
 struct IAvnThumbVtbl {
@@ -33615,6 +37417,11 @@ struct IAvnThumbVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnThumb, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnThumb, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnThumb, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnThumb, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnThumb, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnThumb, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnThumb, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnThumb, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnThumb, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnThumb, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnThumb, *mut f64) -> i32,
@@ -33635,6 +37442,10 @@ struct IAvnThumbVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnThumb, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnThumb, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnThumb, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnThumb, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnThumb, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnThumb, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnThumb, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnThumb, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnThumb, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnThumb, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -33741,6 +37552,42 @@ impl ComPtr<IAvnThumb> {
             hresult::check(hr)
         }
     }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn get_width(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -33878,6 +37725,32 @@ impl ComPtr<IAvnThumb> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -34090,7 +37963,7 @@ impl ComPtr<IAvnThumb> {
     }
 }
 
-pub const I_AVN_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0x3AE61A8C, data2: 0xAAD4, data3: 0x5B5D, data4: [0xA7, 0xAB, 0x70, 0xB8, 0x32, 0x64, 0xC9, 0x45] };
+pub const I_AVN_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0xED70AAF8, data2: 0x5651, data3: 0x5844, data4: [0xBA, 0x09, 0x07, 0x8F, 0x9E, 0xB9, 0xB7, 0xD1] };
 
 #[repr(C)]
 struct IAvnToggleButtonVtbl {
@@ -34106,6 +37979,11 @@ struct IAvnToggleButtonVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnToggleButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnToggleButton, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnToggleButton, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnToggleButton, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnToggleButton, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnToggleButton, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnToggleButton, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnToggleButton, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnToggleButton, *mut f64) -> i32,
@@ -34126,6 +38004,10 @@ struct IAvnToggleButtonVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnToggleButton, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnToggleButton, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnToggleButton, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnToggleButton, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnToggleButton, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnToggleButton, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -34255,6 +38137,42 @@ impl ComPtr<IAvnToggleButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn get_width(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -34392,6 +38310,32 @@ impl ComPtr<IAvnToggleButton> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -34764,7 +38708,7 @@ impl ComPtr<IAvnToggleButton> {
     }
 }
 
-pub const I_AVN_UNIFORM_GRID_IID: Guid = Guid { data1: 0x38A201BC, data2: 0xB869, data3: 0x5FCB, data4: [0xAF, 0xE7, 0x21, 0xB8, 0xF6, 0x25, 0xFF, 0x61] };
+pub const I_AVN_UNIFORM_GRID_IID: Guid = Guid { data1: 0x12DD4BFC, data2: 0x89D8, data3: 0x571D, data4: [0x95, 0xC1, 0xE9, 0x83, 0xF9, 0xDD, 0xFB, 0x88] };
 
 #[repr(C)]
 struct IAvnUniformGridVtbl {
@@ -34780,6 +38724,11 @@ struct IAvnUniformGridVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnUniformGrid, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnUniformGrid, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnUniformGrid, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut f64) -> i32,
@@ -34800,6 +38749,10 @@ struct IAvnUniformGridVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnUniformGrid, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnUniformGrid, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnUniformGrid, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnUniformGrid, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnUniformGrid, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -34893,6 +38846,42 @@ impl ComPtr<IAvnUniformGrid> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -35032,6 +39021,32 @@ impl ComPtr<IAvnUniformGrid> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -35168,7 +39183,7 @@ impl ComPtr<IAvnUniformGrid> {
     }
 }
 
-pub const I_AVN_PROGRESS_BAR_IID: Guid = Guid { data1: 0xCD81B5F3, data2: 0xC8A2, data3: 0x5C69, data4: [0x86, 0xE1, 0xDE, 0x1A, 0x5A, 0x47, 0xF9, 0xA1] };
+pub const I_AVN_PROGRESS_BAR_IID: Guid = Guid { data1: 0x229693D2, data2: 0x326A, data3: 0x5415, data4: [0xA8, 0xD5, 0x3E, 0x13, 0x44, 0xF3, 0x31, 0x48] };
 
 #[repr(C)]
 struct IAvnProgressBarVtbl {
@@ -35184,6 +39199,11 @@ struct IAvnProgressBarVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnProgressBar, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnProgressBar, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnProgressBar, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnProgressBar, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnProgressBar, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnProgressBar, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnProgressBar, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnProgressBar, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnProgressBar, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnProgressBar, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnProgressBar, *mut f64) -> i32,
@@ -35204,6 +39224,10 @@ struct IAvnProgressBarVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnProgressBar, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnProgressBar, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnProgressBar, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnProgressBar, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnProgressBar, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnProgressBar, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnProgressBar, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnProgressBar, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnProgressBar, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnProgressBar, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -35329,6 +39353,42 @@ impl ComPtr<IAvnProgressBar> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -35468,6 +39528,32 @@ impl ComPtr<IAvnProgressBar> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -35827,7 +39913,7 @@ impl ComPtr<IAvnProgressBar> {
     }
 }
 
-pub const I_AVN_RADIO_BUTTON_IID: Guid = Guid { data1: 0xC8648886, data2: 0x2833, data3: 0x56A3, data4: [0xA4, 0xE3, 0x51, 0x6E, 0x9E, 0x5A, 0xEE, 0x45] };
+pub const I_AVN_RADIO_BUTTON_IID: Guid = Guid { data1: 0x35D41892, data2: 0x3FB7, data3: 0x5891, data4: [0xAA, 0x85, 0xA2, 0x8C, 0x93, 0xB7, 0x8C, 0x06] };
 
 #[repr(C)]
 struct IAvnRadioButtonVtbl {
@@ -35843,6 +39929,11 @@ struct IAvnRadioButtonVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnRadioButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnRadioButton, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnRadioButton, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnRadioButton, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnRadioButton, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnRadioButton, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnRadioButton, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnRadioButton, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnRadioButton, *mut f64) -> i32,
@@ -35863,6 +39954,10 @@ struct IAvnRadioButtonVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnRadioButton, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnRadioButton, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnRadioButton, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnRadioButton, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnRadioButton, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnRadioButton, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -35992,6 +40087,42 @@ impl ComPtr<IAvnRadioButton> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -36131,6 +40262,32 @@ impl ComPtr<IAvnRadioButton> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -36517,7 +40674,7 @@ impl ComPtr<IAvnRadioButton> {
     }
 }
 
-pub const I_AVN_REFRESH_CONTAINER_IID: Guid = Guid { data1: 0x75BC20DD, data2: 0x1348, data3: 0x5A06, data4: [0x90, 0x15, 0xF8, 0x56, 0x5E, 0x44, 0x73, 0x2F] };
+pub const I_AVN_REFRESH_CONTAINER_IID: Guid = Guid { data1: 0xE61AE098, data2: 0x3BFC, data3: 0x5128, data4: [0xBD, 0x03, 0xFA, 0xCD, 0x48, 0xA1, 0xB0, 0x85] };
 
 #[repr(C)]
 struct IAvnRefreshContainerVtbl {
@@ -36533,6 +40690,11 @@ struct IAvnRefreshContainerVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnRefreshContainer, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnRefreshContainer, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnRefreshContainer, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut f64) -> i32,
@@ -36553,6 +40715,10 @@ struct IAvnRefreshContainerVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnRefreshContainer, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnRefreshContainer, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnRefreshContainer, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnRefreshContainer, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnRefreshContainer, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -36668,6 +40834,42 @@ impl ComPtr<IAvnRefreshContainer> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -36807,6 +41009,32 @@ impl ComPtr<IAvnRefreshContainer> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -37095,7 +41323,7 @@ impl ComPtr<IAvnRefreshContainer> {
     }
 }
 
-pub const I_AVN_RELATIVE_PANEL_IID: Guid = Guid { data1: 0x6E04FC75, data2: 0x40C6, data3: 0x537B, data4: [0x8A, 0x49, 0x7F, 0x52, 0xB6, 0x14, 0x76, 0xAB] };
+pub const I_AVN_RELATIVE_PANEL_IID: Guid = Guid { data1: 0x49879823, data2: 0x0BD7, data3: 0x5F66, data4: [0xA3, 0x83, 0xD9, 0x5A, 0x6D, 0xE5, 0x71, 0xFC] };
 
 #[repr(C)]
 struct IAvnRelativePanelVtbl {
@@ -37111,6 +41339,11 @@ struct IAvnRelativePanelVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnRelativePanel, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnRelativePanel, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnRelativePanel, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut f64) -> i32,
@@ -37131,6 +41364,10 @@ struct IAvnRelativePanelVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnRelativePanel, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnRelativePanel, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnRelativePanel, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnRelativePanel, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnRelativePanel, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -37214,6 +41451,42 @@ impl ComPtr<IAvnRelativePanel> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -37356,6 +41629,32 @@ impl ComPtr<IAvnRelativePanel> {
             hresult::check(hr)
         }
     }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -37419,7 +41718,7 @@ impl ComPtr<IAvnRelativePanel> {
     }
 }
 
-pub const I_AVN_REPEAT_BUTTON_IID: Guid = Guid { data1: 0x53F5D584, data2: 0xD592, data3: 0x5655, data4: [0x87, 0xFA, 0xED, 0x70, 0xD3, 0xFB, 0xE0, 0x5B] };
+pub const I_AVN_REPEAT_BUTTON_IID: Guid = Guid { data1: 0x8C2602A3, data2: 0x4920, data3: 0x5717, data4: [0x8A, 0x34, 0x9F, 0xA0, 0x39, 0x15, 0x9F, 0xAC] };
 
 #[repr(C)]
 struct IAvnRepeatButtonVtbl {
@@ -37435,6 +41734,11 @@ struct IAvnRepeatButtonVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnRepeatButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnRepeatButton, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnRepeatButton, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut f64) -> i32,
@@ -37455,6 +41759,10 @@ struct IAvnRepeatButtonVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnRepeatButton, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnRepeatButton, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnRepeatButton, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnRepeatButton, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnRepeatButton, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -37582,6 +41890,42 @@ impl ComPtr<IAvnRepeatButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn get_width(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -37719,6 +42063,32 @@ impl ComPtr<IAvnRepeatButton> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -38078,7 +42448,7 @@ impl ComPtr<IAvnRepeatButton> {
     }
 }
 
-pub const I_AVN_SCROLL_VIEWER_IID: Guid = Guid { data1: 0x56D92885, data2: 0x3B57, data3: 0x5362, data4: [0x9F, 0x3A, 0x75, 0x35, 0x7B, 0x51, 0xCA, 0xD8] };
+pub const I_AVN_SCROLL_VIEWER_IID: Guid = Guid { data1: 0x3DF3C63E, data2: 0x7BB1, data3: 0x556A, data4: [0xAB, 0x02, 0x6B, 0xB7, 0x5D, 0xB1, 0x2F, 0xC9] };
 
 #[repr(C)]
 struct IAvnScrollViewerVtbl {
@@ -38094,6 +42464,11 @@ struct IAvnScrollViewerVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnScrollViewer, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnScrollViewer, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnScrollViewer, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut f64) -> i32,
@@ -38114,6 +42489,10 @@ struct IAvnScrollViewerVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnScrollViewer, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnScrollViewer, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnScrollViewer, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnScrollViewer, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnScrollViewer, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -38267,6 +42646,42 @@ impl ComPtr<IAvnScrollViewer> {
             hresult::check(hr)
         }
     }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn get_width(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -38404,6 +42819,32 @@ impl ComPtr<IAvnScrollViewer> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -38939,7 +43380,7 @@ impl ComPtr<IAvnScrollViewer> {
     }
 }
 
-pub const I_AVN_SELECTABLE_TEXT_BLOCK_IID: Guid = Guid { data1: 0x0B5F5059, data2: 0x2BDC, data3: 0x54BF, data4: [0xA0, 0xA0, 0x40, 0x93, 0xEB, 0x13, 0xEB, 0x07] };
+pub const I_AVN_SELECTABLE_TEXT_BLOCK_IID: Guid = Guid { data1: 0x87419452, data2: 0x29A4, data3: 0x5C17, data4: [0xA2, 0x1C, 0x5D, 0xEB, 0xAA, 0x5A, 0xB1, 0xDC] };
 
 #[repr(C)]
 struct IAvnSelectableTextBlockVtbl {
@@ -38955,6 +43396,11 @@ struct IAvnSelectableTextBlockVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut f64) -> i32,
@@ -38975,6 +43421,10 @@ struct IAvnSelectableTextBlockVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -39102,6 +43552,42 @@ impl ComPtr<IAvnSelectableTextBlock> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -39241,6 +43727,32 @@ impl ComPtr<IAvnSelectableTextBlock> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -39612,7 +44124,7 @@ impl ComPtr<IAvnSelectableTextBlock> {
     }
 }
 
-pub const I_AVN_SEPARATOR_IID: Guid = Guid { data1: 0xBE198D61, data2: 0x9C03, data3: 0x5136, data4: [0xB1, 0x33, 0x8E, 0xD6, 0xD4, 0xBD, 0x19, 0xE2] };
+pub const I_AVN_SEPARATOR_IID: Guid = Guid { data1: 0xEA4F057C, data2: 0xA24E, data3: 0x5433, data4: [0x81, 0x47, 0x00, 0xC2, 0x5E, 0x65, 0xFB, 0xF1] };
 
 #[repr(C)]
 struct IAvnSeparatorVtbl {
@@ -39628,6 +44140,11 @@ struct IAvnSeparatorVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnSeparator, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnSeparator, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnSeparator, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnSeparator, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnSeparator, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnSeparator, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnSeparator, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnSeparator, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnSeparator, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnSeparator, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnSeparator, *mut f64) -> i32,
@@ -39648,6 +44165,10 @@ struct IAvnSeparatorVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnSeparator, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnSeparator, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnSeparator, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnSeparator, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnSeparator, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnSeparator, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnSeparator, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnSeparator, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnSeparator, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnSeparator, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -39752,6 +44273,42 @@ impl ComPtr<IAvnSeparator> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -39891,6 +44448,32 @@ impl ComPtr<IAvnSeparator> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -40103,7 +44686,7 @@ impl ComPtr<IAvnSeparator> {
     }
 }
 
-pub const I_AVN_ARC_IID: Guid = Guid { data1: 0xA01B05C9, data2: 0xE7B5, data3: 0x5E48, data4: [0xAC, 0x6B, 0x03, 0x80, 0xB5, 0x44, 0xD2, 0x5F] };
+pub const I_AVN_ARC_IID: Guid = Guid { data1: 0xA64DB855, data2: 0xEEBF, data3: 0x5D4A, data4: [0xB3, 0x5F, 0x69, 0x73, 0x9B, 0x6A, 0xE7, 0xCA] };
 
 #[repr(C)]
 struct IAvnArcVtbl {
@@ -40119,6 +44702,11 @@ struct IAvnArcVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnArc, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnArc, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnArc, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnArc, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnArc, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnArc, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnArc, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnArc, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnArc, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnArc, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnArc, *mut f64) -> i32,
@@ -40139,6 +44727,10 @@ struct IAvnArcVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnArc, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnArc, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnArc, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnArc, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnArc, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnArc, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnArc, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnArc, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnArc, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnArc, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -40239,6 +44831,42 @@ impl ComPtr<IAvnArc> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -40378,6 +45006,32 @@ impl ComPtr<IAvnArc> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -40562,7 +45216,7 @@ impl ComPtr<IAvnArc> {
     }
 }
 
-pub const I_AVN_ELLIPSE_IID: Guid = Guid { data1: 0xFC9264FB, data2: 0x21C6, data3: 0x5DF7, data4: [0xBF, 0x47, 0x22, 0xED, 0x80, 0x4D, 0x4B, 0x49] };
+pub const I_AVN_ELLIPSE_IID: Guid = Guid { data1: 0x7067CB2F, data2: 0x7F47, data3: 0x5DC5, data4: [0xB1, 0x54, 0x76, 0x8A, 0xA8, 0xBD, 0x05, 0x93] };
 
 #[repr(C)]
 struct IAvnEllipseVtbl {
@@ -40578,6 +45232,11 @@ struct IAvnEllipseVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnEllipse, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnEllipse, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnEllipse, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnEllipse, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnEllipse, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnEllipse, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnEllipse, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnEllipse, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnEllipse, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnEllipse, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnEllipse, *mut f64) -> i32,
@@ -40598,6 +45257,10 @@ struct IAvnEllipseVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnEllipse, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnEllipse, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnEllipse, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnEllipse, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnEllipse, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnEllipse, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnEllipse, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnEllipse, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnEllipse, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnEllipse, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -40694,6 +45357,42 @@ impl ComPtr<IAvnEllipse> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -40833,6 +45532,32 @@ impl ComPtr<IAvnEllipse> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -40989,7 +45714,7 @@ impl ComPtr<IAvnEllipse> {
     }
 }
 
-pub const I_AVN_LINE_IID: Guid = Guid { data1: 0x0FC92D69, data2: 0x6C41, data3: 0x5CD5, data4: [0x84, 0xC7, 0x12, 0xD2, 0x3C, 0x0A, 0xA9, 0x84] };
+pub const I_AVN_LINE_IID: Guid = Guid { data1: 0xAF0B0109, data2: 0x4E30, data3: 0x5F61, data4: [0xBA, 0x0A, 0xE8, 0xC5, 0xCB, 0xAC, 0x8B, 0x54] };
 
 #[repr(C)]
 struct IAvnLineVtbl {
@@ -41005,6 +45730,11 @@ struct IAvnLineVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnLine, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnLine, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnLine, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnLine, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnLine, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnLine, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnLine, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnLine, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnLine, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnLine, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnLine, *mut f64) -> i32,
@@ -41025,6 +45755,10 @@ struct IAvnLineVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnLine, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnLine, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnLine, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnLine, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnLine, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnLine, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnLine, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnLine, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnLine, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnLine, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -41125,6 +45859,42 @@ impl ComPtr<IAvnLine> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -41264,6 +46034,32 @@ impl ComPtr<IAvnLine> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -41448,7 +46244,7 @@ impl ComPtr<IAvnLine> {
     }
 }
 
-pub const I_AVN_PATH_IID: Guid = Guid { data1: 0x12654CD6, data2: 0x16FC, data3: 0x5B65, data4: [0x9F, 0x01, 0x1B, 0x11, 0xA5, 0xA4, 0x98, 0xB2] };
+pub const I_AVN_PATH_IID: Guid = Guid { data1: 0xA5DCC730, data2: 0x496B, data3: 0x5891, data4: [0x96, 0xAD, 0x16, 0xD2, 0xA0, 0x9C, 0xD1, 0x55] };
 
 #[repr(C)]
 struct IAvnPathVtbl {
@@ -41464,6 +46260,11 @@ struct IAvnPathVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnPath, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnPath, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnPath, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnPath, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnPath, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnPath, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnPath, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnPath, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnPath, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnPath, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnPath, *mut f64) -> i32,
@@ -41484,6 +46285,10 @@ struct IAvnPathVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnPath, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnPath, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnPath, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnPath, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnPath, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnPath, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnPath, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnPath, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnPath, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnPath, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -41582,6 +46387,42 @@ impl ComPtr<IAvnPath> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -41721,6 +46562,32 @@ impl ComPtr<IAvnPath> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -41891,7 +46758,7 @@ impl ComPtr<IAvnPath> {
     }
 }
 
-pub const I_AVN_POLYGON_IID: Guid = Guid { data1: 0x0E2FEAD9, data2: 0xB930, data3: 0x5825, data4: [0x8E, 0xC7, 0x71, 0x4A, 0xF2, 0xF3, 0x30, 0x2E] };
+pub const I_AVN_POLYGON_IID: Guid = Guid { data1: 0xE6DD016D, data2: 0x26F8, data3: 0x560B, data4: [0x95, 0xB6, 0x1A, 0x68, 0x23, 0x92, 0xBC, 0x09] };
 
 #[repr(C)]
 struct IAvnPolygonVtbl {
@@ -41907,6 +46774,11 @@ struct IAvnPolygonVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnPolygon, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnPolygon, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnPolygon, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnPolygon, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnPolygon, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnPolygon, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnPolygon, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnPolygon, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnPolygon, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnPolygon, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnPolygon, *mut f64) -> i32,
@@ -41927,6 +46799,10 @@ struct IAvnPolygonVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnPolygon, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnPolygon, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnPolygon, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnPolygon, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnPolygon, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnPolygon, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnPolygon, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnPolygon, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnPolygon, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnPolygon, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -42027,6 +46903,42 @@ impl ComPtr<IAvnPolygon> {
             hresult::check(hr)
         }
     }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn get_width(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -42164,6 +47076,32 @@ impl ComPtr<IAvnPolygon> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -42334,7 +47272,7 @@ impl ComPtr<IAvnPolygon> {
     }
 }
 
-pub const I_AVN_POLYLINE_IID: Guid = Guid { data1: 0x82DE2551, data2: 0xBCFC, data3: 0x525A, data4: [0xB1, 0xAC, 0xFF, 0x19, 0x4A, 0xFD, 0x26, 0x51] };
+pub const I_AVN_POLYLINE_IID: Guid = Guid { data1: 0x893D539F, data2: 0x6493, data3: 0x5532, data4: [0xBD, 0x16, 0x35, 0x74, 0x00, 0xEE, 0xD8, 0x0B] };
 
 #[repr(C)]
 struct IAvnPolylineVtbl {
@@ -42350,6 +47288,11 @@ struct IAvnPolylineVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnPolyline, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnPolyline, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnPolyline, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnPolyline, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnPolyline, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnPolyline, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnPolyline, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnPolyline, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnPolyline, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnPolyline, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnPolyline, *mut f64) -> i32,
@@ -42370,6 +47313,10 @@ struct IAvnPolylineVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnPolyline, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnPolyline, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnPolyline, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnPolyline, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnPolyline, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnPolyline, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnPolyline, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnPolyline, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnPolyline, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnPolyline, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -42470,6 +47417,42 @@ impl ComPtr<IAvnPolyline> {
             hresult::check(hr)
         }
     }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn get_width(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -42607,6 +47590,32 @@ impl ComPtr<IAvnPolyline> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -42777,7 +47786,7 @@ impl ComPtr<IAvnPolyline> {
     }
 }
 
-pub const I_AVN_RECTANGLE_IID: Guid = Guid { data1: 0xA1B1A0A3, data2: 0x54E4, data3: 0x59E2, data4: [0xA3, 0x16, 0xD2, 0xA3, 0x5B, 0xE8, 0xE0, 0x63] };
+pub const I_AVN_RECTANGLE_IID: Guid = Guid { data1: 0x0B13A220, data2: 0xDEE0, data3: 0x53FC, data4: [0xA7, 0xB3, 0x2F, 0x6E, 0xD6, 0x3E, 0x10, 0x2F] };
 
 #[repr(C)]
 struct IAvnRectangleVtbl {
@@ -42793,6 +47802,11 @@ struct IAvnRectangleVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnRectangle, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnRectangle, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnRectangle, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnRectangle, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnRectangle, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnRectangle, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnRectangle, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnRectangle, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnRectangle, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnRectangle, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnRectangle, *mut f64) -> i32,
@@ -42813,6 +47827,10 @@ struct IAvnRectangleVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnRectangle, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnRectangle, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnRectangle, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnRectangle, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnRectangle, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnRectangle, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnRectangle, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnRectangle, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnRectangle, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnRectangle, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -42915,6 +47933,42 @@ impl ComPtr<IAvnRectangle> {
             hresult::check(hr)
         }
     }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn get_width(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -43052,6 +48106,32 @@ impl ComPtr<IAvnRectangle> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -43236,7 +48316,7 @@ impl ComPtr<IAvnRectangle> {
     }
 }
 
-pub const I_AVN_SECTOR_IID: Guid = Guid { data1: 0x62878E00, data2: 0x6F7E, data3: 0x5EA0, data4: [0xA9, 0x4C, 0xD8, 0x57, 0xB6, 0x02, 0x27, 0x34] };
+pub const I_AVN_SECTOR_IID: Guid = Guid { data1: 0xD0F311C0, data2: 0xA041, data3: 0x586B, data4: [0xB0, 0x7D, 0x25, 0x73, 0xD5, 0xEC, 0x93, 0x68] };
 
 #[repr(C)]
 struct IAvnSectorVtbl {
@@ -43252,6 +48332,11 @@ struct IAvnSectorVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnSector, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnSector, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnSector, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnSector, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnSector, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnSector, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnSector, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnSector, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnSector, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnSector, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnSector, *mut f64) -> i32,
@@ -43272,6 +48357,10 @@ struct IAvnSectorVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnSector, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnSector, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnSector, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnSector, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnSector, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnSector, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnSector, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnSector, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnSector, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnSector, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -43372,6 +48461,42 @@ impl ComPtr<IAvnSector> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -43511,6 +48636,32 @@ impl ComPtr<IAvnSector> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -43695,7 +48846,7 @@ impl ComPtr<IAvnSector> {
     }
 }
 
-pub const I_AVN_SHAPE_IID: Guid = Guid { data1: 0x9A7088C5, data2: 0x7AF4, data3: 0x525D, data4: [0x94, 0xF1, 0x99, 0x99, 0x18, 0x33, 0x52, 0x66] };
+pub const I_AVN_SHAPE_IID: Guid = Guid { data1: 0xD7B89215, data2: 0xFEEB, data3: 0x5459, data4: [0x83, 0x95, 0x7C, 0xCB, 0x1B, 0xF4, 0x8A, 0xB7] };
 
 #[repr(C)]
 struct IAvnShapeVtbl {
@@ -43711,6 +48862,11 @@ struct IAvnShapeVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnShape, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnShape, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnShape, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnShape, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnShape, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnShape, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnShape, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnShape, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnShape, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnShape, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnShape, *mut f64) -> i32,
@@ -43731,6 +48887,10 @@ struct IAvnShapeVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnShape, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnShape, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnShape, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnShape, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnShape, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnShape, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnShape, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnShape, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnShape, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnShape, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -43827,6 +48987,42 @@ impl ComPtr<IAvnShape> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -43966,6 +49162,32 @@ impl ComPtr<IAvnShape> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -44122,7 +49344,7 @@ impl ComPtr<IAvnShape> {
     }
 }
 
-pub const I_AVN_SLIDER_IID: Guid = Guid { data1: 0x884ECE05, data2: 0x08C5, data3: 0x538A, data4: [0x8D, 0x34, 0x06, 0xF1, 0x78, 0x63, 0x7B, 0x09] };
+pub const I_AVN_SLIDER_IID: Guid = Guid { data1: 0x4CF7FCE8, data2: 0xACE5, data3: 0x5CAD, data4: [0x94, 0xF6, 0xF4, 0x0F, 0xDA, 0x7A, 0xF1, 0x15] };
 
 #[repr(C)]
 struct IAvnSliderVtbl {
@@ -44138,6 +49360,11 @@ struct IAvnSliderVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnSlider, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnSlider, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnSlider, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnSlider, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnSlider, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnSlider, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnSlider, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnSlider, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnSlider, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnSlider, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnSlider, *mut f64) -> i32,
@@ -44158,6 +49385,10 @@ struct IAvnSliderVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnSlider, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnSlider, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnSlider, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnSlider, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnSlider, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnSlider, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnSlider, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnSlider, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnSlider, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnSlider, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -44284,6 +49515,42 @@ impl ComPtr<IAvnSlider> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -44423,6 +49690,32 @@ impl ComPtr<IAvnSlider> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -44788,7 +50081,7 @@ impl ComPtr<IAvnSlider> {
     }
 }
 
-pub const I_AVN_SPINNER_IID: Guid = Guid { data1: 0xC465BAF6, data2: 0x612B, data3: 0x50EF, data4: [0x88, 0x45, 0x30, 0x0C, 0xD4, 0x67, 0x1F, 0x8D] };
+pub const I_AVN_SPINNER_IID: Guid = Guid { data1: 0xD9C76469, data2: 0xBDB9, data3: 0x55DF, data4: [0x9B, 0xC4, 0x6E, 0xAF, 0xFA, 0xDD, 0x84, 0x34] };
 
 #[repr(C)]
 struct IAvnSpinnerVtbl {
@@ -44804,6 +50097,11 @@ struct IAvnSpinnerVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnSpinner, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnSpinner, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnSpinner, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnSpinner, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnSpinner, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnSpinner, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnSpinner, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnSpinner, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnSpinner, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnSpinner, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnSpinner, *mut f64) -> i32,
@@ -44824,6 +50122,10 @@ struct IAvnSpinnerVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnSpinner, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnSpinner, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnSpinner, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnSpinner, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnSpinner, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnSpinner, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnSpinner, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnSpinner, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnSpinner, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnSpinner, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -44934,6 +50236,42 @@ impl ComPtr<IAvnSpinner> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -45073,6 +50411,32 @@ impl ComPtr<IAvnSpinner> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -45327,7 +50691,7 @@ impl ComPtr<IAvnSpinner> {
     }
 }
 
-pub const I_AVN_SPLIT_BUTTON_IID: Guid = Guid { data1: 0x7AC1640E, data2: 0x1FF0, data3: 0x5D9E, data4: [0x9C, 0x9B, 0xCD, 0x77, 0xA9, 0x94, 0x80, 0x44] };
+pub const I_AVN_SPLIT_BUTTON_IID: Guid = Guid { data1: 0x7640B99C, data2: 0x6E7B, data3: 0x5B8D, data4: [0x89, 0x0D, 0x0E, 0xA0, 0xDA, 0x73, 0x20, 0x41] };
 
 #[repr(C)]
 struct IAvnSplitButtonVtbl {
@@ -45343,6 +50707,11 @@ struct IAvnSplitButtonVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnSplitButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnSplitButton, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnSplitButton, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnSplitButton, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnSplitButton, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnSplitButton, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnSplitButton, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnSplitButton, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnSplitButton, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnSplitButton, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnSplitButton, *mut f64) -> i32,
@@ -45363,6 +50732,10 @@ struct IAvnSplitButtonVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnSplitButton, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnSplitButton, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnSplitButton, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnSplitButton, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnSplitButton, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnSplitButton, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnSplitButton, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnSplitButton, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnSplitButton, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnSplitButton, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -45477,6 +50850,42 @@ impl ComPtr<IAvnSplitButton> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -45616,6 +51025,32 @@ impl ComPtr<IAvnSplitButton> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -45897,7 +51332,7 @@ impl ComPtr<IAvnSplitButton> {
     }
 }
 
-pub const I_AVN_SPLIT_VIEW_IID: Guid = Guid { data1: 0xB14736F4, data2: 0xE616, data3: 0x5941, data4: [0x96, 0x12, 0x11, 0x00, 0xB8, 0x6F, 0x83, 0x5A] };
+pub const I_AVN_SPLIT_VIEW_IID: Guid = Guid { data1: 0x0C9C08BE, data2: 0x9C25, data3: 0x5CAC, data4: [0xB3, 0xE8, 0xAA, 0x28, 0x3A, 0x43, 0x19, 0x19] };
 
 #[repr(C)]
 struct IAvnSplitViewVtbl {
@@ -45913,6 +51348,11 @@ struct IAvnSplitViewVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnSplitView, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnSplitView, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnSplitView, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnSplitView, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnSplitView, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnSplitView, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnSplitView, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnSplitView, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnSplitView, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnSplitView, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnSplitView, *mut f64) -> i32,
@@ -45933,6 +51373,10 @@ struct IAvnSplitViewVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnSplitView, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnSplitView, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnSplitView, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnSplitView, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnSplitView, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnSplitView, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnSplitView, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnSplitView, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnSplitView, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnSplitView, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -46063,6 +51507,42 @@ impl ComPtr<IAvnSplitView> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -46202,6 +51682,32 @@ impl ComPtr<IAvnSplitView> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -46594,7 +52100,7 @@ impl ComPtr<IAvnSplitView> {
     }
 }
 
-pub const I_AVN_STACK_PANEL_IID: Guid = Guid { data1: 0x6951F626, data2: 0x1FAF, data3: 0x527B, data4: [0xB3, 0x79, 0xAD, 0xB3, 0x67, 0x88, 0x6E, 0xEF] };
+pub const I_AVN_STACK_PANEL_IID: Guid = Guid { data1: 0xB9102549, data2: 0xF805, data3: 0x54B9, data4: [0x8A, 0x4E, 0x65, 0x49, 0x9B, 0xEE, 0x64, 0x37] };
 
 #[repr(C)]
 struct IAvnStackPanelVtbl {
@@ -46610,6 +52116,11 @@ struct IAvnStackPanelVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnStackPanel, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnStackPanel, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnStackPanel, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnStackPanel, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnStackPanel, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnStackPanel, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnStackPanel, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnStackPanel, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnStackPanel, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnStackPanel, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnStackPanel, *mut f64) -> i32,
@@ -46630,6 +52141,10 @@ struct IAvnStackPanelVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnStackPanel, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnStackPanel, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnStackPanel, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnStackPanel, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnStackPanel, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnStackPanel, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnStackPanel, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnStackPanel, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnStackPanel, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnStackPanel, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -46721,6 +52236,42 @@ impl ComPtr<IAvnStackPanel> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -46863,6 +52414,32 @@ impl ComPtr<IAvnStackPanel> {
             hresult::check(hr)
         }
     }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -46982,7 +52559,7 @@ impl ComPtr<IAvnStackPanel> {
     }
 }
 
-pub const I_AVN_TAB_CONTROL_IID: Guid = Guid { data1: 0x5E487A00, data2: 0x92DC, data3: 0x5C45, data4: [0x83, 0xEF, 0x06, 0x1F, 0x43, 0xFC, 0x2E, 0x34] };
+pub const I_AVN_TAB_CONTROL_IID: Guid = Guid { data1: 0xB0C6EFAF, data2: 0x8F86, data3: 0x584A, data4: [0x8A, 0xF0, 0x06, 0x62, 0x97, 0x0B, 0x59, 0x7B] };
 
 #[repr(C)]
 struct IAvnTabControlVtbl {
@@ -46998,6 +52575,11 @@ struct IAvnTabControlVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnTabControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTabControl, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnTabControl, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnTabControl, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnTabControl, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnTabControl, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnTabControl, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnTabControl, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnTabControl, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnTabControl, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnTabControl, *mut f64) -> i32,
@@ -47018,6 +52600,10 @@ struct IAvnTabControlVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnTabControl, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnTabControl, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnTabControl, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnTabControl, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnTabControl, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnTabControl, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnTabControl, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTabControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTabControl, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTabControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -47143,6 +52729,42 @@ impl ComPtr<IAvnTabControl> {
             hresult::check(hr)
         }
     }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn get_width(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -47280,6 +52902,32 @@ impl ComPtr<IAvnTabControl> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -47625,7 +53273,7 @@ impl ComPtr<IAvnTabControl> {
     }
 }
 
-pub const I_AVN_TAB_ITEM_IID: Guid = Guid { data1: 0x140A473A, data2: 0x4EA0, data3: 0x511D, data4: [0x89, 0xC9, 0x52, 0xBC, 0x39, 0xC1, 0x79, 0x71] };
+pub const I_AVN_TAB_ITEM_IID: Guid = Guid { data1: 0x1C7A24F7, data2: 0x5E14, data3: 0x5981, data4: [0x8E, 0xFF, 0x60, 0xAA, 0x50, 0xF7, 0xD7, 0xD4] };
 
 #[repr(C)]
 struct IAvnTabItemVtbl {
@@ -47641,6 +53289,11 @@ struct IAvnTabItemVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnTabItem, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTabItem, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnTabItem, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnTabItem, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnTabItem, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnTabItem, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnTabItem, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnTabItem, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnTabItem, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnTabItem, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnTabItem, *mut f64) -> i32,
@@ -47661,6 +53314,10 @@ struct IAvnTabItemVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnTabItem, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnTabItem, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnTabItem, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnTabItem, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnTabItem, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnTabItem, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnTabItem, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTabItem, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTabItem, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTabItem, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -47775,6 +53432,42 @@ impl ComPtr<IAvnTabItem> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -47914,6 +53607,32 @@ impl ComPtr<IAvnTabItem> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -48196,7 +53915,7 @@ impl ComPtr<IAvnTabItem> {
     }
 }
 
-pub const I_AVN_TABLE_VIEW_IID: Guid = Guid { data1: 0xE176A9E9, data2: 0xD72E, data3: 0x50F5, data4: [0xB2, 0x55, 0xC0, 0xAE, 0x3D, 0x7C, 0x5C, 0x28] };
+pub const I_AVN_TABLE_VIEW_IID: Guid = Guid { data1: 0x4D0435C8, data2: 0xC782, data3: 0x5FDA, data4: [0x8C, 0xCB, 0x2C, 0xB8, 0x23, 0xA4, 0x3B, 0x7A] };
 
 #[repr(C)]
 struct IAvnTableViewVtbl {
@@ -48212,6 +53931,11 @@ struct IAvnTableViewVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnTableView, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTableView, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnTableView, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnTableView, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnTableView, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnTableView, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnTableView, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnTableView, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnTableView, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnTableView, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnTableView, *mut f64) -> i32,
@@ -48232,6 +53956,10 @@ struct IAvnTableViewVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnTableView, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnTableView, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnTableView, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnTableView, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnTableView, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnTableView, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnTableView, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTableView, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTableView, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTableView, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -48355,6 +54083,42 @@ impl ComPtr<IAvnTableView> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -48494,6 +54258,32 @@ impl ComPtr<IAvnTableView> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -48837,7 +54627,7 @@ impl ComPtr<IAvnTableView> {
     }
 }
 
-pub const I_AVN_TABLE_VIEW_CELL_IID: Guid = Guid { data1: 0xB7792597, data2: 0x6DAD, data3: 0x589B, data4: [0x87, 0x02, 0x33, 0xC3, 0x98, 0x97, 0x5A, 0xE6] };
+pub const I_AVN_TABLE_VIEW_CELL_IID: Guid = Guid { data1: 0xEF4B5794, data2: 0xDF8D, data3: 0x5F67, data4: [0x99, 0xF9, 0x2E, 0xDA, 0xBF, 0x1A, 0x32, 0xA7] };
 
 #[repr(C)]
 struct IAvnTableViewCellVtbl {
@@ -48853,6 +54643,11 @@ struct IAvnTableViewCellVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnTableViewCell, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnTableViewCell, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnTableViewCell, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut f64) -> i32,
@@ -48873,6 +54668,10 @@ struct IAvnTableViewCellVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnTableViewCell, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnTableViewCell, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnTableViewCell, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnTableViewCell, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTableViewCell, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -48983,6 +54782,42 @@ impl ComPtr<IAvnTableViewCell> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -49122,6 +54957,32 @@ impl ComPtr<IAvnTableViewCell> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -49568,7 +55429,7 @@ impl ComPtr<IAvnTableViewColumn> {
     }
 }
 
-pub const I_AVN_TABLE_VIEW_ROW_IID: Guid = Guid { data1: 0x36B64EB0, data2: 0x2F91, data3: 0x5347, data4: [0xB5, 0xB1, 0x29, 0x43, 0x73, 0x9B, 0x22, 0x11] };
+pub const I_AVN_TABLE_VIEW_ROW_IID: Guid = Guid { data1: 0x77D8135A, data2: 0x51C5, data3: 0x5225, data4: [0x94, 0xF3, 0x94, 0x83, 0x9A, 0x67, 0x4B, 0xDE] };
 
 #[repr(C)]
 struct IAvnTableViewRowVtbl {
@@ -49584,6 +55445,11 @@ struct IAvnTableViewRowVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnTableViewRow, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnTableViewRow, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnTableViewRow, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut f64) -> i32,
@@ -49604,6 +55470,10 @@ struct IAvnTableViewRowVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnTableViewRow, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnTableViewRow, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnTableViewRow, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnTableViewRow, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTableViewRow, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -49716,6 +55586,42 @@ impl ComPtr<IAvnTableViewRow> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -49855,6 +55761,32 @@ impl ComPtr<IAvnTableViewRow> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -50123,7 +56055,7 @@ impl ComPtr<IAvnTableViewRow> {
     }
 }
 
-pub const I_AVN_TEXT_BLOCK_IID: Guid = Guid { data1: 0x991802B9, data2: 0xBF9B, data3: 0x5BAE, data4: [0xB9, 0xA7, 0x50, 0x76, 0xF1, 0x48, 0xCF, 0x98] };
+pub const I_AVN_TEXT_BLOCK_IID: Guid = Guid { data1: 0x3975D6B6, data2: 0x4298, data3: 0x59DE, data4: [0xB3, 0x80, 0x7C, 0x20, 0xDA, 0xA0, 0xDF, 0x27] };
 
 #[repr(C)]
 struct IAvnTextBlockVtbl {
@@ -50139,6 +56071,11 @@ struct IAvnTextBlockVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnTextBlock, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTextBlock, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnTextBlock, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnTextBlock, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnTextBlock, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnTextBlock, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnTextBlock, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnTextBlock, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnTextBlock, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnTextBlock, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnTextBlock, *mut f64) -> i32,
@@ -50159,6 +56096,10 @@ struct IAvnTextBlockVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnTextBlock, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnTextBlock, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnTextBlock, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnTextBlock, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnTextBlock, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnTextBlock, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnTextBlock, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTextBlock, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTextBlock, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTextBlock, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -50271,6 +56212,42 @@ impl ComPtr<IAvnTextBlock> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -50410,6 +56387,32 @@ impl ComPtr<IAvnTextBlock> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -50678,7 +56681,7 @@ impl ComPtr<IAvnTextBlock> {
     }
 }
 
-pub const I_AVN_TEXT_BOX_IID: Guid = Guid { data1: 0x007AACD5, data2: 0x4D3D, data3: 0x5EC0, data4: [0xBC, 0xA7, 0xA1, 0x65, 0x77, 0xA2, 0x88, 0x38] };
+pub const I_AVN_TEXT_BOX_IID: Guid = Guid { data1: 0x5FD5A96C, data2: 0x6F7A, data3: 0x51B0, data4: [0x86, 0x09, 0x96, 0x32, 0x84, 0x9C, 0xD3, 0x4F] };
 
 #[repr(C)]
 struct IAvnTextBoxVtbl {
@@ -50694,6 +56697,11 @@ struct IAvnTextBoxVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnTextBox, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTextBox, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnTextBox, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnTextBox, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnTextBox, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnTextBox, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnTextBox, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnTextBox, *mut f64) -> i32,
@@ -50714,6 +56722,10 @@ struct IAvnTextBoxVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnTextBox, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnTextBox, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnTextBox, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnTextBox, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTextBox, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -50902,6 +56914,42 @@ impl ComPtr<IAvnTextBox> {
             hresult::check(hr)
         }
     }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn get_width(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -51039,6 +57087,32 @@ impl ComPtr<IAvnTextBox> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -51817,7 +57891,7 @@ impl ComPtr<IAvnTextBox> {
     }
 }
 
-pub const I_AVN_THEME_VARIANT_SCOPE_IID: Guid = Guid { data1: 0x3D34A21E, data2: 0xA031, data3: 0x5AE7, data4: [0x97, 0xFD, 0xE2, 0xF9, 0xF1, 0xA7, 0xA6, 0xEC] };
+pub const I_AVN_THEME_VARIANT_SCOPE_IID: Guid = Guid { data1: 0x6B8223DE, data2: 0x4F86, data3: 0x5921, data4: [0xBA, 0xD1, 0x39, 0xD6, 0xD3, 0x3D, 0x0B, 0x10] };
 
 #[repr(C)]
 struct IAvnThemeVariantScopeVtbl {
@@ -51833,6 +57907,11 @@ struct IAvnThemeVariantScopeVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnThemeVariantScope, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnThemeVariantScope, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnThemeVariantScope, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut f64) -> i32,
@@ -51853,6 +57932,10 @@ struct IAvnThemeVariantScopeVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnThemeVariantScope, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnThemeVariantScope, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnThemeVariantScope, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnThemeVariantScope, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnThemeVariantScope, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -51937,6 +58020,42 @@ impl ComPtr<IAvnThemeVariantScope> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -52079,6 +58198,32 @@ impl ComPtr<IAvnThemeVariantScope> {
             hresult::check(hr)
         }
     }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -52148,7 +58293,7 @@ impl ComPtr<IAvnThemeVariantScope> {
     }
 }
 
-pub const I_AVN_TIME_PICKER_IID: Guid = Guid { data1: 0x846CC77C, data2: 0x5E94, data3: 0x5912, data4: [0x9D, 0x25, 0x4E, 0x83, 0x16, 0xEB, 0xF1, 0x8A] };
+pub const I_AVN_TIME_PICKER_IID: Guid = Guid { data1: 0x60009974, data2: 0x2307, data3: 0x5DB3, data4: [0x93, 0x1F, 0x79, 0x65, 0xFD, 0x21, 0x76, 0xB5] };
 
 #[repr(C)]
 struct IAvnTimePickerVtbl {
@@ -52164,6 +58309,11 @@ struct IAvnTimePickerVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnTimePicker, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTimePicker, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnTimePicker, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnTimePicker, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnTimePicker, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnTimePicker, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnTimePicker, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnTimePicker, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnTimePicker, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnTimePicker, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnTimePicker, *mut f64) -> i32,
@@ -52184,6 +58334,10 @@ struct IAvnTimePickerVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnTimePicker, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnTimePicker, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnTimePicker, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnTimePicker, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnTimePicker, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnTimePicker, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnTimePicker, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTimePicker, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTimePicker, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTimePicker, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -52303,6 +58457,42 @@ impl ComPtr<IAvnTimePicker> {
             hresult::check(hr)
         }
     }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn get_width(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -52440,6 +58630,32 @@ impl ComPtr<IAvnTimePicker> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -52742,7 +58958,7 @@ impl ComPtr<IAvnTimePicker> {
     }
 }
 
-pub const I_AVN_TOGGLE_SPLIT_BUTTON_IID: Guid = Guid { data1: 0xC1F07689, data2: 0x8764, data3: 0x57FF, data4: [0x8F, 0x22, 0x54, 0xBF, 0x4A, 0x18, 0xD5, 0x04] };
+pub const I_AVN_TOGGLE_SPLIT_BUTTON_IID: Guid = Guid { data1: 0x680541A4, data2: 0x4BB2, data3: 0x58D6, data4: [0xA3, 0xD8, 0x93, 0x5F, 0x8E, 0x96, 0x09, 0x5D] };
 
 #[repr(C)]
 struct IAvnToggleSplitButtonVtbl {
@@ -52758,6 +58974,11 @@ struct IAvnToggleSplitButtonVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnToggleSplitButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnToggleSplitButton, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnToggleSplitButton, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut f64) -> i32,
@@ -52778,6 +58999,10 @@ struct IAvnToggleSplitButtonVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnToggleSplitButton, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnToggleSplitButton, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnToggleSplitButton, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnToggleSplitButton, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnToggleSplitButton, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -52896,6 +59121,42 @@ impl ComPtr<IAvnToggleSplitButton> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -53035,6 +59296,32 @@ impl ComPtr<IAvnToggleSplitButton> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -53343,7 +59630,7 @@ impl ComPtr<IAvnToggleSplitButton> {
     }
 }
 
-pub const I_AVN_TOGGLE_SWITCH_IID: Guid = Guid { data1: 0xABA6544B, data2: 0x4A3E, data3: 0x5042, data4: [0xBF, 0xB1, 0xBE, 0x9D, 0x9E, 0xB1, 0x36, 0x1C] };
+pub const I_AVN_TOGGLE_SWITCH_IID: Guid = Guid { data1: 0x6CF8D113, data2: 0xA905, data3: 0x5505, data4: [0x8D, 0x5F, 0x34, 0x57, 0xEC, 0xD4, 0xC6, 0xD8] };
 
 #[repr(C)]
 struct IAvnToggleSwitchVtbl {
@@ -53359,6 +59646,11 @@ struct IAvnToggleSwitchVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnToggleSwitch, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnToggleSwitch, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnToggleSwitch, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut f64) -> i32,
@@ -53379,6 +59671,10 @@ struct IAvnToggleSwitchVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnToggleSwitch, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnToggleSwitch, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnToggleSwitch, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnToggleSwitch, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnToggleSwitch, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -53510,6 +59806,42 @@ impl ComPtr<IAvnToggleSwitch> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -53649,6 +59981,32 @@ impl ComPtr<IAvnToggleSwitch> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -54049,7 +60407,7 @@ impl ComPtr<IAvnToggleSwitch> {
     }
 }
 
-pub const I_AVN_TOOL_TIP_IID: Guid = Guid { data1: 0x53E39CDB, data2: 0xBF4D, data3: 0x5EDE, data4: [0xA8, 0x3D, 0x5E, 0x13, 0xDA, 0xA9, 0xCA, 0xE1] };
+pub const I_AVN_TOOL_TIP_IID: Guid = Guid { data1: 0x1567103D, data2: 0x03B5, data3: 0x51A8, data4: [0xA3, 0x8F, 0xAD, 0xEE, 0x27, 0x41, 0xF0, 0xCE] };
 
 #[repr(C)]
 struct IAvnToolTipVtbl {
@@ -54065,6 +60423,11 @@ struct IAvnToolTipVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnToolTip, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnToolTip, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnToolTip, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnToolTip, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnToolTip, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnToolTip, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnToolTip, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnToolTip, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnToolTip, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnToolTip, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnToolTip, *mut f64) -> i32,
@@ -54085,6 +60448,10 @@ struct IAvnToolTipVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnToolTip, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnToolTip, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnToolTip, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnToolTip, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnToolTip, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnToolTip, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnToolTip, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnToolTip, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnToolTip, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnToolTip, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -54195,6 +60562,42 @@ impl ComPtr<IAvnToolTip> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -54334,6 +60737,32 @@ impl ComPtr<IAvnToolTip> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -54588,7 +61017,7 @@ impl ComPtr<IAvnToolTip> {
     }
 }
 
-pub const I_AVN_TRANSITIONING_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x96EF7A8B, data2: 0x2282, data3: 0x5A43, data4: [0xBE, 0xEB, 0x01, 0xAE, 0x5B, 0xB2, 0x86, 0x40] };
+pub const I_AVN_TRANSITIONING_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x0B974218, data2: 0xD860, data3: 0x5122, data4: [0xBC, 0x61, 0xAE, 0xA6, 0x5B, 0x05, 0xDE, 0x7C] };
 
 #[repr(C)]
 struct IAvnTransitioningContentControlVtbl {
@@ -54604,6 +61033,11 @@ struct IAvnTransitioningContentControlVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut f64) -> i32,
@@ -54624,6 +61058,10 @@ struct IAvnTransitioningContentControlVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -54736,6 +61174,42 @@ impl ComPtr<IAvnTransitioningContentControl> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -54875,6 +61349,32 @@ impl ComPtr<IAvnTransitioningContentControl> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -55212,7 +61712,7 @@ impl ComPtr<IAvnTrayIcon> {
     }
 }
 
-pub const I_AVN_TREE_VIEW_IID: Guid = Guid { data1: 0x638C4442, data2: 0x77A6, data3: 0x5E2D, data4: [0x9E, 0xB1, 0xA1, 0x57, 0x75, 0xF1, 0xB7, 0x8D] };
+pub const I_AVN_TREE_VIEW_IID: Guid = Guid { data1: 0x662E54E6, data2: 0x2CB4, data3: 0x585C, data4: [0x8C, 0xE7, 0xA3, 0xFE, 0x2D, 0x3F, 0x58, 0x38] };
 
 #[repr(C)]
 struct IAvnTreeViewVtbl {
@@ -55228,6 +61728,11 @@ struct IAvnTreeViewVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnTreeView, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTreeView, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnTreeView, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnTreeView, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnTreeView, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnTreeView, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnTreeView, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnTreeView, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnTreeView, *mut f64) -> i32,
@@ -55248,6 +61753,10 @@ struct IAvnTreeViewVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnTreeView, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnTreeView, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnTreeView, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnTreeView, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnTreeView, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTreeView, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -55365,6 +61874,42 @@ impl ComPtr<IAvnTreeView> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -55504,6 +62049,32 @@ impl ComPtr<IAvnTreeView> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -55803,7 +62374,7 @@ impl ComPtr<IAvnTreeView> {
     }
 }
 
-pub const I_AVN_TREE_VIEW_ITEM_IID: Guid = Guid { data1: 0x9BE2C6EA, data2: 0xFA90, data3: 0x542F, data4: [0x8B, 0x61, 0xD1, 0xDE, 0xF3, 0x57, 0xF0, 0x25] };
+pub const I_AVN_TREE_VIEW_ITEM_IID: Guid = Guid { data1: 0x33D8152A, data2: 0x31F9, data3: 0x5356, data4: [0x89, 0x55, 0xE2, 0x48, 0xFB, 0x07, 0x8D, 0x13] };
 
 #[repr(C)]
 struct IAvnTreeViewItemVtbl {
@@ -55819,6 +62390,11 @@ struct IAvnTreeViewItemVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnTreeViewItem, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnTreeViewItem, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnTreeViewItem, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut f64) -> i32,
@@ -55839,6 +62415,10 @@ struct IAvnTreeViewItemVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnTreeViewItem, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnTreeViewItem, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnTreeViewItem, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnTreeViewItem, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTreeViewItem, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -55957,6 +62537,42 @@ impl ComPtr<IAvnTreeViewItem> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -56096,6 +62712,32 @@ impl ComPtr<IAvnTreeViewItem> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -56406,7 +63048,7 @@ impl ComPtr<IAvnTreeViewItem> {
     }
 }
 
-pub const I_AVN_USER_CONTROL_IID: Guid = Guid { data1: 0x006737C6, data2: 0xF903, data3: 0x562F, data4: [0x96, 0x8E, 0x2A, 0xD0, 0xB2, 0x33, 0xA0, 0x2B] };
+pub const I_AVN_USER_CONTROL_IID: Guid = Guid { data1: 0xB61B153D, data2: 0xEC8B, data3: 0x54C4, data4: [0x87, 0xBA, 0x28, 0x3F, 0xD7, 0xCC, 0xF9, 0xEB] };
 
 #[repr(C)]
 struct IAvnUserControlVtbl {
@@ -56422,6 +63064,11 @@ struct IAvnUserControlVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnUserControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnUserControl, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnUserControl, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnUserControl, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnUserControl, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnUserControl, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnUserControl, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnUserControl, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnUserControl, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnUserControl, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnUserControl, *mut f64) -> i32,
@@ -56442,6 +63089,10 @@ struct IAvnUserControlVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnUserControl, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnUserControl, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnUserControl, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnUserControl, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnUserControl, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnUserControl, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnUserControl, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnUserControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnUserControl, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnUserControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -56552,6 +63203,42 @@ impl ComPtr<IAvnUserControl> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -56691,6 +63378,32 @@ impl ComPtr<IAvnUserControl> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -56945,7 +63658,7 @@ impl ComPtr<IAvnUserControl> {
     }
 }
 
-pub const I_AVN_VIEWBOX_IID: Guid = Guid { data1: 0x982EA76A, data2: 0x4205, data3: 0x5FB0, data4: [0xA1, 0xE6, 0x5A, 0xBF, 0x63, 0x1A, 0x4C, 0xE5] };
+pub const I_AVN_VIEWBOX_IID: Guid = Guid { data1: 0xCDC2A914, data2: 0x1F29, data3: 0x5A49, data4: [0xB1, 0xDE, 0x16, 0xB3, 0x44, 0x07, 0xE2, 0x70] };
 
 #[repr(C)]
 struct IAvnViewboxVtbl {
@@ -56961,6 +63674,11 @@ struct IAvnViewboxVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnViewbox, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnViewbox, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnViewbox, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnViewbox, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnViewbox, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnViewbox, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnViewbox, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnViewbox, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnViewbox, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnViewbox, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnViewbox, *mut f64) -> i32,
@@ -56981,6 +63699,10 @@ struct IAvnViewboxVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnViewbox, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnViewbox, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnViewbox, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnViewbox, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnViewbox, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnViewbox, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnViewbox, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnViewbox, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnViewbox, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnViewbox, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -57067,6 +63789,42 @@ impl ComPtr<IAvnViewbox> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -57209,6 +63967,32 @@ impl ComPtr<IAvnViewbox> {
             hresult::check(hr)
         }
     }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -57292,7 +64076,7 @@ impl ComPtr<IAvnViewbox> {
     }
 }
 
-pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0xA3C6E6F8, data2: 0x2067, data3: 0x5C29, data4: [0x9C, 0x7F, 0x60, 0x37, 0x27, 0x4D, 0x68, 0x44] };
+pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0x4E237A63, data2: 0x4083, data3: 0x5704, data4: [0x8B, 0x9E, 0x1C, 0x6C, 0xAF, 0xC4, 0x17, 0x2A] };
 
 #[repr(C)]
 struct IAvnWindowVtbl {
@@ -57308,6 +64092,11 @@ struct IAvnWindowVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnWindow, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnWindow, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnWindow, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnWindow, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnWindow, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnWindow, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnWindow, *mut f64) -> i32,
@@ -57328,6 +64117,10 @@ struct IAvnWindowVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnWindow, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnWindow, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnWindow, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -57474,6 +64267,42 @@ impl ComPtr<IAvnWindow> {
             hresult::check(hr)
         }
     }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
     pub fn get_width(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -57611,6 +64440,32 @@ impl ComPtr<IAvnWindow> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -58103,7 +64958,7 @@ impl ComPtr<IAvnWindow> {
     }
 }
 
-pub const I_AVN_WRAP_PANEL_IID: Guid = Guid { data1: 0x48DA8953, data2: 0xECCB, data3: 0x5C1F, data4: [0x93, 0xAB, 0xA1, 0xD8, 0x65, 0x8D, 0x32, 0xFA] };
+pub const I_AVN_WRAP_PANEL_IID: Guid = Guid { data1: 0x62F0588C, data2: 0x31F3, data3: 0x59FA, data4: [0xBF, 0xE6, 0x0D, 0x38, 0x09, 0xF8, 0x39, 0x70] };
 
 #[repr(C)]
 struct IAvnWrapPanelVtbl {
@@ -58119,6 +64974,11 @@ struct IAvnWrapPanelVtbl {
     set_is_visible: unsafe extern "system" fn(*mut IAvnWrapPanel, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut f64) -> i32,
     set_opacity: unsafe extern "system" fn(*mut IAvnWrapPanel, f64) -> i32,
+    get_context_menu: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut *mut IAvnContextMenu) -> i32,
+    set_context_menu: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut IAvnContextMenu) -> i32,
+    get_context_flyout: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut *mut IAvnFlyoutBase) -> i32,
+    set_context_flyout: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut IAvnFlyoutBase) -> i32,
+    get_is_loaded: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut i32) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut f64) -> i32,
     set_width: unsafe extern "system" fn(*mut IAvnWrapPanel, f64) -> i32,
     get_height: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut f64) -> i32,
@@ -58139,6 +64999,10 @@ struct IAvnWrapPanelVtbl {
     set_vertical_alignment: unsafe extern "system" fn(*mut IAvnWrapPanel, i32) -> i32,
     get_is_enabled: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut i32) -> i32,
     set_is_enabled: unsafe extern "system" fn(*mut IAvnWrapPanel, i32) -> i32,
+    advise_loaded: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut IAvnControlLoadedHandler, *mut i64) -> i32,
+    unadvise_loaded: unsafe extern "system" fn(*mut IAvnWrapPanel, i64) -> i32,
+    advise_unloaded: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
+    unadvise_unloaded: unsafe extern "system" fn(*mut IAvnWrapPanel, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnWrapPanel, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -58234,6 +65098,42 @@ impl ComPtr<IAvnWrapPanel> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_opacity)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_context_menu(&self) -> Result<Option<ComPtr<IAvnContextMenu>>> {
+        unsafe {
+            let mut value: *mut IAvnContextMenu = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_menu)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_menu(&self, value: Option<&ComPtr<IAvnContextMenu>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_menu)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_context_flyout(&self) -> Result<Option<ComPtr<IAvnFlyoutBase>>> {
+        unsafe {
+            let mut value: *mut IAvnFlyoutBase = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_context_flyout)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_context_flyout(&self, value: Option<&ComPtr<IAvnFlyoutBase>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_context_flyout)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_loaded(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_loaded)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
         }
     }
     pub fn get_width(&self) -> Result<f64> {
@@ -58373,6 +65273,32 @@ impl ComPtr<IAvnWrapPanel> {
     pub fn set_is_enabled(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_enabled)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_loaded(&self, handler: &ComPtr<IAvnControlLoadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_loaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_loaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_loaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_unloaded(&self, handler: &ComPtr<IAvnControlUnloadedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_unloaded)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }

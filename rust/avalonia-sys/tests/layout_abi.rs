@@ -40,13 +40,13 @@ fn widened_interfaces_publish_their_layout_abi_version() {
         // Nothing was added to StyledElement, Control or Decorator after the layout wave, so
         // their flattened vtables — and therefore their version 3 IIDs — still stand.
         "#define I_AVN_STYLED_ELEMENT_ABI_VERSION 3",
-        "#define I_AVN_CONTROL_ABI_VERSION 3",
-        "#define I_AVN_DECORATOR_ABI_VERSION 3",
+        "#define I_AVN_CONTROL_ABI_VERSION 4",
+        "#define I_AVN_DECORATOR_ABI_VERSION 4",
         // Window and Button sit under ContentControl, which the completeness wave widened,
         // and the window overlay-chrome pass widened the leaf to 8 without disturbing
         // the content control or factory ABI.
-        "#define I_AVN_WINDOW_ABI_VERSION 8",
-        "#define I_AVN_BUTTON_ABI_VERSION 7",
+        "#define I_AVN_WINDOW_ABI_VERSION 9",
+        "#define I_AVN_BUTTON_ABI_VERSION 8",
         // AvaloniaObject projects no members, so its vtable never moved.
         "#define I_AVN_AVALONIA_OBJECT_ABI_VERSION 2",
     ] {
@@ -96,11 +96,11 @@ fn widened_interfaces_republish_under_fresh_iids() {
     );
     assert_eq!(
         format_iid(&I_AVN_CONTROL_IID),
-        "7CF51B18-C500-5D06-8FFA-D97EF7BC6487"
+        "82E7495D-EC39-5401-8EB6-862A4FD2C6B7"
     );
     assert_eq!(
         format_iid(&I_AVN_DECORATOR_IID),
-        "32A420CD-730F-5FC4-9148-18B497AE91A7"
+        "E926933F-DA8E-51DC-B504-9B179FBCF17F"
     );
 
     // AvaloniaObject gained nothing, so it keeps the IID it published at version 2.
