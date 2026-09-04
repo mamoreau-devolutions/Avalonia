@@ -19,6 +19,7 @@ public class GeometryMarshallingTests
         public Point Origin { get; set; }
         public Rect LayoutSlot { get; set; }
         public Color Background { get; set; }
+        public Vector Offset { get; set; }
         public Thickness? OptionalMargin { get; set; }
     }
 
@@ -35,6 +36,7 @@ public class GeometryMarshallingTests
                 nameof(GeometryProbe.Origin),
                 nameof(GeometryProbe.LayoutSlot),
                 nameof(GeometryProbe.Background),
+                nameof(GeometryProbe.Offset),
                 nameof(GeometryProbe.OptionalMargin),
             ],
         },
@@ -52,6 +54,7 @@ public class GeometryMarshallingTests
         AssertProperty(probe, nameof(GeometryProbe.Origin), MarshallingKind.Point, "Avalonia.Point");
         AssertProperty(probe, nameof(GeometryProbe.LayoutSlot), MarshallingKind.Rect, "Avalonia.Rect");
         AssertProperty(probe, nameof(GeometryProbe.Background), MarshallingKind.Color, "Avalonia.Media.Color");
+        AssertProperty(probe, nameof(GeometryProbe.Offset), MarshallingKind.Vector, "Avalonia.Vector");
     }
 
     [Fact]
@@ -71,7 +74,7 @@ public class GeometryMarshallingTests
     [Fact]
     public void Describes_every_geometry_struct_as_a_blittable_sequential_shape()
     {
-        Assert.Equal(6, GeometryMarshalling.All.Count);
+        Assert.Equal(7, GeometryMarshalling.All.Count);
         Assert.All(GeometryMarshalling.All, geometry => Assert.NotEmpty(geometry.Fields));
         Assert.All(
             GeometryMarshalling.All,
@@ -84,6 +87,7 @@ public class GeometryMarshallingTests
             ["TopLeft", "TopRight", "BottomRight", "BottomLeft"]);
         AssertShape(MarshallingKind.Size, "Avalonia.Size", ["Width", "Height"]);
         AssertShape(MarshallingKind.Point, "Avalonia.Point", ["X", "Y"]);
+        AssertShape(MarshallingKind.Vector, "Avalonia.Vector", ["X", "Y"]);
         AssertShape(MarshallingKind.Rect, "Avalonia.Rect", ["X", "Y", "Width", "Height"]);
 
         Assert.True(GeometryMarshalling.TryGet(MarshallingKind.Color, out var color));
@@ -105,6 +109,7 @@ public class GeometryMarshallingTests
         // Brush was appended after the geometry kinds rather than grouped with the interface
         // kinds, so nothing that shipped earlier moved.
         Assert.Equal(17, (int)MarshallingKind.Brush);
+        Assert.Equal(18, (int)MarshallingKind.Vector);
     }
 
     [Fact]

@@ -137,6 +137,15 @@ pub const GEOMETRY: &[GeometryStruct] = &[
         }],
         helpers: &[],
     },
+    GeometryStruct {
+        kind: "Vector",
+        abi_name: "AvnVector",
+        safe_name: "Vector",
+        managed_type_name: "Avalonia.Vector",
+        conversion: Conversion::Components,
+        fields: &[f64_field("x"), f64_field("y")],
+        helpers: &[],
+    },
 ];
 
 pub fn find(kind: &str) -> Option<&'static GeometryStruct> {

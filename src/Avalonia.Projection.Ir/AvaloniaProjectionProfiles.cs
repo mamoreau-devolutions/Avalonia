@@ -49,10 +49,10 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnRadioButton"] = 6,
             ["Avalonia.Host.Com.IAvnToggleSwitch"] = 6,
             ["Avalonia.Host.Com.IAvnListBox"] = 6,
-            ["Avalonia.Host.Com.IAvnComboBox"] = 6,
+            ["Avalonia.Host.Com.IAvnComboBox"] = 7,
             ["Avalonia.Host.Com.IAvnListBoxItem"] = 6,
             ["Avalonia.Host.Com.IAvnComboBoxItem"] = 6,
-            ["Avalonia.Host.Com.IAvnScrollViewer"] = 6,
+            ["Avalonia.Host.Com.IAvnScrollViewer"] = 7,
             ["Avalonia.Host.Com.IAvnWindow"] = 7,
             ["Avalonia.Host.Com.IAvnGrid"] = 5,
             // Previously version-1 templated types inherit the TemplatedControl bump.
@@ -298,7 +298,10 @@ public static class AvaloniaProjectionProfiles
                 ["ExpandDirection", "IsExpanded", "Expanded", "Collapsed"],
             ["Avalonia.Controls.ListBox"] = ["SelectionMode", "SelectAll", "UnselectAll"],
             ["Avalonia.Controls.ComboBox"] =
-                ["PlaceholderText", "IsDropDownOpen", "IsEditable", "MaxDropDownHeight"],
+            [
+                "PlaceholderText", "IsDropDownOpen", "IsEditable", "MaxDropDownHeight",
+                "Text", "PlaceholderForeground", "Clear", "DropDownOpened", "DropDownClosed",
+            ],
             ["Avalonia.Controls.ListBoxItem"] = ["IsSelected"],
             ["Avalonia.Controls.ComboBoxItem"] = [],
             // TabControl inherits Items and SelectedIndex from SelectingItemsControl, so it only
@@ -507,6 +510,9 @@ public static class AvaloniaProjectionProfiles
                 "IsScrollInertiaEnabled", "IsDeferredScrollingEnabled", "IsExpanded",
                 "LineUp", "LineDown", "LineLeft", "LineRight", "PageUp", "PageDown",
                 "PageLeft", "PageRight", "ScrollToHome", "ScrollToEnd", "ScrollChanged",
+                "Extent", "Offset", "Viewport", "LargeChange", "SmallChange",
+                "HorizontalSnapPointsType", "VerticalSnapPointsType",
+                "HorizontalSnapPointsAlignment", "VerticalSnapPointsAlignment",
             ],
             ["Avalonia.Controls.Primitives.RangeBase"] =
                 ["Minimum", "Maximum", "Value", "SmallChange", "LargeChange", "ValueChanged"],
@@ -835,6 +841,14 @@ public static class AvaloniaProjectionProfiles
                 PayloadKind = EventPayloadKind.None,
             },
             ["Avalonia.Controls.ScrollViewer.ScrollChanged"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.ComboBox.DropDownOpened"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.ComboBox.DropDownClosed"] = new()
             {
                 PayloadKind = EventPayloadKind.None,
             },

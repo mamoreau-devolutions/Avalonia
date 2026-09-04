@@ -233,6 +233,37 @@ impl From<Color> for sys::AvnColor {
     }
 }
 
+/// Safe mirror of `Avalonia.Vector`, marshalled as `sys::AvnVector`.
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct Vector {
+    pub x: f64,
+    pub y: f64,
+}
+
+impl Vector {
+    pub const fn new(x: f64, y: f64) -> Self {
+        Self { x, y }
+    }
+}
+
+impl From<sys::AvnVector> for Vector {
+    fn from(value: sys::AvnVector) -> Self {
+        Self {
+            x: value.x,
+            y: value.y,
+        }
+    }
+}
+
+impl From<Vector> for sys::AvnVector {
+    fn from(value: Vector) -> Self {
+        Self {
+            x: value.x,
+            y: value.y,
+        }
+    }
+}
+
 /// A solid colour brush: the only brush shape that crosses the ABI.
 ///
 /// `Background`, `BorderBrush` and `Foreground` are carried as a colour plus an
@@ -813,6 +844,46 @@ impl TryFrom<i32> for ScrollBarVisibility {
             1 => Ok(Self::Auto),
             2 => Ok(Self::Hidden),
             3 => Ok(Self::Visible),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum SnapPointsAlignment {
+    Near = 0,
+    Center = 1,
+    Far = 2,
+}
+
+impl TryFrom<i32> for SnapPointsAlignment {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::Near),
+            1 => Ok(Self::Center),
+            2 => Ok(Self::Far),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum SnapPointsType {
+    None = 0,
+    Mandatory = 1,
+    MandatorySingle = 2,
+}
+
+impl TryFrom<i32> for SnapPointsType {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::None),
+            1 => Ok(Self::Mandatory),
+            2 => Ok(Self::MandatorySingle),
             _ => Err(crate::Error::InvalidEnumValue(value)),
         }
     }
@@ -5767,6 +5838,55 @@ impl ComboBox {
     }
     pub fn placeholder_text(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_placeholder_text(value)?;
+        Ok(self)
+    }
+    pub fn get_placeholder_foreground(&self) -> Result<Option<Brush>> {
+        self.raw.get_placeholder_foreground()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_placeholder_foreground(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_placeholder_foreground(value.as_ref())?)
+    }
+    pub fn placeholder_foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_placeholder_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_text(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_text()?)) }
+    }
+    pub fn set_text(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_text(Some(&value))?)
+    }
+    pub fn text(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_text(value)?;
+        Ok(self)
+    }
+    pub fn clear(&self) -> Result<()> { Ok(self.raw.clear()?) }
+    pub fn subscribe_drop_down_closed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::combo_box_drop_down_closed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_drop_down_closed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_drop_down_closed(subscription_id)))
+    }
+    pub fn on_drop_down_closed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_drop_down_closed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_drop_down_opened(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::combo_box_drop_down_opened_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_drop_down_opened(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_drop_down_opened(subscription_id)))
+    }
+    pub fn on_drop_down_opened(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_drop_down_opened(callback)?);
         Ok(self)
     }
 }
@@ -23162,6 +23282,28 @@ impl ScrollViewer {
         self.set_bring_into_view_on_focus_change(value)?;
         Ok(self)
     }
+    pub fn extent(&self) -> Result<Size> {
+        Ok(self.raw.get_extent()?.into())
+    }
+    pub fn get_offset(&self) -> Result<Vector> {
+        Ok(self.raw.get_offset()?.into())
+    }
+    pub fn set_offset(&self, value: Vector) -> Result<()> {
+        Ok(self.raw.set_offset(value.into())?)
+    }
+    pub fn offset(self, value: Vector) -> Result<Self> {
+        self.set_offset(value)?;
+        Ok(self)
+    }
+    pub fn viewport(&self) -> Result<Size> {
+        Ok(self.raw.get_viewport()?.into())
+    }
+    pub fn large_change(&self) -> Result<Size> {
+        Ok(self.raw.get_large_change()?.into())
+    }
+    pub fn small_change(&self) -> Result<Size> {
+        Ok(self.raw.get_small_change()?.into())
+    }
     pub fn get_horizontal_scroll_bar_visibility(&self) -> Result<ScrollBarVisibility> {
         let value = self.raw.get_horizontal_scroll_bar_visibility()?;
         ScrollBarVisibility::try_from(value)
@@ -23185,6 +23327,50 @@ impl ScrollViewer {
         Ok(self)
     }
     pub fn is_expanded(&self) -> Result<bool> { Ok(self.raw.get_is_expanded()?) }
+    pub fn get_horizontal_snap_points_type(&self) -> Result<SnapPointsType> {
+        let value = self.raw.get_horizontal_snap_points_type()?;
+        SnapPointsType::try_from(value)
+    }
+    pub fn set_horizontal_snap_points_type(&self, value: SnapPointsType) -> Result<()> {
+        Ok(self.raw.set_horizontal_snap_points_type(value as i32)?)
+    }
+    pub fn horizontal_snap_points_type(self, value: SnapPointsType) -> Result<Self> {
+        self.set_horizontal_snap_points_type(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_snap_points_type(&self) -> Result<SnapPointsType> {
+        let value = self.raw.get_vertical_snap_points_type()?;
+        SnapPointsType::try_from(value)
+    }
+    pub fn set_vertical_snap_points_type(&self, value: SnapPointsType) -> Result<()> {
+        Ok(self.raw.set_vertical_snap_points_type(value as i32)?)
+    }
+    pub fn vertical_snap_points_type(self, value: SnapPointsType) -> Result<Self> {
+        self.set_vertical_snap_points_type(value)?;
+        Ok(self)
+    }
+    pub fn get_horizontal_snap_points_alignment(&self) -> Result<SnapPointsAlignment> {
+        let value = self.raw.get_horizontal_snap_points_alignment()?;
+        SnapPointsAlignment::try_from(value)
+    }
+    pub fn set_horizontal_snap_points_alignment(&self, value: SnapPointsAlignment) -> Result<()> {
+        Ok(self.raw.set_horizontal_snap_points_alignment(value as i32)?)
+    }
+    pub fn horizontal_snap_points_alignment(self, value: SnapPointsAlignment) -> Result<Self> {
+        self.set_horizontal_snap_points_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_vertical_snap_points_alignment(&self) -> Result<SnapPointsAlignment> {
+        let value = self.raw.get_vertical_snap_points_alignment()?;
+        SnapPointsAlignment::try_from(value)
+    }
+    pub fn set_vertical_snap_points_alignment(&self, value: SnapPointsAlignment) -> Result<()> {
+        Ok(self.raw.set_vertical_snap_points_alignment(value as i32)?)
+    }
+    pub fn vertical_snap_points_alignment(self, value: SnapPointsAlignment) -> Result<Self> {
+        self.set_vertical_snap_points_alignment(value)?;
+        Ok(self)
+    }
     pub fn get_allow_auto_hide(&self) -> Result<bool> { Ok(self.raw.get_allow_auto_hide()?) }
     pub fn set_allow_auto_hide(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_allow_auto_hide(value)?)

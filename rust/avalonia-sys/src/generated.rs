@@ -60,6 +60,14 @@ pub struct AvnColor {
     pub argb: u32,
 }
 
+/// Blittable ABI mirror of `Avalonia.Vector`.
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct AvnVector {
+    pub x: f64,
+    pub y: f64,
+}
+
 /// A brush projected as a solid colour: a packed `AvnColor` plus an opacity.
 ///
 /// Read-only: the managed side hands out immutable brushes, so a new brush is minted
@@ -155,6 +163,116 @@ unsafe extern "system" fn i_avn_button_click_handler_release(this: *mut IUnknown
 
 unsafe extern "system" fn i_avn_button_click_handler_invoke(this: *mut IAvnButtonClickHandler) -> i32 {
     crate::event_callback::invoke::<IAvnButtonClickHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_COMBO_BOX_DROP_DOWN_CLOSED_HANDLER_IID: Guid = Guid { data1: 0x954838EF, data2: 0x2A9F, data3: 0x5383, data4: [0x9E, 0xEF, 0x54, 0x49, 0xFD, 0xE8, 0x98, 0x34] };
+
+#[repr(C)]
+struct IAvnComboBoxDropDownClosedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnComboBoxDropDownClosedHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnComboBoxDropDownClosedHandler {
+    vtbl: *const IAvnComboBoxDropDownClosedHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnComboBoxDropDownClosedHandler {
+    const IID: Guid = I_AVN_COMBO_BOX_DROP_DOWN_CLOSED_HANDLER_IID;
+}
+
+impl ComPtr<IAvnComboBoxDropDownClosedHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_COMBO_BOX_DROP_DOWN_CLOSED_HANDLER_VTBL: IAvnComboBoxDropDownClosedHandlerVtbl = IAvnComboBoxDropDownClosedHandlerVtbl {
+    query_interface: i_avn_combo_box_drop_down_closed_handler_query_interface,
+    add_ref: i_avn_combo_box_drop_down_closed_handler_add_ref,
+    release: i_avn_combo_box_drop_down_closed_handler_release,
+    invoke: i_avn_combo_box_drop_down_closed_handler_invoke,
+};
+
+pub fn combo_box_drop_down_closed_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnComboBoxDropDownClosedHandler> {
+    crate::event_callback::create::<IAvnComboBoxDropDownClosedHandler, ()>(IAvnComboBoxDropDownClosedHandler { vtbl: &I_AVN_COMBO_BOX_DROP_DOWN_CLOSED_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_combo_box_drop_down_closed_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnComboBoxDropDownClosedHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_combo_box_drop_down_closed_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnComboBoxDropDownClosedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_combo_box_drop_down_closed_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnComboBoxDropDownClosedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_combo_box_drop_down_closed_handler_invoke(this: *mut IAvnComboBoxDropDownClosedHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnComboBoxDropDownClosedHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_COMBO_BOX_DROP_DOWN_OPENED_HANDLER_IID: Guid = Guid { data1: 0x4C25AED5, data2: 0x664F, data3: 0x5337, data4: [0x84, 0xBB, 0xCE, 0x9B, 0x37, 0x71, 0x18, 0x8D] };
+
+#[repr(C)]
+struct IAvnComboBoxDropDownOpenedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnComboBoxDropDownOpenedHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnComboBoxDropDownOpenedHandler {
+    vtbl: *const IAvnComboBoxDropDownOpenedHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnComboBoxDropDownOpenedHandler {
+    const IID: Guid = I_AVN_COMBO_BOX_DROP_DOWN_OPENED_HANDLER_IID;
+}
+
+impl ComPtr<IAvnComboBoxDropDownOpenedHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_COMBO_BOX_DROP_DOWN_OPENED_HANDLER_VTBL: IAvnComboBoxDropDownOpenedHandlerVtbl = IAvnComboBoxDropDownOpenedHandlerVtbl {
+    query_interface: i_avn_combo_box_drop_down_opened_handler_query_interface,
+    add_ref: i_avn_combo_box_drop_down_opened_handler_add_ref,
+    release: i_avn_combo_box_drop_down_opened_handler_release,
+    invoke: i_avn_combo_box_drop_down_opened_handler_invoke,
+};
+
+pub fn combo_box_drop_down_opened_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnComboBoxDropDownOpenedHandler> {
+    crate::event_callback::create::<IAvnComboBoxDropDownOpenedHandler, ()>(IAvnComboBoxDropDownOpenedHandler { vtbl: &I_AVN_COMBO_BOX_DROP_DOWN_OPENED_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_combo_box_drop_down_opened_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnComboBoxDropDownOpenedHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_combo_box_drop_down_opened_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnComboBoxDropDownOpenedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_combo_box_drop_down_opened_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnComboBoxDropDownOpenedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_combo_box_drop_down_opened_handler_invoke(this: *mut IAvnComboBoxDropDownOpenedHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnComboBoxDropDownOpenedHandler, ()>(this, &mut ())
 }
 
 pub const I_AVN_CONTROL_KEY_DOWN_HANDLER_IID: Guid = Guid { data1: 0x9232F26F, data2: 0x2F3B, data3: 0x5BA2, data4: [0xB0, 0x98, 0xE4, 0xCB, 0x6B, 0x26, 0xBD, 0xA3] };
@@ -6976,7 +7094,7 @@ impl ComPtr<IAvnCheckBox> {
     }
 }
 
-pub const I_AVN_COMBO_BOX_IID: Guid = Guid { data1: 0x1BFD4CC7, data2: 0x0C79, data3: 0x53D7, data4: [0x84, 0x5D, 0xCC, 0x68, 0x01, 0x69, 0x7E, 0xAD] };
+pub const I_AVN_COMBO_BOX_IID: Guid = Guid { data1: 0xACF92675, data2: 0xF4CB, data3: 0x553B, data4: [0x97, 0x00, 0x58, 0x36, 0x0F, 0xEE, 0x02, 0x32] };
 
 #[repr(C)]
 struct IAvnComboBoxVtbl {
@@ -7055,6 +7173,15 @@ struct IAvnComboBoxVtbl {
     set_max_drop_down_height: unsafe extern "system" fn(*mut IAvnComboBox, f64) -> i32,
     get_placeholder_text: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut u16) -> i32,
     set_placeholder_text: unsafe extern "system" fn(*mut IAvnComboBox, *mut u16) -> i32,
+    get_placeholder_foreground: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut IAvnBrush) -> i32,
+    set_placeholder_foreground: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnBrush) -> i32,
+    get_text: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut u16) -> i32,
+    set_text: unsafe extern "system" fn(*mut IAvnComboBox, *mut u16) -> i32,
+    clear: unsafe extern "system" fn(*mut IAvnComboBox) -> i32,
+    advise_drop_down_closed: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnComboBoxDropDownClosedHandler, *mut i64) -> i32,
+    unadvise_drop_down_closed: unsafe extern "system" fn(*mut IAvnComboBox, i64) -> i32,
+    advise_drop_down_opened: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnComboBoxDropDownOpenedHandler, *mut i64) -> i32,
+    unadvise_drop_down_opened: unsafe extern "system" fn(*mut IAvnComboBox, i64) -> i32,
 }
 
 #[repr(C)]
@@ -7566,6 +7693,66 @@ impl ComPtr<IAvnComboBox> {
     pub fn set_placeholder_text(&self, value: Option<&[u16]>) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placeholder_text)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_placeholder_foreground(&self) -> Result<Option<ComPtr<IAvnBrush>>> {
+        unsafe {
+            let mut value: *mut IAvnBrush = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_placeholder_foreground)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_placeholder_foreground(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placeholder_foreground)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_text(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_text)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_text(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_text)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
+    pub fn clear(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().clear)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_drop_down_closed(&self, handler: &ComPtr<IAvnComboBoxDropDownClosedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_drop_down_closed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_drop_down_closed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_drop_down_closed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_drop_down_opened(&self, handler: &ComPtr<IAvnComboBoxDropDownOpenedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_drop_down_opened)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_drop_down_opened(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_drop_down_opened)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -35882,7 +36069,7 @@ impl ComPtr<IAvnRepeatButton> {
     }
 }
 
-pub const I_AVN_SCROLL_VIEWER_IID: Guid = Guid { data1: 0xA72E6DB5, data2: 0x2A8E, data3: 0x5EA7, data4: [0xA5, 0xD7, 0x46, 0x8A, 0xEC, 0xE6, 0xAA, 0xA0] };
+pub const I_AVN_SCROLL_VIEWER_IID: Guid = Guid { data1: 0x56D92885, data2: 0x3B57, data3: 0x5362, data4: [0x9F, 0x3A, 0x75, 0x35, 0x7B, 0x51, 0xCA, 0xD8] };
 
 #[repr(C)]
 struct IAvnScrollViewerVtbl {
@@ -35956,11 +36143,25 @@ struct IAvnScrollViewerVtbl {
     set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnScrollViewer, i32) -> i32,
     get_bring_into_view_on_focus_change: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i32) -> i32,
     set_bring_into_view_on_focus_change: unsafe extern "system" fn(*mut IAvnScrollViewer, i32) -> i32,
+    get_extent: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut AvnSize) -> i32,
+    get_offset: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut AvnVector) -> i32,
+    set_offset: unsafe extern "system" fn(*mut IAvnScrollViewer, AvnVector) -> i32,
+    get_viewport: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut AvnSize) -> i32,
+    get_large_change: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut AvnSize) -> i32,
+    get_small_change: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut AvnSize) -> i32,
     get_horizontal_scroll_bar_visibility: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i32) -> i32,
     set_horizontal_scroll_bar_visibility: unsafe extern "system" fn(*mut IAvnScrollViewer, i32) -> i32,
     get_vertical_scroll_bar_visibility: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i32) -> i32,
     set_vertical_scroll_bar_visibility: unsafe extern "system" fn(*mut IAvnScrollViewer, i32) -> i32,
     get_is_expanded: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i32) -> i32,
+    get_horizontal_snap_points_type: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i32) -> i32,
+    set_horizontal_snap_points_type: unsafe extern "system" fn(*mut IAvnScrollViewer, i32) -> i32,
+    get_vertical_snap_points_type: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i32) -> i32,
+    set_vertical_snap_points_type: unsafe extern "system" fn(*mut IAvnScrollViewer, i32) -> i32,
+    get_horizontal_snap_points_alignment: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i32) -> i32,
+    set_horizontal_snap_points_alignment: unsafe extern "system" fn(*mut IAvnScrollViewer, i32) -> i32,
+    get_vertical_snap_points_alignment: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i32) -> i32,
+    set_vertical_snap_points_alignment: unsafe extern "system" fn(*mut IAvnScrollViewer, i32) -> i32,
     get_allow_auto_hide: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i32) -> i32,
     set_allow_auto_hide: unsafe extern "system" fn(*mut IAvnScrollViewer, i32) -> i32,
     get_is_scroll_chaining_enabled: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i32) -> i32,
@@ -36460,6 +36661,52 @@ impl ComPtr<IAvnScrollViewer> {
             hresult::check(hr)
         }
     }
+    pub fn get_extent(&self) -> Result<AvnSize> {
+        unsafe {
+            let mut value: AvnSize = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_extent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn get_offset(&self) -> Result<AvnVector> {
+        unsafe {
+            let mut value: AvnVector = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_offset)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_offset(&self, value: AvnVector) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_offset)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_viewport(&self) -> Result<AvnSize> {
+        unsafe {
+            let mut value: AvnSize = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_viewport)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn get_large_change(&self) -> Result<AvnSize> {
+        unsafe {
+            let mut value: AvnSize = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_large_change)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn get_small_change(&self) -> Result<AvnSize> {
+        unsafe {
+            let mut value: AvnSize = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_small_change)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
     pub fn get_horizontal_scroll_bar_visibility(&self) -> Result<i32> {
         unsafe {
             let mut value: i32 = 0;
@@ -36494,6 +36741,62 @@ impl ComPtr<IAvnScrollViewer> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_expanded)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             Ok(value != 0)
+        }
+    }
+    pub fn get_horizontal_snap_points_type(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_snap_points_type)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_snap_points_type(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_snap_points_type)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_snap_points_type(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_snap_points_type)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_snap_points_type(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_snap_points_type)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_horizontal_snap_points_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_horizontal_snap_points_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_horizontal_snap_points_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_horizontal_snap_points_alignment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_vertical_snap_points_alignment(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_vertical_snap_points_alignment)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_vertical_snap_points_alignment(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_snap_points_alignment)(self.as_raw(), value);
+            hresult::check(hr)
         }
     }
     pub fn get_allow_auto_hide(&self) -> Result<bool> {

@@ -119,3 +119,21 @@ public struct AvnColor
     public readonly global::Avalonia.Media.Color ToAvalonia() =>
         global::Avalonia.Media.Color.FromUInt32(Argb);
 }
+
+/// <summary>Blittable ABI mirror of <c>Avalonia.Vector</c>.</summary>
+[StructLayout(LayoutKind.Sequential)]
+public struct AvnVector
+{
+    public double X;
+    public double Y;
+
+    public static AvnVector FromAvalonia(global::Avalonia.Vector value) =>
+        new AvnVector
+        {
+            X = value.X,
+            Y = value.Y,
+        };
+
+    public readonly global::Avalonia.Vector ToAvalonia() =>
+        new global::Avalonia.Vector(X, Y);
+}

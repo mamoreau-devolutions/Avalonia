@@ -71,6 +71,7 @@ public unsafe class GeometryMarshallingComTests
         Assert.Equal(32, Marshal.SizeOf<AvnCornerRadius>());
         Assert.Equal(16, Marshal.SizeOf<AvnSize>());
         Assert.Equal(16, Marshal.SizeOf<AvnPoint>());
+        Assert.Equal(16, Marshal.SizeOf<AvnVector>());
         Assert.Equal(32, Marshal.SizeOf<AvnRect>());
         Assert.Equal(4, Marshal.SizeOf<AvnColor>());
 

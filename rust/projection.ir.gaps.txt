@@ -95,15 +95,10 @@ Avalonia.Controls.Carousel.PageTransition: Not included by projection policy
 Avalonia.Controls.Carousel.Next(): Not included by projection policy
 Avalonia.Controls.Carousel.Previous(): Not included by projection policy
 Avalonia.Controls.ComboBox.SelectionBoxItem: Not included by projection policy
-Avalonia.Controls.ComboBox.PlaceholderForeground: Not included by projection policy
 Avalonia.Controls.ComboBox.HorizontalContentAlignment: Not included by projection policy
 Avalonia.Controls.ComboBox.VerticalContentAlignment: Not included by projection policy
 Avalonia.Controls.ComboBox.SelectionBoxItemTemplate: Not included by projection policy
-Avalonia.Controls.ComboBox.Text: Not included by projection policy
-Avalonia.Controls.ComboBox.DropDownClosed: Not included by projection policy
-Avalonia.Controls.ComboBox.DropDownOpened: Not included by projection policy
 Avalonia.Controls.ComboBox.UpdateSelectionFromEvent(Control, RoutedEventArgs): Not included by projection policy
-Avalonia.Controls.ComboBox.Clear(): Not included by projection policy
 Avalonia.Controls.CommandBar.VisiblePrimaryCommands: Not included by projection policy
 Avalonia.Controls.CommandBar.OverflowItems: Not included by projection policy
 Avalonia.Controls.CommandBar.PrimaryCommands: Not included by projection policy
@@ -279,17 +274,8 @@ Avalonia.Controls.ProgressBar.TemplateSettings: Not included by projection polic
 Avalonia.Controls.RefreshContainer.Visualizer: Not included by projection policy
 Avalonia.Controls.RefreshContainer.RefreshRequested: Not included by projection policy
 Avalonia.Controls.RefreshContainer.RequestRefresh(): Not included by projection policy
-Avalonia.Controls.ScrollViewer.Extent: Not included by projection policy
-Avalonia.Controls.ScrollViewer.Offset: Not included by projection policy
-Avalonia.Controls.ScrollViewer.Viewport: Not included by projection policy
-Avalonia.Controls.ScrollViewer.LargeChange: Not included by projection policy
-Avalonia.Controls.ScrollViewer.SmallChange: Not included by projection policy
 Avalonia.Controls.ScrollViewer.CurrentAnchor: Not included by projection policy
 Avalonia.Controls.ScrollViewer.ScrollBarMaximum: Not included by projection policy
-Avalonia.Controls.ScrollViewer.HorizontalSnapPointsType: Not included by projection policy
-Avalonia.Controls.ScrollViewer.VerticalSnapPointsType: Not included by projection policy
-Avalonia.Controls.ScrollViewer.HorizontalSnapPointsAlignment: Not included by projection policy
-Avalonia.Controls.ScrollViewer.VerticalSnapPointsAlignment: Not included by projection policy
 Avalonia.Controls.ScrollViewer.RegisterAnchorCandidate(Control): Not included by projection policy
 Avalonia.Controls.ScrollViewer.UnregisterAnchorCandidate(Control): Not included by projection policy
 Avalonia.Controls.SelectableTextBlock.SelectionBrush: Not included by projection policy

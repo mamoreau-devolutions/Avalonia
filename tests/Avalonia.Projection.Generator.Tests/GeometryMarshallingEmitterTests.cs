@@ -24,6 +24,7 @@ public class GeometryMarshallingEmitterTests
         public Point Origin { get; set; }
         public Rect LayoutSlot { get; set; }
         public Color Background { get; set; }
+        public Vector Offset { get; set; }
     }
 
     private static ProjectionIr ProbeIr { get; } = ClrTypeExtractor.Extract(
@@ -41,6 +42,7 @@ public class GeometryMarshallingEmitterTests
                     nameof(GeometryProbe.Origin),
                     nameof(GeometryProbe.LayoutSlot),
                     nameof(GeometryProbe.Background),
+                    nameof(GeometryProbe.Offset),
                 ],
             },
         });
@@ -65,6 +67,7 @@ public class GeometryMarshallingEmitterTests
         Assert.Contains("public struct AvnPoint", structs, StringComparison.Ordinal);
         Assert.Contains("public struct AvnRect", structs, StringComparison.Ordinal);
         Assert.Contains("public struct AvnColor", structs, StringComparison.Ordinal);
+        Assert.Contains("public struct AvnVector", structs, StringComparison.Ordinal);
         Assert.Contains("public uint Argb;", structs, StringComparison.Ordinal);
         Assert.Contains(
             "new AvnColor { Argb = value.ToUInt32() };",

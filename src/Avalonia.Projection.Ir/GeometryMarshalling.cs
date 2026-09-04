@@ -70,6 +70,12 @@ public static class GeometryMarshalling
             "AvnColor",
             GeometryConversion.PackedColor,
             [new GeometryField("Argb", "argb", GeometryFieldKind.UInt32)]),
+        new(
+            MarshallingKind.Vector,
+            "Avalonia.Vector",
+            "AvnVector",
+            GeometryConversion.Components,
+            [Double("X"), Double("Y")]),
     ];
 
     public static bool IsGeometry(MarshallingKind kind) =>

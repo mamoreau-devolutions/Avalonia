@@ -191,6 +191,14 @@ moves from 5 to 6. `IAvnMaskedTextBox` grows MaskCompleted/MaskFull and moves
 from 2 to 3. PasswordChar, PromptChar, CaretBlinkInterval, GetLineCount and
 the obsolete Watermark aliases stay gaps. The factory is unmoved.
 
+Wave O adds `AvnVector` (`MarshallingKind.Vector`, ordinal 18 after Brush) as
+two doubles identical in layout to `AvnPoint`. `IAvnComboBox` grows Text,
+PlaceholderForeground, Clear, DropDownOpened and DropDownClosed, and moves
+from 6 to 7. `IAvnScrollViewer` grows Extent/Viewport (`AvnSize`), Offset
+(`AvnVector`), LargeChange/SmallChange and snap-point enums, and moves from
+6 to 7. ComboBoxItem is unchanged. SelectionBoxItem, templates and
+PasswordChar stay gaps. The factory is unmoved at 13.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A

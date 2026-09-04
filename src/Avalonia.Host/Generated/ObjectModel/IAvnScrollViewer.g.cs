@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("A72E6DB5-2A8E-5EA7-A5D7-468AECE6AAA0")]
+[Guid("56D92885-3B57-5362-9F3A-75357B51CAD8")]
 public partial interface IAvnScrollViewer : IAvnContentControl
 {
     [PreserveSig]
@@ -14,6 +14,24 @@ public partial interface IAvnScrollViewer : IAvnContentControl
 
     [PreserveSig]
     int SetBringIntoViewOnFocusChange(int value);
+
+    [PreserveSig]
+    int GetExtent(out AvnSize value);
+
+    [PreserveSig]
+    int GetOffset(out AvnVector value);
+
+    [PreserveSig]
+    int SetOffset(AvnVector value);
+
+    [PreserveSig]
+    int GetViewport(out AvnSize value);
+
+    [PreserveSig]
+    int GetLargeChange(out AvnSize value);
+
+    [PreserveSig]
+    int GetSmallChange(out AvnSize value);
 
     [PreserveSig]
     int GetHorizontalScrollBarVisibility(out int value);
@@ -29,6 +47,30 @@ public partial interface IAvnScrollViewer : IAvnContentControl
 
     [PreserveSig]
     int GetIsExpanded(out int value);
+
+    [PreserveSig]
+    int GetHorizontalSnapPointsType(out int value);
+
+    [PreserveSig]
+    int SetHorizontalSnapPointsType(int value);
+
+    [PreserveSig]
+    int GetVerticalSnapPointsType(out int value);
+
+    [PreserveSig]
+    int SetVerticalSnapPointsType(int value);
+
+    [PreserveSig]
+    int GetHorizontalSnapPointsAlignment(out int value);
+
+    [PreserveSig]
+    int SetHorizontalSnapPointsAlignment(int value);
+
+    [PreserveSig]
+    int GetVerticalSnapPointsAlignment(out int value);
+
+    [PreserveSig]
+    int SetVerticalSnapPointsAlignment(int value);
 
     [PreserveSig]
     int GetAllowAutoHide(out int value);
@@ -1198,6 +1240,101 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
         }
     }
 
+    public int GetExtent(out AvnSize value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnSize.FromAvalonia(_value.Extent);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetOffset(out AvnVector value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnVector.FromAvalonia(_value.Offset);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetOffset(AvnVector value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Offset = value.ToAvalonia();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetViewport(out AvnSize value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnSize.FromAvalonia(_value.Viewport);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetLargeChange(out AvnSize value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnSize.FromAvalonia(_value.LargeChange);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetSmallChange(out AvnSize value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnSize.FromAvalonia(_value.SmallChange);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetHorizontalScrollBarVisibility(out int value)
     {
         value = default!;
@@ -1268,6 +1405,130 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.IsExpanded ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetHorizontalSnapPointsType(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.HorizontalSnapPointsType;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetHorizontalSnapPointsType(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.HorizontalSnapPointsType = (global::Avalonia.Controls.Primitives.SnapPointsType)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetVerticalSnapPointsType(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.VerticalSnapPointsType;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetVerticalSnapPointsType(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.VerticalSnapPointsType = (global::Avalonia.Controls.Primitives.SnapPointsType)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetHorizontalSnapPointsAlignment(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.HorizontalSnapPointsAlignment;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetHorizontalSnapPointsAlignment(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.HorizontalSnapPointsAlignment = (global::Avalonia.Controls.Primitives.SnapPointsAlignment)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetVerticalSnapPointsAlignment(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.VerticalSnapPointsAlignment;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetVerticalSnapPointsAlignment(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.VerticalSnapPointsAlignment = (global::Avalonia.Controls.Primitives.SnapPointsAlignment)value;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

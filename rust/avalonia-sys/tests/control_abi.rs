@@ -74,9 +74,9 @@ fn widened_interfaces_publish_abi_version_five() {
         "#define I_AVN_TOGGLE_SWITCH_ABI_VERSION 6",
         "#define I_AVN_LIST_BOX_ABI_VERSION 6",
         "#define I_AVN_LIST_BOX_ITEM_ABI_VERSION 6",
-        "#define I_AVN_COMBO_BOX_ABI_VERSION 6",
+        "#define I_AVN_COMBO_BOX_ABI_VERSION 7",
         "#define I_AVN_COMBO_BOX_ITEM_ABI_VERSION 6",
-        "#define I_AVN_SCROLL_VIEWER_ABI_VERSION 6",
+        "#define I_AVN_SCROLL_VIEWER_ABI_VERSION 7",
         "#define I_AVN_WINDOW_ABI_VERSION 7",
         "#define I_AVN_TEMPLATED_CONTROL_ABI_VERSION 5",
         "#define I_AVN_TEXT_BLOCK_ABI_VERSION 5",
@@ -165,6 +165,11 @@ fn widened_interfaces_republish_under_fresh_iids() {
             "7334041F-D155-548C-BF70-4CFFB4F44021",
             I_AVN_COMBO_BOX_IID,
         ),
+        (
+            "IAvnComboBox",
+            "1BFD4CC7-0C79-53D7-845D-CC6801697EAD",
+            I_AVN_COMBO_BOX_IID,
+        ),
     ] {
         assert_ne!(format_iid(&current), retired, "{name} reused a retired IID");
     }
@@ -193,7 +198,7 @@ fn widened_interfaces_republish_under_fresh_iids() {
         ),
         (
             "IAvnComboBox",
-            "1BFD4CC7-0C79-53D7-845D-CC6801697EAD",
+            "ACF92675-F4CB-553B-9700-58360FEE0232",
             I_AVN_COMBO_BOX_IID,
         ),
         (

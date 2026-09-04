@@ -320,8 +320,7 @@ public class ClrTypeExtractorTests
         [
             "IAvnContentControl", "IAvnHeaderedContentControl", "IAvnExpander", "IAvnButton",
             "IAvnToggleButton", "IAvnCheckBox", "IAvnRadioButton", "IAvnToggleSwitch",
-            "IAvnListBox", "IAvnComboBox", "IAvnListBoxItem", "IAvnComboBoxItem",
-            "IAvnScrollViewer",
+            "IAvnListBox", "IAvnListBoxItem", "IAvnComboBoxItem",
         ];
 
         Assert.All(
@@ -1473,6 +1472,27 @@ public class ClrTypeExtractorTests
         Assert.Equal(3, Type(ir, "IAvnMaskedTextBox").AbiVersion);
         Assert.Contains(Type(ir, "IAvnMaskedTextBox").Properties, p => p.Name == "MaskCompleted");
         Assert.Equal(5, Type(ir, "IAvnTemplatedControl").AbiVersion);
+        Assert.Equal(13, ir.FactoryAbiVersion);
+    }
+
+    [Fact]
+    public void Wave_o_combo_and_scroll_use_vector_and_size()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+        var combo = Type(ir, "IAvnComboBox");
+        Assert.Equal(7, combo.AbiVersion);
+        Assert.Contains(combo.Properties, p => p.Name == "Text");
+        Assert.Contains(combo.Methods, m => m.Name == "Clear");
+        Assert.Contains(combo.Events, e => e.Name == "DropDownOpened");
+
+        var scroll = Type(ir, "IAvnScrollViewer");
+        Assert.Equal(7, scroll.AbiVersion);
+        Assert.Equal(MarshallingKind.Size, scroll.Properties.Single(p => p.Name == "Extent").Kind);
+        Assert.Equal(MarshallingKind.Vector, scroll.Properties.Single(p => p.Name == "Offset").Kind);
+        Assert.Equal(MarshallingKind.Size, scroll.Properties.Single(p => p.Name == "Viewport").Kind);
+        Assert.False(scroll.Properties.Single(p => p.Name == "Extent").CanWrite);
+        Assert.True(scroll.Properties.Single(p => p.Name == "Offset").CanWrite);
+        Assert.Equal(6, Type(ir, "IAvnContentControl").AbiVersion);
         Assert.Equal(13, ir.FactoryAbiVersion);
     }
 

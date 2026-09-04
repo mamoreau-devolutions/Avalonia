@@ -538,12 +538,20 @@
       "name": "IAvnComboBox",
       "fullName": "Avalonia.Host.Com.IAvnComboBox",
       "kind": "Class",
-      "iid": "1BFD4CC7-0C79-53D7-845D-CC6801697EAD",
-      "abiVersion": 6,
+      "iid": "ACF92675-F4CB-553B-9700-58360FEE0232",
+      "abiVersion": 7,
       "baseFullName": "Avalonia.Host.Com.IAvnSelectingItemsControl",
       "managedFullName": "Avalonia.Controls.ComboBox",
       "isConstructible": true,
-      "methods": [],
+      "methods": [
+        {
+          "name": "Clear",
+          "managedName": "Clear",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": []
+        }
+      ],
       "properties": [
         {
           "name": "IsDropDownOpen",
@@ -580,9 +588,48 @@
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.String",
           "isNullable": true
+        },
+        {
+          "name": "PlaceholderForeground",
+          "kind": "Brush",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnBrush",
+          "interfaceIid": "FC7CCBAE-ED75-5C6D-8516-DF706E137ED3",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.IBrush",
+          "isNullable": true
+        },
+        {
+          "name": "Text",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.String",
+          "isNullable": true
         }
       ],
-      "events": []
+      "events": [
+        {
+          "name": "DropDownClosed",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnComboBoxDropDownClosedHandler",
+          "handlerInterfaceIid": "954838EF-2A9F-5383-9EEF-5449FDE89834",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler",
+          "parameters": []
+        },
+        {
+          "name": "DropDownOpened",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnComboBoxDropDownOpenedHandler",
+          "handlerInterfaceIid": "4C25AED5-664F-5337-84BB-CE9B3771188D",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler",
+          "parameters": []
+        }
+      ]
     },
     {
       "name": "IAvnComboBoxItem",
@@ -3237,8 +3284,8 @@
       "name": "IAvnScrollViewer",
       "fullName": "Avalonia.Host.Com.IAvnScrollViewer",
       "kind": "Class",
-      "iid": "A72E6DB5-2A8E-5EA7-A5D7-468AECE6AAA0",
-      "abiVersion": 6,
+      "iid": "56D92885-3B57-5362-9F3A-75357B51CAD8",
+      "abiVersion": 7,
       "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
       "managedFullName": "Avalonia.Controls.ScrollViewer",
       "isConstructible": true,
@@ -3325,6 +3372,51 @@
           "isNullable": false
         },
         {
+          "name": "Extent",
+          "kind": "Size",
+          "canRead": true,
+          "canWrite": false,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Size",
+          "isNullable": false
+        },
+        {
+          "name": "Offset",
+          "kind": "Vector",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Vector",
+          "isNullable": false
+        },
+        {
+          "name": "Viewport",
+          "kind": "Size",
+          "canRead": true,
+          "canWrite": false,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Size",
+          "isNullable": false
+        },
+        {
+          "name": "LargeChange",
+          "kind": "Size",
+          "canRead": true,
+          "canWrite": false,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Size",
+          "isNullable": false
+        },
+        {
+          "name": "SmallChange",
+          "kind": "Size",
+          "canRead": true,
+          "canWrite": false,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Size",
+          "isNullable": false
+        },
+        {
           "name": "HorizontalScrollBarVisibility",
           "kind": "I32",
           "canRead": true,
@@ -3349,6 +3441,42 @@
           "canWrite": false,
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "HorizontalSnapPointsType",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Primitives.SnapPointsType",
+          "isNullable": false
+        },
+        {
+          "name": "VerticalSnapPointsType",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Primitives.SnapPointsType",
+          "isNullable": false
+        },
+        {
+          "name": "HorizontalSnapPointsAlignment",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Primitives.SnapPointsAlignment",
+          "isNullable": false
+        },
+        {
+          "name": "VerticalSnapPointsAlignment",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Primitives.SnapPointsAlignment",
           "isNullable": false
         },
         {
@@ -6022,6 +6150,42 @@
         {
           "name": "Visible",
           "value": 3
+        }
+      ]
+    },
+    {
+      "name": "SnapPointsAlignment",
+      "fullName": "Avalonia.Controls.Primitives.SnapPointsAlignment",
+      "values": [
+        {
+          "name": "Near",
+          "value": 0
+        },
+        {
+          "name": "Center",
+          "value": 1
+        },
+        {
+          "name": "Far",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "name": "SnapPointsType",
+      "fullName": "Avalonia.Controls.Primitives.SnapPointsType",
+      "values": [
+        {
+          "name": "None",
+          "value": 0
+        },
+        {
+          "name": "Mandatory",
+          "value": 1
+        },
+        {
+          "name": "MandatorySingle",
+          "value": 2
         }
       ]
     },
@@ -9124,11 +9288,6 @@
     },
     {
       "owner": "Avalonia.Controls.ComboBox",
-      "member": "PlaceholderForeground",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ComboBox",
       "member": "HorizontalContentAlignment",
       "reason": "Not included by projection policy"
     },
@@ -9144,27 +9303,7 @@
     },
     {
       "owner": "Avalonia.Controls.ComboBox",
-      "member": "Text",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ComboBox",
-      "member": "DropDownClosed",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ComboBox",
-      "member": "DropDownOpened",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ComboBox",
       "member": "UpdateSelectionFromEvent(Control, RoutedEventArgs)",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ComboBox",
-      "member": "Clear()",
       "reason": "Not included by projection policy"
     },
     {
@@ -10044,57 +10183,12 @@
     },
     {
       "owner": "Avalonia.Controls.ScrollViewer",
-      "member": "Extent",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ScrollViewer",
-      "member": "Offset",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ScrollViewer",
-      "member": "Viewport",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ScrollViewer",
-      "member": "LargeChange",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ScrollViewer",
-      "member": "SmallChange",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ScrollViewer",
       "member": "CurrentAnchor",
       "reason": "Not included by projection policy"
     },
     {
       "owner": "Avalonia.Controls.ScrollViewer",
       "member": "ScrollBarMaximum",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ScrollViewer",
-      "member": "HorizontalSnapPointsType",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ScrollViewer",
-      "member": "VerticalSnapPointsType",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ScrollViewer",
-      "member": "HorizontalSnapPointsAlignment",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ScrollViewer",
-      "member": "VerticalSnapPointsAlignment",
       "reason": "Not included by projection policy"
     },
     {

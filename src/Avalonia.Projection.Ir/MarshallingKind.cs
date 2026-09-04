@@ -28,6 +28,12 @@ public enum MarshallingKind
     /// ordinal stays put.
     /// </summary>
     Brush,
+
+    /// <summary>
+    /// Appended after Brush so every previously published ordinal stays put.
+    /// Two doubles, identical in layout to <see cref="Point"/>.
+    /// </summary>
+    Vector,
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
