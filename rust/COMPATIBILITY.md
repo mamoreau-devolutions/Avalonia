@@ -173,6 +173,17 @@ from Window, so no other interface and no factory slot move. Icon, PixelPoint
 Position and ShowDialog stay gaps. The obsolete SystemDecorations alias is not
 projected; WindowDecorations is the live property.
 
+Wave M widens a base. `IAvnTemplatedControl` grows FontFamily (UTF-16 via
+`FontFamily.Parse`/`ToString`), FontStyle, FontWeight, FontStretch,
+LetterSpacing and Padding, and moves from 4 to 5. Every descendant republishes:
+chrome-era types at 4 go to 5, completeness-era types at 5 go to 6, Window goes
+from 6 to 7, and previously version-1 templated types go to 2. Independently,
+`IAvnTextBlock` grows the same fonts plus Background, LineSpacing, MaxLines and
+TextWrapping, and moves from 4 to 5; `IAvnSelectableTextBlock` goes from 1 to 2.
+`TextTrimming` is an abstract class without `ToString` and stays a gap. The
+factory is unmoved at 13. Panels, Border, Image, shapes and flyouts are not
+under TemplatedControl and keep their IIDs.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A

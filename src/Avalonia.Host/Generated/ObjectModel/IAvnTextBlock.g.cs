@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("3348758A-72D6-5B1F-84F2-9D80A51DC2FD")]
+[Guid("74662671-AA6E-568D-89E2-4569829F35A8")]
 public partial interface IAvnTextBlock : IAvnControl
 {
     [PreserveSig]
@@ -16,10 +16,22 @@ public partial interface IAvnTextBlock : IAvnControl
     int SetPadding(AvnThickness value);
 
     [PreserveSig]
+    int GetBackground(out IAvnBrush? value);
+
+    [PreserveSig]
+    int SetBackground(IAvnBrush? value);
+
+    [PreserveSig]
     int GetText(out string? value);
 
     [PreserveSig]
     int SetText(string? value);
+
+    [PreserveSig]
+    int GetFontFamily(out string value);
+
+    [PreserveSig]
+    int SetFontFamily(string value);
 
     [PreserveSig]
     int GetFontSize(out double value);
@@ -28,16 +40,52 @@ public partial interface IAvnTextBlock : IAvnControl
     int SetFontSize(double value);
 
     [PreserveSig]
+    int GetFontStyle(out int value);
+
+    [PreserveSig]
+    int SetFontStyle(int value);
+
+    [PreserveSig]
     int GetFontWeight(out int value);
 
     [PreserveSig]
     int SetFontWeight(int value);
 
     [PreserveSig]
+    int GetFontStretch(out int value);
+
+    [PreserveSig]
+    int SetFontStretch(int value);
+
+    [PreserveSig]
     int GetForeground(out IAvnBrush? value);
 
     [PreserveSig]
     int SetForeground(IAvnBrush? value);
+
+    [PreserveSig]
+    int GetLineSpacing(out double value);
+
+    [PreserveSig]
+    int SetLineSpacing(double value);
+
+    [PreserveSig]
+    int GetLetterSpacing(out double value);
+
+    [PreserveSig]
+    int SetLetterSpacing(double value);
+
+    [PreserveSig]
+    int GetMaxLines(out int value);
+
+    [PreserveSig]
+    int SetMaxLines(int value);
+
+    [PreserveSig]
+    int GetTextWrapping(out int value);
+
+    [PreserveSig]
+    int SetTextWrapping(int value);
 
     [PreserveSig]
     int GetTextAlignment(out int value);
@@ -686,6 +734,37 @@ public sealed partial class AvnTextBlock : IAvnTextBlock
         }
     }
 
+    public int GetBackground(out IAvnBrush? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnBrush.FromBrush(_value.Background);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetBackground(IAvnBrush? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Background = AvnBrush.ToBrush(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetText(out string? value)
     {
         value = default!;
@@ -709,6 +788,37 @@ public sealed partial class AvnTextBlock : IAvnTextBlock
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Text = value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetFontFamily(out string value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.FontFamily.ToString();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetFontFamily(string value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.FontFamily = global::Avalonia.Media.FontFamily.Parse(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -748,6 +858,37 @@ public sealed partial class AvnTextBlock : IAvnTextBlock
         }
     }
 
+    public int GetFontStyle(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.FontStyle;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetFontStyle(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.FontStyle = (global::Avalonia.Media.FontStyle)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetFontWeight(out int value)
     {
         value = default!;
@@ -779,6 +920,37 @@ public sealed partial class AvnTextBlock : IAvnTextBlock
         }
     }
 
+    public int GetFontStretch(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.FontStretch;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetFontStretch(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.FontStretch = (global::Avalonia.Media.FontStretch)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetForeground(out IAvnBrush? value)
     {
         value = default!;
@@ -802,6 +974,130 @@ public sealed partial class AvnTextBlock : IAvnTextBlock
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Foreground = AvnBrush.ToBrush(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetLineSpacing(out double value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.LineSpacing;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetLineSpacing(double value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.LineSpacing = value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetLetterSpacing(out double value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.LetterSpacing;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetLetterSpacing(double value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.LetterSpacing = value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetMaxLines(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.MaxLines;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetMaxLines(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.MaxLines = value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetTextWrapping(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.TextWrapping;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetTextWrapping(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.TextWrapping = (global::Avalonia.Media.TextWrapping)value;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

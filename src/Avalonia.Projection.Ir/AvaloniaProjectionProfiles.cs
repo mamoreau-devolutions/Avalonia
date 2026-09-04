@@ -28,31 +28,81 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnCanvas"] = 4,
             ["Avalonia.Host.Com.IAvnDockPanel"] = 4,
             ["Avalonia.Host.Com.IAvnStackPanel"] = 4,
-            ["Avalonia.Host.Com.IAvnTextBlock"] = 4,
-            ["Avalonia.Host.Com.IAvnTemplatedControl"] = 4,
-            ["Avalonia.Host.Com.IAvnItemsControl"] = 4,
-            ["Avalonia.Host.Com.IAvnSelectingItemsControl"] = 4,
-            ["Avalonia.Host.Com.IAvnTextBox"] = 4,
-            ["Avalonia.Host.Com.IAvnRangeBase"] = 4,
-            ["Avalonia.Host.Com.IAvnSlider"] = 4,
-            ["Avalonia.Host.Com.IAvnProgressBar"] = 4,
-            // The completeness and definitions waves widened these and nothing has moved them
-            // since, so they stay on the version 5 IIDs they published there.
-            ["Avalonia.Host.Com.IAvnContentControl"] = 5,
-            ["Avalonia.Host.Com.IAvnHeaderedContentControl"] = 5,
-            ["Avalonia.Host.Com.IAvnExpander"] = 5,
-            ["Avalonia.Host.Com.IAvnButton"] = 5,
-            ["Avalonia.Host.Com.IAvnToggleButton"] = 5,
-            ["Avalonia.Host.Com.IAvnCheckBox"] = 5,
-            ["Avalonia.Host.Com.IAvnRadioButton"] = 5,
-            ["Avalonia.Host.Com.IAvnToggleSwitch"] = 5,
-            ["Avalonia.Host.Com.IAvnListBox"] = 5,
-            ["Avalonia.Host.Com.IAvnComboBox"] = 5,
-            ["Avalonia.Host.Com.IAvnListBoxItem"] = 5,
-            ["Avalonia.Host.Com.IAvnComboBoxItem"] = 5,
-            ["Avalonia.Host.Com.IAvnScrollViewer"] = 5,
-            ["Avalonia.Host.Com.IAvnWindow"] = 6,
+            // Wave M grew TemplatedControl (fonts/padding) and TextBlock (fonts/wrapping).
+            // Nano-COM vtables are flattened, so every interface below TemplatedControl
+            // republishes. TextBlock is not under TemplatedControl; SelectableTextBlock is.
+            ["Avalonia.Host.Com.IAvnTextBlock"] = 5,
+            ["Avalonia.Host.Com.IAvnSelectableTextBlock"] = 2,
+            ["Avalonia.Host.Com.IAvnTemplatedControl"] = 5,
+            ["Avalonia.Host.Com.IAvnItemsControl"] = 5,
+            ["Avalonia.Host.Com.IAvnSelectingItemsControl"] = 5,
+            ["Avalonia.Host.Com.IAvnTextBox"] = 5,
+            ["Avalonia.Host.Com.IAvnRangeBase"] = 5,
+            ["Avalonia.Host.Com.IAvnSlider"] = 5,
+            ["Avalonia.Host.Com.IAvnProgressBar"] = 5,
+            ["Avalonia.Host.Com.IAvnContentControl"] = 6,
+            ["Avalonia.Host.Com.IAvnHeaderedContentControl"] = 6,
+            ["Avalonia.Host.Com.IAvnExpander"] = 6,
+            ["Avalonia.Host.Com.IAvnButton"] = 6,
+            ["Avalonia.Host.Com.IAvnToggleButton"] = 6,
+            ["Avalonia.Host.Com.IAvnCheckBox"] = 6,
+            ["Avalonia.Host.Com.IAvnRadioButton"] = 6,
+            ["Avalonia.Host.Com.IAvnToggleSwitch"] = 6,
+            ["Avalonia.Host.Com.IAvnListBox"] = 6,
+            ["Avalonia.Host.Com.IAvnComboBox"] = 6,
+            ["Avalonia.Host.Com.IAvnListBoxItem"] = 6,
+            ["Avalonia.Host.Com.IAvnComboBoxItem"] = 6,
+            ["Avalonia.Host.Com.IAvnScrollViewer"] = 6,
+            ["Avalonia.Host.Com.IAvnWindow"] = 7,
             ["Avalonia.Host.Com.IAvnGrid"] = 5,
+            // Previously version-1 templated types inherit the TemplatedControl bump.
+            ["Avalonia.Host.Com.IAvnAutoCompleteBox"] = 2,
+            ["Avalonia.Host.Com.IAvnButtonSpinner"] = 2,
+            ["Avalonia.Host.Com.IAvnCalendar"] = 2,
+            ["Avalonia.Host.Com.IAvnCalendarDatePicker"] = 2,
+            ["Avalonia.Host.Com.IAvnCarousel"] = 2,
+            ["Avalonia.Host.Com.IAvnCommandBar"] = 2,
+            ["Avalonia.Host.Com.IAvnCommandBarButton"] = 2,
+            ["Avalonia.Host.Com.IAvnCommandBarSeparator"] = 2,
+            ["Avalonia.Host.Com.IAvnCommandBarToggleButton"] = 2,
+            ["Avalonia.Host.Com.IAvnContextMenu"] = 2,
+            ["Avalonia.Host.Com.IAvnDatePicker"] = 2,
+            ["Avalonia.Host.Com.IAvnDropDownButton"] = 2,
+            ["Avalonia.Host.Com.IAvnGridSplitter"] = 2,
+            ["Avalonia.Host.Com.IAvnGroupBox"] = 2,
+            ["Avalonia.Host.Com.IAvnHeaderedItemsControl"] = 2,
+            ["Avalonia.Host.Com.IAvnHeaderedSelectingItemsControl"] = 2,
+            ["Avalonia.Host.Com.IAvnHyperlinkButton"] = 2,
+            ["Avalonia.Host.Com.IAvnIconElement"] = 2,
+            ["Avalonia.Host.Com.IAvnLabel"] = 2,
+            ["Avalonia.Host.Com.IAvnMaskedTextBox"] = 2,
+            ["Avalonia.Host.Com.IAvnMenu"] = 2,
+            ["Avalonia.Host.Com.IAvnMenuBase"] = 2,
+            ["Avalonia.Host.Com.IAvnMenuItem"] = 2,
+            ["Avalonia.Host.Com.IAvnNotificationCard"] = 2,
+            ["Avalonia.Host.Com.IAvnNumericUpDown"] = 2,
+            ["Avalonia.Host.Com.IAvnPathIcon"] = 2,
+            ["Avalonia.Host.Com.IAvnPipsPager"] = 2,
+            ["Avalonia.Host.Com.IAvnRefreshContainer"] = 2,
+            ["Avalonia.Host.Com.IAvnRepeatButton"] = 2,
+            ["Avalonia.Host.Com.IAvnSeparator"] = 2,
+            ["Avalonia.Host.Com.IAvnSpinner"] = 2,
+            ["Avalonia.Host.Com.IAvnSplitButton"] = 2,
+            ["Avalonia.Host.Com.IAvnSplitView"] = 2,
+            ["Avalonia.Host.Com.IAvnTabControl"] = 2,
+            ["Avalonia.Host.Com.IAvnTabItem"] = 2,
+            ["Avalonia.Host.Com.IAvnTableView"] = 2,
+            ["Avalonia.Host.Com.IAvnTableViewCell"] = 2,
+            ["Avalonia.Host.Com.IAvnTableViewRow"] = 2,
+            ["Avalonia.Host.Com.IAvnThumb"] = 2,
+            ["Avalonia.Host.Com.IAvnTimePicker"] = 2,
+            ["Avalonia.Host.Com.IAvnToggleSplitButton"] = 2,
+            ["Avalonia.Host.Com.IAvnToolTip"] = 2,
+            ["Avalonia.Host.Com.IAvnTransitioningContentControl"] = 2,
+            ["Avalonia.Host.Com.IAvnTreeView"] = 2,
+            ["Avalonia.Host.Com.IAvnTreeViewItem"] = 2,
+            ["Avalonia.Host.Com.IAvnUserControl"] = 2,
+            ["Avalonia.Host.Com.IAvnWindowNotificationManager"] = 2,
             // Wave A's seven new interfaces publish at the default version 1 and nothing they
             // sit under moved, so they need no entry here. Waves B, C and D do the same.
             // The factory is the only interface these waves move: wave A gave it a creator per
@@ -230,7 +280,11 @@ public static class AvaloniaProjectionProfiles
             ],
             ["Avalonia.Controls.StackPanel"] = ["Orientation", "Spacing"],
             ["Avalonia.Controls.TextBlock"] =
-                ["Text", "FontSize", "FontWeight", "Foreground", "Padding", "TextAlignment"],
+            [
+                "Text", "FontSize", "FontWeight", "FontFamily", "FontStyle", "FontStretch",
+                "Foreground", "Background", "Padding", "TextAlignment", "LetterSpacing",
+                "LineSpacing", "MaxLines", "TextWrapping",
+            ],
             ["Avalonia.Controls.Image"] =
                 ["Source", "Stretch", "StretchDirection", "BlendMode"],
             ["Avalonia.Controls.Button"] =
@@ -428,7 +482,8 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.Primitives.TemplatedControl"] =
             [
                 "Background", "BorderBrush", "BorderThickness", "CornerRadius", "FontSize",
-                "Foreground",
+                "FontFamily", "FontStyle", "FontWeight", "FontStretch", "LetterSpacing",
+                "Foreground", "Padding",
             ],
             ["Avalonia.Controls.TextBox"] =
             [
@@ -488,6 +543,16 @@ public static class AvaloniaProjectionProfiles
             // ColumnDefinitions/RowDefinitions already parse and print, not as a projected
             // collection of definition objects. The host wrapper converts with the type's own
             // Parse/ToString, so nothing here needs an interface of its own.
+            ["Avalonia.Controls.Primitives.TemplatedControl.FontFamily"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                IsNullable = false,
+            },
+            ["Avalonia.Controls.TextBlock.FontFamily"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                IsNullable = false,
+            },
             ["Avalonia.Controls.Grid.ColumnDefinitions"] = new()
             {
                 Kind = MarshallingKind.StringUtf16,

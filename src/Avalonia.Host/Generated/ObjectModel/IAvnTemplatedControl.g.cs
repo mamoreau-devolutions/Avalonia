@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("002B0BD0-7F53-52CD-A7BC-499224438B34")]
+[Guid("A3893721-54B6-511D-B171-F8D6817F450A")]
 public partial interface IAvnTemplatedControl : IAvnControl
 {
     [PreserveSig]
@@ -34,16 +34,52 @@ public partial interface IAvnTemplatedControl : IAvnControl
     int SetCornerRadius(AvnCornerRadius value);
 
     [PreserveSig]
+    int GetFontFamily(out string value);
+
+    [PreserveSig]
+    int SetFontFamily(string value);
+
+    [PreserveSig]
     int GetFontSize(out double value);
 
     [PreserveSig]
     int SetFontSize(double value);
 
     [PreserveSig]
+    int GetFontStyle(out int value);
+
+    [PreserveSig]
+    int SetFontStyle(int value);
+
+    [PreserveSig]
+    int GetFontWeight(out int value);
+
+    [PreserveSig]
+    int SetFontWeight(int value);
+
+    [PreserveSig]
+    int GetFontStretch(out int value);
+
+    [PreserveSig]
+    int SetFontStretch(int value);
+
+    [PreserveSig]
     int GetForeground(out IAvnBrush? value);
 
     [PreserveSig]
     int SetForeground(IAvnBrush? value);
+
+    [PreserveSig]
+    int GetLetterSpacing(out double value);
+
+    [PreserveSig]
+    int SetLetterSpacing(double value);
+
+    [PreserveSig]
+    int GetPadding(out AvnThickness value);
+
+    [PreserveSig]
+    int SetPadding(AvnThickness value);
 
 }
 
@@ -779,6 +815,37 @@ public sealed partial class AvnTemplatedControl : IAvnTemplatedControl
         }
     }
 
+    public int GetFontFamily(out string value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.FontFamily.ToString();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetFontFamily(string value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.FontFamily = global::Avalonia.Media.FontFamily.Parse(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetFontSize(out double value)
     {
         value = default!;
@@ -810,6 +877,99 @@ public sealed partial class AvnTemplatedControl : IAvnTemplatedControl
         }
     }
 
+    public int GetFontStyle(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.FontStyle;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetFontStyle(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.FontStyle = (global::Avalonia.Media.FontStyle)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetFontWeight(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.FontWeight;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetFontWeight(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.FontWeight = (global::Avalonia.Media.FontWeight)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetFontStretch(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.FontStretch;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetFontStretch(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.FontStretch = (global::Avalonia.Media.FontStretch)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetForeground(out IAvnBrush? value)
     {
         value = default!;
@@ -833,6 +993,68 @@ public sealed partial class AvnTemplatedControl : IAvnTemplatedControl
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Foreground = AvnBrush.ToBrush(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetLetterSpacing(out double value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.LetterSpacing;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetLetterSpacing(double value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.LetterSpacing = value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetPadding(out AvnThickness value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnThickness.FromAvalonia(_value.Padding);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetPadding(AvnThickness value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Padding = value.ToAvalonia();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

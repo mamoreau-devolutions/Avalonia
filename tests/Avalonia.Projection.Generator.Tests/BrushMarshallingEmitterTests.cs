@@ -155,7 +155,7 @@ public class BrushMarshallingEmitterTests
         // move keep the version they already published.
         Assert.Contains("#define I_AVN_BORDER_ABI_VERSION 4", header, StringComparison.Ordinal);
         Assert.Contains("#define I_AVN_PANEL_ABI_VERSION 4", header, StringComparison.Ordinal);
-        Assert.Contains("#define I_AVN_TEXT_BLOCK_ABI_VERSION 4", header, StringComparison.Ordinal);
+        Assert.Contains("#define I_AVN_TEXT_BLOCK_ABI_VERSION 5", header, StringComparison.Ordinal);
         Assert.Contains("#define I_AVN_CONTROL_ABI_VERSION 3", header, StringComparison.Ordinal);
         Assert.Contains("#define I_AVN_DECORATOR_ABI_VERSION 3", header, StringComparison.Ordinal);
         Assert.Contains(

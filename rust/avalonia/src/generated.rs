@@ -1928,6 +1928,58 @@ impl TryFrom<i32> for FillRule {
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum FontStretch {
+    UltraCondensed = 1,
+    ExtraCondensed = 2,
+    Condensed = 3,
+    SemiCondensed = 4,
+    Normal = 5,
+    SemiExpanded = 6,
+    Expanded = 7,
+    ExtraExpanded = 8,
+    UltraExpanded = 9,
+}
+
+impl TryFrom<i32> for FontStretch {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            1 => Ok(Self::UltraCondensed),
+            2 => Ok(Self::ExtraCondensed),
+            3 => Ok(Self::Condensed),
+            4 => Ok(Self::SemiCondensed),
+            5 => Ok(Self::Normal),
+            6 => Ok(Self::SemiExpanded),
+            7 => Ok(Self::Expanded),
+            8 => Ok(Self::ExtraExpanded),
+            9 => Ok(Self::UltraExpanded),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum FontStyle {
+    Normal = 0,
+    Italic = 1,
+    Oblique = 2,
+}
+
+impl TryFrom<i32> for FontStyle {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::Normal),
+            1 => Ok(Self::Italic),
+            2 => Ok(Self::Oblique),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum FontWeight {
     Thin = 100,
     ExtraLight = 200,
@@ -2483,12 +2535,56 @@ impl AutoCompleteBox {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -2500,6 +2596,24 @@ impl AutoCompleteBox {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_minimum_prefix_length(&self) -> Result<i32> { Ok(self.raw.get_minimum_prefix_length()?) }
@@ -3029,12 +3143,56 @@ impl Button {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -3046,6 +3204,24 @@ impl Button {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -3337,12 +3513,56 @@ impl ButtonSpinner {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -3354,6 +3574,24 @@ impl ButtonSpinner {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -3631,12 +3869,56 @@ impl Calendar {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -3648,6 +3930,24 @@ impl Calendar {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_first_day_of_week(&self) -> Result<DayOfWeek> {
@@ -3950,12 +4250,56 @@ impl CalendarDatePicker {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -3967,6 +4311,24 @@ impl CalendarDatePicker {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_display_date(&self) -> Result<String> {
@@ -4523,12 +4885,56 @@ impl Carousel {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -4540,6 +4946,24 @@ impl Carousel {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn items(&self) -> Result<ItemList> {
@@ -4802,12 +5226,56 @@ impl CheckBox {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -4819,6 +5287,24 @@ impl CheckBox {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -5139,12 +5625,56 @@ impl ComboBox {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -5156,6 +5686,24 @@ impl ComboBox {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn items(&self) -> Result<ItemList> {
@@ -5436,12 +5984,56 @@ impl ComboBoxItem {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -5453,6 +6045,24 @@ impl ComboBoxItem {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -5711,12 +6321,56 @@ impl CommandBar {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -5728,6 +6382,24 @@ impl CommandBar {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -6026,12 +6698,56 @@ impl CommandBarButton {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -6043,6 +6759,24 @@ impl CommandBarButton {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -6380,12 +7114,56 @@ impl CommandBarSeparator {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -6397,6 +7175,24 @@ impl CommandBarSeparator {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_is_compact(&self) -> Result<bool> { Ok(self.raw.get_is_compact()?) }
@@ -6630,12 +7426,56 @@ impl CommandBarToggleButton {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -6647,6 +7487,24 @@ impl CommandBarToggleButton {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -7013,12 +7871,56 @@ impl ContentControl {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -7030,6 +7932,24 @@ impl ContentControl {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -7280,12 +8200,56 @@ impl ContextMenu {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -7297,6 +8261,24 @@ impl ContextMenu {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn items(&self) -> Result<ItemList> {
@@ -7779,12 +8761,56 @@ impl DatePicker {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -7796,6 +8822,24 @@ impl DatePicker {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_day_format(&self) -> Result<String> {
@@ -8522,12 +9566,56 @@ impl DropDownButton {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -8539,6 +9627,24 @@ impl DropDownButton {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -8830,12 +9936,56 @@ impl Expander {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -8847,6 +9997,24 @@ impl Expander {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -9833,12 +11001,56 @@ impl GridSplitter {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -9850,6 +11062,24 @@ impl GridSplitter {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_resize_direction(&self) -> Result<GridResizeDirection> {
@@ -10113,12 +11343,56 @@ impl GroupBox {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -10130,6 +11404,24 @@ impl GroupBox {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -10391,12 +11683,56 @@ impl HyperlinkButton {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -10408,6 +11744,24 @@ impl HyperlinkButton {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -10714,12 +12068,56 @@ impl IconElement {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -10731,6 +12129,24 @@ impl IconElement {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
 }
@@ -11165,12 +12581,56 @@ impl ItemsControl {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -11182,6 +12642,24 @@ impl ItemsControl {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn items(&self) -> Result<ItemList> {
@@ -11406,12 +12884,56 @@ impl Label {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -11423,6 +12945,24 @@ impl Label {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -11875,12 +13415,56 @@ impl ListBox {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -11892,6 +13476,24 @@ impl ListBox {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn items(&self) -> Result<ItemList> {
@@ -12150,12 +13752,56 @@ impl ListBoxItem {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -12167,6 +13813,24 @@ impl ListBoxItem {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -12425,12 +14089,56 @@ impl MaskedTextBox {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -12442,6 +14150,24 @@ impl MaskedTextBox {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_accepts_return(&self) -> Result<bool> { Ok(self.raw.get_accepts_return()?) }
@@ -12874,12 +14600,56 @@ impl Menu {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -12891,6 +14661,24 @@ impl Menu {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn items(&self) -> Result<ItemList> {
@@ -13161,12 +14949,56 @@ impl MenuBase {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -13178,6 +15010,24 @@ impl MenuBase {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn items(&self) -> Result<ItemList> {
@@ -13584,12 +15434,56 @@ impl MenuItem {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -13601,6 +15495,24 @@ impl MenuItem {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn items(&self) -> Result<ItemList> {
@@ -13948,12 +15860,56 @@ impl NotificationCard {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -13965,6 +15921,24 @@ impl NotificationCard {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -14234,12 +16208,56 @@ impl WindowNotificationManager {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -14251,6 +16269,24 @@ impl WindowNotificationManager {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_position(&self) -> Result<NotificationPosition> {
@@ -14487,12 +16523,56 @@ impl NumericUpDown {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -14504,6 +16584,24 @@ impl NumericUpDown {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_allow_spin(&self) -> Result<bool> { Ok(self.raw.get_allow_spin()?) }
@@ -15032,12 +17130,56 @@ impl PathIcon {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -15049,6 +17191,24 @@ impl PathIcon {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_data(&self) -> Result<Option<String>> {
@@ -15277,12 +17437,56 @@ impl PipsPager {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -15294,6 +17498,24 @@ impl PipsPager {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_max_visible_pips(&self) -> Result<i32> { Ok(self.raw.get_max_visible_pips()?) }
@@ -15613,12 +17835,56 @@ impl HeaderedContentControl {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -15630,6 +17896,24 @@ impl HeaderedContentControl {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -15891,12 +18175,56 @@ impl HeaderedItemsControl {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -15908,6 +18236,24 @@ impl HeaderedItemsControl {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn items(&self) -> Result<ItemList> {
@@ -16143,12 +18489,56 @@ impl HeaderedSelectingItemsControl {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -16160,6 +18550,24 @@ impl HeaderedSelectingItemsControl {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn items(&self) -> Result<ItemList> {
@@ -16784,12 +19192,56 @@ impl RangeBase {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -16801,6 +19253,24 @@ impl RangeBase {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_minimum(&self) -> Result<f64> { Ok(self.raw.get_minimum()?) }
@@ -17071,12 +19541,56 @@ impl SelectingItemsControl {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -17088,6 +19602,24 @@ impl SelectingItemsControl {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn items(&self) -> Result<ItemList> {
@@ -17333,12 +19865,56 @@ impl TemplatedControl {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -17350,6 +19926,24 @@ impl TemplatedControl {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
 }
@@ -17567,12 +20161,56 @@ impl Thumb {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -17584,6 +20222,24 @@ impl Thumb {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
 }
@@ -17801,12 +20457,56 @@ impl ToggleButton {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -17818,6 +20518,24 @@ impl ToggleButton {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -18369,12 +21087,56 @@ impl ProgressBar {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -18386,6 +21148,24 @@ impl ProgressBar {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_minimum(&self) -> Result<f64> { Ok(self.raw.get_minimum()?) }
@@ -18694,12 +21474,56 @@ impl RadioButton {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -18711,6 +21535,24 @@ impl RadioButton {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -19042,12 +21884,56 @@ impl RefreshContainer {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -19059,6 +21945,24 @@ impl RefreshContainer {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -19573,12 +22477,56 @@ impl RepeatButton {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -19590,6 +22538,24 @@ impl RepeatButton {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -19897,12 +22863,56 @@ impl ScrollViewer {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -19914,6 +22924,24 @@ impl ScrollViewer {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -20218,6 +23246,17 @@ impl SelectableTextBlock {
         self.set_padding(value)?;
         Ok(self)
     }
+    pub fn get_background(&self) -> Result<Option<Brush>> {
+        self.raw.get_background()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_background(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_background(value.as_ref())?)
+    }
+    pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_background(value)?;
+        Ok(self)
+    }
     pub fn get_text(&self) -> Result<Option<String>> {
         unsafe { Ok(sys::take_utf16(self.raw.get_text()?)) }
     }
@@ -20229,12 +23268,34 @@ impl SelectableTextBlock {
         self.set_text(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
         Ok(self)
     }
     pub fn get_font_weight(&self) -> Result<FontWeight> {
@@ -20248,6 +23309,17 @@ impl SelectableTextBlock {
         self.set_font_weight(value)?;
         Ok(self)
     }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
+        Ok(self)
+    }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
         self.raw.get_foreground()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -20257,6 +23329,41 @@ impl SelectableTextBlock {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_line_spacing(&self) -> Result<f64> { Ok(self.raw.get_line_spacing()?) }
+    pub fn set_line_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_line_spacing(value)?)
+    }
+    pub fn line_spacing(self, value: f64) -> Result<Self> {
+        self.set_line_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_max_lines(&self) -> Result<i32> { Ok(self.raw.get_max_lines()?) }
+    pub fn set_max_lines(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_max_lines(value)?)
+    }
+    pub fn max_lines(self, value: i32) -> Result<Self> {
+        self.set_max_lines(value)?;
+        Ok(self)
+    }
+    pub fn get_text_wrapping(&self) -> Result<TextWrapping> {
+        let value = self.raw.get_text_wrapping()?;
+        TextWrapping::try_from(value)
+    }
+    pub fn set_text_wrapping(&self, value: TextWrapping) -> Result<()> {
+        Ok(self.raw.set_text_wrapping(value as i32)?)
+    }
+    pub fn text_wrapping(self, value: TextWrapping) -> Result<Self> {
+        self.set_text_wrapping(value)?;
         Ok(self)
     }
     pub fn get_text_alignment(&self) -> Result<TextAlignment> {
@@ -20506,12 +23613,56 @@ impl Separator {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -20523,6 +23674,24 @@ impl Separator {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
 }
@@ -23105,12 +26274,56 @@ impl Slider {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -23122,6 +26335,24 @@ impl Slider {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_minimum(&self) -> Result<f64> { Ok(self.raw.get_minimum()?) }
@@ -23434,12 +26665,56 @@ impl Spinner {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -23451,6 +26726,24 @@ impl Spinner {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -23701,12 +26994,56 @@ impl SplitButton {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -23718,6 +27055,24 @@ impl SplitButton {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -23981,12 +27336,56 @@ impl SplitView {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -23998,6 +27397,24 @@ impl SplitView {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -24560,12 +27977,56 @@ impl TabControl {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -24577,6 +28038,24 @@ impl TabControl {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn items(&self) -> Result<ItemList> {
@@ -24855,12 +28334,56 @@ impl TabItem {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -24872,6 +28395,24 @@ impl TabItem {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -25141,12 +28682,56 @@ impl TableView {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -25158,6 +28743,24 @@ impl TableView {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn items(&self) -> Result<ItemList> {
@@ -25424,12 +29027,56 @@ impl TableViewCell {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -25441,6 +29088,24 @@ impl TableViewCell {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -25783,12 +29448,56 @@ impl TableViewRow {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -25800,6 +29509,24 @@ impl TableViewRow {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -26026,6 +29753,17 @@ impl TextBlock {
         self.set_padding(value)?;
         Ok(self)
     }
+    pub fn get_background(&self) -> Result<Option<Brush>> {
+        self.raw.get_background()?.as_ref().map(Brush::from_raw).transpose()
+    }
+    pub fn set_background(&self, value: impl Into<Option<Brush>>) -> Result<()> {
+        let value = value.into().map(Brush::to_raw).transpose()?;
+        Ok(self.raw.set_background(value.as_ref())?)
+    }
+    pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
+        self.set_background(value)?;
+        Ok(self)
+    }
     pub fn get_text(&self) -> Result<Option<String>> {
         unsafe { Ok(sys::take_utf16(self.raw.get_text()?)) }
     }
@@ -26037,12 +29775,34 @@ impl TextBlock {
         self.set_text(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
         Ok(self)
     }
     pub fn get_font_weight(&self) -> Result<FontWeight> {
@@ -26056,6 +29816,17 @@ impl TextBlock {
         self.set_font_weight(value)?;
         Ok(self)
     }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
+        Ok(self)
+    }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
         self.raw.get_foreground()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -26065,6 +29836,41 @@ impl TextBlock {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_line_spacing(&self) -> Result<f64> { Ok(self.raw.get_line_spacing()?) }
+    pub fn set_line_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_line_spacing(value)?)
+    }
+    pub fn line_spacing(self, value: f64) -> Result<Self> {
+        self.set_line_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_max_lines(&self) -> Result<i32> { Ok(self.raw.get_max_lines()?) }
+    pub fn set_max_lines(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_max_lines(value)?)
+    }
+    pub fn max_lines(self, value: i32) -> Result<Self> {
+        self.set_max_lines(value)?;
+        Ok(self)
+    }
+    pub fn get_text_wrapping(&self) -> Result<TextWrapping> {
+        let value = self.raw.get_text_wrapping()?;
+        TextWrapping::try_from(value)
+    }
+    pub fn set_text_wrapping(&self, value: TextWrapping) -> Result<()> {
+        Ok(self.raw.set_text_wrapping(value as i32)?)
+    }
+    pub fn text_wrapping(self, value: TextWrapping) -> Result<Self> {
+        self.set_text_wrapping(value)?;
         Ok(self)
     }
     pub fn get_text_alignment(&self) -> Result<TextAlignment> {
@@ -26293,12 +30099,56 @@ impl TextBox {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -26310,6 +30160,24 @@ impl TextBox {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_accepts_return(&self) -> Result<bool> { Ok(self.raw.get_accepts_return()?) }
@@ -26893,12 +30761,56 @@ impl TimePicker {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -26910,6 +30822,24 @@ impl TimePicker {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_minute_increment(&self) -> Result<i32> { Ok(self.raw.get_minute_increment()?) }
@@ -27174,12 +31104,56 @@ impl ToggleSplitButton {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -27191,6 +31165,24 @@ impl ToggleSplitButton {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -27475,12 +31467,56 @@ impl ToggleSwitch {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -27492,6 +31528,24 @@ impl ToggleSwitch {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -27834,12 +31888,56 @@ impl ToolTip {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -27851,6 +31949,24 @@ impl ToolTip {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -28183,12 +32299,56 @@ impl TransitioningContentControl {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -28200,6 +32360,24 @@ impl TransitioningContentControl {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -28490,12 +32668,56 @@ impl TreeView {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -28507,6 +32729,24 @@ impl TreeView {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn items(&self) -> Result<ItemList> {
@@ -28767,12 +33007,56 @@ impl TreeViewItem {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -28784,6 +33068,24 @@ impl TreeViewItem {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn items(&self) -> Result<ItemList> {
@@ -29062,12 +33364,56 @@ impl UserControl {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -29079,6 +33425,24 @@ impl UserControl {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {
@@ -29535,12 +33899,56 @@ impl Window {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_font_family(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_font_family()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_font_family(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_family(&value)?)
+    }
+    pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_family(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
     }
     pub fn font_size(self, value: f64) -> Result<Self> {
         self.set_font_size(value)?;
+        Ok(self)
+    }
+    pub fn get_font_style(&self) -> Result<FontStyle> {
+        let value = self.raw.get_font_style()?;
+        FontStyle::try_from(value)
+    }
+    pub fn set_font_style(&self, value: FontStyle) -> Result<()> {
+        Ok(self.raw.set_font_style(value as i32)?)
+    }
+    pub fn font_style(self, value: FontStyle) -> Result<Self> {
+        self.set_font_style(value)?;
+        Ok(self)
+    }
+    pub fn get_font_weight(&self) -> Result<FontWeight> {
+        let value = self.raw.get_font_weight()?;
+        FontWeight::try_from(value)
+    }
+    pub fn set_font_weight(&self, value: FontWeight) -> Result<()> {
+        Ok(self.raw.set_font_weight(value as i32)?)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Result<Self> {
+        self.set_font_weight(value)?;
+        Ok(self)
+    }
+    pub fn get_font_stretch(&self) -> Result<FontStretch> {
+        let value = self.raw.get_font_stretch()?;
+        FontStretch::try_from(value)
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<()> {
+        Ok(self.raw.set_font_stretch(value as i32)?)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Result<Self> {
+        self.set_font_stretch(value)?;
         Ok(self)
     }
     pub fn get_foreground(&self) -> Result<Option<Brush>> {
@@ -29552,6 +33960,24 @@ impl Window {
     }
     pub fn foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_letter_spacing(&self) -> Result<f64> { Ok(self.raw.get_letter_spacing()?) }
+    pub fn set_letter_spacing(&self, value: f64) -> Result<()> {
+        Ok(self.raw.set_letter_spacing(value)?)
+    }
+    pub fn letter_spacing(self, value: f64) -> Result<Self> {
+        self.set_letter_spacing(value)?;
+        Ok(self)
+    }
+    pub fn get_padding(&self) -> Result<Thickness> {
+        Ok(self.raw.get_padding()?.into())
+    }
+    pub fn set_padding(&self, value: Thickness) -> Result<()> {
+        Ok(self.raw.set_padding(value.into())?)
+    }
+    pub fn padding(self, value: Thickness) -> Result<Self> {
+        self.set_padding(value)?;
         Ok(self)
     }
     pub fn get_content(&self) -> Result<Option<Control>> {

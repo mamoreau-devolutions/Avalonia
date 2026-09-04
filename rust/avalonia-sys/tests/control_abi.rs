@@ -40,6 +40,12 @@ fn completeness_members_are_published_on_the_type_that_declares_them() {
         "*set_window_decorations)(IAvnWindow* self, int32_t value)",
         "*set_closing_behavior)(IAvnWindow* self, int32_t value)",
         "*hide)(IAvnWindow* self)",
+        "*set_font_family)(IAvnTemplatedControl* self, const uint16_t* value)",
+        "*set_font_style)(IAvnTemplatedControl* self, int32_t value)",
+        "*set_font_weight)(IAvnTemplatedControl* self, int32_t value)",
+        "*set_padding)(IAvnTemplatedControl* self, AvnThickness value)",
+        "*set_font_family)(IAvnTextBlock* self, const uint16_t* value)",
+        "*set_text_wrapping)(IAvnTextBlock* self, int32_t value)",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
     }
@@ -54,29 +60,27 @@ fn completeness_members_are_published_on_the_type_that_declares_them() {
 #[test]
 fn widened_interfaces_publish_abi_version_five() {
     for expected in [
-        "#define I_AVN_CONTENT_CONTROL_ABI_VERSION 5",
-        "#define I_AVN_HEADERED_CONTENT_CONTROL_ABI_VERSION 5",
-        "#define I_AVN_EXPANDER_ABI_VERSION 5",
-        "#define I_AVN_BUTTON_ABI_VERSION 5",
-        "#define I_AVN_TOGGLE_BUTTON_ABI_VERSION 5",
-        "#define I_AVN_CHECK_BOX_ABI_VERSION 5",
-        "#define I_AVN_RADIO_BUTTON_ABI_VERSION 5",
-        "#define I_AVN_TOGGLE_SWITCH_ABI_VERSION 5",
-        "#define I_AVN_LIST_BOX_ABI_VERSION 5",
-        "#define I_AVN_LIST_BOX_ITEM_ABI_VERSION 5",
-        "#define I_AVN_COMBO_BOX_ABI_VERSION 5",
-        "#define I_AVN_COMBO_BOX_ITEM_ABI_VERSION 5",
-        "#define I_AVN_SCROLL_VIEWER_ABI_VERSION 5",
-        "#define I_AVN_WINDOW_ABI_VERSION 6",
-        // Nothing above or beside the widened types moved, so these keep the version whose
-        // flattened vtable they still match.
+        "#define I_AVN_CONTENT_CONTROL_ABI_VERSION 6",
+        "#define I_AVN_HEADERED_CONTENT_CONTROL_ABI_VERSION 6",
+        "#define I_AVN_EXPANDER_ABI_VERSION 6",
+        "#define I_AVN_BUTTON_ABI_VERSION 6",
+        "#define I_AVN_TOGGLE_BUTTON_ABI_VERSION 6",
+        "#define I_AVN_CHECK_BOX_ABI_VERSION 6",
+        "#define I_AVN_RADIO_BUTTON_ABI_VERSION 6",
+        "#define I_AVN_TOGGLE_SWITCH_ABI_VERSION 6",
+        "#define I_AVN_LIST_BOX_ABI_VERSION 6",
+        "#define I_AVN_LIST_BOX_ITEM_ABI_VERSION 6",
+        "#define I_AVN_COMBO_BOX_ABI_VERSION 6",
+        "#define I_AVN_COMBO_BOX_ITEM_ABI_VERSION 6",
+        "#define I_AVN_SCROLL_VIEWER_ABI_VERSION 6",
+        "#define I_AVN_WINDOW_ABI_VERSION 7",
+        "#define I_AVN_TEMPLATED_CONTROL_ABI_VERSION 5",
+        "#define I_AVN_TEXT_BLOCK_ABI_VERSION 5",
+        "#define I_AVN_TEXT_BOX_ABI_VERSION 5",
+        "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 5",
+        "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 5",
         "#define I_AVN_BORDER_ABI_VERSION 4",
         "#define I_AVN_PANEL_ABI_VERSION 4",
-        "#define I_AVN_TEMPLATED_CONTROL_ABI_VERSION 4",
-        "#define I_AVN_TEXT_BLOCK_ABI_VERSION 4",
-        "#define I_AVN_TEXT_BOX_ABI_VERSION 4",
-        "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 4",
-        "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 4",
         "#define I_AVN_CONTROL_ABI_VERSION 3",
         "#define I_AVN_AVALONIA_OBJECT_ABI_VERSION 2",
         // The factory gained a creator per wave A control plus get_tool_tip_statics at version
@@ -127,12 +131,11 @@ fn widened_interfaces_republish_under_fresh_iids() {
             "965CC1CE-DA6F-5CCB-900F-3150CA8DB605",
             I_AVN_WINDOW_IID,
         ),
-    ] {
-        assert_ne!(format_iid(&current), retired, "{name} reused a retired IID");
-    }
-
-    // The freshly published version 5 IIDs. Window then grew chrome slots at version 6.
-    for (name, expected, current) in [
+        (
+            "IAvnWindow",
+            "F01ADFEE-98B3-5F6C-85B3-61121B1F7106",
+            I_AVN_WINDOW_IID,
+        ),
         (
             "IAvnContentControl",
             "2C4557A2-537C-5683-9E30-C3AE87D7614C",
@@ -158,9 +161,40 @@ fn widened_interfaces_republish_under_fresh_iids() {
             "7334041F-D155-548C-BF70-4CFFB4F44021",
             I_AVN_COMBO_BOX_IID,
         ),
+    ] {
+        assert_ne!(format_iid(&current), retired, "{name} reused a retired IID");
+    }
+
+    // Wave M republished every TemplatedControl descendant under a fresh IID.
+    for (name, expected, current) in [
+        (
+            "IAvnContentControl",
+            "35C15BC0-F6CD-51D5-868A-9A391D7EF443",
+            I_AVN_CONTENT_CONTROL_IID,
+        ),
+        (
+            "IAvnButton",
+            "110589FF-3BB8-50F5-A392-41BB3107D5F1",
+            I_AVN_BUTTON_IID,
+        ),
+        (
+            "IAvnToggleButton",
+            "E164C024-3AC5-55F1-815E-CE96646E78FD",
+            I_AVN_TOGGLE_BUTTON_IID,
+        ),
+        (
+            "IAvnListBox",
+            "887C3BB0-59E1-57DD-848F-366B137BA3D1",
+            I_AVN_LIST_BOX_IID,
+        ),
+        (
+            "IAvnComboBox",
+            "1BFD4CC7-0C79-53D7-845D-CC6801697EAD",
+            I_AVN_COMBO_BOX_IID,
+        ),
         (
             "IAvnWindow",
-            "F01ADFEE-98B3-5F6C-85B3-61121B1F7106",
+            "C75C263D-AE39-51E4-8F2D-2A65812965EE",
             I_AVN_WINDOW_IID,
         ),
     ] {
@@ -186,11 +220,11 @@ fn widened_interfaces_republish_under_fresh_iids() {
     );
     assert_eq!(
         format_iid(&I_AVN_TEMPLATED_CONTROL_IID),
-        "002B0BD0-7F53-52CD-A7BC-499224438B34"
+        "A3893721-54B6-511D-B171-F8D6817F450A"
     );
     assert_eq!(
         format_iid(&I_AVN_TEXT_BLOCK_IID),
-        "3348758A-72D6-5B1F-84F2-9D80A51DC2FD"
+        "74662671-AA6E-568D-89E2-4569829F35A8"
     );
 }
 
