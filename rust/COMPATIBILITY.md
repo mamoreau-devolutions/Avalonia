@@ -207,6 +207,13 @@ IsLoaded and Loaded/Unloaded stay gaps: putting them on Control would
 republish every control interface and is a wave of its own. ICommand and
 HotKey stay gaps. The factory is unmoved at 13.
 
+Wave overlay chrome grows `IAvnPopup` from 1 to 2 with Open/Close, Opened/Closed,
+InheritsTransform, PlacementTarget, overlay-layer bools and IsPointerOverPopup.
+`IAvnPopupFlyoutBase` (and Flyout/MenuFlyout) grow a read-only Popup COM slot
+and move from 1 to 2. `IAvnContextMenu` grows PlacementTarget and moves from
+2 to 3. PlacementRect is nullable geometry; PlacementAnchor/Gravity/ConstraintAdjustment
+are flags enums whose combined values have no name — both stay gaps. Factory 13.
+
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and
 `IAvnNumericUpDown` each move from 2 to 3. Templates, filters, ItemsSource,

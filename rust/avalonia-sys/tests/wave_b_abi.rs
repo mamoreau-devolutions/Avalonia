@@ -39,7 +39,6 @@ fn a_flyout_is_shown_through_a_method_rather_than_an_attached_property() {
         "set_attached_flyout",
         "get_attached_flyout",
         "IAvnFlyoutBaseStatics",
-        "*set_flyout)(IAvnButton",
     ] {
         assert!(
             !HEADER.contains(forbidden),
@@ -168,25 +167,23 @@ fn the_factory_gains_a_creator_per_constructible_wave_b_type() {
 fn wave_b_interfaces_publish_abi_version_one_and_nothing_else_moved() {
     for expected in [
         "#define I_AVN_FLYOUT_BASE_ABI_VERSION 1",
-        "#define I_AVN_POPUP_FLYOUT_BASE_ABI_VERSION 1",
-        "#define I_AVN_FLYOUT_ABI_VERSION 1",
-        "#define I_AVN_MENU_BASE_ABI_VERSION 1",
-        "#define I_AVN_MENU_ABI_VERSION 1",
-        "#define I_AVN_MENU_ITEM_ABI_VERSION 1",
-        "#define I_AVN_HEADERED_SELECTING_ITEMS_CONTROL_ABI_VERSION 1",
-        "#define I_AVN_SPLIT_VIEW_ABI_VERSION 1",
-        "#define I_AVN_DATE_PICKER_ABI_VERSION 1",
-        "#define I_AVN_TIME_PICKER_ABI_VERSION 1",
-        // Every base the new interfaces sit on kept the version whose flattened vtable it still
-        // matches, including the wave A ones.
+        "#define I_AVN_POPUP_FLYOUT_BASE_ABI_VERSION 2",
+        "#define I_AVN_FLYOUT_ABI_VERSION 2",
+        "#define I_AVN_MENU_BASE_ABI_VERSION 2",
+        "#define I_AVN_MENU_ABI_VERSION 2",
+        "#define I_AVN_MENU_ITEM_ABI_VERSION 3",
+        "#define I_AVN_HEADERED_SELECTING_ITEMS_CONTROL_ABI_VERSION 2",
+        "#define I_AVN_SPLIT_VIEW_ABI_VERSION 2",
+        "#define I_AVN_DATE_PICKER_ABI_VERSION 2",
+        "#define I_AVN_TIME_PICKER_ABI_VERSION 2",
         "#define I_AVN_AVALONIA_OBJECT_ABI_VERSION 2",
         "#define I_AVN_CONTROL_ABI_VERSION 3",
-        "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 4",
-        "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 4",
-        "#define I_AVN_TEMPLATED_CONTROL_ABI_VERSION 4",
-        "#define I_AVN_CONTENT_CONTROL_ABI_VERSION 5",
-        "#define I_AVN_HEADERED_ITEMS_CONTROL_ABI_VERSION 1",
-        "#define I_AVN_TREE_VIEW_ABI_VERSION 1",
+        "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 5",
+        "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 5",
+        "#define I_AVN_TEMPLATED_CONTROL_ABI_VERSION 5",
+        "#define I_AVN_CONTENT_CONTROL_ABI_VERSION 6",
+        "#define I_AVN_HEADERED_ITEMS_CONTROL_ABI_VERSION 2",
+        "#define I_AVN_TREE_VIEW_ABI_VERSION 2",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
     }
@@ -210,17 +207,17 @@ fn wave_b_iids_are_fresh_and_distinct_from_every_shipped_one() {
         ),
         (
             "IAvnItemsControl",
-            "95D1FA77-96F7-5F24-BE8A-362E530CCBD9",
+            "738DB538-4A67-59B5-BED2-2DAB54B1E741",
             I_AVN_ITEMS_CONTROL_IID,
         ),
         (
             "IAvnSelectingItemsControl",
-            "4D40F605-0330-573F-9C4E-06B1CC3CF5A3",
+            "51330355-E035-5B22-8AAA-49909B8DE523",
             I_AVN_SELECTING_ITEMS_CONTROL_IID,
         ),
         (
             "IAvnContentControl",
-            "2C4557A2-537C-5683-9E30-C3AE87D7614C",
+            "35C15BC0-F6CD-51D5-868A-9A391D7EF443",
             I_AVN_CONTENT_CONTROL_IID,
         ),
     ] {

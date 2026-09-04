@@ -463,15 +463,13 @@ public class ClrTypeExtractorTests
     {
         var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
 
+        Assert.Equal(1, Type(ir, "IAvnFlyoutBase").AbiVersion);
         Assert.All(
-            new[] { "IAvnFlyoutBase", "IAvnPopupFlyoutBase", "IAvnFlyout" },
+            new[] { "IAvnPopupFlyoutBase", "IAvnFlyout" },
             name =>
             {
                 var type = Type(ir, name);
-                Assert.Equal(1, type.AbiVersion);
-                Assert.Equal(
-                    ClrTypeExtractor.CreateDeterministicIid(type.FullName, 1),
-                    type.Iid);
+                Assert.Equal(2, type.AbiVersion);
             });
         Assert.All(
             new[]
@@ -1157,8 +1155,8 @@ public class ClrTypeExtractorTests
     {
         var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
 
-        Assert.Equal(1, Type(ir, "IAvnMenuFlyout").AbiVersion);
-        Assert.Equal(2, Type(ir, "IAvnContextMenu").AbiVersion);
+        Assert.Equal(2, Type(ir, "IAvnMenuFlyout").AbiVersion);
+        Assert.Equal(3, Type(ir, "IAvnContextMenu").AbiVersion);
         Assert.All(
             new[]
             {
@@ -1531,6 +1529,30 @@ public class ClrTypeExtractorTests
         Assert.Contains(Type(ir, "IAvnCalendarDatePicker").Methods, m => m.Name == "Clear");
         Assert.Equal(3, Type(ir, "IAvnNumericUpDown").AbiVersion);
         Assert.Contains(Type(ir, "IAvnNumericUpDown").Properties, p => p.Name == "TextAlignment");
+        Assert.Equal(13, ir.FactoryAbiVersion);
+    }
+
+    [Fact]
+    public void Overlay_chrome_projects_popup_open_close_and_placement_target()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+        var popup = Type(ir, "IAvnPopup");
+        Assert.Equal(2, popup.AbiVersion);
+        Assert.Contains(popup.Methods, m => m.Name == "Open");
+        Assert.Contains(popup.Methods, m => m.Name == "Close");
+        Assert.Contains(popup.Events, e => e.Name == "Opened");
+        var target = popup.Properties.Single(p => p.Name == "PlacementTarget");
+        Assert.Equal(MarshallingKind.ComInterface, target.Kind);
+        Assert.Equal("Avalonia.Host.Com.IAvnControl", target.InterfaceName);
+        Assert.DoesNotContain(popup.Properties, p => p.Name is "PlacementRect" or "PlacementAnchor");
+
+        var flyoutBase = Type(ir, "IAvnPopupFlyoutBase");
+        Assert.Equal(2, flyoutBase.AbiVersion);
+        var popupProp = flyoutBase.Properties.Single(p => p.Name == "Popup");
+        Assert.Equal("Avalonia.Host.Com.IAvnPopup", popupProp.InterfaceName);
+
+        Assert.Equal(3, Type(ir, "IAvnContextMenu").AbiVersion);
+        Assert.Contains(Type(ir, "IAvnContextMenu").Properties, p => p.Name == "PlacementTarget");
         Assert.Equal(13, ir.FactoryAbiVersion);
     }
 

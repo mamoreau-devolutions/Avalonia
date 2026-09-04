@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("5F337C86-BAC8-5A8D-B472-B7A39EE3DEC5")]
+[Guid("E0AC8C18-8A66-5364-ADCA-277395472FA4")]
 public partial interface IAvnFlyout : IAvnPopupFlyoutBase
 {
     [PreserveSig]
@@ -229,6 +229,22 @@ public sealed partial class AvnFlyout : IAvnFlyout
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
             subscription.Unsubscribe();
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetPopup(out IAvnPopup value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (IAvnPopup?)ProjectionRuntime.Wrap(_value.Popup as global::Avalonia.AvaloniaObject);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

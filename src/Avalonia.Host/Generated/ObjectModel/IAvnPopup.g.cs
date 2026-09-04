@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("806D4F89-A20E-50A2-802E-7D462AEA78DB")]
+[Guid("43264105-562E-530E-9D96-C27582FE18A7")]
 public partial interface IAvnPopup : IAvnControl
 {
     [PreserveSig]
@@ -20,6 +20,12 @@ public partial interface IAvnPopup : IAvnControl
 
     [PreserveSig]
     int SetChild(IAvnControl? value);
+
+    [PreserveSig]
+    int GetInheritsTransform(out int value);
+
+    [PreserveSig]
+    int SetInheritsTransform(int value);
 
     [PreserveSig]
     int GetIsLightDismissEnabled(out int value);
@@ -38,6 +44,12 @@ public partial interface IAvnPopup : IAvnControl
 
     [PreserveSig]
     int SetPlacement(int value);
+
+    [PreserveSig]
+    int GetPlacementTarget(out IAvnControl? value);
+
+    [PreserveSig]
+    int SetPlacementTarget(IAvnControl? value);
 
     [PreserveSig]
     int GetOverlayDismissEventPassThrough(out int value);
@@ -63,6 +75,42 @@ public partial interface IAvnPopup : IAvnControl
     [PreserveSig]
     int SetTopmost(int value);
 
+    [PreserveSig]
+    int GetTakesFocusFromNativeControl(out int value);
+
+    [PreserveSig]
+    int SetTakesFocusFromNativeControl(int value);
+
+    [PreserveSig]
+    int GetShouldUseOverlayLayer(out int value);
+
+    [PreserveSig]
+    int SetShouldUseOverlayLayer(int value);
+
+    [PreserveSig]
+    int GetIsUsingOverlayLayer(out int value);
+
+    [PreserveSig]
+    int GetIsPointerOverPopup(out int value);
+
+    [PreserveSig]
+    int Open();
+
+    [PreserveSig]
+    int Close();
+
+    [PreserveSig]
+    int AdviseClosed(IAvnPopupClosedHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadviseClosed(long subscriptionId);
+
+    [PreserveSig]
+    int AdviseOpened(IAvnPopupOpenedHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadviseOpened(long subscriptionId);
+
 }
 
 [GeneratedComClass]
@@ -76,6 +124,10 @@ public sealed partial class AvnPopup : IAvnPopup
     private long _nextPointerEnteredSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnControlPointerExitedHandler Handler, global::System.Action Unsubscribe)> _pointerExitedSubscriptions = new();
     private long _nextPointerExitedSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnPopupClosedHandler Handler, global::System.Action Unsubscribe)> _closedSubscriptions = new();
+    private long _nextClosedSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnPopupOpenedHandler Handler, global::System.Action Unsubscribe)> _openedSubscriptions = new();
+    private long _nextOpenedSubscriptionId;
 
     internal AvnPopup(global::Avalonia.Controls.Primitives.Popup value)
     {
@@ -735,6 +787,37 @@ public sealed partial class AvnPopup : IAvnPopup
         }
     }
 
+    public int GetInheritsTransform(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.InheritsTransform ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetInheritsTransform(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.InheritsTransform = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetIsLightDismissEnabled(out int value)
     {
         value = default!;
@@ -820,6 +903,37 @@ public sealed partial class AvnPopup : IAvnPopup
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Placement = (global::Avalonia.Controls.PlacementMode)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetPlacementTarget(out IAvnControl? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (IAvnControl?)ProjectionRuntime.Wrap(_value.PlacementTarget as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetPlacementTarget(IAvnControl? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.PlacementTarget = (global::Avalonia.Controls.Control)ProjectionRuntime.Unwrap(value)!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -952,6 +1066,222 @@ public sealed partial class AvnPopup : IAvnPopup
         }
     }
 
+    public int GetTakesFocusFromNativeControl(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.TakesFocusFromNativeControl ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetTakesFocusFromNativeControl(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.TakesFocusFromNativeControl = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetShouldUseOverlayLayer(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.ShouldUseOverlayLayer ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetShouldUseOverlayLayer(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ShouldUseOverlayLayer = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetIsUsingOverlayLayer(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.IsUsingOverlayLayer ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetIsPointerOverPopup(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.IsPointerOverPopup ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int Open()
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Open();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int Close()
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Close();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseClosed(IAvnPopupClosedHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<System.EventArgs>((_, eventArgs) =>
+            {
+                var hr = handler.Invoke();
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.Closed += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextClosedSubscriptionId);
+            _closedSubscriptions.Add(subscriptionId, (handler, () => eventSource.Closed -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseClosed(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_closedSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseOpened(IAvnPopupOpenedHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler((_, eventArgs) =>
+            {
+                var hr = handler.Invoke();
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.Opened += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextOpenedSubscriptionId);
+            _openedSubscriptions.Add(subscriptionId, (handler, () => eventSource.Opened -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseOpened(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_openedSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     private void ReleaseSubscriptions()
     {
         foreach (var subscription in _keyDownSubscriptions.Values)
@@ -972,5 +1302,17 @@ public sealed partial class AvnPopup : IAvnPopup
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
         }
         _pointerExitedSubscriptions.Clear();
+        foreach (var subscription in _closedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _closedSubscriptions.Clear();
+        foreach (var subscription in _openedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _openedSubscriptions.Clear();
     }
 }

@@ -91,14 +91,14 @@ fn wave_c_interfaces_publish_abi_version_one_and_nothing_else_moved() {
         "#define I_AVN_RELATIVE_PANEL_ABI_VERSION 1",
         "#define I_AVN_VIEWBOX_ABI_VERSION 1",
         "#define I_AVN_FLEX_PANEL_ABI_VERSION 1",
-        "#define I_AVN_THUMB_ABI_VERSION 1",
-        "#define I_AVN_GRID_SPLITTER_ABI_VERSION 1",
+        "#define I_AVN_THUMB_ABI_VERSION 2",
+        "#define I_AVN_GRID_SPLITTER_ABI_VERSION 2",
         "#define I_AVN_AVALONIA_OBJECT_ABI_VERSION 2",
         "#define I_AVN_CONTROL_ABI_VERSION 3",
         "#define I_AVN_PANEL_ABI_VERSION 4",
-        "#define I_AVN_TEMPLATED_CONTROL_ABI_VERSION 4",
-        "#define I_AVN_CONTENT_CONTROL_ABI_VERSION 5",
-        "#define I_AVN_FLYOUT_ABI_VERSION 1",
+        "#define I_AVN_TEMPLATED_CONTROL_ABI_VERSION 5",
+        "#define I_AVN_CONTENT_CONTROL_ABI_VERSION 6",
+        "#define I_AVN_FLYOUT_ABI_VERSION 2",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
     }

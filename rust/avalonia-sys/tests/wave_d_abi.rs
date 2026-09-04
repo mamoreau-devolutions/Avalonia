@@ -13,9 +13,9 @@ fn repeat_button_and_hyperlink_are_buttons() {
         "*set_is_visited)(IAvnHyperlinkButton* self, int32_t value)",
         "*get_navigate_uri)(IAvnHyperlinkButton* self, uint16_t** value)",
         "*set_navigate_uri)(IAvnHyperlinkButton* self, const uint16_t* value)",
-        "#define I_AVN_REPEAT_BUTTON_ABI_VERSION 1",
-        "#define I_AVN_HYPERLINK_BUTTON_ABI_VERSION 1",
-        "#define I_AVN_DROP_DOWN_BUTTON_ABI_VERSION 1",
+        "#define I_AVN_REPEAT_BUTTON_ABI_VERSION 3",
+        "#define I_AVN_HYPERLINK_BUTTON_ABI_VERSION 3",
+        "#define I_AVN_DROP_DOWN_BUTTON_ABI_VERSION 3",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
     }
@@ -36,9 +36,7 @@ fn split_button_carries_click_and_no_icommand() {
     }
 
     for forbidden in [
-        "*set_flyout)(IAvnSplitButton",
         "*set_command)(IAvnSplitButton",
-        "*set_placement_target)(IAvnContextMenu",
     ] {
         assert!(
             !HEADER.contains(forbidden),
@@ -53,9 +51,9 @@ fn menu_flyout_items_use_the_existing_item_list() {
         "*get_items)(IAvnMenuFlyout* self, IAvnItemList** value)",
         "*set_placement)(IAvnContextMenu* self, int32_t value)",
         "*set_horizontal_offset)(IAvnContextMenu* self, double value)",
-        "#define I_AVN_MENU_FLYOUT_ABI_VERSION 1",
-        "#define I_AVN_CONTEXT_MENU_ABI_VERSION 1",
-        "#define I_AVN_BUTTON_ABI_VERSION 5",
+        "#define I_AVN_MENU_FLYOUT_ABI_VERSION 2",
+        "#define I_AVN_CONTEXT_MENU_ABI_VERSION 3",
+        "#define I_AVN_BUTTON_ABI_VERSION 7",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
     }

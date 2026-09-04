@@ -1161,8 +1161,8 @@
       "name": "IAvnContextMenu",
       "fullName": "Avalonia.Host.Com.IAvnContextMenu",
       "kind": "Class",
-      "iid": "325C1CC2-19A6-58BD-A463-3AD131FAFA8C",
-      "abiVersion": 2,
+      "iid": "7564FCBE-C93D-5274-9620-EDE96BB7CFCB",
+      "abiVersion": 3,
       "baseFullName": "Avalonia.Host.Com.IAvnMenuBase",
       "managedFullName": "Avalonia.Controls.ContextMenu",
       "isConstructible": true,
@@ -1203,6 +1203,16 @@
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
+        },
+        {
+          "name": "PlacementTarget",
+          "kind": "ComInterface",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnControl",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Control",
+          "isNullable": true
         }
       ],
       "events": []
@@ -1718,8 +1728,8 @@
       "name": "IAvnFlyout",
       "fullName": "Avalonia.Host.Com.IAvnFlyout",
       "kind": "Class",
-      "iid": "5F337C86-BAC8-5A8D-B472-B7A39EE3DEC5",
-      "abiVersion": 1,
+      "iid": "E0AC8C18-8A66-5364-ADCA-277395472FA4",
+      "abiVersion": 2,
       "baseFullName": "Avalonia.Host.Com.IAvnPopupFlyoutBase",
       "managedFullName": "Avalonia.Controls.Flyout",
       "isConstructible": true,
@@ -2241,8 +2251,8 @@
       "name": "IAvnMenuFlyout",
       "fullName": "Avalonia.Host.Com.IAvnMenuFlyout",
       "kind": "Class",
-      "iid": "C13CFFEC-7D37-5030-8D8B-618BEDD615A1",
-      "abiVersion": 1,
+      "iid": "9980B9F3-355C-5575-ABE3-046652BFCDC8",
+      "abiVersion": 2,
       "baseFullName": "Avalonia.Host.Com.IAvnPopupFlyoutBase",
       "managedFullName": "Avalonia.Controls.MenuFlyout",
       "isConstructible": true,
@@ -2934,12 +2944,27 @@
       "name": "IAvnPopup",
       "fullName": "Avalonia.Host.Com.IAvnPopup",
       "kind": "Class",
-      "iid": "806D4F89-A20E-50A2-802E-7D462AEA78DB",
-      "abiVersion": 1,
+      "iid": "43264105-562E-530E-9D96-C27582FE18A7",
+      "abiVersion": 2,
       "baseFullName": "Avalonia.Host.Com.IAvnControl",
       "managedFullName": "Avalonia.Controls.Primitives.Popup",
       "isConstructible": true,
-      "methods": [],
+      "methods": [
+        {
+          "name": "Open",
+          "managedName": "Open",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": []
+        },
+        {
+          "name": "Close",
+          "managedName": "Close",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": []
+        }
+      ],
       "properties": [
         {
           "name": "WindowManagerAddShadowHint",
@@ -2959,6 +2984,15 @@
           "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Controls.Control",
           "isNullable": true
+        },
+        {
+          "name": "InheritsTransform",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
         },
         {
           "name": "IsLightDismissEnabled",
@@ -2986,6 +3020,16 @@
           "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Controls.PlacementMode",
           "isNullable": false
+        },
+        {
+          "name": "PlacementTarget",
+          "kind": "ComInterface",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnControl",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Control",
+          "isNullable": true
         },
         {
           "name": "OverlayDismissEventPassThrough",
@@ -3022,21 +3066,86 @@
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
+        },
+        {
+          "name": "TakesFocusFromNativeControl",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "ShouldUseOverlayLayer",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "IsUsingOverlayLayer",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": false,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "IsPointerOverPopup",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": false,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
         }
       ],
-      "events": []
+      "events": [
+        {
+          "name": "Closed",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnPopupClosedHandler",
+          "handlerInterfaceIid": "BA05BA4E-4F9F-527C-A8D4-35203B0D5101",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler\u003CSystem.EventArgs\u003E",
+          "parameters": []
+        },
+        {
+          "name": "Opened",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnPopupOpenedHandler",
+          "handlerInterfaceIid": "E221E0B8-BEBA-5462-ADE8-9CD5CFABA8B7",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler",
+          "parameters": []
+        }
+      ]
     },
     {
       "name": "IAvnPopupFlyoutBase",
       "fullName": "Avalonia.Host.Com.IAvnPopupFlyoutBase",
       "kind": "Class",
-      "iid": "3E7168D2-CA62-5030-B9CF-85F108354777",
-      "abiVersion": 1,
+      "iid": "C804908E-9834-53CA-9B84-6F45DC6EEC15",
+      "abiVersion": 2,
       "baseFullName": "Avalonia.Host.Com.IAvnFlyoutBase",
       "managedFullName": "Avalonia.Controls.Primitives.PopupFlyoutBase",
       "isConstructible": false,
       "methods": [],
       "properties": [
+        {
+          "name": "Popup",
+          "kind": "ComInterface",
+          "canRead": true,
+          "canWrite": false,
+          "interfaceName": "Avalonia.Host.Com.IAvnPopup",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Primitives.Popup",
+          "isNullable": false
+        },
         {
           "name": "Placement",
           "kind": "I32",
@@ -9633,11 +9742,6 @@
     },
     {
       "owner": "Avalonia.Controls.ContextMenu",
-      "member": "PlacementTarget",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ContextMenu",
       "member": "CustomPopupPlacementCallback",
       "reason": "Not included by projection policy"
     },
@@ -10123,11 +10227,6 @@
     },
     {
       "owner": "Avalonia.Controls.Primitives.Popup",
-      "member": "InheritsTransform",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Primitives.Popup",
       "member": "PlacementAnchor",
       "reason": "Not included by projection policy"
     },
@@ -10148,11 +10247,6 @@
     },
     {
       "owner": "Avalonia.Controls.Primitives.Popup",
-      "member": "PlacementTarget",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Primitives.Popup",
       "member": "CustomPopupPlacementCallback",
       "reason": "Not included by projection policy"
     },
@@ -10163,52 +10257,7 @@
     },
     {
       "owner": "Avalonia.Controls.Primitives.Popup",
-      "member": "TakesFocusFromNativeControl",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Primitives.Popup",
-      "member": "ShouldUseOverlayLayer",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Primitives.Popup",
-      "member": "IsUsingOverlayLayer",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Primitives.Popup",
-      "member": "IsPointerOverPopup",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Primitives.Popup",
-      "member": "Closed",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Primitives.Popup",
-      "member": "Opened",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Primitives.Popup",
-      "member": "Open()",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Primitives.Popup",
-      "member": "Close()",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Primitives.Popup",
       "member": "IsInsidePopup(Visual)",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Primitives.PopupFlyoutBase",
-      "member": "Popup",
       "reason": "Not included by projection policy"
     },
     {

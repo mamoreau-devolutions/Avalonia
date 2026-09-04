@@ -1163,6 +1163,116 @@ unsafe extern "system" fn i_avn_flyout_base_closed_handler_invoke(this: *mut IAv
     crate::event_callback::invoke::<IAvnFlyoutBaseClosedHandler, ()>(this, &mut ())
 }
 
+pub const I_AVN_POPUP_CLOSED_HANDLER_IID: Guid = Guid { data1: 0xBA05BA4E, data2: 0x4F9F, data3: 0x527C, data4: [0xA8, 0xD4, 0x35, 0x20, 0x3B, 0x0D, 0x51, 0x01] };
+
+#[repr(C)]
+struct IAvnPopupClosedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnPopupClosedHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnPopupClosedHandler {
+    vtbl: *const IAvnPopupClosedHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnPopupClosedHandler {
+    const IID: Guid = I_AVN_POPUP_CLOSED_HANDLER_IID;
+}
+
+impl ComPtr<IAvnPopupClosedHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_POPUP_CLOSED_HANDLER_VTBL: IAvnPopupClosedHandlerVtbl = IAvnPopupClosedHandlerVtbl {
+    query_interface: i_avn_popup_closed_handler_query_interface,
+    add_ref: i_avn_popup_closed_handler_add_ref,
+    release: i_avn_popup_closed_handler_release,
+    invoke: i_avn_popup_closed_handler_invoke,
+};
+
+pub fn popup_closed_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnPopupClosedHandler> {
+    crate::event_callback::create::<IAvnPopupClosedHandler, ()>(IAvnPopupClosedHandler { vtbl: &I_AVN_POPUP_CLOSED_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_popup_closed_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnPopupClosedHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_popup_closed_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnPopupClosedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_popup_closed_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnPopupClosedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_popup_closed_handler_invoke(this: *mut IAvnPopupClosedHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnPopupClosedHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_POPUP_OPENED_HANDLER_IID: Guid = Guid { data1: 0xE221E0B8, data2: 0xBEBA, data3: 0x5462, data4: [0xAD, 0xE8, 0x9C, 0xD5, 0xCF, 0xAB, 0xA8, 0xB7] };
+
+#[repr(C)]
+struct IAvnPopupOpenedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnPopupOpenedHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnPopupOpenedHandler {
+    vtbl: *const IAvnPopupOpenedHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnPopupOpenedHandler {
+    const IID: Guid = I_AVN_POPUP_OPENED_HANDLER_IID;
+}
+
+impl ComPtr<IAvnPopupOpenedHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_POPUP_OPENED_HANDLER_VTBL: IAvnPopupOpenedHandlerVtbl = IAvnPopupOpenedHandlerVtbl {
+    query_interface: i_avn_popup_opened_handler_query_interface,
+    add_ref: i_avn_popup_opened_handler_add_ref,
+    release: i_avn_popup_opened_handler_release,
+    invoke: i_avn_popup_opened_handler_invoke,
+};
+
+pub fn popup_opened_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnPopupOpenedHandler> {
+    crate::event_callback::create::<IAvnPopupOpenedHandler, ()>(IAvnPopupOpenedHandler { vtbl: &I_AVN_POPUP_OPENED_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_popup_opened_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnPopupOpenedHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_popup_opened_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnPopupOpenedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_popup_opened_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnPopupOpenedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_popup_opened_handler_invoke(this: *mut IAvnPopupOpenedHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnPopupOpenedHandler, ()>(this, &mut ())
+}
+
 pub const I_AVN_POPUP_FLYOUT_BASE_CLOSING_HANDLER_IID: Guid = Guid { data1: 0xEAE8EE53, data2: 0x8398, data3: 0x5DF1, data4: [0xAC, 0x68, 0x38, 0xF3, 0x0C, 0x7F, 0xC8, 0x48] };
 
 #[derive(Debug)]
@@ -12117,7 +12227,7 @@ impl ComPtr<IAvnContentControl> {
     }
 }
 
-pub const I_AVN_CONTEXT_MENU_IID: Guid = Guid { data1: 0x325C1CC2, data2: 0x19A6, data3: 0x58BD, data4: [0xA4, 0x63, 0x3A, 0xD1, 0x31, 0xFA, 0xFA, 0x8C] };
+pub const I_AVN_CONTEXT_MENU_IID: Guid = Guid { data1: 0x7564FCBE, data2: 0xC93D, data3: 0x5274, data4: [0x96, 0x20, 0xED, 0xE9, 0x6B, 0xB7, 0xCF, 0xCB] };
 
 #[repr(C)]
 struct IAvnContextMenuVtbl {
@@ -12203,6 +12313,8 @@ struct IAvnContextMenuVtbl {
     set_placement: unsafe extern "system" fn(*mut IAvnContextMenu, i32) -> i32,
     get_window_manager_add_shadow_hint: unsafe extern "system" fn(*mut IAvnContextMenu, *mut i32) -> i32,
     set_window_manager_add_shadow_hint: unsafe extern "system" fn(*mut IAvnContextMenu, i32) -> i32,
+    get_placement_target: unsafe extern "system" fn(*mut IAvnContextMenu, *mut *mut IAvnControl) -> i32,
+    set_placement_target: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnControl) -> i32,
 }
 
 #[repr(C)]
@@ -12760,6 +12872,20 @@ impl ComPtr<IAvnContextMenu> {
     pub fn set_window_manager_add_shadow_hint(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_window_manager_add_shadow_hint)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_placement_target(&self) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_placement_target)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_placement_target(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placement_target)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }
@@ -16089,7 +16215,7 @@ impl ComPtr<IAvnFlexPanel> {
     }
 }
 
-pub const I_AVN_FLYOUT_IID: Guid = Guid { data1: 0x5F337C86, data2: 0xBAC8, data3: 0x5A8D, data4: [0xB4, 0x72, 0xB7, 0xA3, 0x9E, 0xE3, 0xDE, 0xC5] };
+pub const I_AVN_FLYOUT_IID: Guid = Guid { data1: 0xE0AC8C18, data2: 0x8A66, data3: 0x5364, data4: [0xAD, 0xCA, 0x27, 0x73, 0x95, 0x47, 0x2F, 0xA4] };
 
 #[repr(C)]
 struct IAvnFlyoutVtbl {
@@ -16107,6 +16233,7 @@ struct IAvnFlyoutVtbl {
     unadvise_opened: unsafe extern "system" fn(*mut IAvnFlyout, i64) -> i32,
     advise_closed: unsafe extern "system" fn(*mut IAvnFlyout, *mut IAvnFlyoutBaseClosedHandler, *mut i64) -> i32,
     unadvise_closed: unsafe extern "system" fn(*mut IAvnFlyout, i64) -> i32,
+    get_popup: unsafe extern "system" fn(*mut IAvnFlyout, *mut *mut IAvnPopup) -> i32,
     get_placement: unsafe extern "system" fn(*mut IAvnFlyout, *mut i32) -> i32,
     set_placement: unsafe extern "system" fn(*mut IAvnFlyout, i32) -> i32,
     get_horizontal_offset: unsafe extern "system" fn(*mut IAvnFlyout, *mut f64) -> i32,
@@ -16207,6 +16334,14 @@ impl ComPtr<IAvnFlyout> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_closed)(self.as_raw(), subscription_id);
             hresult::check(hr)
+        }
+    }
+    pub fn get_popup(&self) -> Result<ComPtr<IAvnPopup>> {
+        unsafe {
+            let mut value: *mut IAvnPopup = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_popup)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn get_placement(&self) -> Result<i32> {
@@ -24264,7 +24399,7 @@ impl ComPtr<IAvnMenuBase> {
     }
 }
 
-pub const I_AVN_MENU_FLYOUT_IID: Guid = Guid { data1: 0xC13CFFEC, data2: 0x7D37, data3: 0x5030, data4: [0x8D, 0x8B, 0x61, 0x8B, 0xED, 0xD6, 0x15, 0xA1] };
+pub const I_AVN_MENU_FLYOUT_IID: Guid = Guid { data1: 0x9980B9F3, data2: 0x355C, data3: 0x5575, data4: [0xAB, 0xE3, 0x04, 0x66, 0x52, 0xBF, 0xCD, 0xC8] };
 
 #[repr(C)]
 struct IAvnMenuFlyoutVtbl {
@@ -24282,6 +24417,7 @@ struct IAvnMenuFlyoutVtbl {
     unadvise_opened: unsafe extern "system" fn(*mut IAvnMenuFlyout, i64) -> i32,
     advise_closed: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut IAvnFlyoutBaseClosedHandler, *mut i64) -> i32,
     unadvise_closed: unsafe extern "system" fn(*mut IAvnMenuFlyout, i64) -> i32,
+    get_popup: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut *mut IAvnPopup) -> i32,
     get_placement: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut i32) -> i32,
     set_placement: unsafe extern "system" fn(*mut IAvnMenuFlyout, i32) -> i32,
     get_horizontal_offset: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut f64) -> i32,
@@ -24381,6 +24517,14 @@ impl ComPtr<IAvnMenuFlyout> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_closed)(self.as_raw(), subscription_id);
             hresult::check(hr)
+        }
+    }
+    pub fn get_popup(&self) -> Result<ComPtr<IAvnPopup>> {
+        unsafe {
+            let mut value: *mut IAvnPopup = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_popup)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn get_placement(&self) -> Result<i32> {
@@ -30240,7 +30384,7 @@ impl ComPtr<IAvnHeaderedSelectingItemsControl> {
     }
 }
 
-pub const I_AVN_POPUP_IID: Guid = Guid { data1: 0x806D4F89, data2: 0xA20E, data3: 0x50A2, data4: [0x80, 0x2E, 0x7D, 0x46, 0x2A, 0xEA, 0x78, 0xDB] };
+pub const I_AVN_POPUP_IID: Guid = Guid { data1: 0x43264105, data2: 0x562E, data3: 0x530E, data4: [0x9D, 0x96, 0xC2, 0x75, 0x82, 0xFE, 0x18, 0xA7] };
 
 #[repr(C)]
 struct IAvnPopupVtbl {
@@ -30286,12 +30430,16 @@ struct IAvnPopupVtbl {
     set_window_manager_add_shadow_hint: unsafe extern "system" fn(*mut IAvnPopup, i32) -> i32,
     get_child: unsafe extern "system" fn(*mut IAvnPopup, *mut *mut IAvnControl) -> i32,
     set_child: unsafe extern "system" fn(*mut IAvnPopup, *mut IAvnControl) -> i32,
+    get_inherits_transform: unsafe extern "system" fn(*mut IAvnPopup, *mut i32) -> i32,
+    set_inherits_transform: unsafe extern "system" fn(*mut IAvnPopup, i32) -> i32,
     get_is_light_dismiss_enabled: unsafe extern "system" fn(*mut IAvnPopup, *mut i32) -> i32,
     set_is_light_dismiss_enabled: unsafe extern "system" fn(*mut IAvnPopup, i32) -> i32,
     get_is_open: unsafe extern "system" fn(*mut IAvnPopup, *mut i32) -> i32,
     set_is_open: unsafe extern "system" fn(*mut IAvnPopup, i32) -> i32,
     get_placement: unsafe extern "system" fn(*mut IAvnPopup, *mut i32) -> i32,
     set_placement: unsafe extern "system" fn(*mut IAvnPopup, i32) -> i32,
+    get_placement_target: unsafe extern "system" fn(*mut IAvnPopup, *mut *mut IAvnControl) -> i32,
+    set_placement_target: unsafe extern "system" fn(*mut IAvnPopup, *mut IAvnControl) -> i32,
     get_overlay_dismiss_event_pass_through: unsafe extern "system" fn(*mut IAvnPopup, *mut i32) -> i32,
     set_overlay_dismiss_event_pass_through: unsafe extern "system" fn(*mut IAvnPopup, i32) -> i32,
     get_horizontal_offset: unsafe extern "system" fn(*mut IAvnPopup, *mut f64) -> i32,
@@ -30300,6 +30448,18 @@ struct IAvnPopupVtbl {
     set_vertical_offset: unsafe extern "system" fn(*mut IAvnPopup, f64) -> i32,
     get_topmost: unsafe extern "system" fn(*mut IAvnPopup, *mut i32) -> i32,
     set_topmost: unsafe extern "system" fn(*mut IAvnPopup, i32) -> i32,
+    get_takes_focus_from_native_control: unsafe extern "system" fn(*mut IAvnPopup, *mut i32) -> i32,
+    set_takes_focus_from_native_control: unsafe extern "system" fn(*mut IAvnPopup, i32) -> i32,
+    get_should_use_overlay_layer: unsafe extern "system" fn(*mut IAvnPopup, *mut i32) -> i32,
+    set_should_use_overlay_layer: unsafe extern "system" fn(*mut IAvnPopup, i32) -> i32,
+    get_is_using_overlay_layer: unsafe extern "system" fn(*mut IAvnPopup, *mut i32) -> i32,
+    get_is_pointer_over_popup: unsafe extern "system" fn(*mut IAvnPopup, *mut i32) -> i32,
+    open: unsafe extern "system" fn(*mut IAvnPopup) -> i32,
+    close: unsafe extern "system" fn(*mut IAvnPopup) -> i32,
+    advise_closed: unsafe extern "system" fn(*mut IAvnPopup, *mut IAvnPopupClosedHandler, *mut i64) -> i32,
+    unadvise_closed: unsafe extern "system" fn(*mut IAvnPopup, i64) -> i32,
+    advise_opened: unsafe extern "system" fn(*mut IAvnPopup, *mut IAvnPopupOpenedHandler, *mut i64) -> i32,
+    unadvise_opened: unsafe extern "system" fn(*mut IAvnPopup, i64) -> i32,
 }
 
 #[repr(C)]
@@ -30583,6 +30743,20 @@ impl ComPtr<IAvnPopup> {
             hresult::check(hr)
         }
     }
+    pub fn get_inherits_transform(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_inherits_transform)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_inherits_transform(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_inherits_transform)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
     pub fn get_is_light_dismiss_enabled(&self) -> Result<bool> {
         unsafe {
             let mut value: i32 = 0;
@@ -30622,6 +30796,20 @@ impl ComPtr<IAvnPopup> {
     pub fn set_placement(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placement)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_placement_target(&self) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_placement_target)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn set_placement_target(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placement_target)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }
@@ -30681,9 +30869,91 @@ impl ComPtr<IAvnPopup> {
             hresult::check(hr)
         }
     }
+    pub fn get_takes_focus_from_native_control(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_takes_focus_from_native_control)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_takes_focus_from_native_control(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_takes_focus_from_native_control)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_should_use_overlay_layer(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_should_use_overlay_layer)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_should_use_overlay_layer(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_should_use_overlay_layer)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_using_overlay_layer(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_using_overlay_layer)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_is_pointer_over_popup(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_pointer_over_popup)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn open(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().open)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn close(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().close)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_closed(&self, handler: &ComPtr<IAvnPopupClosedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_closed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_closed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_closed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_opened(&self, handler: &ComPtr<IAvnPopupOpenedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_opened)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_opened(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_opened)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
 }
 
-pub const I_AVN_POPUP_FLYOUT_BASE_IID: Guid = Guid { data1: 0x3E7168D2, data2: 0xCA62, data3: 0x5030, data4: [0xB9, 0xCF, 0x85, 0xF1, 0x08, 0x35, 0x47, 0x77] };
+pub const I_AVN_POPUP_FLYOUT_BASE_IID: Guid = Guid { data1: 0xC804908E, data2: 0x9834, data3: 0x53CA, data4: [0x9B, 0x84, 0x6F, 0x45, 0xDC, 0x6E, 0xEC, 0x15] };
 
 #[repr(C)]
 struct IAvnPopupFlyoutBaseVtbl {
@@ -30701,6 +30971,7 @@ struct IAvnPopupFlyoutBaseVtbl {
     unadvise_opened: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, i64) -> i32,
     advise_closed: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, *mut IAvnFlyoutBaseClosedHandler, *mut i64) -> i32,
     unadvise_closed: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, i64) -> i32,
+    get_popup: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, *mut *mut IAvnPopup) -> i32,
     get_placement: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, *mut i32) -> i32,
     set_placement: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, i32) -> i32,
     get_horizontal_offset: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, *mut f64) -> i32,
@@ -30799,6 +31070,14 @@ impl ComPtr<IAvnPopupFlyoutBase> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_closed)(self.as_raw(), subscription_id);
             hresult::check(hr)
+        }
+    }
+    pub fn get_popup(&self) -> Result<ComPtr<IAvnPopup>> {
+        unsafe {
+            let mut value: *mut IAvnPopup = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_popup)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_projected_raw(value)
         }
     }
     pub fn get_placement(&self) -> Result<i32> {

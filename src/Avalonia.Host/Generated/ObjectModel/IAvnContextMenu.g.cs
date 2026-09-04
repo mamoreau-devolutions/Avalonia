@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("325C1CC2-19A6-58BD-A463-3AD131FAFA8C")]
+[Guid("7564FCBE-C93D-5274-9620-EDE96BB7CFCB")]
 public partial interface IAvnContextMenu : IAvnMenuBase
 {
     [PreserveSig]
@@ -32,6 +32,12 @@ public partial interface IAvnContextMenu : IAvnMenuBase
 
     [PreserveSig]
     int SetWindowManagerAddShadowHint(int value);
+
+    [PreserveSig]
+    int GetPlacementTarget(out IAvnControl? value);
+
+    [PreserveSig]
+    int SetPlacementTarget(IAvnControl? value);
 
 }
 
@@ -1368,6 +1374,37 @@ public sealed partial class AvnContextMenu : IAvnContextMenu
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.WindowManagerAddShadowHint = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetPlacementTarget(out IAvnControl? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (IAvnControl?)ProjectionRuntime.Wrap(_value.PlacementTarget as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetPlacementTarget(IAvnControl? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.PlacementTarget = (global::Avalonia.Controls.Control)ProjectionRuntime.Unwrap(value)!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

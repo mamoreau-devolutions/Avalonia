@@ -65,7 +65,11 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnCommandBarButton"] = 3,
             ["Avalonia.Host.Com.IAvnCommandBarSeparator"] = 2,
             ["Avalonia.Host.Com.IAvnCommandBarToggleButton"] = 3,
-            ["Avalonia.Host.Com.IAvnContextMenu"] = 2,
+            ["Avalonia.Host.Com.IAvnContextMenu"] = 3,
+            ["Avalonia.Host.Com.IAvnPopup"] = 2,
+            ["Avalonia.Host.Com.IAvnPopupFlyoutBase"] = 2,
+            ["Avalonia.Host.Com.IAvnFlyout"] = 2,
+            ["Avalonia.Host.Com.IAvnMenuFlyout"] = 2,
             ["Avalonia.Host.Com.IAvnDatePicker"] = 2,
             ["Avalonia.Host.Com.IAvnDropDownButton"] = 3,
             ["Avalonia.Host.Com.IAvnGridSplitter"] = 2,
@@ -336,6 +340,7 @@ public static class AvaloniaProjectionProfiles
             [
                 "Placement", "ShowMode", "HorizontalOffset", "VerticalOffset",
                 "OverlayDismissEventPassThrough", "Opening", "Closing",
+                "Popup",
             ],
             ["Avalonia.Controls.Flyout"] = ["Content"],
             // Menu is imperative, unlike the view-model NativeMenu: MenuBase owns the open
@@ -395,7 +400,10 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.ToggleSplitButton"] = ["IsChecked", "IsCheckedChanged"],
             ["Avalonia.Controls.HyperlinkButton"] = ["IsVisited", "NavigateUri"],
             ["Avalonia.Controls.ContextMenu"] =
-                ["HorizontalOffset", "VerticalOffset", "Placement", "WindowManagerAddShadowHint"],
+            [
+                "HorizontalOffset", "VerticalOffset", "Placement", "WindowManagerAddShadowHint",
+                "PlacementTarget",
+            ],
             ["Avalonia.Controls.MenuFlyout"] = ["Items"],
             ["Avalonia.Controls.Spinner"] = [],
             ["Avalonia.Controls.ButtonSpinner"] =
@@ -462,6 +470,9 @@ public static class AvaloniaProjectionProfiles
                 "Child", "IsOpen", "Placement", "HorizontalOffset", "VerticalOffset",
                 "IsLightDismissEnabled", "Topmost", "WindowManagerAddShadowHint",
                 "OverlayDismissEventPassThrough",
+                "InheritsTransform", "PlacementTarget", "TakesFocusFromNativeControl",
+                "ShouldUseOverlayLayer", "IsUsingOverlayLayer", "IsPointerOverPopup",
+                "Opened", "Closed", "Open", "Close",
             ],
             ["Avalonia.Controls.TrayIcon"] = ["ToolTipText", "IsVisible"],
             ["Avalonia.Controls.Notifications.WindowNotificationManager"] = ["Position", "MaxItems"],
@@ -775,6 +786,24 @@ public static class AvaloniaProjectionProfiles
                 StringConverterTypeName = "Avalonia.Host.Com.AvnGeometry",
                 IsNullable = true,
             },
+            ["Avalonia.Controls.Primitives.Popup.PlacementTarget"] = new()
+            {
+                Kind = MarshallingKind.ComInterface,
+                InterfaceName = "Avalonia.Host.Com.IAvnControl",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.ContextMenu.PlacementTarget"] = new()
+            {
+                Kind = MarshallingKind.ComInterface,
+                InterfaceName = "Avalonia.Host.Com.IAvnControl",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.Primitives.PopupFlyoutBase.Popup"] = new()
+            {
+                Kind = MarshallingKind.ComInterface,
+                InterfaceName = "Avalonia.Host.Com.IAvnPopup",
+                IsNullable = false,
+            },
             ["Avalonia.Controls.Primitives.Popup.Child"] = new()
             {
                 Kind = MarshallingKind.ComInterface,
@@ -967,6 +996,14 @@ public static class AvaloniaProjectionProfiles
             {
                 PayloadKind = EventPayloadKind.Fields,
                 Parameters = [new() { Name = "Cancel", Direction = ParameterDirection.InOut }],
+            },
+            ["Avalonia.Controls.Primitives.Popup.Opened"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.Primitives.Popup.Closed"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
             },
             ["Avalonia.Controls.MenuBase.Opened"] = new()
             {

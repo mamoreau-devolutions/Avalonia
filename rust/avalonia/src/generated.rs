@@ -8768,6 +8768,17 @@ impl ContextMenu {
         self.set_window_manager_add_shadow_hint(value)?;
         Ok(self)
     }
+    pub fn get_placement_target(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_placement_target()?.map(|raw| Control { raw }))
+    }
+    pub fn set_placement_target(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_placement_target(Some(&value))?)
+    }
+    pub fn placement_target(self, value: impl AsControl) -> Result<Self> {
+        self.set_placement_target(value)?;
+        Ok(self)
+    }
 }
 
 impl AsControl for ContextMenu {
@@ -10832,6 +10843,9 @@ impl Flyout {
     pub fn on_closed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_closed(callback)?);
         Ok(self)
+    }
+    pub fn popup(&self) -> Result<Popup> {
+        Ok(Popup { raw: self.raw.get_popup()? })
     }
     pub fn get_placement(&self) -> Result<PlacementMode> {
         let value = self.raw.get_placement()?;
@@ -15739,6 +15753,9 @@ impl MenuFlyout {
         scope.retain_subscription(self.subscribe_closed(callback)?);
         Ok(self)
     }
+    pub fn popup(&self) -> Result<Popup> {
+        Ok(Popup { raw: self.raw.get_popup()? })
+    }
     pub fn get_placement(&self) -> Result<PlacementMode> {
         let value = self.raw.get_placement()?;
         PlacementMode::try_from(value)
@@ -19476,6 +19493,14 @@ impl Popup {
         self.set_child(value)?;
         Ok(self)
     }
+    pub fn get_inherits_transform(&self) -> Result<bool> { Ok(self.raw.get_inherits_transform()?) }
+    pub fn set_inherits_transform(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_inherits_transform(value)?)
+    }
+    pub fn inherits_transform(self, value: bool) -> Result<Self> {
+        self.set_inherits_transform(value)?;
+        Ok(self)
+    }
     pub fn get_is_light_dismiss_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_light_dismiss_enabled()?) }
     pub fn set_light_dismiss_enabled(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_light_dismiss_enabled(value)?)
@@ -19501,6 +19526,17 @@ impl Popup {
     }
     pub fn placement(self, value: PlacementMode) -> Result<Self> {
         self.set_placement(value)?;
+        Ok(self)
+    }
+    pub fn get_placement_target(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_placement_target()?.map(|raw| Control { raw }))
+    }
+    pub fn set_placement_target(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_placement_target(Some(&value))?)
+    }
+    pub fn placement_target(self, value: impl AsControl) -> Result<Self> {
+        self.set_placement_target(value)?;
         Ok(self)
     }
     pub fn get_overlay_dismiss_event_pass_through(&self) -> Result<bool> { Ok(self.raw.get_overlay_dismiss_event_pass_through()?) }
@@ -19533,6 +19569,52 @@ impl Popup {
     }
     pub fn topmost(self, value: bool) -> Result<Self> {
         self.set_topmost(value)?;
+        Ok(self)
+    }
+    pub fn get_takes_focus_from_native_control(&self) -> Result<bool> { Ok(self.raw.get_takes_focus_from_native_control()?) }
+    pub fn set_takes_focus_from_native_control(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_takes_focus_from_native_control(value)?)
+    }
+    pub fn takes_focus_from_native_control(self, value: bool) -> Result<Self> {
+        self.set_takes_focus_from_native_control(value)?;
+        Ok(self)
+    }
+    pub fn get_should_use_overlay_layer(&self) -> Result<bool> { Ok(self.raw.get_should_use_overlay_layer()?) }
+    pub fn set_should_use_overlay_layer(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_should_use_overlay_layer(value)?)
+    }
+    pub fn should_use_overlay_layer(self, value: bool) -> Result<Self> {
+        self.set_should_use_overlay_layer(value)?;
+        Ok(self)
+    }
+    pub fn is_using_overlay_layer(&self) -> Result<bool> { Ok(self.raw.get_is_using_overlay_layer()?) }
+    pub fn is_pointer_over_popup(&self) -> Result<bool> { Ok(self.raw.get_is_pointer_over_popup()?) }
+    pub fn open(&self) -> Result<()> { Ok(self.raw.open()?) }
+    pub fn close(&self) -> Result<()> { Ok(self.raw.close()?) }
+    pub fn subscribe_closed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::popup_closed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_closed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_closed(subscription_id)))
+    }
+    pub fn on_closed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_closed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_opened(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::popup_opened_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_opened(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_opened(subscription_id)))
+    }
+    pub fn on_opened(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_opened(callback)?);
         Ok(self)
     }
 }
@@ -19590,6 +19672,9 @@ impl PopupFlyoutBase {
     pub fn on_closed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_closed(callback)?);
         Ok(self)
+    }
+    pub fn popup(&self) -> Result<Popup> {
+        Ok(Popup { raw: self.raw.get_popup()? })
     }
     pub fn get_placement(&self) -> Result<PlacementMode> {
         let value = self.raw.get_placement()?;
