@@ -1,11 +1,14 @@
 use avalonia::{
     App, Border, Brush, Button, ClickMode, Color, ComboBox, ComboBoxItem, CornerRadius, DatePicker,
-    Dock, DockPanel, ExpandDirection, Expander, Flyout, FlyoutShowMode, FontWeight, Grid,
-    HorizontalAlignment, Image, ListBox, ListBoxItem, Menu, MenuItem, MenuItemToggleType,
-    Orientation, PlacementMode, ProgressBar, RadioButton, ScrollViewer, SelectionMode, SplitView,
-    SplitViewDisplayMode, SplitViewPanePlacement, StackPanel, Stretch, StretchDirection,
-    TabControl, TabItem, TextAlignment, TextBlock, TextBox, ThemeVariant, Thickness, TimePicker,
-    ToggleSwitch, ToolTip, TreeView, TreeViewItem, VerticalAlignment, Window, WindowState,
+    Dock, DockPanel, ExpandDirection, Expander, FlexAlignItems, FlexDirection, FlexJustifyContent,
+    FlexPanel, FlexWrap, Flyout, FlyoutShowMode, FontWeight, Grid, GridResizeBehavior,
+    GridResizeDirection, GridSplitter, HorizontalAlignment, Image, ListBox, ListBoxItem, Menu,
+    MenuItem, MenuItemToggleType, Orientation, PlacementMode, ProgressBar, RadioButton,
+    RelativePanel, ScrollViewer, SelectionMode, SplitView, SplitViewDisplayMode,
+    SplitViewPanePlacement, StackPanel, Stretch, StretchDirection, TabControl, TabItem,
+    TextAlignment, TextBlock, TextBox, ThemeVariant, Thickness, TimePicker, ToggleSwitch, ToolTip,
+    TreeView, TreeViewItem, UniformGrid, VerticalAlignment, Viewbox, Window, WindowState,
+    WrapPanel, WrapPanelItemsAlignment,
 };
 use std::future::Future;
 use std::path::PathBuf;
@@ -513,6 +516,63 @@ fn builders_create_a_real_window_through_nativeaot() {
         assert_eq!(time_picker.get_selected_time()?, None);
         time_picker.clear()?;
 
+        // Wave C. Remaining layout panels: a WrapPanel carries spacing as doubles and
+        // ItemsAlignment as a closed enum; RelativePanel's Align*WithPanel bools cross as
+        // attached properties; object-valued Above/LeftOf stay gaps.
+        let wrap = WrapPanel::new()?
+            .orientation(Orientation::Horizontal)?
+            .item_spacing(8.0)?
+            .line_spacing(4.0)?
+            .items_alignment(WrapPanelItemsAlignment::Center)?
+            .item_width(80.0)?
+            .child(TextBlock::new()?.text("Wrap")?)?;
+        assert_eq!(wrap.get_item_spacing()?, 8.0);
+        assert_eq!(wrap.get_items_alignment()?, WrapPanelItemsAlignment::Center);
+
+        let uniform = UniformGrid::new()?
+            .rows(2)?
+            .columns(3)?
+            .first_column(1)?
+            .row_spacing(6.0)?
+            .column_spacing(8.0)?;
+        assert_eq!(uniform.get_rows()?, 2);
+        assert_eq!(uniform.get_columns()?, 3);
+
+        let relative_child = TextBlock::new()?.text("Pinned")?;
+        RelativePanel::set_align_left_with_panel(&relative_child, true)?;
+        RelativePanel::set_align_top_with_panel(&relative_child, true)?;
+        assert!(RelativePanel::get_align_left_with_panel(&relative_child)?);
+        let relative = RelativePanel::new()?.child(relative_child)?;
+
+        let viewbox = Viewbox::new()?
+            .stretch(Stretch::Uniform)?
+            .stretch_direction(StretchDirection::Both)?
+            .child(TextBlock::new()?.text("Scaled")?)?;
+        assert_eq!(viewbox.get_stretch()?, Stretch::Uniform);
+        assert!(viewbox.get_child()?.is_some());
+
+        let flex = FlexPanel::new()?
+            .direction(FlexDirection::Column)?
+            .justify_content(FlexJustifyContent::Center)?
+            .align_items(FlexAlignItems::FlexStart)?
+            .wrap(FlexWrap::Wrap)?
+            .column_spacing(10.0)?
+            .row_spacing(6.0)?
+            .child(TextBlock::new()?.text("Flex")?)?;
+        assert_eq!(flex.get_direction()?, FlexDirection::Column);
+        assert_eq!(flex.get_justify_content()?, FlexJustifyContent::Center);
+
+        let splitter = GridSplitter::new()?
+            .resize_direction(GridResizeDirection::Columns)?
+            .resize_behavior(GridResizeBehavior::PreviousAndNext)?
+            .shows_preview(true)?
+            .keyboard_increment(20.0)?;
+        assert_eq!(
+            splitter.get_resize_direction()?,
+            GridResizeDirection::Columns
+        );
+        assert!(splitter.get_shows_preview()?);
+
         let panel = StackPanel::new()?
             .orientation(Orientation::Vertical)?
             .spacing(8.0)?
@@ -535,8 +595,14 @@ fn builders_create_a_real_window_through_nativeaot() {
             .child(split_view)?
             .child(date_picker)?
             .child(time_picker)?
+            .child(wrap)?
+            .child(uniform)?
+            .child(relative)?
+            .child(viewbox)?
+            .child(flex)?
+            .child(splitter)?
             .child(button)?;
-        assert_eq!(panel.children()?.len()?, 19);
+        assert_eq!(panel.children()?.len()?, 25);
         assert_eq!(panel.get_orientation()?, Orientation::Vertical);
         assert_eq!(panel.get_spacing()?, 8.0);
         assert_eq!(

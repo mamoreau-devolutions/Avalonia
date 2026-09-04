@@ -111,6 +111,16 @@ interface. `IAvnControlFactory` gains a creator per constructible wave B type an
 goes from 3 to 4; the abstract bases get no creator and are reachable by
 `query_interface` only. Again, only the factory has to be requeried.
 
+Wave C is the same shape again. `IAvnWrapPanel`, `IAvnUniformGrid`,
+`IAvnRelativePanel`, `IAvnViewbox`, `IAvnFlexPanel`, `IAvnThumb` and
+`IAvnGridSplitter` are all brand new and publish at version 1.
+`IAvnControlFactory` gains a creator per constructible wave C type plus
+`get_relative_panel_statics` and goes from 4 to 5. RelativePanel's object-valued
+attached properties (`Above`, `LeftOf`, …) stay gaps: a COM-valued attached
+property has no ABI shape. The `Align*WithPanel` bools do cross. Flex attached
+properties live on the static `Flex` class, which is not an `AvaloniaObject`, so
+`Order`/`Grow`/`Shrink`/`Basis`/`AlignSelf` stay gaps too.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A

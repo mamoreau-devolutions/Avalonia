@@ -583,6 +583,7 @@ compiled against.
 | Definitions | `IAvnGrid` alone | 4 → 5 | everything else, including `IAvnPanel`, `IAvnCanvas`, `IAvnDockPanel`, `IAvnStackPanel` (4) |
 | New controls A | nothing — seven brand-new interfaces | — | every interface that shipped before, at the version it last published |
 | New controls B | nothing — ten brand-new interfaces | — | every interface that shipped before, at the version it last published |
+| New controls C | nothing — seven brand-new interfaces | — | every interface that shipped before, at the version it last published |
 
 Nothing in the object model derives from `Grid`, so the definitions wave moves
 exactly one interface. `IAvnGrid` has published versions 1–4 and now publishes 5;
@@ -610,11 +611,13 @@ stayed at 2; wave A gives it a creator per new control plus
 `get_tool_tip_statics`, so it moves to 3; wave B gives it a creator per
 constructible new type — `Flyout`, `Menu`, `MenuItem`,
 `HeaderedSelectingItemsControl`, `SplitView`, `DatePicker` and `TimePicker` — so it
-moves to 4. The abstract bases (`FlyoutBase`, `PopupFlyoutBase`, `MenuBase`) get no
-creator; they are reachable by `query_interface` only. `IAvnBrush` is brand new, so
-it starts at version 1. The collection interfaces and the event handler interfaces
-are unchanged, because they carry interface pointers rather than the widened
-layouts.
+moves to 4. Wave C gives it a creator per constructible new type — `WrapPanel`,
+`UniformGrid`, `RelativePanel`, `Viewbox`, `FlexPanel`, `Thumb` and `GridSplitter`
+— plus `get_relative_panel_statics`, so it moves to 5. The abstract bases
+(`FlyoutBase`, `PopupFlyoutBase`, `MenuBase`) get no creator; they are reachable
+by `query_interface` only. `IAvnBrush` is brand new, so it starts at version 1.
+The collection interfaces and the event handler interfaces are unchanged, because
+they carry interface pointers rather than the widened layouts.
 
 `Decorator` sits between `Control` and `Border`. The chrome wave added members to
 `Border`, not to `Decorator`, and nothing was added to `Decorator`'s bases either,

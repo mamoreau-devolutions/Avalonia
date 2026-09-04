@@ -1,8 +1,8 @@
 {
   "version": 13,
   "sourceAssembly": "Avalonia.Base,Avalonia.Controls",
-  "factoryIid": "F53646E4-81D1-57C4-A264-E94E4FE83DCD",
-  "factoryAbiVersion": 4,
+  "factoryIid": "5AE19618-F900-50E0-86C7-8282307E38C3",
+  "factoryAbiVersion": 5,
   "brushInterfaceName": "Avalonia.Host.Com.IAvnBrush",
   "brushInterfaceIid": "FC7CCBAE-ED75-5C6D-8516-DF706E137ED3",
   "brushAbiVersion": 1,
@@ -691,6 +691,83 @@
       ]
     },
     {
+      "name": "IAvnFlexPanel",
+      "fullName": "Avalonia.Host.Com.IAvnFlexPanel",
+      "kind": "Class",
+      "iid": "D75BC9D6-5B67-5039-AEF9-E3875BCD98E7",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnPanel",
+      "managedFullName": "Avalonia.Controls.FlexPanel",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "Direction",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.FlexDirection",
+          "isNullable": false
+        },
+        {
+          "name": "JustifyContent",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.FlexJustifyContent",
+          "isNullable": false
+        },
+        {
+          "name": "AlignItems",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.FlexAlignItems",
+          "isNullable": false
+        },
+        {
+          "name": "AlignContent",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.FlexAlignContent",
+          "isNullable": false
+        },
+        {
+          "name": "Wrap",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.FlexWrap",
+          "isNullable": false
+        },
+        {
+          "name": "ColumnSpacing",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "RowSpacing",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        }
+      ],
+      "events": []
+    },
+    {
       "name": "IAvnFlyout",
       "fullName": "Avalonia.Host.Com.IAvnFlyout",
       "kind": "Class",
@@ -768,6 +845,65 @@
           "canWrite": true,
           "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Controls.RowDefinitions",
+          "isNullable": false
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IAvnGridSplitter",
+      "fullName": "Avalonia.Host.Com.IAvnGridSplitter",
+      "kind": "Class",
+      "iid": "EB393205-1A05-5FDE-8BD1-F1BB9A5FEC51",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnThumb",
+      "managedFullName": "Avalonia.Controls.GridSplitter",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "ResizeDirection",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.GridResizeDirection",
+          "isNullable": false
+        },
+        {
+          "name": "ResizeBehavior",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.GridResizeBehavior",
+          "isNullable": false
+        },
+        {
+          "name": "ShowsPreview",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "KeyboardIncrement",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "DragIncrement",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
           "isNullable": false
         }
       ],
@@ -1528,6 +1664,19 @@
       "events": []
     },
     {
+      "name": "IAvnThumb",
+      "fullName": "Avalonia.Host.Com.IAvnThumb",
+      "kind": "Class",
+      "iid": "A285503D-AE59-5D42-931E-08F86578DD9A",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
+      "managedFullName": "Avalonia.Controls.Primitives.Thumb",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [],
+      "events": []
+    },
+    {
       "name": "IAvnToggleButton",
       "fullName": "Avalonia.Host.Com.IAvnToggleButton",
       "kind": "Class",
@@ -1568,6 +1717,65 @@
           "parameters": []
         }
       ]
+    },
+    {
+      "name": "IAvnUniformGrid",
+      "fullName": "Avalonia.Host.Com.IAvnUniformGrid",
+      "kind": "Class",
+      "iid": "38A201BC-B869-5FCB-AFE7-21B8F625FF61",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnPanel",
+      "managedFullName": "Avalonia.Controls.Primitives.UniformGrid",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "Rows",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Int32",
+          "isNullable": false
+        },
+        {
+          "name": "Columns",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Int32",
+          "isNullable": false
+        },
+        {
+          "name": "FirstColumn",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Int32",
+          "isNullable": false
+        },
+        {
+          "name": "RowSpacing",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "ColumnSpacing",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        }
+      ],
+      "events": []
     },
     {
       "name": "IAvnProgressBar",
@@ -1640,6 +1848,19 @@
           "isNullable": true
         }
       ],
+      "events": []
+    },
+    {
+      "name": "IAvnRelativePanel",
+      "fullName": "Avalonia.Host.Com.IAvnRelativePanel",
+      "kind": "Class",
+      "iid": "6E04FC75-40C6-537B-8A49-7F52B61476AB",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnPanel",
+      "managedFullName": "Avalonia.Controls.RelativePanel",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [],
       "events": []
     },
     {
@@ -2672,6 +2893,48 @@
       ]
     },
     {
+      "name": "IAvnViewbox",
+      "fullName": "Avalonia.Host.Com.IAvnViewbox",
+      "kind": "Class",
+      "iid": "982EA76A-4205-5FB0-A1E6-5ABF631A4CE5",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnControl",
+      "managedFullName": "Avalonia.Controls.Viewbox",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "Stretch",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.Stretch",
+          "isNullable": false
+        },
+        {
+          "name": "StretchDirection",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.StretchDirection",
+          "isNullable": false
+        },
+        {
+          "name": "Child",
+          "kind": "ComInterface",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnControl",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Control",
+          "isNullable": true
+        }
+      ],
+      "events": []
+    },
+    {
       "name": "IAvnWindow",
       "fullName": "Avalonia.Host.Com.IAvnWindow",
       "kind": "Class",
@@ -2738,6 +3001,74 @@
           "canWrite": true,
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
+          "isNullable": false
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IAvnWrapPanel",
+      "fullName": "Avalonia.Host.Com.IAvnWrapPanel",
+      "kind": "Class",
+      "iid": "48DA8953-ECCB-5C1F-93AB-A1D8658D32FA",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnPanel",
+      "managedFullName": "Avalonia.Controls.WrapPanel",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "ItemSpacing",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "LineSpacing",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "Orientation",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Layout.Orientation",
+          "isNullable": false
+        },
+        {
+          "name": "ItemsAlignment",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.WrapPanelItemsAlignment",
+          "isNullable": false
+        },
+        {
+          "name": "ItemWidth",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "ItemHeight",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
           "isNullable": false
         }
       ],
@@ -2839,6 +3170,132 @@
       ]
     },
     {
+      "name": "FlexAlignContent",
+      "fullName": "Avalonia.Controls.FlexAlignContent",
+      "values": [
+        {
+          "name": "FlexStart",
+          "value": 0
+        },
+        {
+          "name": "FlexEnd",
+          "value": 1
+        },
+        {
+          "name": "Center",
+          "value": 2
+        },
+        {
+          "name": "Stretch",
+          "value": 3
+        },
+        {
+          "name": "SpaceBetween",
+          "value": 4
+        },
+        {
+          "name": "SpaceAround",
+          "value": 5
+        },
+        {
+          "name": "SpaceEvenly",
+          "value": 6
+        }
+      ]
+    },
+    {
+      "name": "FlexAlignItems",
+      "fullName": "Avalonia.Controls.FlexAlignItems",
+      "values": [
+        {
+          "name": "FlexStart",
+          "value": 0
+        },
+        {
+          "name": "FlexEnd",
+          "value": 1
+        },
+        {
+          "name": "Center",
+          "value": 2
+        },
+        {
+          "name": "Stretch",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "name": "FlexDirection",
+      "fullName": "Avalonia.Controls.FlexDirection",
+      "values": [
+        {
+          "name": "Row",
+          "value": 0
+        },
+        {
+          "name": "RowReverse",
+          "value": 1
+        },
+        {
+          "name": "Column",
+          "value": 2
+        },
+        {
+          "name": "ColumnReverse",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "name": "FlexJustifyContent",
+      "fullName": "Avalonia.Controls.FlexJustifyContent",
+      "values": [
+        {
+          "name": "FlexStart",
+          "value": 0
+        },
+        {
+          "name": "FlexEnd",
+          "value": 1
+        },
+        {
+          "name": "Center",
+          "value": 2
+        },
+        {
+          "name": "SpaceBetween",
+          "value": 3
+        },
+        {
+          "name": "SpaceAround",
+          "value": 4
+        },
+        {
+          "name": "SpaceEvenly",
+          "value": 5
+        }
+      ]
+    },
+    {
+      "name": "FlexWrap",
+      "fullName": "Avalonia.Controls.FlexWrap",
+      "values": [
+        {
+          "name": "NoWrap",
+          "value": 0
+        },
+        {
+          "name": "Wrap",
+          "value": 1
+        },
+        {
+          "name": "WrapReverse",
+          "value": 2
+        }
+      ]
+    },
+    {
       "name": "FlyoutShowMode",
       "fullName": "Avalonia.Controls.FlyoutShowMode",
       "values": [
@@ -2852,6 +3309,46 @@
         },
         {
           "name": "TransientWithDismissOnPointerMoveAway",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "name": "GridResizeBehavior",
+      "fullName": "Avalonia.Controls.GridResizeBehavior",
+      "values": [
+        {
+          "name": "BasedOnAlignment",
+          "value": 0
+        },
+        {
+          "name": "CurrentAndNext",
+          "value": 1
+        },
+        {
+          "name": "PreviousAndCurrent",
+          "value": 2
+        },
+        {
+          "name": "PreviousAndNext",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "name": "GridResizeDirection",
+      "fullName": "Avalonia.Controls.GridResizeDirection",
+      "values": [
+        {
+          "name": "Auto",
+          "value": 0
+        },
+        {
+          "name": "Columns",
+          "value": 1
+        },
+        {
+          "name": "Rows",
           "value": 2
         }
       ]
@@ -3073,6 +3570,36 @@
         {
           "name": "FullScreen",
           "value": 3
+        }
+      ]
+    },
+    {
+      "name": "WrapPanelItemsAlignment",
+      "fullName": "Avalonia.Controls.WrapPanelItemsAlignment",
+      "values": [
+        {
+          "name": "Start",
+          "value": 0
+        },
+        {
+          "name": "Center",
+          "value": 1
+        },
+        {
+          "name": "End",
+          "value": 2
+        },
+        {
+          "name": "Justify",
+          "value": 3
+        },
+        {
+          "name": "Stretch",
+          "value": 4
+        },
+        {
+          "name": "StretchAll",
+          "value": 5
         }
       ]
     },
@@ -5143,6 +5670,72 @@
       "isNullable": false
     },
     {
+      "ownerName": "RelativePanel",
+      "ownerManagedFullName": "Avalonia.Controls.RelativePanel",
+      "staticsInterfaceName": "Avalonia.Host.Com.IAvnRelativePanelStatics",
+      "staticsInterfaceIid": "B4F946D3-E062-52AB-A280-C2904EC28FE8",
+      "staticsInterfaceAbiVersion": 1,
+      "name": "AlignLeftWithPanel",
+      "kind": "Bool",
+      "managedTypeName": "System.Boolean",
+      "isNullable": false
+    },
+    {
+      "ownerName": "RelativePanel",
+      "ownerManagedFullName": "Avalonia.Controls.RelativePanel",
+      "staticsInterfaceName": "Avalonia.Host.Com.IAvnRelativePanelStatics",
+      "staticsInterfaceIid": "B4F946D3-E062-52AB-A280-C2904EC28FE8",
+      "staticsInterfaceAbiVersion": 1,
+      "name": "AlignRightWithPanel",
+      "kind": "Bool",
+      "managedTypeName": "System.Boolean",
+      "isNullable": false
+    },
+    {
+      "ownerName": "RelativePanel",
+      "ownerManagedFullName": "Avalonia.Controls.RelativePanel",
+      "staticsInterfaceName": "Avalonia.Host.Com.IAvnRelativePanelStatics",
+      "staticsInterfaceIid": "B4F946D3-E062-52AB-A280-C2904EC28FE8",
+      "staticsInterfaceAbiVersion": 1,
+      "name": "AlignTopWithPanel",
+      "kind": "Bool",
+      "managedTypeName": "System.Boolean",
+      "isNullable": false
+    },
+    {
+      "ownerName": "RelativePanel",
+      "ownerManagedFullName": "Avalonia.Controls.RelativePanel",
+      "staticsInterfaceName": "Avalonia.Host.Com.IAvnRelativePanelStatics",
+      "staticsInterfaceIid": "B4F946D3-E062-52AB-A280-C2904EC28FE8",
+      "staticsInterfaceAbiVersion": 1,
+      "name": "AlignBottomWithPanel",
+      "kind": "Bool",
+      "managedTypeName": "System.Boolean",
+      "isNullable": false
+    },
+    {
+      "ownerName": "RelativePanel",
+      "ownerManagedFullName": "Avalonia.Controls.RelativePanel",
+      "staticsInterfaceName": "Avalonia.Host.Com.IAvnRelativePanelStatics",
+      "staticsInterfaceIid": "B4F946D3-E062-52AB-A280-C2904EC28FE8",
+      "staticsInterfaceAbiVersion": 1,
+      "name": "AlignHorizontalCenterWithPanel",
+      "kind": "Bool",
+      "managedTypeName": "System.Boolean",
+      "isNullable": false
+    },
+    {
+      "ownerName": "RelativePanel",
+      "ownerManagedFullName": "Avalonia.Controls.RelativePanel",
+      "staticsInterfaceName": "Avalonia.Host.Com.IAvnRelativePanelStatics",
+      "staticsInterfaceIid": "B4F946D3-E062-52AB-A280-C2904EC28FE8",
+      "staticsInterfaceAbiVersion": 1,
+      "name": "AlignVerticalCenterWithPanel",
+      "kind": "Bool",
+      "managedTypeName": "System.Boolean",
+      "isNullable": false
+    },
+    {
       "ownerName": "ToolTip",
       "ownerManagedFullName": "Avalonia.Controls.ToolTip",
       "staticsInterfaceName": "Avalonia.Host.Com.IAvnToolTipStatics",
@@ -5585,6 +6178,11 @@
       "reason": "Not included by projection policy"
     },
     {
+      "owner": "Avalonia.Controls.GridSplitter",
+      "member": "PreviewContent",
+      "reason": "Not included by projection policy"
+    },
+    {
       "owner": "Avalonia.Controls.Image",
       "member": "Render(DrawingContext)",
       "reason": "Not included by projection policy"
@@ -5952,6 +6550,21 @@
     {
       "owner": "Avalonia.Controls.Primitives.TemplatedControl",
       "member": "ApplyTemplate()",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.Thumb",
+      "member": "DragStarted",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.Thumb",
+      "member": "DragDelta",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Primitives.Thumb",
+      "member": "DragCompleted",
       "reason": "Not included by projection policy"
     },
     {

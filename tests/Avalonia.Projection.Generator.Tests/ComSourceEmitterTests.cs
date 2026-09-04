@@ -59,6 +59,13 @@ public class ComSourceEmitterTests
         typeof(SplitView),
         typeof(DatePicker),
         typeof(TimePicker),
+        typeof(WrapPanel),
+        typeof(UniformGrid),
+        typeof(RelativePanel),
+        typeof(Viewbox),
+        typeof(FlexPanel),
+        typeof(Thumb),
+        typeof(GridSplitter),
         typeof(TextBox),
         typeof(ScrollViewer),
         typeof(RangeBase),
@@ -487,6 +494,61 @@ public class ComSourceEmitterTests
         // The abstract bases are reachable by query_interface only.
         Assert.DoesNotContain("CreateFlyoutBase", factory, StringComparison.Ordinal);
         Assert.DoesNotContain("CreateMenuBase", factory, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Emits_wave_c_layout_panels_and_factory_creators()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+        var files = ComSourceEmitter.Emit(ir);
+
+        var wrap = files["IAvnWrapPanel.g.cs"];
+        Assert.Contains(
+            "public partial interface IAvnWrapPanel : IAvnPanel",
+            wrap,
+            StringComparison.Ordinal);
+        Assert.Contains("int SetItemSpacing(double value);", wrap, StringComparison.Ordinal);
+        Assert.Contains("int SetItemsAlignment(int value);", wrap, StringComparison.Ordinal);
+
+        var viewbox = files["IAvnViewbox.g.cs"];
+        Assert.Contains(
+            "public partial interface IAvnViewbox : IAvnControl",
+            viewbox,
+            StringComparison.Ordinal);
+        Assert.Contains("int SetChild(IAvnControl? value);", viewbox, StringComparison.Ordinal);
+
+        var splitter = files["IAvnGridSplitter.g.cs"];
+        Assert.Contains(
+            "public partial interface IAvnGridSplitter : IAvnThumb",
+            splitter,
+            StringComparison.Ordinal);
+        Assert.Contains("int SetResizeDirection(int value);", splitter, StringComparison.Ordinal);
+        Assert.DoesNotContain("SetPreviewContent", splitter, StringComparison.Ordinal);
+
+        var relativeStatics = files["IAvnRelativePanelStatics.g.cs"];
+        Assert.Contains(
+            "int SetAlignLeftWithPanel(IAvnControl? target, int value);",
+            relativeStatics,
+            StringComparison.Ordinal);
+        Assert.DoesNotContain("SetAbove", relativeStatics, StringComparison.Ordinal);
+
+        var factory = files["IAvnControlFactory.g.cs"];
+        Assert.All(
+            new[]
+            {
+                "int CreateWrapPanel(out IAvnWrapPanel? value);",
+                "int CreateUniformGrid(out IAvnUniformGrid? value);",
+                "int CreateRelativePanel(out IAvnRelativePanel? value);",
+                "int CreateViewbox(out IAvnViewbox? value);",
+                "int CreateFlexPanel(out IAvnFlexPanel? value);",
+                "int CreateThumb(out IAvnThumb? value);",
+                "int CreateGridSplitter(out IAvnGridSplitter? value);",
+            },
+            expected => Assert.Contains(expected, factory, StringComparison.Ordinal));
+        Assert.Contains(
+            "int GetRelativePanelStatics(out IAvnRelativePanelStatics? value);",
+            factory,
+            StringComparison.Ordinal);
     }
 
     [Fact]

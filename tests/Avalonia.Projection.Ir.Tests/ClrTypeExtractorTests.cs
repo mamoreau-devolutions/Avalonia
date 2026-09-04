@@ -56,6 +56,13 @@ public class ClrTypeExtractorTests
         typeof(SplitView),
         typeof(DatePicker),
         typeof(TimePicker),
+        typeof(WrapPanel),
+        typeof(UniformGrid),
+        typeof(RelativePanel),
+        typeof(Viewbox),
+        typeof(FlexPanel),
+        typeof(Thumb),
+        typeof(GridSplitter),
         typeof(TextBox),
         typeof(ScrollViewer),
         typeof(RangeBase),
@@ -243,12 +250,12 @@ public class ClrTypeExtractorTests
                     type.Iid);
             });
 
-        // The factory grew a creator per wave A control plus GetToolTipStatics, and then one per
-        // constructible wave B type, so it has moved twice off the version 2 IID it published
-        // for CreateSolidColorBrush.
-        Assert.Equal(4, ir.FactoryAbiVersion);
+        // The factory grew a creator per wave A control plus GetToolTipStatics, then one per
+        // constructible wave B type, then one per constructible wave C type, so it has moved
+        // three times off the version 2 IID it published for CreateSolidColorBrush.
+        Assert.Equal(5, ir.FactoryAbiVersion);
         Assert.Equal(
-            ClrTypeExtractor.CreateDeterministicIid("Avalonia.Host.Com.IAvnControlFactory", 4),
+            ClrTypeExtractor.CreateDeterministicIid("Avalonia.Host.Com.IAvnControlFactory", 5),
             ir.FactoryIid);
     }
 
@@ -697,7 +704,8 @@ public class ClrTypeExtractorTests
         // Every previously published attached-property group keeps its own statics interface.
         Assert.Equal(
             ["Avalonia.Host.Com.IAvnCanvasStatics", "Avalonia.Host.Com.IAvnDockPanelStatics",
-                "Avalonia.Host.Com.IAvnGridStatics", "Avalonia.Host.Com.IAvnToolTipStatics"],
+                "Avalonia.Host.Com.IAvnGridStatics", "Avalonia.Host.Com.IAvnRelativePanelStatics",
+                "Avalonia.Host.Com.IAvnToolTipStatics"],
             ir.AttachedProperties
                 .Select(property => property.StaticsInterfaceName)
                 .Distinct(StringComparer.Ordinal)
@@ -983,6 +991,105 @@ public class ClrTypeExtractorTests
         Assert.Empty(ir.AttachedProperties);
         Assert.Contains(ir.Skipped, skipped =>
             skipped.Member == "Tip" && skipped.Reason.Contains("string", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Wave_c_layout_panels_publish_new_interfaces_at_version_one()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+
+        Assert.All(
+            new[]
+            {
+                "IAvnWrapPanel", "IAvnUniformGrid", "IAvnRelativePanel", "IAvnViewbox",
+                "IAvnFlexPanel", "IAvnThumb", "IAvnGridSplitter",
+            },
+            name =>
+            {
+                var type = Type(ir, name);
+                Assert.Equal(1, type.AbiVersion);
+                Assert.Equal(
+                    ClrTypeExtractor.CreateDeterministicIid(type.FullName, 1),
+                    type.Iid);
+                Assert.True(type.IsConstructible);
+            });
+
+        Assert.Equal("Avalonia.Host.Com.IAvnPanel", Type(ir, "IAvnWrapPanel").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnPanel", Type(ir, "IAvnUniformGrid").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnPanel", Type(ir, "IAvnRelativePanel").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnPanel", Type(ir, "IAvnFlexPanel").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnControl", Type(ir, "IAvnViewbox").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnTemplatedControl", Type(ir, "IAvnThumb").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnThumb", Type(ir, "IAvnGridSplitter").BaseFullName);
+
+        var wrap = Type(ir, "IAvnWrapPanel");
+        Assert.All(
+            new[] { "Orientation", "ItemsAlignment" },
+            name => Assert.Equal(
+                MarshallingKind.I32,
+                wrap.Properties.Single(property => property.Name == name).Kind));
+        Assert.All(
+            new[] { "ItemWidth", "ItemHeight", "ItemSpacing", "LineSpacing" },
+            name => Assert.Equal(
+                MarshallingKind.F64,
+                wrap.Properties.Single(property => property.Name == name).Kind));
+        Assert.Contains(ir.Enums, projected => projected.Name == nameof(WrapPanelItemsAlignment));
+
+        var uniform = Type(ir, "IAvnUniformGrid");
+        Assert.All(
+            new[] { "Rows", "Columns", "FirstColumn" },
+            name => Assert.Equal(
+                MarshallingKind.I32,
+                uniform.Properties.Single(property => property.Name == name).Kind));
+
+        var viewbox = Type(ir, "IAvnViewbox");
+        var child = viewbox.Properties.Single(property => property.Name == nameof(Viewbox.Child));
+        Assert.Equal(MarshallingKind.ComInterface, child.Kind);
+        Assert.Equal("Avalonia.Host.Com.IAvnControl", child.InterfaceName);
+        Assert.True(child.IsNullable);
+
+        var flex = Type(ir, "IAvnFlexPanel");
+        Assert.All(
+            new[] { "Direction", "JustifyContent", "AlignItems", "AlignContent", "Wrap" },
+            name => Assert.Equal(
+                MarshallingKind.I32,
+                flex.Properties.Single(property => property.Name == name).Kind));
+        Assert.Contains(ir.Enums, projected => projected.Name == nameof(FlexDirection));
+
+        var splitter = Type(ir, "IAvnGridSplitter");
+        Assert.All(
+            new[] { "ResizeDirection", "ResizeBehavior" },
+            name => Assert.Equal(
+                MarshallingKind.I32,
+                splitter.Properties.Single(property => property.Name == name).Kind));
+        Assert.DoesNotContain(
+            splitter.Properties,
+            property => property.Name == nameof(GridSplitter.PreviewContent));
+
+        var relativeStatics = ir.AttachedProperties
+            .Where(property => property.OwnerName == nameof(RelativePanel))
+            .Select(property => property.Name)
+            .OrderBy(name => name, StringComparer.Ordinal)
+            .ToArray();
+        Assert.Equal(
+            [
+                "AlignBottomWithPanel", "AlignHorizontalCenterWithPanel", "AlignLeftWithPanel",
+                "AlignRightWithPanel", "AlignTopWithPanel", "AlignVerticalCenterWithPanel",
+            ],
+            relativeStatics);
+        Assert.All(
+            ir.AttachedProperties.Where(property => property.OwnerName == nameof(RelativePanel)),
+            property =>
+            {
+                Assert.Equal(MarshallingKind.Bool, property.Kind);
+                Assert.False(property.IsNullable);
+            });
+        Assert.DoesNotContain(
+            ir.AttachedProperties,
+            property => property.Name is "Above" or "Below" or "LeftOf" or "RightOf"
+                or "AlignLeftWith" or "Order" or "Grow" or "Shrink" or "Basis");
+
+        Assert.Equal(5, ir.FactoryAbiVersion);
     }
 
     [Fact]

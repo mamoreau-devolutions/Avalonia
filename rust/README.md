@@ -29,6 +29,10 @@ back the string the ABI set, or `null` for an image the ABI never set; see
 [Image sources](MARSHALLING.md#image-sources). `ToolTip::set_tip` carries text
 only; a control-valued tip reads back as `null`. See
 [ToolTip](MARSHALLING.md#tooltip) and [Tabs and trees](MARSHALLING.md#tabs-and-trees).
+`WrapPanel`, `UniformGrid`, `RelativePanel`, `Viewbox`, `FlexPanel` and
+`GridSplitter` (plus its `Thumb` base) are projected too. RelativePanel's
+`Align*WithPanel` bools cross as attached properties; object-valued `Above`/`LeftOf`
+and Flex's attached `Order`/`Grow`/`Shrink` stay gaps.
 `Flyout`, the imperative `Menu`/`MenuItem` pair, `SplitView`, `DatePicker` and
 `TimePicker` are projected too. A flyout is an `AvaloniaObject` rather than a
 `Control`, and it reaches a control through `flyout.show_at_with_control(&button)?`

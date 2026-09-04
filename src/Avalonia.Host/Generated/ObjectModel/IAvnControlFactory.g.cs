@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("F53646E4-81D1-57C4-A264-E94E4FE83DCD")]
+[Guid("5AE19618-F900-50E0-86C7-8282307E38C3")]
 public partial interface IAvnControlFactory
 {
     [PreserveSig]
@@ -49,10 +49,16 @@ public partial interface IAvnControlFactory
     int CreateExpander(out IAvnExpander? value);
 
     [PreserveSig]
+    int CreateFlexPanel(out IAvnFlexPanel? value);
+
+    [PreserveSig]
     int CreateFlyout(out IAvnFlyout? value);
 
     [PreserveSig]
     int CreateGrid(out IAvnGrid? value);
+
+    [PreserveSig]
+    int CreateGridSplitter(out IAvnGridSplitter? value);
 
     [PreserveSig]
     int CreateHeaderedContentControl(out IAvnHeaderedContentControl? value);
@@ -91,6 +97,9 @@ public partial interface IAvnControlFactory
     int CreateRadioButton(out IAvnRadioButton? value);
 
     [PreserveSig]
+    int CreateRelativePanel(out IAvnRelativePanel? value);
+
+    [PreserveSig]
     int CreateScrollViewer(out IAvnScrollViewer? value);
 
     [PreserveSig]
@@ -124,6 +133,9 @@ public partial interface IAvnControlFactory
     int CreateTextBox(out IAvnTextBox? value);
 
     [PreserveSig]
+    int CreateThumb(out IAvnThumb? value);
+
+    [PreserveSig]
     int CreateTimePicker(out IAvnTimePicker? value);
 
     [PreserveSig]
@@ -142,7 +154,16 @@ public partial interface IAvnControlFactory
     int CreateTreeViewItem(out IAvnTreeViewItem? value);
 
     [PreserveSig]
+    int CreateUniformGrid(out IAvnUniformGrid? value);
+
+    [PreserveSig]
+    int CreateViewbox(out IAvnViewbox? value);
+
+    [PreserveSig]
     int CreateWindow(out IAvnWindow? value);
+
+    [PreserveSig]
+    int CreateWrapPanel(out IAvnWrapPanel? value);
 
     [PreserveSig]
     int GetCanvasStatics(out IAvnCanvasStatics? value);
@@ -152,6 +173,9 @@ public partial interface IAvnControlFactory
 
     [PreserveSig]
     int GetGridStatics(out IAvnGridStatics? value);
+
+    [PreserveSig]
+    int GetRelativePanelStatics(out IAvnRelativePanelStatics? value);
 
     [PreserveSig]
     int GetToolTipStatics(out IAvnToolTipStatics? value);
@@ -359,6 +383,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         }
     }
 
+    public int CreateFlexPanel(out IAvnFlexPanel? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnFlexPanel)ProjectionRuntime.Wrap(new global::Avalonia.Controls.FlexPanel())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int CreateFlyout(out IAvnFlyout? value)
     {
         value = null;
@@ -381,6 +420,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         {
             global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
             value = (IAvnGrid)ProjectionRuntime.Wrap(new global::Avalonia.Controls.Grid())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateGridSplitter(out IAvnGridSplitter? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnGridSplitter)ProjectionRuntime.Wrap(new global::Avalonia.Controls.GridSplitter())!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -569,6 +623,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         }
     }
 
+    public int CreateRelativePanel(out IAvnRelativePanel? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnRelativePanel)ProjectionRuntime.Wrap(new global::Avalonia.Controls.RelativePanel())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int CreateScrollViewer(out IAvnScrollViewer? value)
     {
         value = null;
@@ -734,6 +803,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         }
     }
 
+    public int CreateThumb(out IAvnThumb? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnThumb)ProjectionRuntime.Wrap(new global::Avalonia.Controls.Primitives.Thumb())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int CreateTimePicker(out IAvnTimePicker? value)
     {
         value = null;
@@ -824,6 +908,36 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         }
     }
 
+    public int CreateUniformGrid(out IAvnUniformGrid? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnUniformGrid)ProjectionRuntime.Wrap(new global::Avalonia.Controls.Primitives.UniformGrid())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateViewbox(out IAvnViewbox? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnViewbox)ProjectionRuntime.Wrap(new global::Avalonia.Controls.Viewbox())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int CreateWindow(out IAvnWindow? value)
     {
         value = null;
@@ -831,6 +945,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         {
             global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
             value = (IAvnWindow)ProjectionRuntime.Wrap(new global::Avalonia.Controls.Window())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateWrapPanel(out IAvnWrapPanel? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnWrapPanel)ProjectionRuntime.Wrap(new global::Avalonia.Controls.WrapPanel())!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -854,6 +983,12 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
     public int GetGridStatics(out IAvnGridStatics? value)
     {
         value = new AvnGridStatics();
+        return global::Avalonia.Host.HResults.S_OK;
+    }
+
+    public int GetRelativePanelStatics(out IAvnRelativePanelStatics? value)
+    {
+        value = new AvnRelativePanelStatics();
         return global::Avalonia.Host.HResults.S_OK;
     }
 

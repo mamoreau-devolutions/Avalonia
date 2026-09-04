@@ -54,11 +54,13 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnWindow"] = 5,
             ["Avalonia.Host.Com.IAvnGrid"] = 5,
             // Wave A's seven new interfaces publish at the default version 1 and nothing they
-            // sit under moved, so they need no entry here. Wave B's ten do the same.
-            // The factory is the only interface either wave moves: wave A gave it a creator per
-            // new control plus GetToolTipStatics (2 → 3) and wave B gives it seven more, one
-            // per constructible wave B type, so it republishes at version 4.
-            ["Avalonia.Host.Com.IAvnControlFactory"] = 4,
+            // sit under moved, so they need no entry here. Wave B's ten and wave C's seven do
+            // the same.
+            // The factory is the only interface these waves move: wave A gave it a creator per
+            // new control plus GetToolTipStatics (2 → 3), wave B gave it seven more, and wave C
+            // gives it seven more still (WrapPanel, UniformGrid, RelativePanel, Viewbox,
+            // FlexPanel, Thumb, GridSplitter), so it republishes at version 5.
+            ["Avalonia.Host.Com.IAvnControlFactory"] = 5,
         },
         IncludeTypeNames =
         [
@@ -108,6 +110,18 @@ public static class AvaloniaProjectionProfiles
             "Avalonia.Controls.SplitView",
             "Avalonia.Controls.DatePicker",
             "Avalonia.Controls.TimePicker",
+            // Wave C. Remaining layout panels plus the Thumb base GridSplitter needs.
+            // RelativePanel's object-valued attached properties (Above/LeftOf/…) stay gaps:
+            // a COM-valued attached property has no ABI shape. The Align*WithPanel bools do
+            // cross. Flex's attached properties live on the static Flex class, which is not
+            // an AvaloniaObject, so Order/Grow/Shrink/Basis/AlignSelf stay gaps too.
+            "Avalonia.Controls.WrapPanel",
+            "Avalonia.Controls.Primitives.UniformGrid",
+            "Avalonia.Controls.RelativePanel",
+            "Avalonia.Controls.Viewbox",
+            "Avalonia.Controls.FlexPanel",
+            "Avalonia.Controls.Primitives.Thumb",
+            "Avalonia.Controls.GridSplitter",
             "Avalonia.Controls.TextBox",
             "Avalonia.Controls.ScrollViewer",
             "Avalonia.Controls.Primitives.RangeBase",
@@ -224,6 +238,26 @@ public static class AvaloniaProjectionProfiles
                 "SelectedTime", "MinuteIncrement", "SecondIncrement", "ClockIdentifier",
                 "UseSeconds", "Clear",
             ],
+            ["Avalonia.Controls.WrapPanel"] =
+            [
+                "Orientation", "ItemWidth", "ItemHeight", "ItemSpacing", "LineSpacing",
+                "ItemsAlignment",
+            ],
+            ["Avalonia.Controls.Primitives.UniformGrid"] =
+                ["Rows", "Columns", "FirstColumn", "RowSpacing", "ColumnSpacing"],
+            ["Avalonia.Controls.RelativePanel"] = [],
+            ["Avalonia.Controls.Viewbox"] = ["Child", "Stretch", "StretchDirection"],
+            ["Avalonia.Controls.FlexPanel"] =
+            [
+                "Direction", "JustifyContent", "AlignItems", "AlignContent", "Wrap",
+                "ColumnSpacing", "RowSpacing",
+            ],
+            ["Avalonia.Controls.Primitives.Thumb"] = [],
+            ["Avalonia.Controls.GridSplitter"] =
+            [
+                "ResizeDirection", "ResizeBehavior", "ShowsPreview", "KeyboardIncrement",
+                "DragIncrement",
+            ],
             ["Avalonia.Controls.Primitives.TemplatedControl"] =
             [
                 "Background", "BorderBrush", "BorderThickness", "CornerRadius", "FontSize",
@@ -334,6 +368,12 @@ public static class AvaloniaProjectionProfiles
                 IsNullable = true,
             },
             ["Avalonia.Controls.SplitView.Pane"] = new()
+            {
+                Kind = MarshallingKind.ComInterface,
+                InterfaceName = "Avalonia.Host.Com.IAvnControl",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.Viewbox.Child"] = new()
             {
                 Kind = MarshallingKind.ComInterface,
                 InterfaceName = "Avalonia.Host.Com.IAvnControl",
@@ -518,6 +558,12 @@ public static class AvaloniaProjectionProfiles
             [
                 "Tip", "IsOpen", "Placement", "HorizontalOffset", "VerticalOffset",
                 "ShowDelay", "BetweenShowDelay", "ShowOnDisabled", "ServiceEnabled",
+            ],
+            ["Avalonia.Controls.RelativePanel"] =
+            [
+                "AlignLeftWithPanel", "AlignRightWithPanel", "AlignTopWithPanel",
+                "AlignBottomWithPanel", "AlignHorizontalCenterWithPanel",
+                "AlignVerticalCenterWithPanel",
             ],
         },
         AttachedPropertyOverrides = new Dictionary<string, MarshallingOverride>(StringComparer.Ordinal)

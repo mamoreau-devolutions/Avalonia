@@ -66,6 +66,7 @@ Avalonia.Controls.Expander.Expanding: Not included by projection policy
 Avalonia.Controls.Flyout.FlyoutPresenterClasses: Not included by projection policy
 Avalonia.Controls.Flyout.FlyoutPresenterTheme: Not included by projection policy
 Avalonia.Controls.Flyout.ContentTemplate: Not included by projection policy
+Avalonia.Controls.GridSplitter.PreviewContent: Not included by projection policy
 Avalonia.Controls.Image.Render(DrawingContext): Not included by projection policy
 Avalonia.Controls.ItemsControl.DisplayMemberBinding: Not included by projection policy
 Avalonia.Controls.ItemsControl.ItemContainerGenerator: Not included by projection policy
@@ -140,6 +141,9 @@ Avalonia.Controls.Primitives.TemplatedControl.Padding: Not included by projectio
 Avalonia.Controls.Primitives.TemplatedControl.Template: Not included by projection policy
 Avalonia.Controls.Primitives.TemplatedControl.TemplateApplied: Not included by projection policy
 Avalonia.Controls.Primitives.TemplatedControl.ApplyTemplate(): Not included by projection policy
+Avalonia.Controls.Primitives.Thumb.DragStarted: Not included by projection policy
+Avalonia.Controls.Primitives.Thumb.DragDelta: Not included by projection policy
+Avalonia.Controls.Primitives.Thumb.DragCompleted: Not included by projection policy
 Avalonia.Controls.ProgressBar.Percentage: Not included by projection policy
 Avalonia.Controls.ProgressBar.TemplateSettings: Not included by projection policy
 Avalonia.Controls.ScrollViewer.Extent: Not included by projection policy
