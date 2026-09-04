@@ -59,8 +59,8 @@ public static class AvaloniaProjectionProfiles
             // new control plus GetToolTipStatics (2 → 3), wave B seven more, wave C seven more,
             // and wave D seven more still (RepeatButton, DropDownButton, SplitButton,
             // ToggleSplitButton, HyperlinkButton, ContextMenu, MenuFlyout), so it republishes
-            // at version 6.
-            ["Avalonia.Host.Com.IAvnControlFactory"] = 6,
+            // at version 6, and wave E six more (Spinner is abstract), so it republishes at 7.
+            ["Avalonia.Host.Com.IAvnControlFactory"] = 7,
         },
         IncludeTypeNames =
         [
@@ -131,6 +131,14 @@ public static class AvaloniaProjectionProfiles
             "Avalonia.Controls.HyperlinkButton",
             "Avalonia.Controls.ContextMenu",
             "Avalonia.Controls.MenuFlyout",
+            // Wave E. Remaining input. Spinner is abstract; NumericUpDown decimals cross as
+            // invariant strings. PromptChar is a char and stays a gap.
+            "Avalonia.Controls.Spinner",
+            "Avalonia.Controls.ButtonSpinner",
+            "Avalonia.Controls.NumericUpDown",
+            "Avalonia.Controls.AutoCompleteBox",
+            "Avalonia.Controls.MaskedTextBox",
+            "Avalonia.Controls.SelectableTextBlock",
             "Avalonia.Controls.TextBox",
             "Avalonia.Controls.ScrollViewer",
             "Avalonia.Controls.Primitives.RangeBase",
@@ -275,6 +283,24 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.ContextMenu"] =
                 ["HorizontalOffset", "VerticalOffset", "Placement", "WindowManagerAddShadowHint"],
             ["Avalonia.Controls.MenuFlyout"] = ["Items"],
+            ["Avalonia.Controls.Spinner"] = [],
+            ["Avalonia.Controls.ButtonSpinner"] =
+                ["AllowSpin", "ShowButtonSpinner", "ButtonSpinnerLocation"],
+            ["Avalonia.Controls.NumericUpDown"] =
+            [
+                "Value", "Minimum", "Maximum", "Increment", "Text", "PlaceholderText",
+                "IsReadOnly", "ClipValueToMinMax", "AllowSpin", "ShowButtonSpinner",
+                "ButtonSpinnerLocation", "FormatString",
+            ],
+            ["Avalonia.Controls.AutoCompleteBox"] =
+            [
+                "Text", "PlaceholderText", "MinimumPrefixLength", "MaxDropDownHeight",
+                "IsDropDownOpen", "FilterMode", "IsTextCompletionEnabled",
+            ],
+            ["Avalonia.Controls.MaskedTextBox"] =
+                ["Mask", "AsciiOnly", "HidePromptOnLeave", "ResetOnPrompt", "ResetOnSpace"],
+            ["Avalonia.Controls.SelectableTextBlock"] =
+                ["SelectionStart", "SelectionEnd", "SelectedText", "CanCopy", "Copy"],
             ["Avalonia.Controls.Primitives.TemplatedControl"] =
             [
                 "Background", "BorderBrush", "BorderThickness", "CornerRadius", "FontSize",
@@ -408,6 +434,30 @@ public static class AvaloniaProjectionProfiles
                 InterfaceName = "Avalonia.Host.Com.IAvnItemList",
                 ElementInterfaceName = "Avalonia.Host.Com.IAvnControl",
                 ElementKind = MarshallingKind.ComInterface,
+                IsNullable = false,
+            },
+            ["Avalonia.Controls.NumericUpDown.Value"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                StringConverterTypeName = "Avalonia.Host.Com.AvnDecimal",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.NumericUpDown.Minimum"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                StringConverterTypeName = "Avalonia.Host.Com.AvnDecimalValue",
+                IsNullable = false,
+            },
+            ["Avalonia.Controls.NumericUpDown.Maximum"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                StringConverterTypeName = "Avalonia.Host.Com.AvnDecimalValue",
+                IsNullable = false,
+            },
+            ["Avalonia.Controls.NumericUpDown.Increment"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                StringConverterTypeName = "Avalonia.Host.Com.AvnDecimalValue",
                 IsNullable = false,
             },
             // The projection has no date/time ABI shape, so a date crosses as an ISO-8601

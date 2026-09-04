@@ -70,6 +70,12 @@ public class ClrTypeExtractorTests
         typeof(HyperlinkButton),
         typeof(ContextMenu),
         typeof(MenuFlyout),
+        typeof(Spinner),
+        typeof(ButtonSpinner),
+        typeof(NumericUpDown),
+        typeof(AutoCompleteBox),
+        typeof(MaskedTextBox),
+        typeof(SelectableTextBlock),
         typeof(TextBox),
         typeof(ScrollViewer),
         typeof(RangeBase),
@@ -260,9 +266,9 @@ public class ClrTypeExtractorTests
         // The factory grew a creator per wave A control plus GetToolTipStatics, then one per
         // constructible wave B type, then one per constructible wave C type, so it has moved
         // three times off the version 2 IID it published for CreateSolidColorBrush.
-        Assert.Equal(6, ir.FactoryAbiVersion);
+        Assert.Equal(7, ir.FactoryAbiVersion);
         Assert.Equal(
-            ClrTypeExtractor.CreateDeterministicIid("Avalonia.Host.Com.IAvnControlFactory", 6),
+            ClrTypeExtractor.CreateDeterministicIid("Avalonia.Host.Com.IAvnControlFactory", 7),
             ir.FactoryIid);
     }
 
@@ -1096,7 +1102,7 @@ public class ClrTypeExtractorTests
             property => property.Name is "Above" or "Below" or "LeftOf" or "RightOf"
                 or "AlignLeftWith" or "Order" or "Grow" or "Shrink" or "Basis");
 
-        Assert.Equal(6, ir.FactoryAbiVersion);
+        Assert.Equal(7, ir.FactoryAbiVersion);
     }
 
     [Fact]
@@ -1149,7 +1155,51 @@ public class ClrTypeExtractorTests
         Assert.Equal(MarshallingKind.ComCollection, items.Kind);
         Assert.Equal("Avalonia.Host.Com.IAvnItemList", items.InterfaceName);
 
-        Assert.Equal(6, ir.FactoryAbiVersion);
+        Assert.Equal(7, ir.FactoryAbiVersion);
+    }
+
+    [Fact]
+    public void Wave_e_input_controls_publish_new_interfaces_at_version_one()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+
+        var spinner = Type(ir, "IAvnSpinner");
+        Assert.Equal(1, spinner.AbiVersion);
+        Assert.False(spinner.IsConstructible);
+        Assert.Equal("Avalonia.Host.Com.IAvnContentControl", spinner.BaseFullName);
+
+        Assert.All(
+            new[]
+            {
+                "IAvnButtonSpinner", "IAvnNumericUpDown", "IAvnAutoCompleteBox",
+                "IAvnMaskedTextBox", "IAvnSelectableTextBlock",
+            },
+            name =>
+            {
+                var type = Type(ir, name);
+                Assert.Equal(1, type.AbiVersion);
+                Assert.True(type.IsConstructible);
+            });
+
+        Assert.Equal("Avalonia.Host.Com.IAvnSpinner", Type(ir, "IAvnButtonSpinner").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnTemplatedControl", Type(ir, "IAvnNumericUpDown").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnTextBox", Type(ir, "IAvnMaskedTextBox").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnTextBlock", Type(ir, "IAvnSelectableTextBlock").BaseFullName);
+
+        var value = Type(ir, "IAvnNumericUpDown").Properties.Single(p => p.Name == "Value");
+        Assert.Equal(MarshallingKind.StringUtf16, value.Kind);
+        Assert.Equal("Avalonia.Host.Com.AvnDecimal", value.StringConverterTypeName);
+        Assert.True(value.IsNullable);
+        var minimum = Type(ir, "IAvnNumericUpDown").Properties.Single(p => p.Name == "Minimum");
+        Assert.Equal("Avalonia.Host.Com.AvnDecimalValue", minimum.StringConverterTypeName);
+        Assert.False(minimum.IsNullable);
+
+        var selectedText = Type(ir, "IAvnSelectableTextBlock").Properties
+            .Single(p => p.Name == "SelectedText");
+        Assert.True(selectedText.CanRead);
+        Assert.False(selectedText.CanWrite);
+
+        Assert.Equal(7, ir.FactoryAbiVersion);
     }
 
     [Fact]

@@ -59,6 +59,8 @@ typedef struct AvnColor {
     uint32_t argb;
 } AvnColor;
 
+typedef struct IAvnAutoCompleteBox IAvnAutoCompleteBox;
+typedef struct IAvnAutoCompleteBoxVtbl IAvnAutoCompleteBoxVtbl;
 typedef struct IAvnAvaloniaObject IAvnAvaloniaObject;
 typedef struct IAvnAvaloniaObjectVtbl IAvnAvaloniaObjectVtbl;
 typedef struct IAvnBorder IAvnBorder;
@@ -69,6 +71,8 @@ typedef struct IAvnButton IAvnButton;
 typedef struct IAvnButtonVtbl IAvnButtonVtbl;
 typedef struct IAvnButtonClickHandler IAvnButtonClickHandler;
 typedef struct IAvnButtonClickHandlerVtbl IAvnButtonClickHandlerVtbl;
+typedef struct IAvnButtonSpinner IAvnButtonSpinner;
+typedef struct IAvnButtonSpinnerVtbl IAvnButtonSpinnerVtbl;
 typedef struct IAvnCanvas IAvnCanvas;
 typedef struct IAvnCanvasVtbl IAvnCanvasVtbl;
 typedef struct IAvnCanvasStatics IAvnCanvasStatics;
@@ -145,6 +149,8 @@ typedef struct IAvnListBox IAvnListBox;
 typedef struct IAvnListBoxVtbl IAvnListBoxVtbl;
 typedef struct IAvnListBoxItem IAvnListBoxItem;
 typedef struct IAvnListBoxItemVtbl IAvnListBoxItemVtbl;
+typedef struct IAvnMaskedTextBox IAvnMaskedTextBox;
+typedef struct IAvnMaskedTextBoxVtbl IAvnMaskedTextBoxVtbl;
 typedef struct IAvnMenu IAvnMenu;
 typedef struct IAvnMenuVtbl IAvnMenuVtbl;
 typedef struct IAvnMenuBase IAvnMenuBase;
@@ -161,6 +167,8 @@ typedef struct IAvnMenuItemClickHandler IAvnMenuItemClickHandler;
 typedef struct IAvnMenuItemClickHandlerVtbl IAvnMenuItemClickHandlerVtbl;
 typedef struct IAvnMenuItemSubmenuOpenedHandler IAvnMenuItemSubmenuOpenedHandler;
 typedef struct IAvnMenuItemSubmenuOpenedHandlerVtbl IAvnMenuItemSubmenuOpenedHandlerVtbl;
+typedef struct IAvnNumericUpDown IAvnNumericUpDown;
+typedef struct IAvnNumericUpDownVtbl IAvnNumericUpDownVtbl;
 typedef struct IAvnPanel IAvnPanel;
 typedef struct IAvnPanelVtbl IAvnPanelVtbl;
 typedef struct IAvnPopupFlyoutBase IAvnPopupFlyoutBase;
@@ -187,12 +195,16 @@ typedef struct IAvnScrollViewer IAvnScrollViewer;
 typedef struct IAvnScrollViewerVtbl IAvnScrollViewerVtbl;
 typedef struct IAvnScrollViewerScrollChangedHandler IAvnScrollViewerScrollChangedHandler;
 typedef struct IAvnScrollViewerScrollChangedHandlerVtbl IAvnScrollViewerScrollChangedHandlerVtbl;
+typedef struct IAvnSelectableTextBlock IAvnSelectableTextBlock;
+typedef struct IAvnSelectableTextBlockVtbl IAvnSelectableTextBlockVtbl;
 typedef struct IAvnSelectingItemsControl IAvnSelectingItemsControl;
 typedef struct IAvnSelectingItemsControlVtbl IAvnSelectingItemsControlVtbl;
 typedef struct IAvnSelectingItemsControlSelectionChangedHandler IAvnSelectingItemsControlSelectionChangedHandler;
 typedef struct IAvnSelectingItemsControlSelectionChangedHandlerVtbl IAvnSelectingItemsControlSelectionChangedHandlerVtbl;
 typedef struct IAvnSlider IAvnSlider;
 typedef struct IAvnSliderVtbl IAvnSliderVtbl;
+typedef struct IAvnSpinner IAvnSpinner;
+typedef struct IAvnSpinnerVtbl IAvnSpinnerVtbl;
 typedef struct IAvnSplitButton IAvnSplitButton;
 typedef struct IAvnSplitButtonVtbl IAvnSplitButtonVtbl;
 typedef struct IAvnSplitButtonClickHandler IAvnSplitButtonClickHandler;
@@ -754,6 +766,82 @@ struct IAvnStringListVtbl {
 struct IAvnStringList { const IAvnStringListVtbl* vtbl; };
 #define I_AVN_STRING_LIST_VTABLE_SLOTS 9
 
+static const AvnGuid I_AVN_AUTO_COMPLETE_BOX_IID = {
+    0x25DAD903,
+    0x1062,
+    0x539D,
+    { 0xA7, 0xDB, 0xF9, 0x55, 0x95, 0x7C, 0x35, 0xF0 }
+};
+#define I_AVN_AUTO_COMPLETE_BOX_ABI_VERSION 1
+struct IAvnAutoCompleteBoxVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnAutoCompleteBox* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnAutoCompleteBox* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnAutoCompleteBox* self); /* slot 2 */
+    AvnHResult (AVN_CALL *get_object_id)(IAvnAutoCompleteBox* self, int64_t* value); /* slot 3 */
+    AvnHResult (AVN_CALL *get_lifetime_token)(IAvnAutoCompleteBox* self, int64_t* value); /* slot 4 */
+    AvnHResult (AVN_CALL *get_name)(IAvnAutoCompleteBox* self, uint16_t** value); /* slot 5 */
+    AvnHResult (AVN_CALL *set_name)(IAvnAutoCompleteBox* self, const uint16_t* value); /* slot 6 */
+    AvnHResult (AVN_CALL *get_classes)(IAvnAutoCompleteBox* self, IAvnStringList** value); /* slot 7 */
+    AvnHResult (AVN_CALL *get_is_visible)(IAvnAutoCompleteBox* self, int32_t* value); /* slot 8 */
+    AvnHResult (AVN_CALL *set_is_visible)(IAvnAutoCompleteBox* self, int32_t value); /* slot 9 */
+    AvnHResult (AVN_CALL *get_opacity)(IAvnAutoCompleteBox* self, double* value); /* slot 10 */
+    AvnHResult (AVN_CALL *set_opacity)(IAvnAutoCompleteBox* self, double value); /* slot 11 */
+    AvnHResult (AVN_CALL *get_width)(IAvnAutoCompleteBox* self, double* value); /* slot 12 */
+    AvnHResult (AVN_CALL *set_width)(IAvnAutoCompleteBox* self, double value); /* slot 13 */
+    AvnHResult (AVN_CALL *get_height)(IAvnAutoCompleteBox* self, double* value); /* slot 14 */
+    AvnHResult (AVN_CALL *set_height)(IAvnAutoCompleteBox* self, double value); /* slot 15 */
+    AvnHResult (AVN_CALL *get_min_width)(IAvnAutoCompleteBox* self, double* value); /* slot 16 */
+    AvnHResult (AVN_CALL *set_min_width)(IAvnAutoCompleteBox* self, double value); /* slot 17 */
+    AvnHResult (AVN_CALL *get_max_width)(IAvnAutoCompleteBox* self, double* value); /* slot 18 */
+    AvnHResult (AVN_CALL *set_max_width)(IAvnAutoCompleteBox* self, double value); /* slot 19 */
+    AvnHResult (AVN_CALL *get_min_height)(IAvnAutoCompleteBox* self, double* value); /* slot 20 */
+    AvnHResult (AVN_CALL *set_min_height)(IAvnAutoCompleteBox* self, double value); /* slot 21 */
+    AvnHResult (AVN_CALL *get_max_height)(IAvnAutoCompleteBox* self, double* value); /* slot 22 */
+    AvnHResult (AVN_CALL *set_max_height)(IAvnAutoCompleteBox* self, double value); /* slot 23 */
+    AvnHResult (AVN_CALL *get_margin)(IAvnAutoCompleteBox* self, AvnThickness* value); /* slot 24 */
+    AvnHResult (AVN_CALL *set_margin)(IAvnAutoCompleteBox* self, AvnThickness value); /* slot 25 */
+    AvnHResult (AVN_CALL *get_horizontal_alignment)(IAvnAutoCompleteBox* self, int32_t* value); /* slot 26 */
+    AvnHResult (AVN_CALL *set_horizontal_alignment)(IAvnAutoCompleteBox* self, int32_t value); /* slot 27 */
+    AvnHResult (AVN_CALL *get_vertical_alignment)(IAvnAutoCompleteBox* self, int32_t* value); /* slot 28 */
+    AvnHResult (AVN_CALL *set_vertical_alignment)(IAvnAutoCompleteBox* self, int32_t value); /* slot 29 */
+    AvnHResult (AVN_CALL *get_is_enabled)(IAvnAutoCompleteBox* self, int32_t* value); /* slot 30 */
+    AvnHResult (AVN_CALL *set_is_enabled)(IAvnAutoCompleteBox* self, int32_t value); /* slot 31 */
+    AvnHResult (AVN_CALL *advise_key_down)(IAvnAutoCompleteBox* self, IAvnControlKeyDownHandler* handler, int64_t* subscription_id); /* slot 32 */
+    AvnHResult (AVN_CALL *unadvise_key_down)(IAvnAutoCompleteBox* self, int64_t subscription_id); /* slot 33 */
+    AvnHResult (AVN_CALL *advise_pointer_entered)(IAvnAutoCompleteBox* self, IAvnControlPointerEnteredHandler* handler, int64_t* subscription_id); /* slot 34 */
+    AvnHResult (AVN_CALL *unadvise_pointer_entered)(IAvnAutoCompleteBox* self, int64_t subscription_id); /* slot 35 */
+    AvnHResult (AVN_CALL *advise_pointer_exited)(IAvnAutoCompleteBox* self, IAvnControlPointerExitedHandler* handler, int64_t* subscription_id); /* slot 36 */
+    AvnHResult (AVN_CALL *unadvise_pointer_exited)(IAvnAutoCompleteBox* self, int64_t subscription_id); /* slot 37 */
+    AvnHResult (AVN_CALL *get_background)(IAvnAutoCompleteBox* self, IAvnBrush** value); /* slot 38 */
+    AvnHResult (AVN_CALL *set_background)(IAvnAutoCompleteBox* self, IAvnBrush* value); /* slot 39 */
+    AvnHResult (AVN_CALL *get_border_brush)(IAvnAutoCompleteBox* self, IAvnBrush** value); /* slot 40 */
+    AvnHResult (AVN_CALL *set_border_brush)(IAvnAutoCompleteBox* self, IAvnBrush* value); /* slot 41 */
+    AvnHResult (AVN_CALL *get_border_thickness)(IAvnAutoCompleteBox* self, AvnThickness* value); /* slot 42 */
+    AvnHResult (AVN_CALL *set_border_thickness)(IAvnAutoCompleteBox* self, AvnThickness value); /* slot 43 */
+    AvnHResult (AVN_CALL *get_corner_radius)(IAvnAutoCompleteBox* self, AvnCornerRadius* value); /* slot 44 */
+    AvnHResult (AVN_CALL *set_corner_radius)(IAvnAutoCompleteBox* self, AvnCornerRadius value); /* slot 45 */
+    AvnHResult (AVN_CALL *get_font_size)(IAvnAutoCompleteBox* self, double* value); /* slot 46 */
+    AvnHResult (AVN_CALL *set_font_size)(IAvnAutoCompleteBox* self, double value); /* slot 47 */
+    AvnHResult (AVN_CALL *get_foreground)(IAvnAutoCompleteBox* self, IAvnBrush** value); /* slot 48 */
+    AvnHResult (AVN_CALL *set_foreground)(IAvnAutoCompleteBox* self, IAvnBrush* value); /* slot 49 */
+    AvnHResult (AVN_CALL *get_minimum_prefix_length)(IAvnAutoCompleteBox* self, int32_t* value); /* slot 50 */
+    AvnHResult (AVN_CALL *set_minimum_prefix_length)(IAvnAutoCompleteBox* self, int32_t value); /* slot 51 */
+    AvnHResult (AVN_CALL *get_is_text_completion_enabled)(IAvnAutoCompleteBox* self, int32_t* value); /* slot 52 */
+    AvnHResult (AVN_CALL *set_is_text_completion_enabled)(IAvnAutoCompleteBox* self, int32_t value); /* slot 53 */
+    AvnHResult (AVN_CALL *get_max_drop_down_height)(IAvnAutoCompleteBox* self, double* value); /* slot 54 */
+    AvnHResult (AVN_CALL *set_max_drop_down_height)(IAvnAutoCompleteBox* self, double value); /* slot 55 */
+    AvnHResult (AVN_CALL *get_is_drop_down_open)(IAvnAutoCompleteBox* self, int32_t* value); /* slot 56 */
+    AvnHResult (AVN_CALL *set_is_drop_down_open)(IAvnAutoCompleteBox* self, int32_t value); /* slot 57 */
+    AvnHResult (AVN_CALL *get_text)(IAvnAutoCompleteBox* self, uint16_t** value); /* slot 58 */
+    AvnHResult (AVN_CALL *set_text)(IAvnAutoCompleteBox* self, const uint16_t* value); /* slot 59 */
+    AvnHResult (AVN_CALL *get_filter_mode)(IAvnAutoCompleteBox* self, int32_t* value); /* slot 60 */
+    AvnHResult (AVN_CALL *set_filter_mode)(IAvnAutoCompleteBox* self, int32_t value); /* slot 61 */
+    AvnHResult (AVN_CALL *get_placeholder_text)(IAvnAutoCompleteBox* self, uint16_t** value); /* slot 62 */
+    AvnHResult (AVN_CALL *set_placeholder_text)(IAvnAutoCompleteBox* self, const uint16_t* value); /* slot 63 */
+};
+struct IAvnAutoCompleteBox { const IAvnAutoCompleteBoxVtbl* vtbl; };
+#define I_AVN_AUTO_COMPLETE_BOX_VTABLE_SLOTS 64
+
 static const AvnGuid I_AVN_AVALONIA_OBJECT_IID = {
     0xFA7F2E03,
     0x0BFA,
@@ -911,6 +999,80 @@ struct IAvnButtonVtbl {
 };
 struct IAvnButton { const IAvnButtonVtbl* vtbl; };
 #define I_AVN_BUTTON_VTABLE_SLOTS 65
+
+static const AvnGuid I_AVN_BUTTON_SPINNER_IID = {
+    0x2C0BF685,
+    0x6C21,
+    0x56EA,
+    { 0xA7, 0xB2, 0x09, 0x05, 0x4A, 0x23, 0x4F, 0x2F }
+};
+#define I_AVN_BUTTON_SPINNER_ABI_VERSION 1
+struct IAvnButtonSpinnerVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnButtonSpinner* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnButtonSpinner* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnButtonSpinner* self); /* slot 2 */
+    AvnHResult (AVN_CALL *get_object_id)(IAvnButtonSpinner* self, int64_t* value); /* slot 3 */
+    AvnHResult (AVN_CALL *get_lifetime_token)(IAvnButtonSpinner* self, int64_t* value); /* slot 4 */
+    AvnHResult (AVN_CALL *get_name)(IAvnButtonSpinner* self, uint16_t** value); /* slot 5 */
+    AvnHResult (AVN_CALL *set_name)(IAvnButtonSpinner* self, const uint16_t* value); /* slot 6 */
+    AvnHResult (AVN_CALL *get_classes)(IAvnButtonSpinner* self, IAvnStringList** value); /* slot 7 */
+    AvnHResult (AVN_CALL *get_is_visible)(IAvnButtonSpinner* self, int32_t* value); /* slot 8 */
+    AvnHResult (AVN_CALL *set_is_visible)(IAvnButtonSpinner* self, int32_t value); /* slot 9 */
+    AvnHResult (AVN_CALL *get_opacity)(IAvnButtonSpinner* self, double* value); /* slot 10 */
+    AvnHResult (AVN_CALL *set_opacity)(IAvnButtonSpinner* self, double value); /* slot 11 */
+    AvnHResult (AVN_CALL *get_width)(IAvnButtonSpinner* self, double* value); /* slot 12 */
+    AvnHResult (AVN_CALL *set_width)(IAvnButtonSpinner* self, double value); /* slot 13 */
+    AvnHResult (AVN_CALL *get_height)(IAvnButtonSpinner* self, double* value); /* slot 14 */
+    AvnHResult (AVN_CALL *set_height)(IAvnButtonSpinner* self, double value); /* slot 15 */
+    AvnHResult (AVN_CALL *get_min_width)(IAvnButtonSpinner* self, double* value); /* slot 16 */
+    AvnHResult (AVN_CALL *set_min_width)(IAvnButtonSpinner* self, double value); /* slot 17 */
+    AvnHResult (AVN_CALL *get_max_width)(IAvnButtonSpinner* self, double* value); /* slot 18 */
+    AvnHResult (AVN_CALL *set_max_width)(IAvnButtonSpinner* self, double value); /* slot 19 */
+    AvnHResult (AVN_CALL *get_min_height)(IAvnButtonSpinner* self, double* value); /* slot 20 */
+    AvnHResult (AVN_CALL *set_min_height)(IAvnButtonSpinner* self, double value); /* slot 21 */
+    AvnHResult (AVN_CALL *get_max_height)(IAvnButtonSpinner* self, double* value); /* slot 22 */
+    AvnHResult (AVN_CALL *set_max_height)(IAvnButtonSpinner* self, double value); /* slot 23 */
+    AvnHResult (AVN_CALL *get_margin)(IAvnButtonSpinner* self, AvnThickness* value); /* slot 24 */
+    AvnHResult (AVN_CALL *set_margin)(IAvnButtonSpinner* self, AvnThickness value); /* slot 25 */
+    AvnHResult (AVN_CALL *get_horizontal_alignment)(IAvnButtonSpinner* self, int32_t* value); /* slot 26 */
+    AvnHResult (AVN_CALL *set_horizontal_alignment)(IAvnButtonSpinner* self, int32_t value); /* slot 27 */
+    AvnHResult (AVN_CALL *get_vertical_alignment)(IAvnButtonSpinner* self, int32_t* value); /* slot 28 */
+    AvnHResult (AVN_CALL *set_vertical_alignment)(IAvnButtonSpinner* self, int32_t value); /* slot 29 */
+    AvnHResult (AVN_CALL *get_is_enabled)(IAvnButtonSpinner* self, int32_t* value); /* slot 30 */
+    AvnHResult (AVN_CALL *set_is_enabled)(IAvnButtonSpinner* self, int32_t value); /* slot 31 */
+    AvnHResult (AVN_CALL *advise_key_down)(IAvnButtonSpinner* self, IAvnControlKeyDownHandler* handler, int64_t* subscription_id); /* slot 32 */
+    AvnHResult (AVN_CALL *unadvise_key_down)(IAvnButtonSpinner* self, int64_t subscription_id); /* slot 33 */
+    AvnHResult (AVN_CALL *advise_pointer_entered)(IAvnButtonSpinner* self, IAvnControlPointerEnteredHandler* handler, int64_t* subscription_id); /* slot 34 */
+    AvnHResult (AVN_CALL *unadvise_pointer_entered)(IAvnButtonSpinner* self, int64_t subscription_id); /* slot 35 */
+    AvnHResult (AVN_CALL *advise_pointer_exited)(IAvnButtonSpinner* self, IAvnControlPointerExitedHandler* handler, int64_t* subscription_id); /* slot 36 */
+    AvnHResult (AVN_CALL *unadvise_pointer_exited)(IAvnButtonSpinner* self, int64_t subscription_id); /* slot 37 */
+    AvnHResult (AVN_CALL *get_background)(IAvnButtonSpinner* self, IAvnBrush** value); /* slot 38 */
+    AvnHResult (AVN_CALL *set_background)(IAvnButtonSpinner* self, IAvnBrush* value); /* slot 39 */
+    AvnHResult (AVN_CALL *get_border_brush)(IAvnButtonSpinner* self, IAvnBrush** value); /* slot 40 */
+    AvnHResult (AVN_CALL *set_border_brush)(IAvnButtonSpinner* self, IAvnBrush* value); /* slot 41 */
+    AvnHResult (AVN_CALL *get_border_thickness)(IAvnButtonSpinner* self, AvnThickness* value); /* slot 42 */
+    AvnHResult (AVN_CALL *set_border_thickness)(IAvnButtonSpinner* self, AvnThickness value); /* slot 43 */
+    AvnHResult (AVN_CALL *get_corner_radius)(IAvnButtonSpinner* self, AvnCornerRadius* value); /* slot 44 */
+    AvnHResult (AVN_CALL *set_corner_radius)(IAvnButtonSpinner* self, AvnCornerRadius value); /* slot 45 */
+    AvnHResult (AVN_CALL *get_font_size)(IAvnButtonSpinner* self, double* value); /* slot 46 */
+    AvnHResult (AVN_CALL *set_font_size)(IAvnButtonSpinner* self, double value); /* slot 47 */
+    AvnHResult (AVN_CALL *get_foreground)(IAvnButtonSpinner* self, IAvnBrush** value); /* slot 48 */
+    AvnHResult (AVN_CALL *set_foreground)(IAvnButtonSpinner* self, IAvnBrush* value); /* slot 49 */
+    AvnHResult (AVN_CALL *get_content)(IAvnButtonSpinner* self, IAvnControl** value); /* slot 50 */
+    AvnHResult (AVN_CALL *set_content)(IAvnButtonSpinner* self, IAvnControl* value); /* slot 51 */
+    AvnHResult (AVN_CALL *get_horizontal_content_alignment)(IAvnButtonSpinner* self, int32_t* value); /* slot 52 */
+    AvnHResult (AVN_CALL *set_horizontal_content_alignment)(IAvnButtonSpinner* self, int32_t value); /* slot 53 */
+    AvnHResult (AVN_CALL *get_vertical_content_alignment)(IAvnButtonSpinner* self, int32_t* value); /* slot 54 */
+    AvnHResult (AVN_CALL *set_vertical_content_alignment)(IAvnButtonSpinner* self, int32_t value); /* slot 55 */
+    AvnHResult (AVN_CALL *get_allow_spin)(IAvnButtonSpinner* self, int32_t* value); /* slot 56 */
+    AvnHResult (AVN_CALL *set_allow_spin)(IAvnButtonSpinner* self, int32_t value); /* slot 57 */
+    AvnHResult (AVN_CALL *get_show_button_spinner)(IAvnButtonSpinner* self, int32_t* value); /* slot 58 */
+    AvnHResult (AVN_CALL *set_show_button_spinner)(IAvnButtonSpinner* self, int32_t value); /* slot 59 */
+    AvnHResult (AVN_CALL *get_button_spinner_location)(IAvnButtonSpinner* self, int32_t* value); /* slot 60 */
+    AvnHResult (AVN_CALL *set_button_spinner_location)(IAvnButtonSpinner* self, int32_t value); /* slot 61 */
+};
+struct IAvnButtonSpinner { const IAvnButtonSpinnerVtbl* vtbl; };
+#define I_AVN_BUTTON_SPINNER_VTABLE_SLOTS 62
 
 static const AvnGuid I_AVN_CANVAS_IID = {
     0x88515BBD,
@@ -2559,6 +2721,125 @@ struct IAvnListBoxItemVtbl {
 struct IAvnListBoxItem { const IAvnListBoxItemVtbl* vtbl; };
 #define I_AVN_LIST_BOX_ITEM_VTABLE_SLOTS 58
 
+static const AvnGuid I_AVN_MASKED_TEXT_BOX_IID = {
+    0xC3276A70,
+    0xB7E4,
+    0x5B01,
+    { 0x8F, 0xE3, 0x54, 0x52, 0x18, 0xD6, 0x92, 0x74 }
+};
+#define I_AVN_MASKED_TEXT_BOX_ABI_VERSION 1
+struct IAvnMaskedTextBoxVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnMaskedTextBox* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnMaskedTextBox* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnMaskedTextBox* self); /* slot 2 */
+    AvnHResult (AVN_CALL *get_object_id)(IAvnMaskedTextBox* self, int64_t* value); /* slot 3 */
+    AvnHResult (AVN_CALL *get_lifetime_token)(IAvnMaskedTextBox* self, int64_t* value); /* slot 4 */
+    AvnHResult (AVN_CALL *get_name)(IAvnMaskedTextBox* self, uint16_t** value); /* slot 5 */
+    AvnHResult (AVN_CALL *set_name)(IAvnMaskedTextBox* self, const uint16_t* value); /* slot 6 */
+    AvnHResult (AVN_CALL *get_classes)(IAvnMaskedTextBox* self, IAvnStringList** value); /* slot 7 */
+    AvnHResult (AVN_CALL *get_is_visible)(IAvnMaskedTextBox* self, int32_t* value); /* slot 8 */
+    AvnHResult (AVN_CALL *set_is_visible)(IAvnMaskedTextBox* self, int32_t value); /* slot 9 */
+    AvnHResult (AVN_CALL *get_opacity)(IAvnMaskedTextBox* self, double* value); /* slot 10 */
+    AvnHResult (AVN_CALL *set_opacity)(IAvnMaskedTextBox* self, double value); /* slot 11 */
+    AvnHResult (AVN_CALL *get_width)(IAvnMaskedTextBox* self, double* value); /* slot 12 */
+    AvnHResult (AVN_CALL *set_width)(IAvnMaskedTextBox* self, double value); /* slot 13 */
+    AvnHResult (AVN_CALL *get_height)(IAvnMaskedTextBox* self, double* value); /* slot 14 */
+    AvnHResult (AVN_CALL *set_height)(IAvnMaskedTextBox* self, double value); /* slot 15 */
+    AvnHResult (AVN_CALL *get_min_width)(IAvnMaskedTextBox* self, double* value); /* slot 16 */
+    AvnHResult (AVN_CALL *set_min_width)(IAvnMaskedTextBox* self, double value); /* slot 17 */
+    AvnHResult (AVN_CALL *get_max_width)(IAvnMaskedTextBox* self, double* value); /* slot 18 */
+    AvnHResult (AVN_CALL *set_max_width)(IAvnMaskedTextBox* self, double value); /* slot 19 */
+    AvnHResult (AVN_CALL *get_min_height)(IAvnMaskedTextBox* self, double* value); /* slot 20 */
+    AvnHResult (AVN_CALL *set_min_height)(IAvnMaskedTextBox* self, double value); /* slot 21 */
+    AvnHResult (AVN_CALL *get_max_height)(IAvnMaskedTextBox* self, double* value); /* slot 22 */
+    AvnHResult (AVN_CALL *set_max_height)(IAvnMaskedTextBox* self, double value); /* slot 23 */
+    AvnHResult (AVN_CALL *get_margin)(IAvnMaskedTextBox* self, AvnThickness* value); /* slot 24 */
+    AvnHResult (AVN_CALL *set_margin)(IAvnMaskedTextBox* self, AvnThickness value); /* slot 25 */
+    AvnHResult (AVN_CALL *get_horizontal_alignment)(IAvnMaskedTextBox* self, int32_t* value); /* slot 26 */
+    AvnHResult (AVN_CALL *set_horizontal_alignment)(IAvnMaskedTextBox* self, int32_t value); /* slot 27 */
+    AvnHResult (AVN_CALL *get_vertical_alignment)(IAvnMaskedTextBox* self, int32_t* value); /* slot 28 */
+    AvnHResult (AVN_CALL *set_vertical_alignment)(IAvnMaskedTextBox* self, int32_t value); /* slot 29 */
+    AvnHResult (AVN_CALL *get_is_enabled)(IAvnMaskedTextBox* self, int32_t* value); /* slot 30 */
+    AvnHResult (AVN_CALL *set_is_enabled)(IAvnMaskedTextBox* self, int32_t value); /* slot 31 */
+    AvnHResult (AVN_CALL *advise_key_down)(IAvnMaskedTextBox* self, IAvnControlKeyDownHandler* handler, int64_t* subscription_id); /* slot 32 */
+    AvnHResult (AVN_CALL *unadvise_key_down)(IAvnMaskedTextBox* self, int64_t subscription_id); /* slot 33 */
+    AvnHResult (AVN_CALL *advise_pointer_entered)(IAvnMaskedTextBox* self, IAvnControlPointerEnteredHandler* handler, int64_t* subscription_id); /* slot 34 */
+    AvnHResult (AVN_CALL *unadvise_pointer_entered)(IAvnMaskedTextBox* self, int64_t subscription_id); /* slot 35 */
+    AvnHResult (AVN_CALL *advise_pointer_exited)(IAvnMaskedTextBox* self, IAvnControlPointerExitedHandler* handler, int64_t* subscription_id); /* slot 36 */
+    AvnHResult (AVN_CALL *unadvise_pointer_exited)(IAvnMaskedTextBox* self, int64_t subscription_id); /* slot 37 */
+    AvnHResult (AVN_CALL *get_background)(IAvnMaskedTextBox* self, IAvnBrush** value); /* slot 38 */
+    AvnHResult (AVN_CALL *set_background)(IAvnMaskedTextBox* self, IAvnBrush* value); /* slot 39 */
+    AvnHResult (AVN_CALL *get_border_brush)(IAvnMaskedTextBox* self, IAvnBrush** value); /* slot 40 */
+    AvnHResult (AVN_CALL *set_border_brush)(IAvnMaskedTextBox* self, IAvnBrush* value); /* slot 41 */
+    AvnHResult (AVN_CALL *get_border_thickness)(IAvnMaskedTextBox* self, AvnThickness* value); /* slot 42 */
+    AvnHResult (AVN_CALL *set_border_thickness)(IAvnMaskedTextBox* self, AvnThickness value); /* slot 43 */
+    AvnHResult (AVN_CALL *get_corner_radius)(IAvnMaskedTextBox* self, AvnCornerRadius* value); /* slot 44 */
+    AvnHResult (AVN_CALL *set_corner_radius)(IAvnMaskedTextBox* self, AvnCornerRadius value); /* slot 45 */
+    AvnHResult (AVN_CALL *get_font_size)(IAvnMaskedTextBox* self, double* value); /* slot 46 */
+    AvnHResult (AVN_CALL *set_font_size)(IAvnMaskedTextBox* self, double value); /* slot 47 */
+    AvnHResult (AVN_CALL *get_foreground)(IAvnMaskedTextBox* self, IAvnBrush** value); /* slot 48 */
+    AvnHResult (AVN_CALL *set_foreground)(IAvnMaskedTextBox* self, IAvnBrush* value); /* slot 49 */
+    AvnHResult (AVN_CALL *get_accepts_return)(IAvnMaskedTextBox* self, int32_t* value); /* slot 50 */
+    AvnHResult (AVN_CALL *set_accepts_return)(IAvnMaskedTextBox* self, int32_t value); /* slot 51 */
+    AvnHResult (AVN_CALL *get_accepts_tab)(IAvnMaskedTextBox* self, int32_t* value); /* slot 52 */
+    AvnHResult (AVN_CALL *set_accepts_tab)(IAvnMaskedTextBox* self, int32_t value); /* slot 53 */
+    AvnHResult (AVN_CALL *get_caret_index)(IAvnMaskedTextBox* self, int32_t* value); /* slot 54 */
+    AvnHResult (AVN_CALL *set_caret_index)(IAvnMaskedTextBox* self, int32_t value); /* slot 55 */
+    AvnHResult (AVN_CALL *get_is_read_only)(IAvnMaskedTextBox* self, int32_t* value); /* slot 56 */
+    AvnHResult (AVN_CALL *set_is_read_only)(IAvnMaskedTextBox* self, int32_t value); /* slot 57 */
+    AvnHResult (AVN_CALL *get_selection_start)(IAvnMaskedTextBox* self, int32_t* value); /* slot 58 */
+    AvnHResult (AVN_CALL *set_selection_start)(IAvnMaskedTextBox* self, int32_t value); /* slot 59 */
+    AvnHResult (AVN_CALL *get_selection_end)(IAvnMaskedTextBox* self, int32_t* value); /* slot 60 */
+    AvnHResult (AVN_CALL *set_selection_end)(IAvnMaskedTextBox* self, int32_t value); /* slot 61 */
+    AvnHResult (AVN_CALL *get_max_length)(IAvnMaskedTextBox* self, int32_t* value); /* slot 62 */
+    AvnHResult (AVN_CALL *set_max_length)(IAvnMaskedTextBox* self, int32_t value); /* slot 63 */
+    AvnHResult (AVN_CALL *get_max_lines)(IAvnMaskedTextBox* self, int32_t* value); /* slot 64 */
+    AvnHResult (AVN_CALL *set_max_lines)(IAvnMaskedTextBox* self, int32_t value); /* slot 65 */
+    AvnHResult (AVN_CALL *get_min_lines)(IAvnMaskedTextBox* self, int32_t* value); /* slot 66 */
+    AvnHResult (AVN_CALL *set_min_lines)(IAvnMaskedTextBox* self, int32_t value); /* slot 67 */
+    AvnHResult (AVN_CALL *get_line_height)(IAvnMaskedTextBox* self, double* value); /* slot 68 */
+    AvnHResult (AVN_CALL *set_line_height)(IAvnMaskedTextBox* self, double value); /* slot 69 */
+    AvnHResult (AVN_CALL *get_text)(IAvnMaskedTextBox* self, uint16_t** value); /* slot 70 */
+    AvnHResult (AVN_CALL *set_text)(IAvnMaskedTextBox* self, const uint16_t* value); /* slot 71 */
+    AvnHResult (AVN_CALL *get_placeholder_text)(IAvnMaskedTextBox* self, uint16_t** value); /* slot 72 */
+    AvnHResult (AVN_CALL *set_placeholder_text)(IAvnMaskedTextBox* self, const uint16_t* value); /* slot 73 */
+    AvnHResult (AVN_CALL *get_reveal_password)(IAvnMaskedTextBox* self, int32_t* value); /* slot 74 */
+    AvnHResult (AVN_CALL *set_reveal_password)(IAvnMaskedTextBox* self, int32_t value); /* slot 75 */
+    AvnHResult (AVN_CALL *get_text_wrapping)(IAvnMaskedTextBox* self, int32_t* value); /* slot 76 */
+    AvnHResult (AVN_CALL *set_text_wrapping)(IAvnMaskedTextBox* self, int32_t value); /* slot 77 */
+    AvnHResult (AVN_CALL *get_new_line)(IAvnMaskedTextBox* self, uint16_t** value); /* slot 78 */
+    AvnHResult (AVN_CALL *set_new_line)(IAvnMaskedTextBox* self, const uint16_t* value); /* slot 79 */
+    AvnHResult (AVN_CALL *get_can_cut)(IAvnMaskedTextBox* self, int32_t* value); /* slot 80 */
+    AvnHResult (AVN_CALL *get_can_copy)(IAvnMaskedTextBox* self, int32_t* value); /* slot 81 */
+    AvnHResult (AVN_CALL *get_can_paste)(IAvnMaskedTextBox* self, int32_t* value); /* slot 82 */
+    AvnHResult (AVN_CALL *get_is_undo_enabled)(IAvnMaskedTextBox* self, int32_t* value); /* slot 83 */
+    AvnHResult (AVN_CALL *set_is_undo_enabled)(IAvnMaskedTextBox* self, int32_t value); /* slot 84 */
+    AvnHResult (AVN_CALL *get_undo_limit)(IAvnMaskedTextBox* self, int32_t* value); /* slot 85 */
+    AvnHResult (AVN_CALL *set_undo_limit)(IAvnMaskedTextBox* self, int32_t value); /* slot 86 */
+    AvnHResult (AVN_CALL *get_can_undo)(IAvnMaskedTextBox* self, int32_t* value); /* slot 87 */
+    AvnHResult (AVN_CALL *get_can_redo)(IAvnMaskedTextBox* self, int32_t* value); /* slot 88 */
+    AvnHResult (AVN_CALL *cut)(IAvnMaskedTextBox* self); /* slot 89 */
+    AvnHResult (AVN_CALL *copy)(IAvnMaskedTextBox* self); /* slot 90 */
+    AvnHResult (AVN_CALL *paste)(IAvnMaskedTextBox* self); /* slot 91 */
+    AvnHResult (AVN_CALL *clear)(IAvnMaskedTextBox* self); /* slot 92 */
+    AvnHResult (AVN_CALL *undo)(IAvnMaskedTextBox* self); /* slot 93 */
+    AvnHResult (AVN_CALL *redo)(IAvnMaskedTextBox* self); /* slot 94 */
+    AvnHResult (AVN_CALL *advise_text_changed)(IAvnMaskedTextBox* self, IAvnTextBoxTextChangedHandler* handler, int64_t* subscription_id); /* slot 95 */
+    AvnHResult (AVN_CALL *unadvise_text_changed)(IAvnMaskedTextBox* self, int64_t subscription_id); /* slot 96 */
+    AvnHResult (AVN_CALL *get_ascii_only)(IAvnMaskedTextBox* self, int32_t* value); /* slot 97 */
+    AvnHResult (AVN_CALL *set_ascii_only)(IAvnMaskedTextBox* self, int32_t value); /* slot 98 */
+    AvnHResult (AVN_CALL *get_hide_prompt_on_leave)(IAvnMaskedTextBox* self, int32_t* value); /* slot 99 */
+    AvnHResult (AVN_CALL *set_hide_prompt_on_leave)(IAvnMaskedTextBox* self, int32_t value); /* slot 100 */
+    AvnHResult (AVN_CALL *get_mask)(IAvnMaskedTextBox* self, uint16_t** value); /* slot 101 */
+    AvnHResult (AVN_CALL *set_mask)(IAvnMaskedTextBox* self, const uint16_t* value); /* slot 102 */
+    AvnHResult (AVN_CALL *get_reset_on_prompt)(IAvnMaskedTextBox* self, int32_t* value); /* slot 103 */
+    AvnHResult (AVN_CALL *set_reset_on_prompt)(IAvnMaskedTextBox* self, int32_t value); /* slot 104 */
+    AvnHResult (AVN_CALL *get_reset_on_space)(IAvnMaskedTextBox* self, int32_t* value); /* slot 105 */
+    AvnHResult (AVN_CALL *set_reset_on_space)(IAvnMaskedTextBox* self, int32_t value); /* slot 106 */
+};
+struct IAvnMaskedTextBox { const IAvnMaskedTextBoxVtbl* vtbl; };
+#define I_AVN_MASKED_TEXT_BOX_VTABLE_SLOTS 107
+
 static const AvnGuid I_AVN_MENU_IID = {
     0xB2CF8283,
     0x5F6E,
@@ -2834,6 +3115,92 @@ struct IAvnMenuItemVtbl {
 };
 struct IAvnMenuItem { const IAvnMenuItemVtbl* vtbl; };
 #define I_AVN_MENU_ITEM_VTABLE_SLOTS 75
+
+static const AvnGuid I_AVN_NUMERIC_UP_DOWN_IID = {
+    0x865EC64A,
+    0xC676,
+    0x5196,
+    { 0xBD, 0xDC, 0x20, 0x9D, 0xC0, 0x38, 0x35, 0xF3 }
+};
+#define I_AVN_NUMERIC_UP_DOWN_ABI_VERSION 1
+struct IAvnNumericUpDownVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnNumericUpDown* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnNumericUpDown* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnNumericUpDown* self); /* slot 2 */
+    AvnHResult (AVN_CALL *get_object_id)(IAvnNumericUpDown* self, int64_t* value); /* slot 3 */
+    AvnHResult (AVN_CALL *get_lifetime_token)(IAvnNumericUpDown* self, int64_t* value); /* slot 4 */
+    AvnHResult (AVN_CALL *get_name)(IAvnNumericUpDown* self, uint16_t** value); /* slot 5 */
+    AvnHResult (AVN_CALL *set_name)(IAvnNumericUpDown* self, const uint16_t* value); /* slot 6 */
+    AvnHResult (AVN_CALL *get_classes)(IAvnNumericUpDown* self, IAvnStringList** value); /* slot 7 */
+    AvnHResult (AVN_CALL *get_is_visible)(IAvnNumericUpDown* self, int32_t* value); /* slot 8 */
+    AvnHResult (AVN_CALL *set_is_visible)(IAvnNumericUpDown* self, int32_t value); /* slot 9 */
+    AvnHResult (AVN_CALL *get_opacity)(IAvnNumericUpDown* self, double* value); /* slot 10 */
+    AvnHResult (AVN_CALL *set_opacity)(IAvnNumericUpDown* self, double value); /* slot 11 */
+    AvnHResult (AVN_CALL *get_width)(IAvnNumericUpDown* self, double* value); /* slot 12 */
+    AvnHResult (AVN_CALL *set_width)(IAvnNumericUpDown* self, double value); /* slot 13 */
+    AvnHResult (AVN_CALL *get_height)(IAvnNumericUpDown* self, double* value); /* slot 14 */
+    AvnHResult (AVN_CALL *set_height)(IAvnNumericUpDown* self, double value); /* slot 15 */
+    AvnHResult (AVN_CALL *get_min_width)(IAvnNumericUpDown* self, double* value); /* slot 16 */
+    AvnHResult (AVN_CALL *set_min_width)(IAvnNumericUpDown* self, double value); /* slot 17 */
+    AvnHResult (AVN_CALL *get_max_width)(IAvnNumericUpDown* self, double* value); /* slot 18 */
+    AvnHResult (AVN_CALL *set_max_width)(IAvnNumericUpDown* self, double value); /* slot 19 */
+    AvnHResult (AVN_CALL *get_min_height)(IAvnNumericUpDown* self, double* value); /* slot 20 */
+    AvnHResult (AVN_CALL *set_min_height)(IAvnNumericUpDown* self, double value); /* slot 21 */
+    AvnHResult (AVN_CALL *get_max_height)(IAvnNumericUpDown* self, double* value); /* slot 22 */
+    AvnHResult (AVN_CALL *set_max_height)(IAvnNumericUpDown* self, double value); /* slot 23 */
+    AvnHResult (AVN_CALL *get_margin)(IAvnNumericUpDown* self, AvnThickness* value); /* slot 24 */
+    AvnHResult (AVN_CALL *set_margin)(IAvnNumericUpDown* self, AvnThickness value); /* slot 25 */
+    AvnHResult (AVN_CALL *get_horizontal_alignment)(IAvnNumericUpDown* self, int32_t* value); /* slot 26 */
+    AvnHResult (AVN_CALL *set_horizontal_alignment)(IAvnNumericUpDown* self, int32_t value); /* slot 27 */
+    AvnHResult (AVN_CALL *get_vertical_alignment)(IAvnNumericUpDown* self, int32_t* value); /* slot 28 */
+    AvnHResult (AVN_CALL *set_vertical_alignment)(IAvnNumericUpDown* self, int32_t value); /* slot 29 */
+    AvnHResult (AVN_CALL *get_is_enabled)(IAvnNumericUpDown* self, int32_t* value); /* slot 30 */
+    AvnHResult (AVN_CALL *set_is_enabled)(IAvnNumericUpDown* self, int32_t value); /* slot 31 */
+    AvnHResult (AVN_CALL *advise_key_down)(IAvnNumericUpDown* self, IAvnControlKeyDownHandler* handler, int64_t* subscription_id); /* slot 32 */
+    AvnHResult (AVN_CALL *unadvise_key_down)(IAvnNumericUpDown* self, int64_t subscription_id); /* slot 33 */
+    AvnHResult (AVN_CALL *advise_pointer_entered)(IAvnNumericUpDown* self, IAvnControlPointerEnteredHandler* handler, int64_t* subscription_id); /* slot 34 */
+    AvnHResult (AVN_CALL *unadvise_pointer_entered)(IAvnNumericUpDown* self, int64_t subscription_id); /* slot 35 */
+    AvnHResult (AVN_CALL *advise_pointer_exited)(IAvnNumericUpDown* self, IAvnControlPointerExitedHandler* handler, int64_t* subscription_id); /* slot 36 */
+    AvnHResult (AVN_CALL *unadvise_pointer_exited)(IAvnNumericUpDown* self, int64_t subscription_id); /* slot 37 */
+    AvnHResult (AVN_CALL *get_background)(IAvnNumericUpDown* self, IAvnBrush** value); /* slot 38 */
+    AvnHResult (AVN_CALL *set_background)(IAvnNumericUpDown* self, IAvnBrush* value); /* slot 39 */
+    AvnHResult (AVN_CALL *get_border_brush)(IAvnNumericUpDown* self, IAvnBrush** value); /* slot 40 */
+    AvnHResult (AVN_CALL *set_border_brush)(IAvnNumericUpDown* self, IAvnBrush* value); /* slot 41 */
+    AvnHResult (AVN_CALL *get_border_thickness)(IAvnNumericUpDown* self, AvnThickness* value); /* slot 42 */
+    AvnHResult (AVN_CALL *set_border_thickness)(IAvnNumericUpDown* self, AvnThickness value); /* slot 43 */
+    AvnHResult (AVN_CALL *get_corner_radius)(IAvnNumericUpDown* self, AvnCornerRadius* value); /* slot 44 */
+    AvnHResult (AVN_CALL *set_corner_radius)(IAvnNumericUpDown* self, AvnCornerRadius value); /* slot 45 */
+    AvnHResult (AVN_CALL *get_font_size)(IAvnNumericUpDown* self, double* value); /* slot 46 */
+    AvnHResult (AVN_CALL *set_font_size)(IAvnNumericUpDown* self, double value); /* slot 47 */
+    AvnHResult (AVN_CALL *get_foreground)(IAvnNumericUpDown* self, IAvnBrush** value); /* slot 48 */
+    AvnHResult (AVN_CALL *set_foreground)(IAvnNumericUpDown* self, IAvnBrush* value); /* slot 49 */
+    AvnHResult (AVN_CALL *get_allow_spin)(IAvnNumericUpDown* self, int32_t* value); /* slot 50 */
+    AvnHResult (AVN_CALL *set_allow_spin)(IAvnNumericUpDown* self, int32_t value); /* slot 51 */
+    AvnHResult (AVN_CALL *get_button_spinner_location)(IAvnNumericUpDown* self, int32_t* value); /* slot 52 */
+    AvnHResult (AVN_CALL *set_button_spinner_location)(IAvnNumericUpDown* self, int32_t value); /* slot 53 */
+    AvnHResult (AVN_CALL *get_show_button_spinner)(IAvnNumericUpDown* self, int32_t* value); /* slot 54 */
+    AvnHResult (AVN_CALL *set_show_button_spinner)(IAvnNumericUpDown* self, int32_t value); /* slot 55 */
+    AvnHResult (AVN_CALL *get_clip_value_to_min_max)(IAvnNumericUpDown* self, int32_t* value); /* slot 56 */
+    AvnHResult (AVN_CALL *set_clip_value_to_min_max)(IAvnNumericUpDown* self, int32_t value); /* slot 57 */
+    AvnHResult (AVN_CALL *get_format_string)(IAvnNumericUpDown* self, uint16_t** value); /* slot 58 */
+    AvnHResult (AVN_CALL *set_format_string)(IAvnNumericUpDown* self, const uint16_t* value); /* slot 59 */
+    AvnHResult (AVN_CALL *get_increment)(IAvnNumericUpDown* self, uint16_t** value); /* slot 60 */
+    AvnHResult (AVN_CALL *set_increment)(IAvnNumericUpDown* self, const uint16_t* value); /* slot 61 */
+    AvnHResult (AVN_CALL *get_is_read_only)(IAvnNumericUpDown* self, int32_t* value); /* slot 62 */
+    AvnHResult (AVN_CALL *set_is_read_only)(IAvnNumericUpDown* self, int32_t value); /* slot 63 */
+    AvnHResult (AVN_CALL *get_maximum)(IAvnNumericUpDown* self, uint16_t** value); /* slot 64 */
+    AvnHResult (AVN_CALL *set_maximum)(IAvnNumericUpDown* self, const uint16_t* value); /* slot 65 */
+    AvnHResult (AVN_CALL *get_minimum)(IAvnNumericUpDown* self, uint16_t** value); /* slot 66 */
+    AvnHResult (AVN_CALL *set_minimum)(IAvnNumericUpDown* self, const uint16_t* value); /* slot 67 */
+    AvnHResult (AVN_CALL *get_text)(IAvnNumericUpDown* self, uint16_t** value); /* slot 68 */
+    AvnHResult (AVN_CALL *set_text)(IAvnNumericUpDown* self, const uint16_t* value); /* slot 69 */
+    AvnHResult (AVN_CALL *get_value)(IAvnNumericUpDown* self, uint16_t** value); /* slot 70 */
+    AvnHResult (AVN_CALL *set_value)(IAvnNumericUpDown* self, const uint16_t* value); /* slot 71 */
+    AvnHResult (AVN_CALL *get_placeholder_text)(IAvnNumericUpDown* self, uint16_t** value); /* slot 72 */
+    AvnHResult (AVN_CALL *set_placeholder_text)(IAvnNumericUpDown* self, const uint16_t* value); /* slot 73 */
+};
+struct IAvnNumericUpDown { const IAvnNumericUpDownVtbl* vtbl; };
+#define I_AVN_NUMERIC_UP_DOWN_VTABLE_SLOTS 74
 
 static const AvnGuid I_AVN_PANEL_IID = {
     0xBD97617A,
@@ -3398,6 +3765,75 @@ struct IAvnScrollViewerVtbl {
 struct IAvnScrollViewer { const IAvnScrollViewerVtbl* vtbl; };
 #define I_AVN_SCROLL_VIEWER_VTABLE_SLOTS 83
 
+static const AvnGuid I_AVN_SELECTABLE_TEXT_BLOCK_IID = {
+    0x4ED24CAB,
+    0x2513,
+    0x5532,
+    { 0x8F, 0xC5, 0xA1, 0x3C, 0x2B, 0xE5, 0xB7, 0x13 }
+};
+#define I_AVN_SELECTABLE_TEXT_BLOCK_ABI_VERSION 1
+struct IAvnSelectableTextBlockVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnSelectableTextBlock* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnSelectableTextBlock* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnSelectableTextBlock* self); /* slot 2 */
+    AvnHResult (AVN_CALL *get_object_id)(IAvnSelectableTextBlock* self, int64_t* value); /* slot 3 */
+    AvnHResult (AVN_CALL *get_lifetime_token)(IAvnSelectableTextBlock* self, int64_t* value); /* slot 4 */
+    AvnHResult (AVN_CALL *get_name)(IAvnSelectableTextBlock* self, uint16_t** value); /* slot 5 */
+    AvnHResult (AVN_CALL *set_name)(IAvnSelectableTextBlock* self, const uint16_t* value); /* slot 6 */
+    AvnHResult (AVN_CALL *get_classes)(IAvnSelectableTextBlock* self, IAvnStringList** value); /* slot 7 */
+    AvnHResult (AVN_CALL *get_is_visible)(IAvnSelectableTextBlock* self, int32_t* value); /* slot 8 */
+    AvnHResult (AVN_CALL *set_is_visible)(IAvnSelectableTextBlock* self, int32_t value); /* slot 9 */
+    AvnHResult (AVN_CALL *get_opacity)(IAvnSelectableTextBlock* self, double* value); /* slot 10 */
+    AvnHResult (AVN_CALL *set_opacity)(IAvnSelectableTextBlock* self, double value); /* slot 11 */
+    AvnHResult (AVN_CALL *get_width)(IAvnSelectableTextBlock* self, double* value); /* slot 12 */
+    AvnHResult (AVN_CALL *set_width)(IAvnSelectableTextBlock* self, double value); /* slot 13 */
+    AvnHResult (AVN_CALL *get_height)(IAvnSelectableTextBlock* self, double* value); /* slot 14 */
+    AvnHResult (AVN_CALL *set_height)(IAvnSelectableTextBlock* self, double value); /* slot 15 */
+    AvnHResult (AVN_CALL *get_min_width)(IAvnSelectableTextBlock* self, double* value); /* slot 16 */
+    AvnHResult (AVN_CALL *set_min_width)(IAvnSelectableTextBlock* self, double value); /* slot 17 */
+    AvnHResult (AVN_CALL *get_max_width)(IAvnSelectableTextBlock* self, double* value); /* slot 18 */
+    AvnHResult (AVN_CALL *set_max_width)(IAvnSelectableTextBlock* self, double value); /* slot 19 */
+    AvnHResult (AVN_CALL *get_min_height)(IAvnSelectableTextBlock* self, double* value); /* slot 20 */
+    AvnHResult (AVN_CALL *set_min_height)(IAvnSelectableTextBlock* self, double value); /* slot 21 */
+    AvnHResult (AVN_CALL *get_max_height)(IAvnSelectableTextBlock* self, double* value); /* slot 22 */
+    AvnHResult (AVN_CALL *set_max_height)(IAvnSelectableTextBlock* self, double value); /* slot 23 */
+    AvnHResult (AVN_CALL *get_margin)(IAvnSelectableTextBlock* self, AvnThickness* value); /* slot 24 */
+    AvnHResult (AVN_CALL *set_margin)(IAvnSelectableTextBlock* self, AvnThickness value); /* slot 25 */
+    AvnHResult (AVN_CALL *get_horizontal_alignment)(IAvnSelectableTextBlock* self, int32_t* value); /* slot 26 */
+    AvnHResult (AVN_CALL *set_horizontal_alignment)(IAvnSelectableTextBlock* self, int32_t value); /* slot 27 */
+    AvnHResult (AVN_CALL *get_vertical_alignment)(IAvnSelectableTextBlock* self, int32_t* value); /* slot 28 */
+    AvnHResult (AVN_CALL *set_vertical_alignment)(IAvnSelectableTextBlock* self, int32_t value); /* slot 29 */
+    AvnHResult (AVN_CALL *get_is_enabled)(IAvnSelectableTextBlock* self, int32_t* value); /* slot 30 */
+    AvnHResult (AVN_CALL *set_is_enabled)(IAvnSelectableTextBlock* self, int32_t value); /* slot 31 */
+    AvnHResult (AVN_CALL *advise_key_down)(IAvnSelectableTextBlock* self, IAvnControlKeyDownHandler* handler, int64_t* subscription_id); /* slot 32 */
+    AvnHResult (AVN_CALL *unadvise_key_down)(IAvnSelectableTextBlock* self, int64_t subscription_id); /* slot 33 */
+    AvnHResult (AVN_CALL *advise_pointer_entered)(IAvnSelectableTextBlock* self, IAvnControlPointerEnteredHandler* handler, int64_t* subscription_id); /* slot 34 */
+    AvnHResult (AVN_CALL *unadvise_pointer_entered)(IAvnSelectableTextBlock* self, int64_t subscription_id); /* slot 35 */
+    AvnHResult (AVN_CALL *advise_pointer_exited)(IAvnSelectableTextBlock* self, IAvnControlPointerExitedHandler* handler, int64_t* subscription_id); /* slot 36 */
+    AvnHResult (AVN_CALL *unadvise_pointer_exited)(IAvnSelectableTextBlock* self, int64_t subscription_id); /* slot 37 */
+    AvnHResult (AVN_CALL *get_padding)(IAvnSelectableTextBlock* self, AvnThickness* value); /* slot 38 */
+    AvnHResult (AVN_CALL *set_padding)(IAvnSelectableTextBlock* self, AvnThickness value); /* slot 39 */
+    AvnHResult (AVN_CALL *get_text)(IAvnSelectableTextBlock* self, uint16_t** value); /* slot 40 */
+    AvnHResult (AVN_CALL *set_text)(IAvnSelectableTextBlock* self, const uint16_t* value); /* slot 41 */
+    AvnHResult (AVN_CALL *get_font_size)(IAvnSelectableTextBlock* self, double* value); /* slot 42 */
+    AvnHResult (AVN_CALL *set_font_size)(IAvnSelectableTextBlock* self, double value); /* slot 43 */
+    AvnHResult (AVN_CALL *get_font_weight)(IAvnSelectableTextBlock* self, int32_t* value); /* slot 44 */
+    AvnHResult (AVN_CALL *set_font_weight)(IAvnSelectableTextBlock* self, int32_t value); /* slot 45 */
+    AvnHResult (AVN_CALL *get_foreground)(IAvnSelectableTextBlock* self, IAvnBrush** value); /* slot 46 */
+    AvnHResult (AVN_CALL *set_foreground)(IAvnSelectableTextBlock* self, IAvnBrush* value); /* slot 47 */
+    AvnHResult (AVN_CALL *get_text_alignment)(IAvnSelectableTextBlock* self, int32_t* value); /* slot 48 */
+    AvnHResult (AVN_CALL *set_text_alignment)(IAvnSelectableTextBlock* self, int32_t value); /* slot 49 */
+    AvnHResult (AVN_CALL *get_selection_start)(IAvnSelectableTextBlock* self, int32_t* value); /* slot 50 */
+    AvnHResult (AVN_CALL *set_selection_start)(IAvnSelectableTextBlock* self, int32_t value); /* slot 51 */
+    AvnHResult (AVN_CALL *get_selection_end)(IAvnSelectableTextBlock* self, int32_t* value); /* slot 52 */
+    AvnHResult (AVN_CALL *set_selection_end)(IAvnSelectableTextBlock* self, int32_t value); /* slot 53 */
+    AvnHResult (AVN_CALL *get_selected_text)(IAvnSelectableTextBlock* self, uint16_t** value); /* slot 54 */
+    AvnHResult (AVN_CALL *get_can_copy)(IAvnSelectableTextBlock* self, int32_t* value); /* slot 55 */
+    AvnHResult (AVN_CALL *copy)(IAvnSelectableTextBlock* self); /* slot 56 */
+};
+struct IAvnSelectableTextBlock { const IAvnSelectableTextBlockVtbl* vtbl; };
+#define I_AVN_SELECTABLE_TEXT_BLOCK_VTABLE_SLOTS 57
+
 static const AvnGuid I_AVN_SELECTING_ITEMS_CONTROL_IID = {
     0x4D40F605,
     0x0330,
@@ -3548,6 +3984,74 @@ struct IAvnSliderVtbl {
 };
 struct IAvnSlider { const IAvnSliderVtbl* vtbl; };
 #define I_AVN_SLIDER_VTABLE_SLOTS 72
+
+static const AvnGuid I_AVN_SPINNER_IID = {
+    0xC658D267,
+    0x1DC3,
+    0x5E24,
+    { 0x98, 0x1C, 0x11, 0xA8, 0xDA, 0x19, 0x12, 0xEF }
+};
+#define I_AVN_SPINNER_ABI_VERSION 1
+struct IAvnSpinnerVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnSpinner* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnSpinner* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnSpinner* self); /* slot 2 */
+    AvnHResult (AVN_CALL *get_object_id)(IAvnSpinner* self, int64_t* value); /* slot 3 */
+    AvnHResult (AVN_CALL *get_lifetime_token)(IAvnSpinner* self, int64_t* value); /* slot 4 */
+    AvnHResult (AVN_CALL *get_name)(IAvnSpinner* self, uint16_t** value); /* slot 5 */
+    AvnHResult (AVN_CALL *set_name)(IAvnSpinner* self, const uint16_t* value); /* slot 6 */
+    AvnHResult (AVN_CALL *get_classes)(IAvnSpinner* self, IAvnStringList** value); /* slot 7 */
+    AvnHResult (AVN_CALL *get_is_visible)(IAvnSpinner* self, int32_t* value); /* slot 8 */
+    AvnHResult (AVN_CALL *set_is_visible)(IAvnSpinner* self, int32_t value); /* slot 9 */
+    AvnHResult (AVN_CALL *get_opacity)(IAvnSpinner* self, double* value); /* slot 10 */
+    AvnHResult (AVN_CALL *set_opacity)(IAvnSpinner* self, double value); /* slot 11 */
+    AvnHResult (AVN_CALL *get_width)(IAvnSpinner* self, double* value); /* slot 12 */
+    AvnHResult (AVN_CALL *set_width)(IAvnSpinner* self, double value); /* slot 13 */
+    AvnHResult (AVN_CALL *get_height)(IAvnSpinner* self, double* value); /* slot 14 */
+    AvnHResult (AVN_CALL *set_height)(IAvnSpinner* self, double value); /* slot 15 */
+    AvnHResult (AVN_CALL *get_min_width)(IAvnSpinner* self, double* value); /* slot 16 */
+    AvnHResult (AVN_CALL *set_min_width)(IAvnSpinner* self, double value); /* slot 17 */
+    AvnHResult (AVN_CALL *get_max_width)(IAvnSpinner* self, double* value); /* slot 18 */
+    AvnHResult (AVN_CALL *set_max_width)(IAvnSpinner* self, double value); /* slot 19 */
+    AvnHResult (AVN_CALL *get_min_height)(IAvnSpinner* self, double* value); /* slot 20 */
+    AvnHResult (AVN_CALL *set_min_height)(IAvnSpinner* self, double value); /* slot 21 */
+    AvnHResult (AVN_CALL *get_max_height)(IAvnSpinner* self, double* value); /* slot 22 */
+    AvnHResult (AVN_CALL *set_max_height)(IAvnSpinner* self, double value); /* slot 23 */
+    AvnHResult (AVN_CALL *get_margin)(IAvnSpinner* self, AvnThickness* value); /* slot 24 */
+    AvnHResult (AVN_CALL *set_margin)(IAvnSpinner* self, AvnThickness value); /* slot 25 */
+    AvnHResult (AVN_CALL *get_horizontal_alignment)(IAvnSpinner* self, int32_t* value); /* slot 26 */
+    AvnHResult (AVN_CALL *set_horizontal_alignment)(IAvnSpinner* self, int32_t value); /* slot 27 */
+    AvnHResult (AVN_CALL *get_vertical_alignment)(IAvnSpinner* self, int32_t* value); /* slot 28 */
+    AvnHResult (AVN_CALL *set_vertical_alignment)(IAvnSpinner* self, int32_t value); /* slot 29 */
+    AvnHResult (AVN_CALL *get_is_enabled)(IAvnSpinner* self, int32_t* value); /* slot 30 */
+    AvnHResult (AVN_CALL *set_is_enabled)(IAvnSpinner* self, int32_t value); /* slot 31 */
+    AvnHResult (AVN_CALL *advise_key_down)(IAvnSpinner* self, IAvnControlKeyDownHandler* handler, int64_t* subscription_id); /* slot 32 */
+    AvnHResult (AVN_CALL *unadvise_key_down)(IAvnSpinner* self, int64_t subscription_id); /* slot 33 */
+    AvnHResult (AVN_CALL *advise_pointer_entered)(IAvnSpinner* self, IAvnControlPointerEnteredHandler* handler, int64_t* subscription_id); /* slot 34 */
+    AvnHResult (AVN_CALL *unadvise_pointer_entered)(IAvnSpinner* self, int64_t subscription_id); /* slot 35 */
+    AvnHResult (AVN_CALL *advise_pointer_exited)(IAvnSpinner* self, IAvnControlPointerExitedHandler* handler, int64_t* subscription_id); /* slot 36 */
+    AvnHResult (AVN_CALL *unadvise_pointer_exited)(IAvnSpinner* self, int64_t subscription_id); /* slot 37 */
+    AvnHResult (AVN_CALL *get_background)(IAvnSpinner* self, IAvnBrush** value); /* slot 38 */
+    AvnHResult (AVN_CALL *set_background)(IAvnSpinner* self, IAvnBrush* value); /* slot 39 */
+    AvnHResult (AVN_CALL *get_border_brush)(IAvnSpinner* self, IAvnBrush** value); /* slot 40 */
+    AvnHResult (AVN_CALL *set_border_brush)(IAvnSpinner* self, IAvnBrush* value); /* slot 41 */
+    AvnHResult (AVN_CALL *get_border_thickness)(IAvnSpinner* self, AvnThickness* value); /* slot 42 */
+    AvnHResult (AVN_CALL *set_border_thickness)(IAvnSpinner* self, AvnThickness value); /* slot 43 */
+    AvnHResult (AVN_CALL *get_corner_radius)(IAvnSpinner* self, AvnCornerRadius* value); /* slot 44 */
+    AvnHResult (AVN_CALL *set_corner_radius)(IAvnSpinner* self, AvnCornerRadius value); /* slot 45 */
+    AvnHResult (AVN_CALL *get_font_size)(IAvnSpinner* self, double* value); /* slot 46 */
+    AvnHResult (AVN_CALL *set_font_size)(IAvnSpinner* self, double value); /* slot 47 */
+    AvnHResult (AVN_CALL *get_foreground)(IAvnSpinner* self, IAvnBrush** value); /* slot 48 */
+    AvnHResult (AVN_CALL *set_foreground)(IAvnSpinner* self, IAvnBrush* value); /* slot 49 */
+    AvnHResult (AVN_CALL *get_content)(IAvnSpinner* self, IAvnControl** value); /* slot 50 */
+    AvnHResult (AVN_CALL *set_content)(IAvnSpinner* self, IAvnControl* value); /* slot 51 */
+    AvnHResult (AVN_CALL *get_horizontal_content_alignment)(IAvnSpinner* self, int32_t* value); /* slot 52 */
+    AvnHResult (AVN_CALL *set_horizontal_content_alignment)(IAvnSpinner* self, int32_t value); /* slot 53 */
+    AvnHResult (AVN_CALL *get_vertical_content_alignment)(IAvnSpinner* self, int32_t* value); /* slot 54 */
+    AvnHResult (AVN_CALL *set_vertical_content_alignment)(IAvnSpinner* self, int32_t value); /* slot 55 */
+};
+struct IAvnSpinner { const IAvnSpinnerVtbl* vtbl; };
+#define I_AVN_SPINNER_VTABLE_SLOTS 56
 
 static const AvnGuid I_AVN_SPLIT_BUTTON_IID = {
     0x8D288F8B,
@@ -5143,83 +5647,88 @@ struct IAvnToolTipStatics { const IAvnToolTipStaticsVtbl* vtbl; };
 #define I_AVN_TOOL_TIP_STATICS_VTABLE_SLOTS 21
 
 static const AvnGuid I_AVN_CONTROL_FACTORY_IID = {
-    0x834E2751,
-    0x6EAB,
-    0x5F89,
-    { 0x8E, 0xC5, 0x07, 0x18, 0x62, 0xCB, 0xF8, 0x99 }
+    0x367492E8,
+    0x7700,
+    0x5B59,
+    { 0xB5, 0xC6, 0x87, 0x30, 0x39, 0xE4, 0xED, 0x1C }
 };
-#define I_AVN_CONTROL_FACTORY_ABI_VERSION 6
+#define I_AVN_CONTROL_FACTORY_ABI_VERSION 7
 struct IAvnControlFactoryVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnControlFactory* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnControlFactory* self); /* slot 1 */
     uint32_t (AVN_CALL *release)(IAvnControlFactory* self); /* slot 2 */
-    AvnHResult (AVN_CALL *create_avalonia_object)(IAvnControlFactory* self, IAvnAvaloniaObject** value); /* slot 3 */
-    AvnHResult (AVN_CALL *create_border)(IAvnControlFactory* self, IAvnBorder** value); /* slot 4 */
-    AvnHResult (AVN_CALL *create_button)(IAvnControlFactory* self, IAvnButton** value); /* slot 5 */
-    AvnHResult (AVN_CALL *create_canvas)(IAvnControlFactory* self, IAvnCanvas** value); /* slot 6 */
-    AvnHResult (AVN_CALL *create_check_box)(IAvnControlFactory* self, IAvnCheckBox** value); /* slot 7 */
-    AvnHResult (AVN_CALL *create_combo_box)(IAvnControlFactory* self, IAvnComboBox** value); /* slot 8 */
-    AvnHResult (AVN_CALL *create_combo_box_item)(IAvnControlFactory* self, IAvnComboBoxItem** value); /* slot 9 */
-    AvnHResult (AVN_CALL *create_content_control)(IAvnControlFactory* self, IAvnContentControl** value); /* slot 10 */
-    AvnHResult (AVN_CALL *create_context_menu)(IAvnControlFactory* self, IAvnContextMenu** value); /* slot 11 */
-    AvnHResult (AVN_CALL *create_control)(IAvnControlFactory* self, IAvnControl** value); /* slot 12 */
-    AvnHResult (AVN_CALL *create_date_picker)(IAvnControlFactory* self, IAvnDatePicker** value); /* slot 13 */
-    AvnHResult (AVN_CALL *create_decorator)(IAvnControlFactory* self, IAvnDecorator** value); /* slot 14 */
-    AvnHResult (AVN_CALL *create_dock_panel)(IAvnControlFactory* self, IAvnDockPanel** value); /* slot 15 */
-    AvnHResult (AVN_CALL *create_drop_down_button)(IAvnControlFactory* self, IAvnDropDownButton** value); /* slot 16 */
-    AvnHResult (AVN_CALL *create_expander)(IAvnControlFactory* self, IAvnExpander** value); /* slot 17 */
-    AvnHResult (AVN_CALL *create_flex_panel)(IAvnControlFactory* self, IAvnFlexPanel** value); /* slot 18 */
-    AvnHResult (AVN_CALL *create_flyout)(IAvnControlFactory* self, IAvnFlyout** value); /* slot 19 */
-    AvnHResult (AVN_CALL *create_grid)(IAvnControlFactory* self, IAvnGrid** value); /* slot 20 */
-    AvnHResult (AVN_CALL *create_grid_splitter)(IAvnControlFactory* self, IAvnGridSplitter** value); /* slot 21 */
-    AvnHResult (AVN_CALL *create_headered_content_control)(IAvnControlFactory* self, IAvnHeaderedContentControl** value); /* slot 22 */
-    AvnHResult (AVN_CALL *create_headered_items_control)(IAvnControlFactory* self, IAvnHeaderedItemsControl** value); /* slot 23 */
-    AvnHResult (AVN_CALL *create_headered_selecting_items_control)(IAvnControlFactory* self, IAvnHeaderedSelectingItemsControl** value); /* slot 24 */
-    AvnHResult (AVN_CALL *create_hyperlink_button)(IAvnControlFactory* self, IAvnHyperlinkButton** value); /* slot 25 */
-    AvnHResult (AVN_CALL *create_image)(IAvnControlFactory* self, IAvnImage** value); /* slot 26 */
-    AvnHResult (AVN_CALL *create_items_control)(IAvnControlFactory* self, IAvnItemsControl** value); /* slot 27 */
-    AvnHResult (AVN_CALL *create_list_box)(IAvnControlFactory* self, IAvnListBox** value); /* slot 28 */
-    AvnHResult (AVN_CALL *create_list_box_item)(IAvnControlFactory* self, IAvnListBoxItem** value); /* slot 29 */
-    AvnHResult (AVN_CALL *create_menu)(IAvnControlFactory* self, IAvnMenu** value); /* slot 30 */
-    AvnHResult (AVN_CALL *create_menu_flyout)(IAvnControlFactory* self, IAvnMenuFlyout** value); /* slot 31 */
-    AvnHResult (AVN_CALL *create_menu_item)(IAvnControlFactory* self, IAvnMenuItem** value); /* slot 32 */
-    AvnHResult (AVN_CALL *create_panel)(IAvnControlFactory* self, IAvnPanel** value); /* slot 33 */
-    AvnHResult (AVN_CALL *create_progress_bar)(IAvnControlFactory* self, IAvnProgressBar** value); /* slot 34 */
-    AvnHResult (AVN_CALL *create_radio_button)(IAvnControlFactory* self, IAvnRadioButton** value); /* slot 35 */
-    AvnHResult (AVN_CALL *create_relative_panel)(IAvnControlFactory* self, IAvnRelativePanel** value); /* slot 36 */
-    AvnHResult (AVN_CALL *create_repeat_button)(IAvnControlFactory* self, IAvnRepeatButton** value); /* slot 37 */
-    AvnHResult (AVN_CALL *create_scroll_viewer)(IAvnControlFactory* self, IAvnScrollViewer** value); /* slot 38 */
-    AvnHResult (AVN_CALL *create_selecting_items_control)(IAvnControlFactory* self, IAvnSelectingItemsControl** value); /* slot 39 */
-    AvnHResult (AVN_CALL *create_slider)(IAvnControlFactory* self, IAvnSlider** value); /* slot 40 */
-    AvnHResult (AVN_CALL *create_split_button)(IAvnControlFactory* self, IAvnSplitButton** value); /* slot 41 */
-    AvnHResult (AVN_CALL *create_split_view)(IAvnControlFactory* self, IAvnSplitView** value); /* slot 42 */
-    AvnHResult (AVN_CALL *create_stack_panel)(IAvnControlFactory* self, IAvnStackPanel** value); /* slot 43 */
-    AvnHResult (AVN_CALL *create_styled_element)(IAvnControlFactory* self, IAvnStyledElement** value); /* slot 44 */
-    AvnHResult (AVN_CALL *create_tab_control)(IAvnControlFactory* self, IAvnTabControl** value); /* slot 45 */
-    AvnHResult (AVN_CALL *create_tab_item)(IAvnControlFactory* self, IAvnTabItem** value); /* slot 46 */
-    AvnHResult (AVN_CALL *create_templated_control)(IAvnControlFactory* self, IAvnTemplatedControl** value); /* slot 47 */
-    AvnHResult (AVN_CALL *create_text_block)(IAvnControlFactory* self, IAvnTextBlock** value); /* slot 48 */
-    AvnHResult (AVN_CALL *create_text_box)(IAvnControlFactory* self, IAvnTextBox** value); /* slot 49 */
-    AvnHResult (AVN_CALL *create_thumb)(IAvnControlFactory* self, IAvnThumb** value); /* slot 50 */
-    AvnHResult (AVN_CALL *create_time_picker)(IAvnControlFactory* self, IAvnTimePicker** value); /* slot 51 */
-    AvnHResult (AVN_CALL *create_toggle_button)(IAvnControlFactory* self, IAvnToggleButton** value); /* slot 52 */
-    AvnHResult (AVN_CALL *create_toggle_split_button)(IAvnControlFactory* self, IAvnToggleSplitButton** value); /* slot 53 */
-    AvnHResult (AVN_CALL *create_toggle_switch)(IAvnControlFactory* self, IAvnToggleSwitch** value); /* slot 54 */
-    AvnHResult (AVN_CALL *create_tool_tip)(IAvnControlFactory* self, IAvnToolTip** value); /* slot 55 */
-    AvnHResult (AVN_CALL *create_tree_view)(IAvnControlFactory* self, IAvnTreeView** value); /* slot 56 */
-    AvnHResult (AVN_CALL *create_tree_view_item)(IAvnControlFactory* self, IAvnTreeViewItem** value); /* slot 57 */
-    AvnHResult (AVN_CALL *create_uniform_grid)(IAvnControlFactory* self, IAvnUniformGrid** value); /* slot 58 */
-    AvnHResult (AVN_CALL *create_viewbox)(IAvnControlFactory* self, IAvnViewbox** value); /* slot 59 */
-    AvnHResult (AVN_CALL *create_window)(IAvnControlFactory* self, IAvnWindow** value); /* slot 60 */
-    AvnHResult (AVN_CALL *create_wrap_panel)(IAvnControlFactory* self, IAvnWrapPanel** value); /* slot 61 */
-    AvnHResult (AVN_CALL *get_canvas_statics)(IAvnControlFactory* self, IAvnCanvasStatics** value); /* slot 62 */
-    AvnHResult (AVN_CALL *get_dock_panel_statics)(IAvnControlFactory* self, IAvnDockPanelStatics** value); /* slot 63 */
-    AvnHResult (AVN_CALL *get_grid_statics)(IAvnControlFactory* self, IAvnGridStatics** value); /* slot 64 */
-    AvnHResult (AVN_CALL *get_relative_panel_statics)(IAvnControlFactory* self, IAvnRelativePanelStatics** value); /* slot 65 */
-    AvnHResult (AVN_CALL *get_tool_tip_statics)(IAvnControlFactory* self, IAvnToolTipStatics** value); /* slot 66 */
-    AvnHResult (AVN_CALL *create_solid_color_brush)(IAvnControlFactory* self, AvnColor color, double opacity, IAvnBrush** value); /* slot 67 */
+    AvnHResult (AVN_CALL *create_auto_complete_box)(IAvnControlFactory* self, IAvnAutoCompleteBox** value); /* slot 3 */
+    AvnHResult (AVN_CALL *create_avalonia_object)(IAvnControlFactory* self, IAvnAvaloniaObject** value); /* slot 4 */
+    AvnHResult (AVN_CALL *create_border)(IAvnControlFactory* self, IAvnBorder** value); /* slot 5 */
+    AvnHResult (AVN_CALL *create_button)(IAvnControlFactory* self, IAvnButton** value); /* slot 6 */
+    AvnHResult (AVN_CALL *create_button_spinner)(IAvnControlFactory* self, IAvnButtonSpinner** value); /* slot 7 */
+    AvnHResult (AVN_CALL *create_canvas)(IAvnControlFactory* self, IAvnCanvas** value); /* slot 8 */
+    AvnHResult (AVN_CALL *create_check_box)(IAvnControlFactory* self, IAvnCheckBox** value); /* slot 9 */
+    AvnHResult (AVN_CALL *create_combo_box)(IAvnControlFactory* self, IAvnComboBox** value); /* slot 10 */
+    AvnHResult (AVN_CALL *create_combo_box_item)(IAvnControlFactory* self, IAvnComboBoxItem** value); /* slot 11 */
+    AvnHResult (AVN_CALL *create_content_control)(IAvnControlFactory* self, IAvnContentControl** value); /* slot 12 */
+    AvnHResult (AVN_CALL *create_context_menu)(IAvnControlFactory* self, IAvnContextMenu** value); /* slot 13 */
+    AvnHResult (AVN_CALL *create_control)(IAvnControlFactory* self, IAvnControl** value); /* slot 14 */
+    AvnHResult (AVN_CALL *create_date_picker)(IAvnControlFactory* self, IAvnDatePicker** value); /* slot 15 */
+    AvnHResult (AVN_CALL *create_decorator)(IAvnControlFactory* self, IAvnDecorator** value); /* slot 16 */
+    AvnHResult (AVN_CALL *create_dock_panel)(IAvnControlFactory* self, IAvnDockPanel** value); /* slot 17 */
+    AvnHResult (AVN_CALL *create_drop_down_button)(IAvnControlFactory* self, IAvnDropDownButton** value); /* slot 18 */
+    AvnHResult (AVN_CALL *create_expander)(IAvnControlFactory* self, IAvnExpander** value); /* slot 19 */
+    AvnHResult (AVN_CALL *create_flex_panel)(IAvnControlFactory* self, IAvnFlexPanel** value); /* slot 20 */
+    AvnHResult (AVN_CALL *create_flyout)(IAvnControlFactory* self, IAvnFlyout** value); /* slot 21 */
+    AvnHResult (AVN_CALL *create_grid)(IAvnControlFactory* self, IAvnGrid** value); /* slot 22 */
+    AvnHResult (AVN_CALL *create_grid_splitter)(IAvnControlFactory* self, IAvnGridSplitter** value); /* slot 23 */
+    AvnHResult (AVN_CALL *create_headered_content_control)(IAvnControlFactory* self, IAvnHeaderedContentControl** value); /* slot 24 */
+    AvnHResult (AVN_CALL *create_headered_items_control)(IAvnControlFactory* self, IAvnHeaderedItemsControl** value); /* slot 25 */
+    AvnHResult (AVN_CALL *create_headered_selecting_items_control)(IAvnControlFactory* self, IAvnHeaderedSelectingItemsControl** value); /* slot 26 */
+    AvnHResult (AVN_CALL *create_hyperlink_button)(IAvnControlFactory* self, IAvnHyperlinkButton** value); /* slot 27 */
+    AvnHResult (AVN_CALL *create_image)(IAvnControlFactory* self, IAvnImage** value); /* slot 28 */
+    AvnHResult (AVN_CALL *create_items_control)(IAvnControlFactory* self, IAvnItemsControl** value); /* slot 29 */
+    AvnHResult (AVN_CALL *create_list_box)(IAvnControlFactory* self, IAvnListBox** value); /* slot 30 */
+    AvnHResult (AVN_CALL *create_list_box_item)(IAvnControlFactory* self, IAvnListBoxItem** value); /* slot 31 */
+    AvnHResult (AVN_CALL *create_masked_text_box)(IAvnControlFactory* self, IAvnMaskedTextBox** value); /* slot 32 */
+    AvnHResult (AVN_CALL *create_menu)(IAvnControlFactory* self, IAvnMenu** value); /* slot 33 */
+    AvnHResult (AVN_CALL *create_menu_flyout)(IAvnControlFactory* self, IAvnMenuFlyout** value); /* slot 34 */
+    AvnHResult (AVN_CALL *create_menu_item)(IAvnControlFactory* self, IAvnMenuItem** value); /* slot 35 */
+    AvnHResult (AVN_CALL *create_numeric_up_down)(IAvnControlFactory* self, IAvnNumericUpDown** value); /* slot 36 */
+    AvnHResult (AVN_CALL *create_panel)(IAvnControlFactory* self, IAvnPanel** value); /* slot 37 */
+    AvnHResult (AVN_CALL *create_progress_bar)(IAvnControlFactory* self, IAvnProgressBar** value); /* slot 38 */
+    AvnHResult (AVN_CALL *create_radio_button)(IAvnControlFactory* self, IAvnRadioButton** value); /* slot 39 */
+    AvnHResult (AVN_CALL *create_relative_panel)(IAvnControlFactory* self, IAvnRelativePanel** value); /* slot 40 */
+    AvnHResult (AVN_CALL *create_repeat_button)(IAvnControlFactory* self, IAvnRepeatButton** value); /* slot 41 */
+    AvnHResult (AVN_CALL *create_scroll_viewer)(IAvnControlFactory* self, IAvnScrollViewer** value); /* slot 42 */
+    AvnHResult (AVN_CALL *create_selectable_text_block)(IAvnControlFactory* self, IAvnSelectableTextBlock** value); /* slot 43 */
+    AvnHResult (AVN_CALL *create_selecting_items_control)(IAvnControlFactory* self, IAvnSelectingItemsControl** value); /* slot 44 */
+    AvnHResult (AVN_CALL *create_slider)(IAvnControlFactory* self, IAvnSlider** value); /* slot 45 */
+    AvnHResult (AVN_CALL *create_split_button)(IAvnControlFactory* self, IAvnSplitButton** value); /* slot 46 */
+    AvnHResult (AVN_CALL *create_split_view)(IAvnControlFactory* self, IAvnSplitView** value); /* slot 47 */
+    AvnHResult (AVN_CALL *create_stack_panel)(IAvnControlFactory* self, IAvnStackPanel** value); /* slot 48 */
+    AvnHResult (AVN_CALL *create_styled_element)(IAvnControlFactory* self, IAvnStyledElement** value); /* slot 49 */
+    AvnHResult (AVN_CALL *create_tab_control)(IAvnControlFactory* self, IAvnTabControl** value); /* slot 50 */
+    AvnHResult (AVN_CALL *create_tab_item)(IAvnControlFactory* self, IAvnTabItem** value); /* slot 51 */
+    AvnHResult (AVN_CALL *create_templated_control)(IAvnControlFactory* self, IAvnTemplatedControl** value); /* slot 52 */
+    AvnHResult (AVN_CALL *create_text_block)(IAvnControlFactory* self, IAvnTextBlock** value); /* slot 53 */
+    AvnHResult (AVN_CALL *create_text_box)(IAvnControlFactory* self, IAvnTextBox** value); /* slot 54 */
+    AvnHResult (AVN_CALL *create_thumb)(IAvnControlFactory* self, IAvnThumb** value); /* slot 55 */
+    AvnHResult (AVN_CALL *create_time_picker)(IAvnControlFactory* self, IAvnTimePicker** value); /* slot 56 */
+    AvnHResult (AVN_CALL *create_toggle_button)(IAvnControlFactory* self, IAvnToggleButton** value); /* slot 57 */
+    AvnHResult (AVN_CALL *create_toggle_split_button)(IAvnControlFactory* self, IAvnToggleSplitButton** value); /* slot 58 */
+    AvnHResult (AVN_CALL *create_toggle_switch)(IAvnControlFactory* self, IAvnToggleSwitch** value); /* slot 59 */
+    AvnHResult (AVN_CALL *create_tool_tip)(IAvnControlFactory* self, IAvnToolTip** value); /* slot 60 */
+    AvnHResult (AVN_CALL *create_tree_view)(IAvnControlFactory* self, IAvnTreeView** value); /* slot 61 */
+    AvnHResult (AVN_CALL *create_tree_view_item)(IAvnControlFactory* self, IAvnTreeViewItem** value); /* slot 62 */
+    AvnHResult (AVN_CALL *create_uniform_grid)(IAvnControlFactory* self, IAvnUniformGrid** value); /* slot 63 */
+    AvnHResult (AVN_CALL *create_viewbox)(IAvnControlFactory* self, IAvnViewbox** value); /* slot 64 */
+    AvnHResult (AVN_CALL *create_window)(IAvnControlFactory* self, IAvnWindow** value); /* slot 65 */
+    AvnHResult (AVN_CALL *create_wrap_panel)(IAvnControlFactory* self, IAvnWrapPanel** value); /* slot 66 */
+    AvnHResult (AVN_CALL *get_canvas_statics)(IAvnControlFactory* self, IAvnCanvasStatics** value); /* slot 67 */
+    AvnHResult (AVN_CALL *get_dock_panel_statics)(IAvnControlFactory* self, IAvnDockPanelStatics** value); /* slot 68 */
+    AvnHResult (AVN_CALL *get_grid_statics)(IAvnControlFactory* self, IAvnGridStatics** value); /* slot 69 */
+    AvnHResult (AVN_CALL *get_relative_panel_statics)(IAvnControlFactory* self, IAvnRelativePanelStatics** value); /* slot 70 */
+    AvnHResult (AVN_CALL *get_tool_tip_statics)(IAvnControlFactory* self, IAvnToolTipStatics** value); /* slot 71 */
+    AvnHResult (AVN_CALL *create_solid_color_brush)(IAvnControlFactory* self, AvnColor color, double opacity, IAvnBrush** value); /* slot 72 */
 };
 struct IAvnControlFactory { const IAvnControlFactoryVtbl* vtbl; };
-#define I_AVN_CONTROL_FACTORY_VTABLE_SLOTS 68
+#define I_AVN_CONTROL_FACTORY_VTABLE_SLOTS 73
 
 #endif /* AVALONIA_RUST_ABI_H */

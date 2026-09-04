@@ -6,9 +6,12 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("834E2751-6EAB-5F89-8EC5-071862CBF899")]
+[Guid("367492E8-7700-5B59-B5C6-873039E4ED1C")]
 public partial interface IAvnControlFactory
 {
+    [PreserveSig]
+    int CreateAutoCompleteBox(out IAvnAutoCompleteBox? value);
+
     [PreserveSig]
     int CreateAvaloniaObject(out IAvnAvaloniaObject? value);
 
@@ -17,6 +20,9 @@ public partial interface IAvnControlFactory
 
     [PreserveSig]
     int CreateButton(out IAvnButton? value);
+
+    [PreserveSig]
+    int CreateButtonSpinner(out IAvnButtonSpinner? value);
 
     [PreserveSig]
     int CreateCanvas(out IAvnCanvas? value);
@@ -91,6 +97,9 @@ public partial interface IAvnControlFactory
     int CreateListBoxItem(out IAvnListBoxItem? value);
 
     [PreserveSig]
+    int CreateMaskedTextBox(out IAvnMaskedTextBox? value);
+
+    [PreserveSig]
     int CreateMenu(out IAvnMenu? value);
 
     [PreserveSig]
@@ -98,6 +107,9 @@ public partial interface IAvnControlFactory
 
     [PreserveSig]
     int CreateMenuItem(out IAvnMenuItem? value);
+
+    [PreserveSig]
+    int CreateNumericUpDown(out IAvnNumericUpDown? value);
 
     [PreserveSig]
     int CreatePanel(out IAvnPanel? value);
@@ -116,6 +128,9 @@ public partial interface IAvnControlFactory
 
     [PreserveSig]
     int CreateScrollViewer(out IAvnScrollViewer? value);
+
+    [PreserveSig]
+    int CreateSelectableTextBlock(out IAvnSelectableTextBlock? value);
 
     [PreserveSig]
     int CreateSelectingItemsControl(out IAvnSelectingItemsControl? value);
@@ -209,6 +224,21 @@ public partial interface IAvnControlFactory
 [GeneratedComClass]
 public sealed partial class AvnControlFactory : IAvnControlFactory
 {
+    public int CreateAutoCompleteBox(out IAvnAutoCompleteBox? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnAutoCompleteBox)ProjectionRuntime.Wrap(new global::Avalonia.Controls.AutoCompleteBox())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int CreateAvaloniaObject(out IAvnAvaloniaObject? value)
     {
         value = null;
@@ -246,6 +276,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         {
             global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
             value = (IAvnButton)ProjectionRuntime.Wrap(new global::Avalonia.Controls.Button())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateButtonSpinner(out IAvnButtonSpinner? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnButtonSpinner)ProjectionRuntime.Wrap(new global::Avalonia.Controls.ButtonSpinner())!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -614,6 +659,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         }
     }
 
+    public int CreateMaskedTextBox(out IAvnMaskedTextBox? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnMaskedTextBox)ProjectionRuntime.Wrap(new global::Avalonia.Controls.MaskedTextBox())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int CreateMenu(out IAvnMenu? value)
     {
         value = null;
@@ -651,6 +711,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         {
             global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
             value = (IAvnMenuItem)ProjectionRuntime.Wrap(new global::Avalonia.Controls.MenuItem())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateNumericUpDown(out IAvnNumericUpDown? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnNumericUpDown)ProjectionRuntime.Wrap(new global::Avalonia.Controls.NumericUpDown())!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -741,6 +816,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         {
             global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
             value = (IAvnScrollViewer)ProjectionRuntime.Wrap(new global::Avalonia.Controls.ScrollViewer())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateSelectableTextBlock(out IAvnSelectableTextBlock? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnSelectableTextBlock)ProjectionRuntime.Wrap(new global::Avalonia.Controls.SelectableTextBlock())!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
