@@ -63,6 +63,13 @@ public class ClrTypeExtractorTests
         typeof(FlexPanel),
         typeof(Thumb),
         typeof(GridSplitter),
+        typeof(RepeatButton),
+        typeof(DropDownButton),
+        typeof(SplitButton),
+        typeof(ToggleSplitButton),
+        typeof(HyperlinkButton),
+        typeof(ContextMenu),
+        typeof(MenuFlyout),
         typeof(TextBox),
         typeof(ScrollViewer),
         typeof(RangeBase),
@@ -253,9 +260,9 @@ public class ClrTypeExtractorTests
         // The factory grew a creator per wave A control plus GetToolTipStatics, then one per
         // constructible wave B type, then one per constructible wave C type, so it has moved
         // three times off the version 2 IID it published for CreateSolidColorBrush.
-        Assert.Equal(5, ir.FactoryAbiVersion);
+        Assert.Equal(6, ir.FactoryAbiVersion);
         Assert.Equal(
-            ClrTypeExtractor.CreateDeterministicIid("Avalonia.Host.Com.IAvnControlFactory", 5),
+            ClrTypeExtractor.CreateDeterministicIid("Avalonia.Host.Com.IAvnControlFactory", 6),
             ir.FactoryIid);
     }
 
@@ -1089,7 +1096,60 @@ public class ClrTypeExtractorTests
             property => property.Name is "Above" or "Below" or "LeftOf" or "RightOf"
                 or "AlignLeftWith" or "Order" or "Grow" or "Shrink" or "Basis");
 
-        Assert.Equal(5, ir.FactoryAbiVersion);
+        Assert.Equal(6, ir.FactoryAbiVersion);
+    }
+
+    [Fact]
+    public void Wave_d_button_family_publishes_new_interfaces_at_version_one()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+
+        Assert.All(
+            new[]
+            {
+                "IAvnRepeatButton", "IAvnDropDownButton", "IAvnSplitButton",
+                "IAvnToggleSplitButton", "IAvnHyperlinkButton", "IAvnContextMenu",
+                "IAvnMenuFlyout",
+            },
+            name =>
+            {
+                var type = Type(ir, name);
+                Assert.Equal(1, type.AbiVersion);
+                Assert.True(type.IsConstructible);
+            });
+
+        Assert.Equal("Avalonia.Host.Com.IAvnButton", Type(ir, "IAvnRepeatButton").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnButton", Type(ir, "IAvnDropDownButton").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnButton", Type(ir, "IAvnHyperlinkButton").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnContentControl", Type(ir, "IAvnSplitButton").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnSplitButton", Type(ir, "IAvnToggleSplitButton").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnMenuBase", Type(ir, "IAvnContextMenu").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnPopupFlyoutBase", Type(ir, "IAvnMenuFlyout").BaseFullName);
+
+        var repeat = Type(ir, "IAvnRepeatButton");
+        Assert.All(
+            new[] { "Interval", "Delay" },
+            name => Assert.Equal(
+                MarshallingKind.I32,
+                repeat.Properties.Single(property => property.Name == name).Kind));
+
+        var hyperlink = Type(ir, "IAvnHyperlinkButton");
+        var navigateUri = hyperlink.Properties.Single(property => property.Name == "NavigateUri");
+        Assert.Equal(MarshallingKind.StringUtf16, navigateUri.Kind);
+        Assert.Equal("Avalonia.Host.Com.AvnUri", navigateUri.StringConverterTypeName);
+        Assert.True(navigateUri.IsNullable);
+
+        var split = Type(ir, "IAvnSplitButton");
+        Assert.Contains(split.Events, @event => @event.Name == "Click");
+        Assert.DoesNotContain(split.Properties, property => property.Name == "Flyout");
+        Assert.DoesNotContain(split.Properties, property => property.Name == "Command");
+
+        var menuFlyout = Type(ir, "IAvnMenuFlyout");
+        var items = menuFlyout.Properties.Single(property => property.Name == "Items");
+        Assert.Equal(MarshallingKind.ComCollection, items.Kind);
+        Assert.Equal("Avalonia.Host.Com.IAvnItemList", items.InterfaceName);
+
+        Assert.Equal(6, ir.FactoryAbiVersion);
     }
 
     [Fact]

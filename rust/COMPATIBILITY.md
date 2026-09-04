@@ -121,6 +121,12 @@ property has no ABI shape. The `Align*WithPanel` bools do cross. Flex attached
 properties live on the static `Flex` class, which is not an `AvaloniaObject`, so
 `Order`/`Grow`/`Shrink`/`Basis`/`AlignSelf` stay gaps too.
 
+Wave D is the same shape. `IAvnRepeatButton`, `IAvnDropDownButton`,
+`IAvnSplitButton`, `IAvnToggleSplitButton`, `IAvnHyperlinkButton`,
+`IAvnContextMenu` and `IAvnMenuFlyout` publish at version 1.
+`IAvnControlFactory` moves from 5 to 6. `SplitButton.Flyout` and `Command` stay
+gaps. `HyperlinkButton.NavigateUri` crosses as a URI string through `AvnUri`.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A

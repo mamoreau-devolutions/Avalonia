@@ -54,13 +54,13 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnWindow"] = 5,
             ["Avalonia.Host.Com.IAvnGrid"] = 5,
             // Wave A's seven new interfaces publish at the default version 1 and nothing they
-            // sit under moved, so they need no entry here. Wave B's ten and wave C's seven do
-            // the same.
+            // sit under moved, so they need no entry here. Waves B, C and D do the same.
             // The factory is the only interface these waves move: wave A gave it a creator per
-            // new control plus GetToolTipStatics (2 → 3), wave B gave it seven more, and wave C
-            // gives it seven more still (WrapPanel, UniformGrid, RelativePanel, Viewbox,
-            // FlexPanel, Thumb, GridSplitter), so it republishes at version 5.
-            ["Avalonia.Host.Com.IAvnControlFactory"] = 5,
+            // new control plus GetToolTipStatics (2 → 3), wave B seven more, wave C seven more,
+            // and wave D seven more still (RepeatButton, DropDownButton, SplitButton,
+            // ToggleSplitButton, HyperlinkButton, ContextMenu, MenuFlyout), so it republishes
+            // at version 6.
+            ["Avalonia.Host.Com.IAvnControlFactory"] = 6,
         },
         IncludeTypeNames =
         [
@@ -122,6 +122,15 @@ public static class AvaloniaProjectionProfiles
             "Avalonia.Controls.FlexPanel",
             "Avalonia.Controls.Primitives.Thumb",
             "Avalonia.Controls.GridSplitter",
+            // Wave D. Button family plus context menus. Flyout on SplitButton/Button stays a
+            // gap (COM-valued). NavigateUri crosses as a URI string through AvnUri.
+            "Avalonia.Controls.RepeatButton",
+            "Avalonia.Controls.DropDownButton",
+            "Avalonia.Controls.SplitButton",
+            "Avalonia.Controls.ToggleSplitButton",
+            "Avalonia.Controls.HyperlinkButton",
+            "Avalonia.Controls.ContextMenu",
+            "Avalonia.Controls.MenuFlyout",
             "Avalonia.Controls.TextBox",
             "Avalonia.Controls.ScrollViewer",
             "Avalonia.Controls.Primitives.RangeBase",
@@ -258,6 +267,14 @@ public static class AvaloniaProjectionProfiles
                 "ResizeDirection", "ResizeBehavior", "ShowsPreview", "KeyboardIncrement",
                 "DragIncrement",
             ],
+            ["Avalonia.Controls.RepeatButton"] = ["Interval", "Delay"],
+            ["Avalonia.Controls.DropDownButton"] = [],
+            ["Avalonia.Controls.SplitButton"] = ["Click"],
+            ["Avalonia.Controls.ToggleSplitButton"] = ["IsChecked", "IsCheckedChanged"],
+            ["Avalonia.Controls.HyperlinkButton"] = ["IsVisited", "NavigateUri"],
+            ["Avalonia.Controls.ContextMenu"] =
+                ["HorizontalOffset", "VerticalOffset", "Placement", "WindowManagerAddShadowHint"],
+            ["Avalonia.Controls.MenuFlyout"] = ["Items"],
             ["Avalonia.Controls.Primitives.TemplatedControl"] =
             [
                 "Background", "BorderBrush", "BorderThickness", "CornerRadius", "FontSize",
@@ -378,6 +395,20 @@ public static class AvaloniaProjectionProfiles
                 Kind = MarshallingKind.ComInterface,
                 InterfaceName = "Avalonia.Host.Com.IAvnControl",
                 IsNullable = true,
+            },
+            ["Avalonia.Controls.HyperlinkButton.NavigateUri"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                StringConverterTypeName = "Avalonia.Host.Com.AvnUri",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.MenuFlyout.Items"] = new()
+            {
+                Kind = MarshallingKind.ComCollection,
+                InterfaceName = "Avalonia.Host.Com.IAvnItemList",
+                ElementInterfaceName = "Avalonia.Host.Com.IAvnControl",
+                ElementKind = MarshallingKind.ComInterface,
+                IsNullable = false,
             },
             // The projection has no date/time ABI shape, so a date crosses as an ISO-8601
             // string through a host-side converter, the same mechanism Image.Source uses. The
@@ -512,6 +543,14 @@ public static class AvaloniaProjectionProfiles
                 PayloadKind = EventPayloadKind.None,
             },
             ["Avalonia.Controls.MenuItem.Click"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.SplitButton.Click"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.ToggleSplitButton.IsCheckedChanged"] = new()
             {
                 PayloadKind = EventPayloadKind.None,
             },

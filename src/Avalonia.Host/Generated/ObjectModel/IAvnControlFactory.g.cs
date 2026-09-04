@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("5AE19618-F900-50E0-86C7-8282307E38C3")]
+[Guid("834E2751-6EAB-5F89-8EC5-071862CBF899")]
 public partial interface IAvnControlFactory
 {
     [PreserveSig]
@@ -34,6 +34,9 @@ public partial interface IAvnControlFactory
     int CreateContentControl(out IAvnContentControl? value);
 
     [PreserveSig]
+    int CreateContextMenu(out IAvnContextMenu? value);
+
+    [PreserveSig]
     int CreateControl(out IAvnControl? value);
 
     [PreserveSig]
@@ -44,6 +47,9 @@ public partial interface IAvnControlFactory
 
     [PreserveSig]
     int CreateDockPanel(out IAvnDockPanel? value);
+
+    [PreserveSig]
+    int CreateDropDownButton(out IAvnDropDownButton? value);
 
     [PreserveSig]
     int CreateExpander(out IAvnExpander? value);
@@ -70,6 +76,9 @@ public partial interface IAvnControlFactory
     int CreateHeaderedSelectingItemsControl(out IAvnHeaderedSelectingItemsControl? value);
 
     [PreserveSig]
+    int CreateHyperlinkButton(out IAvnHyperlinkButton? value);
+
+    [PreserveSig]
     int CreateImage(out IAvnImage? value);
 
     [PreserveSig]
@@ -83,6 +92,9 @@ public partial interface IAvnControlFactory
 
     [PreserveSig]
     int CreateMenu(out IAvnMenu? value);
+
+    [PreserveSig]
+    int CreateMenuFlyout(out IAvnMenuFlyout? value);
 
     [PreserveSig]
     int CreateMenuItem(out IAvnMenuItem? value);
@@ -100,6 +112,9 @@ public partial interface IAvnControlFactory
     int CreateRelativePanel(out IAvnRelativePanel? value);
 
     [PreserveSig]
+    int CreateRepeatButton(out IAvnRepeatButton? value);
+
+    [PreserveSig]
     int CreateScrollViewer(out IAvnScrollViewer? value);
 
     [PreserveSig]
@@ -107,6 +122,9 @@ public partial interface IAvnControlFactory
 
     [PreserveSig]
     int CreateSlider(out IAvnSlider? value);
+
+    [PreserveSig]
+    int CreateSplitButton(out IAvnSplitButton? value);
 
     [PreserveSig]
     int CreateSplitView(out IAvnSplitView? value);
@@ -140,6 +158,9 @@ public partial interface IAvnControlFactory
 
     [PreserveSig]
     int CreateToggleButton(out IAvnToggleButton? value);
+
+    [PreserveSig]
+    int CreateToggleSplitButton(out IAvnToggleSplitButton? value);
 
     [PreserveSig]
     int CreateToggleSwitch(out IAvnToggleSwitch? value);
@@ -308,6 +329,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         }
     }
 
+    public int CreateContextMenu(out IAvnContextMenu? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnContextMenu)ProjectionRuntime.Wrap(new global::Avalonia.Controls.ContextMenu())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int CreateControl(out IAvnControl? value)
     {
         value = null;
@@ -360,6 +396,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         {
             global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
             value = (IAvnDockPanel)ProjectionRuntime.Wrap(new global::Avalonia.Controls.DockPanel())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateDropDownButton(out IAvnDropDownButton? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnDropDownButton)ProjectionRuntime.Wrap(new global::Avalonia.Controls.DropDownButton())!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -488,6 +539,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         }
     }
 
+    public int CreateHyperlinkButton(out IAvnHyperlinkButton? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnHyperlinkButton)ProjectionRuntime.Wrap(new global::Avalonia.Controls.HyperlinkButton())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int CreateImage(out IAvnImage? value)
     {
         value = null;
@@ -555,6 +621,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         {
             global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
             value = (IAvnMenu)ProjectionRuntime.Wrap(new global::Avalonia.Controls.Menu())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateMenuFlyout(out IAvnMenuFlyout? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnMenuFlyout)ProjectionRuntime.Wrap(new global::Avalonia.Controls.MenuFlyout())!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -638,6 +719,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         }
     }
 
+    public int CreateRepeatButton(out IAvnRepeatButton? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnRepeatButton)ProjectionRuntime.Wrap(new global::Avalonia.Controls.RepeatButton())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int CreateScrollViewer(out IAvnScrollViewer? value)
     {
         value = null;
@@ -675,6 +771,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         {
             global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
             value = (IAvnSlider)ProjectionRuntime.Wrap(new global::Avalonia.Controls.Slider())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateSplitButton(out IAvnSplitButton? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnSplitButton)ProjectionRuntime.Wrap(new global::Avalonia.Controls.SplitButton())!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -840,6 +951,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         {
             global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
             value = (IAvnToggleButton)ProjectionRuntime.Wrap(new global::Avalonia.Controls.Primitives.ToggleButton())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateToggleSplitButton(out IAvnToggleSplitButton? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnToggleSplitButton)ProjectionRuntime.Wrap(new global::Avalonia.Controls.ToggleSplitButton())!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

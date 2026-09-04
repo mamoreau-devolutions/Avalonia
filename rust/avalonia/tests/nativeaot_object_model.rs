@@ -1,14 +1,15 @@
 use avalonia::{
-    App, Border, Brush, Button, ClickMode, Color, ComboBox, ComboBoxItem, CornerRadius, DatePicker,
-    Dock, DockPanel, ExpandDirection, Expander, FlexAlignItems, FlexDirection, FlexJustifyContent,
-    FlexPanel, FlexWrap, Flyout, FlyoutShowMode, FontWeight, Grid, GridResizeBehavior,
-    GridResizeDirection, GridSplitter, HorizontalAlignment, Image, ListBox, ListBoxItem, Menu,
-    MenuItem, MenuItemToggleType, Orientation, PlacementMode, ProgressBar, RadioButton,
-    RelativePanel, ScrollViewer, SelectionMode, SplitView, SplitViewDisplayMode,
+    App, Border, Brush, Button, ClickMode, Color, ComboBox, ComboBoxItem, ContextMenu,
+    CornerRadius, DatePicker, Dock, DockPanel, DropDownButton, ExpandDirection, Expander,
+    FlexAlignItems, FlexDirection, FlexJustifyContent, FlexPanel, FlexWrap, Flyout, FlyoutShowMode,
+    FontWeight, Grid, GridResizeBehavior, GridResizeDirection, GridSplitter, HorizontalAlignment,
+    HyperlinkButton, Image, ListBox, ListBoxItem, Menu, MenuFlyout, MenuItem, MenuItemToggleType,
+    Orientation, PlacementMode, ProgressBar, RadioButton, RelativePanel, RepeatButton,
+    ScrollViewer, SelectionMode, SplitButton, SplitView, SplitViewDisplayMode,
     SplitViewPanePlacement, StackPanel, Stretch, StretchDirection, TabControl, TabItem,
-    TextAlignment, TextBlock, TextBox, ThemeVariant, Thickness, TimePicker, ToggleSwitch, ToolTip,
-    TreeView, TreeViewItem, UniformGrid, VerticalAlignment, Viewbox, Window, WindowState,
-    WrapPanel, WrapPanelItemsAlignment,
+    TextAlignment, TextBlock, TextBox, ThemeVariant, Thickness, TimePicker, ToggleSplitButton,
+    ToggleSwitch, ToolTip, TreeView, TreeViewItem, UniformGrid, VerticalAlignment, Viewbox, Window,
+    WindowState, WrapPanel, WrapPanelItemsAlignment,
 };
 use std::future::Future;
 use std::path::PathBuf;
@@ -573,6 +574,26 @@ fn builders_create_a_real_window_through_nativeaot() {
         );
         assert!(splitter.get_shows_preview()?);
 
+        let repeat = RepeatButton::new()?.delay(400)?.interval(50)?;
+        assert_eq!(repeat.get_delay()?, 400);
+        let hyperlink = HyperlinkButton::new()?
+            .navigate_uri("https://avaloniaui.net")?
+            .visited(true)?;
+        assert_eq!(
+            hyperlink.get_navigate_uri()?.as_deref(),
+            Some("https://avaloniaui.net")
+        );
+        let toggle_split = ToggleSplitButton::new()?.checked(true)?;
+        assert!(toggle_split.get_is_checked()?);
+        let context_menu = ContextMenu::new()?
+            .horizontal_offset(8.0)?
+            .placement(PlacementMode::Bottom)?;
+        assert_eq!(context_menu.get_horizontal_offset()?, 8.0);
+        let menu_flyout = MenuFlyout::new()?.item(MenuItem::new()?)?;
+        assert_eq!(menu_flyout.items()?.len()?, 1);
+        let split = SplitButton::new()?;
+        let drop_down = DropDownButton::new()?;
+
         let panel = StackPanel::new()?
             .orientation(Orientation::Vertical)?
             .spacing(8.0)?
@@ -601,8 +622,14 @@ fn builders_create_a_real_window_through_nativeaot() {
             .child(viewbox)?
             .child(flex)?
             .child(splitter)?
+            .child(repeat)?
+            .child(hyperlink)?
+            .child(toggle_split)?
+            .child(context_menu)?
+            .child(split)?
+            .child(drop_down)?
             .child(button)?;
-        assert_eq!(panel.children()?.len()?, 25);
+        assert_eq!(panel.children()?.len()?, 31);
         assert_eq!(panel.get_orientation()?, Orientation::Vertical);
         assert_eq!(panel.get_spacing()?, 8.0);
         assert_eq!(

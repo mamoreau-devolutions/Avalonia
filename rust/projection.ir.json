@@ -1,8 +1,8 @@
 {
   "version": 13,
   "sourceAssembly": "Avalonia.Base,Avalonia.Controls",
-  "factoryIid": "5AE19618-F900-50E0-86C7-8282307E38C3",
-  "factoryAbiVersion": 5,
+  "factoryIid": "834E2751-6EAB-5F89-8EC5-071862CBF899",
+  "factoryAbiVersion": 6,
   "brushInterfaceName": "Avalonia.Host.Com.IAvnBrush",
   "brushInterfaceIid": "FC7CCBAE-ED75-5C6D-8516-DF706E137ED3",
   "brushAbiVersion": 1,
@@ -268,6 +268,56 @@
           "canWrite": true,
           "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Layout.VerticalAlignment",
+          "isNullable": false
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IAvnContextMenu",
+      "fullName": "Avalonia.Host.Com.IAvnContextMenu",
+      "kind": "Class",
+      "iid": "7FF8616B-72E3-51CD-8476-378684F8E2C2",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnMenuBase",
+      "managedFullName": "Avalonia.Controls.ContextMenu",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "HorizontalOffset",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "VerticalOffset",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "Placement",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.PlacementMode",
+          "isNullable": false
+        },
+        {
+          "name": "WindowManagerAddShadowHint",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
           "isNullable": false
         }
       ],
@@ -640,6 +690,19 @@
       "events": []
     },
     {
+      "name": "IAvnDropDownButton",
+      "fullName": "Avalonia.Host.Com.IAvnDropDownButton",
+      "kind": "Class",
+      "iid": "92042848-059C-55FE-9CEC-FEC91CE84075",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnButton",
+      "managedFullName": "Avalonia.Controls.DropDownButton",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [],
+      "events": []
+    },
+    {
       "name": "IAvnExpander",
       "fullName": "Avalonia.Host.Com.IAvnExpander",
       "kind": "Class",
@@ -910,6 +973,39 @@
       "events": []
     },
     {
+      "name": "IAvnHyperlinkButton",
+      "fullName": "Avalonia.Host.Com.IAvnHyperlinkButton",
+      "kind": "Class",
+      "iid": "191FB103-882A-5206-81A6-9D91ADC0E76B",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnButton",
+      "managedFullName": "Avalonia.Controls.HyperlinkButton",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "IsVisited",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "NavigateUri",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Uri",
+          "isNullable": true,
+          "stringConverterTypeName": "Avalonia.Host.Com.AvnUri"
+        }
+      ],
+      "events": []
+    },
+    {
       "name": "IAvnImage",
       "fullName": "Avalonia.Host.Com.IAvnImage",
       "kind": "Class",
@@ -1117,6 +1213,33 @@
           "parameters": []
         }
       ]
+    },
+    {
+      "name": "IAvnMenuFlyout",
+      "fullName": "Avalonia.Host.Com.IAvnMenuFlyout",
+      "kind": "Class",
+      "iid": "C13CFFEC-7D37-5030-8D8B-618BEDD615A1",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnPopupFlyoutBase",
+      "managedFullName": "Avalonia.Controls.MenuFlyout",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "Items",
+          "kind": "ComCollection",
+          "canRead": true,
+          "canWrite": false,
+          "interfaceName": "Avalonia.Host.Com.IAvnItemList",
+          "interfaceIid": "59A429A7-CF8A-5EB0-B615-912A3DEF0704",
+          "interfaceAbiVersion": 1,
+          "elementInterfaceName": "Avalonia.Host.Com.IAvnControl",
+          "elementKind": "ComInterface",
+          "managedTypeName": "Avalonia.Controls.ItemCollection",
+          "isNullable": false
+        }
+      ],
+      "events": []
     },
     {
       "name": "IAvnMenuItem",
@@ -1864,6 +1987,38 @@
       "events": []
     },
     {
+      "name": "IAvnRepeatButton",
+      "fullName": "Avalonia.Host.Com.IAvnRepeatButton",
+      "kind": "Class",
+      "iid": "5300A39B-D2B5-59E9-BE24-6177116E4E4A",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnButton",
+      "managedFullName": "Avalonia.Controls.RepeatButton",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "Interval",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Int32",
+          "isNullable": false
+        },
+        {
+          "name": "Delay",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Int32",
+          "isNullable": false
+        }
+      ],
+      "events": []
+    },
+    {
       "name": "IAvnScrollViewer",
       "fullName": "Avalonia.Host.Com.IAvnScrollViewer",
       "kind": "Class",
@@ -2088,6 +2243,29 @@
         }
       ],
       "events": []
+    },
+    {
+      "name": "IAvnSplitButton",
+      "fullName": "Avalonia.Host.Com.IAvnSplitButton",
+      "kind": "Class",
+      "iid": "8D288F8B-7AD3-5752-901C-AC6BFB163316",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
+      "managedFullName": "Avalonia.Controls.SplitButton",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [],
+      "events": [
+        {
+          "name": "Click",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnSplitButtonClickHandler",
+          "handlerInterfaceIid": "257AD223-D656-551A-AC83-E4D4F3B590E6",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E",
+          "parameters": []
+        }
+      ]
     },
     {
       "name": "IAvnSplitView",
@@ -2695,6 +2873,39 @@
         }
       ],
       "events": []
+    },
+    {
+      "name": "IAvnToggleSplitButton",
+      "fullName": "Avalonia.Host.Com.IAvnToggleSplitButton",
+      "kind": "Class",
+      "iid": "792975C0-A4E2-5FC5-B613-080C81234870",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnSplitButton",
+      "managedFullName": "Avalonia.Controls.ToggleSplitButton",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "IsChecked",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        }
+      ],
+      "events": [
+        {
+          "name": "IsCheckedChanged",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnToggleSplitButtonIsCheckedChangedHandler",
+          "handlerInterfaceIid": "0034F5FE-A55D-5A7E-B5B0-667C82854A8A",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E",
+          "parameters": []
+        }
+      ]
     },
     {
       "name": "IAvnToggleSwitch",
@@ -6093,6 +6304,61 @@
       "reason": "Not included by projection policy"
     },
     {
+      "owner": "Avalonia.Controls.ContextMenu",
+      "member": "PlacementAnchor",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.ContextMenu",
+      "member": "PlacementConstraintAdjustment",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.ContextMenu",
+      "member": "PlacementGravity",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.ContextMenu",
+      "member": "PlacementRect",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.ContextMenu",
+      "member": "PlacementTarget",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.ContextMenu",
+      "member": "CustomPopupPlacementCallback",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.ContextMenu",
+      "member": "Opening",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.ContextMenu",
+      "member": "Closing",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.ContextMenu",
+      "member": "Open()",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.ContextMenu",
+      "member": "Open(Control)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.ContextMenu",
+      "member": "Close()",
+      "reason": "Not included by projection policy"
+    },
+    {
       "owner": "Avalonia.Controls.Control",
       "member": "FocusAdorner",
       "reason": "Not included by projection policy"
@@ -6315,6 +6581,31 @@
     {
       "owner": "Avalonia.Controls.Menu",
       "member": "Open()",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.MenuFlyout",
+      "member": "FlyoutPresenterClasses",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.MenuFlyout",
+      "member": "ItemsSource",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.MenuFlyout",
+      "member": "ItemTemplate",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.MenuFlyout",
+      "member": "ItemContainerTheme",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.MenuFlyout",
+      "member": "FlyoutPresenterTheme",
       "reason": "Not included by projection policy"
     },
     {
@@ -6645,6 +6936,26 @@
     {
       "owner": "Avalonia.Controls.Slider",
       "member": "Ticks",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.SplitButton",
+      "member": "Command",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.SplitButton",
+      "member": "CommandParameter",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.SplitButton",
+      "member": "Flyout",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.SplitButton",
+      "member": "HotKey",
       "reason": "Not included by projection policy"
     },
     {
