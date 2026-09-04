@@ -1,8 +1,8 @@
 {
   "version": 13,
   "sourceAssembly": "Avalonia.Base,Avalonia.Controls",
-  "factoryIid": "D6AFB17D-D7AE-57F6-B183-44BCD5D5B32E",
-  "factoryAbiVersion": 11,
+  "factoryIid": "ED7F37F6-7A26-5777-83B6-636AA10AA927",
+  "factoryAbiVersion": 12,
   "brushInterfaceName": "Avalonia.Host.Com.IAvnBrush",
   "brushInterfaceIid": "FC7CCBAE-ED75-5C6D-8516-DF706E137ED3",
   "brushAbiVersion": 1,
@@ -595,6 +595,252 @@
       "isConstructible": true,
       "methods": [],
       "properties": [],
+      "events": []
+    },
+    {
+      "name": "IAvnCommandBar",
+      "fullName": "Avalonia.Host.Com.IAvnCommandBar",
+      "kind": "Class",
+      "iid": "EF828B48-E6D6-53BF-9822-8A3C1FF86073",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
+      "managedFullName": "Avalonia.Controls.CommandBar",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "Content",
+          "kind": "ComInterface",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnControl",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Object",
+          "isNullable": true
+        },
+        {
+          "name": "DefaultLabelPosition",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.CommandBarDefaultLabelPosition",
+          "isNullable": false
+        },
+        {
+          "name": "IsDynamicOverflowEnabled",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "OverflowButtonVisibility",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.CommandBarOverflowButtonVisibility",
+          "isNullable": false
+        },
+        {
+          "name": "IsOpen",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "IsSticky",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "ItemWidthBottom",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "ItemWidthRight",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "ItemWidthCollapsed",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IAvnCommandBarButton",
+      "fullName": "Avalonia.Host.Com.IAvnCommandBarButton",
+      "kind": "Class",
+      "iid": "FF519394-F2E2-575C-A906-BEFD878B195D",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnButton",
+      "managedFullName": "Avalonia.Controls.CommandBarButton",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "Label",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.String",
+          "isNullable": true
+        },
+        {
+          "name": "IsCompact",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "DynamicOverflowOrder",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Int32",
+          "isNullable": false
+        },
+        {
+          "name": "LabelPosition",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.CommandBarDefaultLabelPosition",
+          "isNullable": false
+        },
+        {
+          "name": "IsInOverflow",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IAvnCommandBarSeparator",
+      "fullName": "Avalonia.Host.Com.IAvnCommandBarSeparator",
+      "kind": "Class",
+      "iid": "FF5C3E62-318C-580A-A3C6-7839B992C7DC",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnSeparator",
+      "managedFullName": "Avalonia.Controls.CommandBarSeparator",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "IsCompact",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "IsInOverflow",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IAvnCommandBarToggleButton",
+      "fullName": "Avalonia.Host.Com.IAvnCommandBarToggleButton",
+      "kind": "Class",
+      "iid": "0B0DDA52-FE6B-5B3D-8F94-70039533BDA8",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnToggleButton",
+      "managedFullName": "Avalonia.Controls.CommandBarToggleButton",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "Label",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.String",
+          "isNullable": true
+        },
+        {
+          "name": "IsCompact",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "DynamicOverflowOrder",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Int32",
+          "isNullable": false
+        },
+        {
+          "name": "LabelPosition",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.CommandBarDefaultLabelPosition",
+          "isNullable": false
+        },
+        {
+          "name": "IsInOverflow",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        }
+      ],
       "events": []
     },
     {
@@ -2036,6 +2282,74 @@
           "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Media.IBrush",
           "isNullable": true
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IAvnPipsPager",
+      "fullName": "Avalonia.Host.Com.IAvnPipsPager",
+      "kind": "Class",
+      "iid": "B68285BF-1872-5AEF-A251-A2DCD3C974AD",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
+      "managedFullName": "Avalonia.Controls.PipsPager",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "MaxVisiblePips",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Int32",
+          "isNullable": false
+        },
+        {
+          "name": "IsNextButtonVisible",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "NumberOfPages",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Int32",
+          "isNullable": false
+        },
+        {
+          "name": "Orientation",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Layout.Orientation",
+          "isNullable": false
+        },
+        {
+          "name": "IsPreviousButtonVisible",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "SelectedPageIndex",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Int32",
+          "isNullable": false
         }
       ],
       "events": []
@@ -3984,6 +4298,19 @@
       ]
     },
     {
+      "name": "IAvnThemeVariantScope",
+      "fullName": "Avalonia.Host.Com.IAvnThemeVariantScope",
+      "kind": "Class",
+      "iid": "3D34A21E-A031-5AE7-97FD-E2F9F1A7A6EC",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnDecorator",
+      "managedFullName": "Avalonia.Controls.ThemeVariantScope",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [],
+      "events": []
+    },
+    {
       "name": "IAvnTimePicker",
       "fullName": "Avalonia.Host.Com.IAvnTimePicker",
       "kind": "Class",
@@ -4698,6 +5025,42 @@
         {
           "name": "Press",
           "value": 1
+        }
+      ]
+    },
+    {
+      "name": "CommandBarDefaultLabelPosition",
+      "fullName": "Avalonia.Controls.CommandBarDefaultLabelPosition",
+      "values": [
+        {
+          "name": "Bottom",
+          "value": 0
+        },
+        {
+          "name": "Right",
+          "value": 1
+        },
+        {
+          "name": "Collapsed",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "name": "CommandBarOverflowButtonVisibility",
+      "fullName": "Avalonia.Controls.CommandBarOverflowButtonVisibility",
+      "values": [
+        {
+          "name": "Auto",
+          "value": 0
+        },
+        {
+          "name": "Visible",
+          "value": 1
+        },
+        {
+          "name": "Collapsed",
+          "value": 2
         }
       ]
     },
@@ -8116,6 +8479,66 @@
       "reason": "Not included by projection policy"
     },
     {
+      "owner": "Avalonia.Controls.CommandBar",
+      "member": "VisiblePrimaryCommands",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CommandBar",
+      "member": "OverflowItems",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CommandBar",
+      "member": "PrimaryCommands",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CommandBar",
+      "member": "SecondaryCommands",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CommandBar",
+      "member": "HasSecondaryCommands",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CommandBar",
+      "member": "IsOverflowButtonVisible",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CommandBar",
+      "member": "Opening",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CommandBar",
+      "member": "Opened",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CommandBar",
+      "member": "Closing",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CommandBar",
+      "member": "Closed",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CommandBarButton",
+      "member": "Icon",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CommandBarToggleButton",
+      "member": "Icon",
+      "reason": "Not included by projection policy"
+    },
+    {
       "owner": "Avalonia.Controls.ContentControl",
       "member": "ContentTemplate",
       "reason": "Not included by projection policy"
@@ -8638,6 +9061,26 @@
     {
       "owner": "Avalonia.Controls.Panel",
       "member": "Render(DrawingContext)",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.PipsPager",
+      "member": "TemplateSettings",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.PipsPager",
+      "member": "PreviousButtonTheme",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.PipsPager",
+      "member": "NextButtonTheme",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.PipsPager",
+      "member": "SelectedIndexChanged",
       "reason": "Not included by projection policy"
     },
     {
@@ -9413,6 +9856,11 @@
     {
       "owner": "Avalonia.Controls.TextBox",
       "member": "SelectAll()",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.ThemeVariantScope",
+      "member": "RequestedThemeVariant",
       "reason": "Not included by projection policy"
     },
     {

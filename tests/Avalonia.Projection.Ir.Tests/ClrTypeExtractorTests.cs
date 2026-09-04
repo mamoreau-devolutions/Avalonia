@@ -99,6 +99,12 @@ public class ClrTypeExtractorTests
         typeof(Avalonia.Controls.Notifications.WindowNotificationManager),
         typeof(Avalonia.Controls.Notifications.NotificationCard),
         typeof(RefreshContainer),
+        typeof(CommandBar),
+        typeof(CommandBarButton),
+        typeof(CommandBarToggleButton),
+        typeof(CommandBarSeparator),
+        typeof(PipsPager),
+        typeof(ThemeVariantScope),
         typeof(TextBox),
         typeof(ScrollViewer),
         typeof(RangeBase),
@@ -289,9 +295,9 @@ public class ClrTypeExtractorTests
         // The factory grew a creator per wave A control plus GetToolTipStatics, then one per
         // constructible wave B type, then one per constructible wave C type, so it has moved
         // three times off the version 2 IID it published for CreateSolidColorBrush.
-        Assert.Equal(11, ir.FactoryAbiVersion);
+        Assert.Equal(12, ir.FactoryAbiVersion);
         Assert.Equal(
-            ClrTypeExtractor.CreateDeterministicIid("Avalonia.Host.Com.IAvnControlFactory", 11),
+            ClrTypeExtractor.CreateDeterministicIid("Avalonia.Host.Com.IAvnControlFactory", 12),
             ir.FactoryIid);
     }
 
@@ -1125,7 +1131,7 @@ public class ClrTypeExtractorTests
             property => property.Name is "Above" or "Below" or "LeftOf" or "RightOf"
                 or "AlignLeftWith" or "Order" or "Grow" or "Shrink" or "Basis");
 
-        Assert.Equal(11, ir.FactoryAbiVersion);
+        Assert.Equal(12, ir.FactoryAbiVersion);
     }
 
     [Fact]
@@ -1178,7 +1184,7 @@ public class ClrTypeExtractorTests
         Assert.Equal(MarshallingKind.ComCollection, items.Kind);
         Assert.Equal("Avalonia.Host.Com.IAvnItemList", items.InterfaceName);
 
-        Assert.Equal(11, ir.FactoryAbiVersion);
+        Assert.Equal(12, ir.FactoryAbiVersion);
     }
 
     [Fact]
@@ -1222,7 +1228,7 @@ public class ClrTypeExtractorTests
         Assert.True(selectedText.CanRead);
         Assert.False(selectedText.CanWrite);
 
-        Assert.Equal(11, ir.FactoryAbiVersion);
+        Assert.Equal(12, ir.FactoryAbiVersion);
     }
 
     [Fact]
@@ -1255,7 +1261,7 @@ public class ClrTypeExtractorTests
             Type(ir, "IAvnCalendar").Properties,
             p => p.Name == "SelectedDates");
 
-        Assert.Equal(11, ir.FactoryAbiVersion);
+        Assert.Equal(12, ir.FactoryAbiVersion);
     }
 
     [Fact]
@@ -1280,7 +1286,7 @@ public class ClrTypeExtractorTests
             Type(ir, "IAvnLayoutTransformControl").Properties,
             p => p.Name == "LayoutTransform");
 
-        Assert.Equal(11, ir.FactoryAbiVersion);
+        Assert.Equal(12, ir.FactoryAbiVersion);
     }
 
     [Fact]
@@ -1318,7 +1324,7 @@ public class ClrTypeExtractorTests
         Assert.True(data.IsNullable);
         Assert.DoesNotContain(Type(ir, "IAvnPolygon").Properties, p => p.Name == "Points");
 
-        Assert.Equal(11, ir.FactoryAbiVersion);
+        Assert.Equal(12, ir.FactoryAbiVersion);
     }
 
     [Fact]
@@ -1336,7 +1342,27 @@ public class ClrTypeExtractorTests
         Assert.Equal(MarshallingKind.ComInterface, child.Kind);
         Assert.DoesNotContain(Type(ir, "IAvnTrayIcon").Properties, p => p.Name is "Menu" or "Icon" or "Command");
 
-        Assert.Equal(11, ir.FactoryAbiVersion);
+        Assert.Equal(12, ir.FactoryAbiVersion);
+    }
+
+    [Fact]
+    public void Wave_j_command_bar_publishes_new_interfaces_at_version_one()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+
+        Assert.Equal("Avalonia.Host.Com.IAvnTemplatedControl", Type(ir, "IAvnCommandBar").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnButton", Type(ir, "IAvnCommandBarButton").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnToggleButton", Type(ir, "IAvnCommandBarToggleButton").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnSeparator", Type(ir, "IAvnCommandBarSeparator").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnTemplatedControl", Type(ir, "IAvnPipsPager").BaseFullName);
+        Assert.Equal("Avalonia.Host.Com.IAvnDecorator", Type(ir, "IAvnThemeVariantScope").BaseFullName);
+
+        var content = Type(ir, "IAvnCommandBar").Properties.Single(p => p.Name == "Content");
+        Assert.Equal(MarshallingKind.ComInterface, content.Kind);
+        Assert.DoesNotContain(Type(ir, "IAvnCommandBar").Properties, p => p.Name == "PrimaryCommands");
+        Assert.DoesNotContain(Type(ir, "IAvnCommandBarButton").Properties, p => p.Name == "Icon");
+
+        Assert.Equal(12, ir.FactoryAbiVersion);
     }
 
     [Fact]

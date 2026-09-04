@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("D6AFB17D-D7AE-57F6-B183-44BCD5D5B32E")]
+[Guid("ED7F37F6-7A26-5777-83B6-636AA10AA927")]
 public partial interface IAvnControlFactory
 {
     [PreserveSig]
@@ -47,6 +47,18 @@ public partial interface IAvnControlFactory
 
     [PreserveSig]
     int CreateComboBoxItem(out IAvnComboBoxItem? value);
+
+    [PreserveSig]
+    int CreateCommandBar(out IAvnCommandBar? value);
+
+    [PreserveSig]
+    int CreateCommandBarButton(out IAvnCommandBarButton? value);
+
+    [PreserveSig]
+    int CreateCommandBarSeparator(out IAvnCommandBarSeparator? value);
+
+    [PreserveSig]
+    int CreateCommandBarToggleButton(out IAvnCommandBarToggleButton? value);
 
     [PreserveSig]
     int CreateContentControl(out IAvnContentControl? value);
@@ -148,6 +160,9 @@ public partial interface IAvnControlFactory
     int CreatePath(out IAvnPath? value);
 
     [PreserveSig]
+    int CreatePipsPager(out IAvnPipsPager? value);
+
+    [PreserveSig]
     int CreatePolygon(out IAvnPolygon? value);
 
     [PreserveSig]
@@ -218,6 +233,9 @@ public partial interface IAvnControlFactory
 
     [PreserveSig]
     int CreateTextBox(out IAvnTextBox? value);
+
+    [PreserveSig]
+    int CreateThemeVariantScope(out IAvnThemeVariantScope? value);
 
     [PreserveSig]
     int CreateThumb(out IAvnThumb? value);
@@ -477,6 +495,66 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         {
             global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
             value = (IAvnComboBoxItem)ProjectionRuntime.Wrap(new global::Avalonia.Controls.ComboBoxItem())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateCommandBar(out IAvnCommandBar? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnCommandBar)ProjectionRuntime.Wrap(new global::Avalonia.Controls.CommandBar())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateCommandBarButton(out IAvnCommandBarButton? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnCommandBarButton)ProjectionRuntime.Wrap(new global::Avalonia.Controls.CommandBarButton())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateCommandBarSeparator(out IAvnCommandBarSeparator? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnCommandBarSeparator)ProjectionRuntime.Wrap(new global::Avalonia.Controls.CommandBarSeparator())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateCommandBarToggleButton(out IAvnCommandBarToggleButton? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnCommandBarToggleButton)ProjectionRuntime.Wrap(new global::Avalonia.Controls.CommandBarToggleButton())!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -980,6 +1058,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         }
     }
 
+    public int CreatePipsPager(out IAvnPipsPager? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnPipsPager)ProjectionRuntime.Wrap(new global::Avalonia.Controls.PipsPager())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int CreatePolygon(out IAvnPolygon? value)
     {
         value = null;
@@ -1332,6 +1425,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         {
             global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
             value = (IAvnTextBox)ProjectionRuntime.Wrap(new global::Avalonia.Controls.TextBox())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateThemeVariantScope(out IAvnThemeVariantScope? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnThemeVariantScope)ProjectionRuntime.Wrap(new global::Avalonia.Controls.ThemeVariantScope())!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

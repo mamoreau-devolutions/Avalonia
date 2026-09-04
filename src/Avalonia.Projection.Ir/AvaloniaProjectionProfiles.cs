@@ -61,8 +61,9 @@ public static class AvaloniaProjectionProfiles
             // ToggleSplitButton, HyperlinkButton, ContextMenu, MenuFlyout), so it republishes
             // at version 6, wave E six more (Spinner is abstract) so 7, and wave F two more
             // (Calendar, CalendarDatePicker) so 8, wave G seven more so 9, and wave H
-            // eight constructible shapes (Shape is abstract) so 10, and wave I five more so 11.
-            ["Avalonia.Host.Com.IAvnControlFactory"] = 11,
+            // eight constructible shapes (Shape is abstract) so 10, wave I five more so 11,
+            // and wave J six more so 12.
+            ["Avalonia.Host.Com.IAvnControlFactory"] = 12,
         },
         IncludeTypeNames =
         [
@@ -172,6 +173,14 @@ public static class AvaloniaProjectionProfiles
             "Avalonia.Controls.Notifications.WindowNotificationManager",
             "Avalonia.Controls.Notifications.NotificationCard",
             "Avalonia.Controls.RefreshContainer",
+            // Wave J. CommandBar family, PipsPager, ThemeVariantScope. Command lists, Icon
+            // and ThemeVariant stay gaps.
+            "Avalonia.Controls.CommandBar",
+            "Avalonia.Controls.CommandBarButton",
+            "Avalonia.Controls.CommandBarToggleButton",
+            "Avalonia.Controls.CommandBarSeparator",
+            "Avalonia.Controls.PipsPager",
+            "Avalonia.Controls.ThemeVariantScope",
             "Avalonia.Controls.TextBox",
             "Avalonia.Controls.ScrollViewer",
             "Avalonia.Controls.Primitives.RangeBase",
@@ -375,6 +384,23 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.Notifications.WindowNotificationManager"] = ["Position", "MaxItems"],
             ["Avalonia.Controls.Notifications.NotificationCard"] = ["IsClosed", "NotificationType"],
             ["Avalonia.Controls.RefreshContainer"] = ["PullDirection", "IsMouseEnabled"],
+            ["Avalonia.Controls.CommandBar"] =
+            [
+                "Content", "DefaultLabelPosition", "IsDynamicOverflowEnabled",
+                "OverflowButtonVisibility", "IsOpen", "IsSticky",
+                "ItemWidthBottom", "ItemWidthRight", "ItemWidthCollapsed",
+            ],
+            ["Avalonia.Controls.CommandBarButton"] =
+                ["Label", "IsCompact", "DynamicOverflowOrder", "LabelPosition", "IsInOverflow"],
+            ["Avalonia.Controls.CommandBarToggleButton"] =
+                ["Label", "IsCompact", "DynamicOverflowOrder", "LabelPosition", "IsInOverflow"],
+            ["Avalonia.Controls.CommandBarSeparator"] = ["IsCompact", "IsInOverflow"],
+            ["Avalonia.Controls.PipsPager"] =
+            [
+                "MaxVisiblePips", "NumberOfPages", "SelectedPageIndex", "Orientation",
+                "IsNextButtonVisible", "IsPreviousButtonVisible",
+            ],
+            ["Avalonia.Controls.ThemeVariantScope"] = [],
             ["Avalonia.Controls.Primitives.TemplatedControl"] =
             [
                 "Background", "BorderBrush", "BorderThickness", "CornerRadius", "FontSize",
@@ -589,6 +615,12 @@ public static class AvaloniaProjectionProfiles
                 IsNullable = true,
             },
             ["Avalonia.Controls.Primitives.Popup.Child"] = new()
+            {
+                Kind = MarshallingKind.ComInterface,
+                InterfaceName = "Avalonia.Host.Com.IAvnControl",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.CommandBar.Content"] = new()
             {
                 Kind = MarshallingKind.ComInterface,
                 InterfaceName = "Avalonia.Host.Com.IAvnControl",

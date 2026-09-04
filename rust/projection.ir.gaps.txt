@@ -104,6 +104,18 @@ Avalonia.Controls.ComboBox.DropDownClosed: Not included by projection policy
 Avalonia.Controls.ComboBox.DropDownOpened: Not included by projection policy
 Avalonia.Controls.ComboBox.UpdateSelectionFromEvent(Control, RoutedEventArgs): Not included by projection policy
 Avalonia.Controls.ComboBox.Clear(): Not included by projection policy
+Avalonia.Controls.CommandBar.VisiblePrimaryCommands: Not included by projection policy
+Avalonia.Controls.CommandBar.OverflowItems: Not included by projection policy
+Avalonia.Controls.CommandBar.PrimaryCommands: Not included by projection policy
+Avalonia.Controls.CommandBar.SecondaryCommands: Not included by projection policy
+Avalonia.Controls.CommandBar.HasSecondaryCommands: Not included by projection policy
+Avalonia.Controls.CommandBar.IsOverflowButtonVisible: Not included by projection policy
+Avalonia.Controls.CommandBar.Opening: Not included by projection policy
+Avalonia.Controls.CommandBar.Opened: Not included by projection policy
+Avalonia.Controls.CommandBar.Closing: Not included by projection policy
+Avalonia.Controls.CommandBar.Closed: Not included by projection policy
+Avalonia.Controls.CommandBarButton.Icon: Not included by projection policy
+Avalonia.Controls.CommandBarToggleButton.Icon: Not included by projection policy
 Avalonia.Controls.ContentControl.ContentTemplate: Not included by projection policy
 Avalonia.Controls.ContentControl.Presenter: Not included by projection policy
 Avalonia.Controls.ContextMenu.PlacementAnchor: Not included by projection policy
@@ -209,6 +221,10 @@ Avalonia.Controls.NumericUpDown.Spinned: Not included by projection policy
 Avalonia.Controls.NumericUpDown.ValueChanged: Not included by projection policy
 Avalonia.Controls.Panel.IsItemsHost: Not included by projection policy
 Avalonia.Controls.Panel.Render(DrawingContext): Not included by projection policy
+Avalonia.Controls.PipsPager.TemplateSettings: Not included by projection policy
+Avalonia.Controls.PipsPager.PreviousButtonTheme: Not included by projection policy
+Avalonia.Controls.PipsPager.NextButtonTheme: Not included by projection policy
+Avalonia.Controls.PipsPager.SelectedIndexChanged: Not included by projection policy
 Avalonia.Controls.Primitives.HeaderedContentControl.HeaderPresenter: Not included by projection policy
 Avalonia.Controls.Primitives.HeaderedContentControl.HeaderTemplate: Not included by projection policy
 Avalonia.Controls.Primitives.HeaderedItemsControl.HeaderTemplate: Not included by projection policy
@@ -364,6 +380,7 @@ Avalonia.Controls.TextBox.ClearSelection(): Not included by projection policy
 Avalonia.Controls.TextBox.GetLineCount(): Not included by projection policy
 Avalonia.Controls.TextBox.ScrollToLine(Int32): Not included by projection policy
 Avalonia.Controls.TextBox.SelectAll(): Not included by projection policy
+Avalonia.Controls.ThemeVariantScope.RequestedThemeVariant: Not included by projection policy
 Avalonia.Controls.TimePicker.VerticalContentAlignment: Not included by projection policy
 Avalonia.Controls.TimePicker.SelectedTimeChanged: Not included by projection policy
 Avalonia.Controls.ToggleSwitch.OffContentPresenter: Not included by projection policy

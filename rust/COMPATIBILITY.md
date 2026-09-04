@@ -154,6 +154,11 @@ Wave I is the same shape. `IAvnPopup`, `IAvnTrayIcon`, `IAvnWindowNotificationMa
 `IAvnControlFactory` moves from 10 to 11. TrayIcon hangs off `IAvnAvaloniaObject`.
 `NativeMenu`, `WindowIcon` and `ICommand` stay gaps.
 
+Wave J is the same shape. `IAvnCommandBar`, `IAvnCommandBarButton`,
+`IAvnCommandBarToggleButton`, `IAvnCommandBarSeparator`, `IAvnPipsPager` and
+`IAvnThemeVariantScope` publish at version 1. `IAvnControlFactory` moves from
+11 to 12. Command lists, Icon and ThemeVariant stay gaps.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A
