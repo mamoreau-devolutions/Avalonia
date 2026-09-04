@@ -277,7 +277,6 @@ Avalonia.Controls.Window.WindowDecorationsTheme: Not included by projection poli
 Avalonia.Controls.Window.SystemDecorations: Not included by projection policy
 Avalonia.Controls.Window.Icon: Not included by projection policy
 Avalonia.Controls.Window.Position: Not included by projection policy
-Avalonia.Controls.Window.Closing: Included event requires an explicit event projection
 Avalonia.Controls.Window.BeginMoveDrag(PointerPressedEventArgs): Not included by projection policy
 Avalonia.Controls.Window.BeginResizeDrag(WindowEdge, PointerPressedEventArgs): Not included by projection policy
 Avalonia.Controls.Window.Close(Object): Parameter 'dialogResult': Type 'System.Object' is not marshallable

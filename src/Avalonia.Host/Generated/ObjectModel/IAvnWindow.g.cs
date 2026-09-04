@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("4E237A63-4083-5704-8B9E-1C6CAFC4172A")]
+[Guid("F5E5AEB8-FB6D-5AF1-AE35-33B41FC6FCF1")]
 public partial interface IAvnWindow : IAvnContentControl
 {
     [PreserveSig]
@@ -111,6 +111,12 @@ public partial interface IAvnWindow : IAvnContentControl
     [PreserveSig]
     int ShowWithWindow(IAvnWindow owner);
 
+    [PreserveSig]
+    int AdviseClosing(IAvnWindowClosingHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadviseClosing(long subscriptionId);
+
 }
 
 [GeneratedComClass]
@@ -128,6 +134,8 @@ public sealed partial class AvnWindow : IAvnWindow
     private long _nextPointerEnteredSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnControlPointerExitedHandler Handler, global::System.Action Unsubscribe)> _pointerExitedSubscriptions = new();
     private long _nextPointerExitedSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnWindowClosingHandler Handler, global::System.Action Unsubscribe)> _closingSubscriptions = new();
+    private long _nextClosingSubscriptionId;
 
     internal AvnWindow(global::Avalonia.Controls.Window value)
     {
@@ -1887,6 +1895,54 @@ public sealed partial class AvnWindow : IAvnWindow
         }
     }
 
+    public int AdviseClosing(IAvnWindowClosingHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<Avalonia.Controls.WindowClosingEventArgs>((_, eventArgs) =>
+            {
+                var cancel = eventArgs.Cancel ? 1 : 0;
+                var hr = handler.Invoke(ref cancel, (int)eventArgs.CloseReason, eventArgs.IsProgrammatic ? 1 : 0);
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+                eventArgs.Cancel = cancel != 0;
+            });
+            eventSource.Closing += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextClosingSubscriptionId);
+            _closingSubscriptions.Add(subscriptionId, (handler, () => eventSource.Closing -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseClosing(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_closingSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     private void ReleaseSubscriptions()
     {
         foreach (var subscription in _loadedSubscriptions.Values)
@@ -1919,5 +1975,11 @@ public sealed partial class AvnWindow : IAvnWindow
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
         }
         _pointerExitedSubscriptions.Clear();
+        foreach (var subscription in _closingSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _closingSubscriptions.Clear();
     }
 }

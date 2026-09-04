@@ -1105,6 +1105,30 @@ impl TryFrom<i32> for TickPlacement {
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum WindowCloseReason {
+    Undefined = 0,
+    WindowClosing = 1,
+    OwnerWindowClosing = 2,
+    ApplicationShutdown = 3,
+    OSShutdown = 4,
+}
+
+impl TryFrom<i32> for WindowCloseReason {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::Undefined),
+            1 => Ok(Self::WindowClosing),
+            2 => Ok(Self::OwnerWindowClosing),
+            3 => Ok(Self::ApplicationShutdown),
+            4 => Ok(Self::OSShutdown),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum WindowClosingBehavior {
     OwnerAndChildWindows = 0,
     OwnerWindowOnly = 1,
@@ -2424,6 +2448,7 @@ impl TryFrom<i32> for CalendarWeekRule {
 
 pub use sys::ControlKeyDownEventArgs;
 pub use sys::PopupFlyoutBaseClosingEventArgs;
+pub use sys::WindowClosingEventArgs;
 
 #[derive(Clone, Debug)]
 pub struct ItemList {
@@ -40344,6 +40369,17 @@ impl Window {
     pub fn close(&self) -> Result<()> { Ok(self.raw.close()?) }
     pub fn hide(&self) -> Result<()> { Ok(self.raw.hide()?) }
     pub fn show_with_window(&self, owner: &Window) -> Result<()> { Ok(self.raw.show_with_window(&owner.raw)?) }
+    pub fn subscribe_closing(&self, callback: impl FnMut(&mut WindowClosingEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::window_closing_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_closing(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_closing(subscription_id)))
+    }
+    pub fn on_closing(self, scope: &crate::AppScope, callback: impl FnMut(&mut WindowClosingEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_closing(callback)?);
+        Ok(self)
+    }
 }
 
 impl AsControl for Window {

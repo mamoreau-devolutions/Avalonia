@@ -415,6 +415,8 @@ typedef struct IAvnViewbox IAvnViewbox;
 typedef struct IAvnViewboxVtbl IAvnViewboxVtbl;
 typedef struct IAvnWindow IAvnWindow;
 typedef struct IAvnWindowVtbl IAvnWindowVtbl;
+typedef struct IAvnWindowClosingHandler IAvnWindowClosingHandler;
+typedef struct IAvnWindowClosingHandlerVtbl IAvnWindowClosingHandlerVtbl;
 typedef struct IAvnWindowNotificationManager IAvnWindowNotificationManager;
 typedef struct IAvnWindowNotificationManagerVtbl IAvnWindowNotificationManagerVtbl;
 typedef struct IAvnWrapPanel IAvnWrapPanel;
@@ -1091,6 +1093,22 @@ struct IAvnTreeViewSelectionChangedHandlerVtbl {
 };
 struct IAvnTreeViewSelectionChangedHandler { const IAvnTreeViewSelectionChangedHandlerVtbl* vtbl; };
 #define I_AVN_TREE_VIEW_SELECTION_CHANGED_HANDLER_VTABLE_SLOTS 4
+
+static const AvnGuid I_AVN_WINDOW_CLOSING_HANDLER_IID = {
+    0x9E4F5540,
+    0x9E58,
+    0x52B6,
+    { 0x9B, 0xEA, 0xF2, 0x1C, 0xF9, 0xA7, 0xAC, 0x48 }
+};
+#define I_AVN_WINDOW_CLOSING_HANDLER_ABI_VERSION 1
+struct IAvnWindowClosingHandlerVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnWindowClosingHandler* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnWindowClosingHandler* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnWindowClosingHandler* self); /* slot 2 */
+    AvnHResult (AVN_CALL *invoke)(IAvnWindowClosingHandler* self, int32_t* cancel, int32_t close_reason, int32_t is_programmatic); /* slot 3 */
+};
+struct IAvnWindowClosingHandler { const IAvnWindowClosingHandlerVtbl* vtbl; };
+#define I_AVN_WINDOW_CLOSING_HANDLER_VTABLE_SLOTS 4
 
 static const AvnGuid I_AVN_BRUSH_IID = {
     0xFC7CCBAE,
@@ -10125,12 +10143,12 @@ struct IAvnViewbox { const IAvnViewboxVtbl* vtbl; };
 #define I_AVN_VIEWBOX_VTABLE_SLOTS 53
 
 static const AvnGuid I_AVN_WINDOW_IID = {
-    0x4E237A63,
-    0x4083,
-    0x5704,
-    { 0x8B, 0x9E, 0x1C, 0x6C, 0xAF, 0xC4, 0x17, 0x2A }
+    0xF5E5AEB8,
+    0xFB6D,
+    0x5AF1,
+    { 0xAE, 0x35, 0x33, 0xB4, 0x1F, 0xC6, 0xFC, 0xF1 }
 };
-#define I_AVN_WINDOW_ABI_VERSION 9
+#define I_AVN_WINDOW_ABI_VERSION 10
 struct IAvnWindowVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnWindow* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnWindow* self); /* slot 1 */
@@ -10243,9 +10261,11 @@ struct IAvnWindowVtbl {
     AvnHResult (AVN_CALL *hide)(IAvnWindow* self); /* slot 108 */
     AvnHResult (AVN_CALL *show)(IAvnWindow* self); /* slot 109 */
     AvnHResult (AVN_CALL *show_with_window)(IAvnWindow* self, IAvnWindow* owner); /* slot 110 */
+    AvnHResult (AVN_CALL *advise_closing)(IAvnWindow* self, IAvnWindowClosingHandler* handler, int64_t* subscription_id); /* slot 111 */
+    AvnHResult (AVN_CALL *unadvise_closing)(IAvnWindow* self, int64_t subscription_id); /* slot 112 */
 };
 struct IAvnWindow { const IAvnWindowVtbl* vtbl; };
-#define I_AVN_WINDOW_VTABLE_SLOTS 111
+#define I_AVN_WINDOW_VTABLE_SLOTS 113
 
 static const AvnGuid I_AVN_WINDOW_NOTIFICATION_MANAGER_IID = {
     0x4F5B9E71,

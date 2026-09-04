@@ -141,7 +141,7 @@ public class ClrTypeExtractorTests
         Assert.Contains(window.Properties, p => p.Name == nameof(Window.WindowDecorationMargin));
         Assert.Contains(window.Properties, p => p.Name == nameof(Window.OffScreenMargin));
         Assert.Contains(window.Properties, p => p.Name == nameof(Window.IsDialog));
-        Assert.DoesNotContain(window.Events, e => e.Name == nameof(Window.Closing));
+        Assert.Contains(window.Events, e => e.Name == nameof(Window.Closing));
         Assert.Contains(window.Methods, m => m.Name == nameof(Window.Show) && m.Parameters.Count == 0);
         Assert.Contains(window.Methods, m => m.Name == nameof(Window.Close) && m.Parameters.Count == 0);
 
@@ -346,9 +346,9 @@ public class ClrTypeExtractorTests
             });
 
         var window = Type(ir, "IAvnWindow");
-        Assert.Equal(9, window.AbiVersion);
+        Assert.Equal(10, window.AbiVersion);
         Assert.Equal(
-            ClrTypeExtractor.CreateDeterministicIid(window.FullName, 9),
+            ClrTypeExtractor.CreateDeterministicIid(window.FullName, 10),
             window.Iid);
         Assert.Equal(7, Type(ir, "IAvnContentControl").AbiVersion);
     }
@@ -1449,7 +1449,7 @@ public class ClrTypeExtractorTests
     {
         var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
         var window = Type(ir, "IAvnWindow");
-        Assert.Equal(9, window.AbiVersion);
+        Assert.Equal(10, window.AbiVersion);
         Assert.Contains(window.Methods, m => m.Name == "Hide");
         Assert.All(
             new[]
@@ -1462,7 +1462,11 @@ public class ClrTypeExtractorTests
             },
             name => Assert.Contains(window.Properties, p => p.Name == name));
         Assert.DoesNotContain(window.Properties, p => p.Name is "Icon" or "Position");
-        Assert.DoesNotContain(window.Events, e => e.Name == "Closing");
+        var closing = window.Events.Single(e => e.Name == "Closing");
+        Assert.Equal(EventPayloadKind.Fields, closing.PayloadKind);
+        Assert.Contains(closing.Parameters, p => p.Name == "Cancel" && p.Direction == ParameterDirection.InOut);
+        Assert.Contains(closing.Parameters, p => p.Name == "CloseReason" && p.Kind == MarshallingKind.I32);
+        Assert.Contains(closing.Parameters, p => p.Name == "IsProgrammatic" && p.Kind == MarshallingKind.Bool);
         Assert.Equal(7, Type(ir, "IAvnContentControl").AbiVersion);
     }
 
@@ -1589,7 +1593,7 @@ public class ClrTypeExtractorTests
         Assert.Contains(selecting.Events, e => e.Name == "SelectionChanged");
         Assert.Contains(selecting.Properties, p => p.Name == "AutoScrollToSelectedItem");
         Assert.Equal(7, Type(ir, "IAvnContentControl").AbiVersion);
-        Assert.Equal(9, Type(ir, "IAvnWindow").AbiVersion);
+        Assert.Equal(10, Type(ir, "IAvnWindow").AbiVersion);
         Assert.Equal(13, ir.FactoryAbiVersion);
     }
 

@@ -40,6 +40,7 @@ fn completeness_members_are_published_on_the_type_that_declares_them() {
         "*set_window_decorations)(IAvnWindow* self, int32_t value)",
         "*set_closing_behavior)(IAvnWindow* self, int32_t value)",
         "*hide)(IAvnWindow* self)",
+        "*advise_closing)(IAvnWindow* self, IAvnWindowClosingHandler* handler, int64_t* subscription_id)",
         "*set_font_family)(IAvnTemplatedControl* self, const uint16_t* value)",
         "*set_font_style)(IAvnTemplatedControl* self, int32_t value)",
         "*set_font_weight)(IAvnTemplatedControl* self, int32_t value)",
@@ -101,7 +102,7 @@ fn widened_interfaces_publish_abi_version_five() {
         "#define I_AVN_COMBO_BOX_ABI_VERSION 9",
         "#define I_AVN_COMBO_BOX_ITEM_ABI_VERSION 7",
         "#define I_AVN_SCROLL_VIEWER_ABI_VERSION 8",
-        "#define I_AVN_WINDOW_ABI_VERSION 9",
+        "#define I_AVN_WINDOW_ABI_VERSION 10",
         "#define I_AVN_TEMPLATED_CONTROL_ABI_VERSION 6",
         "#define I_AVN_TEXT_BLOCK_ABI_VERSION 7",
         "#define I_AVN_TEXT_BOX_ABI_VERSION 10",
@@ -162,6 +163,11 @@ fn widened_interfaces_republish_under_fresh_iids() {
         (
             "IAvnWindow",
             "F01ADFEE-98B3-5F6C-85B3-61121B1F7106",
+            I_AVN_WINDOW_IID,
+        ),
+        (
+            "IAvnWindow",
+            "4E237A63-4083-5704-8B9E-1C6CAFC4172A",
             I_AVN_WINDOW_IID,
         ),
         (
@@ -237,7 +243,7 @@ fn widened_interfaces_republish_under_fresh_iids() {
         ),
         (
             "IAvnWindow",
-            "4E237A63-4083-5704-8B9E-1C6CAFC4172A",
+            "F5E5AEB8-FB6D-5AF1-AE35-33B41FC6FCF1",
             I_AVN_WINDOW_IID,
         ),
     ] {

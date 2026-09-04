@@ -263,6 +263,9 @@ Nullable geometry crosses as `AvnOptional{Kind}` (`has_value` plus the existing
 blittable struct). PlacementRect appends on Popup (4 to 5) and ContextMenu
 (6 to 7). Factory 13. Non-nullable geometry slots stay `AvnRect` by value.
 
+Window.Closing projects as a field payload: Cancel is in/out, CloseReason and
+IsProgrammatic are inbound. `IAvnWindow` 9 to 10. Factory 13.
+
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and
 `IAvnNumericUpDown` each move from 2 to 3. Templates, filters, ItemsSource,

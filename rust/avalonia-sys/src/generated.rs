@@ -2484,6 +2484,65 @@ unsafe extern "system" fn i_avn_tree_view_item_collapsed_handler_invoke(this: *m
     crate::event_callback::invoke::<IAvnTreeViewItemCollapsedHandler, ()>(this, &mut ())
 }
 
+pub const I_AVN_WINDOW_CLOSING_HANDLER_IID: Guid = Guid { data1: 0x9E4F5540, data2: 0x9E58, data3: 0x52B6, data4: [0x9B, 0xEA, 0xF2, 0x1C, 0xF9, 0xA7, 0xAC, 0x48] };
+
+#[derive(Debug)]
+pub struct WindowClosingEventArgs {
+    pub cancel: bool,
+    pub close_reason: i32,
+    pub is_programmatic: bool,
+}
+
+#[repr(C)]
+struct IAvnWindowClosingHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnWindowClosingHandler, cancel: *mut i32, close_reason: i32, is_programmatic: i32) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnWindowClosingHandler { vtbl: *const IAvnWindowClosingHandlerVtbl }
+
+unsafe impl ComInterface for IAvnWindowClosingHandler { const IID: Guid = I_AVN_WINDOW_CLOSING_HANDLER_IID; }
+
+static I_AVN_WINDOW_CLOSING_HANDLER_VTBL: IAvnWindowClosingHandlerVtbl = IAvnWindowClosingHandlerVtbl {
+    query_interface: i_avn_window_closing_handler_query_interface,
+    add_ref: i_avn_window_closing_handler_add_ref,
+    release: i_avn_window_closing_handler_release,
+    invoke: i_avn_window_closing_handler_invoke,
+};
+
+pub fn window_closing_handler(callback: impl FnMut(&mut WindowClosingEventArgs) -> Result<()> + Send + 'static) -> ComPtr<IAvnWindowClosingHandler> {
+    crate::event_callback::create(IAvnWindowClosingHandler { vtbl: &I_AVN_WINDOW_CLOSING_HANDLER_VTBL }, callback)
+}
+
+unsafe extern "system" fn i_avn_window_closing_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnWindowClosingHandler, WindowClosingEventArgs>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_window_closing_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnWindowClosingHandler, WindowClosingEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_window_closing_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnWindowClosingHandler, WindowClosingEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_window_closing_handler_invoke(this: *mut IAvnWindowClosingHandler, cancel: *mut i32, close_reason: i32, is_programmatic: i32) -> i32 {
+    if cancel.is_null() { return hresult::E_POINTER; }
+    let mut arguments = WindowClosingEventArgs {
+        cancel: *cancel != 0,
+        close_reason,
+        is_programmatic: is_programmatic != 0,
+    };
+    let hr = crate::event_callback::invoke::<IAvnWindowClosingHandler, WindowClosingEventArgs>(this, &mut arguments);
+    if hr >= 0 {
+        *cancel = i32::from(arguments.cancel);
+    }
+    hr
+}
+
 pub const I_AVN_ITEM_LIST_IID: Guid = Guid { data1: 0x59A429A7, data2: 0xCF8A, data3: 0x5EB0, data4: [0xB6, 0x15, 0x91, 0x2A, 0x3D, 0xEF, 0x07, 0x04] };
 
 #[repr(C)]
@@ -64468,7 +64527,7 @@ impl ComPtr<IAvnViewbox> {
     }
 }
 
-pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0x4E237A63, data2: 0x4083, data3: 0x5704, data4: [0x8B, 0x9E, 0x1C, 0x6C, 0xAF, 0xC4, 0x17, 0x2A] };
+pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0xF5E5AEB8, data2: 0xFB6D, data3: 0x5AF1, data4: [0xAE, 0x35, 0x33, 0xB4, 0x1F, 0xC6, 0xFC, 0xF1] };
 
 #[repr(C)]
 struct IAvnWindowVtbl {
@@ -64583,6 +64642,8 @@ struct IAvnWindowVtbl {
     hide: unsafe extern "system" fn(*mut IAvnWindow) -> i32,
     show: unsafe extern "system" fn(*mut IAvnWindow) -> i32,
     show_with_window: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnWindow) -> i32,
+    advise_closing: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnWindowClosingHandler, *mut i64) -> i32,
+    unadvise_closing: unsafe extern "system" fn(*mut IAvnWindow, i64) -> i32,
 }
 
 #[repr(C)]
@@ -65345,6 +65406,19 @@ impl ComPtr<IAvnWindow> {
     pub fn show_with_window(&self, owner: &ComPtr<IAvnWindow>) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().show_with_window)(self.as_raw(), owner.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_closing(&self, handler: &ComPtr<IAvnWindowClosingHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_closing)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_closing(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_closing)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }

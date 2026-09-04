@@ -53,7 +53,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnListBoxItem"] = 7,
             ["Avalonia.Host.Com.IAvnComboBoxItem"] = 7,
             ["Avalonia.Host.Com.IAvnScrollViewer"] = 8,
-            ["Avalonia.Host.Com.IAvnWindow"] = 9,
+            ["Avalonia.Host.Com.IAvnWindow"] = 10,
             ["Avalonia.Host.Com.IAvnGrid"] = 6,
             // Previously version-1 templated types inherit the TemplatedControl bump.
             ["Avalonia.Host.Com.IAvnAutoCompleteBox"] = 4,
@@ -1055,6 +1055,16 @@ public static class AvaloniaProjectionProfiles
             {
                 PayloadKind = EventPayloadKind.Fields,
                 Parameters = [new() { Name = "Cancel", Direction = ParameterDirection.InOut }],
+            },
+            ["Avalonia.Controls.Window.Closing"] = new()
+            {
+                PayloadKind = EventPayloadKind.Fields,
+                Parameters =
+                [
+                    new() { Name = "Cancel", Direction = ParameterDirection.InOut },
+                    new() { Name = "CloseReason" },
+                    new() { Name = "IsProgrammatic" },
+                ],
             },
             ["Avalonia.Controls.Primitives.Popup.Opened"] = new()
             {
