@@ -9,6 +9,7 @@ fn overlay_controls_publish_at_version_one() {
         "*set_is_open)(IAvnPopup* self, int32_t value)",
         "*set_placement_target)(IAvnPopup* self, IAvnControl* value)",
         "*set_placement_anchor)(IAvnPopup* self, int32_t value)",
+        "*set_placement_rect)(IAvnPopup* self, AvnOptionalRect value)",
         "*open)(IAvnPopup* self)",
         "*close)(IAvnPopup* self)",
         "*set_tool_tip_text)(IAvnTrayIcon* self, const uint16_t* value)",
@@ -16,7 +17,7 @@ fn overlay_controls_publish_at_version_one() {
         "*set_pull_direction)(IAvnRefreshContainer* self, int32_t value)",
         "*create_popup)(IAvnControlFactory* self, IAvnPopup** value)",
         "*create_tray_icon)(IAvnControlFactory* self, IAvnTrayIcon** value)",
-        "#define I_AVN_POPUP_ABI_VERSION 4",
+        "#define I_AVN_POPUP_ABI_VERSION 5",
         "#define I_AVN_TRAY_ICON_ABI_VERSION 1",
         "#define I_AVN_CONTROL_FACTORY_ABI_VERSION 13",
     ] {

@@ -325,23 +325,35 @@ fn emit_type(
         let safe_type = if is_enum {
             enum_name.to_string()
         } else if let Some(geometry) = geometry::find(&property.kind) {
-            geometry.safe_name.to_string()
+            if property.is_nullable {
+                format!("Option<{}>", geometry.safe_name)
+            } else {
+                geometry.safe_name.to_string()
+            }
         } else {
             rust_scalar_kind(&property.kind).to_string()
         };
         let raw_get = if is_enum {
             format!("{enum_name}::try_from(value)")
-        } else if geometry::is_geometry(&property.kind) {
-            "Ok(value.into())".to_string()
+        } else if let Some(geometry) = geometry::find(&property.kind) {
+            if property.is_nullable {
+                format!("Ok({}::from_optional_abi(value))", geometry.safe_name)
+            } else {
+                "Ok(value.into())".to_string()
+            }
         } else {
             "Ok(value)".to_string()
         };
         let raw_set = if is_enum {
-            "value as i32"
-        } else if geometry::is_geometry(&property.kind) {
-            "value.into()"
+            "value as i32".to_string()
+        } else if let Some(geometry) = geometry::find(&property.kind) {
+            if property.is_nullable {
+                format!("{}::to_optional_abi(value)", geometry.safe_name)
+            } else {
+                "value.into()".to_string()
+            }
         } else {
-            "value"
+            "value".to_string()
         };
         format!(
             "    pub fn get_{name}(target: &impl AsControl) -> Result<{safe_type}> {{\n\
@@ -437,11 +449,19 @@ fn emit_property(
             }
             kind if geometry::is_geometry(kind) => {
                 let safe_type = geometry::find(kind).unwrap().safe_name;
-                out.push_str(&format!(
-                    "    pub fn {getter}(&self) -> Result<{safe_type}> {{\n\
-                     \x20       Ok(self.raw.get_{snake}()?.into())\n\
-                     \x20   }}\n"
-                ));
+                if property.is_nullable {
+                    out.push_str(&format!(
+                        "    pub fn {getter}(&self) -> Result<Option<{safe_type}>> {{\n\
+                         \x20       Ok({safe_type}::from_optional_abi(self.raw.get_{snake}()?))\n\
+                         \x20   }}\n"
+                    ));
+                } else {
+                    out.push_str(&format!(
+                        "    pub fn {getter}(&self) -> Result<{safe_type}> {{\n\
+                         \x20       Ok(self.raw.get_{snake}()?.into())\n\
+                         \x20   }}\n"
+                    ));
+                }
             }
             _ => out.push_str(&format!(
                 "    pub fn {getter}(&self) -> Result<{}> {{ Ok(self.raw.get_{snake}()?) }}\n",
@@ -635,6 +655,13 @@ fn safe_property_input(
     flags_enums: &std::collections::HashSet<&str>,
 ) -> (String, String, String) {
     if let Some(geometry) = geometry::find(&property.kind) {
+        if property.is_nullable {
+            return (
+                format!("Option<{}>", geometry.safe_name),
+                String::new(),
+                format!("{}::to_optional_abi(value)", geometry.safe_name),
+            );
+        }
         return (
             geometry.safe_name.into(),
             String::new(),
@@ -701,7 +728,11 @@ fn safe_scalar_type(
     flags_enums: &std::collections::HashSet<&str>,
 ) -> String {
     if let Some(geometry) = geometry::find(&property.kind) {
-        geometry.safe_name.into()
+        if property.is_nullable {
+            format!("Option<{}>", geometry.safe_name)
+        } else {
+            geometry.safe_name.into()
+        }
     } else if property.kind == "I32" && is_enum_property(property, flags_enums) {
         simple_name(property.managed_type_name.as_deref().unwrap()).into()
     } else {

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("E500A22B-B91E-56BB-9C91-F2481DA72727")]
+[Guid("20F9B7E4-9C5A-5ABA-AAD9-40F23ACE1D6E")]
 public partial interface IAvnPopup : IAvnControl
 {
     [PreserveSig]
@@ -62,6 +62,12 @@ public partial interface IAvnPopup : IAvnControl
 
     [PreserveSig]
     int SetPlacement(int value);
+
+    [PreserveSig]
+    int GetPlacementRect(out AvnOptionalRect value);
+
+    [PreserveSig]
+    int SetPlacementRect(AvnOptionalRect value);
 
     [PreserveSig]
     int GetPlacementTarget(out IAvnControl? value);
@@ -1188,6 +1194,37 @@ public sealed partial class AvnPopup : IAvnPopup
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Placement = (global::Avalonia.Controls.PlacementMode)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetPlacementRect(out AvnOptionalRect value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnOptionalRect.FromAvalonia(_value.PlacementRect);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetPlacementRect(AvnOptionalRect value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.PlacementRect = value.ToAvalonia();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

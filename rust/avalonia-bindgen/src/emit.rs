@@ -73,7 +73,11 @@ fn emit_collection(collection: &ProjectedProperty) -> String {
         .element_interface_name
         .as_deref()
         .map(simple_name);
-    let abi_type = rust_abi_type(element_kind, collection.element_interface_name.as_deref());
+    let abi_type = rust_abi_type(
+        element_kind,
+        collection.element_interface_name.as_deref(),
+        false,
+    );
     let iid = collection
         .interface_iid
         .as_deref()
@@ -397,7 +401,11 @@ fn emit_field_event_handler(event: &ProjectedEvent) -> String {
         .parameters
         .iter()
         .map(|parameter| {
-            let abi = rust_abi_type(&parameter.kind, parameter.interface_name.as_deref());
+            let abi = rust_abi_type(
+                &parameter.kind,
+                parameter.interface_name.as_deref(),
+                parameter.is_nullable,
+            );
             if parameter.direction == "InOut" {
                 format!(", {}: *mut {abi}", to_snake(&parameter.name))
             } else {
@@ -644,7 +652,7 @@ fn emit_attached_statics(properties: &[&ProjectedAttachedProperty]) -> String {
     emit_iunknown_slots(&mut out);
     for property in properties {
         let snake = to_snake(&property.name);
-        let abi_type = rust_abi_type(&property.kind, None);
+        let abi_type = rust_abi_type(&property.kind, None, property.is_nullable);
         out.push_str(&format!(
             "    get_{snake}: unsafe extern \"system\" fn(*mut {name}, *mut IAvnControl, *mut {abi_type}) -> i32,\n\
              \x20   set_{snake}: unsafe extern \"system\" fn(*mut {name}, *mut IAvnControl, {abi_type}) -> i32,\n"
@@ -657,7 +665,7 @@ fn emit_attached_statics(properties: &[&ProjectedAttachedProperty]) -> String {
     ));
     for property in properties {
         let snake = to_snake(&property.name);
-        let abi_type = rust_abi_type(&property.kind, None);
+        let abi_type = rust_abi_type(&property.kind, None, property.is_nullable);
         let result = match property.kind.as_str() {
             "Bool" => "value != 0",
             _ => "value",
@@ -672,12 +680,12 @@ fn emit_attached_statics(properties: &[&ProjectedAttachedProperty]) -> String {
         // kind is a scalar that crosses by value.
         let get_type = match property.kind.as_str() {
             "Bool" => "bool".to_string(),
-            _ => rust_abi_type(&property.kind, None),
+            _ => rust_abi_type(&property.kind, None, property.is_nullable),
         };
         let set_type = match property.kind.as_str() {
             "Bool" => "bool".to_string(),
             "StringUtf16" => "&[u16]".to_string(),
-            _ => rust_abi_type(&property.kind, None),
+            _ => rust_abi_type(&property.kind, None, property.is_nullable),
         };
         out.push_str(&format!(
             "    pub fn get_{snake}(&self, target: &ComPtr<IAvnControl>) -> Result<{get_type}> {{\n\
@@ -734,7 +742,11 @@ fn emit_property_slots(out: &mut String, ty: &ProjectedType, property: &Projecte
             "    get_{}: unsafe extern \"system\" fn(*mut {}, *mut {}) -> i32,\n",
             to_snake(&property.name),
             ty.name,
-            rust_abi_type(&property.kind, property.interface_name.as_deref())
+            rust_abi_type(
+                &property.kind,
+                property.interface_name.as_deref(),
+                property.is_nullable
+            )
         ));
     }
     if property.can_write {
@@ -742,7 +754,11 @@ fn emit_property_slots(out: &mut String, ty: &ProjectedType, property: &Projecte
             "    set_{}: unsafe extern \"system\" fn(*mut {}, {}) -> i32,\n",
             to_snake(&property.name),
             ty.name,
-            rust_abi_type(&property.kind, property.interface_name.as_deref())
+            rust_abi_type(
+                &property.kind,
+                property.interface_name.as_deref(),
+                property.is_nullable
+            )
         ));
     }
 }
@@ -751,7 +767,11 @@ fn emit_property(ty: &ProjectedType, property: &ProjectedProperty) -> String {
     let mut out = String::new();
     let snake = to_snake(&property.name);
     if property.can_read {
-        let abi_type = rust_abi_type(&property.kind, property.interface_name.as_deref());
+        let abi_type = rust_abi_type(
+            &property.kind,
+            property.interface_name.as_deref(),
+            property.is_nullable,
+        );
         out.push_str(&format!(
             "    pub fn get_{snake}(&self) -> Result<{}> {{\n        unsafe {{\n            let mut value: {abi_type} = {};\n            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_{snake})(self.as_raw(), &mut value);\n            hresult::check(hr)?;\n            {}\n        }}\n    }}\n",
             rust_property_type(property),
@@ -787,7 +807,11 @@ fn emit_method(_ty: &ProjectedType, method: &ProjectedMethod) -> String {
         body.push_str(&format!(
             "            let mut {}: {} = {};\n",
             to_snake(&parameter.name),
-            rust_abi_type(&parameter.kind, parameter.interface_name.as_deref()),
+            rust_abi_type(
+                &parameter.kind,
+                parameter.interface_name.as_deref(),
+                parameter.is_nullable
+            ),
             rust_abi_default(&parameter.kind)
         ));
     }
@@ -828,7 +852,7 @@ fn emit_method(_ty: &ProjectedType, method: &ProjectedMethod) -> String {
 fn vtbl_method_args(ty: &ProjectedType, method: &ProjectedMethod) -> String {
     let mut args = vec![format!("*mut {}", ty.name)];
     args.extend(method.parameters.iter().map(|p| {
-        let abi = rust_abi_type(&p.kind, p.interface_name.as_deref());
+        let abi = rust_abi_type(&p.kind, p.interface_name.as_deref(), p.is_nullable);
         if p.direction == "Out" {
             format!("*mut {abi}")
         } else {
@@ -879,9 +903,13 @@ fn event_handler_function(event: &ProjectedEvent) -> String {
     format!("{}_handler", to_snake(name))
 }
 
-fn rust_abi_type(kind: &str, interface_name: Option<&str>) -> String {
+fn rust_abi_type(kind: &str, interface_name: Option<&str>, is_nullable: bool) -> String {
     if let Some(geometry) = geometry::find(kind) {
-        return geometry.abi_name.into();
+        return if is_nullable {
+            geometry.optional_abi_name()
+        } else {
+            geometry.abi_name.into()
+        };
     }
     match kind {
         "CharUtf16" => "u16".into(),
@@ -913,7 +941,11 @@ fn rust_abi_default(kind: &str) -> &'static str {
 
 fn rust_property_type(property: &ProjectedProperty) -> String {
     if let Some(geometry) = geometry::find(&property.kind) {
-        return geometry.abi_name.into();
+        return if property.is_nullable {
+            geometry.optional_abi_name()
+        } else {
+            geometry.abi_name.into()
+        };
     }
     match property.kind.as_str() {
         "CharUtf16" => "u16".into(),
@@ -1009,7 +1041,11 @@ fn rust_parameter_input_type(parameter: &ProjectedParameter) -> String {
             "&ComPtr<{}>",
             simple_name(parameter.interface_name.as_deref().expect("interfaceName"))
         ),
-        _ => rust_abi_type(&parameter.kind, parameter.interface_name.as_deref()),
+        _ => rust_abi_type(
+            &parameter.kind,
+            parameter.interface_name.as_deref(),
+            parameter.is_nullable,
+        ),
     }
 }
 
@@ -1036,12 +1072,16 @@ fn rust_parameter_call_value(parameter: &ProjectedParameter) -> String {
 fn rust_method_result_type(parameters: &[&ProjectedParameter]) -> String {
     match parameters.len() {
         0 => "()".into(),
-        1 => rust_abi_type(&parameters[0].kind, parameters[0].interface_name.as_deref()),
+        1 => rust_abi_type(
+            &parameters[0].kind,
+            parameters[0].interface_name.as_deref(),
+            parameters[0].is_nullable,
+        ),
         _ => format!(
             "({})",
             parameters
                 .iter()
-                .map(|p| rust_abi_type(&p.kind, p.interface_name.as_deref()))
+                .map(|p| rust_abi_type(&p.kind, p.interface_name.as_deref(), p.is_nullable))
                 .collect::<Vec<_>>()
                 .join(", ")
         ),

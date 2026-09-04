@@ -84,7 +84,6 @@ Avalonia.Controls.CommandBarButton.Icon: Not included by projection policy
 Avalonia.Controls.CommandBarToggleButton.Icon: Not included by projection policy
 Avalonia.Controls.ContentControl.ContentTemplate: Not included by projection policy
 Avalonia.Controls.ContentControl.Presenter: Not included by projection policy
-Avalonia.Controls.ContextMenu.PlacementRect: Not included by projection policy
 Avalonia.Controls.ContextMenu.CustomPopupPlacementCallback: Not included by projection policy
 Avalonia.Controls.ContextMenu.Opening: Not included by projection policy
 Avalonia.Controls.ContextMenu.Closing: Not included by projection policy
@@ -170,7 +169,6 @@ Avalonia.Controls.Primitives.HeaderedSelectingItemsControl.HeaderTemplate: Not i
 Avalonia.Controls.Primitives.HeaderedSelectingItemsControl.HeaderPresenter: Not included by projection policy
 Avalonia.Controls.Primitives.Popup.OpenedPopups: Not included by projection policy
 Avalonia.Controls.Primitives.Popup.DependencyResolver: Not included by projection policy
-Avalonia.Controls.Primitives.Popup.PlacementRect: Not included by projection policy
 Avalonia.Controls.Primitives.Popup.CustomPopupPlacementCallback: Not included by projection policy
 Avalonia.Controls.Primitives.Popup.OverlayInputPassThroughElement: Not included by projection policy
 Avalonia.Controls.Primitives.Popup.IsInsidePopup(Visual): Not included by projection policy

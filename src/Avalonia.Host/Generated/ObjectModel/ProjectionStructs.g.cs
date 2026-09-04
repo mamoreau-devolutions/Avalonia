@@ -27,6 +27,22 @@ public struct AvnThickness
         new global::Avalonia.Thickness(Left, Top, Right, Bottom);
 }
 
+/// <summary>Nullable ABI wrapper of <see cref="AvnThickness"/>.</summary>
+[StructLayout(LayoutKind.Sequential)]
+public struct AvnOptionalThickness
+{
+    public int HasValue;
+    public AvnThickness Value;
+
+    public static AvnOptionalThickness FromAvalonia(global::Avalonia.Thickness? value) =>
+        value is { } inner
+            ? new AvnOptionalThickness { HasValue = 1, Value = AvnThickness.FromAvalonia(inner) }
+            : default;
+
+    public readonly global::Avalonia.Thickness? ToAvalonia() =>
+        HasValue != 0 ? Value.ToAvalonia() : null;
+}
+
 /// <summary>Blittable ABI mirror of <c>Avalonia.CornerRadius</c>.</summary>
 [StructLayout(LayoutKind.Sequential)]
 public struct AvnCornerRadius
@@ -49,6 +65,22 @@ public struct AvnCornerRadius
         new global::Avalonia.CornerRadius(TopLeft, TopRight, BottomRight, BottomLeft);
 }
 
+/// <summary>Nullable ABI wrapper of <see cref="AvnCornerRadius"/>.</summary>
+[StructLayout(LayoutKind.Sequential)]
+public struct AvnOptionalCornerRadius
+{
+    public int HasValue;
+    public AvnCornerRadius Value;
+
+    public static AvnOptionalCornerRadius FromAvalonia(global::Avalonia.CornerRadius? value) =>
+        value is { } inner
+            ? new AvnOptionalCornerRadius { HasValue = 1, Value = AvnCornerRadius.FromAvalonia(inner) }
+            : default;
+
+    public readonly global::Avalonia.CornerRadius? ToAvalonia() =>
+        HasValue != 0 ? Value.ToAvalonia() : null;
+}
+
 /// <summary>Blittable ABI mirror of <c>Avalonia.Size</c>.</summary>
 [StructLayout(LayoutKind.Sequential)]
 public struct AvnSize
@@ -67,6 +99,22 @@ public struct AvnSize
         new global::Avalonia.Size(Width, Height);
 }
 
+/// <summary>Nullable ABI wrapper of <see cref="AvnSize"/>.</summary>
+[StructLayout(LayoutKind.Sequential)]
+public struct AvnOptionalSize
+{
+    public int HasValue;
+    public AvnSize Value;
+
+    public static AvnOptionalSize FromAvalonia(global::Avalonia.Size? value) =>
+        value is { } inner
+            ? new AvnOptionalSize { HasValue = 1, Value = AvnSize.FromAvalonia(inner) }
+            : default;
+
+    public readonly global::Avalonia.Size? ToAvalonia() =>
+        HasValue != 0 ? Value.ToAvalonia() : null;
+}
+
 /// <summary>Blittable ABI mirror of <c>Avalonia.Point</c>.</summary>
 [StructLayout(LayoutKind.Sequential)]
 public struct AvnPoint
@@ -83,6 +131,22 @@ public struct AvnPoint
 
     public readonly global::Avalonia.Point ToAvalonia() =>
         new global::Avalonia.Point(X, Y);
+}
+
+/// <summary>Nullable ABI wrapper of <see cref="AvnPoint"/>.</summary>
+[StructLayout(LayoutKind.Sequential)]
+public struct AvnOptionalPoint
+{
+    public int HasValue;
+    public AvnPoint Value;
+
+    public static AvnOptionalPoint FromAvalonia(global::Avalonia.Point? value) =>
+        value is { } inner
+            ? new AvnOptionalPoint { HasValue = 1, Value = AvnPoint.FromAvalonia(inner) }
+            : default;
+
+    public readonly global::Avalonia.Point? ToAvalonia() =>
+        HasValue != 0 ? Value.ToAvalonia() : null;
 }
 
 /// <summary>Blittable ABI mirror of <c>Avalonia.Rect</c>.</summary>
@@ -107,6 +171,22 @@ public struct AvnRect
         new global::Avalonia.Rect(X, Y, Width, Height);
 }
 
+/// <summary>Nullable ABI wrapper of <see cref="AvnRect"/>.</summary>
+[StructLayout(LayoutKind.Sequential)]
+public struct AvnOptionalRect
+{
+    public int HasValue;
+    public AvnRect Value;
+
+    public static AvnOptionalRect FromAvalonia(global::Avalonia.Rect? value) =>
+        value is { } inner
+            ? new AvnOptionalRect { HasValue = 1, Value = AvnRect.FromAvalonia(inner) }
+            : default;
+
+    public readonly global::Avalonia.Rect? ToAvalonia() =>
+        HasValue != 0 ? Value.ToAvalonia() : null;
+}
+
 /// <summary>Blittable ABI mirror of <c>Avalonia.Media.Color</c>.</summary>
 [StructLayout(LayoutKind.Sequential)]
 public struct AvnColor
@@ -118,6 +198,22 @@ public struct AvnColor
 
     public readonly global::Avalonia.Media.Color ToAvalonia() =>
         global::Avalonia.Media.Color.FromUInt32(Argb);
+}
+
+/// <summary>Nullable ABI wrapper of <see cref="AvnColor"/>.</summary>
+[StructLayout(LayoutKind.Sequential)]
+public struct AvnOptionalColor
+{
+    public int HasValue;
+    public AvnColor Value;
+
+    public static AvnOptionalColor FromAvalonia(global::Avalonia.Media.Color? value) =>
+        value is { } inner
+            ? new AvnOptionalColor { HasValue = 1, Value = AvnColor.FromAvalonia(inner) }
+            : default;
+
+    public readonly global::Avalonia.Media.Color? ToAvalonia() =>
+        HasValue != 0 ? Value.ToAvalonia() : null;
 }
 
 /// <summary>Blittable ABI mirror of <c>Avalonia.Vector</c>.</summary>
@@ -136,4 +232,20 @@ public struct AvnVector
 
     public readonly global::Avalonia.Vector ToAvalonia() =>
         new global::Avalonia.Vector(X, Y);
+}
+
+/// <summary>Nullable ABI wrapper of <see cref="AvnVector"/>.</summary>
+[StructLayout(LayoutKind.Sequential)]
+public struct AvnOptionalVector
+{
+    public int HasValue;
+    public AvnVector Value;
+
+    public static AvnOptionalVector FromAvalonia(global::Avalonia.Vector? value) =>
+        value is { } inner
+            ? new AvnOptionalVector { HasValue = 1, Value = AvnVector.FromAvalonia(inner) }
+            : default;
+
+    public readonly global::Avalonia.Vector? ToAvalonia() =>
+        HasValue != 0 ? Value.ToAvalonia() : null;
 }

@@ -17,6 +17,14 @@ pub struct AvnThickness {
     pub bottom: f64,
 }
 
+/// Nullable ABI wrapper of `AvnThickness`.
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct AvnOptionalThickness {
+    pub has_value: i32,
+    pub value: AvnThickness,
+}
+
 /// Blittable ABI mirror of `Avalonia.CornerRadius`.
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
@@ -27,6 +35,14 @@ pub struct AvnCornerRadius {
     pub bottom_left: f64,
 }
 
+/// Nullable ABI wrapper of `AvnCornerRadius`.
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct AvnOptionalCornerRadius {
+    pub has_value: i32,
+    pub value: AvnCornerRadius,
+}
+
 /// Blittable ABI mirror of `Avalonia.Size`.
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
@@ -35,12 +51,28 @@ pub struct AvnSize {
     pub height: f64,
 }
 
+/// Nullable ABI wrapper of `AvnSize`.
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct AvnOptionalSize {
+    pub has_value: i32,
+    pub value: AvnSize,
+}
+
 /// Blittable ABI mirror of `Avalonia.Point`.
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub struct AvnPoint {
     pub x: f64,
     pub y: f64,
+}
+
+/// Nullable ABI wrapper of `AvnPoint`.
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct AvnOptionalPoint {
+    pub has_value: i32,
+    pub value: AvnPoint,
 }
 
 /// Blittable ABI mirror of `Avalonia.Rect`.
@@ -53,11 +85,27 @@ pub struct AvnRect {
     pub height: f64,
 }
 
+/// Nullable ABI wrapper of `AvnRect`.
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct AvnOptionalRect {
+    pub has_value: i32,
+    pub value: AvnRect,
+}
+
 /// Blittable ABI mirror of `Avalonia.Media.Color`.
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub struct AvnColor {
     pub argb: u32,
+}
+
+/// Nullable ABI wrapper of `AvnColor`.
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct AvnOptionalColor {
+    pub has_value: i32,
+    pub value: AvnColor,
 }
 
 /// Blittable ABI mirror of `Avalonia.Vector`.
@@ -66,6 +114,14 @@ pub struct AvnColor {
 pub struct AvnVector {
     pub x: f64,
     pub y: f64,
+}
+
+/// Nullable ABI wrapper of `AvnVector`.
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct AvnOptionalVector {
+    pub has_value: i32,
+    pub value: AvnVector,
 }
 
 /// A brush projected as a solid colour: a packed `AvnColor` plus an opacity.
@@ -13752,7 +13808,7 @@ impl ComPtr<IAvnContentControl> {
     }
 }
 
-pub const I_AVN_CONTEXT_MENU_IID: Guid = Guid { data1: 0x519F1FAC, data2: 0x5B53, data3: 0x56BD, data4: [0xAC, 0x3F, 0x02, 0x25, 0x0C, 0x15, 0x84, 0x3B] };
+pub const I_AVN_CONTEXT_MENU_IID: Guid = Guid { data1: 0x0B266866, data2: 0xBC3D, data3: 0x59F3, data4: [0xB1, 0x95, 0xFF, 0xAD, 0xB8, 0xAE, 0xED, 0x40] };
 
 #[repr(C)]
 struct IAvnContextMenuVtbl {
@@ -13861,6 +13917,8 @@ struct IAvnContextMenuVtbl {
     set_placement: unsafe extern "system" fn(*mut IAvnContextMenu, i32) -> i32,
     get_window_manager_add_shadow_hint: unsafe extern "system" fn(*mut IAvnContextMenu, *mut i32) -> i32,
     set_window_manager_add_shadow_hint: unsafe extern "system" fn(*mut IAvnContextMenu, i32) -> i32,
+    get_placement_rect: unsafe extern "system" fn(*mut IAvnContextMenu, *mut AvnOptionalRect) -> i32,
+    set_placement_rect: unsafe extern "system" fn(*mut IAvnContextMenu, AvnOptionalRect) -> i32,
     get_placement_target: unsafe extern "system" fn(*mut IAvnContextMenu, *mut *mut IAvnControl) -> i32,
     set_placement_target: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnControl) -> i32,
 }
@@ -14580,6 +14638,20 @@ impl ComPtr<IAvnContextMenu> {
     pub fn set_window_manager_add_shadow_hint(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_window_manager_add_shadow_hint)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_placement_rect(&self) -> Result<AvnOptionalRect> {
+        unsafe {
+            let mut value: AvnOptionalRect = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_placement_rect)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_placement_rect(&self, value: AvnOptionalRect) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placement_rect)(self.as_raw(), value);
             hresult::check(hr)
         }
     }
@@ -34835,7 +34907,7 @@ impl ComPtr<IAvnHeaderedSelectingItemsControl> {
     }
 }
 
-pub const I_AVN_POPUP_IID: Guid = Guid { data1: 0xE500A22B, data2: 0xB91E, data3: 0x56BB, data4: [0x9C, 0x91, 0xF2, 0x48, 0x1D, 0xA7, 0x27, 0x27] };
+pub const I_AVN_POPUP_IID: Guid = Guid { data1: 0x20F9B7E4, data2: 0x9C5A, data3: 0x5ABA, data4: [0xAA, 0xD9, 0x40, 0xF2, 0x3A, 0xCE, 0x1D, 0x6E] };
 
 #[repr(C)]
 struct IAvnPopupVtbl {
@@ -34904,6 +34976,8 @@ struct IAvnPopupVtbl {
     set_placement_gravity: unsafe extern "system" fn(*mut IAvnPopup, i32) -> i32,
     get_placement: unsafe extern "system" fn(*mut IAvnPopup, *mut i32) -> i32,
     set_placement: unsafe extern "system" fn(*mut IAvnPopup, i32) -> i32,
+    get_placement_rect: unsafe extern "system" fn(*mut IAvnPopup, *mut AvnOptionalRect) -> i32,
+    set_placement_rect: unsafe extern "system" fn(*mut IAvnPopup, AvnOptionalRect) -> i32,
     get_placement_target: unsafe extern "system" fn(*mut IAvnPopup, *mut *mut IAvnControl) -> i32,
     set_placement_target: unsafe extern "system" fn(*mut IAvnPopup, *mut IAvnControl) -> i32,
     get_overlay_dismiss_event_pass_through: unsafe extern "system" fn(*mut IAvnPopup, *mut i32) -> i32,
@@ -35366,6 +35440,20 @@ impl ComPtr<IAvnPopup> {
     pub fn set_placement(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placement)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_placement_rect(&self) -> Result<AvnOptionalRect> {
+        unsafe {
+            let mut value: AvnOptionalRect = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_placement_rect)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_placement_rect(&self, value: AvnOptionalRect) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placement_rect)(self.as_raw(), value);
             hresult::check(hr)
         }
     }

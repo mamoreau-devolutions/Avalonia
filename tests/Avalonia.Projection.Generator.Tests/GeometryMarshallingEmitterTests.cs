@@ -68,6 +68,8 @@ public class GeometryMarshallingEmitterTests
         Assert.Contains("public struct AvnRect", structs, StringComparison.Ordinal);
         Assert.Contains("public struct AvnColor", structs, StringComparison.Ordinal);
         Assert.Contains("public struct AvnVector", structs, StringComparison.Ordinal);
+        Assert.Contains("public struct AvnOptionalRect", structs, StringComparison.Ordinal);
+        Assert.Contains("public struct AvnOptionalThickness", structs, StringComparison.Ordinal);
         Assert.Contains("public uint Argb;", structs, StringComparison.Ordinal);
         Assert.Contains(
             "new AvnColor { Argb = value.ToUInt32() };",
@@ -122,6 +124,10 @@ public class GeometryMarshallingEmitterTests
             header.ReplaceLineEndings("\n"),
             StringComparison.Ordinal);
         Assert.Contains(
+            "typedef struct AvnOptionalRect {\n    int32_t has_value;\n    AvnRect value;\n} AvnOptionalRect;",
+            header.ReplaceLineEndings("\n"),
+            StringComparison.Ordinal);
+        Assert.Contains(
             "typedef struct AvnColor {\n    uint32_t argb;\n} AvnColor;",
             header.ReplaceLineEndings("\n"),
             StringComparison.Ordinal);
@@ -140,6 +146,7 @@ public class GeometryMarshallingEmitterTests
         foreach (var name in new[]
                  {
                      "AvnThickness", "AvnCornerRadius", "AvnSize", "AvnPoint", "AvnRect", "AvnColor",
+                     "AvnOptionalRect", "AvnOptionalThickness",
                  })
         {
             Assert.Contains($"typedef struct {name} {{", header, StringComparison.Ordinal);
@@ -162,7 +169,7 @@ public class GeometryMarshallingEmitterTests
 
         // Widening IAvnControl republishes it at version 3; IAvnAvaloniaObject projects no
         // members, so its vtable and version are untouched.
-        Assert.Contains("#define I_AVN_CONTROL_ABI_VERSION 3", header, StringComparison.Ordinal);
+        Assert.Contains("#define I_AVN_CONTROL_ABI_VERSION 4", header, StringComparison.Ordinal);
         Assert.Contains(
             "#define I_AVN_AVALONIA_OBJECT_ABI_VERSION 2",
             header,

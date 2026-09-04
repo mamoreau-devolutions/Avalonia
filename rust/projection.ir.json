@@ -1203,8 +1203,8 @@
       "name": "IAvnContextMenu",
       "fullName": "Avalonia.Host.Com.IAvnContextMenu",
       "kind": "Class",
-      "iid": "519F1FAC-5B53-56BD-AC3F-02250C15843B",
-      "abiVersion": 6,
+      "iid": "0B266866-BC3D-59F3-B195-FFADB8AEED40",
+      "abiVersion": 7,
       "baseFullName": "Avalonia.Host.Com.IAvnMenuBase",
       "managedFullName": "Avalonia.Controls.ContextMenu",
       "isConstructible": true,
@@ -1272,6 +1272,15 @@
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
+        },
+        {
+          "name": "PlacementRect",
+          "kind": "Rect",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Nullable\u00601[[Avalonia.Rect, Avalonia.Base, Version=12.2.999.0, Culture=neutral, PublicKeyToken=c8d484a7012f9a8b]]",
+          "isNullable": true
         },
         {
           "name": "PlacementTarget",
@@ -3130,8 +3139,8 @@
       "name": "IAvnPopup",
       "fullName": "Avalonia.Host.Com.IAvnPopup",
       "kind": "Class",
-      "iid": "E500A22B-B91E-56BB-9C91-F2481DA72727",
-      "abiVersion": 4,
+      "iid": "20F9B7E4-9C5A-5ABA-AAD9-40F23ACE1D6E",
+      "abiVersion": 5,
       "baseFullName": "Avalonia.Host.Com.IAvnControl",
       "managedFullName": "Avalonia.Controls.Primitives.Popup",
       "isConstructible": true,
@@ -3233,6 +3242,15 @@
           "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Controls.PlacementMode",
           "isNullable": false
+        },
+        {
+          "name": "PlacementRect",
+          "kind": "Rect",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Nullable\u00601[[Avalonia.Rect, Avalonia.Base, Version=12.2.999.0, Culture=neutral, PublicKeyToken=c8d484a7012f9a8b]]",
+          "isNullable": true
         },
         {
           "name": "PlacementTarget",
@@ -10376,11 +10394,6 @@
     },
     {
       "owner": "Avalonia.Controls.ContextMenu",
-      "member": "PlacementRect",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ContextMenu",
       "member": "CustomPopupPlacementCallback",
       "reason": "Not included by projection policy"
     },
@@ -10802,11 +10815,6 @@
     {
       "owner": "Avalonia.Controls.Primitives.Popup",
       "member": "DependencyResolver",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Primitives.Popup",
-      "member": "PlacementRect",
       "reason": "Not included by projection policy"
     },
     {

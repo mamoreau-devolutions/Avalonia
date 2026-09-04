@@ -559,6 +559,23 @@ public static class ComSourceEmitter
                 : $"        new global::{geometry.ManagedTypeName}({string.Join(", ", geometry.Fields.Select(f => f.Name))});");
             sb.AppendLine("}");
             sb.AppendLine();
+            sb.AppendLine($"/// <summary>Nullable ABI wrapper of <see cref=\"{geometry.AbiName}\"/>.</summary>");
+            sb.AppendLine("[StructLayout(LayoutKind.Sequential)]");
+            sb.AppendLine($"public struct {geometry.OptionalAbiName}");
+            sb.AppendLine("{");
+            sb.AppendLine("    public int HasValue;");
+            sb.AppendLine($"    public {geometry.AbiName} Value;");
+            sb.AppendLine();
+            sb.AppendLine(
+                $"    public static {geometry.OptionalAbiName} FromAvalonia(global::{geometry.ManagedTypeName}? value) =>");
+            sb.AppendLine($"        value is {{ }} inner");
+            sb.AppendLine($"            ? new {geometry.OptionalAbiName} {{ HasValue = 1, Value = {geometry.AbiName}.FromAvalonia(inner) }}");
+            sb.AppendLine($"            : default;");
+            sb.AppendLine();
+            sb.AppendLine($"    public readonly global::{geometry.ManagedTypeName}? ToAvalonia() =>");
+            sb.AppendLine("        HasValue != 0 ? Value.ToAvalonia() : null;");
+            sb.AppendLine("}");
+            sb.AppendLine();
         }
         return sb.ToString().TrimEnd() + Environment.NewLine;
     }
@@ -701,7 +718,7 @@ public static class ComSourceEmitter
                 MarshallingKind.StringUtf16 when property.ManagedTypeName != "System.String" =>
                     property.IsNullable ? "result?.ToString()" : "result.ToString()",
                 _ when GeometryMarshalling.TryGet(property.Kind, out var geometry) =>
-                    $"{geometry.AbiName}.FromAvalonia(result)",
+                    $"{(property.IsNullable ? geometry.OptionalAbiName : geometry.AbiName)}.FromAvalonia(result)",
                 _ => "result",
             };
             sb.AppendLine($"    public int Get{property.Name}(IAvnControl? target, out {type} value)");
@@ -972,7 +989,7 @@ public static class ComSourceEmitter
             MarshallingKind.ComCollection =>
                 $"new {SimpleName(property.InterfaceName!)[1..]}(_value.{property.Name})",
             _ when GeometryMarshalling.TryGet(property.Kind, out var geometry) =>
-                $"{geometry.AbiName}.FromAvalonia(_value.{property.Name})",
+                $"{(property.IsNullable ? geometry.OptionalAbiName : geometry.AbiName)}.FromAvalonia(_value.{property.Name})",
             _ => $"_value.{property.Name}",
         };
 
@@ -1104,7 +1121,8 @@ public static class ComSourceEmitter
             MarshallingKind.ComInterface => (interfaceName is null ? "object" : SimpleName(interfaceName)) + (nullable ? "?" : ""),
             MarshallingKind.Brush => SimpleName(interfaceName!) + (nullable ? "?" : ""),
             MarshallingKind.ComCollection => SimpleName(interfaceName!),
-            _ when GeometryMarshalling.TryGet(kind, out var geometry) => geometry.AbiName,
+            _ when GeometryMarshalling.TryGet(kind, out var geometry) =>
+                nullable ? geometry.OptionalAbiName : geometry.AbiName,
             _ => throw new InvalidOperationException($"Cannot emit C# for {kind}"),
         };
 

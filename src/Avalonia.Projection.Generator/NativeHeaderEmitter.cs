@@ -70,6 +70,12 @@ public static class NativeHeaderEmitter
                 sb.AppendLine($"    {NativeFieldType(field.Kind)} {field.NativeName};");
             sb.AppendLine($"}} {geometry.AbiName};");
             sb.AppendLine();
+            sb.AppendLine($"/* Nullable ABI wrapper of {geometry.AbiName}. has_value is 0 or 1. */");
+            sb.AppendLine($"typedef struct {geometry.OptionalAbiName} {{");
+            sb.AppendLine("    int32_t has_value;");
+            sb.AppendLine($"    {geometry.AbiName} value;");
+            sb.AppendLine($"}} {geometry.OptionalAbiName};");
+            sb.AppendLine();
         }
 
         foreach (var name in names)
@@ -138,7 +144,7 @@ public static class NativeHeaderEmitter
                             slot++,
                             $"get_{Snake(property.Name)}",
                             type.Name,
-                            [$"{OutputType(property.Kind, property.InterfaceName)} value"]);
+                            [$"{OutputType(property.Kind, property.InterfaceName, property.IsNullable)} value"]);
                     }
                     if (property.CanWrite)
                     {
@@ -147,7 +153,7 @@ public static class NativeHeaderEmitter
                             slot++,
                             $"set_{Snake(property.Name)}",
                             type.Name,
-                            [$"{InputType(property.Kind, property.InterfaceName)} value"]);
+                            [$"{InputType(property.Kind, property.InterfaceName, property.IsNullable)} value"]);
                     }
                 }
                 foreach (var method in owner.Methods)
@@ -195,13 +201,13 @@ public static class NativeHeaderEmitter
                     slot++,
                     $"get_{Snake(property.Name)}",
                     name,
-                    ["IAvnControl* target", $"{OutputType(property.Kind, null)} value"]);
+                    ["IAvnControl* target", $"{OutputType(property.Kind, null, property.IsNullable)} value"]);
                 EmitSlot(
                     sb,
                     slot++,
                     $"set_{Snake(property.Name)}",
                     name,
-                    ["IAvnControl* target", $"{InputType(property.Kind, null)} value"]);
+                    ["IAvnControl* target", $"{InputType(property.Kind, null, property.IsNullable)} value"]);
             }
             EndInterface(sb, name, slot);
         }
@@ -304,43 +310,44 @@ public static class NativeHeaderEmitter
 
     private static string EventParameter(ProjectedParameter parameter) =>
         parameter.Direction == ParameterDirection.InOut
-            ? $"{AbiType(parameter.Kind, parameter.InterfaceName, pointerForInterface: false)}* {Snake(parameter.Name)}"
-            : $"{InputType(parameter.Kind, parameter.InterfaceName)} {Snake(parameter.Name)}";
+            ? $"{AbiType(parameter.Kind, parameter.InterfaceName, pointerForInterface: false, parameter.IsNullable)}* {Snake(parameter.Name)}"
+            : $"{InputType(parameter.Kind, parameter.InterfaceName, parameter.IsNullable)} {Snake(parameter.Name)}";
 
     private static string MethodParameter(ProjectedParameter parameter) =>
         parameter.Direction switch
         {
             ParameterDirection.Out =>
-                $"{OutputType(parameter.Kind, parameter.InterfaceName)} {Snake(parameter.Name)}",
+                $"{OutputType(parameter.Kind, parameter.InterfaceName, parameter.IsNullable)} {Snake(parameter.Name)}",
             ParameterDirection.InOut =>
-                $"{AbiType(parameter.Kind, parameter.InterfaceName, pointerForInterface: false)}* {Snake(parameter.Name)}",
-            _ => $"{InputType(parameter.Kind, parameter.InterfaceName)} {Snake(parameter.Name)}",
+                $"{AbiType(parameter.Kind, parameter.InterfaceName, pointerForInterface: false, parameter.IsNullable)}* {Snake(parameter.Name)}",
+            _ => $"{InputType(parameter.Kind, parameter.InterfaceName, parameter.IsNullable)} {Snake(parameter.Name)}",
         };
 
-    private static string OutputType(MarshallingKind kind, string? interfaceName) =>
+    private static string OutputType(MarshallingKind kind, string? interfaceName, bool isNullable = false) =>
         kind switch
         {
             MarshallingKind.StringUtf16 => "uint16_t**",
             MarshallingKind.ComInterface or MarshallingKind.ComCollection =>
                 $"{SimpleName(interfaceName!)}**",
             MarshallingKind.Brush => $"{SimpleName(interfaceName!)}**",
-            _ => $"{AbiType(kind, interfaceName, pointerForInterface: false)}*",
+            _ => $"{AbiType(kind, interfaceName, pointerForInterface: false, isNullable)}*",
         };
 
-    private static string InputType(MarshallingKind kind, string? interfaceName) =>
+    private static string InputType(MarshallingKind kind, string? interfaceName, bool isNullable = false) =>
         kind switch
         {
             MarshallingKind.StringUtf16 => "const uint16_t*",
             MarshallingKind.ComInterface or MarshallingKind.ComCollection =>
                 $"{SimpleName(interfaceName!)}*",
             MarshallingKind.Brush => $"{SimpleName(interfaceName!)}*",
-            _ => AbiType(kind, interfaceName, pointerForInterface: false),
+            _ => AbiType(kind, interfaceName, pointerForInterface: false, isNullable),
         };
 
     private static string AbiType(
         MarshallingKind kind,
         string? interfaceName,
-        bool pointerForInterface) =>
+        bool pointerForInterface,
+        bool isNullable = false) =>
         kind switch
         {
             MarshallingKind.CharUtf16 => "uint16_t",
@@ -352,7 +359,8 @@ public static class NativeHeaderEmitter
             MarshallingKind.ComInterface or MarshallingKind.ComCollection =>
                 SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
             MarshallingKind.Brush => SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
-            _ when GeometryMarshalling.TryGet(kind, out var geometry) => geometry.AbiName,
+            _ when GeometryMarshalling.TryGet(kind, out var geometry) =>
+                isNullable ? geometry.OptionalAbiName : geometry.AbiName,
             _ => throw new InvalidOperationException($"Unsupported ABI kind '{kind}'."),
         };
 

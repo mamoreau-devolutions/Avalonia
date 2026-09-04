@@ -156,6 +156,12 @@ pub fn is_geometry(kind: &str) -> bool {
     find(kind).is_some()
 }
 
+impl GeometryStruct {
+    pub fn optional_abi_name(&self) -> String {
+        format!("AvnOptional{}", self.kind)
+    }
+}
+
 /// `#[repr(C)]` ABI structs for the `avalonia-sys` crate.
 pub fn emit_sys_structs() -> String {
     let mut out = String::new();
@@ -175,6 +181,17 @@ pub fn emit_sys_structs() -> String {
             ));
         }
         out.push_str("}\n\n");
+        let optional = geometry.optional_abi_name();
+        out.push_str(&format!(
+            "/// Nullable ABI wrapper of `{abi}`.\n\
+             #[repr(C)]\n\
+             #[derive(Clone, Copy, Debug, Default, PartialEq)]\n\
+             pub struct {optional} {{\n\
+             \x20   pub has_value: i32,\n\
+             \x20   pub value: {abi},\n\
+             }}\n\n",
+            abi = geometry.abi_name
+        ));
     }
     out
 }
@@ -267,12 +284,26 @@ pub fn emit_safe_structs() -> String {
                 }
             }
         }
+        let optional = geometry.optional_abi_name();
         out.push_str(&format!(
             "impl {safe} {{\n\
              \x20   pub const fn new({parameters}) -> Self {{\n\
              \x20       Self {{ {initializers} }}\n\
              \x20   }}\n\
-             {helpers}}}\n\n"
+             {helpers}    pub(crate) fn from_optional_abi(value: sys::{optional}) -> Option<Self> {{\n\
+             \x20       if value.has_value != 0 {{\n\
+             \x20           Some(value.value.into())\n\
+             \x20       }} else {{\n\
+             \x20           None\n\
+             \x20       }}\n\
+             \x20   }}\n\
+             \x20   pub(crate) fn to_optional_abi(value: Option<Self>) -> sys::{optional} {{\n\
+             \x20       match value {{\n\
+             \x20           Some(inner) => sys::{optional} {{ has_value: 1, value: inner.into() }},\n\
+             \x20           None => sys::{optional} {{ has_value: 0, value: Default::default() }},\n\
+             \x20       }}\n\
+             \x20   }}\n\
+             }}\n\n"
         ));
 
         if geometry.conversion == Conversion::PackedColor {

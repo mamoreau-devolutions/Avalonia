@@ -25,6 +25,19 @@ impl Thickness {
     pub const fn symmetric(horizontal: f64, vertical: f64) -> Self {
         Self { left: horizontal, top: vertical, right: horizontal, bottom: vertical }
     }
+    pub(crate) fn from_optional_abi(value: sys::AvnOptionalThickness) -> Option<Self> {
+        if value.has_value != 0 {
+            Some(value.value.into())
+        } else {
+            None
+        }
+    }
+    pub(crate) fn to_optional_abi(value: Option<Self>) -> sys::AvnOptionalThickness {
+        match value {
+            Some(inner) => sys::AvnOptionalThickness { has_value: 1, value: inner.into() },
+            None => sys::AvnOptionalThickness { has_value: 0, value: Default::default() },
+        }
+    }
 }
 
 impl From<sys::AvnThickness> for Thickness {
@@ -66,6 +79,19 @@ impl CornerRadius {
     pub const fn uniform(value: f64) -> Self {
         Self { top_left: value, top_right: value, bottom_right: value, bottom_left: value }
     }
+    pub(crate) fn from_optional_abi(value: sys::AvnOptionalCornerRadius) -> Option<Self> {
+        if value.has_value != 0 {
+            Some(value.value.into())
+        } else {
+            None
+        }
+    }
+    pub(crate) fn to_optional_abi(value: Option<Self>) -> sys::AvnOptionalCornerRadius {
+        match value {
+            Some(inner) => sys::AvnOptionalCornerRadius { has_value: 1, value: inner.into() },
+            None => sys::AvnOptionalCornerRadius { has_value: 0, value: Default::default() },
+        }
+    }
 }
 
 impl From<sys::AvnCornerRadius> for CornerRadius {
@@ -101,6 +127,19 @@ impl Size {
     pub const fn new(width: f64, height: f64) -> Self {
         Self { width, height }
     }
+    pub(crate) fn from_optional_abi(value: sys::AvnOptionalSize) -> Option<Self> {
+        if value.has_value != 0 {
+            Some(value.value.into())
+        } else {
+            None
+        }
+    }
+    pub(crate) fn to_optional_abi(value: Option<Self>) -> sys::AvnOptionalSize {
+        match value {
+            Some(inner) => sys::AvnOptionalSize { has_value: 1, value: inner.into() },
+            None => sys::AvnOptionalSize { has_value: 0, value: Default::default() },
+        }
+    }
 }
 
 impl From<sys::AvnSize> for Size {
@@ -131,6 +170,19 @@ pub struct Point {
 impl Point {
     pub const fn new(x: f64, y: f64) -> Self {
         Self { x, y }
+    }
+    pub(crate) fn from_optional_abi(value: sys::AvnOptionalPoint) -> Option<Self> {
+        if value.has_value != 0 {
+            Some(value.value.into())
+        } else {
+            None
+        }
+    }
+    pub(crate) fn to_optional_abi(value: Option<Self>) -> sys::AvnOptionalPoint {
+        match value {
+            Some(inner) => sys::AvnOptionalPoint { has_value: 1, value: inner.into() },
+            None => sys::AvnOptionalPoint { has_value: 0, value: Default::default() },
+        }
     }
 }
 
@@ -164,6 +216,19 @@ pub struct Rect {
 impl Rect {
     pub const fn new(x: f64, y: f64, width: f64, height: f64) -> Self {
         Self { x, y, width, height }
+    }
+    pub(crate) fn from_optional_abi(value: sys::AvnOptionalRect) -> Option<Self> {
+        if value.has_value != 0 {
+            Some(value.value.into())
+        } else {
+            None
+        }
+    }
+    pub(crate) fn to_optional_abi(value: Option<Self>) -> sys::AvnOptionalRect {
+        match value {
+            Some(inner) => sys::AvnOptionalRect { has_value: 1, value: inner.into() },
+            None => sys::AvnOptionalRect { has_value: 0, value: Default::default() },
+        }
     }
 }
 
@@ -201,6 +266,19 @@ pub struct Color {
 impl Color {
     pub const fn new(a: u8, r: u8, g: u8, b: u8) -> Self {
         Self { a, r, g, b }
+    }
+    pub(crate) fn from_optional_abi(value: sys::AvnOptionalColor) -> Option<Self> {
+        if value.has_value != 0 {
+            Some(value.value.into())
+        } else {
+            None
+        }
+    }
+    pub(crate) fn to_optional_abi(value: Option<Self>) -> sys::AvnOptionalColor {
+        match value {
+            Some(inner) => sys::AvnOptionalColor { has_value: 1, value: inner.into() },
+            None => sys::AvnOptionalColor { has_value: 0, value: Default::default() },
+        }
     }
 }
 
@@ -243,6 +321,19 @@ pub struct Vector {
 impl Vector {
     pub const fn new(x: f64, y: f64) -> Self {
         Self { x, y }
+    }
+    pub(crate) fn from_optional_abi(value: sys::AvnOptionalVector) -> Option<Self> {
+        if value.has_value != 0 {
+            Some(value.value.into())
+        } else {
+            None
+        }
+    }
+    pub(crate) fn to_optional_abi(value: Option<Self>) -> sys::AvnOptionalVector {
+        match value {
+            Some(inner) => sys::AvnOptionalVector { has_value: 1, value: inner.into() },
+            None => sys::AvnOptionalVector { has_value: 0, value: Default::default() },
+        }
     }
 }
 
@@ -9672,6 +9763,16 @@ impl ContextMenu {
     }
     pub fn window_manager_add_shadow_hint(self, value: bool) -> Result<Self> {
         self.set_window_manager_add_shadow_hint(value)?;
+        Ok(self)
+    }
+    pub fn get_placement_rect(&self) -> Result<Option<Rect>> {
+        Ok(Rect::from_optional_abi(self.raw.get_placement_rect()?))
+    }
+    pub fn set_placement_rect(&self, value: Option<Rect>) -> Result<()> {
+        Ok(self.raw.set_placement_rect(Rect::to_optional_abi(value))?)
+    }
+    pub fn placement_rect(self, value: Option<Rect>) -> Result<Self> {
+        self.set_placement_rect(value)?;
         Ok(self)
     }
     pub fn get_placement_target(&self) -> Result<Option<Control>> {
@@ -22183,6 +22284,16 @@ impl Popup {
     }
     pub fn placement(self, value: PlacementMode) -> Result<Self> {
         self.set_placement(value)?;
+        Ok(self)
+    }
+    pub fn get_placement_rect(&self) -> Result<Option<Rect>> {
+        Ok(Rect::from_optional_abi(self.raw.get_placement_rect()?))
+    }
+    pub fn set_placement_rect(&self, value: Option<Rect>) -> Result<()> {
+        Ok(self.raw.set_placement_rect(Rect::to_optional_abi(value))?)
+    }
+    pub fn placement_rect(self, value: Option<Rect>) -> Result<Self> {
+        self.set_placement_rect(value)?;
         Ok(self)
     }
     pub fn get_placement_target(&self) -> Result<Option<Control>> {

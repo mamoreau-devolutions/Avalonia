@@ -24,7 +24,14 @@ public sealed record GeometryStruct(
     string ManagedTypeName,
     string AbiName,
     GeometryConversion Conversion,
-    IReadOnlyList<GeometryField> Fields);
+    IReadOnlyList<GeometryField> Fields)
+{
+    /// <summary>
+    /// Blittable wrapper that carries <see cref="AbiName"/> plus a has-value flag so a
+    /// nullable CLR geometry value can cross without a sentinel inside the struct itself.
+    /// </summary>
+    public string OptionalAbiName => "AvnOptional" + Kind;
+}
 
 /// <summary>
 /// Blittable Avalonia value types that cross the nano-COM ABI by value instead of as COM objects.

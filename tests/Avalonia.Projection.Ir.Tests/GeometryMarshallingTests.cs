@@ -58,17 +58,13 @@ public class GeometryMarshallingTests
     }
 
     [Fact]
-    public void Skips_nullable_geometry_because_the_abi_carries_the_struct_by_value()
+    public void Maps_nullable_geometry_as_the_same_kind_with_is_nullable()
     {
         var ir = ClrTypeExtractor.Extract([typeof(GeometryProbe)], Policy);
-
-        Assert.DoesNotContain(
-            ir.Types.Single().Properties,
-            property => property.Name == nameof(GeometryProbe.OptionalMargin));
-        var skipped = Assert.Single(
-            ir.Skipped,
-            entry => entry.Member == nameof(GeometryProbe.OptionalMargin));
-        Assert.Contains("Nullable geometry type", skipped.Reason, StringComparison.Ordinal);
+        var property = ir.Types.Single().Properties.Single(p => p.Name == nameof(GeometryProbe.OptionalMargin));
+        Assert.Equal(MarshallingKind.Thickness, property.Kind);
+        Assert.True(property.IsNullable);
+        Assert.DoesNotContain(ir.Skipped, entry => entry.Member == nameof(GeometryProbe.OptionalMargin));
     }
 
     [Fact]
@@ -110,6 +106,7 @@ public class GeometryMarshallingTests
         // kinds, so nothing that shipped earlier moved.
         Assert.Equal(17, (int)MarshallingKind.Brush);
         Assert.Equal(18, (int)MarshallingKind.Vector);
+        Assert.Equal(19, (int)MarshallingKind.CharUtf16);
     }
 
     [Fact]
