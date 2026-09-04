@@ -842,6 +842,28 @@ impl TryFrom<i32> for SelectionMode {
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum SizeToContent {
+    Manual = 0,
+    Width = 1,
+    Height = 2,
+    WidthAndHeight = 3,
+}
+
+impl TryFrom<i32> for SizeToContent {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::Manual),
+            1 => Ok(Self::Width),
+            2 => Ok(Self::Height),
+            3 => Ok(Self::WidthAndHeight),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum SplitViewDisplayMode {
     Inline = 0,
     CompactInline = 1,
@@ -901,6 +923,64 @@ impl TryFrom<i32> for TickPlacement {
             1 => Ok(Self::TopLeft),
             2 => Ok(Self::BottomRight),
             3 => Ok(Self::Outside),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum WindowClosingBehavior {
+    OwnerAndChildWindows = 0,
+    OwnerWindowOnly = 1,
+}
+
+impl TryFrom<i32> for WindowClosingBehavior {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::OwnerAndChildWindows),
+            1 => Ok(Self::OwnerWindowOnly),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum WindowDecorations {
+    None = 0,
+    BorderOnly = 1,
+    Full = 2,
+}
+
+impl TryFrom<i32> for WindowDecorations {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::None),
+            1 => Ok(Self::BorderOnly),
+            2 => Ok(Self::Full),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum WindowStartupLocation {
+    Manual = 0,
+    CenterScreen = 1,
+    CenterOwner = 2,
+}
+
+impl TryFrom<i32> for WindowStartupLocation {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::Manual),
+            1 => Ok(Self::CenterScreen),
+            2 => Ok(Self::CenterOwner),
             _ => Err(crate::Error::InvalidEnumValue(value)),
         }
     }
@@ -29507,6 +29587,17 @@ impl Window {
         self.set_vertical_content_alignment(value)?;
         Ok(self)
     }
+    pub fn get_size_to_content(&self) -> Result<SizeToContent> {
+        let value = self.raw.get_size_to_content()?;
+        SizeToContent::try_from(value)
+    }
+    pub fn set_size_to_content(&self, value: SizeToContent) -> Result<()> {
+        Ok(self.raw.set_size_to_content(value as i32)?)
+    }
+    pub fn size_to_content(self, value: SizeToContent) -> Result<Self> {
+        self.set_size_to_content(value)?;
+        Ok(self)
+    }
     pub fn get_title(&self) -> Result<Option<String>> {
         unsafe { Ok(sys::take_utf16(self.raw.get_title()?)) }
     }
@@ -29516,6 +29607,44 @@ impl Window {
     }
     pub fn title(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_title(value)?;
+        Ok(self)
+    }
+    pub fn get_window_decorations(&self) -> Result<WindowDecorations> {
+        let value = self.raw.get_window_decorations()?;
+        WindowDecorations::try_from(value)
+    }
+    pub fn set_window_decorations(&self, value: WindowDecorations) -> Result<()> {
+        Ok(self.raw.set_window_decorations(value as i32)?)
+    }
+    pub fn window_decorations(self, value: WindowDecorations) -> Result<Self> {
+        self.set_window_decorations(value)?;
+        Ok(self)
+    }
+    pub fn get_show_activated(&self) -> Result<bool> { Ok(self.raw.get_show_activated()?) }
+    pub fn set_show_activated(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_show_activated(value)?)
+    }
+    pub fn show_activated(self, value: bool) -> Result<Self> {
+        self.set_show_activated(value)?;
+        Ok(self)
+    }
+    pub fn get_show_in_taskbar(&self) -> Result<bool> { Ok(self.raw.get_show_in_taskbar()?) }
+    pub fn set_show_in_taskbar(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_show_in_taskbar(value)?)
+    }
+    pub fn show_in_taskbar(self, value: bool) -> Result<Self> {
+        self.set_show_in_taskbar(value)?;
+        Ok(self)
+    }
+    pub fn get_closing_behavior(&self) -> Result<WindowClosingBehavior> {
+        let value = self.raw.get_closing_behavior()?;
+        WindowClosingBehavior::try_from(value)
+    }
+    pub fn set_closing_behavior(&self, value: WindowClosingBehavior) -> Result<()> {
+        Ok(self.raw.set_closing_behavior(value as i32)?)
+    }
+    pub fn closing_behavior(self, value: WindowClosingBehavior) -> Result<Self> {
+        self.set_closing_behavior(value)?;
         Ok(self)
     }
     pub fn get_window_state(&self) -> Result<WindowState> {
@@ -29537,7 +29666,35 @@ impl Window {
         self.set_can_resize(value)?;
         Ok(self)
     }
+    pub fn get_can_minimize(&self) -> Result<bool> { Ok(self.raw.get_can_minimize()?) }
+    pub fn set_can_minimize(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_can_minimize(value)?)
+    }
+    pub fn can_minimize(self, value: bool) -> Result<Self> {
+        self.set_can_minimize(value)?;
+        Ok(self)
+    }
+    pub fn get_can_maximize(&self) -> Result<bool> { Ok(self.raw.get_can_maximize()?) }
+    pub fn set_can_maximize(&self, value: bool) -> Result<()> {
+        Ok(self.raw.set_can_maximize(value)?)
+    }
+    pub fn can_maximize(self, value: bool) -> Result<Self> {
+        self.set_can_maximize(value)?;
+        Ok(self)
+    }
+    pub fn get_window_startup_location(&self) -> Result<WindowStartupLocation> {
+        let value = self.raw.get_window_startup_location()?;
+        WindowStartupLocation::try_from(value)
+    }
+    pub fn set_window_startup_location(&self, value: WindowStartupLocation) -> Result<()> {
+        Ok(self.raw.set_window_startup_location(value as i32)?)
+    }
+    pub fn window_startup_location(self, value: WindowStartupLocation) -> Result<Self> {
+        self.set_window_startup_location(value)?;
+        Ok(self)
+    }
     pub fn close(&self) -> Result<()> { Ok(self.raw.close()?) }
+    pub fn hide(&self) -> Result<()> { Ok(self.raw.hide()?) }
     pub fn show_with_window(&self, owner: &Window) -> Result<()> { Ok(self.raw.show_with_window(&owner.raw)?) }
 }
 

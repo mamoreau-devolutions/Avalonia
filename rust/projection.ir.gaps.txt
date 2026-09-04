@@ -417,29 +417,20 @@ Avalonia.Controls.TreeView.TreeItemFromContainer(Control): Not included by proje
 Avalonia.Controls.TreeView.UpdateSelectionFromEvent(Control, RoutedEventArgs): Not included by projection policy
 Avalonia.Controls.Window.PlatformImpl: Not included by projection policy
 Avalonia.Controls.Window.OwnedWindows: Not included by projection policy
-Avalonia.Controls.Window.SizeToContent: Not included by projection policy
 Avalonia.Controls.Window.ExtendClientAreaToDecorationsHint: Not included by projection policy
 Avalonia.Controls.Window.ExtendClientAreaTitleBarHeightHint: Not included by projection policy
 Avalonia.Controls.Window.IsExtendedIntoWindowDecorations: Not included by projection policy
 Avalonia.Controls.Window.WindowDecorationMargin: Not included by projection policy
 Avalonia.Controls.Window.OffScreenMargin: Not included by projection policy
-Avalonia.Controls.Window.WindowDecorations: Not included by projection policy
 Avalonia.Controls.Window.WindowDecorationsTheme: Not included by projection policy
 Avalonia.Controls.Window.SystemDecorations: Not included by projection policy
-Avalonia.Controls.Window.ShowActivated: Not included by projection policy
-Avalonia.Controls.Window.ShowInTaskbar: Not included by projection policy
-Avalonia.Controls.Window.ClosingBehavior: Not included by projection policy
-Avalonia.Controls.Window.CanMinimize: Not included by projection policy
-Avalonia.Controls.Window.CanMaximize: Not included by projection policy
 Avalonia.Controls.Window.Icon: Not included by projection policy
-Avalonia.Controls.Window.WindowStartupLocation: Not included by projection policy
 Avalonia.Controls.Window.Position: Not included by projection policy
 Avalonia.Controls.Window.IsDialog: Not included by projection policy
 Avalonia.Controls.Window.Closing: Not included by projection policy
 Avalonia.Controls.Window.BeginMoveDrag(PointerPressedEventArgs): Not included by projection policy
 Avalonia.Controls.Window.BeginResizeDrag(WindowEdge, PointerPressedEventArgs): Not included by projection policy
 Avalonia.Controls.Window.Close(Object): Parameter 'dialogResult': Type 'System.Object' is not marshallable
-Avalonia.Controls.Window.Hide(): Not included by projection policy
 Avalonia.Controls.Window.ShowDialog(Window): Not included by projection policy
 Avalonia.Controls.Window.ShowDialog(Window): Not included by projection policy
 Avalonia.StyledElement.DataContext: Not included by projection policy

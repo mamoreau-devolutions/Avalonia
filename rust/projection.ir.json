@@ -4885,8 +4885,8 @@
       "name": "IAvnWindow",
       "fullName": "Avalonia.Host.Com.IAvnWindow",
       "kind": "Class",
-      "iid": "965CC1CE-DA6F-5CCB-900F-3150CA8DB605",
-      "abiVersion": 5,
+      "iid": "F01ADFEE-98B3-5F6C-85B3-61121B1F7106",
+      "abiVersion": 6,
       "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
       "managedFullName": "Avalonia.Controls.Window",
       "isConstructible": true,
@@ -4894,6 +4894,13 @@
         {
           "name": "Close",
           "managedName": "Close",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": []
+        },
+        {
+          "name": "Hide",
+          "managedName": "Hide",
           "returnKind": "I32",
           "preserveSig": true,
           "parameters": []
@@ -4924,6 +4931,15 @@
       ],
       "properties": [
         {
+          "name": "SizeToContent",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.SizeToContent",
+          "isNullable": false
+        },
+        {
           "name": "Title",
           "kind": "StringUtf16",
           "canRead": true,
@@ -4931,6 +4947,42 @@
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.String",
           "isNullable": true
+        },
+        {
+          "name": "WindowDecorations",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.WindowDecorations",
+          "isNullable": false
+        },
+        {
+          "name": "ShowActivated",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "ShowInTaskbar",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "ClosingBehavior",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.WindowClosingBehavior",
+          "isNullable": false
         },
         {
           "name": "WindowState",
@@ -4948,6 +5000,33 @@
           "canWrite": true,
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "CanMinimize",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "CanMaximize",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "WindowStartupLocation",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.WindowStartupLocation",
           "isNullable": false
         }
       ],
@@ -5655,6 +5734,28 @@
       ]
     },
     {
+      "name": "SizeToContent",
+      "fullName": "Avalonia.Controls.SizeToContent",
+      "values": [
+        {
+          "name": "Manual",
+          "value": 0
+        },
+        {
+          "name": "Width",
+          "value": 1
+        },
+        {
+          "name": "Height",
+          "value": 2
+        },
+        {
+          "name": "WidthAndHeight",
+          "value": 3
+        }
+      ]
+    },
+    {
       "name": "SplitViewDisplayMode",
       "fullName": "Avalonia.Controls.SplitViewDisplayMode",
       "values": [
@@ -5717,6 +5818,56 @@
         {
           "name": "Outside",
           "value": 3
+        }
+      ]
+    },
+    {
+      "name": "WindowClosingBehavior",
+      "fullName": "Avalonia.Controls.WindowClosingBehavior",
+      "values": [
+        {
+          "name": "OwnerAndChildWindows",
+          "value": 0
+        },
+        {
+          "name": "OwnerWindowOnly",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "name": "WindowDecorations",
+      "fullName": "Avalonia.Controls.WindowDecorations",
+      "values": [
+        {
+          "name": "None",
+          "value": 0
+        },
+        {
+          "name": "BorderOnly",
+          "value": 1
+        },
+        {
+          "name": "Full",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "name": "WindowStartupLocation",
+      "fullName": "Avalonia.Controls.WindowStartupLocation",
+      "values": [
+        {
+          "name": "Manual",
+          "value": 0
+        },
+        {
+          "name": "CenterScreen",
+          "value": 1
+        },
+        {
+          "name": "CenterOwner",
+          "value": 2
         }
       ]
     },
@@ -10209,11 +10360,6 @@
     },
     {
       "owner": "Avalonia.Controls.Window",
-      "member": "SizeToContent",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Window",
       "member": "ExtendClientAreaToDecorationsHint",
       "reason": "Not included by projection policy"
     },
@@ -10239,11 +10385,6 @@
     },
     {
       "owner": "Avalonia.Controls.Window",
-      "member": "WindowDecorations",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Window",
       "member": "WindowDecorationsTheme",
       "reason": "Not included by projection policy"
     },
@@ -10254,37 +10395,7 @@
     },
     {
       "owner": "Avalonia.Controls.Window",
-      "member": "ShowActivated",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Window",
-      "member": "ShowInTaskbar",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Window",
-      "member": "ClosingBehavior",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Window",
-      "member": "CanMinimize",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Window",
-      "member": "CanMaximize",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Window",
       "member": "Icon",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Window",
-      "member": "WindowStartupLocation",
       "reason": "Not included by projection policy"
     },
     {
@@ -10316,11 +10427,6 @@
       "owner": "Avalonia.Controls.Window",
       "member": "Close(Object)",
       "reason": "Parameter \u0027dialogResult\u0027: Type \u0027System.Object\u0027 is not marshallable"
-    },
-    {
-      "owner": "Avalonia.Controls.Window",
-      "member": "Hide()",
-      "reason": "Not included by projection policy"
     },
     {
       "owner": "Avalonia.Controls.Window",

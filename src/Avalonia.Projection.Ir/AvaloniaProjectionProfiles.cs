@@ -51,7 +51,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnListBoxItem"] = 5,
             ["Avalonia.Host.Com.IAvnComboBoxItem"] = 5,
             ["Avalonia.Host.Com.IAvnScrollViewer"] = 5,
-            ["Avalonia.Host.Com.IAvnWindow"] = 5,
+            ["Avalonia.Host.Com.IAvnWindow"] = 6,
             ["Avalonia.Host.Com.IAvnGrid"] = 5,
             // Wave A's seven new interfaces publish at the default version 1 and nothing they
             // sit under moved, so they need no entry here. Waves B, C and D do the same.
@@ -221,7 +221,13 @@ public static class AvaloniaProjectionProfiles
                 ["ShowGridLines", "RowSpacing", "ColumnSpacing", "ColumnDefinitions", "RowDefinitions"],
             ["Avalonia.Controls.Canvas"] = [],
             ["Avalonia.Controls.DockPanel"] = ["LastChildFill", "HorizontalSpacing", "VerticalSpacing"],
-            ["Avalonia.Controls.Window"] = ["Title", "CanResize", "WindowState", "Show", "Close"],
+            ["Avalonia.Controls.Window"] =
+            [
+                "Title", "CanResize", "WindowState", "Show", "Close", "Hide",
+                "SizeToContent", "ShowActivated", "ShowInTaskbar", "CanMinimize",
+                "CanMaximize", "WindowStartupLocation", "WindowDecorations",
+                "ClosingBehavior",
+            ],
             ["Avalonia.Controls.StackPanel"] = ["Orientation", "Spacing"],
             ["Avalonia.Controls.TextBlock"] =
                 ["Text", "FontSize", "FontWeight", "Foreground", "Padding", "TextAlignment"],

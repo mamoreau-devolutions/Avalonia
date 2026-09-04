@@ -31,6 +31,15 @@ fn completeness_members_are_published_on_the_type_that_declares_them() {
         "*set_is_drop_down_open)(IAvnComboBox* self, int32_t value)",
         "*set_is_editable)(IAvnComboBox* self, int32_t value)",
         "*set_max_drop_down_height)(IAvnComboBox* self, double value)",
+        "*set_size_to_content)(IAvnWindow* self, int32_t value)",
+        "*set_show_activated)(IAvnWindow* self, int32_t value)",
+        "*set_show_in_taskbar)(IAvnWindow* self, int32_t value)",
+        "*set_can_minimize)(IAvnWindow* self, int32_t value)",
+        "*set_can_maximize)(IAvnWindow* self, int32_t value)",
+        "*set_window_startup_location)(IAvnWindow* self, int32_t value)",
+        "*set_window_decorations)(IAvnWindow* self, int32_t value)",
+        "*set_closing_behavior)(IAvnWindow* self, int32_t value)",
+        "*hide)(IAvnWindow* self)",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
     }
@@ -58,7 +67,7 @@ fn widened_interfaces_publish_abi_version_five() {
         "#define I_AVN_COMBO_BOX_ABI_VERSION 5",
         "#define I_AVN_COMBO_BOX_ITEM_ABI_VERSION 5",
         "#define I_AVN_SCROLL_VIEWER_ABI_VERSION 5",
-        "#define I_AVN_WINDOW_ABI_VERSION 5",
+        "#define I_AVN_WINDOW_ABI_VERSION 6",
         // Nothing above or beside the widened types moved, so these keep the version whose
         // flattened vtable they still match.
         "#define I_AVN_BORDER_ABI_VERSION 4",
@@ -113,11 +122,16 @@ fn widened_interfaces_republish_under_fresh_iids() {
             "0A480A4D-6DF1-5762-8661-F83519B0CC38",
             I_AVN_WINDOW_IID,
         ),
+        (
+            "IAvnWindow",
+            "965CC1CE-DA6F-5CCB-900F-3150CA8DB605",
+            I_AVN_WINDOW_IID,
+        ),
     ] {
         assert_ne!(format_iid(&current), retired, "{name} reused a retired IID");
     }
 
-    // The freshly published version 5 IIDs.
+    // The freshly published version 5 IIDs. Window then grew chrome slots at version 6.
     for (name, expected, current) in [
         (
             "IAvnContentControl",
@@ -146,7 +160,7 @@ fn widened_interfaces_republish_under_fresh_iids() {
         ),
         (
             "IAvnWindow",
-            "965CC1CE-DA6F-5CCB-900F-3150CA8DB605",
+            "F01ADFEE-98B3-5F6C-85B3-61121B1F7106",
             I_AVN_WINDOW_IID,
         ),
     ] {

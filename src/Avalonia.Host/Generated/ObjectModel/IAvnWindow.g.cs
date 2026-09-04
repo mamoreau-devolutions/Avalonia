@@ -6,14 +6,44 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("965CC1CE-DA6F-5CCB-900F-3150CA8DB605")]
+[Guid("F01ADFEE-98B3-5F6C-85B3-61121B1F7106")]
 public partial interface IAvnWindow : IAvnContentControl
 {
+    [PreserveSig]
+    int GetSizeToContent(out int value);
+
+    [PreserveSig]
+    int SetSizeToContent(int value);
+
     [PreserveSig]
     int GetTitle(out string? value);
 
     [PreserveSig]
     int SetTitle(string? value);
+
+    [PreserveSig]
+    int GetWindowDecorations(out int value);
+
+    [PreserveSig]
+    int SetWindowDecorations(int value);
+
+    [PreserveSig]
+    int GetShowActivated(out int value);
+
+    [PreserveSig]
+    int SetShowActivated(int value);
+
+    [PreserveSig]
+    int GetShowInTaskbar(out int value);
+
+    [PreserveSig]
+    int SetShowInTaskbar(int value);
+
+    [PreserveSig]
+    int GetClosingBehavior(out int value);
+
+    [PreserveSig]
+    int SetClosingBehavior(int value);
 
     [PreserveSig]
     int GetWindowState(out int value);
@@ -28,7 +58,28 @@ public partial interface IAvnWindow : IAvnContentControl
     int SetCanResize(int value);
 
     [PreserveSig]
+    int GetCanMinimize(out int value);
+
+    [PreserveSig]
+    int SetCanMinimize(int value);
+
+    [PreserveSig]
+    int GetCanMaximize(out int value);
+
+    [PreserveSig]
+    int SetCanMaximize(int value);
+
+    [PreserveSig]
+    int GetWindowStartupLocation(out int value);
+
+    [PreserveSig]
+    int SetWindowStartupLocation(int value);
+
+    [PreserveSig]
     int Close();
+
+    [PreserveSig]
+    int Hide();
 
     [PreserveSig]
     int Show();
@@ -925,6 +976,37 @@ public sealed partial class AvnWindow : IAvnWindow
         }
     }
 
+    public int GetSizeToContent(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.SizeToContent;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetSizeToContent(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.SizeToContent = (global::Avalonia.Controls.SizeToContent)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetTitle(out string? value)
     {
         value = default!;
@@ -948,6 +1030,130 @@ public sealed partial class AvnWindow : IAvnWindow
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Title = value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetWindowDecorations(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.WindowDecorations;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetWindowDecorations(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.WindowDecorations = (global::Avalonia.Controls.WindowDecorations)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetShowActivated(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.ShowActivated ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetShowActivated(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ShowActivated = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetShowInTaskbar(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.ShowInTaskbar ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetShowInTaskbar(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ShowInTaskbar = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetClosingBehavior(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.ClosingBehavior;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetClosingBehavior(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ClosingBehavior = (global::Avalonia.Controls.WindowClosingBehavior)value;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -1018,6 +1224,99 @@ public sealed partial class AvnWindow : IAvnWindow
         }
     }
 
+    public int GetCanMinimize(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.CanMinimize ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetCanMinimize(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.CanMinimize = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetCanMaximize(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.CanMaximize ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetCanMaximize(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.CanMaximize = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetWindowStartupLocation(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.WindowStartupLocation;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetWindowStartupLocation(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.WindowStartupLocation = (global::Avalonia.Controls.WindowStartupLocation)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int Close()
     {
         try
@@ -1025,6 +1324,21 @@ public sealed partial class AvnWindow : IAvnWindow
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Close();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int Hide()
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Hide();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

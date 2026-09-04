@@ -320,7 +320,7 @@ public class ClrTypeExtractorTests
             "IAvnContentControl", "IAvnHeaderedContentControl", "IAvnExpander", "IAvnButton",
             "IAvnToggleButton", "IAvnCheckBox", "IAvnRadioButton", "IAvnToggleSwitch",
             "IAvnListBox", "IAvnComboBox", "IAvnListBoxItem", "IAvnComboBoxItem",
-            "IAvnScrollViewer", "IAvnWindow", "IAvnGrid",
+            "IAvnScrollViewer", "IAvnGrid",
         ];
 
         Assert.All(
@@ -1397,6 +1397,21 @@ public class ClrTypeExtractorTests
         Assert.Equal(MarshallingKind.StringUtf16, width.Kind);
 
         Assert.Equal(13, ir.FactoryAbiVersion);
+    }
+
+    [Fact]
+    public void Wave_l_window_chrome_bumps_only_window()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+        var window = Type(ir, "IAvnWindow");
+        Assert.Equal(6, window.AbiVersion);
+        Assert.Contains(window.Methods, m => m.Name == "Hide");
+        Assert.All(
+            new[] { "SizeToContent", "ShowActivated", "ShowInTaskbar", "CanMinimize",
+                "CanMaximize", "WindowStartupLocation", "WindowDecorations", "ClosingBehavior" },
+            name => Assert.Contains(window.Properties, p => p.Name == name));
+        Assert.DoesNotContain(window.Properties, p => p.Name is "Icon" or "Position");
+        Assert.Equal(5, Type(ir, "IAvnContentControl").AbiVersion);
     }
 
     [Fact]

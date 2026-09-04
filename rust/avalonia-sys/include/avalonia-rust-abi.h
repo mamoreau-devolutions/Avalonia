@@ -7752,12 +7752,12 @@ struct IAvnViewbox { const IAvnViewboxVtbl* vtbl; };
 #define I_AVN_VIEWBOX_VTABLE_SLOTS 44
 
 static const AvnGuid I_AVN_WINDOW_IID = {
-    0x965CC1CE,
-    0xDA6F,
-    0x5CCB,
-    { 0x90, 0x0F, 0x31, 0x50, 0xCA, 0x8D, 0xB6, 0x05 }
+    0xF01ADFEE,
+    0x98B3,
+    0x5F6C,
+    { 0x85, 0xB3, 0x61, 0x12, 0x1B, 0x1F, 0x71, 0x06 }
 };
-#define I_AVN_WINDOW_ABI_VERSION 5
+#define I_AVN_WINDOW_ABI_VERSION 6
 struct IAvnWindowVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnWindow* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnWindow* self); /* slot 1 */
@@ -7815,18 +7815,35 @@ struct IAvnWindowVtbl {
     AvnHResult (AVN_CALL *set_horizontal_content_alignment)(IAvnWindow* self, int32_t value); /* slot 53 */
     AvnHResult (AVN_CALL *get_vertical_content_alignment)(IAvnWindow* self, int32_t* value); /* slot 54 */
     AvnHResult (AVN_CALL *set_vertical_content_alignment)(IAvnWindow* self, int32_t value); /* slot 55 */
-    AvnHResult (AVN_CALL *get_title)(IAvnWindow* self, uint16_t** value); /* slot 56 */
-    AvnHResult (AVN_CALL *set_title)(IAvnWindow* self, const uint16_t* value); /* slot 57 */
-    AvnHResult (AVN_CALL *get_window_state)(IAvnWindow* self, int32_t* value); /* slot 58 */
-    AvnHResult (AVN_CALL *set_window_state)(IAvnWindow* self, int32_t value); /* slot 59 */
-    AvnHResult (AVN_CALL *get_can_resize)(IAvnWindow* self, int32_t* value); /* slot 60 */
-    AvnHResult (AVN_CALL *set_can_resize)(IAvnWindow* self, int32_t value); /* slot 61 */
-    AvnHResult (AVN_CALL *close)(IAvnWindow* self); /* slot 62 */
-    AvnHResult (AVN_CALL *show)(IAvnWindow* self); /* slot 63 */
-    AvnHResult (AVN_CALL *show_with_window)(IAvnWindow* self, IAvnWindow* owner); /* slot 64 */
+    AvnHResult (AVN_CALL *get_size_to_content)(IAvnWindow* self, int32_t* value); /* slot 56 */
+    AvnHResult (AVN_CALL *set_size_to_content)(IAvnWindow* self, int32_t value); /* slot 57 */
+    AvnHResult (AVN_CALL *get_title)(IAvnWindow* self, uint16_t** value); /* slot 58 */
+    AvnHResult (AVN_CALL *set_title)(IAvnWindow* self, const uint16_t* value); /* slot 59 */
+    AvnHResult (AVN_CALL *get_window_decorations)(IAvnWindow* self, int32_t* value); /* slot 60 */
+    AvnHResult (AVN_CALL *set_window_decorations)(IAvnWindow* self, int32_t value); /* slot 61 */
+    AvnHResult (AVN_CALL *get_show_activated)(IAvnWindow* self, int32_t* value); /* slot 62 */
+    AvnHResult (AVN_CALL *set_show_activated)(IAvnWindow* self, int32_t value); /* slot 63 */
+    AvnHResult (AVN_CALL *get_show_in_taskbar)(IAvnWindow* self, int32_t* value); /* slot 64 */
+    AvnHResult (AVN_CALL *set_show_in_taskbar)(IAvnWindow* self, int32_t value); /* slot 65 */
+    AvnHResult (AVN_CALL *get_closing_behavior)(IAvnWindow* self, int32_t* value); /* slot 66 */
+    AvnHResult (AVN_CALL *set_closing_behavior)(IAvnWindow* self, int32_t value); /* slot 67 */
+    AvnHResult (AVN_CALL *get_window_state)(IAvnWindow* self, int32_t* value); /* slot 68 */
+    AvnHResult (AVN_CALL *set_window_state)(IAvnWindow* self, int32_t value); /* slot 69 */
+    AvnHResult (AVN_CALL *get_can_resize)(IAvnWindow* self, int32_t* value); /* slot 70 */
+    AvnHResult (AVN_CALL *set_can_resize)(IAvnWindow* self, int32_t value); /* slot 71 */
+    AvnHResult (AVN_CALL *get_can_minimize)(IAvnWindow* self, int32_t* value); /* slot 72 */
+    AvnHResult (AVN_CALL *set_can_minimize)(IAvnWindow* self, int32_t value); /* slot 73 */
+    AvnHResult (AVN_CALL *get_can_maximize)(IAvnWindow* self, int32_t* value); /* slot 74 */
+    AvnHResult (AVN_CALL *set_can_maximize)(IAvnWindow* self, int32_t value); /* slot 75 */
+    AvnHResult (AVN_CALL *get_window_startup_location)(IAvnWindow* self, int32_t* value); /* slot 76 */
+    AvnHResult (AVN_CALL *set_window_startup_location)(IAvnWindow* self, int32_t value); /* slot 77 */
+    AvnHResult (AVN_CALL *close)(IAvnWindow* self); /* slot 78 */
+    AvnHResult (AVN_CALL *hide)(IAvnWindow* self); /* slot 79 */
+    AvnHResult (AVN_CALL *show)(IAvnWindow* self); /* slot 80 */
+    AvnHResult (AVN_CALL *show_with_window)(IAvnWindow* self, IAvnWindow* owner); /* slot 81 */
 };
 struct IAvnWindow { const IAvnWindowVtbl* vtbl; };
-#define I_AVN_WINDOW_VTABLE_SLOTS 65
+#define I_AVN_WINDOW_VTABLE_SLOTS 82
 
 static const AvnGuid I_AVN_WINDOW_NOTIFICATION_MANAGER_IID = {
     0x02AE0E5C,

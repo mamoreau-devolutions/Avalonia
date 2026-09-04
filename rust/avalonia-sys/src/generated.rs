@@ -47169,7 +47169,7 @@ impl ComPtr<IAvnViewbox> {
     }
 }
 
-pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0x965CC1CE, data2: 0xDA6F, data3: 0x5CCB, data4: [0x90, 0x0F, 0x31, 0x50, 0xCA, 0x8D, 0xB6, 0x05] };
+pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0xF01ADFEE, data2: 0x98B3, data3: 0x5F6C, data4: [0x85, 0xB3, 0x61, 0x12, 0x1B, 0x1F, 0x71, 0x06] };
 
 #[repr(C)]
 struct IAvnWindowVtbl {
@@ -47229,13 +47229,30 @@ struct IAvnWindowVtbl {
     set_horizontal_content_alignment: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
     get_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
     set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
+    get_size_to_content: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
+    set_size_to_content: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
     get_title: unsafe extern "system" fn(*mut IAvnWindow, *mut *mut u16) -> i32,
     set_title: unsafe extern "system" fn(*mut IAvnWindow, *mut u16) -> i32,
+    get_window_decorations: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
+    set_window_decorations: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
+    get_show_activated: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
+    set_show_activated: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
+    get_show_in_taskbar: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
+    set_show_in_taskbar: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
+    get_closing_behavior: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
+    set_closing_behavior: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
     get_window_state: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
     set_window_state: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
     get_can_resize: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
     set_can_resize: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
+    get_can_minimize: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
+    set_can_minimize: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
+    get_can_maximize: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
+    set_can_maximize: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
+    get_window_startup_location: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
+    set_window_startup_location: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
     close: unsafe extern "system" fn(*mut IAvnWindow) -> i32,
+    hide: unsafe extern "system" fn(*mut IAvnWindow) -> i32,
     show: unsafe extern "system" fn(*mut IAvnWindow) -> i32,
     show_with_window: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnWindow) -> i32,
 }
@@ -47619,6 +47636,20 @@ impl ComPtr<IAvnWindow> {
             hresult::check(hr)
         }
     }
+    pub fn get_size_to_content(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_size_to_content)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_size_to_content(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_size_to_content)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
     pub fn get_title(&self) -> Result<*mut u16> {
         unsafe {
             let mut value: *mut u16 = ptr::null_mut();
@@ -47630,6 +47661,62 @@ impl ComPtr<IAvnWindow> {
     pub fn set_title(&self, value: Option<&[u16]>) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_title)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_window_decorations(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_window_decorations)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_window_decorations(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_window_decorations)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_show_activated(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_show_activated)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_show_activated(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_show_activated)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_show_in_taskbar(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_show_in_taskbar)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_show_in_taskbar(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_show_in_taskbar)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_closing_behavior(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_closing_behavior)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_closing_behavior(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_closing_behavior)(self.as_raw(), value);
             hresult::check(hr)
         }
     }
@@ -47661,9 +47748,57 @@ impl ComPtr<IAvnWindow> {
             hresult::check(hr)
         }
     }
+    pub fn get_can_minimize(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_can_minimize)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_can_minimize(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_can_minimize)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_can_maximize(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_can_maximize)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn set_can_maximize(&self, value: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_can_maximize)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_window_startup_location(&self) -> Result<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_window_startup_location)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_window_startup_location(&self, value: i32) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_window_startup_location)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
     pub fn close(&self) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().close)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn hide(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().hide)(self.as_raw());
             hresult::check(hr)
         }
     }

@@ -166,6 +166,13 @@ reuses `AvnGeometry`. Column Width is a GridLength string. `TableView.Columns`
 stays a gap: a generic `AvaloniaList<T>` cannot be assigned from the collection
 wrapper. Inlines stay a gap.
 
+Wave L widens an existing leaf. `IAvnWindow` grows Hide plus SizeToContent,
+ShowActivated, ShowInTaskbar, CanMinimize, CanMaximize, WindowStartupLocation,
+WindowDecorations and ClosingBehavior, and moves from 5 to 6. Nothing derives
+from Window, so no other interface and no factory slot move. Icon, PixelPoint
+Position and ShowDialog stay gaps. The obsolete SystemDecorations alias is not
+projected; WindowDecorations is the live property.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A
