@@ -14,14 +14,14 @@ fn command_bar_family_publishes_at_version_one() {
         "*create_theme_variant_scope)(IAvnControlFactory* self, IAvnThemeVariantScope** value)",
         "#define I_AVN_COMMAND_BAR_ABI_VERSION 1",
         "#define I_AVN_PIPS_PAGER_ABI_VERSION 1",
-        "#define I_AVN_CONTROL_FACTORY_ABI_VERSION 12",
+        "#define I_AVN_CONTROL_FACTORY_ABI_VERSION 13",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
     }
-    for forbidden in [
-        "*set_primary_commands)",
-        "*set_icon)(IAvnCommandBarButton",
-    ] {
-        assert!(!HEADER.contains(forbidden), "header must not declare `{forbidden}`");
+    for forbidden in ["*set_primary_commands)", "*set_icon)(IAvnCommandBarButton"] {
+        assert!(
+            !HEADER.contains(forbidden),
+            "header must not declare `{forbidden}`"
+        );
     }
 }

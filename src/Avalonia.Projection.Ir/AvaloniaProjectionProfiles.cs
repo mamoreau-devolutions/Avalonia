@@ -62,8 +62,8 @@ public static class AvaloniaProjectionProfiles
             // at version 6, wave E six more (Spinner is abstract) so 7, and wave F two more
             // (Calendar, CalendarDatePicker) so 8, wave G seven more so 9, and wave H
             // eight constructible shapes (Shape is abstract) so 10, wave I five more so 11,
-            // and wave J six more so 12.
-            ["Avalonia.Host.Com.IAvnControlFactory"] = 12,
+            // and wave J six more so 12, and wave K five constructible (IconElement abstract) so 13.
+            ["Avalonia.Host.Com.IAvnControlFactory"] = 13,
         },
         IncludeTypeNames =
         [
@@ -181,6 +181,14 @@ public static class AvaloniaProjectionProfiles
             "Avalonia.Controls.CommandBarSeparator",
             "Avalonia.Controls.PipsPager",
             "Avalonia.Controls.ThemeVariantScope",
+            // Wave K. Icons and TableView. Inlines stay a gap. Column Width is a GridLength
+            // string. Columns is a projected collection of TableViewColumn.
+            "Avalonia.Controls.IconElement",
+            "Avalonia.Controls.PathIcon",
+            "Avalonia.Controls.TableView",
+            "Avalonia.Controls.TableViewColumn",
+            "Avalonia.Controls.TableViewRow",
+            "Avalonia.Controls.TableViewCell",
             "Avalonia.Controls.TextBox",
             "Avalonia.Controls.ScrollViewer",
             "Avalonia.Controls.Primitives.RangeBase",
@@ -401,6 +409,16 @@ public static class AvaloniaProjectionProfiles
                 "IsNextButtonVisible", "IsPreviousButtonVisible",
             ],
             ["Avalonia.Controls.ThemeVariantScope"] = [],
+            ["Avalonia.Controls.IconElement"] = [],
+            ["Avalonia.Controls.PathIcon"] = ["Data"],
+            ["Avalonia.Controls.TableView"] = ["CanUserResizeColumns"],
+            ["Avalonia.Controls.TableViewColumn"] =
+            [
+                "Header", "Width", "MinWidth", "MaxWidth", "IsVisible",
+                "HorizontalContentAlignment", "CanUserResize",
+            ],
+            ["Avalonia.Controls.TableViewRow"] = [],
+            ["Avalonia.Controls.TableViewCell"] = [],
             ["Avalonia.Controls.Primitives.TemplatedControl"] =
             [
                 "Background", "BorderBrush", "BorderThickness", "CornerRadius", "FontSize",
@@ -625,6 +643,23 @@ public static class AvaloniaProjectionProfiles
                 Kind = MarshallingKind.ComInterface,
                 InterfaceName = "Avalonia.Host.Com.IAvnControl",
                 IsNullable = true,
+            },
+            ["Avalonia.Controls.PathIcon.Data"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                StringConverterTypeName = "Avalonia.Host.Com.AvnGeometry",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.TableViewColumn.Header"] = new()
+            {
+                Kind = MarshallingKind.ComInterface,
+                InterfaceName = "Avalonia.Host.Com.IAvnControl",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.TableViewColumn.Width"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                IsNullable = false,
             },
             // The projection has no date/time ABI shape, so a date crosses as an ISO-8601
             // string through a host-side converter, the same mechanism Image.Source uses. The

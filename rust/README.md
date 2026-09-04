@@ -29,6 +29,7 @@ back the string the ABI set, or `null` for an image the ABI never set; see
 [Image sources](MARSHALLING.md#image-sources). `ToolTip::set_tip` carries text
 only; a control-valued tip reads back as `null`. See
 [ToolTip](MARSHALLING.md#tooltip) and [Tabs and trees](MARSHALLING.md#tabs-and-trees).
+`PathIcon`, `TableView` and `TableViewColumn` are projected too.
 `CommandBar`, `PipsPager` and `ThemeVariantScope` are projected too.
 `Popup`, `TrayIcon`, `WindowNotificationManager`, `NotificationCard` and
 `RefreshContainer` are projected too.

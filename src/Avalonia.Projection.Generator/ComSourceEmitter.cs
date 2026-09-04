@@ -614,9 +614,10 @@ public static class ComSourceEmitter
         sb.AppendLine("[GeneratedComClass]");
         sb.AppendLine($"public sealed partial class {className} : {interfaceName}");
         sb.AppendLine("{");
-        sb.AppendLine($"    private readonly global::{collection.ManagedTypeName} _value;");
+        var managedCollectionName = CSharpManagedTypeName(collection.ManagedTypeName);
+        sb.AppendLine($"    private readonly global::{managedCollectionName} _value;");
         sb.AppendLine();
-        sb.AppendLine($"    internal {className}(global::{collection.ManagedTypeName} value) => _value = value;");
+        sb.AppendLine($"    internal {className}(global::{managedCollectionName} value) => _value = value;");
         EmitCollectionMethod(
             sb,
             "GetCount",
@@ -1100,6 +1101,34 @@ public static class ComSourceEmitter
     {
         var i = fullName.LastIndexOf('.');
         return i < 0 ? null : fullName[..i];
+    }
+
+    /// <summary>
+    /// CLR <see cref="Type.FullName"/> for a constructed generic uses backticks
+    /// (<c>AvaloniaList`1[[T, Assembly, ...]]</c>). C# needs
+    /// <c>AvaloniaList&lt;T&gt;</c>.
+    /// </summary>
+    private static string CSharpManagedTypeName(string? fullName)
+    {
+        if (string.IsNullOrEmpty(fullName))
+            return fullName ?? "";
+
+        var nullable = fullName.EndsWith('?');
+        var name = nullable ? fullName[..^1] : fullName;
+        var tick = name.IndexOf('`');
+        if (tick < 0)
+            return fullName;
+
+        var definition = name[..tick];
+        var start = name.IndexOf("[[", tick, StringComparison.Ordinal);
+        if (start < 0)
+            return definition + (nullable ? "?" : "");
+
+        var inner = name[(start + 2)..];
+        var comma = inner.IndexOf(',');
+        var argument = comma < 0 ? inner.TrimEnd(']') : inner[..comma];
+        var rewritten = $"{definition}<{argument}>";
+        return nullable ? rewritten + "?" : rewritten;
     }
 
     private static string SimpleName(string fullName)

@@ -72,7 +72,7 @@ fn viewbox_child_is_a_control_and_grid_splitter_sits_on_thumb() {
         "*create_flex_panel)(IAvnControlFactory* self, IAvnFlexPanel** value)",
         "*create_thumb)(IAvnControlFactory* self, IAvnThumb** value)",
         "*create_grid_splitter)(IAvnControlFactory* self, IAvnGridSplitter** value)",
-        "#define I_AVN_CONTROL_FACTORY_ABI_VERSION 12",
+        "#define I_AVN_CONTROL_FACTORY_ABI_VERSION 13",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
     }

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("ED7F37F6-7A26-5777-83B6-636AA10AA927")]
+[Guid("15778134-9E9F-5BAF-98FF-5510778094BA")]
 public partial interface IAvnControlFactory
 {
     [PreserveSig]
@@ -160,6 +160,9 @@ public partial interface IAvnControlFactory
     int CreatePath(out IAvnPath? value);
 
     [PreserveSig]
+    int CreatePathIcon(out IAvnPathIcon? value);
+
+    [PreserveSig]
     int CreatePipsPager(out IAvnPipsPager? value);
 
     [PreserveSig]
@@ -224,6 +227,18 @@ public partial interface IAvnControlFactory
 
     [PreserveSig]
     int CreateTabItem(out IAvnTabItem? value);
+
+    [PreserveSig]
+    int CreateTableView(out IAvnTableView? value);
+
+    [PreserveSig]
+    int CreateTableViewCell(out IAvnTableViewCell? value);
+
+    [PreserveSig]
+    int CreateTableViewColumn(out IAvnTableViewColumn? value);
+
+    [PreserveSig]
+    int CreateTableViewRow(out IAvnTableViewRow? value);
 
     [PreserveSig]
     int CreateTemplatedControl(out IAvnTemplatedControl? value);
@@ -1058,6 +1073,21 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         }
     }
 
+    public int CreatePathIcon(out IAvnPathIcon? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnPathIcon)ProjectionRuntime.Wrap(new global::Avalonia.Controls.PathIcon())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int CreatePipsPager(out IAvnPipsPager? value)
     {
         value = null;
@@ -1380,6 +1410,66 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         {
             global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
             value = (IAvnTabItem)ProjectionRuntime.Wrap(new global::Avalonia.Controls.TabItem())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateTableView(out IAvnTableView? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnTableView)ProjectionRuntime.Wrap(new global::Avalonia.Controls.TableView())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateTableViewCell(out IAvnTableViewCell? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnTableViewCell)ProjectionRuntime.Wrap(new global::Avalonia.Controls.TableViewCell())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateTableViewColumn(out IAvnTableViewColumn? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnTableViewColumn)ProjectionRuntime.Wrap(new global::Avalonia.Controls.TableViewColumn())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateTableViewRow(out IAvnTableViewRow? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnTableViewRow)ProjectionRuntime.Wrap(new global::Avalonia.Controls.TableViewRow())!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

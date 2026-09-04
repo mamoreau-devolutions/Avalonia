@@ -159,6 +159,13 @@ Wave J is the same shape. `IAvnCommandBar`, `IAvnCommandBarButton`,
 `IAvnThemeVariantScope` publish at version 1. `IAvnControlFactory` moves from
 11 to 12. Command lists, Icon and ThemeVariant stay gaps.
 
+Wave K is the same shape. `IAvnIconElement` (abstract), `IAvnPathIcon`,
+`IAvnTableView`, `IAvnTableViewColumn`, `IAvnTableViewRow` and `IAvnTableViewCell`
+publish at version 1. `IAvnControlFactory` moves from 12 to 13. PathIcon.Data
+reuses `AvnGeometry`. Column Width is a GridLength string. `TableView.Columns`
+stays a gap: a generic `AvaloniaList<T>` cannot be assigned from the collection
+wrapper. Inlines stay a gap.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A

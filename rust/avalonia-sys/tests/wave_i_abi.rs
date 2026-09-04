@@ -14,7 +14,7 @@ fn overlay_controls_publish_at_version_one() {
         "*create_tray_icon)(IAvnControlFactory* self, IAvnTrayIcon** value)",
         "#define I_AVN_POPUP_ABI_VERSION 1",
         "#define I_AVN_TRAY_ICON_ABI_VERSION 1",
-        "#define I_AVN_CONTROL_FACTORY_ABI_VERSION 12",
+        "#define I_AVN_CONTROL_FACTORY_ABI_VERSION 13",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
     }

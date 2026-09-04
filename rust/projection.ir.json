@@ -1,8 +1,8 @@
 {
   "version": 13,
   "sourceAssembly": "Avalonia.Base,Avalonia.Controls",
-  "factoryIid": "ED7F37F6-7A26-5777-83B6-636AA10AA927",
-  "factoryAbiVersion": 12,
+  "factoryIid": "15778134-9E9F-5BAF-98FF-5510778094BA",
+  "factoryAbiVersion": 13,
   "brushInterfaceName": "Avalonia.Host.Com.IAvnBrush",
   "brushInterfaceIid": "FC7CCBAE-ED75-5C6D-8516-DF706E137ED3",
   "brushAbiVersion": 1,
@@ -1631,6 +1631,19 @@
       "events": []
     },
     {
+      "name": "IAvnIconElement",
+      "fullName": "Avalonia.Host.Com.IAvnIconElement",
+      "kind": "Class",
+      "iid": "FD80F791-455B-5F4F-A961-D01B28C974F7",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
+      "managedFullName": "Avalonia.Controls.IconElement",
+      "isConstructible": false,
+      "methods": [],
+      "properties": [],
+      "events": []
+    },
+    {
       "name": "IAvnImage",
       "fullName": "Avalonia.Host.Com.IAvnImage",
       "kind": "Class",
@@ -2282,6 +2295,30 @@
           "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Media.IBrush",
           "isNullable": true
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IAvnPathIcon",
+      "fullName": "Avalonia.Host.Com.IAvnPathIcon",
+      "kind": "Class",
+      "iid": "E23ACB7D-50DE-53A2-B3BC-004142B213AE",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnIconElement",
+      "managedFullName": "Avalonia.Controls.PathIcon",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "Data",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.Geometry",
+          "isNullable": true,
+          "stringConverterTypeName": "Avalonia.Host.Com.AvnGeometry"
         }
       ],
       "events": []
@@ -3960,6 +3997,133 @@
           "isNullable": false
         }
       ],
+      "events": []
+    },
+    {
+      "name": "IAvnTableView",
+      "fullName": "Avalonia.Host.Com.IAvnTableView",
+      "kind": "Class",
+      "iid": "F4F459D3-D25A-5AA1-9E1A-D4D05BAB3455",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnListBox",
+      "managedFullName": "Avalonia.Controls.TableView",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "CanUserResizeColumns",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IAvnTableViewCell",
+      "fullName": "Avalonia.Host.Com.IAvnTableViewCell",
+      "kind": "Class",
+      "iid": "FAA83C13-000C-5B34-AABB-9F90551F95BB",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
+      "managedFullName": "Avalonia.Controls.TableViewCell",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [],
+      "events": []
+    },
+    {
+      "name": "IAvnTableViewColumn",
+      "fullName": "Avalonia.Host.Com.IAvnTableViewColumn",
+      "kind": "Class",
+      "iid": "67152819-6C5E-5AEA-9AC1-14FEEFD7A8CF",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnStyledElement",
+      "managedFullName": "Avalonia.Controls.TableViewColumn",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "Header",
+          "kind": "ComInterface",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnControl",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Object",
+          "isNullable": true
+        },
+        {
+          "name": "Width",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.GridLength",
+          "isNullable": false
+        },
+        {
+          "name": "MinWidth",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "MaxWidth",
+          "kind": "F64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Double",
+          "isNullable": false
+        },
+        {
+          "name": "IsVisible",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "CanUserResize",
+          "kind": "NullableBool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Nullable\u00601[[System.Boolean, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "isNullable": true
+        },
+        {
+          "name": "HorizontalContentAlignment",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Layout.HorizontalAlignment",
+          "isNullable": false
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IAvnTableViewRow",
+      "fullName": "Avalonia.Host.Com.IAvnTableViewRow",
+      "kind": "Class",
+      "iid": "29F1C3D3-30C1-50F4-A381-8FC5B716A3C2",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnListBoxItem",
+      "managedFullName": "Avalonia.Controls.TableViewRow",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [],
       "events": []
     },
     {
@@ -9646,6 +9810,66 @@
     {
       "owner": "Avalonia.Controls.TabItem",
       "member": "IndicatorTemplate",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TableView",
+      "member": "DisplayMemberBinding",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TableView",
+      "member": "ItemTemplate",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TableView",
+      "member": "Columns",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TableViewCell",
+      "member": "Column",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TableViewColumn",
+      "member": "HeaderTheme",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TableViewColumn",
+      "member": "HeaderTemplate",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TableViewColumn",
+      "member": "CellTheme",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TableViewColumn",
+      "member": "CellTemplate",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TableViewColumn",
+      "member": "Binding",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TableViewColumn",
+      "member": "TableView",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TableViewColumn",
+      "member": "ActualWidth",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.TableViewColumn",
+      "member": "CanUserEffectivelyResize",
       "reason": "Not included by projection policy"
     },
     {
