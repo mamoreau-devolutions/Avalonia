@@ -1,8 +1,8 @@
 {
   "version": 13,
   "sourceAssembly": "Avalonia.Base,Avalonia.Controls",
-  "factoryIid": "367492E8-7700-5B59-B5C6-873039E4ED1C",
-  "factoryAbiVersion": 7,
+  "factoryIid": "2119ECE0-ED37-5424-A012-A9196DEE0CA5",
+  "factoryAbiVersion": 8,
   "brushInterfaceName": "Avalonia.Host.Com.IAvnBrush",
   "brushInterfaceIid": "FC7CCBAE-ED75-5C6D-8516-DF706E137ED3",
   "brushAbiVersion": 1,
@@ -255,6 +255,213 @@
           "canWrite": true,
           "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Controls.Location",
+          "isNullable": false
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IAvnCalendar",
+      "fullName": "Avalonia.Host.Com.IAvnCalendar",
+      "kind": "Class",
+      "iid": "6AA79B1C-DE2C-5693-AB13-8A3DA15E9727",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
+      "managedFullName": "Avalonia.Controls.Calendar",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "FirstDayOfWeek",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.DayOfWeek",
+          "isNullable": false
+        },
+        {
+          "name": "IsTodayHighlighted",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "DisplayMode",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.CalendarMode",
+          "isNullable": false
+        },
+        {
+          "name": "SelectionMode",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.CalendarSelectionMode",
+          "isNullable": false
+        },
+        {
+          "name": "SelectedDate",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "isNullable": true,
+          "stringConverterTypeName": "Avalonia.Host.Com.AvnCalendarDate"
+        },
+        {
+          "name": "DisplayDate",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.DateTime",
+          "isNullable": false,
+          "stringConverterTypeName": "Avalonia.Host.Com.AvnCalendarDateValue"
+        },
+        {
+          "name": "DisplayDateStart",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "isNullable": true,
+          "stringConverterTypeName": "Avalonia.Host.Com.AvnCalendarDate"
+        },
+        {
+          "name": "DisplayDateEnd",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "isNullable": true,
+          "stringConverterTypeName": "Avalonia.Host.Com.AvnCalendarDate"
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IAvnCalendarDatePicker",
+      "fullName": "Avalonia.Host.Com.IAvnCalendarDatePicker",
+      "kind": "Class",
+      "iid": "3B4653A1-9A45-5879-82D7-E9F68A8D956A",
+      "abiVersion": 1,
+      "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
+      "managedFullName": "Avalonia.Controls.CalendarDatePicker",
+      "isConstructible": true,
+      "methods": [],
+      "properties": [
+        {
+          "name": "DisplayDate",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.DateTime",
+          "isNullable": false,
+          "stringConverterTypeName": "Avalonia.Host.Com.AvnCalendarDateValue"
+        },
+        {
+          "name": "DisplayDateStart",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "isNullable": true,
+          "stringConverterTypeName": "Avalonia.Host.Com.AvnCalendarDate"
+        },
+        {
+          "name": "DisplayDateEnd",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "isNullable": true,
+          "stringConverterTypeName": "Avalonia.Host.Com.AvnCalendarDate"
+        },
+        {
+          "name": "IsDropDownOpen",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "IsTodayHighlighted",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "SelectedDate",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "isNullable": true,
+          "stringConverterTypeName": "Avalonia.Host.Com.AvnCalendarDate"
+        },
+        {
+          "name": "SelectedDateFormat",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.CalendarDatePickerFormat",
+          "isNullable": false
+        },
+        {
+          "name": "CustomDateFormatString",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.String",
+          "isNullable": false
+        },
+        {
+          "name": "Text",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.String",
+          "isNullable": true
+        },
+        {
+          "name": "PlaceholderText",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.String",
+          "isNullable": true
+        },
+        {
+          "name": "IsWeekNumberVisible",
+          "kind": "Bool",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Boolean",
           "isNullable": false
         }
       ],
@@ -3759,6 +3966,64 @@
       ]
     },
     {
+      "name": "CalendarDatePickerFormat",
+      "fullName": "Avalonia.Controls.CalendarDatePickerFormat",
+      "values": [
+        {
+          "name": "Long",
+          "value": 0
+        },
+        {
+          "name": "Short",
+          "value": 1
+        },
+        {
+          "name": "Custom",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "name": "CalendarMode",
+      "fullName": "Avalonia.Controls.CalendarMode",
+      "values": [
+        {
+          "name": "Month",
+          "value": 0
+        },
+        {
+          "name": "Year",
+          "value": 1
+        },
+        {
+          "name": "Decade",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "name": "CalendarSelectionMode",
+      "fullName": "Avalonia.Controls.CalendarSelectionMode",
+      "values": [
+        {
+          "name": "SingleDate",
+          "value": 0
+        },
+        {
+          "name": "SingleRange",
+          "value": 1
+        },
+        {
+          "name": "MultipleRange",
+          "value": 2
+        },
+        {
+          "name": "None",
+          "value": 3
+        }
+      ]
+    },
+    {
       "name": "ClickMode",
       "fullName": "Avalonia.Controls.ClickMode",
       "values": [
@@ -6217,6 +6482,40 @@
           "value": 2
         }
       ]
+    },
+    {
+      "name": "DayOfWeek",
+      "fullName": "System.DayOfWeek",
+      "values": [
+        {
+          "name": "Sunday",
+          "value": 0
+        },
+        {
+          "name": "Monday",
+          "value": 1
+        },
+        {
+          "name": "Tuesday",
+          "value": 2
+        },
+        {
+          "name": "Wednesday",
+          "value": 3
+        },
+        {
+          "name": "Thursday",
+          "value": 4
+        },
+        {
+          "name": "Friday",
+          "value": 5
+        },
+        {
+          "name": "Saturday",
+          "value": 6
+        }
+      ]
     }
   ],
   "attachedProperties": [
@@ -6831,6 +7130,136 @@
     {
       "owner": "Avalonia.Controls.Button",
       "member": "Flyout",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Calendar",
+      "member": "HeaderBackground",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Calendar",
+      "member": "IsWeekNumberVisible",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Calendar",
+      "member": "WeekNumberRule",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Calendar",
+      "member": "AllowTapRangeSelection",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Calendar",
+      "member": "SelectedDates",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Calendar",
+      "member": "BlackoutDates",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Calendar",
+      "member": "SelectedDatesChanged",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Calendar",
+      "member": "DisplayDateChanged",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Calendar",
+      "member": "DisplayModeChanged",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.Calendar",
+      "member": "ToString()",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CalendarDatePicker",
+      "member": "BlackoutDates",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CalendarDatePicker",
+      "member": "FirstDayOfWeek",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CalendarDatePicker",
+      "member": "TextConverter",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CalendarDatePicker",
+      "member": "Watermark",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CalendarDatePicker",
+      "member": "UseFloatingPlaceholder",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CalendarDatePicker",
+      "member": "UseFloatingWatermark",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CalendarDatePicker",
+      "member": "PlaceholderForeground",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CalendarDatePicker",
+      "member": "WatermarkForeground",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CalendarDatePicker",
+      "member": "HorizontalContentAlignment",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CalendarDatePicker",
+      "member": "VerticalContentAlignment",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CalendarDatePicker",
+      "member": "WeekNumberRule",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CalendarDatePicker",
+      "member": "CalendarClosed",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CalendarDatePicker",
+      "member": "CalendarOpened",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CalendarDatePicker",
+      "member": "DateValidationError",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CalendarDatePicker",
+      "member": "SelectedDateChanged",
+      "reason": "Not included by projection policy"
+    },
+    {
+      "owner": "Avalonia.Controls.CalendarDatePicker",
+      "member": "Clear()",
       "reason": "Not included by projection policy"
     },
     {

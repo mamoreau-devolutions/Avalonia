@@ -101,6 +101,8 @@ internal static class ProjectionRuntime
         global::Avalonia.Controls.Window typed => new AvnWindow(typed),
         global::Avalonia.Controls.AutoCompleteBox typed => new AvnAutoCompleteBox(typed),
         global::Avalonia.Controls.Border typed => new AvnBorder(typed),
+        global::Avalonia.Controls.Calendar typed => new AvnCalendar(typed),
+        global::Avalonia.Controls.CalendarDatePicker typed => new AvnCalendarDatePicker(typed),
         global::Avalonia.Controls.Canvas typed => new AvnCanvas(typed),
         global::Avalonia.Controls.ContentControl typed => new AvnContentControl(typed),
         global::Avalonia.Controls.DatePicker typed => new AvnDatePicker(typed),

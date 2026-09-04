@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("367492E8-7700-5B59-B5C6-873039E4ED1C")]
+[Guid("2119ECE0-ED37-5424-A012-A9196DEE0CA5")]
 public partial interface IAvnControlFactory
 {
     [PreserveSig]
@@ -23,6 +23,12 @@ public partial interface IAvnControlFactory
 
     [PreserveSig]
     int CreateButtonSpinner(out IAvnButtonSpinner? value);
+
+    [PreserveSig]
+    int CreateCalendar(out IAvnCalendar? value);
+
+    [PreserveSig]
+    int CreateCalendarDatePicker(out IAvnCalendarDatePicker? value);
 
     [PreserveSig]
     int CreateCanvas(out IAvnCanvas? value);
@@ -291,6 +297,36 @@ public sealed partial class AvnControlFactory : IAvnControlFactory
         {
             global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
             value = (IAvnButtonSpinner)ProjectionRuntime.Wrap(new global::Avalonia.Controls.ButtonSpinner())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateCalendar(out IAvnCalendar? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnCalendar)ProjectionRuntime.Wrap(new global::Avalonia.Controls.Calendar())!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CreateCalendarDatePicker(out IAvnCalendarDatePicker? value)
+    {
+        value = null;
+        try
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
+            value = (IAvnCalendarDatePicker)ProjectionRuntime.Wrap(new global::Avalonia.Controls.CalendarDatePicker())!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

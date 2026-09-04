@@ -76,6 +76,8 @@ public class ClrTypeExtractorTests
         typeof(AutoCompleteBox),
         typeof(MaskedTextBox),
         typeof(SelectableTextBlock),
+        typeof(Calendar),
+        typeof(CalendarDatePicker),
         typeof(TextBox),
         typeof(ScrollViewer),
         typeof(RangeBase),
@@ -266,9 +268,9 @@ public class ClrTypeExtractorTests
         // The factory grew a creator per wave A control plus GetToolTipStatics, then one per
         // constructible wave B type, then one per constructible wave C type, so it has moved
         // three times off the version 2 IID it published for CreateSolidColorBrush.
-        Assert.Equal(7, ir.FactoryAbiVersion);
+        Assert.Equal(8, ir.FactoryAbiVersion);
         Assert.Equal(
-            ClrTypeExtractor.CreateDeterministicIid("Avalonia.Host.Com.IAvnControlFactory", 7),
+            ClrTypeExtractor.CreateDeterministicIid("Avalonia.Host.Com.IAvnControlFactory", 8),
             ir.FactoryIid);
     }
 
@@ -1102,7 +1104,7 @@ public class ClrTypeExtractorTests
             property => property.Name is "Above" or "Below" or "LeftOf" or "RightOf"
                 or "AlignLeftWith" or "Order" or "Grow" or "Shrink" or "Basis");
 
-        Assert.Equal(7, ir.FactoryAbiVersion);
+        Assert.Equal(8, ir.FactoryAbiVersion);
     }
 
     [Fact]
@@ -1155,7 +1157,7 @@ public class ClrTypeExtractorTests
         Assert.Equal(MarshallingKind.ComCollection, items.Kind);
         Assert.Equal("Avalonia.Host.Com.IAvnItemList", items.InterfaceName);
 
-        Assert.Equal(7, ir.FactoryAbiVersion);
+        Assert.Equal(8, ir.FactoryAbiVersion);
     }
 
     [Fact]
@@ -1199,7 +1201,40 @@ public class ClrTypeExtractorTests
         Assert.True(selectedText.CanRead);
         Assert.False(selectedText.CanWrite);
 
-        Assert.Equal(7, ir.FactoryAbiVersion);
+        Assert.Equal(8, ir.FactoryAbiVersion);
+    }
+
+    [Fact]
+    public void Wave_f_calendar_family_publishes_new_interfaces_at_version_one()
+    {
+        var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
+
+        Assert.All(
+            new[] { "IAvnCalendar", "IAvnCalendarDatePicker" },
+            name =>
+            {
+                var type = Type(ir, name);
+                Assert.Equal(1, type.AbiVersion);
+                Assert.True(type.IsConstructible);
+                Assert.Equal("Avalonia.Host.Com.IAvnTemplatedControl", type.BaseFullName);
+            });
+
+        var selected = Type(ir, "IAvnCalendar").Properties.Single(p => p.Name == "SelectedDate");
+        Assert.Equal(MarshallingKind.StringUtf16, selected.Kind);
+        Assert.Equal("Avalonia.Host.Com.AvnCalendarDate", selected.StringConverterTypeName);
+        Assert.True(selected.IsNullable);
+
+        var display = Type(ir, "IAvnCalendar").Properties.Single(p => p.Name == "DisplayDate");
+        Assert.Equal("Avalonia.Host.Com.AvnCalendarDateValue", display.StringConverterTypeName);
+        Assert.False(display.IsNullable);
+
+        Assert.Contains(ir.Enums, e => e.Name == nameof(CalendarMode));
+        Assert.Contains(ir.Enums, e => e.Name == nameof(CalendarSelectionMode));
+        Assert.DoesNotContain(
+            Type(ir, "IAvnCalendar").Properties,
+            p => p.Name == "SelectedDates");
+
+        Assert.Equal(8, ir.FactoryAbiVersion);
     }
 
     [Fact]

@@ -133,6 +133,11 @@ Wave E is the same shape. `IAvnSpinner` (abstract), `IAvnButtonSpinner`,
 6 to 7. `NumericUpDown` decimals cross as invariant strings through `AvnDecimal`.
 `PromptChar` is a `char` and stays a gap.
 
+Wave F is the same shape. `IAvnCalendar` and `IAvnCalendarDatePicker` publish at
+version 1. `IAvnControlFactory` moves from 7 to 8. Calendar days are `DateTime`,
+not `DateTimeOffset`, so they cross as `yyyy-MM-dd` through `AvnCalendarDate`
+rather than the picker `"o"` form. `SelectedDates` stays a gap.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A

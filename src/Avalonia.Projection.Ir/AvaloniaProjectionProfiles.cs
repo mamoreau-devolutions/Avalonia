@@ -59,8 +59,9 @@ public static class AvaloniaProjectionProfiles
             // new control plus GetToolTipStatics (2 → 3), wave B seven more, wave C seven more,
             // and wave D seven more still (RepeatButton, DropDownButton, SplitButton,
             // ToggleSplitButton, HyperlinkButton, ContextMenu, MenuFlyout), so it republishes
-            // at version 6, and wave E six more (Spinner is abstract), so it republishes at 7.
-            ["Avalonia.Host.Com.IAvnControlFactory"] = 7,
+            // at version 6, wave E six more (Spinner is abstract) so 7, and wave F two more
+            // (Calendar, CalendarDatePicker) so 8.
+            ["Avalonia.Host.Com.IAvnControlFactory"] = 8,
         },
         IncludeTypeNames =
         [
@@ -139,6 +140,10 @@ public static class AvaloniaProjectionProfiles
             "Avalonia.Controls.AutoCompleteBox",
             "Avalonia.Controls.MaskedTextBox",
             "Avalonia.Controls.SelectableTextBlock",
+            // Wave F. Calendar days are DateTime, not DateTimeOffset, so they cross as
+            // yyyy-MM-dd through AvnCalendarDate rather than the picker "o" form.
+            "Avalonia.Controls.Calendar",
+            "Avalonia.Controls.CalendarDatePicker",
             "Avalonia.Controls.TextBox",
             "Avalonia.Controls.ScrollViewer",
             "Avalonia.Controls.Primitives.RangeBase",
@@ -301,6 +306,17 @@ public static class AvaloniaProjectionProfiles
                 ["Mask", "AsciiOnly", "HidePromptOnLeave", "ResetOnPrompt", "ResetOnSpace"],
             ["Avalonia.Controls.SelectableTextBlock"] =
                 ["SelectionStart", "SelectionEnd", "SelectedText", "CanCopy", "Copy"],
+            ["Avalonia.Controls.Calendar"] =
+            [
+                "SelectedDate", "DisplayDate", "DisplayDateStart", "DisplayDateEnd",
+                "DisplayMode", "SelectionMode", "IsTodayHighlighted", "FirstDayOfWeek",
+            ],
+            ["Avalonia.Controls.CalendarDatePicker"] =
+            [
+                "SelectedDate", "DisplayDate", "DisplayDateStart", "DisplayDateEnd",
+                "IsDropDownOpen", "IsTodayHighlighted", "SelectedDateFormat",
+                "CustomDateFormatString", "Text", "PlaceholderText", "IsWeekNumberVisible",
+            ],
             ["Avalonia.Controls.Primitives.TemplatedControl"] =
             [
                 "Background", "BorderBrush", "BorderThickness", "CornerRadius", "FontSize",
@@ -459,6 +475,54 @@ public static class AvaloniaProjectionProfiles
                 Kind = MarshallingKind.StringUtf16,
                 StringConverterTypeName = "Avalonia.Host.Com.AvnDecimalValue",
                 IsNullable = false,
+            },
+            ["Avalonia.Controls.Calendar.SelectedDate"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                StringConverterTypeName = "Avalonia.Host.Com.AvnCalendarDate",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.Calendar.DisplayDate"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                StringConverterTypeName = "Avalonia.Host.Com.AvnCalendarDateValue",
+                IsNullable = false,
+            },
+            ["Avalonia.Controls.Calendar.DisplayDateStart"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                StringConverterTypeName = "Avalonia.Host.Com.AvnCalendarDate",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.Calendar.DisplayDateEnd"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                StringConverterTypeName = "Avalonia.Host.Com.AvnCalendarDate",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.CalendarDatePicker.SelectedDate"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                StringConverterTypeName = "Avalonia.Host.Com.AvnCalendarDate",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.CalendarDatePicker.DisplayDate"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                StringConverterTypeName = "Avalonia.Host.Com.AvnCalendarDateValue",
+                IsNullable = false,
+            },
+            ["Avalonia.Controls.CalendarDatePicker.DisplayDateStart"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                StringConverterTypeName = "Avalonia.Host.Com.AvnCalendarDate",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.CalendarDatePicker.DisplayDateEnd"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                StringConverterTypeName = "Avalonia.Host.Com.AvnCalendarDate",
+                IsNullable = true,
             },
             // The projection has no date/time ABI shape, so a date crosses as an ISO-8601
             // string through a host-side converter, the same mechanism Image.Source uses. The

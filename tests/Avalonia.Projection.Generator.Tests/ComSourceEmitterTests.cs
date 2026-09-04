@@ -79,6 +79,8 @@ public class ComSourceEmitterTests
         typeof(AutoCompleteBox),
         typeof(MaskedTextBox),
         typeof(SelectableTextBlock),
+        typeof(Calendar),
+        typeof(CalendarDatePicker),
         typeof(TextBox),
         typeof(ScrollViewer),
         typeof(RangeBase),
