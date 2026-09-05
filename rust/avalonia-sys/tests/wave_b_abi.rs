@@ -83,13 +83,15 @@ fn the_menu_pair_is_imperative_and_its_commands_cross() {
         !HEADER.contains("*set_is_open)(IAvnMenuBase* self"),
         "IAvnMenuBase must not publish a set_is_open"
     );
-    for forbidden in [
-        "*set_hot_key)(IAvnMenuItem",
-        "*set_input_gesture)(IAvnMenuItem",
+    // U27 projects the gestures as strings through KeyGesture's own round-trip, so the
+    // setters exist; what stays out is the AvaloniaProperty plumbing.
+    for expected in [
+        "*set_hot_key)(IAvnMenuItem* self, const uint16_t* value)",
+        "*set_input_gesture)(IAvnMenuItem* self, const uint16_t* value)",
     ] {
         assert!(
-            !HEADER.contains(forbidden),
-            "header must not declare `{forbidden}`"
+            HEADER.contains(expected),
+            "header is missing `{expected}`"
         );
     }
 }
@@ -170,7 +172,7 @@ fn the_factory_gains_a_creator_per_constructible_wave_b_type() {
 fn wave_b_interfaces_publish_abi_version_one_and_nothing_else_moved() {
     for expected in [
         "#define I_AVN_FLYOUT_BASE_ABI_VERSION 1",
-        "#define I_AVN_POPUP_FLYOUT_BASE_ABI_VERSION 4",
+        "#define I_AVN_POPUP_FLYOUT_BASE_ABI_VERSION 5",
         "#define I_AVN_FLYOUT_ABI_VERSION 4",
         "#define I_AVN_MENU_BASE_ABI_VERSION 12",
         "#define I_AVN_MENU_ABI_VERSION 12",

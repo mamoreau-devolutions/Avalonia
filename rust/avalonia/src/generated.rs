@@ -16697,6 +16697,10 @@ impl Flyout {
         self.set_placement_constraint_adjustment(value)?;
         Ok(self)
     }
+    pub fn show_at_with_control_and_boolean(&self, placement_target: &impl AsControl, show_at_pointer: bool) -> Result<()> {
+        let placement_target = placement_target.as_control()?;
+        Ok(self.raw.show_at_with_control_and_boolean(&placement_target, show_at_pointer)?)
+    }
     pub fn subscribe_closing(&self, callback: impl FnMut(&mut PopupFlyoutBaseClosingEventArgs) + Send + 'static) -> Result<EventSubscription> {
         let mut callback = callback;
         let handler = sys::popup_flyout_base_closing_handler(move |event| { callback(event); Ok(()) });
@@ -24681,6 +24685,10 @@ impl MenuFlyout {
         self.set_placement_constraint_adjustment(value)?;
         Ok(self)
     }
+    pub fn show_at_with_control_and_boolean(&self, placement_target: &impl AsControl, show_at_pointer: bool) -> Result<()> {
+        let placement_target = placement_target.as_control()?;
+        Ok(self.raw.show_at_with_control_and_boolean(&placement_target, show_at_pointer)?)
+    }
     pub fn subscribe_closing(&self, callback: impl FnMut(&mut PopupFlyoutBaseClosingEventArgs) + Send + 'static) -> Result<EventSubscription> {
         let mut callback = callback;
         let handler = sys::popup_flyout_base_closing_handler(move |event| { callback(event); Ok(()) });
@@ -31084,6 +31092,10 @@ impl PopupFlyoutBase {
     pub fn placement_constraint_adjustment(self, value: i32) -> Result<Self> {
         self.set_placement_constraint_adjustment(value)?;
         Ok(self)
+    }
+    pub fn show_at_with_control_and_boolean(&self, placement_target: &impl AsControl, show_at_pointer: bool) -> Result<()> {
+        let placement_target = placement_target.as_control()?;
+        Ok(self.raw.show_at_with_control_and_boolean(&placement_target, show_at_pointer)?)
     }
     pub fn subscribe_closing(&self, callback: impl FnMut(&mut PopupFlyoutBaseClosingEventArgs) + Send + 'static) -> Result<EventSubscription> {
         let mut callback = callback;

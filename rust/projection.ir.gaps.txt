@@ -100,9 +100,8 @@ Avalonia.Controls.Primitives.Popup.DependencyResolver: By design: the resolver i
 Avalonia.Controls.Primitives.Popup.CustomPopupPlacementCallback: By design: custom placement needs a callback with geometry out-parameters
 Avalonia.Controls.Primitives.Popup.IsInsidePopup(Visual): By design: visual-tree queries are owned by the host
 Avalonia.Controls.Primitives.PopupFlyoutBase.CustomPopupPlacementCallback: By design: custom placement needs a callback with geometry out-parameters
-Avalonia.Controls.Primitives.PopupFlyoutBase.ShowAt(Control): By design: the flyout base's virtual ShowAt pair needs pointer-event state
-Avalonia.Controls.Primitives.PopupFlyoutBase.ShowAt(Control, Boolean): By design: the flyout base's virtual ShowAt pair needs pointer-event state
-Avalonia.Controls.Primitives.PopupFlyoutBase.Hide(): By design: the flyout base's virtual Hide needs pointer-event state
+Avalonia.Controls.Primitives.PopupFlyoutBase.ShowAt(Control): By design: overrides the projected base slot
+Avalonia.Controls.Primitives.PopupFlyoutBase.Hide(): By design: the sealed override of the projected base Hide slot
 Avalonia.Controls.Primitives.SelectingItemsControl.SelectedValueBinding: By design: bindings are not projected; use the imperative surface
 Avalonia.Controls.Primitives.SelectingItemsControl.BeginInit(): By design: initialization and internal plumbing is owned by the host
 Avalonia.Controls.Primitives.SelectingItemsControl.EndInit(): By design: initialization and internal plumbing is owned by the host

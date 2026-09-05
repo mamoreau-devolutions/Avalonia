@@ -538,6 +538,21 @@ public sealed partial class AvnFlyout : IAvnFlyout
         }
     }
 
+    public int ShowAtWithControlAndBoolean(IAvnControl placementTarget, int showAtPointer)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ShowAt((global::Avalonia.Controls.Control)ProjectionRuntime.Unwrap(placementTarget)!, showAtPointer != 0);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int AdviseClosing(IAvnPopupFlyoutBaseClosingHandler? handler, out long subscriptionId)
     {
         subscriptionId = 0;

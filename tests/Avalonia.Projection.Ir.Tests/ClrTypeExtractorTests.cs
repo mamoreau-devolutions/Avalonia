@@ -513,7 +513,7 @@ public class ClrTypeExtractorTests
 
         Assert.Equal(1, Type(ir, "IAvnFlyoutBase").AbiVersion);
         // PopupFlyoutBase stayed; Flyout grew ContentTemplate in U19.
-        Assert.Equal(4, Type(ir, "IAvnPopupFlyoutBase").AbiVersion);
+        Assert.Equal(5, Type(ir, "IAvnPopupFlyoutBase").AbiVersion);
         Assert.Equal(4, Type(ir, "IAvnFlyout").AbiVersion);
         Assert.All(
             new[] { "IAvnSplitView" },
@@ -598,7 +598,10 @@ public class ClrTypeExtractorTests
         // publishes each exactly once, from the base that declares it.
         var popupFlyoutBase = Type(ir, "IAvnPopupFlyoutBase");
         Assert.Equal("Avalonia.Host.Com.IAvnFlyoutBase", popupFlyoutBase.BaseFullName);
-        Assert.Empty(popupFlyoutBase.Methods);
+        // U34 projects the pointer-tracking ShowAt overload; the sealed ShowAt/Hide
+        // overrides of the base slots stay suppressed.
+        var showAtPointer = popupFlyoutBase.Methods.Single(m => m.Name == "ShowAtWithControlAndBoolean");
+        Assert.Contains(showAtPointer.Parameters, p => p.Name == "showAtPointer");
         Assert.All(
             new[] { "Placement", "ShowMode" },
             name => Assert.Equal(
@@ -1772,7 +1775,7 @@ public class ClrTypeExtractorTests
         Assert.Contains(popup.Properties, p => p.Name == "PlacementAnchor");
 
         var flyoutBase = Type(ir, "IAvnPopupFlyoutBase");
-        Assert.Equal(4, flyoutBase.AbiVersion);
+        Assert.Equal(5, flyoutBase.AbiVersion);
         var popupProp = flyoutBase.Properties.Single(p => p.Name == "Popup");
         Assert.Equal("Avalonia.Host.Com.IAvnPopup", popupProp.InterfaceName);
 

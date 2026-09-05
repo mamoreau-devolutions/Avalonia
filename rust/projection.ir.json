@@ -4412,12 +4412,36 @@
       "name": "IAvnPopupFlyoutBase",
       "fullName": "Avalonia.Host.Com.IAvnPopupFlyoutBase",
       "kind": "Class",
-      "iid": "95076423-DA07-563E-B758-024C6F5FF0B0",
-      "abiVersion": 4,
+      "iid": "2910253B-2AEF-5C56-8011-2E8117C0DDA5",
+      "abiVersion": 5,
       "baseFullName": "Avalonia.Host.Com.IAvnFlyoutBase",
       "managedFullName": "Avalonia.Controls.Primitives.PopupFlyoutBase",
       "isConstructible": false,
-      "methods": [],
+      "methods": [
+        {
+          "name": "ShowAtWithControlAndBoolean",
+          "managedName": "ShowAt",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": [
+            {
+              "name": "placementTarget",
+              "kind": "ComInterface",
+              "direction": "In",
+              "interfaceName": "Avalonia.Host.Com.IAvnControl",
+              "managedTypeName": "Avalonia.Controls.Control",
+              "isNullable": false
+            },
+            {
+              "name": "showAtPointer",
+              "kind": "Bool",
+              "direction": "In",
+              "managedTypeName": "System.Boolean",
+              "isNullable": false
+            }
+          ]
+        }
+      ],
       "properties": [
         {
           "name": "Popup",
@@ -12399,17 +12423,12 @@
     {
       "owner": "Avalonia.Controls.Primitives.PopupFlyoutBase",
       "member": "ShowAt(Control)",
-      "reason": "By design: the flyout base\u0027s virtual ShowAt pair needs pointer-event state"
-    },
-    {
-      "owner": "Avalonia.Controls.Primitives.PopupFlyoutBase",
-      "member": "ShowAt(Control, Boolean)",
-      "reason": "By design: the flyout base\u0027s virtual ShowAt pair needs pointer-event state"
+      "reason": "By design: overrides the projected base slot"
     },
     {
       "owner": "Avalonia.Controls.Primitives.PopupFlyoutBase",
       "member": "Hide()",
-      "reason": "By design: the flyout base\u0027s virtual Hide needs pointer-event state"
+      "reason": "By design: the sealed override of the projected base Hide slot"
     },
     {
       "owner": "Avalonia.Controls.Primitives.SelectingItemsControl",

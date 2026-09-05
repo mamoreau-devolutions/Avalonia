@@ -27643,6 +27643,7 @@ struct IAvnFlyoutVtbl {
     set_overlay_input_pass_through_element: unsafe extern "system" fn(*mut IAvnFlyout, *mut IAvnControl) -> i32,
     get_placement_constraint_adjustment: unsafe extern "system" fn(*mut IAvnFlyout, *mut i32) -> i32,
     set_placement_constraint_adjustment: unsafe extern "system" fn(*mut IAvnFlyout, i32) -> i32,
+    show_at_with_control_and_boolean: unsafe extern "system" fn(*mut IAvnFlyout, *mut IAvnControl, i32) -> i32,
     advise_closing: unsafe extern "system" fn(*mut IAvnFlyout, *mut IAvnPopupFlyoutBaseClosingHandler, *mut i64) -> i32,
     unadvise_closing: unsafe extern "system" fn(*mut IAvnFlyout, i64) -> i32,
     advise_opening: unsafe extern "system" fn(*mut IAvnFlyout, *mut IAvnPopupFlyoutBaseOpeningHandler, *mut i64) -> i32,
@@ -27868,6 +27869,12 @@ impl ComPtr<IAvnFlyout> {
     pub fn set_placement_constraint_adjustment(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placement_constraint_adjustment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn show_at_with_control_and_boolean(&self, placement_target: &ComPtr<IAvnControl>, show_at_pointer: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().show_at_with_control_and_boolean)(self.as_raw(), placement_target.as_raw(), i32::from(show_at_pointer));
             hresult::check(hr)
         }
     }
@@ -40530,6 +40537,7 @@ struct IAvnMenuFlyoutVtbl {
     set_overlay_input_pass_through_element: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut IAvnControl) -> i32,
     get_placement_constraint_adjustment: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut i32) -> i32,
     set_placement_constraint_adjustment: unsafe extern "system" fn(*mut IAvnMenuFlyout, i32) -> i32,
+    show_at_with_control_and_boolean: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut IAvnControl, i32) -> i32,
     advise_closing: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut IAvnPopupFlyoutBaseClosingHandler, *mut i64) -> i32,
     unadvise_closing: unsafe extern "system" fn(*mut IAvnMenuFlyout, i64) -> i32,
     advise_opening: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut IAvnPopupFlyoutBaseOpeningHandler, *mut i64) -> i32,
@@ -40756,6 +40764,12 @@ impl ComPtr<IAvnMenuFlyout> {
     pub fn set_placement_constraint_adjustment(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placement_constraint_adjustment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn show_at_with_control_and_boolean(&self, placement_target: &ComPtr<IAvnControl>, show_at_pointer: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().show_at_with_control_and_boolean)(self.as_raw(), placement_target.as_raw(), i32::from(show_at_pointer));
             hresult::check(hr)
         }
     }
@@ -50872,7 +50886,7 @@ impl ComPtr<IAvnPopup> {
     }
 }
 
-pub const I_AVN_POPUP_FLYOUT_BASE_IID: Guid = Guid { data1: 0x95076423, data2: 0xDA07, data3: 0x563E, data4: [0xB7, 0x58, 0x02, 0x4C, 0x6F, 0x5F, 0xF0, 0xB0] };
+pub const I_AVN_POPUP_FLYOUT_BASE_IID: Guid = Guid { data1: 0x2910253B, data2: 0x2AEF, data3: 0x5C56, data4: [0x80, 0x11, 0x2E, 0x81, 0x17, 0xC0, 0xDD, 0xA5] };
 
 #[repr(C)]
 struct IAvnPopupFlyoutBaseVtbl {
@@ -50909,6 +50923,7 @@ struct IAvnPopupFlyoutBaseVtbl {
     set_overlay_input_pass_through_element: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, *mut IAvnControl) -> i32,
     get_placement_constraint_adjustment: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, *mut i32) -> i32,
     set_placement_constraint_adjustment: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, i32) -> i32,
+    show_at_with_control_and_boolean: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, *mut IAvnControl, i32) -> i32,
     advise_closing: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, *mut IAvnPopupFlyoutBaseClosingHandler, *mut i64) -> i32,
     unadvise_closing: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, i64) -> i32,
     advise_opening: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, *mut IAvnPopupFlyoutBaseOpeningHandler, *mut i64) -> i32,
@@ -51130,6 +51145,12 @@ impl ComPtr<IAvnPopupFlyoutBase> {
     pub fn set_placement_constraint_adjustment(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placement_constraint_adjustment)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn show_at_with_control_and_boolean(&self, placement_target: &ComPtr<IAvnControl>, show_at_pointer: bool) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().show_at_with_control_and_boolean)(self.as_raw(), placement_target.as_raw(), i32::from(show_at_pointer));
             hresult::check(hr)
         }
     }

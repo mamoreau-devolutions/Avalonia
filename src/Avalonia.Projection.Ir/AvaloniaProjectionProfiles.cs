@@ -70,7 +70,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnContextMenu"] = 14,
             ["Avalonia.Host.Com.IAvnPopup"] = 7,
             ["Avalonia.Host.Com.IAvnTrayIcon"] = 3,
-            ["Avalonia.Host.Com.IAvnPopupFlyoutBase"] = 4,
+            ["Avalonia.Host.Com.IAvnPopupFlyoutBase"] = 5,
             ["Avalonia.Host.Com.IAvnFlyout"] = 4,
             ["Avalonia.Host.Com.IAvnMenuFlyout"] = 5,
             ["Avalonia.Host.Com.IAvnDatePicker"] = 11,
@@ -377,7 +377,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.Primitives.PopupFlyoutBase"] =
             [
                 "Placement", "ShowMode", "HorizontalOffset", "VerticalOffset",
-                "OverlayDismissEventPassThrough", "OverlayInputPassThroughElement", "Opening", "Closing",
+                "OverlayDismissEventPassThrough", "OverlayInputPassThroughElement", "ShowAt", "Opening", "Closing",
                 "Popup",
                 "PlacementAnchor", "PlacementGravity", "PlacementConstraintAdjustment",
             ],
@@ -1338,6 +1338,7 @@ public static class AvaloniaProjectionProfiles
                         ["ResourcesChanged"] = "the resource dictionary is not part of the projected model",
                         ["KnobTransitions"] = "animation internals owned by the host",
                         ["Open"] = "the suppressed override of the base Open slot",
+                        ["Hide"] = "the sealed override of the projected base Hide slot",
                         ["ContentTransition"] = "transitions are animation internals owned by the host",
                         ["PreviewContent"] = "preview plumbing is owned by the host",
                         ["FocusAdorner"] = "adorner plumbing is owned by the host",
@@ -1375,8 +1376,6 @@ public static class AvaloniaProjectionProfiles
                         ["BeginMoveDrag"] = "drag needs the pointer-event payload shape",
                         ["BeginResizeDrag"] = "drag needs the pointer-event payload shape",
                         ["SelectedItems"] = "the new-hidden member duplicates the projected base",
-                        ["ShowAt"] = "the flyout base's virtual ShowAt pair needs pointer-event state",
-                        ["Hide"] = "the flyout base's virtual Hide needs pointer-event state",
                     },
                     EventOverrides = new Dictionary<string, EventProjection>(StringComparer.Ordinal)
         {

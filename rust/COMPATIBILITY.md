@@ -593,6 +593,18 @@ ContextMenu/Menu's Close overwrites are corrected to name the real cause:
 they suppress the projected base slot. The gap report drops to 164
 entries. Factory stays 13.
 
+Wave U34 crosses the pointer-tracking flyout overload. The insight:
+`showAtPointer` is only a placement-mode switch, not pointer state, so
+PopupFlyoutBase.ShowAt(Control, Boolean) crosses as an ordinary method
+(`ShowAtWithControlAndBoolean`) with no payload shape at all. The sealed
+ShowAt(Control) and Hide overrides of the projected base slots stay
+suppressed, now with accurate reasons ("overrides the projected base
+slot" / "the sealed override of the projected base Hide slot") instead of
+the stale pointer-event wording. PopupFlyoutBase republishes at 5; a
+stale wave-B forbidden pin that banned MenuItem's gesture setters is
+flipped to require them now that U27 projects the gestures. The gap
+report drops to 163 entries. Factory stays 13.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A

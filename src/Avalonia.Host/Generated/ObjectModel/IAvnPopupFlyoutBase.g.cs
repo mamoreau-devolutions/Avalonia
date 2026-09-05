@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("95076423-DA07-563E-B758-024C6F5FF0B0")]
+[Guid("2910253B-2AEF-5C56-8011-2E8117C0DDA5")]
 public partial interface IAvnPopupFlyoutBase : IAvnFlyoutBase
 {
     [PreserveSig]
@@ -65,6 +65,9 @@ public partial interface IAvnPopupFlyoutBase : IAvnFlyoutBase
 
     [PreserveSig]
     int SetPlacementConstraintAdjustment(int value);
+
+    [PreserveSig]
+    int ShowAtWithControlAndBoolean(IAvnControl placementTarget, int showAtPointer);
 
     [PreserveSig]
     int AdviseClosing(IAvnPopupFlyoutBaseClosingHandler? handler, out long subscriptionId);
@@ -587,6 +590,21 @@ public sealed partial class AvnPopupFlyoutBase : IAvnPopupFlyoutBase
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.PlacementConstraintAdjustment = (global::Avalonia.Controls.Primitives.PopupPositioning.PopupPositionerConstraintAdjustment)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int ShowAtWithControlAndBoolean(IAvnControl placementTarget, int showAtPointer)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ShowAt((global::Avalonia.Controls.Control)ProjectionRuntime.Unwrap(placementTarget)!, showAtPointer != 0);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
