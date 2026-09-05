@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("5FC8913E-4951-5668-BB9E-8F04805A3F1F")]
+[Guid("58147197-F476-5728-A0BA-8307004FF3C3")]
 public partial interface IAvnComboBox : IAvnSelectingItemsControl
 {
     [PreserveSig]
@@ -26,6 +26,9 @@ public partial interface IAvnComboBox : IAvnSelectingItemsControl
 
     [PreserveSig]
     int SetMaxDropDownHeight(double value);
+
+    [PreserveSig]
+    int GetSelectionBoxItem(out AvnVariant value);
 
     [PreserveSig]
     int GetPlaceholderText(out string? value);
@@ -73,8 +76,18 @@ public sealed partial class AvnComboBox : IAvnComboBox
 {
     private readonly global::Avalonia.Host.Ownership.ProjectionObjectState _state;
     private global::Avalonia.Controls.ComboBox _value => _state.GetTarget<global::Avalonia.Controls.ComboBox>();
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnStyledElementAttachedToLogicalTreeHandler Handler, global::System.Action Unsubscribe)> _attachedToLogicalTreeSubscriptions = new();
+    private long _nextAttachedToLogicalTreeSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnStyledElementDetachedFromLogicalTreeHandler Handler, global::System.Action Unsubscribe)> _detachedFromLogicalTreeSubscriptions = new();
+    private long _nextDetachedFromLogicalTreeSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnStyledElementDataContextChangedHandler Handler, global::System.Action Unsubscribe)> _dataContextChangedSubscriptions = new();
     private long _nextDataContextChangedSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnStyledElementInitializedHandler Handler, global::System.Action Unsubscribe)> _initializedSubscriptions = new();
+    private long _nextInitializedSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnStyledElementResourcesChangedHandler Handler, global::System.Action Unsubscribe)> _resourcesChangedSubscriptions = new();
+    private long _nextResourcesChangedSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnStyledElementActualThemeVariantChangedHandler Handler, global::System.Action Unsubscribe)> _actualThemeVariantChangedSubscriptions = new();
+    private long _nextActualThemeVariantChangedSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnControlLoadedHandler Handler, global::System.Action Unsubscribe)> _loadedSubscriptions = new();
     private long _nextLoadedSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnControlUnloadedHandler Handler, global::System.Action Unsubscribe)> _unloadedSubscriptions = new();
@@ -178,6 +191,177 @@ public sealed partial class AvnComboBox : IAvnComboBox
         }
     }
 
+    public int GetDataContext(out AvnVariant value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnVariant.FromObject(_value.DataContext);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetDataContext(AvnVariant value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.DataContext = value.ToObject();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetIsInitialized(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.IsInitialized ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetTemplatedParent(out IAvnAvaloniaObject? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (IAvnAvaloniaObject?)ProjectionRuntime.Wrap(_value.TemplatedParent as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetParent(out IAvnStyledElement? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (IAvnStyledElement?)ProjectionRuntime.Wrap(_value.Parent as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseAttachedToLogicalTree(IAvnStyledElementAttachedToLogicalTreeHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<Avalonia.LogicalTree.LogicalTreeAttachmentEventArgs>((_, eventArgs) =>
+            {
+                var hr = handler.Invoke();
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.AttachedToLogicalTree += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextAttachedToLogicalTreeSubscriptionId);
+            _attachedToLogicalTreeSubscriptions.Add(subscriptionId, (handler, () => eventSource.AttachedToLogicalTree -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseAttachedToLogicalTree(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_attachedToLogicalTreeSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseDetachedFromLogicalTree(IAvnStyledElementDetachedFromLogicalTreeHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<Avalonia.LogicalTree.LogicalTreeAttachmentEventArgs>((_, eventArgs) =>
+            {
+                var hr = handler.Invoke();
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.DetachedFromLogicalTree += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextDetachedFromLogicalTreeSubscriptionId);
+            _detachedFromLogicalTreeSubscriptions.Add(subscriptionId, (handler, () => eventSource.DetachedFromLogicalTree -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseDetachedFromLogicalTree(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_detachedFromLogicalTreeSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int AdviseDataContextChanged(IAvnStyledElementDataContextChangedHandler? handler, out long subscriptionId)
     {
         subscriptionId = 0;
@@ -213,6 +397,144 @@ public sealed partial class AvnComboBox : IAvnComboBox
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             if (!_dataContextChangedSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseInitialized(IAvnStyledElementInitializedHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler((_, eventArgs) =>
+            {
+                var hr = handler.Invoke();
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.Initialized += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextInitializedSubscriptionId);
+            _initializedSubscriptions.Add(subscriptionId, (handler, () => eventSource.Initialized -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseInitialized(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_initializedSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseResourcesChanged(IAvnStyledElementResourcesChangedHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<Avalonia.Controls.ResourcesChangedEventArgs>((_, eventArgs) =>
+            {
+                var hr = handler.Invoke();
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.ResourcesChanged += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextResourcesChangedSubscriptionId);
+            _resourcesChangedSubscriptions.Add(subscriptionId, (handler, () => eventSource.ResourcesChanged -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseResourcesChanged(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_resourcesChangedSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseActualThemeVariantChanged(IAvnStyledElementActualThemeVariantChangedHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler((_, eventArgs) =>
+            {
+                var hr = handler.Invoke();
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.ActualThemeVariantChanged += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextActualThemeVariantChangedSubscriptionId);
+            _actualThemeVariantChangedSubscriptions.Add(subscriptionId, (handler, () => eventSource.ActualThemeVariantChanged -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseActualThemeVariantChanged(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_actualThemeVariantChangedSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
             subscription.Unsubscribe();
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
@@ -1837,6 +2159,22 @@ public sealed partial class AvnComboBox : IAvnComboBox
         }
     }
 
+    public int GetSelectionBoxItem(out AvnVariant value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnVariant.FromObject(_value.SelectionBoxItem);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetPlaceholderText(out string? value)
     {
         value = default!;
@@ -2070,12 +2408,42 @@ public sealed partial class AvnComboBox : IAvnComboBox
 
     private void ReleaseSubscriptions()
     {
+        foreach (var subscription in _attachedToLogicalTreeSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _attachedToLogicalTreeSubscriptions.Clear();
+        foreach (var subscription in _detachedFromLogicalTreeSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _detachedFromLogicalTreeSubscriptions.Clear();
         foreach (var subscription in _dataContextChangedSubscriptions.Values)
         {
             subscription.Unsubscribe();
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
         }
         _dataContextChangedSubscriptions.Clear();
+        foreach (var subscription in _initializedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _initializedSubscriptions.Clear();
+        foreach (var subscription in _resourcesChangedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _resourcesChangedSubscriptions.Clear();
+        foreach (var subscription in _actualThemeVariantChangedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _actualThemeVariantChangedSubscriptions.Clear();
         foreach (var subscription in _loadedSubscriptions.Values)
         {
             subscription.Unsubscribe();

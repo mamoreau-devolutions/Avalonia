@@ -984,6 +984,63 @@ unsafe extern "system" fn i_avn_calendar_date_picker_calendar_opened_handler_inv
     crate::event_callback::invoke::<IAvnCalendarDatePickerCalendarOpenedHandler, ()>(this, &mut ())
 }
 
+pub const I_AVN_CALENDAR_DATE_PICKER_DATE_VALIDATION_ERROR_HANDLER_IID: Guid = Guid { data1: 0xD401F3FD, data2: 0xFAEB, data3: 0x5107, data4: [0xA0, 0xCF, 0x11, 0x58, 0xFF, 0x04, 0x7A, 0x5D] };
+
+#[derive(Debug)]
+pub struct CalendarDatePickerDateValidationErrorEventArgs {
+    pub text: String,
+    pub throw_exception: bool,
+}
+
+#[repr(C)]
+struct IAvnCalendarDatePickerDateValidationErrorHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnCalendarDatePickerDateValidationErrorHandler, text: *mut u16, throw_exception: *mut i32) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnCalendarDatePickerDateValidationErrorHandler { vtbl: *const IAvnCalendarDatePickerDateValidationErrorHandlerVtbl }
+
+unsafe impl ComInterface for IAvnCalendarDatePickerDateValidationErrorHandler { const IID: Guid = I_AVN_CALENDAR_DATE_PICKER_DATE_VALIDATION_ERROR_HANDLER_IID; }
+
+static I_AVN_CALENDAR_DATE_PICKER_DATE_VALIDATION_ERROR_HANDLER_VTBL: IAvnCalendarDatePickerDateValidationErrorHandlerVtbl = IAvnCalendarDatePickerDateValidationErrorHandlerVtbl {
+    query_interface: i_avn_calendar_date_picker_date_validation_error_handler_query_interface,
+    add_ref: i_avn_calendar_date_picker_date_validation_error_handler_add_ref,
+    release: i_avn_calendar_date_picker_date_validation_error_handler_release,
+    invoke: i_avn_calendar_date_picker_date_validation_error_handler_invoke,
+};
+
+pub fn calendar_date_picker_date_validation_error_handler(callback: impl FnMut(&mut CalendarDatePickerDateValidationErrorEventArgs) -> Result<()> + Send + 'static) -> ComPtr<IAvnCalendarDatePickerDateValidationErrorHandler> {
+    crate::event_callback::create(IAvnCalendarDatePickerDateValidationErrorHandler { vtbl: &I_AVN_CALENDAR_DATE_PICKER_DATE_VALIDATION_ERROR_HANDLER_VTBL }, callback)
+}
+
+unsafe extern "system" fn i_avn_calendar_date_picker_date_validation_error_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnCalendarDatePickerDateValidationErrorHandler, CalendarDatePickerDateValidationErrorEventArgs>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_calendar_date_picker_date_validation_error_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnCalendarDatePickerDateValidationErrorHandler, CalendarDatePickerDateValidationErrorEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_calendar_date_picker_date_validation_error_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnCalendarDatePickerDateValidationErrorHandler, CalendarDatePickerDateValidationErrorEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_calendar_date_picker_date_validation_error_handler_invoke(this: *mut IAvnCalendarDatePickerDateValidationErrorHandler, text: *mut u16, throw_exception: *mut i32) -> i32 {
+    if throw_exception.is_null() { return hresult::E_POINTER; }
+    let mut arguments = CalendarDatePickerDateValidationErrorEventArgs {
+        text: crate::clone_utf16(text).unwrap_or_default(),
+        throw_exception: *throw_exception != 0,
+    };
+    let hr = crate::event_callback::invoke::<IAvnCalendarDatePickerDateValidationErrorHandler, CalendarDatePickerDateValidationErrorEventArgs>(this, &mut arguments);
+    if hr >= 0 {
+        *throw_exception = i32::from(arguments.throw_exception);
+    }
+    hr
+}
+
 pub const I_AVN_COMBO_BOX_DROP_DOWN_CLOSED_HANDLER_IID: Guid = Guid { data1: 0x954838EF, data2: 0x2A9F, data3: 0x5383, data4: [0x9E, 0xEF, 0x54, 0x49, 0xFD, 0xE8, 0x98, 0x34] };
 
 #[repr(C)]
@@ -2145,6 +2202,61 @@ unsafe extern "system" fn i_avn_notification_card_notification_closed_handler_re
 
 unsafe extern "system" fn i_avn_notification_card_notification_closed_handler_invoke(this: *mut IAvnNotificationCardNotificationClosedHandler) -> i32 {
     crate::event_callback::invoke::<IAvnNotificationCardNotificationClosedHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_NUMERIC_UP_DOWN_SPINNED_HANDLER_IID: Guid = Guid { data1: 0x904CBD0B, data2: 0x4238, data3: 0x54F8, data4: [0x86, 0xBE, 0xDD, 0x3E, 0x2E, 0x1C, 0x00, 0xA7] };
+
+#[derive(Debug)]
+pub struct NumericUpDownSpinnedEventArgs {
+    pub direction: i32,
+    pub using_mouse_wheel: bool,
+}
+
+#[repr(C)]
+struct IAvnNumericUpDownSpinnedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnNumericUpDownSpinnedHandler, direction: i32, using_mouse_wheel: i32) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnNumericUpDownSpinnedHandler { vtbl: *const IAvnNumericUpDownSpinnedHandlerVtbl }
+
+unsafe impl ComInterface for IAvnNumericUpDownSpinnedHandler { const IID: Guid = I_AVN_NUMERIC_UP_DOWN_SPINNED_HANDLER_IID; }
+
+static I_AVN_NUMERIC_UP_DOWN_SPINNED_HANDLER_VTBL: IAvnNumericUpDownSpinnedHandlerVtbl = IAvnNumericUpDownSpinnedHandlerVtbl {
+    query_interface: i_avn_numeric_up_down_spinned_handler_query_interface,
+    add_ref: i_avn_numeric_up_down_spinned_handler_add_ref,
+    release: i_avn_numeric_up_down_spinned_handler_release,
+    invoke: i_avn_numeric_up_down_spinned_handler_invoke,
+};
+
+pub fn numeric_up_down_spinned_handler(callback: impl FnMut(&mut NumericUpDownSpinnedEventArgs) -> Result<()> + Send + 'static) -> ComPtr<IAvnNumericUpDownSpinnedHandler> {
+    crate::event_callback::create(IAvnNumericUpDownSpinnedHandler { vtbl: &I_AVN_NUMERIC_UP_DOWN_SPINNED_HANDLER_VTBL }, callback)
+}
+
+unsafe extern "system" fn i_avn_numeric_up_down_spinned_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnNumericUpDownSpinnedHandler, NumericUpDownSpinnedEventArgs>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_numeric_up_down_spinned_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnNumericUpDownSpinnedHandler, NumericUpDownSpinnedEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_numeric_up_down_spinned_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnNumericUpDownSpinnedHandler, NumericUpDownSpinnedEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_numeric_up_down_spinned_handler_invoke(this: *mut IAvnNumericUpDownSpinnedHandler, direction: i32, using_mouse_wheel: i32) -> i32 {
+    let mut arguments = NumericUpDownSpinnedEventArgs {
+        direction,
+        using_mouse_wheel: using_mouse_wheel != 0,
+    };
+    let hr = crate::event_callback::invoke::<IAvnNumericUpDownSpinnedHandler, NumericUpDownSpinnedEventArgs>(this, &mut arguments);
+    if hr >= 0 {
+    }
+    hr
 }
 
 pub const I_AVN_NUMERIC_UP_DOWN_VALUE_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x68A72F63, data2: 0xB469, data3: 0x5312, data4: [0x92, 0x5F, 0xF7, 0xFC, 0xCF, 0x35, 0xA0, 0xDF] };
@@ -3795,6 +3907,116 @@ unsafe extern "system" fn i_avn_window_closing_handler_invoke(this: *mut IAvnWin
     hr
 }
 
+pub const I_AVN_STYLED_ELEMENT_ATTACHED_TO_LOGICAL_TREE_HANDLER_IID: Guid = Guid { data1: 0x713425C4, data2: 0x712B, data3: 0x544D, data4: [0xAE, 0x34, 0xD4, 0x42, 0xC3, 0x57, 0x3A, 0x31] };
+
+#[repr(C)]
+struct IAvnStyledElementAttachedToLogicalTreeHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnStyledElementAttachedToLogicalTreeHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnStyledElementAttachedToLogicalTreeHandler {
+    vtbl: *const IAvnStyledElementAttachedToLogicalTreeHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnStyledElementAttachedToLogicalTreeHandler {
+    const IID: Guid = I_AVN_STYLED_ELEMENT_ATTACHED_TO_LOGICAL_TREE_HANDLER_IID;
+}
+
+impl ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_STYLED_ELEMENT_ATTACHED_TO_LOGICAL_TREE_HANDLER_VTBL: IAvnStyledElementAttachedToLogicalTreeHandlerVtbl = IAvnStyledElementAttachedToLogicalTreeHandlerVtbl {
+    query_interface: i_avn_styled_element_attached_to_logical_tree_handler_query_interface,
+    add_ref: i_avn_styled_element_attached_to_logical_tree_handler_add_ref,
+    release: i_avn_styled_element_attached_to_logical_tree_handler_release,
+    invoke: i_avn_styled_element_attached_to_logical_tree_handler_invoke,
+};
+
+pub fn styled_element_attached_to_logical_tree_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler> {
+    crate::event_callback::create::<IAvnStyledElementAttachedToLogicalTreeHandler, ()>(IAvnStyledElementAttachedToLogicalTreeHandler { vtbl: &I_AVN_STYLED_ELEMENT_ATTACHED_TO_LOGICAL_TREE_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_styled_element_attached_to_logical_tree_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnStyledElementAttachedToLogicalTreeHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_styled_element_attached_to_logical_tree_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnStyledElementAttachedToLogicalTreeHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_styled_element_attached_to_logical_tree_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnStyledElementAttachedToLogicalTreeHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_styled_element_attached_to_logical_tree_handler_invoke(this: *mut IAvnStyledElementAttachedToLogicalTreeHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnStyledElementAttachedToLogicalTreeHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_STYLED_ELEMENT_DETACHED_FROM_LOGICAL_TREE_HANDLER_IID: Guid = Guid { data1: 0xDB750505, data2: 0x7EED, data3: 0x581F, data4: [0xA1, 0x1B, 0x5B, 0xE2, 0x9D, 0xD8, 0x83, 0xDF] };
+
+#[repr(C)]
+struct IAvnStyledElementDetachedFromLogicalTreeHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnStyledElementDetachedFromLogicalTreeHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnStyledElementDetachedFromLogicalTreeHandler {
+    vtbl: *const IAvnStyledElementDetachedFromLogicalTreeHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnStyledElementDetachedFromLogicalTreeHandler {
+    const IID: Guid = I_AVN_STYLED_ELEMENT_DETACHED_FROM_LOGICAL_TREE_HANDLER_IID;
+}
+
+impl ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_STYLED_ELEMENT_DETACHED_FROM_LOGICAL_TREE_HANDLER_VTBL: IAvnStyledElementDetachedFromLogicalTreeHandlerVtbl = IAvnStyledElementDetachedFromLogicalTreeHandlerVtbl {
+    query_interface: i_avn_styled_element_detached_from_logical_tree_handler_query_interface,
+    add_ref: i_avn_styled_element_detached_from_logical_tree_handler_add_ref,
+    release: i_avn_styled_element_detached_from_logical_tree_handler_release,
+    invoke: i_avn_styled_element_detached_from_logical_tree_handler_invoke,
+};
+
+pub fn styled_element_detached_from_logical_tree_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler> {
+    crate::event_callback::create::<IAvnStyledElementDetachedFromLogicalTreeHandler, ()>(IAvnStyledElementDetachedFromLogicalTreeHandler { vtbl: &I_AVN_STYLED_ELEMENT_DETACHED_FROM_LOGICAL_TREE_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_styled_element_detached_from_logical_tree_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnStyledElementDetachedFromLogicalTreeHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_styled_element_detached_from_logical_tree_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnStyledElementDetachedFromLogicalTreeHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_styled_element_detached_from_logical_tree_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnStyledElementDetachedFromLogicalTreeHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_styled_element_detached_from_logical_tree_handler_invoke(this: *mut IAvnStyledElementDetachedFromLogicalTreeHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnStyledElementDetachedFromLogicalTreeHandler, ()>(this, &mut ())
+}
+
 pub const I_AVN_STYLED_ELEMENT_DATA_CONTEXT_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x622D4F08, data2: 0x5DE5, data3: 0x5A44, data4: [0xAA, 0x40, 0xE2, 0x5A, 0x22, 0x4E, 0x41, 0x1D] };
 
 #[repr(C)]
@@ -3848,6 +4070,171 @@ unsafe extern "system" fn i_avn_styled_element_data_context_changed_handler_rele
 
 unsafe extern "system" fn i_avn_styled_element_data_context_changed_handler_invoke(this: *mut IAvnStyledElementDataContextChangedHandler) -> i32 {
     crate::event_callback::invoke::<IAvnStyledElementDataContextChangedHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_STYLED_ELEMENT_INITIALIZED_HANDLER_IID: Guid = Guid { data1: 0x3A9D93B2, data2: 0xCC0A, data3: 0x51B8, data4: [0xA3, 0xAD, 0x2B, 0x2F, 0xDB, 0x93, 0xF2, 0xEE] };
+
+#[repr(C)]
+struct IAvnStyledElementInitializedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnStyledElementInitializedHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnStyledElementInitializedHandler {
+    vtbl: *const IAvnStyledElementInitializedHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnStyledElementInitializedHandler {
+    const IID: Guid = I_AVN_STYLED_ELEMENT_INITIALIZED_HANDLER_IID;
+}
+
+impl ComPtr<IAvnStyledElementInitializedHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_STYLED_ELEMENT_INITIALIZED_HANDLER_VTBL: IAvnStyledElementInitializedHandlerVtbl = IAvnStyledElementInitializedHandlerVtbl {
+    query_interface: i_avn_styled_element_initialized_handler_query_interface,
+    add_ref: i_avn_styled_element_initialized_handler_add_ref,
+    release: i_avn_styled_element_initialized_handler_release,
+    invoke: i_avn_styled_element_initialized_handler_invoke,
+};
+
+pub fn styled_element_initialized_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnStyledElementInitializedHandler> {
+    crate::event_callback::create::<IAvnStyledElementInitializedHandler, ()>(IAvnStyledElementInitializedHandler { vtbl: &I_AVN_STYLED_ELEMENT_INITIALIZED_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_styled_element_initialized_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnStyledElementInitializedHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_styled_element_initialized_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnStyledElementInitializedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_styled_element_initialized_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnStyledElementInitializedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_styled_element_initialized_handler_invoke(this: *mut IAvnStyledElementInitializedHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnStyledElementInitializedHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_STYLED_ELEMENT_RESOURCES_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x1E8B1690, data2: 0x2A2B, data3: 0x5409, data4: [0x9A, 0xA9, 0xD1, 0xB8, 0xC0, 0xED, 0x23, 0x56] };
+
+#[repr(C)]
+struct IAvnStyledElementResourcesChangedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnStyledElementResourcesChangedHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnStyledElementResourcesChangedHandler {
+    vtbl: *const IAvnStyledElementResourcesChangedHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnStyledElementResourcesChangedHandler {
+    const IID: Guid = I_AVN_STYLED_ELEMENT_RESOURCES_CHANGED_HANDLER_IID;
+}
+
+impl ComPtr<IAvnStyledElementResourcesChangedHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_STYLED_ELEMENT_RESOURCES_CHANGED_HANDLER_VTBL: IAvnStyledElementResourcesChangedHandlerVtbl = IAvnStyledElementResourcesChangedHandlerVtbl {
+    query_interface: i_avn_styled_element_resources_changed_handler_query_interface,
+    add_ref: i_avn_styled_element_resources_changed_handler_add_ref,
+    release: i_avn_styled_element_resources_changed_handler_release,
+    invoke: i_avn_styled_element_resources_changed_handler_invoke,
+};
+
+pub fn styled_element_resources_changed_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnStyledElementResourcesChangedHandler> {
+    crate::event_callback::create::<IAvnStyledElementResourcesChangedHandler, ()>(IAvnStyledElementResourcesChangedHandler { vtbl: &I_AVN_STYLED_ELEMENT_RESOURCES_CHANGED_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_styled_element_resources_changed_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnStyledElementResourcesChangedHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_styled_element_resources_changed_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnStyledElementResourcesChangedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_styled_element_resources_changed_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnStyledElementResourcesChangedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_styled_element_resources_changed_handler_invoke(this: *mut IAvnStyledElementResourcesChangedHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnStyledElementResourcesChangedHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_STYLED_ELEMENT_ACTUAL_THEME_VARIANT_CHANGED_HANDLER_IID: Guid = Guid { data1: 0xD6F3A330, data2: 0x1C6F, data3: 0x5472, data4: [0x9C, 0xA4, 0x14, 0x48, 0x4D, 0xFE, 0x2C, 0xAA] };
+
+#[repr(C)]
+struct IAvnStyledElementActualThemeVariantChangedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnStyledElementActualThemeVariantChangedHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnStyledElementActualThemeVariantChangedHandler {
+    vtbl: *const IAvnStyledElementActualThemeVariantChangedHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnStyledElementActualThemeVariantChangedHandler {
+    const IID: Guid = I_AVN_STYLED_ELEMENT_ACTUAL_THEME_VARIANT_CHANGED_HANDLER_IID;
+}
+
+impl ComPtr<IAvnStyledElementActualThemeVariantChangedHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_STYLED_ELEMENT_ACTUAL_THEME_VARIANT_CHANGED_HANDLER_VTBL: IAvnStyledElementActualThemeVariantChangedHandlerVtbl = IAvnStyledElementActualThemeVariantChangedHandlerVtbl {
+    query_interface: i_avn_styled_element_actual_theme_variant_changed_handler_query_interface,
+    add_ref: i_avn_styled_element_actual_theme_variant_changed_handler_add_ref,
+    release: i_avn_styled_element_actual_theme_variant_changed_handler_release,
+    invoke: i_avn_styled_element_actual_theme_variant_changed_handler_invoke,
+};
+
+pub fn styled_element_actual_theme_variant_changed_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnStyledElementActualThemeVariantChangedHandler> {
+    crate::event_callback::create::<IAvnStyledElementActualThemeVariantChangedHandler, ()>(IAvnStyledElementActualThemeVariantChangedHandler { vtbl: &I_AVN_STYLED_ELEMENT_ACTUAL_THEME_VARIANT_CHANGED_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_styled_element_actual_theme_variant_changed_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnStyledElementActualThemeVariantChangedHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_styled_element_actual_theme_variant_changed_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnStyledElementActualThemeVariantChangedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_styled_element_actual_theme_variant_changed_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnStyledElementActualThemeVariantChangedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_styled_element_actual_theme_variant_changed_handler_invoke(this: *mut IAvnStyledElementActualThemeVariantChangedHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnStyledElementActualThemeVariantChangedHandler, ()>(this, &mut ())
 }
 
 pub const I_AVN_VARIANT_LIST_IID: Guid = Guid { data1: 0x79D4229E, data2: 0xDE83, data3: 0x5C54, data4: [0x91, 0xA9, 0x20, 0x64, 0x25, 0x0F, 0x6B, 0xC0] };
@@ -4189,7 +4576,7 @@ impl ComPtr<IAvnAvaloniaObject> {
     }
 }
 
-pub const I_AVN_AUTO_COMPLETE_BOX_IID: Guid = Guid { data1: 0x4E0F6FA2, data2: 0x72EA, data3: 0x5A48, data4: [0xA0, 0xE3, 0xD8, 0xD4, 0x8A, 0x37, 0xAC, 0x2D] };
+pub const I_AVN_AUTO_COMPLETE_BOX_IID: Guid = Guid { data1: 0xAD1E13B5, data2: 0x7782, data3: 0x5CCE, data4: [0x92, 0x8E, 0x2A, 0x1F, 0xE1, 0xDD, 0x77, 0x33] };
 
 #[repr(C)]
 struct IAvnAutoCompleteBoxVtbl {
@@ -4201,8 +4588,23 @@ struct IAvnAutoCompleteBoxVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut f64) -> i32,
@@ -4364,6 +4766,70 @@ impl ComPtr<IAvnAutoCompleteBox> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -4374,6 +4840,45 @@ impl ComPtr<IAvnAutoCompleteBox> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -5159,7 +5664,7 @@ impl ComPtr<IAvnAutoCompleteBox> {
     }
 }
 
-pub const I_AVN_BORDER_IID: Guid = Guid { data1: 0x30C85C8D, data2: 0x39D4, data3: 0x5BA2, data4: [0x8C, 0x01, 0x56, 0x8B, 0x02, 0x1D, 0xFA, 0x70] };
+pub const I_AVN_BORDER_IID: Guid = Guid { data1: 0xC8B9D802, data2: 0x476B, data3: 0x5AD3, data4: [0x92, 0xD5, 0x96, 0x9B, 0xB4, 0x77, 0xF8, 0xF2] };
 
 #[repr(C)]
 struct IAvnBorderVtbl {
@@ -5171,8 +5676,23 @@ struct IAvnBorderVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnBorder, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnBorder, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnBorder, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnBorder, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnBorder, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnBorder, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnBorder, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnBorder, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnBorder, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnBorder, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnBorder, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnBorder, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnBorder, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnBorder, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnBorder, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnBorder, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnBorder, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnBorder, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnBorder, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnBorder, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnBorder, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnBorder, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnBorder, *mut f64) -> i32,
@@ -5277,6 +5797,70 @@ impl ComPtr<IAvnBorder> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -5287,6 +5871,45 @@ impl ComPtr<IAvnBorder> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -5680,7 +6303,7 @@ impl ComPtr<IAvnBorder> {
     }
 }
 
-pub const I_AVN_BUTTON_IID: Guid = Guid { data1: 0x8982C1DE, data2: 0x2BD3, data3: 0x5C82, data4: [0xA1, 0xD4, 0xC8, 0x6F, 0x6B, 0x06, 0xC3, 0x8F] };
+pub const I_AVN_BUTTON_IID: Guid = Guid { data1: 0x225C7E4D, data2: 0x56A3, data3: 0x5A89, data4: [0x8B, 0x32, 0x45, 0xD7, 0x79, 0xAD, 0x4E, 0x8D] };
 
 #[repr(C)]
 struct IAvnButtonVtbl {
@@ -5692,8 +6315,23 @@ struct IAvnButtonVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnButton, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnButton, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnButton, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnButton, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnButton, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnButton, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnButton, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnButton, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnButton, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnButton, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnButton, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnButton, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnButton, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnButton, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnButton, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnButton, *mut f64) -> i32,
@@ -5830,6 +6468,70 @@ impl ComPtr<IAvnButton> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -5840,6 +6542,45 @@ impl ComPtr<IAvnButton> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -6456,7 +7197,7 @@ impl ComPtr<IAvnButton> {
     }
 }
 
-pub const I_AVN_BUTTON_SPINNER_IID: Guid = Guid { data1: 0x206CAB22, data2: 0xF85A, data3: 0x5C9B, data4: [0x8F, 0x3F, 0x47, 0xD4, 0xEA, 0x98, 0x5D, 0xD4] };
+pub const I_AVN_BUTTON_SPINNER_IID: Guid = Guid { data1: 0xE68340C8, data2: 0xB8A3, data3: 0x5BBC, data4: [0xA6, 0x58, 0x16, 0x67, 0xE3, 0xF5, 0x77, 0x41] };
 
 #[repr(C)]
 struct IAvnButtonSpinnerVtbl {
@@ -6468,8 +7209,23 @@ struct IAvnButtonSpinnerVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnButtonSpinner, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnButtonSpinner, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnButtonSpinner, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnButtonSpinner, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnButtonSpinner, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnButtonSpinner, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnButtonSpinner, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnButtonSpinner, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut f64) -> i32,
@@ -6597,6 +7353,70 @@ impl ComPtr<IAvnButtonSpinner> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -6607,6 +7427,45 @@ impl ComPtr<IAvnButtonSpinner> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -7160,7 +8019,7 @@ impl ComPtr<IAvnButtonSpinner> {
     }
 }
 
-pub const I_AVN_CALENDAR_IID: Guid = Guid { data1: 0xB2D421A6, data2: 0x18FA, data3: 0x5FBA, data4: [0x8D, 0xAA, 0x2A, 0x27, 0x75, 0xB2, 0x77, 0x64] };
+pub const I_AVN_CALENDAR_IID: Guid = Guid { data1: 0x2110D0C8, data2: 0x2AB8, data3: 0x592F, data4: [0xA8, 0xBE, 0x54, 0xD6, 0xCF, 0x1A, 0xCD, 0xC1] };
 
 #[repr(C)]
 struct IAvnCalendarVtbl {
@@ -7172,8 +8031,23 @@ struct IAvnCalendarVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnCalendar, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnCalendar, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnCalendar, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnCalendar, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnCalendar, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnCalendar, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnCalendar, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnCalendar, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCalendar, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCalendar, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCalendar, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCalendar, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnCalendar, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnCalendar, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnCalendar, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnCalendar, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnCalendar, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnCalendar, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnCalendar, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnCalendar, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnCalendar, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnCalendar, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCalendar, *mut f64) -> i32,
@@ -7315,6 +8189,70 @@ impl ComPtr<IAvnCalendar> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -7325,6 +8263,45 @@ impl ComPtr<IAvnCalendar> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -7974,7 +8951,7 @@ impl ComPtr<IAvnCalendar> {
     }
 }
 
-pub const I_AVN_CALENDAR_DATE_PICKER_IID: Guid = Guid { data1: 0xE981679A, data2: 0x66B7, data3: 0x5973, data4: [0xB7, 0x8D, 0x49, 0x38, 0x3F, 0x85, 0xFA, 0xD7] };
+pub const I_AVN_CALENDAR_DATE_PICKER_IID: Guid = Guid { data1: 0x98F55C6B, data2: 0xB19B, data3: 0x5C82, data4: [0x83, 0xB6, 0x37, 0x48, 0x56, 0x29, 0x2E, 0x82] };
 
 #[repr(C)]
 struct IAvnCalendarDatePickerVtbl {
@@ -7986,8 +8963,23 @@ struct IAvnCalendarDatePickerVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut f64) -> i32,
@@ -8092,6 +9084,8 @@ struct IAvnCalendarDatePickerVtbl {
     unadvise_calendar_closed: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i64) -> i32,
     advise_calendar_opened: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut IAvnCalendarDatePickerCalendarOpenedHandler, *mut i64) -> i32,
     unadvise_calendar_opened: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i64) -> i32,
+    advise_date_validation_error: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut IAvnCalendarDatePickerDateValidationErrorHandler, *mut i64) -> i32,
+    unadvise_date_validation_error: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i64) -> i32,
 }
 
 #[repr(C)]
@@ -8140,6 +9134,70 @@ impl ComPtr<IAvnCalendarDatePicker> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -8150,6 +9208,45 @@ impl ComPtr<IAvnCalendarDatePicker> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -8873,9 +9970,22 @@ impl ComPtr<IAvnCalendarDatePicker> {
             hresult::check(hr)
         }
     }
+    pub fn advise_date_validation_error(&self, handler: &ComPtr<IAvnCalendarDatePickerDateValidationErrorHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_date_validation_error)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_date_validation_error(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_date_validation_error)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
 }
 
-pub const I_AVN_CANVAS_IID: Guid = Guid { data1: 0xFD8CE006, data2: 0x95E8, data3: 0x549D, data4: [0xBA, 0x8E, 0x1C, 0xA4, 0xA7, 0x72, 0x98, 0x21] };
+pub const I_AVN_CANVAS_IID: Guid = Guid { data1: 0x2CBEBAB4, data2: 0xF3C1, data3: 0x51F1, data4: [0x92, 0x3F, 0x50, 0x64, 0x68, 0x59, 0xB7, 0x79] };
 
 #[repr(C)]
 struct IAvnCanvasVtbl {
@@ -8887,8 +9997,23 @@ struct IAvnCanvasVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnCanvas, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnCanvas, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnCanvas, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnCanvas, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnCanvas, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnCanvas, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnCanvas, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnCanvas, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCanvas, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCanvas, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCanvas, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCanvas, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnCanvas, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnCanvas, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnCanvas, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnCanvas, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnCanvas, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnCanvas, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnCanvas, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnCanvas, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnCanvas, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnCanvas, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCanvas, *mut f64) -> i32,
@@ -8981,6 +10106,70 @@ impl ComPtr<IAvnCanvas> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -8991,6 +10180,45 @@ impl ComPtr<IAvnCanvas> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -9300,7 +10528,7 @@ impl ComPtr<IAvnCanvas> {
     }
 }
 
-pub const I_AVN_CAROUSEL_IID: Guid = Guid { data1: 0x3A08A26B, data2: 0x4170, data3: 0x5F25, data4: [0xB9, 0xBF, 0xF9, 0x51, 0xC1, 0x69, 0x3F, 0x52] };
+pub const I_AVN_CAROUSEL_IID: Guid = Guid { data1: 0x6F630BF2, data2: 0x342B, data3: 0x5004, data4: [0xA9, 0xDF, 0xC2, 0x76, 0x5D, 0xC3, 0xF5, 0xB3] };
 
 #[repr(C)]
 struct IAvnCarouselVtbl {
@@ -9312,8 +10540,23 @@ struct IAvnCarouselVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnCarousel, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnCarousel, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnCarousel, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnCarousel, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnCarousel, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnCarousel, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnCarousel, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnCarousel, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCarousel, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCarousel, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnCarousel, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnCarousel, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnCarousel, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnCarousel, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnCarousel, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnCarousel, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCarousel, *mut f64) -> i32,
@@ -9460,6 +10703,70 @@ impl ComPtr<IAvnCarousel> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -9470,6 +10777,45 @@ impl ComPtr<IAvnCarousel> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -10154,7 +11500,7 @@ impl ComPtr<IAvnCarousel> {
     }
 }
 
-pub const I_AVN_CHECK_BOX_IID: Guid = Guid { data1: 0x0625C96F, data2: 0x5C9F, data3: 0x5B7B, data4: [0xAF, 0xC3, 0x56, 0x16, 0x52, 0x7A, 0x26, 0xFA] };
+pub const I_AVN_CHECK_BOX_IID: Guid = Guid { data1: 0x182B00FF, data2: 0x40B3, data3: 0x57D3, data4: [0xB4, 0x4F, 0xD1, 0xD1, 0x9E, 0x70, 0x64, 0x59] };
 
 #[repr(C)]
 struct IAvnCheckBoxVtbl {
@@ -10166,8 +11512,23 @@ struct IAvnCheckBoxVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnCheckBox, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnCheckBox, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnCheckBox, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnCheckBox, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnCheckBox, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnCheckBox, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnCheckBox, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnCheckBox, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCheckBox, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCheckBox, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnCheckBox, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnCheckBox, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnCheckBox, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnCheckBox, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnCheckBox, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnCheckBox, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCheckBox, *mut f64) -> i32,
@@ -10310,6 +11671,70 @@ impl ComPtr<IAvnCheckBox> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -10320,6 +11745,45 @@ impl ComPtr<IAvnCheckBox> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -10977,7 +12441,7 @@ impl ComPtr<IAvnCheckBox> {
     }
 }
 
-pub const I_AVN_COMBO_BOX_IID: Guid = Guid { data1: 0x5FC8913E, data2: 0x4951, data3: 0x5668, data4: [0xBB, 0x9E, 0x8F, 0x04, 0x80, 0x5A, 0x3F, 0x1F] };
+pub const I_AVN_COMBO_BOX_IID: Guid = Guid { data1: 0x58147197, data2: 0xF476, data3: 0x5728, data4: [0xA0, 0xBA, 0x83, 0x07, 0x00, 0x4F, 0xF3, 0xC3] };
 
 #[repr(C)]
 struct IAvnComboBoxVtbl {
@@ -10989,8 +12453,23 @@ struct IAvnComboBoxVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnComboBox, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnComboBox, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnComboBox, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnComboBox, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnComboBox, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnComboBox, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnComboBox, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnComboBox, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnComboBox, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnComboBox, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnComboBox, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnComboBox, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnComboBox, *mut f64) -> i32,
@@ -11088,6 +12567,7 @@ struct IAvnComboBoxVtbl {
     set_is_editable: unsafe extern "system" fn(*mut IAvnComboBox, i32) -> i32,
     get_max_drop_down_height: unsafe extern "system" fn(*mut IAvnComboBox, *mut f64) -> i32,
     set_max_drop_down_height: unsafe extern "system" fn(*mut IAvnComboBox, f64) -> i32,
+    get_selection_box_item: unsafe extern "system" fn(*mut IAvnComboBox, *mut AvnVariant) -> i32,
     get_placeholder_text: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut u16) -> i32,
     set_placeholder_text: unsafe extern "system" fn(*mut IAvnComboBox, *mut u16) -> i32,
     get_placeholder_foreground: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut IAvnBrush) -> i32,
@@ -11149,6 +12629,70 @@ impl ComPtr<IAvnComboBox> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -11159,6 +12703,45 @@ impl ComPtr<IAvnComboBox> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -11835,6 +13418,14 @@ impl ComPtr<IAvnComboBox> {
             hresult::check(hr)
         }
     }
+    pub fn get_selection_box_item(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selection_box_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
     pub fn get_placeholder_text(&self) -> Result<*mut u16> {
         unsafe {
             let mut value: *mut u16 = ptr::null_mut();
@@ -11925,7 +13516,7 @@ impl ComPtr<IAvnComboBox> {
     }
 }
 
-pub const I_AVN_COMBO_BOX_ITEM_IID: Guid = Guid { data1: 0xB2A55314, data2: 0x0B18, data3: 0x5024, data4: [0xA7, 0xFB, 0xDF, 0x5C, 0x02, 0x31, 0xE2, 0x35] };
+pub const I_AVN_COMBO_BOX_ITEM_IID: Guid = Guid { data1: 0x4E54ADE7, data2: 0x63B0, data3: 0x56D6, data4: [0xA7, 0x16, 0x01, 0xFE, 0x34, 0x3E, 0x36, 0xC3] };
 
 #[repr(C)]
 struct IAvnComboBoxItemVtbl {
@@ -11937,8 +13528,23 @@ struct IAvnComboBoxItemVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnComboBoxItem, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnComboBoxItem, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnComboBoxItem, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnComboBoxItem, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnComboBoxItem, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnComboBoxItem, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnComboBoxItem, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnComboBoxItem, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut f64) -> i32,
@@ -12062,6 +13668,70 @@ impl ComPtr<IAvnComboBoxItem> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -12072,6 +13742,45 @@ impl ComPtr<IAvnComboBoxItem> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -12597,7 +14306,7 @@ impl ComPtr<IAvnComboBoxItem> {
     }
 }
 
-pub const I_AVN_COMMAND_BAR_IID: Guid = Guid { data1: 0x1E54096F, data2: 0x2970, data3: 0x5069, data4: [0xAD, 0xF6, 0x48, 0x9B, 0xF8, 0xD0, 0x85, 0xBE] };
+pub const I_AVN_COMMAND_BAR_IID: Guid = Guid { data1: 0xF9391B78, data2: 0xB8F5, data3: 0x54EF, data4: [0xA9, 0xA7, 0xA4, 0xF8, 0x88, 0x20, 0x6C, 0x68] };
 
 #[repr(C)]
 struct IAvnCommandBarVtbl {
@@ -12609,8 +14318,23 @@ struct IAvnCommandBarVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnCommandBar, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnCommandBar, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnCommandBar, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnCommandBar, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnCommandBar, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnCommandBar, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnCommandBar, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnCommandBar, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBar, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBar, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBar, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBar, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnCommandBar, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnCommandBar, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnCommandBar, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnCommandBar, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnCommandBar, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnCommandBar, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnCommandBar, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnCommandBar, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnCommandBar, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnCommandBar, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCommandBar, *mut f64) -> i32,
@@ -12752,6 +14476,70 @@ impl ComPtr<IAvnCommandBar> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -12762,6 +14550,45 @@ impl ComPtr<IAvnCommandBar> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -13411,7 +15238,7 @@ impl ComPtr<IAvnCommandBar> {
     }
 }
 
-pub const I_AVN_COMMAND_BAR_BUTTON_IID: Guid = Guid { data1: 0xAF439768, data2: 0xF7C0, data3: 0x5309, data4: [0xAA, 0xE2, 0x97, 0x20, 0x92, 0xCA, 0x6B, 0x74] };
+pub const I_AVN_COMMAND_BAR_BUTTON_IID: Guid = Guid { data1: 0x21B9B7E6, data2: 0x87EA, data3: 0x586F, data4: [0x8F, 0xAC, 0xE7, 0xDF, 0x84, 0x87, 0x47, 0xC3] };
 
 #[repr(C)]
 struct IAvnCommandBarButtonVtbl {
@@ -13423,8 +15250,23 @@ struct IAvnCommandBarButtonVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnCommandBarButton, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBarButton, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBarButton, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnCommandBarButton, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnCommandBarButton, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnCommandBarButton, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnCommandBarButton, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnCommandBarButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut f64) -> i32,
@@ -13571,6 +15413,70 @@ impl ComPtr<IAvnCommandBarButton> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -13581,6 +15487,45 @@ impl ComPtr<IAvnCommandBarButton> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -14267,7 +16212,7 @@ impl ComPtr<IAvnCommandBarButton> {
     }
 }
 
-pub const I_AVN_COMMAND_BAR_SEPARATOR_IID: Guid = Guid { data1: 0xBB1EA3E4, data2: 0x1928, data3: 0x5B88, data4: [0xB5, 0x3F, 0xF4, 0xAB, 0xFF, 0x8E, 0xEB, 0x3A] };
+pub const I_AVN_COMMAND_BAR_SEPARATOR_IID: Guid = Guid { data1: 0xEC37CAEB, data2: 0x1372, data3: 0x50FC, data4: [0xA2, 0xE1, 0xB2, 0xA3, 0x4F, 0x7F, 0xDC, 0xEC] };
 
 #[repr(C)]
 struct IAvnCommandBarSeparatorVtbl {
@@ -14279,8 +16224,23 @@ struct IAvnCommandBarSeparatorVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut f64) -> i32,
@@ -14398,6 +16358,70 @@ impl ComPtr<IAvnCommandBarSeparator> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -14408,6 +16432,45 @@ impl ComPtr<IAvnCommandBarSeparator> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -14891,7 +16954,7 @@ impl ComPtr<IAvnCommandBarSeparator> {
     }
 }
 
-pub const I_AVN_COMMAND_BAR_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0x890B94AC, data2: 0xD1BA, data3: 0x5489, data4: [0xAF, 0xD8, 0x60, 0x8B, 0xF8, 0x21, 0x3A, 0xAA] };
+pub const I_AVN_COMMAND_BAR_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0x1880ED37, data2: 0x653A, data3: 0x5BFC, data4: [0xA8, 0x12, 0xD0, 0x84, 0xEF, 0x09, 0x76, 0x35] };
 
 #[repr(C)]
 struct IAvnCommandBarToggleButtonVtbl {
@@ -14903,8 +16966,23 @@ struct IAvnCommandBarToggleButtonVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut f64) -> i32,
@@ -15057,6 +17135,70 @@ impl ComPtr<IAvnCommandBarToggleButton> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -15067,6 +17209,45 @@ impl ComPtr<IAvnCommandBarToggleButton> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -15794,7 +17975,7 @@ impl ComPtr<IAvnCommandBarToggleButton> {
     }
 }
 
-pub const I_AVN_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x3A0E2EE9, data2: 0x5A8A, data3: 0x5D92, data4: [0x8A, 0xEF, 0xA6, 0xA9, 0x3B, 0xE6, 0x6C, 0x1B] };
+pub const I_AVN_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x60BE64C7, data2: 0xAAE0, data3: 0x5B06, data4: [0xBC, 0xB2, 0xEB, 0xE2, 0xAF, 0xAE, 0x59, 0x82] };
 
 #[repr(C)]
 struct IAvnContentControlVtbl {
@@ -15806,8 +17987,23 @@ struct IAvnContentControlVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnContentControl, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnContentControl, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnContentControl, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnContentControl, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnContentControl, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnContentControl, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnContentControl, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnContentControl, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnContentControl, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnContentControl, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnContentControl, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnContentControl, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnContentControl, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnContentControl, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnContentControl, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnContentControl, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnContentControl, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnContentControl, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnContentControl, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnContentControl, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnContentControl, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnContentControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnContentControl, *mut f64) -> i32,
@@ -15929,6 +18125,70 @@ impl ComPtr<IAvnContentControl> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -15939,6 +18199,45 @@ impl ComPtr<IAvnContentControl> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -16450,7 +18749,7 @@ impl ComPtr<IAvnContentControl> {
     }
 }
 
-pub const I_AVN_CONTEXT_MENU_IID: Guid = Guid { data1: 0x3B508BF0, data2: 0xA4F2, data3: 0x5BC8, data4: [0xB8, 0xCB, 0x19, 0x59, 0xE1, 0xB2, 0x59, 0xDE] };
+pub const I_AVN_CONTEXT_MENU_IID: Guid = Guid { data1: 0x990E507A, data2: 0x9DF0, data3: 0x58CD, data4: [0xB8, 0x07, 0x07, 0x8F, 0xBA, 0xC7, 0xF8, 0xE5] };
 
 #[repr(C)]
 struct IAvnContextMenuVtbl {
@@ -16462,8 +18761,23 @@ struct IAvnContextMenuVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnContextMenu, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnContextMenu, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnContextMenu, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnContextMenu, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnContextMenu, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnContextMenu, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnContextMenu, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnContextMenu, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnContextMenu, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnContextMenu, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnContextMenu, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnContextMenu, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnContextMenu, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnContextMenu, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnContextMenu, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnContextMenu, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnContextMenu, *mut f64) -> i32,
@@ -16633,6 +18947,70 @@ impl ComPtr<IAvnContextMenu> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -16643,6 +19021,45 @@ impl ComPtr<IAvnContextMenu> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -17483,7 +19900,7 @@ impl ComPtr<IAvnContextMenu> {
     }
 }
 
-pub const I_AVN_CONTROL_IID: Guid = Guid { data1: 0xC08EBEE5, data2: 0xBDFD, data3: 0x5A33, data4: [0x90, 0x24, 0xB6, 0x4C, 0x13, 0x9D, 0x10, 0x88] };
+pub const I_AVN_CONTROL_IID: Guid = Guid { data1: 0xF2ED1EA6, data2: 0x3316, data3: 0x5722, data4: [0x8F, 0x27, 0x74, 0xEE, 0xBA, 0x88, 0xF1, 0x69] };
 
 #[repr(C)]
 struct IAvnControlVtbl {
@@ -17495,8 +19912,23 @@ struct IAvnControlVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnControl, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnControl, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnControl, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnControl, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnControl, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnControl, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnControl, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnControl, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnControl, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnControl, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnControl, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnControl, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnControl, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnControl, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnControl, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnControl, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnControl, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnControl, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnControl, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnControl, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnControl, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnControl, *mut f64) -> i32,
@@ -17586,6 +20018,70 @@ impl ComPtr<IAvnControl> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -17596,6 +20092,45 @@ impl ComPtr<IAvnControl> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -17883,7 +20418,7 @@ impl ComPtr<IAvnControl> {
     }
 }
 
-pub const I_AVN_DATE_PICKER_IID: Guid = Guid { data1: 0x3CCE7CC1, data2: 0x7F17, data3: 0x5D7A, data4: [0xB3, 0x08, 0x20, 0x06, 0x5E, 0x41, 0x6F, 0xA9] };
+pub const I_AVN_DATE_PICKER_IID: Guid = Guid { data1: 0x0909A55C, data2: 0x8861, data3: 0x5533, data4: [0x9C, 0xD6, 0x25, 0x27, 0xBD, 0xD2, 0x85, 0x79] };
 
 #[repr(C)]
 struct IAvnDatePickerVtbl {
@@ -17895,8 +20430,23 @@ struct IAvnDatePickerVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnDatePicker, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnDatePicker, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnDatePicker, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnDatePicker, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnDatePicker, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnDatePicker, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnDatePicker, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnDatePicker, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnDatePicker, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnDatePicker, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnDatePicker, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnDatePicker, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnDatePicker, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnDatePicker, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnDatePicker, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnDatePicker, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnDatePicker, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnDatePicker, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnDatePicker, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnDatePicker, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnDatePicker, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnDatePicker, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnDatePicker, *mut f64) -> i32,
@@ -18031,6 +20581,70 @@ impl ComPtr<IAvnDatePicker> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -18041,6 +20655,45 @@ impl ComPtr<IAvnDatePicker> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -18642,7 +21295,7 @@ impl ComPtr<IAvnDatePicker> {
     }
 }
 
-pub const I_AVN_DECORATOR_IID: Guid = Guid { data1: 0xA2E19D66, data2: 0x8F18, data3: 0x52F7, data4: [0xAD, 0xC9, 0x38, 0xBF, 0x6B, 0x8E, 0x07, 0xCB] };
+pub const I_AVN_DECORATOR_IID: Guid = Guid { data1: 0x70FBB6AD, data2: 0xB1B5, data3: 0x5711, data4: [0x87, 0x1E, 0xE2, 0x25, 0x05, 0x39, 0x97, 0x87] };
 
 #[repr(C)]
 struct IAvnDecoratorVtbl {
@@ -18654,8 +21307,23 @@ struct IAvnDecoratorVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnDecorator, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnDecorator, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnDecorator, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnDecorator, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnDecorator, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnDecorator, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnDecorator, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnDecorator, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnDecorator, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnDecorator, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnDecorator, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnDecorator, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnDecorator, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnDecorator, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnDecorator, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnDecorator, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnDecorator, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnDecorator, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnDecorator, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnDecorator, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnDecorator, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnDecorator, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnDecorator, *mut f64) -> i32,
@@ -18749,6 +21417,70 @@ impl ComPtr<IAvnDecorator> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -18759,6 +21491,45 @@ impl ComPtr<IAvnDecorator> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -19074,7 +21845,7 @@ impl ComPtr<IAvnDecorator> {
     }
 }
 
-pub const I_AVN_DOCK_PANEL_IID: Guid = Guid { data1: 0x3B4E1B7A, data2: 0xC387, data3: 0x547B, data4: [0xA6, 0xF4, 0x78, 0x52, 0xDE, 0xA1, 0xC1, 0x34] };
+pub const I_AVN_DOCK_PANEL_IID: Guid = Guid { data1: 0x64FBB7B6, data2: 0xF709, data3: 0x5CAE, data4: [0xB9, 0x31, 0x5F, 0xBB, 0xDA, 0x1D, 0x13, 0xBF] };
 
 #[repr(C)]
 struct IAvnDockPanelVtbl {
@@ -19086,8 +21857,23 @@ struct IAvnDockPanelVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnDockPanel, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnDockPanel, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnDockPanel, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnDockPanel, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnDockPanel, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnDockPanel, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnDockPanel, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnDockPanel, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnDockPanel, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnDockPanel, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnDockPanel, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnDockPanel, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnDockPanel, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnDockPanel, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnDockPanel, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnDockPanel, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnDockPanel, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnDockPanel, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnDockPanel, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnDockPanel, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnDockPanel, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnDockPanel, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnDockPanel, *mut f64) -> i32,
@@ -19186,6 +21972,70 @@ impl ComPtr<IAvnDockPanel> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -19196,6 +22046,45 @@ impl ComPtr<IAvnDockPanel> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -19547,7 +22436,7 @@ impl ComPtr<IAvnDockPanel> {
     }
 }
 
-pub const I_AVN_DROP_DOWN_BUTTON_IID: Guid = Guid { data1: 0x06812F60, data2: 0x8B67, data3: 0x5346, data4: [0xA8, 0x45, 0x6A, 0x66, 0x1A, 0xA4, 0x3D, 0xED] };
+pub const I_AVN_DROP_DOWN_BUTTON_IID: Guid = Guid { data1: 0xFC0038D6, data2: 0x944A, data3: 0x5FDE, data4: [0x8F, 0x89, 0x99, 0x3D, 0x73, 0xDD, 0x4A, 0xE8] };
 
 #[repr(C)]
 struct IAvnDropDownButtonVtbl {
@@ -19559,8 +22448,23 @@ struct IAvnDropDownButtonVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnDropDownButton, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnDropDownButton, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnDropDownButton, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnDropDownButton, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnDropDownButton, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnDropDownButton, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnDropDownButton, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnDropDownButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut f64) -> i32,
@@ -19697,6 +22601,70 @@ impl ComPtr<IAvnDropDownButton> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -19707,6 +22675,45 @@ impl ComPtr<IAvnDropDownButton> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -20323,7 +23330,7 @@ impl ComPtr<IAvnDropDownButton> {
     }
 }
 
-pub const I_AVN_EXPANDER_IID: Guid = Guid { data1: 0xB9D33048, data2: 0x057B, data3: 0x58E9, data4: [0xAF, 0xB5, 0xC2, 0x47, 0x11, 0x47, 0xE3, 0x94] };
+pub const I_AVN_EXPANDER_IID: Guid = Guid { data1: 0xB14323E7, data2: 0xB50C, data3: 0x52B6, data4: [0x8E, 0x6F, 0x2D, 0x18, 0xA6, 0x96, 0x90, 0x29] };
 
 #[repr(C)]
 struct IAvnExpanderVtbl {
@@ -20335,8 +23342,23 @@ struct IAvnExpanderVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnExpander, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnExpander, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnExpander, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnExpander, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnExpander, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnExpander, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnExpander, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnExpander, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnExpander, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnExpander, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnExpander, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnExpander, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnExpander, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnExpander, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnExpander, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnExpander, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnExpander, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnExpander, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnExpander, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnExpander, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnExpander, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnExpander, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnExpander, *mut f64) -> i32,
@@ -20470,6 +23492,70 @@ impl ComPtr<IAvnExpander> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -20480,6 +23566,45 @@ impl ComPtr<IAvnExpander> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -21073,7 +24198,7 @@ impl ComPtr<IAvnExpander> {
     }
 }
 
-pub const I_AVN_FLEX_PANEL_IID: Guid = Guid { data1: 0x602D6EAB, data2: 0x5BA8, data3: 0x5E61, data4: [0x97, 0x30, 0x78, 0xF5, 0xA7, 0x1D, 0x73, 0x2A] };
+pub const I_AVN_FLEX_PANEL_IID: Guid = Guid { data1: 0xAE56B7A7, data2: 0x26EC, data3: 0x5162, data4: [0x86, 0xB3, 0x9F, 0xC7, 0x29, 0xC4, 0x71, 0x46] };
 
 #[repr(C)]
 struct IAvnFlexPanelVtbl {
@@ -21085,8 +24210,23 @@ struct IAvnFlexPanelVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnFlexPanel, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnFlexPanel, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnFlexPanel, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnFlexPanel, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnFlexPanel, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnFlexPanel, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnFlexPanel, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnFlexPanel, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut f64) -> i32,
@@ -21193,6 +24333,70 @@ impl ComPtr<IAvnFlexPanel> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -21203,6 +24407,45 @@ impl ComPtr<IAvnFlexPanel> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -21915,7 +25158,7 @@ impl ComPtr<IAvnFlyout> {
     }
 }
 
-pub const I_AVN_GRID_IID: Guid = Guid { data1: 0xB57FF025, data2: 0x1BB8, data3: 0x5CC1, data4: [0xB2, 0x32, 0xAC, 0x3E, 0x88, 0x44, 0x5C, 0x4B] };
+pub const I_AVN_GRID_IID: Guid = Guid { data1: 0x691CDFB5, data2: 0x81C1, data3: 0x54FE, data4: [0xA2, 0xD9, 0x9C, 0x32, 0xE7, 0x60, 0x5E, 0x42] };
 
 #[repr(C)]
 struct IAvnGridVtbl {
@@ -21927,8 +25170,23 @@ struct IAvnGridVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnGrid, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnGrid, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnGrid, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnGrid, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnGrid, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnGrid, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnGrid, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnGrid, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnGrid, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnGrid, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnGrid, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnGrid, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnGrid, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnGrid, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnGrid, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnGrid, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnGrid, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnGrid, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnGrid, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnGrid, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnGrid, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnGrid, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnGrid, *mut f64) -> i32,
@@ -22031,6 +25289,70 @@ impl ComPtr<IAvnGrid> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -22041,6 +25363,45 @@ impl ComPtr<IAvnGrid> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -22420,7 +25781,7 @@ impl ComPtr<IAvnGrid> {
     }
 }
 
-pub const I_AVN_GRID_SPLITTER_IID: Guid = Guid { data1: 0xA187EEEE, data2: 0x084C, data3: 0x5025, data4: [0x83, 0x47, 0xD1, 0xEE, 0x8D, 0xA6, 0x3B, 0x14] };
+pub const I_AVN_GRID_SPLITTER_IID: Guid = Guid { data1: 0xB612D23B, data2: 0xB948, data3: 0x53BB, data4: [0x81, 0x9F, 0x53, 0x8A, 0xAA, 0xC1, 0x34, 0x60] };
 
 #[repr(C)]
 struct IAvnGridSplitterVtbl {
@@ -22432,8 +25793,23 @@ struct IAvnGridSplitterVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnGridSplitter, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnGridSplitter, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnGridSplitter, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnGridSplitter, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnGridSplitter, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnGridSplitter, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnGridSplitter, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnGridSplitter, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut f64) -> i32,
@@ -22563,6 +25939,70 @@ impl ComPtr<IAvnGridSplitter> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -22573,6 +26013,45 @@ impl ComPtr<IAvnGridSplitter> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -23137,7 +26616,7 @@ impl ComPtr<IAvnGridSplitter> {
     }
 }
 
-pub const I_AVN_GROUP_BOX_IID: Guid = Guid { data1: 0x1551C400, data2: 0xBA99, data3: 0x5F78, data4: [0x85, 0x11, 0x19, 0x79, 0x31, 0x4C, 0x16, 0xC7] };
+pub const I_AVN_GROUP_BOX_IID: Guid = Guid { data1: 0x759020AB, data2: 0x82F3, data3: 0x5160, data4: [0x8E, 0x1A, 0x4B, 0xC2, 0x1A, 0x9D, 0xC9, 0xF9] };
 
 #[repr(C)]
 struct IAvnGroupBoxVtbl {
@@ -23149,8 +26628,23 @@ struct IAvnGroupBoxVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnGroupBox, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnGroupBox, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnGroupBox, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnGroupBox, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnGroupBox, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnGroupBox, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnGroupBox, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnGroupBox, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnGroupBox, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnGroupBox, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnGroupBox, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnGroupBox, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnGroupBox, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnGroupBox, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnGroupBox, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnGroupBox, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnGroupBox, *mut f64) -> i32,
@@ -23276,6 +26770,70 @@ impl ComPtr<IAvnGroupBox> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -23286,6 +26844,45 @@ impl ComPtr<IAvnGroupBox> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -23825,7 +27422,7 @@ impl ComPtr<IAvnGroupBox> {
     }
 }
 
-pub const I_AVN_HYPERLINK_BUTTON_IID: Guid = Guid { data1: 0x3DAA06BF, data2: 0x5C7E, data3: 0x53FC, data4: [0xBE, 0x67, 0xA3, 0xC4, 0x46, 0x48, 0x6C, 0x2E] };
+pub const I_AVN_HYPERLINK_BUTTON_IID: Guid = Guid { data1: 0x22EF70F6, data2: 0x79C6, data3: 0x53B8, data4: [0xAE, 0x38, 0xA9, 0xBF, 0x6B, 0x2E, 0xC0, 0x05] };
 
 #[repr(C)]
 struct IAvnHyperlinkButtonVtbl {
@@ -23837,8 +27434,23 @@ struct IAvnHyperlinkButtonVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnHyperlinkButton, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnHyperlinkButton, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnHyperlinkButton, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnHyperlinkButton, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnHyperlinkButton, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnHyperlinkButton, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnHyperlinkButton, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnHyperlinkButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut f64) -> i32,
@@ -23979,6 +27591,70 @@ impl ComPtr<IAvnHyperlinkButton> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -23989,6 +27665,45 @@ impl ComPtr<IAvnHyperlinkButton> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -24633,7 +28348,7 @@ impl ComPtr<IAvnHyperlinkButton> {
     }
 }
 
-pub const I_AVN_ICON_ELEMENT_IID: Guid = Guid { data1: 0x74813D5C, data2: 0x5718, data3: 0x5EFC, data4: [0xB6, 0xA2, 0xBD, 0x8F, 0xA1, 0xB7, 0x3D, 0x48] };
+pub const I_AVN_ICON_ELEMENT_IID: Guid = Guid { data1: 0x065D6D5D, data2: 0x831B, data3: 0x56A8, data4: [0xBD, 0x78, 0xE1, 0xA9, 0x3D, 0xC8, 0xCA, 0x71] };
 
 #[repr(C)]
 struct IAvnIconElementVtbl {
@@ -24645,8 +28360,23 @@ struct IAvnIconElementVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnIconElement, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnIconElement, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnIconElement, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnIconElement, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnIconElement, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnIconElement, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnIconElement, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnIconElement, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnIconElement, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnIconElement, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnIconElement, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnIconElement, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnIconElement, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnIconElement, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnIconElement, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnIconElement, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnIconElement, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnIconElement, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnIconElement, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnIconElement, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnIconElement, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnIconElement, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnIconElement, *mut f64) -> i32,
@@ -24760,6 +28490,70 @@ impl ComPtr<IAvnIconElement> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -24770,6 +28564,45 @@ impl ComPtr<IAvnIconElement> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -25225,7 +29058,7 @@ impl ComPtr<IAvnIconElement> {
     }
 }
 
-pub const I_AVN_IMAGE_IID: Guid = Guid { data1: 0xD47E1645, data2: 0xD876, data3: 0x5E5C, data4: [0x90, 0x02, 0xD3, 0x23, 0xE6, 0xB7, 0x15, 0x63] };
+pub const I_AVN_IMAGE_IID: Guid = Guid { data1: 0x3371DE3A, data2: 0xE3C3, data3: 0x584C, data4: [0x83, 0xBF, 0xE2, 0x4A, 0xCE, 0x8E, 0x19, 0xA8] };
 
 #[repr(C)]
 struct IAvnImageVtbl {
@@ -25237,8 +29070,23 @@ struct IAvnImageVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnImage, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnImage, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnImage, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnImage, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnImage, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnImage, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnImage, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnImage, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnImage, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnImage, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnImage, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnImage, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnImage, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnImage, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnImage, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnImage, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnImage, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnImage, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnImage, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnImage, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnImage, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnImage, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnImage, *mut f64) -> i32,
@@ -25336,6 +29184,70 @@ impl ComPtr<IAvnImage> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -25346,6 +29258,45 @@ impl ComPtr<IAvnImage> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -25689,7 +29640,7 @@ impl ComPtr<IAvnImage> {
     }
 }
 
-pub const I_AVN_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x1776A0F2, data2: 0xE14F, data3: 0x5431, data4: [0x94, 0xF7, 0x06, 0xA1, 0x25, 0xB4, 0x8F, 0xA1] };
+pub const I_AVN_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x9D2CFC79, data2: 0xBACC, data3: 0x5318, data4: [0xAA, 0xF0, 0x5E, 0x9F, 0x82, 0xEF, 0x6F, 0xAF] };
 
 #[repr(C)]
 struct IAvnItemsControlVtbl {
@@ -25701,8 +29652,23 @@ struct IAvnItemsControlVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnItemsControl, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnItemsControl, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnItemsControl, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnItemsControl, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnItemsControl, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnItemsControl, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnItemsControl, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnItemsControl, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnItemsControl, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnItemsControl, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnItemsControl, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnItemsControl, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnItemsControl, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnItemsControl, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnItemsControl, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnItemsControl, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnItemsControl, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnItemsControl, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnItemsControl, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnItemsControl, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnItemsControl, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnItemsControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnItemsControl, *mut f64) -> i32,
@@ -25828,6 +29794,70 @@ impl ComPtr<IAvnItemsControl> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -25838,6 +29868,45 @@ impl ComPtr<IAvnItemsControl> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -26377,7 +30446,7 @@ impl ComPtr<IAvnItemsControl> {
     }
 }
 
-pub const I_AVN_LABEL_IID: Guid = Guid { data1: 0x03F89BE0, data2: 0xE7B9, data3: 0x5C08, data4: [0xAF, 0x8D, 0xF9, 0x91, 0x1A, 0x2D, 0x14, 0xD5] };
+pub const I_AVN_LABEL_IID: Guid = Guid { data1: 0x4B355F82, data2: 0xE6AB, data3: 0x5822, data4: [0xA1, 0x2D, 0xCA, 0xA2, 0x74, 0x60, 0x73, 0x59] };
 
 #[repr(C)]
 struct IAvnLabelVtbl {
@@ -26389,8 +30458,23 @@ struct IAvnLabelVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnLabel, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnLabel, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnLabel, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnLabel, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnLabel, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnLabel, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnLabel, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnLabel, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnLabel, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnLabel, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnLabel, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnLabel, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnLabel, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnLabel, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnLabel, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnLabel, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnLabel, *mut f64) -> i32,
@@ -26514,6 +30598,70 @@ impl ComPtr<IAvnLabel> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -26524,6 +30672,45 @@ impl ComPtr<IAvnLabel> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -27049,7 +31236,7 @@ impl ComPtr<IAvnLabel> {
     }
 }
 
-pub const I_AVN_LAYOUT_TRANSFORM_CONTROL_IID: Guid = Guid { data1: 0x07ECA663, data2: 0xA5D3, data3: 0x52F4, data4: [0x92, 0xE6, 0xDA, 0x4F, 0x75, 0x62, 0x01, 0xEE] };
+pub const I_AVN_LAYOUT_TRANSFORM_CONTROL_IID: Guid = Guid { data1: 0x8DA0AE8A, data2: 0x3DA1, data3: 0x5BFF, data4: [0x9F, 0x24, 0xDD, 0xCB, 0xC4, 0x5A, 0x74, 0x84] };
 
 #[repr(C)]
 struct IAvnLayoutTransformControlVtbl {
@@ -27061,8 +31248,23 @@ struct IAvnLayoutTransformControlVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut f64) -> i32,
@@ -27158,6 +31360,70 @@ impl ComPtr<IAvnLayoutTransformControl> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -27168,6 +31434,45 @@ impl ComPtr<IAvnLayoutTransformControl> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -27497,7 +31802,7 @@ impl ComPtr<IAvnLayoutTransformControl> {
     }
 }
 
-pub const I_AVN_LIST_BOX_IID: Guid = Guid { data1: 0x7B22303D, data2: 0x76C3, data3: 0x5206, data4: [0x8F, 0xB2, 0x01, 0x2A, 0x85, 0xCD, 0x9E, 0xBD] };
+pub const I_AVN_LIST_BOX_IID: Guid = Guid { data1: 0x78769014, data2: 0x820C, data3: 0x52A5, data4: [0x88, 0xD9, 0xE8, 0x0C, 0x8E, 0x46, 0x53, 0xA9] };
 
 #[repr(C)]
 struct IAvnListBoxVtbl {
@@ -27509,8 +31814,23 @@ struct IAvnListBoxVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnListBox, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnListBox, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnListBox, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnListBox, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnListBox, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnListBox, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnListBox, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnListBox, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnListBox, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnListBox, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnListBox, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnListBox, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnListBox, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnListBox, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnListBox, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnListBox, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnListBox, *mut f64) -> i32,
@@ -27654,6 +31974,70 @@ impl ComPtr<IAvnListBox> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -27664,6 +32048,45 @@ impl ComPtr<IAvnListBox> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -28326,7 +32749,7 @@ impl ComPtr<IAvnListBox> {
     }
 }
 
-pub const I_AVN_LIST_BOX_ITEM_IID: Guid = Guid { data1: 0x133AAAAA, data2: 0x326E, data3: 0x55B9, data4: [0xA1, 0xBA, 0x42, 0x5B, 0x1B, 0x7F, 0xD4, 0x68] };
+pub const I_AVN_LIST_BOX_ITEM_IID: Guid = Guid { data1: 0x3395B04C, data2: 0x5E8D, data3: 0x5A9C, data4: [0x88, 0xE8, 0xC9, 0xD0, 0x56, 0xC6, 0xBA, 0xEC] };
 
 #[repr(C)]
 struct IAvnListBoxItemVtbl {
@@ -28338,8 +32761,23 @@ struct IAvnListBoxItemVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnListBoxItem, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnListBoxItem, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnListBoxItem, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnListBoxItem, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnListBoxItem, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnListBoxItem, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnListBoxItem, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnListBoxItem, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut f64) -> i32,
@@ -28463,6 +32901,70 @@ impl ComPtr<IAvnListBoxItem> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -28473,6 +32975,45 @@ impl ComPtr<IAvnListBoxItem> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -28998,7 +33539,7 @@ impl ComPtr<IAvnListBoxItem> {
     }
 }
 
-pub const I_AVN_MASKED_TEXT_BOX_IID: Guid = Guid { data1: 0xD6D5FF82, data2: 0xCC62, data3: 0x5E87, data4: [0xA1, 0xCE, 0x96, 0xEE, 0xA4, 0x19, 0x0E, 0xA6] };
+pub const I_AVN_MASKED_TEXT_BOX_IID: Guid = Guid { data1: 0x54E13A13, data2: 0x76DE, data3: 0x5203, data4: [0xAD, 0x0E, 0x66, 0x97, 0x6E, 0xA5, 0x05, 0x63] };
 
 #[repr(C)]
 struct IAvnMaskedTextBoxVtbl {
@@ -29010,8 +33551,23 @@ struct IAvnMaskedTextBoxVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnMaskedTextBox, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut f64) -> i32,
@@ -29226,6 +33782,70 @@ impl ComPtr<IAvnMaskedTextBox> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -29236,6 +33856,45 @@ impl ComPtr<IAvnMaskedTextBox> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -30392,7 +35051,7 @@ impl ComPtr<IAvnMaskedTextBox> {
     }
 }
 
-pub const I_AVN_MENU_IID: Guid = Guid { data1: 0x7AC46513, data2: 0x0135, data3: 0x5188, data4: [0xA8, 0xEA, 0xD5, 0xAA, 0xCB, 0xC8, 0x25, 0x37] };
+pub const I_AVN_MENU_IID: Guid = Guid { data1: 0x377DE6AC, data2: 0xF395, data3: 0x5D09, data4: [0x83, 0x67, 0x17, 0xFF, 0x38, 0xE4, 0x29, 0x6A] };
 
 #[repr(C)]
 struct IAvnMenuVtbl {
@@ -30404,8 +35063,23 @@ struct IAvnMenuVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnMenu, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnMenu, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnMenu, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnMenu, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnMenu, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnMenu, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnMenu, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnMenu, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnMenu, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnMenu, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnMenu, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnMenu, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnMenu, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnMenu, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnMenu, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnMenu, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnMenu, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnMenu, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnMenu, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnMenu, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnMenu, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnMenu, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnMenu, *mut f64) -> i32,
@@ -30552,6 +35226,70 @@ impl ComPtr<IAvnMenu> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -30562,6 +35300,45 @@ impl ComPtr<IAvnMenu> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -31244,7 +36021,7 @@ impl ComPtr<IAvnMenu> {
     }
 }
 
-pub const I_AVN_MENU_BASE_IID: Guid = Guid { data1: 0xBACF5D70, data2: 0xFF19, data3: 0x52E1, data4: [0x9C, 0x25, 0x15, 0x1D, 0x66, 0x8B, 0x8C, 0xE8] };
+pub const I_AVN_MENU_BASE_IID: Guid = Guid { data1: 0xFC15A9F4, data2: 0x2E12, data3: 0x5965, data4: [0xA4, 0x22, 0x12, 0x3E, 0xF6, 0xAB, 0xA1, 0x93] };
 
 #[repr(C)]
 struct IAvnMenuBaseVtbl {
@@ -31256,8 +36033,23 @@ struct IAvnMenuBaseVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnMenuBase, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnMenuBase, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnMenuBase, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnMenuBase, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnMenuBase, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnMenuBase, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnMenuBase, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnMenuBase, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnMenuBase, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnMenuBase, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnMenuBase, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnMenuBase, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnMenuBase, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnMenuBase, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnMenuBase, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnMenuBase, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnMenuBase, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnMenuBase, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnMenuBase, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnMenuBase, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnMenuBase, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnMenuBase, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnMenuBase, *mut f64) -> i32,
@@ -31404,6 +36196,70 @@ impl ComPtr<IAvnMenuBase> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -31414,6 +36270,45 @@ impl ComPtr<IAvnMenuBase> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -32410,7 +37305,7 @@ impl ComPtr<IAvnMenuFlyout> {
     }
 }
 
-pub const I_AVN_MENU_ITEM_IID: Guid = Guid { data1: 0x574C6B20, data2: 0x63CB, data3: 0x54F7, data4: [0x98, 0x69, 0x05, 0x82, 0xB0, 0x36, 0x57, 0x6F] };
+pub const I_AVN_MENU_ITEM_IID: Guid = Guid { data1: 0x42AEB633, data2: 0x5E2F, data3: 0x5690, data4: [0xA4, 0xA8, 0xC7, 0x01, 0xB4, 0x88, 0x9A, 0xF8] };
 
 #[repr(C)]
 struct IAvnMenuItemVtbl {
@@ -32422,8 +37317,23 @@ struct IAvnMenuItemVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnMenuItem, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnMenuItem, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnMenuItem, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnMenuItem, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnMenuItem, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnMenuItem, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnMenuItem, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnMenuItem, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnMenuItem, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnMenuItem, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnMenuItem, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnMenuItem, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnMenuItem, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnMenuItem, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnMenuItem, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnMenuItem, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnMenuItem, *mut f64) -> i32,
@@ -32593,6 +37503,70 @@ impl ComPtr<IAvnMenuItem> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -32603,6 +37577,45 @@ impl ComPtr<IAvnMenuItem> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -33447,7 +38460,7 @@ impl ComPtr<IAvnMenuItem> {
     }
 }
 
-pub const I_AVN_NOTIFICATION_CARD_IID: Guid = Guid { data1: 0xDF0E6F65, data2: 0x7FF2, data3: 0x51E5, data4: [0x9E, 0x8C, 0x45, 0xF6, 0x95, 0x0F, 0xE0, 0x1C] };
+pub const I_AVN_NOTIFICATION_CARD_IID: Guid = Guid { data1: 0x9328635A, data2: 0x4DB2, data3: 0x5E7B, data4: [0xA0, 0x5F, 0xC6, 0x78, 0xF3, 0x96, 0x49, 0x3C] };
 
 #[repr(C)]
 struct IAvnNotificationCardVtbl {
@@ -33459,8 +38472,23 @@ struct IAvnNotificationCardVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnNotificationCard, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnNotificationCard, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnNotificationCard, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnNotificationCard, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnNotificationCard, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnNotificationCard, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnNotificationCard, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnNotificationCard, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut f64) -> i32,
@@ -33590,6 +38618,70 @@ impl ComPtr<IAvnNotificationCard> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -33600,6 +38692,45 @@ impl ComPtr<IAvnNotificationCard> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -34166,7 +39297,7 @@ impl ComPtr<IAvnNotificationCard> {
     }
 }
 
-pub const I_AVN_WINDOW_NOTIFICATION_MANAGER_IID: Guid = Guid { data1: 0x745C507C, data2: 0xDCE1, data3: 0x5B3B, data4: [0x87, 0xA5, 0x2D, 0x8A, 0x9B, 0x19, 0xC5, 0xBD] };
+pub const I_AVN_WINDOW_NOTIFICATION_MANAGER_IID: Guid = Guid { data1: 0x14F6F9A3, data2: 0xBC21, data3: 0x51F7, data4: [0xB7, 0xA7, 0xA9, 0x86, 0x82, 0x5C, 0x2E, 0x83] };
 
 #[repr(C)]
 struct IAvnWindowNotificationManagerVtbl {
@@ -34178,8 +39309,23 @@ struct IAvnWindowNotificationManagerVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut f64) -> i32,
@@ -34300,6 +39446,70 @@ impl ComPtr<IAvnWindowNotificationManager> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -34310,6 +39520,45 @@ impl ComPtr<IAvnWindowNotificationManager> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -34811,7 +40060,7 @@ impl ComPtr<IAvnWindowNotificationManager> {
     }
 }
 
-pub const I_AVN_NUMERIC_UP_DOWN_IID: Guid = Guid { data1: 0x6797FC23, data2: 0xDED7, data3: 0x5015, data4: [0xAB, 0x14, 0xF6, 0x59, 0xDC, 0x90, 0x7A, 0x88] };
+pub const I_AVN_NUMERIC_UP_DOWN_IID: Guid = Guid { data1: 0x69B2F75B, data2: 0x7539, data3: 0x5CA2, data4: [0xA7, 0x51, 0x3E, 0x21, 0x9F, 0x69, 0x77, 0x05] };
 
 #[repr(C)]
 struct IAvnNumericUpDownVtbl {
@@ -34823,8 +40072,23 @@ struct IAvnNumericUpDownVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnNumericUpDown, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnNumericUpDown, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnNumericUpDown, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnNumericUpDown, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnNumericUpDown, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnNumericUpDown, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnNumericUpDown, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnNumericUpDown, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut f64) -> i32,
@@ -34926,6 +40190,8 @@ struct IAvnNumericUpDownVtbl {
     set_inner_left_content: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnControl) -> i32,
     get_inner_right_content: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut *mut IAvnControl) -> i32,
     set_inner_right_content: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnControl) -> i32,
+    advise_spinned: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnNumericUpDownSpinnedHandler, *mut i64) -> i32,
+    unadvise_spinned: unsafe extern "system" fn(*mut IAvnNumericUpDown, i64) -> i32,
     advise_value_changed: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnNumericUpDownValueChangedHandler, *mut i64) -> i32,
     unadvise_value_changed: unsafe extern "system" fn(*mut IAvnNumericUpDown, i64) -> i32,
 }
@@ -34976,6 +40242,70 @@ impl ComPtr<IAvnNumericUpDown> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -34986,6 +40316,45 @@ impl ComPtr<IAvnNumericUpDown> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -35691,6 +41060,19 @@ impl ComPtr<IAvnNumericUpDown> {
             hresult::check(hr)
         }
     }
+    pub fn advise_spinned(&self, handler: &ComPtr<IAvnNumericUpDownSpinnedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_spinned)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_spinned(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_spinned)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_value_changed(&self, handler: &ComPtr<IAvnNumericUpDownValueChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -35706,7 +41088,7 @@ impl ComPtr<IAvnNumericUpDown> {
     }
 }
 
-pub const I_AVN_PANEL_IID: Guid = Guid { data1: 0x712FA85F, data2: 0x0521, data3: 0x517E, data4: [0xBD, 0x9B, 0xB6, 0x55, 0xF4, 0x36, 0x36, 0x0E] };
+pub const I_AVN_PANEL_IID: Guid = Guid { data1: 0x6F17ED96, data2: 0x2AB4, data3: 0x560F, data4: [0x9E, 0x2B, 0x51, 0xC4, 0x0D, 0xD6, 0x6A, 0xF5] };
 
 #[repr(C)]
 struct IAvnPanelVtbl {
@@ -35718,8 +41100,23 @@ struct IAvnPanelVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnPanel, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnPanel, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnPanel, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnPanel, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnPanel, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnPanel, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnPanel, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnPanel, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPanel, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPanel, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnPanel, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnPanel, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnPanel, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnPanel, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnPanel, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnPanel, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnPanel, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnPanel, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnPanel, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnPanel, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnPanel, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnPanel, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnPanel, *mut f64) -> i32,
@@ -35812,6 +41209,70 @@ impl ComPtr<IAvnPanel> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -35822,6 +41283,45 @@ impl ComPtr<IAvnPanel> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -36131,7 +41631,7 @@ impl ComPtr<IAvnPanel> {
     }
 }
 
-pub const I_AVN_PATH_ICON_IID: Guid = Guid { data1: 0x7013F309, data2: 0xB661, data3: 0x53F9, data4: [0xA4, 0x8B, 0xD3, 0xFB, 0x26, 0x6F, 0x03, 0x17] };
+pub const I_AVN_PATH_ICON_IID: Guid = Guid { data1: 0x91C9F05C, data2: 0x61D6, data3: 0x5DED, data4: [0xA6, 0xA6, 0xA3, 0xB7, 0xAD, 0x55, 0x3C, 0x0F] };
 
 #[repr(C)]
 struct IAvnPathIconVtbl {
@@ -36143,8 +41643,23 @@ struct IAvnPathIconVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnPathIcon, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnPathIcon, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnPathIcon, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnPathIcon, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnPathIcon, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnPathIcon, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnPathIcon, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnPathIcon, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPathIcon, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPathIcon, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnPathIcon, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnPathIcon, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnPathIcon, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnPathIcon, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnPathIcon, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnPathIcon, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnPathIcon, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnPathIcon, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnPathIcon, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnPathIcon, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnPathIcon, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnPathIcon, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnPathIcon, *mut f64) -> i32,
@@ -36260,6 +41775,70 @@ impl ComPtr<IAvnPathIcon> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -36270,6 +41849,45 @@ impl ComPtr<IAvnPathIcon> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -36739,7 +42357,7 @@ impl ComPtr<IAvnPathIcon> {
     }
 }
 
-pub const I_AVN_PIPS_PAGER_IID: Guid = Guid { data1: 0x53868482, data2: 0xADE4, data3: 0x5B1F, data4: [0x9C, 0x20, 0x08, 0x40, 0x95, 0xD7, 0xAB, 0x79] };
+pub const I_AVN_PIPS_PAGER_IID: Guid = Guid { data1: 0xDDD48293, data2: 0x8B29, data3: 0x58BF, data4: [0x8D, 0x98, 0xFB, 0x97, 0x89, 0xFE, 0x01, 0xC6] };
 
 #[repr(C)]
 struct IAvnPipsPagerVtbl {
@@ -36751,8 +42369,23 @@ struct IAvnPipsPagerVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnPipsPager, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnPipsPager, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnPipsPager, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnPipsPager, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnPipsPager, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnPipsPager, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnPipsPager, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnPipsPager, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPipsPager, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPipsPager, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnPipsPager, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnPipsPager, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnPipsPager, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnPipsPager, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnPipsPager, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnPipsPager, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnPipsPager, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnPipsPager, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnPipsPager, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnPipsPager, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnPipsPager, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnPipsPager, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnPipsPager, *mut f64) -> i32,
@@ -36880,6 +42513,70 @@ impl ComPtr<IAvnPipsPager> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -36890,6 +42587,45 @@ impl ComPtr<IAvnPipsPager> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -37548,7 +43284,7 @@ impl ComPtr<IAvnFlyoutBase> {
     }
 }
 
-pub const I_AVN_HEADERED_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x30AE6669, data2: 0x4E91, data3: 0x54FE, data4: [0x85, 0x5F, 0x04, 0x18, 0x08, 0xFB, 0x7A, 0x4F] };
+pub const I_AVN_HEADERED_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x48A213B1, data2: 0x6CA8, data3: 0x5B29, data4: [0xB6, 0x1B, 0x4E, 0xBC, 0xE2, 0xBA, 0xD6, 0x3C] };
 
 #[repr(C)]
 struct IAvnHeaderedContentControlVtbl {
@@ -37560,8 +43296,23 @@ struct IAvnHeaderedContentControlVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut f64) -> i32,
@@ -37687,6 +43438,70 @@ impl ComPtr<IAvnHeaderedContentControl> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -37697,6 +43512,45 @@ impl ComPtr<IAvnHeaderedContentControl> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -38236,7 +44090,7 @@ impl ComPtr<IAvnHeaderedContentControl> {
     }
 }
 
-pub const I_AVN_HEADERED_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x61895BD9, data2: 0xCB0A, data3: 0x5DD3, data4: [0x87, 0x3D, 0x85, 0x1C, 0x4B, 0x7F, 0xA1, 0xDE] };
+pub const I_AVN_HEADERED_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x278900C3, data2: 0xA2AC, data3: 0x5FF1, data4: [0xAB, 0x4A, 0x1F, 0xCC, 0xCC, 0x62, 0xCB, 0x67] };
 
 #[repr(C)]
 struct IAvnHeaderedItemsControlVtbl {
@@ -38248,8 +44102,23 @@ struct IAvnHeaderedItemsControlVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut f64) -> i32,
@@ -38379,6 +44248,70 @@ impl ComPtr<IAvnHeaderedItemsControl> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -38389,6 +44322,45 @@ impl ComPtr<IAvnHeaderedItemsControl> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -38956,7 +44928,7 @@ impl ComPtr<IAvnHeaderedItemsControl> {
     }
 }
 
-pub const I_AVN_HEADERED_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x8D38BBF3, data2: 0x0201, data3: 0x5C02, data4: [0xAD, 0xBB, 0x6A, 0x31, 0x12, 0x59, 0x15, 0x31] };
+pub const I_AVN_HEADERED_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x5C02B1E0, data2: 0x7A87, data3: 0x59D7, data4: [0x8D, 0xD6, 0xE8, 0xC6, 0xD6, 0xBB, 0x38, 0x18] };
 
 #[repr(C)]
 struct IAvnHeaderedSelectingItemsControlVtbl {
@@ -38968,8 +44940,23 @@ struct IAvnHeaderedSelectingItemsControlVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut f64) -> i32,
@@ -39113,6 +45100,70 @@ impl ComPtr<IAvnHeaderedSelectingItemsControl> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -39123,6 +45174,45 @@ impl ComPtr<IAvnHeaderedSelectingItemsControl> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -39799,8 +45889,23 @@ struct IAvnPopupVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnPopup, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnPopup, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnPopup, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnPopup, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnPopup, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnPopup, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnPopup, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnPopup, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPopup, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPopup, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnPopup, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnPopup, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnPopup, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnPopup, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnPopup, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnPopup, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnPopup, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnPopup, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnPopup, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnPopup, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnPopup, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnPopup, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnPopup, *mut f64) -> i32,
@@ -39932,6 +46037,70 @@ impl ComPtr<IAvnPopup> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -39942,6 +46111,45 @@ impl ComPtr<IAvnPopup> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -40794,7 +47002,7 @@ impl ComPtr<IAvnPopupFlyoutBase> {
     }
 }
 
-pub const I_AVN_RANGE_BASE_IID: Guid = Guid { data1: 0x713C8088, data2: 0x9626, data3: 0x5029, data4: [0x99, 0xDE, 0xDC, 0x87, 0x2F, 0x6B, 0xB2, 0xC8] };
+pub const I_AVN_RANGE_BASE_IID: Guid = Guid { data1: 0x9AEB61D1, data2: 0xB890, data3: 0x51B7, data4: [0xA4, 0xD7, 0x04, 0xFB, 0x6F, 0xF1, 0x49, 0x83] };
 
 #[repr(C)]
 struct IAvnRangeBaseVtbl {
@@ -40806,8 +47014,23 @@ struct IAvnRangeBaseVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnRangeBase, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnRangeBase, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnRangeBase, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnRangeBase, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnRangeBase, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnRangeBase, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnRangeBase, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnRangeBase, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnRangeBase, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnRangeBase, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnRangeBase, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnRangeBase, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnRangeBase, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnRangeBase, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnRangeBase, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnRangeBase, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnRangeBase, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnRangeBase, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnRangeBase, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnRangeBase, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnRangeBase, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnRangeBase, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnRangeBase, *mut f64) -> i32,
@@ -40933,6 +47156,70 @@ impl ComPtr<IAvnRangeBase> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -40943,6 +47230,45 @@ impl ComPtr<IAvnRangeBase> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -41481,7 +47807,7 @@ impl ComPtr<IAvnRangeBase> {
     }
 }
 
-pub const I_AVN_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x7192B20D, data2: 0xB928, data3: 0x50D1, data4: [0xA4, 0x3A, 0xE6, 0x19, 0xD4, 0x18, 0x84, 0xAF] };
+pub const I_AVN_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x43255F12, data2: 0xADB0, data3: 0x5E53, data4: [0x8F, 0x63, 0xDB, 0x8C, 0xFE, 0xE3, 0x54, 0xAF] };
 
 #[repr(C)]
 struct IAvnSelectingItemsControlVtbl {
@@ -41493,8 +47819,23 @@ struct IAvnSelectingItemsControlVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut f64) -> i32,
@@ -41634,6 +47975,70 @@ impl ComPtr<IAvnSelectingItemsControl> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -41644,6 +48049,45 @@ impl ComPtr<IAvnSelectingItemsControl> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -42280,7 +48724,7 @@ impl ComPtr<IAvnSelectingItemsControl> {
     }
 }
 
-pub const I_AVN_TEMPLATED_CONTROL_IID: Guid = Guid { data1: 0x17EA3E0C, data2: 0xBB46, data3: 0x50A1, data4: [0x8F, 0x48, 0x07, 0xCE, 0x03, 0x91, 0x0F, 0x3D] };
+pub const I_AVN_TEMPLATED_CONTROL_IID: Guid = Guid { data1: 0xE5395D95, data2: 0x3781, data3: 0x5ED5, data4: [0x8A, 0x2D, 0x27, 0x75, 0xFB, 0x87, 0xA8, 0xB6] };
 
 #[repr(C)]
 struct IAvnTemplatedControlVtbl {
@@ -42292,8 +48736,23 @@ struct IAvnTemplatedControlVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnTemplatedControl, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTemplatedControl, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTemplatedControl, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnTemplatedControl, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnTemplatedControl, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnTemplatedControl, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnTemplatedControl, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnTemplatedControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut f64) -> i32,
@@ -42407,6 +48866,70 @@ impl ComPtr<IAvnTemplatedControl> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -42417,6 +48940,45 @@ impl ComPtr<IAvnTemplatedControl> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -42872,7 +49434,7 @@ impl ComPtr<IAvnTemplatedControl> {
     }
 }
 
-pub const I_AVN_THUMB_IID: Guid = Guid { data1: 0xC1DAF16A, data2: 0x704E, data3: 0x5DB4, data4: [0x98, 0x3A, 0xCC, 0x49, 0x45, 0x81, 0x6D, 0xBA] };
+pub const I_AVN_THUMB_IID: Guid = Guid { data1: 0xA07A005E, data2: 0x9A5F, data3: 0x59C0, data4: [0xBF, 0xB0, 0x5F, 0x7A, 0x59, 0xF7, 0x0D, 0x1E] };
 
 #[repr(C)]
 struct IAvnThumbVtbl {
@@ -42884,8 +49446,23 @@ struct IAvnThumbVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnThumb, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnThumb, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnThumb, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnThumb, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnThumb, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnThumb, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnThumb, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnThumb, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnThumb, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnThumb, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnThumb, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnThumb, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnThumb, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnThumb, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnThumb, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnThumb, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnThumb, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnThumb, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnThumb, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnThumb, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnThumb, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnThumb, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnThumb, *mut f64) -> i32,
@@ -43005,6 +49582,70 @@ impl ComPtr<IAvnThumb> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -43015,6 +49656,45 @@ impl ComPtr<IAvnThumb> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -43509,7 +50189,7 @@ impl ComPtr<IAvnThumb> {
     }
 }
 
-pub const I_AVN_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0xCD166BA4, data2: 0x63CB, data3: 0x55E0, data4: [0x9E, 0xAF, 0xB5, 0x52, 0x04, 0x75, 0xF3, 0xDC] };
+pub const I_AVN_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0x5AE5EF93, data2: 0xCB75, data3: 0x595B, data4: [0x81, 0x92, 0x5B, 0x1C, 0x5D, 0x4D, 0x98, 0xFF] };
 
 #[repr(C)]
 struct IAvnToggleButtonVtbl {
@@ -43521,8 +50201,23 @@ struct IAvnToggleButtonVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnToggleButton, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnToggleButton, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnToggleButton, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnToggleButton, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnToggleButton, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnToggleButton, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnToggleButton, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnToggleButton, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnToggleButton, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnToggleButton, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnToggleButton, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnToggleButton, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnToggleButton, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnToggleButton, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnToggleButton, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnToggleButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnToggleButton, *mut f64) -> i32,
@@ -43665,6 +50360,70 @@ impl ComPtr<IAvnToggleButton> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -43675,6 +50434,45 @@ impl ComPtr<IAvnToggleButton> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -44332,7 +51130,7 @@ impl ComPtr<IAvnToggleButton> {
     }
 }
 
-pub const I_AVN_UNIFORM_GRID_IID: Guid = Guid { data1: 0xF159F2C8, data2: 0x3784, data3: 0x5C2E, data4: [0xA0, 0xFE, 0xF4, 0x3F, 0x1A, 0x03, 0x21, 0x68] };
+pub const I_AVN_UNIFORM_GRID_IID: Guid = Guid { data1: 0x3448082A, data2: 0x0C82, data3: 0x50DC, data4: [0x86, 0x21, 0xEB, 0xE5, 0x48, 0xB1, 0x07, 0xB7] };
 
 #[repr(C)]
 struct IAvnUniformGridVtbl {
@@ -44344,8 +51142,23 @@ struct IAvnUniformGridVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnUniformGrid, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnUniformGrid, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnUniformGrid, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnUniformGrid, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnUniformGrid, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnUniformGrid, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnUniformGrid, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnUniformGrid, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut f64) -> i32,
@@ -44448,6 +51261,70 @@ impl ComPtr<IAvnUniformGrid> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -44458,6 +51335,45 @@ impl ComPtr<IAvnUniformGrid> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -44837,7 +51753,7 @@ impl ComPtr<IAvnUniformGrid> {
     }
 }
 
-pub const I_AVN_PROGRESS_BAR_IID: Guid = Guid { data1: 0x84F466A6, data2: 0x928D, data3: 0x53EC, data4: [0xAC, 0xBC, 0x8F, 0x49, 0x79, 0xD2, 0x6F, 0x23] };
+pub const I_AVN_PROGRESS_BAR_IID: Guid = Guid { data1: 0x4949C3EE, data2: 0xD30A, data3: 0x59A3, data4: [0xAD, 0x46, 0xB6, 0x50, 0xBD, 0x8D, 0xC5, 0xF7] };
 
 #[repr(C)]
 struct IAvnProgressBarVtbl {
@@ -44849,8 +51765,23 @@ struct IAvnProgressBarVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnProgressBar, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnProgressBar, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnProgressBar, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnProgressBar, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnProgressBar, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnProgressBar, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnProgressBar, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnProgressBar, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnProgressBar, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnProgressBar, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnProgressBar, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnProgressBar, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnProgressBar, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnProgressBar, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnProgressBar, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnProgressBar, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnProgressBar, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnProgressBar, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnProgressBar, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnProgressBar, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnProgressBar, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnProgressBar, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnProgressBar, *mut f64) -> i32,
@@ -44985,6 +51916,70 @@ impl ComPtr<IAvnProgressBar> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -44995,6 +51990,45 @@ impl ComPtr<IAvnProgressBar> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -45597,7 +52631,7 @@ impl ComPtr<IAvnProgressBar> {
     }
 }
 
-pub const I_AVN_RADIO_BUTTON_IID: Guid = Guid { data1: 0x62C739B8, data2: 0x1B3A, data3: 0x5DE1, data4: [0x8C, 0xCA, 0x00, 0xD1, 0xBE, 0x01, 0xF7, 0x46] };
+pub const I_AVN_RADIO_BUTTON_IID: Guid = Guid { data1: 0x906C589D, data2: 0xA675, data3: 0x5602, data4: [0x83, 0x83, 0x26, 0x79, 0xDD, 0x33, 0x5F, 0x62] };
 
 #[repr(C)]
 struct IAvnRadioButtonVtbl {
@@ -45609,8 +52643,23 @@ struct IAvnRadioButtonVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnRadioButton, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnRadioButton, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnRadioButton, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnRadioButton, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnRadioButton, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnRadioButton, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnRadioButton, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnRadioButton, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnRadioButton, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnRadioButton, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnRadioButton, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnRadioButton, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnRadioButton, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnRadioButton, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnRadioButton, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnRadioButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnRadioButton, *mut f64) -> i32,
@@ -45755,6 +52804,70 @@ impl ComPtr<IAvnRadioButton> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -45765,6 +52878,45 @@ impl ComPtr<IAvnRadioButton> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -46436,7 +53588,7 @@ impl ComPtr<IAvnRadioButton> {
     }
 }
 
-pub const I_AVN_REFRESH_CONTAINER_IID: Guid = Guid { data1: 0x2E6B3A4C, data2: 0x1910, data3: 0x5572, data4: [0xB7, 0x3F, 0xAC, 0x84, 0xBA, 0xA1, 0x1B, 0x35] };
+pub const I_AVN_REFRESH_CONTAINER_IID: Guid = Guid { data1: 0xB3B2CA18, data2: 0x0805, data3: 0x51C2, data4: [0x99, 0x37, 0xF7, 0x97, 0x73, 0x07, 0x6F, 0x35] };
 
 #[repr(C)]
 struct IAvnRefreshContainerVtbl {
@@ -46448,8 +53600,23 @@ struct IAvnRefreshContainerVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnRefreshContainer, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnRefreshContainer, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnRefreshContainer, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnRefreshContainer, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnRefreshContainer, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnRefreshContainer, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnRefreshContainer, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnRefreshContainer, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut f64) -> i32,
@@ -46576,6 +53743,70 @@ impl ComPtr<IAvnRefreshContainer> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -46586,6 +53817,45 @@ impl ComPtr<IAvnRefreshContainer> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -47131,7 +54401,7 @@ impl ComPtr<IAvnRefreshContainer> {
     }
 }
 
-pub const I_AVN_RELATIVE_PANEL_IID: Guid = Guid { data1: 0x6D532791, data2: 0x8F97, data3: 0x56B0, data4: [0xB0, 0x35, 0x67, 0xAD, 0x99, 0x0C, 0xBE, 0x6A] };
+pub const I_AVN_RELATIVE_PANEL_IID: Guid = Guid { data1: 0xB43AAC72, data2: 0xA5ED, data3: 0x54EA, data4: [0xA0, 0xDD, 0x75, 0xD6, 0xE9, 0x1A, 0x88, 0xFE] };
 
 #[repr(C)]
 struct IAvnRelativePanelVtbl {
@@ -47143,8 +54413,23 @@ struct IAvnRelativePanelVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnRelativePanel, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnRelativePanel, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnRelativePanel, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnRelativePanel, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnRelativePanel, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnRelativePanel, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnRelativePanel, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnRelativePanel, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut f64) -> i32,
@@ -47237,6 +54522,70 @@ impl ComPtr<IAvnRelativePanel> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -47247,6 +54596,45 @@ impl ComPtr<IAvnRelativePanel> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -47556,7 +54944,7 @@ impl ComPtr<IAvnRelativePanel> {
     }
 }
 
-pub const I_AVN_REPEAT_BUTTON_IID: Guid = Guid { data1: 0xC722DF8F, data2: 0xFE73, data3: 0x51C0, data4: [0xBC, 0xA4, 0xD7, 0x8F, 0xD6, 0x92, 0x58, 0x9A] };
+pub const I_AVN_REPEAT_BUTTON_IID: Guid = Guid { data1: 0x46A7DCF9, data2: 0x73BC, data3: 0x5EC3, data4: [0x8A, 0x68, 0xB9, 0x37, 0xEE, 0xD8, 0xA5, 0x47] };
 
 #[repr(C)]
 struct IAvnRepeatButtonVtbl {
@@ -47568,8 +54956,23 @@ struct IAvnRepeatButtonVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnRepeatButton, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnRepeatButton, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnRepeatButton, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnRepeatButton, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnRepeatButton, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnRepeatButton, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnRepeatButton, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnRepeatButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut f64) -> i32,
@@ -47710,6 +55113,70 @@ impl ComPtr<IAvnRepeatButton> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -47720,6 +55187,45 @@ impl ComPtr<IAvnRepeatButton> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -48364,7 +55870,7 @@ impl ComPtr<IAvnRepeatButton> {
     }
 }
 
-pub const I_AVN_SCROLL_VIEWER_IID: Guid = Guid { data1: 0x6B38CD67, data2: 0xC27E, data3: 0x5355, data4: [0x8C, 0xE9, 0xE9, 0xF3, 0xDB, 0xD3, 0x59, 0xF3] };
+pub const I_AVN_SCROLL_VIEWER_IID: Guid = Guid { data1: 0xA6A9BCED, data2: 0xE379, data3: 0x51EB, data4: [0xBB, 0xEF, 0x06, 0x8F, 0x41, 0xF1, 0x14, 0x67] };
 
 #[repr(C)]
 struct IAvnScrollViewerVtbl {
@@ -48376,8 +55882,23 @@ struct IAvnScrollViewerVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnScrollViewer, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnScrollViewer, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnScrollViewer, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnScrollViewer, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnScrollViewer, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnScrollViewer, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnScrollViewer, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnScrollViewer, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut f64) -> i32,
@@ -48544,6 +56065,70 @@ impl ComPtr<IAvnScrollViewer> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -48554,6 +56139,45 @@ impl ComPtr<IAvnScrollViewer> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -49374,7 +56998,7 @@ impl ComPtr<IAvnScrollViewer> {
     }
 }
 
-pub const I_AVN_SELECTABLE_TEXT_BLOCK_IID: Guid = Guid { data1: 0xE57F609B, data2: 0x19B0, data3: 0x5AE7, data4: [0x8E, 0x8C, 0x1D, 0x51, 0x6D, 0x94, 0xD6, 0x0F] };
+pub const I_AVN_SELECTABLE_TEXT_BLOCK_IID: Guid = Guid { data1: 0x4171D6F1, data2: 0xDB00, data3: 0x5611, data4: [0xA8, 0x07, 0x25, 0xDC, 0x84, 0x90, 0x96, 0x0C] };
 
 #[repr(C)]
 struct IAvnSelectableTextBlockVtbl {
@@ -49386,8 +57010,23 @@ struct IAvnSelectableTextBlockVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut f64) -> i32,
@@ -49526,6 +57165,70 @@ impl ComPtr<IAvnSelectableTextBlock> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -49536,6 +57239,45 @@ impl ComPtr<IAvnSelectableTextBlock> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -50164,7 +57906,7 @@ impl ComPtr<IAvnSelectableTextBlock> {
     }
 }
 
-pub const I_AVN_SEPARATOR_IID: Guid = Guid { data1: 0xEAC0EDB9, data2: 0x0894, data3: 0x5AC7, data4: [0xB8, 0x0B, 0xDA, 0x52, 0xCE, 0x1A, 0x6E, 0xD7] };
+pub const I_AVN_SEPARATOR_IID: Guid = Guid { data1: 0x4870AD34, data2: 0xBDEF, data3: 0x50A5, data4: [0x93, 0x6C, 0x27, 0xD4, 0x23, 0x78, 0xB7, 0xB7] };
 
 #[repr(C)]
 struct IAvnSeparatorVtbl {
@@ -50176,8 +57918,23 @@ struct IAvnSeparatorVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnSeparator, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnSeparator, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnSeparator, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnSeparator, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnSeparator, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnSeparator, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnSeparator, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnSeparator, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSeparator, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSeparator, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnSeparator, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnSeparator, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnSeparator, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnSeparator, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnSeparator, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnSeparator, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnSeparator, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnSeparator, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnSeparator, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnSeparator, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnSeparator, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnSeparator, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnSeparator, *mut f64) -> i32,
@@ -50291,6 +58048,70 @@ impl ComPtr<IAvnSeparator> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -50301,6 +58122,45 @@ impl ComPtr<IAvnSeparator> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -50756,7 +58616,7 @@ impl ComPtr<IAvnSeparator> {
     }
 }
 
-pub const I_AVN_ARC_IID: Guid = Guid { data1: 0x1F050036, data2: 0x72FA, data3: 0x5872, data4: [0x94, 0x65, 0xA7, 0xFF, 0xC6, 0x7A, 0xDC, 0xF9] };
+pub const I_AVN_ARC_IID: Guid = Guid { data1: 0x95E3B204, data2: 0x61ED, data3: 0x5CCC, data4: [0x85, 0x54, 0xD7, 0xD0, 0xA4, 0x9C, 0x77, 0x1E] };
 
 #[repr(C)]
 struct IAvnArcVtbl {
@@ -50768,8 +58628,23 @@ struct IAvnArcVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnArc, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnArc, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnArc, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnArc, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnArc, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnArc, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnArc, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnArc, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnArc, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnArc, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnArc, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnArc, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnArc, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnArc, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnArc, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnArc, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnArc, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnArc, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnArc, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnArc, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnArc, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnArc, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnArc, *mut f64) -> i32,
@@ -50879,6 +58754,70 @@ impl ComPtr<IAvnArc> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -50889,6 +58828,45 @@ impl ComPtr<IAvnArc> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -51316,7 +59294,7 @@ impl ComPtr<IAvnArc> {
     }
 }
 
-pub const I_AVN_ELLIPSE_IID: Guid = Guid { data1: 0xB34AC182, data2: 0xF320, data3: 0x5FE2, data4: [0x9A, 0xEF, 0xFE, 0xDD, 0xC1, 0x40, 0x50, 0x1C] };
+pub const I_AVN_ELLIPSE_IID: Guid = Guid { data1: 0x7FDC6AEF, data2: 0x047B, data3: 0x5CAE, data4: [0xB3, 0x40, 0xFC, 0x08, 0xDA, 0xC9, 0xE9, 0xFF] };
 
 #[repr(C)]
 struct IAvnEllipseVtbl {
@@ -51328,8 +59306,23 @@ struct IAvnEllipseVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnEllipse, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnEllipse, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnEllipse, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnEllipse, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnEllipse, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnEllipse, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnEllipse, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnEllipse, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnEllipse, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnEllipse, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnEllipse, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnEllipse, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnEllipse, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnEllipse, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnEllipse, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnEllipse, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnEllipse, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnEllipse, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnEllipse, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnEllipse, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnEllipse, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnEllipse, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnEllipse, *mut f64) -> i32,
@@ -51435,6 +59428,70 @@ impl ComPtr<IAvnEllipse> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -51445,6 +59502,45 @@ impl ComPtr<IAvnEllipse> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -51844,7 +59940,7 @@ impl ComPtr<IAvnEllipse> {
     }
 }
 
-pub const I_AVN_LINE_IID: Guid = Guid { data1: 0xEB72B087, data2: 0x7911, data3: 0x5B32, data4: [0x8B, 0xD6, 0xD5, 0x15, 0x46, 0xC2, 0x23, 0x36] };
+pub const I_AVN_LINE_IID: Guid = Guid { data1: 0x0562C88F, data2: 0x5ADA, data3: 0x52A5, data4: [0xAB, 0x7B, 0x27, 0x82, 0x2B, 0x05, 0x31, 0x17] };
 
 #[repr(C)]
 struct IAvnLineVtbl {
@@ -51856,8 +59952,23 @@ struct IAvnLineVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnLine, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnLine, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnLine, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnLine, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnLine, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnLine, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnLine, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnLine, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnLine, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnLine, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnLine, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnLine, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnLine, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnLine, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnLine, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnLine, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnLine, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnLine, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnLine, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnLine, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnLine, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnLine, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnLine, *mut f64) -> i32,
@@ -51967,6 +60078,70 @@ impl ComPtr<IAvnLine> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -51977,6 +60152,45 @@ impl ComPtr<IAvnLine> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -52404,7 +60618,7 @@ impl ComPtr<IAvnLine> {
     }
 }
 
-pub const I_AVN_PATH_IID: Guid = Guid { data1: 0x55C04643, data2: 0x3476, data3: 0x53AA, data4: [0xAB, 0xA2, 0xC8, 0x4C, 0x75, 0x8D, 0x03, 0x0C] };
+pub const I_AVN_PATH_IID: Guid = Guid { data1: 0xE99410D3, data2: 0xB395, data3: 0x5D53, data4: [0x9E, 0xE2, 0x47, 0x3D, 0x57, 0xD0, 0xAB, 0xA8] };
 
 #[repr(C)]
 struct IAvnPathVtbl {
@@ -52416,8 +60630,23 @@ struct IAvnPathVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnPath, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnPath, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnPath, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnPath, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnPath, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnPath, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnPath, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnPath, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPath, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPath, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnPath, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnPath, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnPath, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnPath, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnPath, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnPath, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnPath, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnPath, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnPath, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnPath, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnPath, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnPath, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnPath, *mut f64) -> i32,
@@ -52525,6 +60754,70 @@ impl ComPtr<IAvnPath> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -52535,6 +60828,45 @@ impl ComPtr<IAvnPath> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -52948,7 +61280,7 @@ impl ComPtr<IAvnPath> {
     }
 }
 
-pub const I_AVN_POLYGON_IID: Guid = Guid { data1: 0x48C61B16, data2: 0xF8C9, data3: 0x582D, data4: [0xA1, 0xEB, 0xE5, 0xEA, 0xFD, 0x65, 0x2A, 0x0A] };
+pub const I_AVN_POLYGON_IID: Guid = Guid { data1: 0x2BB9271A, data2: 0x35DD, data3: 0x5AD8, data4: [0xB6, 0xDA, 0xC9, 0xAF, 0x84, 0xDA, 0x52, 0xD5] };
 
 #[repr(C)]
 struct IAvnPolygonVtbl {
@@ -52960,8 +61292,23 @@ struct IAvnPolygonVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnPolygon, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnPolygon, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnPolygon, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnPolygon, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnPolygon, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnPolygon, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnPolygon, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnPolygon, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPolygon, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPolygon, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnPolygon, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnPolygon, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnPolygon, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnPolygon, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnPolygon, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnPolygon, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnPolygon, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnPolygon, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnPolygon, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnPolygon, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnPolygon, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnPolygon, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnPolygon, *mut f64) -> i32,
@@ -53069,6 +61416,70 @@ impl ComPtr<IAvnPolygon> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -53079,6 +61490,45 @@ impl ComPtr<IAvnPolygon> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -53492,7 +61942,7 @@ impl ComPtr<IAvnPolygon> {
     }
 }
 
-pub const I_AVN_POLYLINE_IID: Guid = Guid { data1: 0x2827C327, data2: 0x9C80, data3: 0x52E8, data4: [0xB1, 0x2A, 0xFA, 0xFF, 0x86, 0x40, 0xAD, 0x5E] };
+pub const I_AVN_POLYLINE_IID: Guid = Guid { data1: 0x8C786A78, data2: 0x1345, data3: 0x5C59, data4: [0xBE, 0xFF, 0xE4, 0xAB, 0x5D, 0x85, 0x05, 0x44] };
 
 #[repr(C)]
 struct IAvnPolylineVtbl {
@@ -53504,8 +61954,23 @@ struct IAvnPolylineVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnPolyline, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnPolyline, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnPolyline, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnPolyline, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnPolyline, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnPolyline, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnPolyline, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnPolyline, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPolyline, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPolyline, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnPolyline, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnPolyline, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnPolyline, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnPolyline, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnPolyline, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnPolyline, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnPolyline, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnPolyline, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnPolyline, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnPolyline, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnPolyline, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnPolyline, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnPolyline, *mut f64) -> i32,
@@ -53613,6 +62078,70 @@ impl ComPtr<IAvnPolyline> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -53623,6 +62152,45 @@ impl ComPtr<IAvnPolyline> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -54036,7 +62604,7 @@ impl ComPtr<IAvnPolyline> {
     }
 }
 
-pub const I_AVN_RECTANGLE_IID: Guid = Guid { data1: 0x7B51DAD3, data2: 0x74E2, data3: 0x5F03, data4: [0x96, 0x1C, 0x03, 0x1A, 0x7C, 0xBD, 0x3F, 0x24] };
+pub const I_AVN_RECTANGLE_IID: Guid = Guid { data1: 0x75ED5900, data2: 0xFA99, data3: 0x55A1, data4: [0xB3, 0xFE, 0x8F, 0x1A, 0x79, 0xE5, 0xC4, 0xBF] };
 
 #[repr(C)]
 struct IAvnRectangleVtbl {
@@ -54048,8 +62616,23 @@ struct IAvnRectangleVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnRectangle, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnRectangle, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnRectangle, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnRectangle, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnRectangle, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnRectangle, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnRectangle, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnRectangle, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnRectangle, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnRectangle, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnRectangle, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnRectangle, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnRectangle, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnRectangle, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnRectangle, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnRectangle, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnRectangle, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnRectangle, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnRectangle, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnRectangle, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnRectangle, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnRectangle, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnRectangle, *mut f64) -> i32,
@@ -54159,6 +62742,70 @@ impl ComPtr<IAvnRectangle> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -54169,6 +62816,45 @@ impl ComPtr<IAvnRectangle> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -54596,7 +63282,7 @@ impl ComPtr<IAvnRectangle> {
     }
 }
 
-pub const I_AVN_SECTOR_IID: Guid = Guid { data1: 0x0F44FAA7, data2: 0xB97F, data3: 0x5905, data4: [0xB1, 0x52, 0x80, 0xE9, 0x85, 0x25, 0x7B, 0x3B] };
+pub const I_AVN_SECTOR_IID: Guid = Guid { data1: 0xEFDAEB3F, data2: 0xD818, data3: 0x5FE8, data4: [0xBC, 0xAE, 0xFB, 0xF6, 0x20, 0x36, 0xC8, 0x01] };
 
 #[repr(C)]
 struct IAvnSectorVtbl {
@@ -54608,8 +63294,23 @@ struct IAvnSectorVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnSector, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnSector, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnSector, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnSector, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnSector, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnSector, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnSector, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnSector, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSector, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSector, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnSector, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnSector, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnSector, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnSector, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnSector, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnSector, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnSector, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnSector, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnSector, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnSector, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnSector, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnSector, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnSector, *mut f64) -> i32,
@@ -54719,6 +63420,70 @@ impl ComPtr<IAvnSector> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -54729,6 +63494,45 @@ impl ComPtr<IAvnSector> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -55156,7 +63960,7 @@ impl ComPtr<IAvnSector> {
     }
 }
 
-pub const I_AVN_SHAPE_IID: Guid = Guid { data1: 0xF21AE92A, data2: 0x78A5, data3: 0x5B73, data4: [0x99, 0x2B, 0x52, 0xFE, 0x1D, 0xBA, 0xD7, 0x81] };
+pub const I_AVN_SHAPE_IID: Guid = Guid { data1: 0x11CE4201, data2: 0xE41E, data3: 0x525C, data4: [0xBF, 0xBD, 0x31, 0x56, 0x92, 0x6B, 0xDB, 0xDC] };
 
 #[repr(C)]
 struct IAvnShapeVtbl {
@@ -55168,8 +63972,23 @@ struct IAvnShapeVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnShape, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnShape, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnShape, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnShape, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnShape, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnShape, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnShape, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnShape, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnShape, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnShape, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnShape, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnShape, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnShape, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnShape, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnShape, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnShape, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnShape, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnShape, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnShape, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnShape, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnShape, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnShape, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnShape, *mut f64) -> i32,
@@ -55275,6 +64094,70 @@ impl ComPtr<IAvnShape> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -55285,6 +64168,45 @@ impl ComPtr<IAvnShape> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -55684,7 +64606,7 @@ impl ComPtr<IAvnShape> {
     }
 }
 
-pub const I_AVN_SLIDER_IID: Guid = Guid { data1: 0x19DF1507, data2: 0xD41B, data3: 0x5769, data4: [0x8E, 0xC9, 0x5D, 0xDA, 0xE8, 0x92, 0x2A, 0x03] };
+pub const I_AVN_SLIDER_IID: Guid = Guid { data1: 0x077FB51A, data2: 0x6D4D, data3: 0x5A42, data4: [0xB7, 0x93, 0x60, 0x51, 0xF3, 0xDA, 0x88, 0x27] };
 
 #[repr(C)]
 struct IAvnSliderVtbl {
@@ -55696,8 +64618,23 @@ struct IAvnSliderVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnSlider, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnSlider, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnSlider, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnSlider, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnSlider, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnSlider, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnSlider, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnSlider, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSlider, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSlider, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnSlider, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnSlider, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnSlider, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnSlider, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnSlider, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnSlider, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnSlider, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnSlider, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnSlider, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnSlider, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnSlider, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnSlider, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnSlider, *mut f64) -> i32,
@@ -55833,6 +64770,70 @@ impl ComPtr<IAvnSlider> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -55843,6 +64844,45 @@ impl ComPtr<IAvnSlider> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -56451,7 +65491,7 @@ impl ComPtr<IAvnSlider> {
     }
 }
 
-pub const I_AVN_SPINNER_IID: Guid = Guid { data1: 0x847589B4, data2: 0xB732, data3: 0x53E0, data4: [0x8E, 0xD4, 0x92, 0x0A, 0x4E, 0xD8, 0x36, 0xF2] };
+pub const I_AVN_SPINNER_IID: Guid = Guid { data1: 0x1F10B49F, data2: 0xA259, data3: 0x51E5, data4: [0x89, 0x44, 0x48, 0x12, 0x5E, 0x0A, 0x12, 0x4C] };
 
 #[repr(C)]
 struct IAvnSpinnerVtbl {
@@ -56463,8 +65503,23 @@ struct IAvnSpinnerVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnSpinner, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnSpinner, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnSpinner, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnSpinner, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnSpinner, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnSpinner, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnSpinner, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnSpinner, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSpinner, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSpinner, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnSpinner, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnSpinner, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnSpinner, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnSpinner, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnSpinner, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnSpinner, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnSpinner, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnSpinner, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnSpinner, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnSpinner, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnSpinner, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnSpinner, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnSpinner, *mut f64) -> i32,
@@ -56586,6 +65641,70 @@ impl ComPtr<IAvnSpinner> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -56596,6 +65715,45 @@ impl ComPtr<IAvnSpinner> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -57107,7 +66265,7 @@ impl ComPtr<IAvnSpinner> {
     }
 }
 
-pub const I_AVN_SPLIT_BUTTON_IID: Guid = Guid { data1: 0x2CE6E4A9, data2: 0xC827, data3: 0x5F09, data4: [0xB4, 0x17, 0x75, 0x7A, 0x6B, 0xCD, 0xCB, 0x50] };
+pub const I_AVN_SPLIT_BUTTON_IID: Guid = Guid { data1: 0x6D1B000C, data2: 0xCD41, data3: 0x58B2, data4: [0x88, 0x58, 0x02, 0x3A, 0xF2, 0x7B, 0x54, 0x5B] };
 
 #[repr(C)]
 struct IAvnSplitButtonVtbl {
@@ -57119,8 +66277,23 @@ struct IAvnSplitButtonVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnSplitButton, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnSplitButton, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnSplitButton, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnSplitButton, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnSplitButton, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnSplitButton, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnSplitButton, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnSplitButton, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSplitButton, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSplitButton, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnSplitButton, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnSplitButton, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnSplitButton, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnSplitButton, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnSplitButton, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnSplitButton, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnSplitButton, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnSplitButton, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnSplitButton, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnSplitButton, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnSplitButton, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnSplitButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnSplitButton, *mut f64) -> i32,
@@ -57250,6 +66423,70 @@ impl ComPtr<IAvnSplitButton> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -57260,6 +66497,45 @@ impl ComPtr<IAvnSplitButton> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -57826,7 +67102,7 @@ impl ComPtr<IAvnSplitButton> {
     }
 }
 
-pub const I_AVN_SPLIT_VIEW_IID: Guid = Guid { data1: 0xEB640B8B, data2: 0x6C22, data3: 0x5DFC, data4: [0xBC, 0xB6, 0x59, 0xF2, 0xBE, 0x82, 0x47, 0x0D] };
+pub const I_AVN_SPLIT_VIEW_IID: Guid = Guid { data1: 0x55F8048A, data2: 0x20E3, data3: 0x5AA2, data4: [0xAE, 0xEF, 0xF7, 0x96, 0xD1, 0xA9, 0xFA, 0x2D] };
 
 #[repr(C)]
 struct IAvnSplitViewVtbl {
@@ -57838,8 +67114,23 @@ struct IAvnSplitViewVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnSplitView, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnSplitView, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnSplitView, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnSplitView, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnSplitView, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnSplitView, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnSplitView, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnSplitView, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSplitView, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSplitView, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnSplitView, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnSplitView, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnSplitView, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnSplitView, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnSplitView, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnSplitView, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnSplitView, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnSplitView, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnSplitView, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnSplitView, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnSplitView, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnSplitView, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnSplitView, *mut f64) -> i32,
@@ -57985,6 +67276,70 @@ impl ComPtr<IAvnSplitView> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -57995,6 +67350,45 @@ impl ComPtr<IAvnSplitView> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -58670,7 +68064,7 @@ impl ComPtr<IAvnSplitView> {
     }
 }
 
-pub const I_AVN_STACK_PANEL_IID: Guid = Guid { data1: 0x7C4CB23C, data2: 0x6D12, data3: 0x5693, data4: [0xB8, 0x58, 0xF1, 0xB4, 0x00, 0xFF, 0xC8, 0xE2] };
+pub const I_AVN_STACK_PANEL_IID: Guid = Guid { data1: 0xE6848E82, data2: 0x168A, data3: 0x52F1, data4: [0x89, 0x63, 0x47, 0x51, 0x32, 0x01, 0x86, 0x9B] };
 
 #[repr(C)]
 struct IAvnStackPanelVtbl {
@@ -58682,8 +68076,23 @@ struct IAvnStackPanelVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnStackPanel, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnStackPanel, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnStackPanel, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnStackPanel, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnStackPanel, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnStackPanel, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnStackPanel, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnStackPanel, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnStackPanel, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnStackPanel, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnStackPanel, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnStackPanel, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnStackPanel, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnStackPanel, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnStackPanel, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnStackPanel, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnStackPanel, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnStackPanel, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnStackPanel, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnStackPanel, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnStackPanel, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnStackPanel, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnStackPanel, *mut f64) -> i32,
@@ -58784,6 +68193,70 @@ impl ComPtr<IAvnStackPanel> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -58794,6 +68267,45 @@ impl ComPtr<IAvnStackPanel> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -59159,7 +68671,7 @@ impl ComPtr<IAvnStackPanel> {
     }
 }
 
-pub const I_AVN_TAB_CONTROL_IID: Guid = Guid { data1: 0x91A24C23, data2: 0x5610, data3: 0x561C, data4: [0x9F, 0x23, 0xDA, 0x2A, 0x75, 0x18, 0x3E, 0x82] };
+pub const I_AVN_TAB_CONTROL_IID: Guid = Guid { data1: 0xB08D2C93, data2: 0x68B2, data3: 0x5B92, data4: [0x8E, 0x24, 0xC3, 0xE5, 0x1C, 0xEB, 0xB1, 0x72] };
 
 #[repr(C)]
 struct IAvnTabControlVtbl {
@@ -59171,8 +68683,23 @@ struct IAvnTabControlVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnTabControl, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnTabControl, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTabControl, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnTabControl, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnTabControl, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnTabControl, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnTabControl, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnTabControl, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTabControl, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTabControl, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTabControl, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTabControl, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnTabControl, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnTabControl, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnTabControl, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnTabControl, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnTabControl, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnTabControl, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnTabControl, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnTabControl, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnTabControl, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnTabControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTabControl, *mut f64) -> i32,
@@ -59273,6 +68800,9 @@ struct IAvnTabControlVtbl {
     get_content_template: unsafe extern "system" fn(*mut IAvnTabControl, *mut *mut IAvnDataTemplate) -> i32,
     set_content_template: unsafe extern "system" fn(*mut IAvnTabControl, *mut IAvnDataTemplate) -> i32,
     get_selected_content: unsafe extern "system" fn(*mut IAvnTabControl, *mut AvnVariant) -> i32,
+    get_selected_content_template: unsafe extern "system" fn(*mut IAvnTabControl, *mut *mut IAvnDataTemplate) -> i32,
+    get_indicator_template: unsafe extern "system" fn(*mut IAvnTabControl, *mut *mut IAvnDataTemplate) -> i32,
+    set_indicator_template: unsafe extern "system" fn(*mut IAvnTabControl, *mut IAvnDataTemplate) -> i32,
 }
 
 #[repr(C)]
@@ -59321,6 +68851,70 @@ impl ComPtr<IAvnTabControl> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -59331,6 +68925,45 @@ impl ComPtr<IAvnTabControl> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -60029,9 +69662,31 @@ impl ComPtr<IAvnTabControl> {
             Ok(value)
         }
     }
+    pub fn get_selected_content_template(&self) -> Result<Option<ComPtr<IAvnDataTemplate>>> {
+        unsafe {
+            let mut value: *mut IAvnDataTemplate = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_content_template)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn get_indicator_template(&self) -> Result<Option<ComPtr<IAvnDataTemplate>>> {
+        unsafe {
+            let mut value: *mut IAvnDataTemplate = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_indicator_template)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_indicator_template(&self, value: Option<&ComPtr<IAvnDataTemplate>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_indicator_template)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
 }
 
-pub const I_AVN_TAB_ITEM_IID: Guid = Guid { data1: 0xAC75952D, data2: 0x881E, data3: 0x5A6B, data4: [0xB8, 0x6F, 0xAF, 0x3D, 0xCB, 0xAE, 0xCA, 0x40] };
+pub const I_AVN_TAB_ITEM_IID: Guid = Guid { data1: 0x3D250B17, data2: 0x0B16, data3: 0x5F6B, data4: [0xB4, 0x46, 0x61, 0x92, 0x86, 0x23, 0x43, 0xD4] };
 
 #[repr(C)]
 struct IAvnTabItemVtbl {
@@ -60043,8 +69698,23 @@ struct IAvnTabItemVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnTabItem, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnTabItem, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTabItem, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnTabItem, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnTabItem, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnTabItem, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnTabItem, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnTabItem, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTabItem, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTabItem, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTabItem, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTabItem, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnTabItem, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnTabItem, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnTabItem, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnTabItem, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnTabItem, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnTabItem, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnTabItem, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnTabItem, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnTabItem, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnTabItem, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTabItem, *mut f64) -> i32,
@@ -60124,6 +69794,10 @@ struct IAvnTabItemVtbl {
     set_header_template: unsafe extern "system" fn(*mut IAvnTabItem, *mut IAvnDataTemplate) -> i32,
     get_is_selected: unsafe extern "system" fn(*mut IAvnTabItem, *mut i32) -> i32,
     set_is_selected: unsafe extern "system" fn(*mut IAvnTabItem, i32) -> i32,
+    get_icon: unsafe extern "system" fn(*mut IAvnTabItem, *mut AvnVariant) -> i32,
+    set_icon: unsafe extern "system" fn(*mut IAvnTabItem, AvnVariant) -> i32,
+    get_icon_template: unsafe extern "system" fn(*mut IAvnTabItem, *mut *mut IAvnDataTemplate) -> i32,
+    set_icon_template: unsafe extern "system" fn(*mut IAvnTabItem, *mut IAvnDataTemplate) -> i32,
 }
 
 #[repr(C)]
@@ -60172,6 +69846,70 @@ impl ComPtr<IAvnTabItem> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -60182,6 +69920,45 @@ impl ComPtr<IAvnTabItem> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -60733,9 +70510,37 @@ impl ComPtr<IAvnTabItem> {
             hresult::check(hr)
         }
     }
+    pub fn get_icon(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_icon)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_icon(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_icon)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_icon_template(&self) -> Result<Option<ComPtr<IAvnDataTemplate>>> {
+        unsafe {
+            let mut value: *mut IAvnDataTemplate = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_icon_template)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_icon_template(&self, value: Option<&ComPtr<IAvnDataTemplate>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_icon_template)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
 }
 
-pub const I_AVN_TABLE_VIEW_IID: Guid = Guid { data1: 0x2A28C98B, data2: 0xB99B, data3: 0x5267, data4: [0x92, 0x9B, 0x06, 0x99, 0xD6, 0x04, 0x51, 0xF3] };
+pub const I_AVN_TABLE_VIEW_IID: Guid = Guid { data1: 0xC77EA6C9, data2: 0x4FBD, data3: 0x50FD, data4: [0x8C, 0x90, 0xF7, 0x46, 0x5A, 0x8D, 0x57, 0x94] };
 
 #[repr(C)]
 struct IAvnTableViewVtbl {
@@ -60747,8 +70552,23 @@ struct IAvnTableViewVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnTableView, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnTableView, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTableView, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnTableView, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnTableView, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnTableView, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnTableView, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnTableView, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTableView, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTableView, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTableView, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTableView, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnTableView, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnTableView, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnTableView, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnTableView, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnTableView, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnTableView, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnTableView, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnTableView, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnTableView, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnTableView, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTableView, *mut f64) -> i32,
@@ -60894,6 +70714,70 @@ impl ComPtr<IAvnTableView> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -60904,6 +70788,45 @@ impl ComPtr<IAvnTableView> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -61580,7 +71503,7 @@ impl ComPtr<IAvnTableView> {
     }
 }
 
-pub const I_AVN_TABLE_VIEW_CELL_IID: Guid = Guid { data1: 0x0A0222E4, data2: 0xA99E, data3: 0x5334, data4: [0xAB, 0xA4, 0x92, 0x38, 0xC7, 0xC5, 0xD8, 0x3A] };
+pub const I_AVN_TABLE_VIEW_CELL_IID: Guid = Guid { data1: 0x97914E89, data2: 0xAC59, data3: 0x537F, data4: [0x88, 0x6E, 0xC1, 0x0C, 0xF7, 0xE3, 0xCF, 0xBC] };
 
 #[repr(C)]
 struct IAvnTableViewCellVtbl {
@@ -61592,8 +71515,23 @@ struct IAvnTableViewCellVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnTableViewCell, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTableViewCell, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTableViewCell, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnTableViewCell, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnTableViewCell, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnTableViewCell, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnTableViewCell, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnTableViewCell, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut f64) -> i32,
@@ -61715,6 +71653,70 @@ impl ComPtr<IAvnTableViewCell> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -61725,6 +71727,45 @@ impl ComPtr<IAvnTableViewCell> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -62236,7 +72277,7 @@ impl ComPtr<IAvnTableViewCell> {
     }
 }
 
-pub const I_AVN_TABLE_VIEW_COLUMN_IID: Guid = Guid { data1: 0x103DBB66, data2: 0xFECF, data3: 0x50A5, data4: [0xB2, 0x79, 0x69, 0xBF, 0xCE, 0x92, 0xC7, 0xBD] };
+pub const I_AVN_TABLE_VIEW_COLUMN_IID: Guid = Guid { data1: 0xAF079BAA, data2: 0xC51E, data3: 0x5D73, data4: [0x8E, 0x1F, 0xB7, 0x5F, 0x27, 0xD6, 0x7E, 0xC6] };
 
 #[repr(C)]
 struct IAvnTableViewColumnVtbl {
@@ -62248,8 +72289,23 @@ struct IAvnTableViewColumnVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnTableViewColumn, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTableViewColumn, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTableViewColumn, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnTableViewColumn, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnTableViewColumn, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnTableViewColumn, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnTableViewColumn, i64) -> i32,
     get_header_template: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut *mut IAvnDataTemplate) -> i32,
     set_header_template: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut IAvnDataTemplate) -> i32,
     get_header: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut *mut IAvnControl) -> i32,
@@ -62316,6 +72372,70 @@ impl ComPtr<IAvnTableViewColumn> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -62326,6 +72446,45 @@ impl ComPtr<IAvnTableViewColumn> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -62459,7 +72618,7 @@ impl ComPtr<IAvnTableViewColumn> {
     }
 }
 
-pub const I_AVN_TABLE_VIEW_ROW_IID: Guid = Guid { data1: 0xDF7E1A97, data2: 0x74E2, data3: 0x5362, data4: [0xA5, 0x33, 0x8E, 0x2C, 0x7C, 0xD4, 0x46, 0x97] };
+pub const I_AVN_TABLE_VIEW_ROW_IID: Guid = Guid { data1: 0xE28D9792, data2: 0x350C, data3: 0x5737, data4: [0xB3, 0xF2, 0x7C, 0x66, 0x51, 0x93, 0x0E, 0xD9] };
 
 #[repr(C)]
 struct IAvnTableViewRowVtbl {
@@ -62471,8 +72630,23 @@ struct IAvnTableViewRowVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnTableViewRow, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTableViewRow, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTableViewRow, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnTableViewRow, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnTableViewRow, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnTableViewRow, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnTableViewRow, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnTableViewRow, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut f64) -> i32,
@@ -62596,6 +72770,70 @@ impl ComPtr<IAvnTableViewRow> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -62606,6 +72844,45 @@ impl ComPtr<IAvnTableViewRow> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -63131,7 +73408,7 @@ impl ComPtr<IAvnTableViewRow> {
     }
 }
 
-pub const I_AVN_TEXT_BLOCK_IID: Guid = Guid { data1: 0xCC20CD1C, data2: 0xD0B7, data3: 0x532C, data4: [0xA0, 0x32, 0x58, 0xDA, 0x7C, 0xB7, 0xEE, 0x32] };
+pub const I_AVN_TEXT_BLOCK_IID: Guid = Guid { data1: 0x2CB075E2, data2: 0x1E0A, data3: 0x5ACA, data4: [0xA2, 0xB6, 0x2B, 0x32, 0x5B, 0x9B, 0x59, 0x2D] };
 
 #[repr(C)]
 struct IAvnTextBlockVtbl {
@@ -63143,8 +73420,23 @@ struct IAvnTextBlockVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnTextBlock, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnTextBlock, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTextBlock, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnTextBlock, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnTextBlock, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnTextBlock, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnTextBlock, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnTextBlock, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTextBlock, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTextBlock, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTextBlock, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTextBlock, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnTextBlock, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnTextBlock, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnTextBlock, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnTextBlock, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnTextBlock, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnTextBlock, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnTextBlock, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnTextBlock, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnTextBlock, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnTextBlock, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTextBlock, *mut f64) -> i32,
@@ -63268,6 +73560,70 @@ impl ComPtr<IAvnTextBlock> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -63278,6 +73634,45 @@ impl ComPtr<IAvnTextBlock> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -63803,7 +74198,7 @@ impl ComPtr<IAvnTextBlock> {
     }
 }
 
-pub const I_AVN_TEXT_BOX_IID: Guid = Guid { data1: 0xB10B1F35, data2: 0xB17D, data3: 0x5A3A, data4: [0x88, 0xBB, 0xDC, 0xA7, 0xE8, 0xC3, 0x39, 0xD8] };
+pub const I_AVN_TEXT_BOX_IID: Guid = Guid { data1: 0xCF3157F2, data2: 0xEFBA, data3: 0x52C7, data4: [0xA1, 0x7A, 0x59, 0x43, 0x13, 0x16, 0x1D, 0x42] };
 
 #[repr(C)]
 struct IAvnTextBoxVtbl {
@@ -63815,8 +74210,23 @@ struct IAvnTextBoxVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnTextBox, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnTextBox, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTextBox, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnTextBox, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnTextBox, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnTextBox, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnTextBox, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTextBox, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTextBox, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnTextBox, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnTextBox, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnTextBox, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnTextBox, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnTextBox, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTextBox, *mut f64) -> i32,
@@ -64017,6 +74427,70 @@ impl ComPtr<IAvnTextBox> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -64027,6 +74501,45 @@ impl ComPtr<IAvnTextBox> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -65083,7 +75596,7 @@ impl ComPtr<IAvnTextBox> {
     }
 }
 
-pub const I_AVN_THEME_VARIANT_SCOPE_IID: Guid = Guid { data1: 0x624511A7, data2: 0x7BFB, data3: 0x5249, data4: [0x82, 0x04, 0x99, 0xDC, 0xEF, 0x05, 0xC2, 0xD9] };
+pub const I_AVN_THEME_VARIANT_SCOPE_IID: Guid = Guid { data1: 0x4AC54667, data2: 0x03CD, data3: 0x56B8, data4: [0xAA, 0x20, 0xA6, 0x87, 0xCF, 0xA3, 0x60, 0xA9] };
 
 #[repr(C)]
 struct IAvnThemeVariantScopeVtbl {
@@ -65095,8 +75608,23 @@ struct IAvnThemeVariantScopeVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnThemeVariantScope, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnThemeVariantScope, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnThemeVariantScope, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnThemeVariantScope, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnThemeVariantScope, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnThemeVariantScope, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnThemeVariantScope, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnThemeVariantScope, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut f64) -> i32,
@@ -65190,6 +75718,70 @@ impl ComPtr<IAvnThemeVariantScope> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -65200,6 +75792,45 @@ impl ComPtr<IAvnThemeVariantScope> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -65515,7 +76146,7 @@ impl ComPtr<IAvnThemeVariantScope> {
     }
 }
 
-pub const I_AVN_TIME_PICKER_IID: Guid = Guid { data1: 0xB1A91655, data2: 0xF4FF, data3: 0x53CA, data4: [0x8D, 0xD5, 0x7A, 0xB1, 0xFF, 0xEC, 0xF4, 0x17] };
+pub const I_AVN_TIME_PICKER_IID: Guid = Guid { data1: 0x64E49082, data2: 0xC265, data3: 0x524C, data4: [0x97, 0x26, 0xD1, 0xD2, 0x8A, 0x5F, 0x3A, 0x0C] };
 
 #[repr(C)]
 struct IAvnTimePickerVtbl {
@@ -65527,8 +76158,23 @@ struct IAvnTimePickerVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnTimePicker, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnTimePicker, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTimePicker, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnTimePicker, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnTimePicker, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnTimePicker, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnTimePicker, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnTimePicker, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTimePicker, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTimePicker, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTimePicker, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTimePicker, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnTimePicker, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnTimePicker, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnTimePicker, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnTimePicker, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnTimePicker, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnTimePicker, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnTimePicker, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnTimePicker, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnTimePicker, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnTimePicker, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTimePicker, *mut f64) -> i32,
@@ -65655,6 +76301,70 @@ impl ComPtr<IAvnTimePicker> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -65665,6 +76375,45 @@ impl ComPtr<IAvnTimePicker> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -66210,7 +76959,7 @@ impl ComPtr<IAvnTimePicker> {
     }
 }
 
-pub const I_AVN_TOGGLE_SPLIT_BUTTON_IID: Guid = Guid { data1: 0xE91F00FD, data2: 0x5662, data3: 0x50A8, data4: [0x9A, 0xDC, 0x5E, 0x01, 0x39, 0x1E, 0xCB, 0x38] };
+pub const I_AVN_TOGGLE_SPLIT_BUTTON_IID: Guid = Guid { data1: 0x4F8C8631, data2: 0xBB81, data3: 0x5E73, data4: [0x8F, 0xEC, 0x7D, 0x12, 0x6F, 0x5D, 0x81, 0xB1] };
 
 #[repr(C)]
 struct IAvnToggleSplitButtonVtbl {
@@ -66222,8 +76971,23 @@ struct IAvnToggleSplitButtonVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnToggleSplitButton, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnToggleSplitButton, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnToggleSplitButton, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnToggleSplitButton, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnToggleSplitButton, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnToggleSplitButton, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnToggleSplitButton, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnToggleSplitButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut f64) -> i32,
@@ -66357,6 +77121,70 @@ impl ComPtr<IAvnToggleSplitButton> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -66367,6 +77195,45 @@ impl ComPtr<IAvnToggleSplitButton> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -66960,7 +77827,7 @@ impl ComPtr<IAvnToggleSplitButton> {
     }
 }
 
-pub const I_AVN_TOGGLE_SWITCH_IID: Guid = Guid { data1: 0x6D8DDFD4, data2: 0x4408, data3: 0x5965, data4: [0xA7, 0x6D, 0x60, 0x86, 0x4A, 0xFB, 0xF1, 0x26] };
+pub const I_AVN_TOGGLE_SWITCH_IID: Guid = Guid { data1: 0x6B0C4DEB, data2: 0x3D2F, data3: 0x5A52, data4: [0xA8, 0xFA, 0xFF, 0xE9, 0x7C, 0xDF, 0x7E, 0x3D] };
 
 #[repr(C)]
 struct IAvnToggleSwitchVtbl {
@@ -66972,8 +77839,23 @@ struct IAvnToggleSwitchVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnToggleSwitch, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnToggleSwitch, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnToggleSwitch, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnToggleSwitch, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnToggleSwitch, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnToggleSwitch, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnToggleSwitch, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnToggleSwitch, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut f64) -> i32,
@@ -67124,6 +78006,70 @@ impl ComPtr<IAvnToggleSwitch> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -67134,6 +78080,45 @@ impl ComPtr<IAvnToggleSwitch> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -67847,7 +78832,7 @@ impl ComPtr<IAvnToggleSwitch> {
     }
 }
 
-pub const I_AVN_TOOL_TIP_IID: Guid = Guid { data1: 0x3B623D0B, data2: 0xB044, data3: 0x5B5C, data4: [0xA8, 0xC3, 0x57, 0xF3, 0x9F, 0x7E, 0xE1, 0xB1] };
+pub const I_AVN_TOOL_TIP_IID: Guid = Guid { data1: 0x6AC94227, data2: 0xC403, data3: 0x5F2A, data4: [0x9D, 0x9F, 0x33, 0x60, 0x3A, 0x86, 0xA5, 0xFD] };
 
 #[repr(C)]
 struct IAvnToolTipVtbl {
@@ -67859,8 +78844,23 @@ struct IAvnToolTipVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnToolTip, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnToolTip, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnToolTip, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnToolTip, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnToolTip, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnToolTip, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnToolTip, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnToolTip, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnToolTip, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnToolTip, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnToolTip, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnToolTip, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnToolTip, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnToolTip, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnToolTip, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnToolTip, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnToolTip, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnToolTip, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnToolTip, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnToolTip, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnToolTip, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnToolTip, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnToolTip, *mut f64) -> i32,
@@ -67982,6 +78982,70 @@ impl ComPtr<IAvnToolTip> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -67992,6 +79056,45 @@ impl ComPtr<IAvnToolTip> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -68503,7 +79606,7 @@ impl ComPtr<IAvnToolTip> {
     }
 }
 
-pub const I_AVN_TRANSITIONING_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x30B68142, data2: 0x7070, data3: 0x519A, data4: [0xA2, 0x8C, 0x5C, 0x66, 0xAF, 0x1B, 0x02, 0x63] };
+pub const I_AVN_TRANSITIONING_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x7A0C4A08, data2: 0x447F, data3: 0x5C4C, data4: [0xA6, 0x98, 0x92, 0x3D, 0x96, 0x71, 0x88, 0xB5] };
 
 #[repr(C)]
 struct IAvnTransitioningContentControlVtbl {
@@ -68515,8 +79618,23 @@ struct IAvnTransitioningContentControlVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut f64) -> i32,
@@ -68640,6 +79758,70 @@ impl ComPtr<IAvnTransitioningContentControl> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -68650,6 +79832,45 @@ impl ComPtr<IAvnTransitioningContentControl> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -69276,7 +80497,7 @@ impl ComPtr<IAvnTrayIcon> {
     }
 }
 
-pub const I_AVN_TREE_VIEW_IID: Guid = Guid { data1: 0x7027A19F, data2: 0xD680, data3: 0x533F, data4: [0x96, 0xB3, 0x5C, 0x9A, 0xE4, 0x13, 0xB2, 0x8B] };
+pub const I_AVN_TREE_VIEW_IID: Guid = Guid { data1: 0xAA156A07, data2: 0xF925, data3: 0x5DDE, data4: [0xA2, 0x4C, 0x67, 0xC1, 0x71, 0xC8, 0xB0, 0xAA] };
 
 #[repr(C)]
 struct IAvnTreeViewVtbl {
@@ -69288,8 +80509,23 @@ struct IAvnTreeViewVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnTreeView, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnTreeView, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTreeView, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnTreeView, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnTreeView, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnTreeView, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnTreeView, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnTreeView, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTreeView, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTreeView, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnTreeView, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnTreeView, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnTreeView, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnTreeView, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnTreeView, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnTreeView, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTreeView, *mut f64) -> i32,
@@ -69431,6 +80667,70 @@ impl ComPtr<IAvnTreeView> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -69441,6 +80741,45 @@ impl ComPtr<IAvnTreeView> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -70087,7 +81426,7 @@ impl ComPtr<IAvnTreeView> {
     }
 }
 
-pub const I_AVN_TREE_VIEW_ITEM_IID: Guid = Guid { data1: 0x9CF36593, data2: 0xE830, data3: 0x53A5, data4: [0xA8, 0x51, 0x8D, 0x2D, 0x9E, 0xD5, 0x8F, 0x4D] };
+pub const I_AVN_TREE_VIEW_ITEM_IID: Guid = Guid { data1: 0xF659F8A3, data2: 0xD277, data3: 0x5F6A, data4: [0xA3, 0x28, 0x07, 0xD1, 0xD4, 0xBB, 0x67, 0xE9] };
 
 #[repr(C)]
 struct IAvnTreeViewItemVtbl {
@@ -70099,8 +81438,23 @@ struct IAvnTreeViewItemVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnTreeViewItem, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTreeViewItem, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTreeViewItem, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnTreeViewItem, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnTreeViewItem, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnTreeViewItem, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnTreeViewItem, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnTreeViewItem, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut f64) -> i32,
@@ -70239,6 +81593,70 @@ impl ComPtr<IAvnTreeViewItem> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -70249,6 +81667,45 @@ impl ComPtr<IAvnTreeViewItem> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -70878,7 +82335,7 @@ impl ComPtr<IAvnTreeViewItem> {
     }
 }
 
-pub const I_AVN_USER_CONTROL_IID: Guid = Guid { data1: 0xDE9A92DE, data2: 0xDF95, data3: 0x50FD, data4: [0x8B, 0xD3, 0x20, 0x7F, 0x39, 0x47, 0x8E, 0x28] };
+pub const I_AVN_USER_CONTROL_IID: Guid = Guid { data1: 0xC19B8CF3, data2: 0xE683, data3: 0x5105, data4: [0x9F, 0x9B, 0x5E, 0xF8, 0xF8, 0xD9, 0x35, 0xF8] };
 
 #[repr(C)]
 struct IAvnUserControlVtbl {
@@ -70890,8 +82347,23 @@ struct IAvnUserControlVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnUserControl, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnUserControl, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnUserControl, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnUserControl, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnUserControl, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnUserControl, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnUserControl, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnUserControl, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnUserControl, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnUserControl, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnUserControl, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnUserControl, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnUserControl, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnUserControl, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnUserControl, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnUserControl, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnUserControl, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnUserControl, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnUserControl, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnUserControl, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnUserControl, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnUserControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnUserControl, *mut f64) -> i32,
@@ -71013,6 +82485,70 @@ impl ComPtr<IAvnUserControl> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -71023,6 +82559,45 @@ impl ComPtr<IAvnUserControl> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -71534,7 +83109,7 @@ impl ComPtr<IAvnUserControl> {
     }
 }
 
-pub const I_AVN_VIEWBOX_IID: Guid = Guid { data1: 0x241F4DC8, data2: 0x3783, data3: 0x5FF0, data4: [0xAC, 0xB5, 0x3D, 0xB2, 0x74, 0xCD, 0xC4, 0x92] };
+pub const I_AVN_VIEWBOX_IID: Guid = Guid { data1: 0x72C20771, data2: 0x6B45, data3: 0x5EDA, data4: [0x99, 0xB0, 0xA6, 0xA0, 0x74, 0xD6, 0x7A, 0x33] };
 
 #[repr(C)]
 struct IAvnViewboxVtbl {
@@ -71546,8 +83121,23 @@ struct IAvnViewboxVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnViewbox, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnViewbox, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnViewbox, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnViewbox, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnViewbox, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnViewbox, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnViewbox, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnViewbox, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnViewbox, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnViewbox, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnViewbox, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnViewbox, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnViewbox, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnViewbox, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnViewbox, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnViewbox, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnViewbox, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnViewbox, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnViewbox, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnViewbox, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnViewbox, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnViewbox, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnViewbox, *mut f64) -> i32,
@@ -71643,6 +83233,70 @@ impl ComPtr<IAvnViewbox> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -71653,6 +83307,45 @@ impl ComPtr<IAvnViewbox> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -71982,7 +83675,7 @@ impl ComPtr<IAvnViewbox> {
     }
 }
 
-pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0x9A6818AA, data2: 0xB444, data3: 0x5706, data4: [0x9A, 0x1E, 0xF5, 0xE8, 0x13, 0xA8, 0xC4, 0x29] };
+pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0x436B9265, data2: 0x5D23, data3: 0x5630, data4: [0x9C, 0x25, 0x32, 0x94, 0x68, 0x03, 0x7E, 0x9C] };
 
 #[repr(C)]
 struct IAvnWindowVtbl {
@@ -71994,8 +83687,23 @@ struct IAvnWindowVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnWindow, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnWindow, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnWindow, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnWindow, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnWindow, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnWindow, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnWindow, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnWindow, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnWindow, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnWindow, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnWindow, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnWindow, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnWindow, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnWindow, *mut f64) -> i32,
@@ -72156,6 +83864,70 @@ impl ComPtr<IAvnWindow> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -72166,6 +83938,45 @@ impl ComPtr<IAvnWindow> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -72948,7 +84759,7 @@ impl ComPtr<IAvnWindow> {
     }
 }
 
-pub const I_AVN_WRAP_PANEL_IID: Guid = Guid { data1: 0x963067AC, data2: 0x8A2F, data3: 0x5E6C, data4: [0x9D, 0x15, 0x9F, 0x99, 0x30, 0x11, 0x7B, 0xE7] };
+pub const I_AVN_WRAP_PANEL_IID: Guid = Guid { data1: 0x85FD6DAA, data2: 0x85FF, data3: 0x5830, data4: [0x8B, 0x71, 0xF8, 0xDA, 0x68, 0x19, 0xEA, 0x33] };
 
 #[repr(C)]
 struct IAvnWrapPanelVtbl {
@@ -72960,8 +84771,23 @@ struct IAvnWrapPanelVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnWrapPanel, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnWrapPanel, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnWrapPanel, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnWrapPanel, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnWrapPanel, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnWrapPanel, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnWrapPanel, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnWrapPanel, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut f64) -> i32,
@@ -73066,6 +84892,70 @@ impl ComPtr<IAvnWrapPanel> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -73076,6 +84966,45 @@ impl ComPtr<IAvnWrapPanel> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -73469,7 +85398,7 @@ impl ComPtr<IAvnWrapPanel> {
     }
 }
 
-pub const I_AVN_STYLED_ELEMENT_IID: Guid = Guid { data1: 0xCECDC9F8, data2: 0x5DA4, data3: 0x5670, data4: [0x8F, 0x6F, 0xFE, 0xCA, 0x0F, 0x77, 0xA0, 0x87] };
+pub const I_AVN_STYLED_ELEMENT_IID: Guid = Guid { data1: 0x4262B197, data2: 0x29CE, data3: 0x5433, data4: [0x81, 0x6A, 0xF2, 0xD1, 0x88, 0x38, 0x98, 0x53] };
 
 #[repr(C)]
 struct IAvnStyledElementVtbl {
@@ -73481,8 +85410,23 @@ struct IAvnStyledElementVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnStyledElement, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnStyledElement, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnStyledElement, *mut *mut IAvnStringList) -> i32,
+    get_data_context: unsafe extern "system" fn(*mut IAvnStyledElement, *mut AvnVariant) -> i32,
+    set_data_context: unsafe extern "system" fn(*mut IAvnStyledElement, AvnVariant) -> i32,
+    get_is_initialized: unsafe extern "system" fn(*mut IAvnStyledElement, *mut i32) -> i32,
+    get_templated_parent: unsafe extern "system" fn(*mut IAvnStyledElement, *mut *mut IAvnAvaloniaObject) -> i32,
+    get_parent: unsafe extern "system" fn(*mut IAvnStyledElement, *mut *mut IAvnStyledElement) -> i32,
+    advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnStyledElement, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnStyledElement, i64) -> i32,
+    advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnStyledElement, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
+    unadvise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnStyledElement, i64) -> i32,
     advise_data_context_changed: unsafe extern "system" fn(*mut IAvnStyledElement, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
     unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnStyledElement, i64) -> i32,
+    advise_initialized: unsafe extern "system" fn(*mut IAvnStyledElement, *mut IAvnStyledElementInitializedHandler, *mut i64) -> i32,
+    unadvise_initialized: unsafe extern "system" fn(*mut IAvnStyledElement, i64) -> i32,
+    advise_resources_changed: unsafe extern "system" fn(*mut IAvnStyledElement, *mut IAvnStyledElementResourcesChangedHandler, *mut i64) -> i32,
+    unadvise_resources_changed: unsafe extern "system" fn(*mut IAvnStyledElement, i64) -> i32,
+    advise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnStyledElement, *mut IAvnStyledElementActualThemeVariantChangedHandler, *mut i64) -> i32,
+    unadvise_actual_theme_variant_changed: unsafe extern "system" fn(*mut IAvnStyledElement, i64) -> i32,
 }
 
 #[repr(C)]
@@ -73531,6 +85475,70 @@ impl ComPtr<IAvnStyledElement> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_data_context(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_context)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_data_context(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_data_context)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_is_initialized(&self) -> Result<bool> {
+        unsafe {
+            let mut value: i32 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_initialized)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value != 0)
+        }
+    }
+    pub fn get_templated_parent(&self) -> Result<Option<ComPtr<IAvnAvaloniaObject>>> {
+        unsafe {
+            let mut value: *mut IAvnAvaloniaObject = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_templated_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_parent(&self) -> Result<Option<ComPtr<IAvnStyledElement>>> {
+        unsafe {
+            let mut value: *mut IAvnStyledElement = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_attached_to_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_attached_to_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_attached_to_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_detached_from_logical_tree(&self, handler: &ComPtr<IAvnStyledElementDetachedFromLogicalTreeHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_detached_from_logical_tree)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_detached_from_logical_tree(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_detached_from_logical_tree)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -73541,6 +85549,45 @@ impl ComPtr<IAvnStyledElement> {
     pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_initialized(&self, handler: &ComPtr<IAvnStyledElementInitializedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_initialized)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_initialized(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_initialized)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_resources_changed(&self, handler: &ComPtr<IAvnStyledElementResourcesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_resources_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_resources_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_resources_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_actual_theme_variant_changed(&self, handler: &ComPtr<IAvnStyledElementActualThemeVariantChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_actual_theme_variant_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_actual_theme_variant_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_actual_theme_variant_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }

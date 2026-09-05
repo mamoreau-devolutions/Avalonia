@@ -1172,6 +1172,24 @@ pub mod size_to_content {
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum SpinDirection {
+    Increase = 0,
+    Decrease = 1,
+}
+
+impl TryFrom<i32> for SpinDirection {
+    type Error = crate::Error;
+    fn try_from(value: i32) -> Result<Self> {
+        match value {
+            0 => Ok(Self::Increase),
+            1 => Ok(Self::Decrease),
+            _ => Err(crate::Error::InvalidEnumValue(value)),
+        }
+    }
+}
+
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum SplitViewDisplayMode {
     Inline = 0,
     CompactInline = 1,
@@ -2584,10 +2602,12 @@ pub use sys::AutoCompleteBoxDropDownOpeningEventArgs;
 pub use sys::AutoCompleteBoxDropDownClosingEventArgs;
 pub use sys::CalendarDisplayDateChangedEventArgs;
 pub use sys::CalendarDisplayModeChangedEventArgs;
+pub use sys::CalendarDatePickerDateValidationErrorEventArgs;
 pub use sys::ContextMenuOpeningEventArgs;
 pub use sys::ContextMenuClosingEventArgs;
 pub use sys::ControlSizeChangedEventArgs;
 pub use sys::ControlKeyDownEventArgs;
+pub use sys::NumericUpDownSpinnedEventArgs;
 pub use sys::PopupFlyoutBaseClosingEventArgs;
 pub use sys::ThumbDragStartedEventArgs;
 pub use sys::ThumbDragDeltaEventArgs;
@@ -2749,6 +2769,50 @@ impl AutoCompleteBox {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -2760,6 +2824,45 @@ impl AutoCompleteBox {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -3357,6 +3460,50 @@ impl Border {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -3368,6 +3515,45 @@ impl Border {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -3678,6 +3864,50 @@ impl Button {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -3689,6 +3919,45 @@ impl Button {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -4160,6 +4429,50 @@ impl ButtonSpinner {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -4171,6 +4484,45 @@ impl ButtonSpinner {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -4597,6 +4949,50 @@ impl Calendar {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -4608,6 +5004,45 @@ impl Calendar {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -5109,6 +5544,50 @@ impl CalendarDatePicker {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -5120,6 +5599,45 @@ impl CalendarDatePicker {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -5646,6 +6164,17 @@ impl CalendarDatePicker {
         scope.retain_subscription(self.subscribe_calendar_opened(callback)?);
         Ok(self)
     }
+    pub fn subscribe_date_validation_error(&self, callback: impl FnMut(&mut CalendarDatePickerDateValidationErrorEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::calendar_date_picker_date_validation_error_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_date_validation_error(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_date_validation_error(subscription_id)))
+    }
+    pub fn on_date_validation_error(self, scope: &crate::AppScope, callback: impl FnMut(&mut CalendarDatePickerDateValidationErrorEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_date_validation_error(callback)?);
+        Ok(self)
+    }
 }
 
 impl AsControl for CalendarDatePicker {
@@ -5678,6 +6207,50 @@ impl Canvas {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -5689,6 +6262,45 @@ impl Canvas {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -5976,6 +6588,50 @@ impl Carousel {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -5987,6 +6643,45 @@ impl Carousel {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -6469,6 +7164,50 @@ impl CheckBox {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -6480,6 +7219,45 @@ impl CheckBox {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -6980,6 +7758,50 @@ impl ComboBox {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -6991,6 +7813,45 @@ impl ComboBox {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -7446,6 +8307,9 @@ impl ComboBox {
         self.set_max_drop_down_height(value)?;
         Ok(self)
     }
+    pub fn selection_box_item(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_selection_box_item()?))
+    }
     pub fn get_placeholder_text(&self) -> Result<Option<String>> {
         unsafe { Ok(sys::take_utf16(self.raw.get_placeholder_text()?)) }
     }
@@ -7548,6 +8412,50 @@ impl ComboBoxItem {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -7559,6 +8467,45 @@ impl ComboBoxItem {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -7966,6 +8913,50 @@ impl CommandBar {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -7977,6 +8968,45 @@ impl CommandBar {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -8468,6 +9498,50 @@ impl CommandBarButton {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -8479,6 +9553,45 @@ impl CommandBarButton {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -8996,6 +10109,50 @@ impl CommandBarSeparator {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -9007,6 +10164,45 @@ impl CommandBarSeparator {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -9379,6 +10575,50 @@ impl CommandBarToggleButton {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -9390,6 +10630,45 @@ impl CommandBarToggleButton {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -9936,6 +11215,50 @@ impl ContentControl {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -9947,6 +11270,45 @@ impl ContentControl {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -10346,6 +11708,50 @@ impl ContextMenu {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -10357,6 +11763,45 @@ impl ContextMenu {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -10955,6 +12400,50 @@ impl Control {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -10966,6 +12455,45 @@ impl Control {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -11199,6 +12727,50 @@ impl DatePicker {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -11210,6 +12782,45 @@ impl DatePicker {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -11668,6 +13279,50 @@ impl Decorator {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -11679,6 +13334,45 @@ impl Decorator {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -11933,6 +13627,50 @@ impl DockPanel {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -11944,6 +13682,45 @@ impl DockPanel {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -12228,6 +14005,50 @@ impl DropDownButton {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -12239,6 +14060,45 @@ impl DropDownButton {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -12710,6 +14570,50 @@ impl Expander {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -12721,6 +14625,45 @@ impl Expander {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -13186,6 +15129,50 @@ impl FlexPanel {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -13197,6 +15184,45 @@ impl FlexPanel {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -13692,6 +15718,50 @@ impl Grid {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -13703,6 +15773,45 @@ impl Grid {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -14045,6 +16154,50 @@ impl GridSplitter {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -14056,6 +16209,45 @@ impl GridSplitter {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -14491,6 +16683,50 @@ impl GroupBox {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -14502,6 +16738,45 @@ impl GroupBox {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -14922,6 +17197,50 @@ impl HyperlinkButton {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -14933,6 +17252,45 @@ impl HyperlinkButton {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -15419,6 +17777,50 @@ impl IconElement {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -15430,6 +17832,45 @@ impl IconElement {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -15786,6 +18227,50 @@ impl Image {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -15797,6 +18282,45 @@ impl Image {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -16074,6 +18598,50 @@ impl ItemsControl {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -16085,6 +18653,45 @@ impl ItemsControl {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -16481,6 +19088,50 @@ impl Label {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -16492,6 +19143,45 @@ impl Label {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -16902,6 +19592,50 @@ impl LayoutTransformControl {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -16913,6 +19647,45 @@ impl LayoutTransformControl {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -17175,6 +19948,50 @@ impl ListBox {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -17186,6 +20003,45 @@ impl ListBox {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -17659,6 +20515,50 @@ impl ListBoxItem {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -17670,6 +20570,45 @@ impl ListBoxItem {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -18077,6 +21016,50 @@ impl MaskedTextBox {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -18088,6 +21071,45 @@ impl MaskedTextBox {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -18866,6 +21888,50 @@ impl Menu {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -18877,6 +21943,45 @@ impl Menu {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -19365,6 +22470,50 @@ impl MenuBase {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -19376,6 +22525,45 @@ impl MenuBase {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -20047,6 +23235,50 @@ impl MenuItem {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -20058,6 +23290,45 @@ impl MenuItem {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -20658,6 +23929,50 @@ impl NotificationCard {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -20669,6 +23984,45 @@ impl NotificationCard {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -21102,6 +24456,50 @@ impl WindowNotificationManager {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -21113,6 +24511,45 @@ impl WindowNotificationManager {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -21491,6 +24928,50 @@ impl NumericUpDown {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -21502,6 +24983,45 @@ impl NumericUpDown {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -22012,6 +25532,17 @@ impl NumericUpDown {
         self.set_inner_right_content(value)?;
         Ok(self)
     }
+    pub fn subscribe_spinned(&self, callback: impl FnMut(&mut NumericUpDownSpinnedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::numeric_up_down_spinned_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_spinned(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_spinned(subscription_id)))
+    }
+    pub fn on_spinned(self, scope: &crate::AppScope, callback: impl FnMut(&mut NumericUpDownSpinnedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_spinned(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_value_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::numeric_up_down_value_changed_handler(move || {
             callback(());
@@ -22057,6 +25588,50 @@ impl Panel {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -22068,6 +25643,45 @@ impl Panel {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -22319,6 +25933,50 @@ impl PathIcon {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -22330,6 +25988,45 @@ impl PathIcon {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -22697,6 +26394,50 @@ impl PipsPager {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -22708,6 +26449,45 @@ impl PipsPager {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -23179,6 +26959,50 @@ impl HeaderedContentControl {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -23190,6 +27014,45 @@ impl HeaderedContentControl {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -23610,6 +27473,50 @@ impl HeaderedItemsControl {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -23621,6 +27528,45 @@ impl HeaderedItemsControl {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -24038,6 +27984,50 @@ impl HeaderedSelectingItemsControl {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -24049,6 +28039,45 @@ impl HeaderedSelectingItemsControl {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -24533,6 +28562,50 @@ impl Popup {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -24544,6 +28617,45 @@ impl Popup {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -25098,6 +29210,50 @@ impl RangeBase {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -25109,6 +29265,45 @@ impl RangeBase {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -25518,6 +29713,50 @@ impl SelectingItemsControl {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -25529,6 +29768,45 @@ impl SelectingItemsControl {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -25992,6 +30270,50 @@ impl TemplatedControl {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -26003,6 +30325,45 @@ impl TemplatedControl {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -26359,6 +30720,50 @@ impl Thumb {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -26370,6 +30775,45 @@ impl Thumb {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -26759,6 +31203,50 @@ impl ToggleButton {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -26770,6 +31258,45 @@ impl ToggleButton {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -27270,6 +31797,50 @@ impl UniformGrid {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -27281,6 +31852,45 @@ impl UniformGrid {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -27572,6 +32182,50 @@ impl ProgressBar {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -27583,6 +32237,45 @@ impl ProgressBar {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -28031,6 +32724,50 @@ impl RadioButton {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -28042,6 +32779,45 @@ impl RadioButton {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -28553,6 +33329,50 @@ impl RefreshContainer {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -28564,6 +33384,45 @@ impl RefreshContainer {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -28983,6 +33842,50 @@ impl RelativePanel {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -28994,6 +33897,45 @@ impl RelativePanel {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -29299,6 +34241,50 @@ impl RepeatButton {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -29310,6 +34296,45 @@ impl RepeatButton {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -29797,6 +34822,50 @@ impl ScrollViewer {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -29808,6 +34877,45 @@ impl ScrollViewer {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -30373,6 +35481,50 @@ impl SelectableTextBlock {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -30384,6 +35536,45 @@ impl SelectableTextBlock {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -30843,6 +36034,50 @@ impl Separator {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -30854,6 +36089,45 @@ impl Separator {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -31210,6 +36484,50 @@ impl Arc {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -31221,6 +36539,45 @@ impl Arc {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -31549,6 +36906,50 @@ impl Ellipse {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -31560,6 +36961,45 @@ impl Ellipse {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -31872,6 +37312,50 @@ impl Line {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -31883,6 +37367,45 @@ impl Line {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -32215,6 +37738,50 @@ impl Path {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -32226,6 +37793,45 @@ impl Path {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -32549,6 +38155,50 @@ impl Polygon {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -32560,6 +38210,45 @@ impl Polygon {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -32883,6 +38572,50 @@ impl Polyline {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -32894,6 +38627,45 @@ impl Polyline {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -33217,6 +38989,50 @@ impl Rectangle {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -33228,6 +39044,45 @@ impl Rectangle {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -33556,6 +39411,50 @@ impl Sector {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -33567,6 +39466,45 @@ impl Sector {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -33891,6 +39829,50 @@ impl Shape {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -33902,6 +39884,45 @@ impl Shape {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -34214,6 +40235,50 @@ impl Slider {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -34225,6 +40290,45 @@ impl Slider {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -34676,6 +40780,50 @@ impl Spinner {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -34687,6 +40835,45 @@ impl Spinner {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -35086,6 +41273,50 @@ impl SplitButton {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -35097,6 +41328,45 @@ impl SplitButton {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -35540,6 +41810,50 @@ impl SplitView {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -35551,6 +41865,45 @@ impl SplitView {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -36074,6 +42427,50 @@ impl StackPanel {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -36085,6 +42482,45 @@ impl StackPanel {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -36371,6 +42807,50 @@ impl TabControl {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -36382,6 +42862,45 @@ impl TabControl {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -36859,6 +43378,19 @@ impl TabControl {
     pub fn selected_content(&self) -> Result<Variant> {
         Ok(Variant::from_abi(self.raw.get_selected_content()?))
     }
+    pub fn selected_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_selected_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn get_indicator_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_indicator_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_indicator_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_indicator_template(value.map(|value| &value.raw))?)
+    }
+    pub fn indicator_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_indicator_template(value)?;
+        Ok(self)
+    }
 }
 
 impl AsControl for TabControl {
@@ -36891,6 +43423,50 @@ impl TabItem {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -36902,6 +43478,45 @@ impl TabItem {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -37298,6 +43913,27 @@ impl TabItem {
         self.set_selected(value)?;
         Ok(self)
     }
+    pub fn get_icon(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_icon()?))
+    }
+    pub fn set_icon(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_icon(&value)?)
+    }
+    pub fn icon(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_icon(value)?;
+        Ok(self)
+    }
+    pub fn get_icon_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_icon_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_icon_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_icon_template(value.map(|value| &value.raw))?)
+    }
+    pub fn icon_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_icon_template(value)?;
+        Ok(self)
+    }
 }
 
 impl AsControl for TabItem {
@@ -37330,6 +43966,50 @@ impl TableView {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -37341,6 +44021,45 @@ impl TableView {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -37822,6 +44541,50 @@ impl TableViewCell {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -37833,6 +44596,45 @@ impl TableViewCell {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -38232,6 +45034,50 @@ impl TableViewColumn {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -38243,6 +45089,45 @@ impl TableViewColumn {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_header_template(&self) -> Result<Option<DataTemplate>> {
@@ -38349,6 +45234,50 @@ impl TableViewRow {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -38360,6 +45289,45 @@ impl TableViewRow {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -38767,6 +45735,50 @@ impl TextBlock {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -38778,6 +45790,45 @@ impl TextBlock {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -39179,6 +46230,50 @@ impl TextBox {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -39190,6 +46285,45 @@ impl TextBox {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -39915,6 +47049,50 @@ impl ThemeVariantScope {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -39926,6 +47104,45 @@ impl ThemeVariantScope {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -40180,6 +47397,50 @@ impl TimePicker {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -40191,6 +47452,45 @@ impl TimePicker {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -40605,6 +47905,50 @@ impl ToggleSplitButton {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -40616,6 +47960,45 @@ impl ToggleSplitButton {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -41080,6 +48463,50 @@ impl ToggleSwitch {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -41091,6 +48518,45 @@ impl ToggleSwitch {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -41633,6 +49099,50 @@ impl ToolTip {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -41644,6 +49154,45 @@ impl ToolTip {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -42125,6 +49674,50 @@ impl TransitioningContentControl {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -42136,6 +49729,45 @@ impl TransitioningContentControl {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -42596,6 +50228,50 @@ impl TreeView {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -42607,6 +50283,45 @@ impl TreeView {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -43062,6 +50777,50 @@ impl TreeViewItem {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -43073,6 +50832,45 @@ impl TreeViewItem {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -43533,6 +51331,50 @@ impl UserControl {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -43544,6 +51386,45 @@ impl UserControl {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -43943,6 +51824,50 @@ impl Viewbox {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -43954,6 +51879,45 @@ impl Viewbox {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -44220,6 +52184,50 @@ impl Window {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -44231,6 +52239,45 @@ impl Window {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -44783,6 +52830,50 @@ impl WrapPanel {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -44794,6 +52885,45 @@ impl WrapPanel {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
@@ -45099,6 +53229,50 @@ impl StyledElement {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn get_data_context(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_data_context()?))
+    }
+    pub fn set_data_context(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_data_context(&value)?)
+    }
+    pub fn data_context(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_data_context(value)?;
+        Ok(self)
+    }
+    pub fn is_initialized(&self) -> Result<bool> { Ok(self.raw.get_is_initialized()?) }
+    pub fn templated_parent(&self) -> Result<Option<AvaloniaObject>> {
+        Ok(self.raw.get_templated_parent()?.map(|raw| AvaloniaObject { raw }))
+    }
+    pub fn parent(&self) -> Result<Option<StyledElement>> {
+        Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_attached_to_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_attached_to_logical_tree(subscription_id)))
+    }
+    pub fn on_attached_to_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_attached_to_logical_tree(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_detached_from_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_detached_from_logical_tree_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_detached_from_logical_tree(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_detached_from_logical_tree(subscription_id)))
+    }
+    pub fn on_detached_from_logical_tree(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_detached_from_logical_tree(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_data_context_changed_handler(move || {
             callback(());
@@ -45110,6 +53284,45 @@ impl StyledElement {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_initialized(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_initialized_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_initialized(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_initialized(subscription_id)))
+    }
+    pub fn on_initialized(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_initialized(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_resources_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_resources_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_resources_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_resources_changed(subscription_id)))
+    }
+    pub fn on_resources_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_resources_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_actual_theme_variant_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_actual_theme_variant_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_actual_theme_variant_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_actual_theme_variant_changed(subscription_id)))
+    }
+    pub fn on_actual_theme_variant_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_actual_theme_variant_changed(callback)?);
         Ok(self)
     }
 }

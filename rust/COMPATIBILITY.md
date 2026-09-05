@@ -425,6 +425,19 @@ items lineage reaches 11), Flyout 3 to 4, MenuFlyout 4 to 5, Window 13 to
 TemplatedControl.Template (the control template, not a data template) and
 the TemplateSettings getters stay gaps by design. Factory stays 13.
 
+Wave U20 projects the styled-element lifecycle and the payload events.
+StyledElement gains IsInitialized, Parent, DataContext and TemplatedParent
+(as a Variant) plus Initialized, ActualThemeVariantChanged, ResourcesChanged
+and Attached/DetachedFromLogicalTree as no-payload events (StyledElement 4
+to 5, cascading the whole control tree once more). NumericUpDown gains
+Spinned carrying Direction/UsingMouseWheel; CalendarDatePicker gains
+DateValidationError carrying Text and the ThrowException write-back
+(both at their republished versions). TabItem gains Icon (Variant) and
+IconTemplate (DataTemplate); TabControl gains IndicatorTemplate and
+SelectedContentTemplate; ComboBox gains SelectionBoxItem (Variant).
+Nullable event string fields now read as Option<String> with a
+null-tolerant clone. Factory stays 13.
+
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and
 `IAvnNumericUpDown` each move from 2 to 3. Templates, filters, ItemsSource,

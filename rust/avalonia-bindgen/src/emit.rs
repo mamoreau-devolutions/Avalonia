@@ -690,7 +690,12 @@ fn emit_field_event_handler(event: &ProjectedEvent) -> String {
             let source = match (parameter.kind.as_str(), parameter.direction.as_str()) {
                 ("Bool", "InOut") => format!("*{name} != 0"),
                 ("Bool", _) => format!("{name} != 0"),
-                ("StringUtf16", _) => format!("crate::clone_utf16({name})"),
+                ("StringUtf16", _) if parameter.is_nullable => {
+                    format!("crate::clone_utf16({name})")
+                }
+                ("StringUtf16", _) => {
+                    format!("crate::clone_utf16({name}).unwrap_or_default()")
+                }
                 (_, "InOut") => format!("*{name}"),
                 _ => name.clone(),
             };

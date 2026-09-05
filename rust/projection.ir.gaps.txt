@@ -52,10 +52,8 @@ Avalonia.Controls.CalendarDatePicker.TextConverter: Not included by projection p
 Avalonia.Controls.CalendarDatePicker.Watermark: Not included by projection policy
 Avalonia.Controls.CalendarDatePicker.UseFloatingWatermark: Not included by projection policy
 Avalonia.Controls.CalendarDatePicker.WatermarkForeground: Not included by projection policy
-Avalonia.Controls.CalendarDatePicker.DateValidationError: Not included by projection policy
 Avalonia.Controls.CalendarDatePicker.SelectedDateChanged: Not included by projection policy
 Avalonia.Controls.Carousel.PageTransition: Not included by projection policy
-Avalonia.Controls.ComboBox.SelectionBoxItem: Not included by projection policy
 Avalonia.Controls.ComboBox.HorizontalContentAlignment: Not included by projection policy
 Avalonia.Controls.ComboBox.VerticalContentAlignment: Not included by projection policy
 Avalonia.Controls.ComboBox.UpdateSelectionFromEvent(Control, RoutedEventArgs): Not included by projection policy
@@ -116,7 +114,6 @@ Avalonia.Controls.NumericUpDown.ParsingNumberStyle: Not included by projection p
 Avalonia.Controls.NumericUpDown.TextConverter: Not included by projection policy
 Avalonia.Controls.NumericUpDown.Watermark: Not included by projection policy
 Avalonia.Controls.NumericUpDown.WatermarkForeground: Not included by projection policy
-Avalonia.Controls.NumericUpDown.Spinned: Not included by projection policy
 Avalonia.Controls.Panel.IsItemsHost: Not included by projection policy
 Avalonia.Controls.Panel.Render(DrawingContext): Not included by projection policy
 Avalonia.Controls.PipsPager.TemplateSettings: Not included by projection policy
@@ -163,13 +160,9 @@ Avalonia.Controls.StackPanel.HorizontalSnapPointsChanged: Not included by projec
 Avalonia.Controls.StackPanel.VerticalSnapPointsChanged: Not included by projection policy
 Avalonia.Controls.StackPanel.GetIrregularSnapPoints(Orientation, SnapPointsAlignment): Not included by projection policy
 Avalonia.Controls.StackPanel.GetRegularSnapPoints(Orientation, SnapPointsAlignment, Double&): Not included by projection policy
-Avalonia.Controls.TabControl.SelectedContentTemplate: Not included by projection policy
 Avalonia.Controls.TabControl.PageTransition: Not included by projection policy
-Avalonia.Controls.TabControl.IndicatorTemplate: Not included by projection policy
 Avalonia.Controls.TabControl.UpdateSelectionFromEvent(Control, RoutedEventArgs): Not included by projection policy
 Avalonia.Controls.TabItem.TabStripPlacement: Not included by projection policy
-Avalonia.Controls.TabItem.Icon: Not included by projection policy
-Avalonia.Controls.TabItem.IconTemplate: Not included by projection policy
 Avalonia.Controls.TabItem.IndicatorTemplate: Not included by projection policy
 Avalonia.Controls.TableView.DisplayMemberBinding: Not included by projection policy
 Avalonia.Controls.TableView.ItemTemplate: Not included by projection policy
@@ -212,20 +205,11 @@ Avalonia.Controls.Window.BeginMoveDrag(PointerPressedEventArgs): Not included by
 Avalonia.Controls.Window.BeginResizeDrag(WindowEdge, PointerPressedEventArgs): Not included by projection policy
 Avalonia.Controls.Window.ShowDialog(Window): Not included by projection policy
 Avalonia.Controls.Window.ShowDialog(Window): Not included by projection policy
-Avalonia.StyledElement.DataContext: Not included by projection policy
-Avalonia.StyledElement.IsInitialized: Not included by projection policy
 Avalonia.StyledElement.Styles: Not included by projection policy
 Avalonia.StyledElement.StyleKey: Not included by projection policy
 Avalonia.StyledElement.Resources: Not included by projection policy
-Avalonia.StyledElement.TemplatedParent: Not included by projection policy
 Avalonia.StyledElement.Theme: Not included by projection policy
-Avalonia.StyledElement.Parent: Not included by projection policy
 Avalonia.StyledElement.ActualThemeVariant: Not included by projection policy
-Avalonia.StyledElement.AttachedToLogicalTree: Not included by projection policy
-Avalonia.StyledElement.DetachedFromLogicalTree: Not included by projection policy
-Avalonia.StyledElement.Initialized: Not included by projection policy
-Avalonia.StyledElement.ResourcesChanged: Not included by projection policy
-Avalonia.StyledElement.ActualThemeVariantChanged: Not included by projection policy
 Avalonia.StyledElement.BeginInit(): Not included by projection policy
 Avalonia.StyledElement.EndInit(): Not included by projection policy
 Avalonia.StyledElement.ApplyStyling(): Not included by projection policy
