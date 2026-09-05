@@ -33,7 +33,6 @@ Avalonia.AvaloniaObject.CoerceValue(AvaloniaProperty): By design: AvaloniaProper
 Avalonia.Controls.AutoCompleteBox.ValueMemberBinding: By design: bindings are not projected; use the imperative surface
 Avalonia.Controls.AutoCompleteBox.Watermark: By design: obsolete alias of PlaceholderText
 Avalonia.Controls.AutoCompleteBox.WatermarkForeground: By design: obsolete alias of PlaceholderForeground
-Avalonia.Controls.AutoCompleteBox.AsyncPopulator: By design: async population needs the async-completion transport
 Avalonia.Controls.Border.Render(DrawingContext): By design: custom drawing is not part of the projected model
 Avalonia.Controls.Calendar.ToString(): By design: identity and formatting members are not ABI surface
 Avalonia.Controls.CalendarDatePicker.TextConverter: By design: the converter is owned by the host
@@ -148,8 +147,8 @@ Avalonia.Controls.Window.WindowDecorationsTheme: By design: theming is owned by 
 Avalonia.Controls.Window.SystemDecorations: By design: decorations are owned by the platform chrome
 Avalonia.Controls.Window.BeginMoveDrag(PointerPressedEventArgs): By design: drag needs the pointer-event payload shape
 Avalonia.Controls.Window.BeginResizeDrag(WindowEdge, PointerPressedEventArgs): By design: drag needs the pointer-event payload shape
-Avalonia.Controls.Window.ShowDialog(Window): By design: modal dialogs need the async-completion transport
-Avalonia.Controls.Window.ShowDialog(Window): By design: modal dialogs need the async-completion transport
+Avalonia.Controls.Window.ShowDialog(Window): By design: the modal completion needs the dialog-owner lifetime the projected Show overloads do not carry
+Avalonia.Controls.Window.ShowDialog(Window): By design: the modal completion needs the dialog-owner lifetime the projected Show overloads do not carry
 Avalonia.StyledElement.Styles: By design: the style system is not projected; use the imperative surface
 Avalonia.StyledElement.StyleKey: By design: styling is owned by the host
 Avalonia.StyledElement.Resources: By design: the resource dictionary is not part of the projected model

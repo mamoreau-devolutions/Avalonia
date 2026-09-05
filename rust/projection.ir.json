@@ -26,6 +26,10 @@
   "textSelectorInterfaceIid": "9264A9E9-6E9C-5504-8A56-D6FBAAAE48DE",
   "popupPlacementInterfaceName": "Avalonia.Host.Com.IAvnPopupPlacementCallback",
   "popupPlacementInterfaceIid": "0D1A4FBB-291C-536B-80E3-01EC74117E7A",
+  "asyncPopulatorInterfaceName": "Avalonia.Host.Com.IAvnAsyncPopulator",
+  "asyncPopulatorInterfaceIid": "126B1732-9310-5B23-8E98-0123B31352EC",
+  "asyncPopulatorCompletionInterfaceName": "Avalonia.Host.Com.IAvnAsyncPopulatorCompletion",
+  "asyncPopulatorCompletionInterfaceIid": "BE757F89-DDC2-5DDD-B763-CB90C709886E",
   "types": [
     {
       "name": "IAvnAvaloniaObject",
@@ -43,8 +47,8 @@
       "name": "IAvnAutoCompleteBox",
       "fullName": "Avalonia.Host.Com.IAvnAutoCompleteBox",
       "kind": "Class",
-      "iid": "F2590267-0628-5866-8D65-10FB957D8AF3",
-      "abiVersion": 15,
+      "iid": "92CEFC39-4E40-5193-893F-F3E2C77ED24C",
+      "abiVersion": 16,
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.AutoCompleteBox",
       "isConstructible": true,
@@ -225,6 +229,16 @@
           "interfaceName": "Avalonia.Host.Com.IAvnTextSelector",
           "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Controls.AutoCompleteSelector\u00601[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "isNullable": true
+        },
+        {
+          "name": "AsyncPopulator",
+          "kind": "AsyncPopulator",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnAsyncPopulator",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Func\u00603[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Threading.CancellationToken, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Threading.Tasks.Task\u00601[[System.Collections.Generic.IEnumerable\u00601[[System.Object, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
           "isNullable": true
         },
         {
@@ -12118,11 +12132,6 @@
       "reason": "By design: obsolete alias of PlaceholderForeground"
     },
     {
-      "owner": "Avalonia.Controls.AutoCompleteBox",
-      "member": "AsyncPopulator",
-      "reason": "By design: async population needs the async-completion transport"
-    },
-    {
       "owner": "Avalonia.Controls.Border",
       "member": "Render(DrawingContext)",
       "reason": "By design: custom drawing is not part of the projected model"
@@ -12695,12 +12704,12 @@
     {
       "owner": "Avalonia.Controls.Window",
       "member": "ShowDialog(Window)",
-      "reason": "By design: modal dialogs need the async-completion transport"
+      "reason": "By design: the modal completion needs the dialog-owner lifetime the projected Show overloads do not carry"
     },
     {
       "owner": "Avalonia.Controls.Window",
       "member": "ShowDialog(Window)",
-      "reason": "By design: modal dialogs need the async-completion transport"
+      "reason": "By design: the modal completion needs the dialog-owner lifetime the projected Show overloads do not carry"
     },
     {
       "owner": "Avalonia.StyledElement",

@@ -620,6 +620,22 @@ CCW — `avalonia_sys::popup_placement` — returns a
 `PopupPlacementResult`. The gap report drops to 160 entries. Factory
 stays 13.
 
+Wave U36 crosses the async populator. `AsyncPopulator` (ordinal 32) maps
+AutoCompleteBox's `Func<string?, CancellationToken,
+Task<IEnumerable<object?>>`? to `IAvnAsyncPopulator`:
+`BeginPopulate(requestId, IAvnAsyncPopulatorCompletion, searchText)`
+launches, and the CCW reports through the completion's
+`Complete(requestId, hresult, IAvnVariantList)` slot. The host wrapper
+bridges both directions: a managed delegate runs under
+`AvnPopulatorBridge` and reports through a host-built completion CCW,
+while a foreign CCW converts into the delegate through a
+`TaskCompletionSource` the completion resolves (AutoCompleteBox 15 to
+16). The Rust CCW — `avalonia_sys::async_populator` — hands the closure a
+`PopulateCompletion` reporter. ShowDialog stays by-design with an
+accurate reason: its modal completion needs the dialog-owner lifetime the
+projected Show overloads do not carry. The gap report drops to 159
+entries. Factory stays 13.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A

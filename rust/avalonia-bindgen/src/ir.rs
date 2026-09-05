@@ -45,6 +45,14 @@ pub struct ProjectionIr {
     #[serde(default)]
     pub popup_placement_interface_iid: Option<String>,
     #[serde(default)]
+    pub async_populator_interface_name: Option<String>,
+    #[serde(default)]
+    pub async_populator_interface_iid: Option<String>,
+    #[serde(default)]
+    pub async_populator_completion_interface_name: Option<String>,
+    #[serde(default)]
+    pub async_populator_completion_interface_iid: Option<String>,
+    #[serde(default)]
     pub types: Vec<ProjectedType>,
     #[serde(default)]
     pub enums: Vec<ProjectedEnum>,

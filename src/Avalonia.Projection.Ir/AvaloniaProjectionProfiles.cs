@@ -57,7 +57,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnWindow"] = 18,
             ["Avalonia.Host.Com.IAvnGrid"] = 12,
             // Previously version-1 templated types inherit the TemplatedControl bump.
-            ["Avalonia.Host.Com.IAvnAutoCompleteBox"] = 15,
+            ["Avalonia.Host.Com.IAvnAutoCompleteBox"] = 16,
             ["Avalonia.Host.Com.IAvnButtonSpinner"] = 9,
             ["Avalonia.Host.Com.IAvnCalendar"] = 12,
             ["Avalonia.Host.Com.IAvnCalendarDatePicker"] = 11,
@@ -474,7 +474,7 @@ public static class AvaloniaProjectionProfiles
                 "PopulateComplete", "DropDownOpened", "DropDownClosed",
                 "MinimumPopulateDelay", "TextChanged", "ItemsSource",
                 "Populating", "DropDownOpening", "DropDownClosing", "SelectedItem", "ItemTemplate",
-                "ItemFilter", "TextFilter", "ItemSelector", "TextSelector",
+                "ItemFilter", "TextFilter", "ItemSelector", "TextSelector", "AsyncPopulator",
                 "SelectionChanged", "Populated",
             ],
             ["Avalonia.Controls.MaskedTextBox"] =
@@ -775,6 +775,14 @@ public static class AvaloniaProjectionProfiles
             {
                 Kind = MarshallingKind.StringUtf16,
                 StringConverterTypeName = "Avalonia.Host.Com.AvnDoubleList",
+                IsNullable = true,
+            },
+            // U36: the async populator crosses as IAvnAsyncPopulator — BeginPopulate
+            // launches and the CCW reports through IAvnAsyncPopulatorCompletion.
+            ["Avalonia.Controls.AutoCompleteBox.AsyncPopulator"] = new()
+            {
+                Kind = MarshallingKind.AsyncPopulator,
+                InterfaceName = "Avalonia.Host.Com.IAvnAsyncPopulator",
                 IsNullable = true,
             },
             ["Avalonia.Controls.AutoCompleteBox.SelectedItem"] = new()
@@ -1313,8 +1321,7 @@ public static class AvaloniaProjectionProfiles
                         ["PlatformImpl"] = "the platform implementation is not ABI surface",
                         ["OwnedWindows"] = "window enumeration is owned by the host",
                         ["DependencyResolver"] = "the resolver is not ABI surface",
-                        ["ShowDialog"] = "modal dialogs need the async-completion transport",
-                        ["AsyncPopulator"] = "async population needs the async-completion transport",
+                        ["ShowDialog"] = "the modal completion needs the dialog-owner lifetime the projected Show overloads do not carry",
                         ["Show"] = "the suppressed override of the base Open slot",
                         ["Close"] = "the suppressed override of the base Close slot",
                         ["Spun"] = "obsolete alias of Spinned",

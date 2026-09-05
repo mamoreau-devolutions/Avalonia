@@ -120,6 +120,20 @@ public enum MarshallingKind
     /// <c>Avalonia.Controls.Primitives.PopupPositioning.CustomPopupPlacementCallback</c>.
     /// </summary>
     PopupPlacement,
+
+    /// <summary>
+    /// Appended after PopupPlacement so every previously published ordinal stays put.
+    /// A nano-COM <c>IAvnAsyncPopulator</c> wrapping AutoCompleteBox's
+    /// <c>Func&lt;string?, CancellationToken, Task&lt;IEnumerable&lt;object?&gt;&gt;?&gt;</c>.
+    /// </summary>
+    AsyncPopulator,
+
+    /// <summary>
+    /// Appended after AsyncPopulator so every previously published ordinal stays put.
+    /// A nano-COM <c>IAvnDialogCompletion</c> carrying the completion side of
+    /// <c>Window.ShowDialog</c>.
+    /// </summary>
+    DialogCompletion,
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]

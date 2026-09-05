@@ -5,6 +5,7 @@
 
 mod app_handler;
 mod application;
+mod async_populator;
 mod async_completion;
 mod clipboard;
 mod com;
@@ -37,6 +38,7 @@ pub use filters::{item_filter, text_filter, ItemFilter, TextFilter};
 pub use notification::{notification, Notification, NotificationSpec};
 pub use selectors::{item_selector, text_selector, ItemSelector, TextSelector};
 pub use popup_placement::{popup_placement, PopupPlacement, PopupPlacementResult};
+pub use async_populator::{async_populator, AsyncPopulator, PopulateCompletion};
 pub use dispatcher::{action, IAvnAction, IAvnDispatcher};
 pub use echo::IAvnEcho;
 pub use factory::IAvnActivationFactory;

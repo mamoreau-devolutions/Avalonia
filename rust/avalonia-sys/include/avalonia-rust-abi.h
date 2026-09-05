@@ -2098,6 +2098,38 @@ struct IAvnPopupPlacementCallbackVtbl {
 struct IAvnPopupPlacementCallback { const IAvnPopupPlacementCallbackVtbl* vtbl; };
 #define I_AVN_POPUP_PLACEMENT_CALLBACK_VTABLE_SLOTS 4
 
+static const AvnGuid I_AVN_ASYNC_POPULATOR_COMPLETION_IID = {
+    0xBE757F89,
+    0xDDC2,
+    0x5DDD,
+    { 0xB7, 0x63, 0xCB, 0x90, 0xC7, 0x09, 0x88, 0x6E }
+};
+#define I_AVN_ASYNC_POPULATOR_COMPLETION_ABI_VERSION 1
+struct IAvnAsyncPopulatorCompletionVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnAsyncPopulatorCompletion* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnAsyncPopulatorCompletion* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnAsyncPopulatorCompletion* self); /* slot 2 */
+    AvnHResult (AVN_CALL *complete)(IAvnAsyncPopulatorCompletion* self, int64_t request_id, int32_t hresult, IAvnVariantList* items); /* slot 3 */
+};
+struct IAvnAsyncPopulatorCompletion { const IAvnAsyncPopulatorCompletionVtbl* vtbl; };
+#define I_AVN_ASYNC_POPULATOR_COMPLETION_VTABLE_SLOTS 4
+
+static const AvnGuid I_AVN_ASYNC_POPULATOR_IID = {
+    0x126B1732,
+    0x9310,
+    0x5B23,
+    { 0x8E, 0x98, 0x01, 0x23, 0xB3, 0x13, 0x52, 0xEC }
+};
+#define I_AVN_ASYNC_POPULATOR_ABI_VERSION 1
+struct IAvnAsyncPopulatorVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnAsyncPopulator* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnAsyncPopulator* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnAsyncPopulator* self); /* slot 2 */
+    AvnHResult (AVN_CALL *begin_populate)(IAvnAsyncPopulator* self, int64_t request_id, IAvnAsyncPopulatorCompletion* completion, const uint16_t* search_text); /* slot 3 */
+};
+struct IAvnAsyncPopulator { const IAvnAsyncPopulatorVtbl* vtbl; };
+#define I_AVN_ASYNC_POPULATOR_VTABLE_SLOTS 4
+
 static const AvnGuid I_AVN_NOTIFICATION_ACTION_HANDLER_IID = {
     0xD5D37A2F,
     0xA0AC,
@@ -2365,12 +2397,12 @@ struct IAvnArc { const IAvnArcVtbl* vtbl; };
 #define I_AVN_ARC_VTABLE_SLOTS 91
 
 static const AvnGuid I_AVN_AUTO_COMPLETE_BOX_IID = {
-    0xF2590267,
-    0x0628,
-    0x5866,
-    { 0x8D, 0x65, 0x10, 0xFB, 0x95, 0x7D, 0x8A, 0xF3 }
+    0x92CEFC39,
+    0x4E40,
+    0x5193,
+    { 0x89, 0x3F, 0xF3, 0xE2, 0xC7, 0x7E, 0xD2, 0x4C }
 };
-#define I_AVN_AUTO_COMPLETE_BOX_ABI_VERSION 15
+#define I_AVN_AUTO_COMPLETE_BOX_ABI_VERSION 16
 struct IAvnAutoCompleteBoxVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnAutoCompleteBox* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnAutoCompleteBox* self); /* slot 1 */
@@ -2504,34 +2536,36 @@ struct IAvnAutoCompleteBoxVtbl {
     AvnHResult (AVN_CALL *set_item_selector)(IAvnAutoCompleteBox* self, IAvnItemSelector* value); /* slot 129 */
     AvnHResult (AVN_CALL *get_text_selector)(IAvnAutoCompleteBox* self, IAvnTextSelector** value); /* slot 130 */
     AvnHResult (AVN_CALL *set_text_selector)(IAvnAutoCompleteBox* self, IAvnTextSelector* value); /* slot 131 */
-    AvnHResult (AVN_CALL *get_items_source)(IAvnAutoCompleteBox* self, IAvnVariantList** value); /* slot 132 */
-    AvnHResult (AVN_CALL *set_items_source)(IAvnAutoCompleteBox* self, IAvnVariantList* value); /* slot 133 */
-    AvnHResult (AVN_CALL *get_max_length)(IAvnAutoCompleteBox* self, int32_t* value); /* slot 134 */
-    AvnHResult (AVN_CALL *set_max_length)(IAvnAutoCompleteBox* self, int32_t value); /* slot 135 */
-    AvnHResult (AVN_CALL *get_inner_left_content)(IAvnAutoCompleteBox* self, IAvnControl** value); /* slot 136 */
-    AvnHResult (AVN_CALL *set_inner_left_content)(IAvnAutoCompleteBox* self, IAvnControl* value); /* slot 137 */
-    AvnHResult (AVN_CALL *get_inner_right_content)(IAvnAutoCompleteBox* self, IAvnControl** value); /* slot 138 */
-    AvnHResult (AVN_CALL *set_inner_right_content)(IAvnAutoCompleteBox* self, IAvnControl* value); /* slot 139 */
-    AvnHResult (AVN_CALL *populate_complete)(IAvnAutoCompleteBox* self); /* slot 140 */
-    AvnHResult (AVN_CALL *advise_text_changed)(IAvnAutoCompleteBox* self, IAvnAutoCompleteBoxTextChangedHandler* handler, int64_t* subscription_id); /* slot 141 */
-    AvnHResult (AVN_CALL *unadvise_text_changed)(IAvnAutoCompleteBox* self, int64_t subscription_id); /* slot 142 */
-    AvnHResult (AVN_CALL *advise_populating)(IAvnAutoCompleteBox* self, IAvnAutoCompleteBoxPopulatingHandler* handler, int64_t* subscription_id); /* slot 143 */
-    AvnHResult (AVN_CALL *unadvise_populating)(IAvnAutoCompleteBox* self, int64_t subscription_id); /* slot 144 */
-    AvnHResult (AVN_CALL *advise_populated)(IAvnAutoCompleteBox* self, IAvnAutoCompleteBoxPopulatedHandler* handler, int64_t* subscription_id); /* slot 145 */
-    AvnHResult (AVN_CALL *unadvise_populated)(IAvnAutoCompleteBox* self, int64_t subscription_id); /* slot 146 */
-    AvnHResult (AVN_CALL *advise_drop_down_opening)(IAvnAutoCompleteBox* self, IAvnAutoCompleteBoxDropDownOpeningHandler* handler, int64_t* subscription_id); /* slot 147 */
-    AvnHResult (AVN_CALL *unadvise_drop_down_opening)(IAvnAutoCompleteBox* self, int64_t subscription_id); /* slot 148 */
-    AvnHResult (AVN_CALL *advise_drop_down_opened)(IAvnAutoCompleteBox* self, IAvnAutoCompleteBoxDropDownOpenedHandler* handler, int64_t* subscription_id); /* slot 149 */
-    AvnHResult (AVN_CALL *unadvise_drop_down_opened)(IAvnAutoCompleteBox* self, int64_t subscription_id); /* slot 150 */
-    AvnHResult (AVN_CALL *advise_drop_down_closing)(IAvnAutoCompleteBox* self, IAvnAutoCompleteBoxDropDownClosingHandler* handler, int64_t* subscription_id); /* slot 151 */
-    AvnHResult (AVN_CALL *unadvise_drop_down_closing)(IAvnAutoCompleteBox* self, int64_t subscription_id); /* slot 152 */
-    AvnHResult (AVN_CALL *advise_drop_down_closed)(IAvnAutoCompleteBox* self, IAvnAutoCompleteBoxDropDownClosedHandler* handler, int64_t* subscription_id); /* slot 153 */
-    AvnHResult (AVN_CALL *unadvise_drop_down_closed)(IAvnAutoCompleteBox* self, int64_t subscription_id); /* slot 154 */
-    AvnHResult (AVN_CALL *advise_selection_changed)(IAvnAutoCompleteBox* self, IAvnAutoCompleteBoxSelectionChangedHandler* handler, int64_t* subscription_id); /* slot 155 */
-    AvnHResult (AVN_CALL *unadvise_selection_changed)(IAvnAutoCompleteBox* self, int64_t subscription_id); /* slot 156 */
+    AvnHResult (AVN_CALL *get_async_populator)(IAvnAutoCompleteBox* self, IAvnAsyncPopulator** value); /* slot 132 */
+    AvnHResult (AVN_CALL *set_async_populator)(IAvnAutoCompleteBox* self, IAvnAsyncPopulator* value); /* slot 133 */
+    AvnHResult (AVN_CALL *get_items_source)(IAvnAutoCompleteBox* self, IAvnVariantList** value); /* slot 134 */
+    AvnHResult (AVN_CALL *set_items_source)(IAvnAutoCompleteBox* self, IAvnVariantList* value); /* slot 135 */
+    AvnHResult (AVN_CALL *get_max_length)(IAvnAutoCompleteBox* self, int32_t* value); /* slot 136 */
+    AvnHResult (AVN_CALL *set_max_length)(IAvnAutoCompleteBox* self, int32_t value); /* slot 137 */
+    AvnHResult (AVN_CALL *get_inner_left_content)(IAvnAutoCompleteBox* self, IAvnControl** value); /* slot 138 */
+    AvnHResult (AVN_CALL *set_inner_left_content)(IAvnAutoCompleteBox* self, IAvnControl* value); /* slot 139 */
+    AvnHResult (AVN_CALL *get_inner_right_content)(IAvnAutoCompleteBox* self, IAvnControl** value); /* slot 140 */
+    AvnHResult (AVN_CALL *set_inner_right_content)(IAvnAutoCompleteBox* self, IAvnControl* value); /* slot 141 */
+    AvnHResult (AVN_CALL *populate_complete)(IAvnAutoCompleteBox* self); /* slot 142 */
+    AvnHResult (AVN_CALL *advise_text_changed)(IAvnAutoCompleteBox* self, IAvnAutoCompleteBoxTextChangedHandler* handler, int64_t* subscription_id); /* slot 143 */
+    AvnHResult (AVN_CALL *unadvise_text_changed)(IAvnAutoCompleteBox* self, int64_t subscription_id); /* slot 144 */
+    AvnHResult (AVN_CALL *advise_populating)(IAvnAutoCompleteBox* self, IAvnAutoCompleteBoxPopulatingHandler* handler, int64_t* subscription_id); /* slot 145 */
+    AvnHResult (AVN_CALL *unadvise_populating)(IAvnAutoCompleteBox* self, int64_t subscription_id); /* slot 146 */
+    AvnHResult (AVN_CALL *advise_populated)(IAvnAutoCompleteBox* self, IAvnAutoCompleteBoxPopulatedHandler* handler, int64_t* subscription_id); /* slot 147 */
+    AvnHResult (AVN_CALL *unadvise_populated)(IAvnAutoCompleteBox* self, int64_t subscription_id); /* slot 148 */
+    AvnHResult (AVN_CALL *advise_drop_down_opening)(IAvnAutoCompleteBox* self, IAvnAutoCompleteBoxDropDownOpeningHandler* handler, int64_t* subscription_id); /* slot 149 */
+    AvnHResult (AVN_CALL *unadvise_drop_down_opening)(IAvnAutoCompleteBox* self, int64_t subscription_id); /* slot 150 */
+    AvnHResult (AVN_CALL *advise_drop_down_opened)(IAvnAutoCompleteBox* self, IAvnAutoCompleteBoxDropDownOpenedHandler* handler, int64_t* subscription_id); /* slot 151 */
+    AvnHResult (AVN_CALL *unadvise_drop_down_opened)(IAvnAutoCompleteBox* self, int64_t subscription_id); /* slot 152 */
+    AvnHResult (AVN_CALL *advise_drop_down_closing)(IAvnAutoCompleteBox* self, IAvnAutoCompleteBoxDropDownClosingHandler* handler, int64_t* subscription_id); /* slot 153 */
+    AvnHResult (AVN_CALL *unadvise_drop_down_closing)(IAvnAutoCompleteBox* self, int64_t subscription_id); /* slot 154 */
+    AvnHResult (AVN_CALL *advise_drop_down_closed)(IAvnAutoCompleteBox* self, IAvnAutoCompleteBoxDropDownClosedHandler* handler, int64_t* subscription_id); /* slot 155 */
+    AvnHResult (AVN_CALL *unadvise_drop_down_closed)(IAvnAutoCompleteBox* self, int64_t subscription_id); /* slot 156 */
+    AvnHResult (AVN_CALL *advise_selection_changed)(IAvnAutoCompleteBox* self, IAvnAutoCompleteBoxSelectionChangedHandler* handler, int64_t* subscription_id); /* slot 157 */
+    AvnHResult (AVN_CALL *unadvise_selection_changed)(IAvnAutoCompleteBox* self, int64_t subscription_id); /* slot 158 */
 };
 struct IAvnAutoCompleteBox { const IAvnAutoCompleteBoxVtbl* vtbl; };
-#define I_AVN_AUTO_COMPLETE_BOX_VTABLE_SLOTS 157
+#define I_AVN_AUTO_COMPLETE_BOX_VTABLE_SLOTS 159
 
 static const AvnGuid I_AVN_AVALONIA_OBJECT_IID = {
     0xFA7F2E03,

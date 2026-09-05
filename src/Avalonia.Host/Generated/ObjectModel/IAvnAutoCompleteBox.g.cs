@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("F2590267-0628-5866-8D65-10FB957D8AF3")]
+[Guid("92CEFC39-4E40-5193-893F-F3E2C77ED24C")]
 public partial interface IAvnAutoCompleteBox : IAvnTemplatedControl
 {
     [PreserveSig]
@@ -113,6 +113,12 @@ public partial interface IAvnAutoCompleteBox : IAvnTemplatedControl
 
     [PreserveSig]
     int SetTextSelector(IAvnTextSelector? value);
+
+    [PreserveSig]
+    int GetAsyncPopulator(out IAvnAsyncPopulator? value);
+
+    [PreserveSig]
+    int SetAsyncPopulator(IAvnAsyncPopulator? value);
 
     [PreserveSig]
     int GetItemsSource(out IAvnVariantList value);
@@ -2420,6 +2426,37 @@ public sealed partial class AvnAutoCompleteBox : IAvnAutoCompleteBox
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.TextSelector = AvnTextSelector.ToSelector(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetAsyncPopulator(out IAvnAsyncPopulator? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnAsyncPopulator.FromPopulator(_value.AsyncPopulator);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetAsyncPopulator(IAvnAsyncPopulator? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.AsyncPopulator = AvnAsyncPopulator.ToPopulator(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

@@ -49,6 +49,8 @@ public static class ComSourceEmitter
                 files["AvnSelectors.g.cs"] = EmitSelectors(ir);
             if (ir.PopupPlacementInterfaceName is not null)
                 files["AvnPopupPlacement.g.cs"] = EmitPopupPlacement(ir);
+            if (ir.AsyncPopulatorInterfaceName is not null)
+                files["AvnAsyncPopulator.g.cs"] = EmitAsyncPopulator(ir);
             if (ir.NotificationInterfaceName is not null)
                 files[SimpleName(ir.NotificationInterfaceName) + ".g.cs"] = EmitNotification(ir);
             files["IAvnControlFactory.g.cs"] = EmitFactory(ir);
@@ -528,6 +530,11 @@ public static class ComSourceEmitter
         if (ir.TextSelectorInterfaceName is { })
         {
             sb.AppendLine("    [global::System.Diagnostics.CodeAnalysis.DynamicDependency(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All, typeof(AvnTextSelector))]");
+        }
+        if (ir.AsyncPopulatorInterfaceName is { })
+        {
+            sb.AppendLine("    [global::System.Diagnostics.CodeAnalysis.DynamicDependency(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All, typeof(AvnAsyncPopulator))]");
+            sb.AppendLine("    [global::System.Diagnostics.CodeAnalysis.DynamicDependency(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All, typeof(AvnPopulatorCompletion))]");
         }
         foreach (var collection in ir.Types
                      .SelectMany(t => t.Properties)
@@ -1071,6 +1078,116 @@ public static class ComSourceEmitter
             sb.AppendLine("}");
             sb.AppendLine();
         }
+        return sb.ToString().TrimEnd() + Environment.NewLine;
+    }
+
+    public static string EmitAsyncPopulator(ProjectionIr ir)
+    {
+        var root = ir.Types.First(t => t.Kind == ProjectedTypeKind.Class && t.BaseFullName is null);
+        var sb = Header(root);
+        var interfaceName = SimpleName(ir.AsyncPopulatorInterfaceName
+            ?? throw new InvalidOperationException("The IR declares no projected async populator interface."));
+        var completionName = SimpleName(ir.AsyncPopulatorCompletionInterfaceName!);
+
+        // The completion interface the CCW reports through: one variant list of items.
+        sb.AppendLine("[GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]");
+        sb.AppendLine($"[Guid(\"{ir.AsyncPopulatorCompletionInterfaceIid}\")]");
+        sb.AppendLine($"public partial interface {completionName}");
+        sb.AppendLine("{");
+        sb.AppendLine("    [PreserveSig]");
+        sb.AppendLine("    int Complete(long requestId, int hresult, IAvnVariantList? items);");
+        sb.AppendLine("}");
+        sb.AppendLine();
+        // The populator interface the host invokes.
+        sb.AppendLine("[GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]");
+        sb.AppendLine($"[Guid(\"{ir.AsyncPopulatorInterfaceIid}\")]");
+        sb.AppendLine($"public partial interface {interfaceName}");
+        sb.AppendLine("{");
+        sb.AppendLine("    [PreserveSig]");
+        sb.AppendLine($"    int BeginPopulate(long requestId, {completionName}? completion, string? searchText);");
+        sb.AppendLine("}");
+        sb.AppendLine();
+        // Host wrapper: managed delegate -> CCW.
+        sb.AppendLine("[GeneratedComClass]");
+        sb.AppendLine($"public sealed partial class AvnAsyncPopulator : {interfaceName}");
+        sb.AppendLine("{");
+        sb.AppendLine("    private readonly global::System.Func<string?, global::System.Threading.CancellationToken, global::System.Threading.Tasks.Task<global::System.Collections.Generic.IEnumerable<object?>>>? _value;");
+        sb.AppendLine();
+        sb.AppendLine("    public AvnAsyncPopulator(global::System.Func<string?, global::System.Threading.CancellationToken, global::System.Threading.Tasks.Task<global::System.Collections.Generic.IEnumerable<object?>>>? value) => _value = value;");
+        sb.AppendLine();
+        sb.AppendLine($"    public static {interfaceName}? FromPopulator(global::System.Func<string?, global::System.Threading.CancellationToken, global::System.Threading.Tasks.Task<global::System.Collections.Generic.IEnumerable<object?>>>? value) =>");
+        sb.AppendLine("        value is null ? null : new AvnAsyncPopulator(value);");
+        sb.AppendLine();
+        sb.AppendLine($"    public static global::System.Func<string?, global::System.Threading.CancellationToken, global::System.Threading.Tasks.Task<global::System.Collections.Generic.IEnumerable<object?>>>? ToPopulator({interfaceName}? value) =>");
+        sb.AppendLine("        value switch");
+        sb.AppendLine("        {");
+        sb.AppendLine("            null => null,");
+        sb.AppendLine("            AvnAsyncPopulator local => local._value,");
+        sb.AppendLine("            _ => (searchText, cancellationToken) =>");
+        sb.AppendLine("            {");
+        sb.AppendLine("                var source = new global::System.Threading.Tasks.TaskCompletionSource<global::System.Collections.Generic.IEnumerable<object?>>(global::System.Threading.Tasks.TaskCreationOptions.RunContinuationsAsynchronously);");
+        sb.AppendLine("                var completion = new AvnPopulatorCompletion(source);");
+        sb.AppendLine("                var hr = value.BeginPopulate(completion.RequestId, completion, searchText);");
+        sb.AppendLine("                if (hr < 0)");
+        sb.AppendLine("                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);");
+        sb.AppendLine("                return source.Task;");
+        sb.AppendLine("            },");
+        sb.AppendLine("        };");
+        sb.AppendLine();
+        sb.AppendLine($"    public int BeginPopulate(long requestId, {completionName}? completion, string? searchText)");
+        sb.AppendLine("    {");
+        sb.AppendLine("        try");
+        sb.AppendLine("        {");
+        sb.AppendLine("            if (_value is null || completion is null)");
+        sb.AppendLine("                return global::Avalonia.Host.HResults.E_POINTER;");
+        sb.AppendLine("            _ = global::Avalonia.Host.Com.AvnPopulatorBridge.RunAsync(_value, requestId, completion, searchText);");
+        sb.AppendLine("            return global::Avalonia.Host.HResults.S_OK;");
+        sb.AppendLine("        }");
+        sb.AppendLine("        catch (global::System.Exception e)");
+        sb.AppendLine("        {");
+        sb.AppendLine("            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);");
+        sb.AppendLine("        }");
+        sb.AppendLine("    }");
+        sb.AppendLine("}");
+        sb.AppendLine();
+        // Completion CCW: resolves the TCS when the foreign populator reports.
+        sb.AppendLine("[GeneratedComClass]");
+        sb.AppendLine($"public sealed partial class AvnPopulatorCompletion : {completionName}");
+        sb.AppendLine("{");
+        sb.AppendLine("    private readonly global::System.Threading.Tasks.TaskCompletionSource<global::System.Collections.Generic.IEnumerable<object?>> _source;");
+        sb.AppendLine("    public long RequestId { get; }");
+        sb.AppendLine();
+        sb.AppendLine("    private static long s_nextRequestId;");
+        sb.AppendLine();
+        sb.AppendLine("    public AvnPopulatorCompletion(global::System.Threading.Tasks.TaskCompletionSource<global::System.Collections.Generic.IEnumerable<object?>> source)");
+        sb.AppendLine("    {");
+        sb.AppendLine("        _source = source;");
+        sb.AppendLine("        RequestId = global::System.Threading.Interlocked.Increment(ref s_nextRequestId);");
+        sb.AppendLine("    }");
+        sb.AppendLine();
+        sb.AppendLine("    public int Complete(long requestId, int hresult, IAvnVariantList? items)");
+        sb.AppendLine("    {");
+        sb.AppendLine("        try");
+        sb.AppendLine("        {");
+        sb.AppendLine("            if (requestId != RequestId)");
+        sb.AppendLine("                return global::Avalonia.Host.HResults.E_INVALIDARG;");
+        sb.AppendLine("            if (hresult < 0)");
+        sb.AppendLine("            {");
+        sb.AppendLine("                _source.SetException(global::System.Runtime.InteropServices.Marshal.GetExceptionForHR(hresult));");
+        sb.AppendLine("                return global::Avalonia.Host.HResults.S_OK;");
+        sb.AppendLine("            }");
+        sb.AppendLine("            var list = items is null");
+        sb.AppendLine("                ? global::System.Array.Empty<object?>()");
+        sb.AppendLine("                : global::Avalonia.Host.Com.AvnPopulatorBridge.Materialize(items);");
+        sb.AppendLine("            _source.SetResult(list);");
+        sb.AppendLine("            return global::Avalonia.Host.HResults.S_OK;");
+        sb.AppendLine("        }");
+        sb.AppendLine("        catch (global::System.Exception e)");
+        sb.AppendLine("        {");
+        sb.AppendLine("            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);");
+        sb.AppendLine("        }");
+        sb.AppendLine("    }");
+        sb.AppendLine("}");
         return sb.ToString().TrimEnd() + Environment.NewLine;
     }
 
@@ -1940,6 +2057,8 @@ public static class ComSourceEmitter
                 $"{SimpleName(property.InterfaceName!)[1..]}.FromSelector(_value.{property.Name})",
             MarshallingKind.PopupPlacement =>
                 $"{SimpleName(property.InterfaceName!)[1..]}.FromCallback(_value.{property.Name})",
+            MarshallingKind.AsyncPopulator =>
+                $"{SimpleName(property.InterfaceName!)[1..]}.FromPopulator(_value.{property.Name})",
             MarshallingKind.Variant => $"AvnVariant.FromObject(_value.{property.Name})",
             MarshallingKind.ComCollection =>
                 property.HostImplementationTypeName is { }
@@ -2017,6 +2136,7 @@ public static class ComSourceEmitter
             MarshallingKind.ItemSelector => $"{SimpleName(property.InterfaceName!)[1..]}.ToSelector(value)",
             MarshallingKind.TextSelector => $"{SimpleName(property.InterfaceName!)[1..]}.ToSelector(value)",
             MarshallingKind.PopupPlacement => $"{SimpleName(property.InterfaceName!)[1..]}.ToCallback(value)",
+            MarshallingKind.AsyncPopulator => $"{SimpleName(property.InterfaceName!)[1..]}.ToPopulator(value)",
             MarshallingKind.Variant => "value.ToObject()",
             MarshallingKind.ComCollection => property.HostImplementationTypeName is { }
                 ? $"(global::{CSharpManagedTypeName(property.ManagedTypeName)}?)({SimpleName(property.InterfaceName!)[1..]}Marshal.ToManaged(value))!"
@@ -2129,6 +2249,7 @@ public static class ComSourceEmitter
             MarshallingKind.ItemSelector => SimpleName(interfaceName!) + (nullable ? "?" : ""),
             MarshallingKind.TextSelector => SimpleName(interfaceName!) + (nullable ? "?" : ""),
             MarshallingKind.PopupPlacement => SimpleName(interfaceName!) + (nullable ? "?" : ""),
+            MarshallingKind.AsyncPopulator => SimpleName(interfaceName!) + (nullable ? "?" : ""),
             MarshallingKind.Notification => SimpleName(interfaceName!) + (nullable ? "?" : ""),
             MarshallingKind.ComCollection => SimpleName(interfaceName!),
             _ when GeometryMarshalling.TryGet(kind, out var geometry) =>

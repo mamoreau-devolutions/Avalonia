@@ -257,6 +257,23 @@ public static class NativeHeaderEmitter
             EndInterface(sb, name, 4);
         }
 
+        if (ir.AsyncPopulatorInterfaceName is { } asyncPopulatorInterfaceName)
+        {
+            var completionName = "IAvnAsyncPopulatorCompletion";
+            EmitIid(sb, completionName, ir.AsyncPopulatorCompletionInterfaceIid!, 1);
+            BeginInterface(sb, completionName);
+            EmitSlot(sb, 3, "complete", completionName,
+                ["int64_t request_id", "int32_t hresult", "IAvnVariantList* items"]);
+            EndInterface(sb, completionName, 4);
+
+            var name = SimpleName(asyncPopulatorInterfaceName);
+            EmitIid(sb, name, ir.AsyncPopulatorInterfaceIid!, 1);
+            BeginInterface(sb, name);
+            EmitSlot(sb, 3, "begin_populate", name,
+                ["int64_t request_id", "IAvnAsyncPopulatorCompletion* completion", "const uint16_t* search_text"]);
+            EndInterface(sb, name, 4);
+        }
+
         if (ir.NotificationInterfaceName is { } notificationInterfaceName)
         {
             var name = SimpleName(notificationInterfaceName);
@@ -508,6 +525,7 @@ public static class NativeHeaderEmitter
             MarshallingKind.ItemSelector => $"{SimpleName(interfaceName!)}**",
             MarshallingKind.TextSelector => $"{SimpleName(interfaceName!)}**",
             MarshallingKind.PopupPlacement => $"{SimpleName(interfaceName!)}**",
+            MarshallingKind.AsyncPopulator => $"{SimpleName(interfaceName!)}**",
             MarshallingKind.Notification => $"{SimpleName(interfaceName!)}**",
             _ => $"{AbiType(kind, interfaceName, pointerForInterface: false, isNullable)}*",
         };
@@ -526,6 +544,7 @@ public static class NativeHeaderEmitter
             MarshallingKind.ItemSelector => $"{SimpleName(interfaceName!)}*",
             MarshallingKind.TextSelector => $"{SimpleName(interfaceName!)}*",
             MarshallingKind.PopupPlacement => $"{SimpleName(interfaceName!)}*",
+            MarshallingKind.AsyncPopulator => $"{SimpleName(interfaceName!)}*",
             MarshallingKind.Notification => $"{SimpleName(interfaceName!)}*",
             _ => AbiType(kind, interfaceName, pointerForInterface: false, isNullable),
         };
@@ -556,6 +575,7 @@ public static class NativeHeaderEmitter
             MarshallingKind.ItemSelector => SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
             MarshallingKind.TextSelector => SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
             MarshallingKind.PopupPlacement => SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
+            MarshallingKind.AsyncPopulator => SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
             MarshallingKind.Notification => SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
             MarshallingKind.Variant => "AvnVariant",
             _ when GeometryMarshalling.TryGet(kind, out var geometry) =>

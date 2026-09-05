@@ -77,6 +77,22 @@ public sealed class ProjectionIr
     public string? PopupPlacementInterfaceName { get; init; }
     public string? PopupPlacementInterfaceIid { get; init; }
 
+    /// <summary>
+    /// The projected async populator interfaces, present only when a member marshals
+    /// as <see cref="MarshallingKind.AsyncPopulator"/>.
+    /// </summary>
+    public string? AsyncPopulatorInterfaceName { get; init; }
+    public string? AsyncPopulatorInterfaceIid { get; init; }
+    public string? AsyncPopulatorCompletionInterfaceName { get; init; }
+    public string? AsyncPopulatorCompletionInterfaceIid { get; init; }
+
+    /// <summary>
+    /// The projected dialog completion interface, present only when a method marshals
+    /// its completion as <see cref="MarshallingKind.DialogCompletion"/>.
+    /// </summary>
+    public string? DialogCompletionInterfaceName { get; init; }
+    public string? DialogCompletionInterfaceIid { get; init; }
+
     public IReadOnlyList<ProjectedType> Types { get; init; } = [];
     public IReadOnlyList<ProjectedEnum> Enums { get; init; } = [];
     public IReadOnlyList<ProjectedAttachedProperty> AttachedProperties { get; init; } = [];

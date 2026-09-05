@@ -563,6 +563,62 @@ impl ComPtr<IAvnPopupPlacementCallback> {
     }
 }
 
+pub const I_AVN_ASYNC_POPULATOR_COMPLETION_IID: Guid = Guid { data1: 0xBE757F89, data2: 0xDDC2, data3: 0x5DDD, data4: [0xB7, 0x63, 0xCB, 0x90, 0xC7, 0x09, 0x88, 0x6E] };
+
+#[repr(C)]
+struct IAvnAsyncPopulatorCompletionVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    complete: unsafe extern "system" fn(*mut IAvnAsyncPopulatorCompletion, i64, i32, *mut IAvnVariantList) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnAsyncPopulatorCompletion {
+    vtbl: *const IAvnAsyncPopulatorCompletionVtbl,
+}
+
+unsafe impl ComInterface for IAvnAsyncPopulatorCompletion {
+    const IID: Guid = I_AVN_ASYNC_POPULATOR_COMPLETION_IID;
+}
+
+impl ComPtr<IAvnAsyncPopulatorCompletion> {
+    pub fn complete(&self, request_id: i64, hresult_value: i32, items: *mut IAvnVariantList) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().complete)(self.as_raw(), request_id, hresult_value, items);
+            hresult::check(hr)
+        }
+    }
+}
+
+pub const I_AVN_ASYNC_POPULATOR_IID: Guid = Guid { data1: 0x126B1732, data2: 0x9310, data3: 0x5B23, data4: [0x8E, 0x98, 0x01, 0x23, 0xB3, 0x13, 0x52, 0xEC] };
+
+#[repr(C)]
+struct IAvnAsyncPopulatorVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    begin_populate: unsafe extern "system" fn(*mut IAvnAsyncPopulator, i64, *mut IAvnAsyncPopulatorCompletion, *const u16) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnAsyncPopulator {
+    vtbl: *const IAvnAsyncPopulatorVtbl,
+}
+
+unsafe impl ComInterface for IAvnAsyncPopulator {
+    const IID: Guid = I_AVN_ASYNC_POPULATOR_IID;
+}
+
+impl ComPtr<IAvnAsyncPopulator> {
+    pub fn begin_populate(&self, request_id: i64, completion: *mut IAvnAsyncPopulatorCompletion, search: *const u16) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().begin_populate)(self.as_raw(), request_id, completion, search);
+            hresult::check(hr)
+        }
+    }
+}
+
 pub const I_AVN_NOTIFICATION_ACTION_HANDLER_IID: Guid = Guid { data1: 0xD5D37A2F, data2: 0xA0AC, data3: 0x51AB, data4: [0x8C, 0x16, 0xB8, 0xF3, 0x73, 0x08, 0xAA, 0x11] };
 
          #[repr(C)]
@@ -5791,7 +5847,7 @@ impl ComPtr<IAvnAvaloniaObject> {
     }
 }
 
-pub const I_AVN_AUTO_COMPLETE_BOX_IID: Guid = Guid { data1: 0xF2590267, data2: 0x0628, data3: 0x5866, data4: [0x8D, 0x65, 0x10, 0xFB, 0x95, 0x7D, 0x8A, 0xF3] };
+pub const I_AVN_AUTO_COMPLETE_BOX_IID: Guid = Guid { data1: 0x92CEFC39, data2: 0x4E40, data3: 0x5193, data4: [0x89, 0x3F, 0xF3, 0xE2, 0xC7, 0x7E, 0xD2, 0x4C] };
 
 #[repr(C)]
 struct IAvnAutoCompleteBoxVtbl {
@@ -5927,6 +5983,8 @@ struct IAvnAutoCompleteBoxVtbl {
     set_item_selector: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnItemSelector) -> i32,
     get_text_selector: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut IAvnTextSelector) -> i32,
     set_text_selector: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnTextSelector) -> i32,
+    get_async_populator: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut IAvnAsyncPopulator) -> i32,
+    set_async_populator: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnAsyncPopulator) -> i32,
     get_items_source: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut IAvnVariantList) -> i32,
     set_items_source: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnVariantList) -> i32,
     get_max_length: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut i32) -> i32,
@@ -6859,6 +6917,20 @@ impl ComPtr<IAvnAutoCompleteBox> {
     pub fn set_text_selector(&self, value: Option<&ComPtr<IAvnTextSelector>>) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_text_selector)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_async_populator(&self) -> Result<Option<ComPtr<IAvnAsyncPopulator>>> {
+        unsafe {
+            let mut value: *mut IAvnAsyncPopulator = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_async_populator)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_async_populator(&self, value: Option<&ComPtr<IAvnAsyncPopulator>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_async_populator)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }

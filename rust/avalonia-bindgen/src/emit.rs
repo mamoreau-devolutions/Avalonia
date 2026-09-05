@@ -112,6 +112,10 @@ pub fn emit_sys_module(ir: &ProjectionIr) -> String {
         out.push_str(&emit_popup_placement(ir));
         out.push('\n');
     }
+    if ir.async_populator_interface_name.is_some() {
+        out.push_str(&emit_async_populator(ir));
+        out.push('\n');
+    }
     if ir.notification_interface_name.is_some() {
         out.push_str(&emit_notification(ir));
         out.push('\n');
@@ -684,6 +688,79 @@ fn emit_selectors(ir: &ProjectionIr) -> String {
         ));
     }
     out
+}
+
+fn emit_async_populator(ir: &ProjectionIr) -> String {
+    let name = simple_name(
+        ir.async_populator_interface_name
+            .as_deref()
+            .expect("asyncPopulatorInterfaceName"),
+    );
+    let iid = ir
+        .async_populator_interface_iid
+        .as_deref()
+        .expect("asyncPopulatorInterfaceIid");
+    let iid_const = format!("{}_IID", to_shouty(name));
+    let completion_name = simple_name(
+        ir.async_populator_completion_interface_name
+            .as_deref()
+            .expect("asyncPopulatorCompletionInterfaceName"),
+    );
+    let completion_iid = ir
+        .async_populator_completion_interface_iid
+        .as_deref()
+        .expect("asyncPopulatorCompletionInterfaceIid");
+    let completion_iid_const = format!("{}_IID", to_shouty(completion_name));
+    format!(
+        "pub const {completion_iid_const}: Guid = {completion_iid_literal};\n\n\
+         #[repr(C)]\n\
+         struct {completion_name}Vtbl {{\n\
+         \x20   query_interface: unsafe extern \"system\" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,\n\
+         \x20   add_ref: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+         \x20   release: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+         \x20   complete: unsafe extern \"system\" fn(*mut {completion_name}, i64, i32, *mut IAvnVariantList) -> i32,\n\
+         }}\n\n\
+         #[repr(C)]\n\
+         pub struct {completion_name} {{\n\
+         \x20   vtbl: *const {completion_name}Vtbl,\n\
+         }}\n\n\
+         unsafe impl ComInterface for {completion_name} {{\n\
+         \x20   const IID: Guid = {completion_iid_const};\n\
+         }}\n\n\
+         impl ComPtr<{completion_name}> {{\n\
+         \x20   pub fn complete(&self, request_id: i64, hresult_value: i32, items: *mut IAvnVariantList) -> Result<()> {{\n\
+         \x20       unsafe {{\n\
+         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().complete)(self.as_raw(), request_id, hresult_value, items);\n\
+         \x20           hresult::check(hr)\n\
+         \x20       }}\n\
+         \x20   }}\n\
+         }}\n\n\
+         pub const {iid_const}: Guid = {iid_literal};\n\n\
+         #[repr(C)]\n\
+         struct {name}Vtbl {{\n\
+         \x20   query_interface: unsafe extern \"system\" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,\n\
+         \x20   add_ref: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+         \x20   release: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+         \x20   begin_populate: unsafe extern \"system\" fn(*mut {name}, i64, *mut {completion_name}, *const u16) -> i32,\n\
+         }}\n\n\
+         #[repr(C)]\n\
+         pub struct {name} {{\n\
+         \x20   vtbl: *const {name}Vtbl,\n\
+         }}\n\n\
+         unsafe impl ComInterface for {name} {{\n\
+         \x20   const IID: Guid = {iid_const};\n\
+         }}\n\n\
+         impl ComPtr<{name}> {{\n\
+         \x20   pub fn begin_populate(&self, request_id: i64, completion: *mut {completion_name}, search: *const u16) -> Result<()> {{\n\
+         \x20       unsafe {{\n\
+         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().begin_populate)(self.as_raw(), request_id, completion, search);\n\
+         \x20           hresult::check(hr)\n\
+         \x20       }}\n\
+         \x20   }}\n\
+         }}\n",
+        completion_iid_literal = guid_literal(completion_iid),
+        iid_literal = guid_literal(iid),
+    )
 }
 
 fn emit_popup_placement(ir: &ProjectionIr) -> String {
@@ -1701,7 +1778,7 @@ fn rust_abi_type(kind: &str, interface_name: Option<&str>, is_nullable: bool) ->
         "F64" => "f64".into(),
         "StringUtf16" => "*mut u16".into(),
         "ComInterface" | "ComCollection" | "Brush" | "Command" | "DataTemplate" | "ItemFilter"
-            | "TextFilter" | "ItemSelector" | "TextSelector" | "Notification" | "PopupPlacement" => {
+            | "TextFilter" | "ItemSelector" | "TextSelector" | "Notification" | "PopupPlacement" | "AsyncPopulator" => {
             format!(
                 "*mut {}",
                 simple_name(interface_name.expect("interfaceName"))
@@ -1758,7 +1835,7 @@ fn rust_property_type(property: &ProjectedProperty) -> String {
         }
         // A brush is always optional: a control with no brush reports a null pointer.
         "Brush" | "Command" | "DataTemplate" | "ItemFilter" | "TextFilter" | "ItemSelector"
-        | "TextSelector" | "Notification" | "PopupPlacement" => format!(
+        | "TextSelector" | "Notification" | "PopupPlacement" | "AsyncPopulator" => format!(
             "Option<ComPtr<{}>>",
             simple_name(property.interface_name.as_deref().expect("interfaceName"))
         ),
@@ -1781,7 +1858,7 @@ fn rust_property_result(property: &ProjectedProperty) -> String {
             "Ok(ComPtr::from_raw(value))".into()
         }
         "Brush" | "Command" | "DataTemplate" | "ItemFilter" | "TextFilter" | "ItemSelector"
-        | "TextSelector" | "Notification" | "PopupPlacement" => "Ok(ComPtr::from_raw(value))".into(),
+        | "TextSelector" | "Notification" | "PopupPlacement" | "AsyncPopulator" => "Ok(ComPtr::from_raw(value))".into(),
         "ComInterface" => {
             "ComPtr::from_projected_raw(value)".into()
         }
@@ -1811,7 +1888,7 @@ fn rust_property_input(property: &ProjectedProperty) -> (String, String) {
             )
         }
         "Brush" | "Command" | "DataTemplate" | "ItemFilter" | "TextFilter" | "ItemSelector"
-        | "TextSelector" | "Notification" | "PopupPlacement" => {
+        | "TextSelector" | "Notification" | "PopupPlacement" | "AsyncPopulator" => {
             let ty = simple_name(property.interface_name.as_deref().expect("interfaceName"));
             (
                 format!("Option<&ComPtr<{ty}>>"),

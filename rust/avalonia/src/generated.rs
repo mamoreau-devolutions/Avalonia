@@ -3440,6 +3440,16 @@ impl AutoCompleteBox {
         self.set_text_selector(value)?;
         Ok(self)
     }
+    pub fn get_async_populator(&self) -> Result<Option<sys::ComPtr<sys::IAvnAsyncPopulator>>> {
+        Ok(self.raw.get_async_populator()?)
+    }
+    pub fn set_async_populator(&self, value: Option<&sys::ComPtr<sys::IAvnAsyncPopulator>>) -> Result<()> {
+        Ok(self.raw.set_async_populator(value)?)
+    }
+    pub fn async_populator(self, value: Option<&sys::ComPtr<sys::IAvnAsyncPopulator>>) -> Result<Self> {
+        self.set_async_populator(value)?;
+        Ok(self)
+    }
     pub fn get_items_source(&self) -> Result<Option<VariantList>> {
         Ok(self.raw.get_items_source()?.map(|raw| VariantList { raw }))
     }

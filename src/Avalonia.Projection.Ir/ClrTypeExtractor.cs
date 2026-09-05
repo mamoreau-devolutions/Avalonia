@@ -58,6 +58,12 @@ public static class ClrTypeExtractor
         var popupPlacementInterfaceName = PopupPlacementMarshalling.QualifiedInterfaceName(policy.ProjectionNamespace);
         var usesPopupPlacement = types.Any(type =>
             type.Properties.Any(property => property.Kind == MarshallingKind.PopupPlacement));
+        var asyncPopulatorInterfaceName = AsyncMarshalling.QualifiedAsyncPopulatorInterfaceName(policy.ProjectionNamespace);
+        var usesAsyncPopulator = types.Any(type =>
+            type.Properties.Any(property => property.Kind == MarshallingKind.AsyncPopulator));
+        var dialogCompletionInterfaceName = AsyncMarshalling.QualifiedDialogCompletionInterfaceName(policy.ProjectionNamespace);
+        var usesDialogCompletion = types.Any(type =>
+            type.Methods.Any(method => method.Parameters.Any(p => p.Kind == MarshallingKind.DialogCompletion)));
 
         return new ProjectionIr
         {
@@ -112,6 +118,20 @@ public static class ClrTypeExtractor
             PopupPlacementInterfaceName = usesPopupPlacement ? popupPlacementInterfaceName : null,
             PopupPlacementInterfaceIid = usesPopupPlacement
                 ? CreateDeterministicIid(popupPlacementInterfaceName, 1)
+                : null,
+            AsyncPopulatorInterfaceName = usesAsyncPopulator ? asyncPopulatorInterfaceName : null,
+            AsyncPopulatorInterfaceIid = usesAsyncPopulator
+                ? CreateDeterministicIid(asyncPopulatorInterfaceName, 1)
+                : null,
+            AsyncPopulatorCompletionInterfaceName = usesAsyncPopulator
+                ? $"{policy.ProjectionNamespace}.{AsyncMarshalling.AsyncPopulatorCompletionInterfaceName}"
+                : null,
+            AsyncPopulatorCompletionInterfaceIid = usesAsyncPopulator
+                ? CreateDeterministicIid($"{policy.ProjectionNamespace}.{AsyncMarshalling.AsyncPopulatorCompletionInterfaceName}")
+                : null,
+            DialogCompletionInterfaceName = usesDialogCompletion ? dialogCompletionInterfaceName : null,
+            DialogCompletionInterfaceIid = usesDialogCompletion
+                ? CreateDeterministicIid(dialogCompletionInterfaceName, 1)
                 : null,
             Types = types,
             Enums = ExtractEnums(selected, policy),
@@ -643,6 +663,11 @@ public static class ClrTypeExtractor
         {
             kind = MarshallingKind.PopupPlacement;
             interfaceName = PopupPlacementMarshalling.QualifiedInterfaceName(policy.ProjectionNamespace);
+        }
+        else if (AsyncMarshalling.IsAsyncPopulator(type))
+        {
+            kind = MarshallingKind.AsyncPopulator;
+            interfaceName = AsyncMarshalling.QualifiedAsyncPopulatorInterfaceName(policy.ProjectionNamespace);
         }
         else if (NotificationMarshalling.IsNotification(type.FullName))
         {
