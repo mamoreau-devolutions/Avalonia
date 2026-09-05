@@ -21,9 +21,9 @@ public class WaveU7CommandComTests
         Target<Button>(projected).Command = new Relay(_ => executed++);
         var command = AvnCommand.FromCommand(Target<Button>(projected).Command);
         Assert.NotNull(command);
-        Assert.Equal(0, command.Execute());
+        Assert.Equal(0, command.Execute(AvnVariant.FromObject("parameter")));
         Assert.Equal(1, executed);
-        Assert.Equal(0, command.CanExecute(out var can));
+        Assert.Equal(0, command.CanExecute(AvnVariant.FromObject("parameter"), out var can));
         Assert.Equal(1, can);
     }
 

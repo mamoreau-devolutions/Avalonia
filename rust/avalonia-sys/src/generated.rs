@@ -192,15 +192,15 @@ impl ComPtr<IAvnBrush> {
     }
 }
 
-pub const I_AVN_COMMAND_IID: Guid = Guid { data1: 0xFB93FAB9, data2: 0x2BAA, data3: 0x5AD2, data4: [0x95, 0xDC, 0x0F, 0x26, 0x1A, 0xF7, 0xB4, 0x47] };
+pub const I_AVN_COMMAND_IID: Guid = Guid { data1: 0xE6F7AAF7, data2: 0xD5E7, data3: 0x503F, data4: [0x9B, 0xE6, 0x5A, 0xF8, 0xDB, 0x5B, 0x52, 0x73] };
 
 #[repr(C)]
 struct IAvnCommandVtbl {
     query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
-    execute: unsafe extern "system" fn(*mut IAvnCommand) -> i32,
-    can_execute: unsafe extern "system" fn(*mut IAvnCommand, *mut i32) -> i32,
+    execute: unsafe extern "system" fn(*mut IAvnCommand, AvnVariant) -> i32,
+    can_execute: unsafe extern "system" fn(*mut IAvnCommand, AvnVariant, *mut i32) -> i32,
     advise_can_execute_changed: unsafe extern "system" fn(*mut IAvnCommand, *mut IAvnCommandCanExecuteChangedHandler, *mut i64) -> i32,
     unadvise_can_execute_changed: unsafe extern "system" fn(*mut IAvnCommand, i64) -> i32,
 }
@@ -215,13 +215,13 @@ unsafe impl ComInterface for IAvnCommand {
 }
 
 impl ComPtr<IAvnCommand> {
-    pub fn execute(&self) -> Result<()> {
-        unsafe { hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().execute)(self.as_raw())) }
+    pub fn execute(&self, parameter: AvnVariant) -> Result<()> {
+        unsafe { hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().execute)(self.as_raw(), parameter)) }
     }
-    pub fn can_execute(&self) -> Result<bool> {
+    pub fn can_execute(&self, parameter: AvnVariant) -> Result<bool> {
         unsafe {
             let mut value = 0;
-            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().can_execute)(self.as_raw(), &mut value);
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().can_execute)(self.as_raw(), parameter, &mut value);
             hresult::check(hr).map(|_| value != 0)
         }
     }

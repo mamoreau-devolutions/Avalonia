@@ -278,8 +278,8 @@ fn emit_command(ir: &ProjectionIr) -> String {
          \x20   query_interface: unsafe extern \"system\" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,\n\
          \x20   add_ref: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
          \x20   release: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
-         \x20   execute: unsafe extern \"system\" fn(*mut {name}) -> i32,\n\
-         \x20   can_execute: unsafe extern \"system\" fn(*mut {name}, *mut i32) -> i32,\n\
+         \x20   execute: unsafe extern \"system\" fn(*mut {name}, AvnVariant) -> i32,\n\
+         \x20   can_execute: unsafe extern \"system\" fn(*mut {name}, AvnVariant, *mut i32) -> i32,\n\
          \x20   advise_can_execute_changed: unsafe extern \"system\" fn(*mut {name}, *mut {handler_name}, *mut i64) -> i32,\n\
          \x20   unadvise_can_execute_changed: unsafe extern \"system\" fn(*mut {name}, i64) -> i32,\n\
          }}\n\n\
@@ -291,13 +291,13 @@ fn emit_command(ir: &ProjectionIr) -> String {
          \x20   const IID: Guid = {iid_const};\n\
          }}\n\n\
          impl ComPtr<{name}> {{\n\
-         \x20   pub fn execute(&self) -> Result<()> {{\n\
-         \x20       unsafe {{ hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().execute)(self.as_raw())) }}\n\
+         \x20   pub fn execute(&self, parameter: AvnVariant) -> Result<()> {{\n\
+         \x20       unsafe {{ hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().execute)(self.as_raw(), parameter)) }}\n\
          \x20   }}\n\
-         \x20   pub fn can_execute(&self) -> Result<bool> {{\n\
+         \x20   pub fn can_execute(&self, parameter: AvnVariant) -> Result<bool> {{\n\
          \x20       unsafe {{\n\
          \x20           let mut value = 0;\n\
-         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().can_execute)(self.as_raw(), &mut value);\n\
+         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().can_execute)(self.as_raw(), parameter, &mut value);\n\
          \x20           hresult::check(hr).map(|_| value != 0)\n\
          \x20       }}\n\
          \x20   }}\n\

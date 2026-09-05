@@ -1211,18 +1211,18 @@ struct IAvnCommandCanExecuteChangedHandler { const IAvnCommandCanExecuteChangedH
 #define I_AVN_COMMAND_CAN_EXECUTE_CHANGED_HANDLER_VTABLE_SLOTS 4
 
 static const AvnGuid I_AVN_COMMAND_IID = {
-    0xFB93FAB9,
-    0x2BAA,
-    0x5AD2,
-    { 0x95, 0xDC, 0x0F, 0x26, 0x1A, 0xF7, 0xB4, 0x47 }
+    0xE6F7AAF7,
+    0xD5E7,
+    0x503F,
+    { 0x9B, 0xE6, 0x5A, 0xF8, 0xDB, 0x5B, 0x52, 0x73 }
 };
-#define I_AVN_COMMAND_ABI_VERSION 1
+#define I_AVN_COMMAND_ABI_VERSION 2
 struct IAvnCommandVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnCommand* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnCommand* self); /* slot 1 */
     uint32_t (AVN_CALL *release)(IAvnCommand* self); /* slot 2 */
-    AvnHResult (AVN_CALL *execute)(IAvnCommand* self); /* slot 3 */
-    AvnHResult (AVN_CALL *can_execute)(IAvnCommand* self, int32_t* value); /* slot 4 */
+    AvnHResult (AVN_CALL *execute)(IAvnCommand* self, AvnVariant parameter); /* slot 3 */
+    AvnHResult (AVN_CALL *can_execute)(IAvnCommand* self, AvnVariant parameter, int32_t* value); /* slot 4 */
     AvnHResult (AVN_CALL *advise_can_execute_changed)(IAvnCommand* self, IAvnCommandCanExecuteChangedHandler* handler, int64_t* subscription_id); /* slot 5 */
     AvnHResult (AVN_CALL *unadvise_can_execute_changed)(IAvnCommand* self, int64_t subscription_id); /* slot 6 */
 };

@@ -13,7 +13,7 @@
 //! well-formed `IAvnCommand`.
 
 use crate::com::{ComInterface, ComPtr, IUnknown};
-use crate::generated::{IAvnCommand, IAvnCommandCanExecuteChangedHandler};
+use crate::generated::{AvnVariant, IAvnCommand, IAvnCommandCanExecuteChangedHandler};
 use crate::guid::Guid;
 use crate::hresult::{self, Result};
 use std::collections::HashMap;
@@ -23,16 +23,16 @@ use std::ptr;
 use std::sync::atomic::{fence, AtomicI64, AtomicU32, Ordering};
 use std::sync::Mutex;
 
-type ExecuteCallback = Box<dyn FnMut() -> Result<()> + Send>;
-type CanExecuteCallback = Box<dyn FnMut() -> Result<bool> + Send>;
+type ExecuteCallback = Box<dyn FnMut(AvnVariant) -> Result<()> + Send>;
+type CanExecuteCallback = Box<dyn FnMut(AvnVariant) -> Result<bool> + Send>;
 
 #[repr(C)]
 struct CommandVtbl {
     query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
     add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
-    execute: unsafe extern "system" fn(*mut IAvnCommand) -> i32,
-    can_execute: unsafe extern "system" fn(*mut IAvnCommand, *mut i32) -> i32,
+    execute: unsafe extern "system" fn(*mut IAvnCommand, AvnVariant) -> i32,
+    can_execute: unsafe extern "system" fn(*mut IAvnCommand, AvnVariant, *mut i32) -> i32,
     advise_can_execute_changed: unsafe extern "system" fn(
         *mut IAvnCommand,
         *mut IAvnCommandCanExecuteChangedHandler,
@@ -54,10 +54,13 @@ struct CommandObject {
 /// Builds an `IAvnCommand` from Rust closures.
 ///
 /// Both closures must be `Send`; they are invoked on whatever thread calls
-/// into the command, which for Avalonia controls is the UI thread.
+/// into the command, which for Avalonia controls is the UI thread. The
+/// parameter arrives as the raw ABI variant: the UTF-16 payload is borrowed
+/// for the duration of the call only, so read it (or copy it) before
+/// returning.
 pub fn command(
-    execute: impl FnMut() -> Result<()> + Send + 'static,
-    can_execute: impl FnMut() -> Result<bool> + Send + 'static,
+    execute: impl FnMut(AvnVariant) -> Result<()> + Send + 'static,
+    can_execute: impl FnMut(AvnVariant) -> Result<bool> + Send + 'static,
 ) -> Command {
     let object = Box::into_raw(Box::new(CommandObject {
         vtbl: &COMMAND_VTBL,
@@ -162,20 +165,31 @@ unsafe extern "system" fn command_release(this: *mut IUnknown) -> u32 {
     remaining
 }
 
-unsafe extern "system" fn command_execute(this: *mut IAvnCommand) -> i32 {
+unsafe extern "system" fn command_execute(this: *mut IAvnCommand, parameter: AvnVariant) -> i32 {
     let object = this.cast::<CommandObject>();
-    invoke_callback(&(*object).execute, |execute| execute())
+    let hr = invoke_callback(&(*object).execute, |execute| execute(parameter));
+    if parameter.tag == AvnVariant::TAG_UTF16 && !parameter.utf16.is_null() {
+        crate::free_utf16(parameter.utf16);
+    }
+    hr
 }
 
-unsafe extern "system" fn command_can_execute(this: *mut IAvnCommand, value: *mut i32) -> i32 {
+unsafe extern "system" fn command_can_execute(
+    this: *mut IAvnCommand,
+    parameter: AvnVariant,
+    value: *mut i32,
+) -> i32 {
     if value.is_null() {
         return hresult::E_POINTER;
     }
     let object = this.cast::<CommandObject>();
     let mut result = 0i32;
     let hr = invoke_callback(&(*object).can_execute, |can_execute| {
-        can_execute().map(|can| result = i32::from(can))
+        can_execute(parameter).map(|can| result = i32::from(can))
     });
+    if parameter.tag == AvnVariant::TAG_UTF16 && !parameter.utf16.is_null() {
+        crate::free_utf16(parameter.utf16);
+    }
     if hr == 0 {
         *value = result;
     }

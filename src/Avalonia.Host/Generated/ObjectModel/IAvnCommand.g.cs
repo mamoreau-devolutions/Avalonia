@@ -14,14 +14,14 @@ public partial interface IAvnCommandCanExecuteChangedHandler
 }
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("FB93FAB9-2BAA-5AD2-95DC-0F261AF7B447")]
+[Guid("E6F7AAF7-D5E7-503F-9BE6-5AF8DB5B5273")]
 public partial interface IAvnCommand
 {
     [PreserveSig]
-    int Execute();
+    int Execute(AvnVariant parameter);
 
     [PreserveSig]
-    int CanExecute(out int value);
+    int CanExecute(AvnVariant parameter, out int value);
 
     [PreserveSig]
     int AdviseCanExecuteChanged(IAvnCommandCanExecuteChangedHandler? handler, out long subscriptionId);
@@ -50,16 +50,30 @@ public sealed partial class AvnCommand : IAvnCommand
             _ => new CommandAdapter(value),
         };
 
-    public int Execute()
+    public int Execute(AvnVariant parameter)
     {
-        _value.Execute(null);
-        return global::Avalonia.Host.HResults.S_OK;
+        try
+        {
+            _value.Execute(parameter.ToObject());
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        finally
+        {
+            parameter.FreeUtf16();
+        }
     }
 
-    public int CanExecute(out int value)
+    public int CanExecute(AvnVariant parameter, out int value)
     {
-        value = _value.CanExecute(null) ? 1 : 0;
-        return global::Avalonia.Host.HResults.S_OK;
+        try
+        {
+            value = _value.CanExecute(parameter.ToObject()) ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        finally
+        {
+            parameter.FreeUtf16();
+        }
     }
 
     public int AdviseCanExecuteChanged(IAvnCommandCanExecuteChangedHandler? handler, out long subscriptionId)
@@ -107,7 +121,7 @@ public sealed partial class AvnCommand : IAvnCommand
 
         public bool CanExecute(object? parameter)
         {
-            var hr = _inner.CanExecute(out var value);
+            var hr = _inner.CanExecute(AvnVariant.FromObject(parameter), out var value);
             if (hr < 0)
                 global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
             return value != 0;
@@ -115,7 +129,7 @@ public sealed partial class AvnCommand : IAvnCommand
 
         public void Execute(object? parameter)
         {
-            var hr = _inner.Execute();
+            var hr = _inner.Execute(AvnVariant.FromObject(parameter));
             if (hr < 0)
                 global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
         }

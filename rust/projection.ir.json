@@ -7,8 +7,8 @@
   "brushInterfaceIid": "FC7CCBAE-ED75-5C6D-8516-DF706E137ED3",
   "brushAbiVersion": 1,
   "commandInterfaceName": "Avalonia.Host.Com.IAvnCommand",
-  "commandInterfaceIid": "FB93FAB9-2BAA-5AD2-95DC-0F261AF7B447",
-  "commandAbiVersion": 1,
+  "commandInterfaceIid": "E6F7AAF7-D5E7-503F-9BE6-5AF8DB5B5273",
+  "commandAbiVersion": 2,
   "commandHandlerInterfaceName": "Avalonia.Host.Com.IAvnCommandCanExecuteChangedHandler",
   "commandHandlerInterfaceIid": "13E58040-B570-518F-A5F2-FE3EA80B4688",
   "types": [

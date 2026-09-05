@@ -2,7 +2,7 @@
 //! execute/can_execute, and advise/notify/unadvise against a handler
 //! implemented in Rust, without the NativeAOT host in the loop.
 
-use avalonia_sys::command;
+use avalonia_sys::{command, AvnVariant};
 use std::sync::atomic::{AtomicBool, AtomicI32, Ordering};
 use std::sync::Arc;
 
@@ -14,20 +14,30 @@ fn command_executes_closures_and_reports_can_execute() {
     let executed_for_command = Arc::clone(&executed);
     let can_run_for_command = Arc::clone(&can_run);
     let handle = command(
-        move || {
+        move |parameter: AvnVariant| {
+            assert_eq!(parameter.tag, AvnVariant::TAG_I32);
+            assert_eq!(parameter.i32, 42);
             executed_for_command.fetch_add(1, Ordering::SeqCst);
             Ok(())
         },
-        move || Ok(can_run_for_command.load(Ordering::SeqCst)),
+        move |parameter: AvnVariant| {
+            assert_eq!(parameter.tag, AvnVariant::TAG_I32);
+            Ok(can_run_for_command.load(Ordering::SeqCst))
+        },
     );
 
     let ptr = handle.as_com_ptr();
-    assert!(ptr.can_execute().expect("can_execute failed"));
-    ptr.execute().expect("execute failed");
+    let parameter = AvnVariant {
+        tag: AvnVariant::TAG_I32,
+        i32: 42,
+        ..Default::default()
+    };
+    assert!(ptr.can_execute(parameter).expect("can_execute failed"));
+    ptr.execute(parameter).expect("execute failed");
     assert_eq!(executed.load(Ordering::SeqCst), 1);
 
     can_run.store(false, Ordering::SeqCst);
-    assert!(!ptr.can_execute().expect("can_execute failed"));
+    assert!(!ptr.can_execute(parameter).expect("can_execute failed"));
 }
 
 #[test]
@@ -40,7 +50,10 @@ fn command_advise_notify_unadvise_round_trip() {
         Ok(())
     });
 
-    let handle = command(|| Ok(()), || Ok(true));
+    let handle = command(
+        |_: AvnVariant| Ok(()),
+        |_: AvnVariant| Ok(true),
+    );
     let ptr = handle.as_com_ptr();
 
     let subscription = ptr

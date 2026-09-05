@@ -137,8 +137,8 @@ public static class NativeHeaderEmitter
             EndInterface(sb, handlerName, 4);
             EmitIid(sb, commandName, ir.CommandInterfaceIid!, ir.CommandAbiVersion);
             BeginInterface(sb, commandName);
-            EmitSlot(sb, 3, "execute", commandName, []);
-            EmitSlot(sb, 4, "can_execute", commandName, ["int32_t* value"]);
+            EmitSlot(sb, 3, "execute", commandName, ["AvnVariant parameter"]);
+            EmitSlot(sb, 4, "can_execute", commandName, ["AvnVariant parameter", "int32_t* value"]);
             EmitSlot(sb, 5, "advise_can_execute_changed", commandName,
                 [$"{handlerName}* handler", "int64_t* subscription_id"]);
             EmitSlot(sb, 6, "unadvise_can_execute_changed", commandName, ["int64_t subscription_id"]);

@@ -56,9 +56,9 @@ public unsafe class WaveU11CommandNotifyComTests
 
         public int AdvisedCount => _handlers.Count;
 
-        public int Execute() => 0;
+        public int Execute(AvnVariant parameter) => 0;
 
-        public int CanExecute(out int value)
+        public int CanExecute(AvnVariant parameter, out int value)
         {
             value = 1;
             return 0;

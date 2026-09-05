@@ -62,6 +62,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnCalendarDatePicker"] = 4,
             ["Avalonia.Host.Com.IAvnCarousel"] = 5,
             ["Avalonia.Host.Com.IAvnCommandBar"] = 4,
+            ["Avalonia.Host.Com.IAvnCommand"] = 2,
             ["Avalonia.Host.Com.IAvnCommandBarButton"] = 5,
             ["Avalonia.Host.Com.IAvnCommandBarSeparator"] = 3,
             ["Avalonia.Host.Com.IAvnCommandBarToggleButton"] = 5,

@@ -318,6 +318,16 @@ Button family 9 to 10 (Button/ToggleButton/CheckBox/RadioButton/ToggleSwitch),
 MenuItem 6 to 7, SplitButton and ToggleSplitButton 5 to 6, TrayIcon 2 to 3,
 each republished under its fresh deterministic IID. Factory stays 13.
 
+`IAvnCommand` moves to ABI version 2 so the parameter reaches the command:
+`execute(AvnVariant parameter)` and `can_execute(AvnVariant parameter,
+int32_t* value)` replace their parameterless v1 shapes, and the IID is
+republished accordingly. The host's `AvnCommand` frees a UTF-16 payload
+after converting it to the managed parameter; the Rust CCW does the same
+after the closure returns. The Rust `command(execute, can_execute)`
+closures now take the raw `AvnVariant`, and `CommandParameter` set on the
+control flows end to end: `Button.CommandParameter` → managed
+`ICommand.Execute(parameter)` → Rust closure argument.
+
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and
 `IAvnNumericUpDown` each move from 2 to 3. Templates, filters, ItemsSource,
