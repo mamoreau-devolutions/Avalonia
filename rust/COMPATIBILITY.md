@@ -497,6 +497,20 @@ Wave Q sweeps leftover marshallable scalars on leaf input types.
 SelectedDates, NumberFormat and obsolete Watermark aliases stay gaps.
 The factory is unmoved at 13.
 
+Wave U26 projects typed notifications, closing the last pending gaps.
+`Notification` (ordinal 28) maps `INotification` to `IAvnNotification`
+whose getter slots carry the title, message, type, expiration and the
+OnClick/OnClose handler interfaces (`IAvnNotificationActionHandler`);
+the host's `AvnNotification` wraps a foreign interface as a managed
+`INotification`, reading the handlers through getter slots into managed
+actions. The bindgen emits the handler CCW through the event-callback
+pattern and RCW getters on `IAvnWindowNotificationManager`, and the
+Rust side grows a ref-counted `avalonia_sys::notification` CCW whose
+string getters allocate through the host's UTF-16 provider. The INotification
+content overloads and the Action-carrying Show overload cross through
+the notification CCW's handler slots; every remaining gap in the report
+is now by-design with its rationale. Factory stays 13.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A

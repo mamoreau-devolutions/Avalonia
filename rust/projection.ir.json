@@ -17,6 +17,9 @@
   "itemFilterInterfaceIid": "9BE82183-F2F3-5F56-99C8-5362F60D6D7E",
   "textFilterInterfaceName": "Avalonia.Host.Com.IAvnTextFilter",
   "textFilterInterfaceIid": "D1548C05-E9AB-53C3-8D87-A8BFEA3ABD9F",
+  "notificationInterfaceName": "Avalonia.Host.Com.IAvnNotification",
+  "notificationInterfaceIid": "DE4D1CD2-6CDF-5FED-91B6-1D0A95A562D2",
+  "notificationHandlerInterfaceIid": "D5D37A2F-A0AC-51AB-8C16-B8F37308AA11",
   "types": [
     {
       "name": "IAvnAvaloniaObject",
@@ -3299,6 +3302,22 @@
       "isConstructible": true,
       "methods": [
         {
+          "name": "ShowWithINotification",
+          "managedName": "Show",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": [
+            {
+              "name": "content",
+              "kind": "Notification",
+              "direction": "In",
+              "interfaceName": "Avalonia.Host.Com.IAvnNotification",
+              "managedTypeName": "Avalonia.Controls.Notifications.INotification",
+              "isNullable": false
+            }
+          ]
+        },
+        {
           "name": "ShowWithObject",
           "managedName": "Show",
           "returnKind": "I32",
@@ -3309,6 +3328,22 @@
               "kind": "Variant",
               "direction": "In",
               "managedTypeName": "System.Object",
+              "isNullable": false
+            }
+          ]
+        },
+        {
+          "name": "CloseWithINotification",
+          "managedName": "Close",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": [
+            {
+              "name": "notification",
+              "kind": "Notification",
+              "direction": "In",
+              "interfaceName": "Avalonia.Host.Com.IAvnNotification",
+              "managedTypeName": "Avalonia.Controls.Notifications.INotification",
               "isNullable": false
             }
           ]
@@ -11766,7 +11801,7 @@
     {
       "owner": "Avalonia.Controls.ContextMenu",
       "member": "Open()",
-      "reason": "Overrides a projected base method"
+      "reason": "By design: overrides the projected base slot"
     },
     {
       "owner": "Avalonia.Controls.ContextMenu",
@@ -11960,18 +11995,8 @@
     },
     {
       "owner": "Avalonia.Controls.Notifications.WindowNotificationManager",
-      "member": "Show(INotification)",
-      "reason": "Parameter \u0027content\u0027: Type \u0027Avalonia.Controls.Notifications.INotification\u0027 is not marshallable"
-    },
-    {
-      "owner": "Avalonia.Controls.Notifications.WindowNotificationManager",
       "member": "Show(Object, NotificationType, Nullable\u00601, Action, Action, String[])",
-      "reason": "Parameter \u0027onClick\u0027: Type \u0027System.Action\u0027 is not marshallable"
-    },
-    {
-      "owner": "Avalonia.Controls.Notifications.WindowNotificationManager",
-      "member": "Close(INotification)",
-      "reason": "Parameter \u0027notification\u0027: Type \u0027Avalonia.Controls.Notifications.INotification\u0027 is not marshallable"
+      "reason": "By design: System.Action parameters ride the notification CCW\u0027s handler slots instead"
     },
     {
       "owner": "Avalonia.Controls.NumericUpDown",

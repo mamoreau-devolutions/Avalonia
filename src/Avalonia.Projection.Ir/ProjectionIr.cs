@@ -52,6 +52,14 @@ public sealed class ProjectionIr
     public string? TextFilterInterfaceName { get; init; }
     public string? TextFilterInterfaceIid { get; init; }
 
+    /// <summary>
+    /// The projected notification interface, present only when a member marshals as
+    /// <see cref="MarshallingKind.Notification"/>.
+    /// </summary>
+    public string? NotificationInterfaceName { get; init; }
+    public string? NotificationInterfaceIid { get; init; }
+    public string? NotificationHandlerInterfaceIid { get; init; }
+
     public IReadOnlyList<ProjectedType> Types { get; init; } = [];
     public IReadOnlyList<ProjectedEnum> Enums { get; init; } = [];
     public IReadOnlyList<ProjectedAttachedProperty> AttachedProperties { get; init; } = [];

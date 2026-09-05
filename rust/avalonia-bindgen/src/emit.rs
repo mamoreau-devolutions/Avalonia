@@ -79,6 +79,10 @@ pub fn emit_sys_module(ir: &ProjectionIr) -> String {
         out.push_str(&emit_filters(ir));
         out.push('\n');
     }
+    if ir.notification_interface_name.is_some() {
+        out.push_str(&emit_notification(ir));
+        out.push('\n');
+    }
     for event in unique_events(ir) {
         out.push_str(&emit_event_handler(event));
         out.push('\n');
@@ -572,6 +576,135 @@ fn emit_filters(ir: &ProjectionIr) -> String {
         ));
     }
     out
+}
+
+fn emit_notification(ir: &ProjectionIr) -> String {
+    let name = simple_name(
+        ir.notification_interface_name
+            .as_deref()
+            .expect("notificationInterfaceName"),
+    );
+    let iid = ir
+        .notification_interface_iid
+        .as_deref()
+            .expect("notificationInterfaceIid for a projected notification");
+    let handler_iid = ir
+        .notification_handler_interface_iid
+        .as_deref()
+            .expect("notificationHandlerInterfaceIid for a projected notification");
+    let iid_const = format!("{}_IID", to_shouty(name));
+    let handler = "IAvnNotificationActionHandler";
+    let handler_iid_const = format!("{}_IID", to_shouty(handler));
+    let handler_shouty = to_shouty(handler);
+    format!(
+        "pub const {handler_iid_const}: Guid = {handler_iid_literal};
+
+         #[repr(C)]
+         struct {handler}Vtbl {{
+         \x20   query_interface: unsafe extern \"system\" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+         \x20   add_ref: unsafe extern \"system\" fn(*mut IUnknown) -> u32,
+         \x20   release: unsafe extern \"system\" fn(*mut IUnknown) -> u32,
+         \x20   invoke: unsafe extern \"system\" fn(*mut {handler}) -> i32,
+         }}
+
+         #[repr(C)]
+         pub struct {handler} {{
+         \x20   vtbl: *const {handler}Vtbl,
+         }}
+
+         unsafe impl ComInterface for {handler} {{
+         \x20   const IID: Guid = {handler_iid_const};
+         }}
+
+         pub fn notification_action_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<{handler}> {{
+         \x20   crate::event_callback::create::<{handler}, ()>({handler} {{ vtbl: &{handler_shouty}_VTBL }}, move |_| callback())
+         }}
+
+         unsafe extern \"system\" fn notification_action_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {{
+         \x20   crate::event_callback::query_interface::<{handler}, ()>(this, iid, result)
+         }}
+
+         unsafe extern \"system\" fn notification_action_handler_add_ref(this: *mut IUnknown) -> u32 {{
+         \x20   crate::event_callback::add_ref::<{handler}, ()>(this)
+         }}
+
+         unsafe extern \"system\" fn notification_action_handler_release(this: *mut IUnknown) -> u32 {{
+         \x20   crate::event_callback::release::<{handler}, ()>(this)
+         }}
+
+         unsafe extern \"system\" fn notification_action_handler_invoke(this: *mut {handler}) -> i32 {{
+         \x20   crate::event_callback::invoke::<{handler}, ()>(this, &mut ())
+         }}
+
+         #[rustfmt::skip]
+         static {handler_shouty}_VTBL: {handler}Vtbl = {handler}Vtbl {{
+         \x20   query_interface: notification_action_handler_query_interface,
+         \x20   add_ref: notification_action_handler_add_ref,
+         \x20   release: notification_action_handler_release,
+         \x20   invoke: notification_action_handler_invoke,
+         }};
+
+         pub const {iid_const}: Guid = {iid_literal};
+
+         #[repr(C)]
+         struct {name}Vtbl {{
+         \x20   query_interface: unsafe extern \"system\" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+         \x20   add_ref: unsafe extern \"system\" fn(*mut IUnknown) -> u32,
+         \x20   release: unsafe extern \"system\" fn(*mut IUnknown) -> u32,
+         \x20   get_title: unsafe extern \"system\" fn(*mut {name}, *mut *mut u16) -> i32,
+         \x20   get_message: unsafe extern \"system\" fn(*mut {name}, *mut *mut u16) -> i32,
+         \x20   get_type: unsafe extern \"system\" fn(*mut {name}, *mut i32) -> i32,
+         \x20   get_expiration: unsafe extern \"system\" fn(*mut {name}, *mut i64) -> i32,
+         \x20   get_on_click: unsafe extern \"system\" fn(*mut {name}, *mut *mut {handler}) -> i32,
+         \x20   get_on_close: unsafe extern \"system\" fn(*mut {name}, *mut *mut {handler}) -> i32,
+         }}
+
+         #[repr(C)]
+         pub struct {name} {{
+         \x20   vtbl: *const {name}Vtbl,
+         }}
+
+         unsafe impl ComInterface for {name} {{
+         \x20   const IID: Guid = {iid_const};
+         }}
+
+         impl ComPtr<{name}> {{
+         \x20   pub fn title(&self) -> Result<String> {{
+         \x20       unsafe {{
+         \x20           let mut value: *mut u16 = ptr::null_mut();
+         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_title)(self.as_raw(), &mut value);
+         \x20           hresult::check(hr)?;
+         \x20           crate::clone_utf16(value).ok_or(Error(hresult::E_POINTER))
+         \x20       }}
+         \x20   }}
+         \x20   pub fn message(&self) -> Result<String> {{
+         \x20       unsafe {{
+         \x20           let mut value: *mut u16 = ptr::null_mut();
+         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_message)(self.as_raw(), &mut value);
+         \x20           hresult::check(hr)?;
+         \x20           crate::clone_utf16(value).ok_or(Error(hresult::E_POINTER))
+         \x20       }}
+         \x20   }}
+         \x20   pub fn notification_type(&self) -> Result<i32> {{
+         \x20       unsafe {{
+         \x20           let mut value = 0;
+         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_type)(self.as_raw(), &mut value);
+         \x20           hresult::check(hr).map(|_| value)
+         \x20       }}
+         \x20   }}
+         \x20   pub fn expiration(&self) -> Result<i64> {{
+         \x20       unsafe {{
+         \x20           let mut value = 0;
+         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_expiration)(self.as_raw(), &mut value);
+         \x20           hresult::check(hr).map(|_| value)
+         \x20       }}
+         \x20   }}
+         }}
+",
+        iid_literal = guid_literal(iid),
+        handler_iid_literal = guid_literal(handler_iid),
+        handler_shouty = handler_shouty,
+    )
 }
 
 fn emit_interface(ir: &ProjectionIr, ty: &ProjectedType) -> String {
@@ -1295,7 +1428,7 @@ fn rust_abi_type(kind: &str, interface_name: Option<&str>, is_nullable: bool) ->
         "F64" => "f64".into(),
         "StringUtf16" => "*mut u16".into(),
         "ComInterface" | "ComCollection" | "Brush" | "Command" | "DataTemplate" | "ItemFilter"
-            | "TextFilter" => {
+            | "TextFilter" | "Notification" => {
             format!(
                 "*mut {}",
                 simple_name(interface_name.expect("interfaceName"))
@@ -1349,7 +1482,7 @@ fn rust_property_type(property: &ProjectedProperty) -> String {
             }
         }
         // A brush is always optional: a control with no brush reports a null pointer.
-        "Brush" | "Command" | "DataTemplate" | "ItemFilter" | "TextFilter" => format!(
+        "Brush" | "Command" | "DataTemplate" | "ItemFilter" | "TextFilter" | "Notification" => format!(
             "Option<ComPtr<{}>>",
             simple_name(property.interface_name.as_deref().expect("interfaceName"))
         ),
@@ -1371,7 +1504,7 @@ fn rust_property_result(property: &ProjectedProperty) -> String {
         "ComCollection" if property.is_nullable => {
             "Ok(ComPtr::from_raw(value))".into()
         }
-        "Brush" | "Command" | "DataTemplate" | "ItemFilter" | "TextFilter" => "Ok(ComPtr::from_raw(value))".into(),
+        "Brush" | "Command" | "DataTemplate" | "ItemFilter" | "TextFilter" | "Notification" => "Ok(ComPtr::from_raw(value))".into(),
         "ComInterface" => {
             "ComPtr::from_projected_raw(value)".into()
         }
@@ -1400,7 +1533,7 @@ fn rust_property_input(property: &ProjectedProperty) -> (String, String) {
                 "value.map_or(ptr::null_mut(), ComPtr::as_raw)".into(),
             )
         }
-        "Brush" | "Command" | "DataTemplate" | "ItemFilter" | "TextFilter" => {
+        "Brush" | "Command" | "DataTemplate" | "ItemFilter" | "TextFilter" | "Notification" => {
             let ty = simple_name(property.interface_name.as_deref().expect("interfaceName"));
             (
                 format!("Option<&ComPtr<{ty}>>"),
@@ -1421,11 +1554,11 @@ fn rust_parameter_input_type(parameter: &ProjectedParameter) -> String {
         "NullableBool" => "Option<bool>".into(),
         "StringUtf16" if parameter.is_nullable => "Option<&[u16]>".into(),
         "StringUtf16" => "&[u16]".into(),
-        "ComInterface" if parameter.is_nullable => format!(
+        "ComInterface" | "Notification" if parameter.is_nullable => format!(
             "Option<&ComPtr<{}>>",
             simple_name(parameter.interface_name.as_deref().expect("interfaceName"))
         ),
-        "ComInterface" => format!(
+        "ComInterface" | "Notification" => format!(
             "&ComPtr<{}>",
             simple_name(parameter.interface_name.as_deref().expect("interfaceName"))
         ),
@@ -1449,10 +1582,10 @@ fn rust_parameter_call_value(parameter: &ProjectedParameter) -> String {
             format!("{name}.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut())")
         }
         "StringUtf16" => format!("{name}.as_ptr().cast_mut()"),
-        "ComInterface" if parameter.is_nullable => {
+        "ComInterface" | "Notification" if parameter.is_nullable => {
             format!("{name}.map_or(ptr::null_mut(), ComPtr::as_raw)")
         }
-        "ComInterface" => format!("{name}.as_raw()"),
+        "ComInterface" | "Notification" => format!("{name}.as_raw()"),
         _ => name,
     }
 }

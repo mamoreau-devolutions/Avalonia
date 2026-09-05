@@ -723,6 +723,15 @@ fn emit_method(ty: &ProjectedType, method: &crate::ir::ProjectedMethod) -> Strin
                 } else {
                     format!("{parameter_name}: &{safe}")
                 }
+            } else if parameter.kind == "Notification" {
+                let full = simple_name(
+                    parameter.interface_name.as_deref().expect("interfaceName"),
+                );
+                if parameter.is_nullable {
+                    format!("{parameter_name}: Option<&sys::ComPtr<sys::{full}>>")
+                } else {
+                    format!("{parameter_name}: &sys::ComPtr<sys::{full}>")
+                }
             } else if parameter.kind == "Variant" {
                 format!("{parameter_name}: impl Into<Variant>")
             } else if let Some(geometry) = geometry::find(&parameter.kind) {
@@ -763,6 +772,8 @@ fn emit_method(ty: &ProjectedType, method: &crate::ir::ProjectedMethod) -> Strin
                 } else {
                     format!("&{parameter_name}.raw")
                 }
+            } else if parameter.kind == "Notification" {
+                format!("{parameter_name}")
             } else if parameter.kind == "Variant" {
                 format!("*{parameter_name}.into().to_abi()?")
             } else if geometry::is_geometry(&parameter.kind) {

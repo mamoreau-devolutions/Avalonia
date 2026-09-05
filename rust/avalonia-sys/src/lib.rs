@@ -12,6 +12,7 @@ mod command;
 mod data_template;
 mod dispatcher;
 mod filters;
+mod notification;
 mod echo;
 mod event_callback;
 mod factory;
@@ -31,6 +32,7 @@ pub use com::{ComInterface, ComPtr, IUnknown};
 pub use command::{command, Command};
 pub use data_template::{data_template, DataTemplate};
 pub use filters::{item_filter, text_filter, ItemFilter, TextFilter};
+pub use notification::{notification, Notification, NotificationSpec};
 pub use dispatcher::{action, IAvnAction, IAvnDispatcher};
 pub use echo::IAvnEcho;
 pub use factory::IAvnActivationFactory;
@@ -204,6 +206,14 @@ pub(crate) unsafe fn free_utf16_if_host(ptr: *mut u16) {
     if !ptr.is_null() && FREE.get().is_some() {
         free_utf16(ptr);
     }
+}
+
+/// The host's raw UTF-16 allocator (length in UTF-16 units, including the
+/// terminator the caller writes), when a host session has been loaded. CCWs
+/// use this for strings the host will later release; without a host there is
+/// no allocator, and callers surface E_NOTIMPL instead.
+pub(crate) fn alloc_utf16_provider() -> Option<AllocUtf16Fn> {
+    ALLOC_UTF16.get().copied()
 }
 
 pub struct Host {

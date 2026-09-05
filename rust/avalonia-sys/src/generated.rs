@@ -434,6 +434,110 @@ impl ComPtr<IAvnTextFilter> {
     }
 }
 
+pub const I_AVN_NOTIFICATION_ACTION_HANDLER_IID: Guid = Guid { data1: 0xD5D37A2F, data2: 0xA0AC, data3: 0x51AB, data4: [0x8C, 0x16, 0xB8, 0xF3, 0x73, 0x08, 0xAA, 0x11] };
+
+         #[repr(C)]
+         struct IAvnNotificationActionHandlerVtbl {
+             query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+             add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+             release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+             invoke: unsafe extern "system" fn(*mut IAvnNotificationActionHandler) -> i32,
+         }
+
+         #[repr(C)]
+         pub struct IAvnNotificationActionHandler {
+             vtbl: *const IAvnNotificationActionHandlerVtbl,
+         }
+
+         unsafe impl ComInterface for IAvnNotificationActionHandler {
+             const IID: Guid = I_AVN_NOTIFICATION_ACTION_HANDLER_IID;
+         }
+
+         pub fn notification_action_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnNotificationActionHandler> {
+             crate::event_callback::create::<IAvnNotificationActionHandler, ()>(IAvnNotificationActionHandler { vtbl: &I_AVN_NOTIFICATION_ACTION_HANDLER_VTBL }, move |_| callback())
+         }
+
+         unsafe extern "system" fn notification_action_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+             crate::event_callback::query_interface::<IAvnNotificationActionHandler, ()>(this, iid, result)
+         }
+
+         unsafe extern "system" fn notification_action_handler_add_ref(this: *mut IUnknown) -> u32 {
+             crate::event_callback::add_ref::<IAvnNotificationActionHandler, ()>(this)
+         }
+
+         unsafe extern "system" fn notification_action_handler_release(this: *mut IUnknown) -> u32 {
+             crate::event_callback::release::<IAvnNotificationActionHandler, ()>(this)
+         }
+
+         unsafe extern "system" fn notification_action_handler_invoke(this: *mut IAvnNotificationActionHandler) -> i32 {
+             crate::event_callback::invoke::<IAvnNotificationActionHandler, ()>(this, &mut ())
+         }
+
+         #[rustfmt::skip]
+         static I_AVN_NOTIFICATION_ACTION_HANDLER_VTBL: IAvnNotificationActionHandlerVtbl = IAvnNotificationActionHandlerVtbl {
+             query_interface: notification_action_handler_query_interface,
+             add_ref: notification_action_handler_add_ref,
+             release: notification_action_handler_release,
+             invoke: notification_action_handler_invoke,
+         };
+
+         pub const I_AVN_NOTIFICATION_IID: Guid = Guid { data1: 0xDE4D1CD2, data2: 0x6CDF, data3: 0x5FED, data4: [0x91, 0xB6, 0x1D, 0x0A, 0x95, 0xA5, 0x62, 0xD2] };
+
+         #[repr(C)]
+         struct IAvnNotificationVtbl {
+             query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+             add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+             release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+             get_title: unsafe extern "system" fn(*mut IAvnNotification, *mut *mut u16) -> i32,
+             get_message: unsafe extern "system" fn(*mut IAvnNotification, *mut *mut u16) -> i32,
+             get_type: unsafe extern "system" fn(*mut IAvnNotification, *mut i32) -> i32,
+             get_expiration: unsafe extern "system" fn(*mut IAvnNotification, *mut i64) -> i32,
+             get_on_click: unsafe extern "system" fn(*mut IAvnNotification, *mut *mut IAvnNotificationActionHandler) -> i32,
+             get_on_close: unsafe extern "system" fn(*mut IAvnNotification, *mut *mut IAvnNotificationActionHandler) -> i32,
+         }
+
+         #[repr(C)]
+         pub struct IAvnNotification {
+             vtbl: *const IAvnNotificationVtbl,
+         }
+
+         unsafe impl ComInterface for IAvnNotification {
+             const IID: Guid = I_AVN_NOTIFICATION_IID;
+         }
+
+         impl ComPtr<IAvnNotification> {
+             pub fn title(&self) -> Result<String> {
+                 unsafe {
+                     let mut value: *mut u16 = ptr::null_mut();
+                     let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_title)(self.as_raw(), &mut value);
+                     hresult::check(hr)?;
+                     crate::clone_utf16(value).ok_or(Error(hresult::E_POINTER))
+                 }
+             }
+             pub fn message(&self) -> Result<String> {
+                 unsafe {
+                     let mut value: *mut u16 = ptr::null_mut();
+                     let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_message)(self.as_raw(), &mut value);
+                     hresult::check(hr)?;
+                     crate::clone_utf16(value).ok_or(Error(hresult::E_POINTER))
+                 }
+             }
+             pub fn notification_type(&self) -> Result<i32> {
+                 unsafe {
+                     let mut value = 0;
+                     let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_type)(self.as_raw(), &mut value);
+                     hresult::check(hr).map(|_| value)
+                 }
+             }
+             pub fn expiration(&self) -> Result<i64> {
+                 unsafe {
+                     let mut value = 0;
+                     let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_expiration)(self.as_raw(), &mut value);
+                     hresult::check(hr).map(|_| value)
+                 }
+             }
+         }
+
 pub const I_AVN_AUTO_COMPLETE_BOX_TEXT_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x03E79A47, data2: 0x0885, data3: 0x5435, data4: [0x88, 0x0A, 0x7A, 0x15, 0x52, 0x93, 0x63, 0x9B] };
 
 #[repr(C)]
@@ -40935,7 +41039,9 @@ struct IAvnWindowNotificationManagerVtbl {
     set_position: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, i32) -> i32,
     get_max_items: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut i32) -> i32,
     set_max_items: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, i32) -> i32,
+    show_with_i_notification: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut IAvnNotification) -> i32,
     show_with_object: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, AvnVariant) -> i32,
+    close_with_i_notification: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut IAvnNotification) -> i32,
     close_with_object: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, AvnVariant) -> i32,
     close_all: unsafe extern "system" fn(*mut IAvnWindowNotificationManager) -> i32,
 }
@@ -41608,9 +41714,21 @@ impl ComPtr<IAvnWindowNotificationManager> {
             hresult::check(hr)
         }
     }
+    pub fn show_with_i_notification(&self, content: &ComPtr<IAvnNotification>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().show_with_i_notification)(self.as_raw(), content.as_raw());
+            hresult::check(hr)
+        }
+    }
     pub fn show_with_object(&self, content: AvnVariant) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().show_with_object)(self.as_raw(), content);
+            hresult::check(hr)
+        }
+    }
+    pub fn close_with_i_notification(&self, notification: &ComPtr<IAvnNotification>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().close_with_i_notification)(self.as_raw(), notification.as_raw());
             hresult::check(hr)
         }
     }

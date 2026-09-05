@@ -1818,6 +1818,43 @@ struct IAvnTextFilterVtbl {
 struct IAvnTextFilter { const IAvnTextFilterVtbl* vtbl; };
 #define I_AVN_TEXT_FILTER_VTABLE_SLOTS 4
 
+static const AvnGuid I_AVN_NOTIFICATION_ACTION_HANDLER_IID = {
+    0xD5D37A2F,
+    0xA0AC,
+    0x51AB,
+    { 0x8C, 0x16, 0xB8, 0xF3, 0x73, 0x08, 0xAA, 0x11 }
+};
+#define I_AVN_NOTIFICATION_ACTION_HANDLER_ABI_VERSION 1
+struct IAvnNotificationActionHandlerVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnNotificationActionHandler* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnNotificationActionHandler* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnNotificationActionHandler* self); /* slot 2 */
+    AvnHResult (AVN_CALL *invoke)(IAvnNotificationActionHandler* self); /* slot 3 */
+};
+struct IAvnNotificationActionHandler { const IAvnNotificationActionHandlerVtbl* vtbl; };
+#define I_AVN_NOTIFICATION_ACTION_HANDLER_VTABLE_SLOTS 4
+
+static const AvnGuid I_AVN_NOTIFICATION_IID = {
+    0xDE4D1CD2,
+    0x6CDF,
+    0x5FED,
+    { 0x91, 0xB6, 0x1D, 0x0A, 0x95, 0xA5, 0x62, 0xD2 }
+};
+#define I_AVN_NOTIFICATION_ABI_VERSION 1
+struct IAvnNotificationVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnNotification* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnNotification* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnNotification* self); /* slot 2 */
+    AvnHResult (AVN_CALL *get_title)(IAvnNotification* self, const uint16_t** value); /* slot 3 */
+    AvnHResult (AVN_CALL *get_message)(IAvnNotification* self, const uint16_t** value); /* slot 4 */
+    AvnHResult (AVN_CALL *get_type)(IAvnNotification* self, int32_t* value); /* slot 5 */
+    AvnHResult (AVN_CALL *get_expiration)(IAvnNotification* self, int64_t* value); /* slot 6 */
+    AvnHResult (AVN_CALL *get_on_click)(IAvnNotification* self, IAvnNotificationActionHandler** value); /* slot 7 */
+    AvnHResult (AVN_CALL *get_on_close)(IAvnNotification* self, IAvnNotificationActionHandler** value); /* slot 8 */
+};
+struct IAvnNotification { const IAvnNotificationVtbl* vtbl; };
+#define I_AVN_NOTIFICATION_VTABLE_SLOTS 9
+
 static const AvnGuid I_AVN_CONTROL_LIST_IID = {
     0x30347281,
     0x9A69,
@@ -13696,12 +13733,14 @@ struct IAvnWindowNotificationManagerVtbl {
     AvnHResult (AVN_CALL *set_position)(IAvnWindowNotificationManager* self, int32_t value); /* slot 95 */
     AvnHResult (AVN_CALL *get_max_items)(IAvnWindowNotificationManager* self, int32_t* value); /* slot 96 */
     AvnHResult (AVN_CALL *set_max_items)(IAvnWindowNotificationManager* self, int32_t value); /* slot 97 */
-    AvnHResult (AVN_CALL *show_with_object)(IAvnWindowNotificationManager* self, AvnVariant content); /* slot 98 */
-    AvnHResult (AVN_CALL *close_with_object)(IAvnWindowNotificationManager* self, AvnVariant content); /* slot 99 */
-    AvnHResult (AVN_CALL *close_all)(IAvnWindowNotificationManager* self); /* slot 100 */
+    AvnHResult (AVN_CALL *show_with_i_notification)(IAvnWindowNotificationManager* self, IAvnNotification* content); /* slot 98 */
+    AvnHResult (AVN_CALL *show_with_object)(IAvnWindowNotificationManager* self, AvnVariant content); /* slot 99 */
+    AvnHResult (AVN_CALL *close_with_i_notification)(IAvnWindowNotificationManager* self, IAvnNotification* notification); /* slot 100 */
+    AvnHResult (AVN_CALL *close_with_object)(IAvnWindowNotificationManager* self, AvnVariant content); /* slot 101 */
+    AvnHResult (AVN_CALL *close_all)(IAvnWindowNotificationManager* self); /* slot 102 */
 };
 struct IAvnWindowNotificationManager { const IAvnWindowNotificationManagerVtbl* vtbl; };
-#define I_AVN_WINDOW_NOTIFICATION_MANAGER_VTABLE_SLOTS 101
+#define I_AVN_WINDOW_NOTIFICATION_MANAGER_VTABLE_SLOTS 103
 
 static const AvnGuid I_AVN_WRAP_PANEL_IID = {
     0x5D628CDD,

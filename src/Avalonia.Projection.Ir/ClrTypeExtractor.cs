@@ -38,9 +38,15 @@ public static class ClrTypeExtractor
         var itemFilterInterfaceName = FilterMarshalling.QualifiedItemFilterInterfaceName(policy.ProjectionNamespace);
         var textFilterInterfaceName = FilterMarshalling.QualifiedTextFilterInterfaceName(policy.ProjectionNamespace);
         var usesItemFilter = types.Any(type =>
-            type.Properties.Any(property => property.Kind == MarshallingKind.ItemFilter));
+            type.Properties.Any(property => property.Kind == MarshallingKind.ItemFilter) ||
+            type.Methods.Any(method => method.Parameters.Any(p => p.Kind == MarshallingKind.ItemFilter)));
         var usesTextFilter = types.Any(type =>
-            type.Properties.Any(property => property.Kind == MarshallingKind.TextFilter));
+            type.Properties.Any(property => property.Kind == MarshallingKind.TextFilter) ||
+            type.Methods.Any(method => method.Parameters.Any(p => p.Kind == MarshallingKind.TextFilter)));
+        var notificationInterfaceName = NotificationMarshalling.QualifiedInterfaceName(policy.ProjectionNamespace);
+        var usesNotification = types.Any(type =>
+            type.Properties.Any(property => property.Kind == MarshallingKind.Notification) ||
+            type.Methods.Any(method => method.Parameters.Any(p => p.Kind == MarshallingKind.Notification)));
 
         return new ProjectionIr
         {
@@ -76,6 +82,13 @@ public static class ClrTypeExtractor
             TextFilterInterfaceName = usesTextFilter ? textFilterInterfaceName : null,
             TextFilterInterfaceIid = usesTextFilter
                 ? CreateDeterministicIid(textFilterInterfaceName, 1)
+                : null,
+            NotificationInterfaceName = usesNotification ? notificationInterfaceName : null,
+            NotificationInterfaceIid = usesNotification
+                ? CreateDeterministicIid(notificationInterfaceName, 1)
+                : null,
+            NotificationHandlerInterfaceIid = usesNotification
+                ? CreateDeterministicIid($"{policy.ProjectionNamespace}.IAvnNotificationActionHandler", 1)
                 : null,
             Types = types,
             Enums = ExtractEnums(selected, policy),
@@ -301,7 +314,8 @@ public static class ClrTypeExtractor
                 LineageProjectsMethod(type.BaseType, abiName, projectedNames, policy);
             if (overridesProjectedBase)
             {
-                Skip(skipped, type, FormatMethod(method), "Overrides a projected base method");
+                Skip(skipped, type, FormatMethod(method),
+                    "By design: overrides the projected base slot");
                 continue;
             }
 
@@ -361,7 +375,10 @@ public static class ClrTypeExtractor
                     out var interfaceName,
                     out var typeReason))
             {
-                reason = $"Parameter '{parameter.Name}': {typeReason}";
+                reason = parameter.Name is { } parameterName &&
+                        policy.TryGetByDesignReason(parameterName, out var byDesign)
+                    ? $"By design: {byDesign}"
+                    : $"Parameter '{parameter.Name}': {typeReason}";
                 return false;
             }
 
@@ -544,6 +561,11 @@ public static class ClrTypeExtractor
         {
             kind = MarshallingKind.TextFilter;
             interfaceName = FilterMarshalling.QualifiedTextFilterInterfaceName(policy.ProjectionNamespace);
+        }
+        else if (NotificationMarshalling.IsNotification(type.FullName))
+        {
+            kind = MarshallingKind.Notification;
+            interfaceName = NotificationMarshalling.QualifiedInterfaceName(policy.ProjectionNamespace);
         }
         else if (projectedNames.TryGetValue(type, out interfaceName))
             kind = MarshallingKind.ComInterface;

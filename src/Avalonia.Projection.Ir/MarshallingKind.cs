@@ -92,6 +92,13 @@ public enum MarshallingKind
     /// <c>AutoCompleteFilterPredicate&lt;string?&gt;</c>.
     /// </summary>
     TextFilter,
+
+    /// <summary>
+    /// Appended after TextFilter so every previously published ordinal stays put.
+    /// A nano-COM <c>IAvnNotification</c> wrapping
+    /// <c>Avalonia.Controls.Notifications.INotification</c>.
+    /// </summary>
+    Notification,
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]

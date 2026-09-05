@@ -25731,7 +25731,9 @@ impl WindowNotificationManager {
         self.set_max_items(value)?;
         Ok(self)
     }
+    pub fn show_with_i_notification(&self, content: &sys::ComPtr<sys::IAvnNotification>) -> Result<()> { Ok(self.raw.show_with_i_notification(content)?) }
     pub fn show_with_object(&self, content: impl Into<Variant>) -> Result<()> { Ok(self.raw.show_with_object(*content.into().to_abi()?)?) }
+    pub fn close_with_i_notification(&self, notification: &sys::ComPtr<sys::IAvnNotification>) -> Result<()> { Ok(self.raw.close_with_i_notification(notification)?) }
     pub fn close_with_object(&self, content: impl Into<Variant>) -> Result<()> { Ok(self.raw.close_with_object(*content.into().to_abi()?)?) }
     pub fn close_all(&self) -> Result<()> { Ok(self.raw.close_all()?) }
 }

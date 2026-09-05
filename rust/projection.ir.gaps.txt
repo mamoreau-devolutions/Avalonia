@@ -58,7 +58,7 @@ Avalonia.Controls.CommandBar.PrimaryCommands: By design: the typed command-bar e
 Avalonia.Controls.CommandBar.SecondaryCommands: By design: the typed command-bar element list needs its own element ABI
 Avalonia.Controls.ContentControl.Presenter: By design: template-part presenters are internal layout plumbing
 Avalonia.Controls.ContextMenu.CustomPopupPlacementCallback: By design: custom placement needs a callback with geometry out-parameters
-Avalonia.Controls.ContextMenu.Open(): Overrides a projected base method
+Avalonia.Controls.ContextMenu.Open(): By design: overrides the projected base slot
 Avalonia.Controls.ContextMenu.Close(): By design: the INotification content needs a typed notification ABI
 Avalonia.Controls.Control.FocusAdorner: By design: adorner plumbing is owned by the host
 Avalonia.Controls.Control.DataTemplates: By design: the default-template list is owned by the host
@@ -97,9 +97,7 @@ Avalonia.Controls.MenuItem.HotKey: By design: KeyGesture is not part of the proj
 Avalonia.Controls.MenuItem.InputGesture: By design: input gestures are not part of the projected model
 Avalonia.Controls.MenuItem.PointerEnteredItem: By design: internal hover plumbing is owned by the host
 Avalonia.Controls.MenuItem.PointerExitedItem: By design: internal hover plumbing is owned by the host
-Avalonia.Controls.Notifications.WindowNotificationManager.Show(INotification): Parameter 'content': Type 'Avalonia.Controls.Notifications.INotification' is not marshallable
-Avalonia.Controls.Notifications.WindowNotificationManager.Show(Object, NotificationType, Nullable`1, Action, Action, String[]): Parameter 'onClick': Type 'System.Action' is not marshallable
-Avalonia.Controls.Notifications.WindowNotificationManager.Close(INotification): Parameter 'notification': Type 'Avalonia.Controls.Notifications.INotification' is not marshallable
+Avalonia.Controls.Notifications.WindowNotificationManager.Show(Object, NotificationType, Nullable`1, Action, Action, String[]): By design: System.Action parameters ride the notification CCW's handler slots instead
 Avalonia.Controls.NumericUpDown.NumberFormat: By design: globalization is owned by the host
 Avalonia.Controls.NumericUpDown.ParsingNumberStyle: By design: globalization is owned by the host
 Avalonia.Controls.NumericUpDown.TextConverter: By design: the converter is owned by the host

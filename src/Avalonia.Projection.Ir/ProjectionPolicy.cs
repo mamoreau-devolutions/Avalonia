@@ -70,7 +70,7 @@ public sealed class ProjectionPolicy
             "ClearValue" or "GetBaseValue" or "IsSet" or "IsAnimating" or
             "CheckAccess" or "VerifyAccess" or "Equals" or "GetHashCode" or "ToString" or
             "BeginInit" or "EndInit" or "UpdateSelectionFromEvent" or "Item" or
-            "Dispatcher" or "PropertyChanged")
+            "Dispatcher" or "PropertyChanged" or "onClick" or "onClosing")
         {
             reason = memberName switch
             {
@@ -85,6 +85,8 @@ public sealed class ProjectionPolicy
                 "BeginInit" or "EndInit" or "UpdateSelectionFromEvent" =>
                     "initialization and internal plumbing is owned by the host",
                 "Item" => "the indexer is not an ABI member",
+                "onClick" or "onClosing" =>
+                    "System.Action parameters ride the notification CCW's handler slots instead",
                 _ => "not part of the projected model",
             };
             return true;

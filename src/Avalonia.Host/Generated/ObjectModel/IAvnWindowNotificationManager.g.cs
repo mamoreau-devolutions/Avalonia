@@ -22,7 +22,13 @@ public partial interface IAvnWindowNotificationManager : IAvnTemplatedControl
     int SetMaxItems(int value);
 
     [PreserveSig]
+    int ShowWithINotification(IAvnNotification content);
+
+    [PreserveSig]
     int ShowWithObject(AvnVariant content);
+
+    [PreserveSig]
+    int CloseWithINotification(IAvnNotification notification);
 
     [PreserveSig]
     int CloseWithObject(AvnVariant content);
@@ -1725,6 +1731,21 @@ public sealed partial class AvnWindowNotificationManager : IAvnWindowNotificatio
         }
     }
 
+    public int ShowWithINotification(IAvnNotification content)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Show(AvnNotification.ToNotification(content));
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int ShowWithObject(AvnVariant content)
     {
         try
@@ -1732,6 +1753,21 @@ public sealed partial class AvnWindowNotificationManager : IAvnWindowNotificatio
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Show(content.ToObject());
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CloseWithINotification(IAvnNotification notification)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Close(AvnNotification.ToNotification(notification));
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
