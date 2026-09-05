@@ -56,7 +56,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnWindow"] = 10,
             ["Avalonia.Host.Com.IAvnGrid"] = 6,
             // Previously version-1 templated types inherit the TemplatedControl bump.
-            ["Avalonia.Host.Com.IAvnAutoCompleteBox"] = 4,
+            ["Avalonia.Host.Com.IAvnAutoCompleteBox"] = 5,
             ["Avalonia.Host.Com.IAvnButtonSpinner"] = 3,
             ["Avalonia.Host.Com.IAvnCalendar"] = 4,
             ["Avalonia.Host.Com.IAvnCalendarDatePicker"] = 4,
@@ -457,6 +457,8 @@ public static class AvaloniaProjectionProfiles
                 "CaretIndex", "ClearSelectionOnLostFocus", "SearchText", "MaxLength",
                 "PlaceholderForeground", "InnerLeftContent", "InnerRightContent",
                 "PopulateComplete", "DropDownOpened", "DropDownClosed",
+                "MinimumPopulateDelay", "TextChanged",
+                "Populating", "DropDownOpening", "DropDownClosing",
             ],
             ["Avalonia.Controls.MaskedTextBox"] =
                 ["Mask", "AsciiOnly", "HidePromptOnLeave", "ResetOnPrompt", "ResetOnSpace",
@@ -1128,6 +1130,29 @@ public static class AvaloniaProjectionProfiles
                 Parameters = [new() { Name = "Cancel", Direction = ParameterDirection.InOut }],
             },
             ["Avalonia.Controls.ContextMenu.Closing"] = new()
+            {
+                PayloadKind = EventPayloadKind.Fields,
+                Parameters = [new() { Name = "Cancel", Direction = ParameterDirection.InOut }],
+            },
+            ["Avalonia.Controls.AutoCompleteBox.TextChanged"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.AutoCompleteBox.Populating"] = new()
+            {
+                PayloadKind = EventPayloadKind.Fields,
+                Parameters =
+                [
+                    new() { Name = "Cancel", Direction = ParameterDirection.InOut },
+                    new() { Name = "Parameter" },
+                ],
+            },
+            ["Avalonia.Controls.AutoCompleteBox.DropDownOpening"] = new()
+            {
+                PayloadKind = EventPayloadKind.Fields,
+                Parameters = [new() { Name = "Cancel", Direction = ParameterDirection.InOut }],
+            },
+            ["Avalonia.Controls.AutoCompleteBox.DropDownClosing"] = new()
             {
                 PayloadKind = EventPayloadKind.Fields,
                 Parameters = [new() { Name = "Cancel", Direction = ParameterDirection.InOut }],

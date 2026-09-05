@@ -465,6 +465,8 @@ public static class ClrTypeExtractor
             kind = MarshallingKind.CharUtf16;
         else if (type == typeof(string))
             kind = MarshallingKind.StringUtf16;
+        else if (type == typeof(TimeSpan))
+            kind = MarshallingKind.TimeSpanI64;
         else if (GeometryMarshalling.TryGetByManagedTypeName(type.FullName, out var geometry))
             kind = geometry.Kind;
         else if (BrushMarshalling.IsBrush(type.FullName))

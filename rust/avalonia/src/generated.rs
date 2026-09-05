@@ -2547,6 +2547,9 @@ impl TryFrom<i32> for CalendarWeekRule {
     }
 }
 
+pub use sys::AutoCompleteBoxPopulatingEventArgs;
+pub use sys::AutoCompleteBoxDropDownOpeningEventArgs;
+pub use sys::AutoCompleteBoxDropDownClosingEventArgs;
 pub use sys::ContextMenuOpeningEventArgs;
 pub use sys::ContextMenuClosingEventArgs;
 pub use sys::ControlKeyDownEventArgs;
@@ -2998,6 +3001,18 @@ impl AutoCompleteBox {
         self.set_text_completion_enabled(value)?;
         Ok(self)
     }
+    pub fn get_minimum_populate_delay(&self) -> Result<std::time::Duration> {
+        let ticks = self.raw.get_minimum_populate_delay()?;
+        Ok(std::time::Duration::from_nanos(ticks.clamp(0, i64::MAX / 100) as u64 * 100))
+    }
+    pub fn set_minimum_populate_delay(&self, value: std::time::Duration) -> Result<()> {
+        let value = (value.as_nanos() / 100).clamp(0, i64::MAX as u128) as i64;
+        Ok(self.raw.set_minimum_populate_delay(value)?)
+    }
+    pub fn minimum_populate_delay(self, value: std::time::Duration) -> Result<Self> {
+        self.set_minimum_populate_delay(value)?;
+        Ok(self)
+    }
     pub fn get_max_drop_down_height(&self) -> Result<f64> { Ok(self.raw.get_max_drop_down_height()?) }
     pub fn set_max_drop_down_height(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_max_drop_down_height(value)?)
@@ -3100,6 +3115,41 @@ impl AutoCompleteBox {
         Ok(self)
     }
     pub fn populate_complete(&self) -> Result<()> { Ok(self.raw.populate_complete()?) }
+    pub fn subscribe_text_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::auto_complete_box_text_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_text_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_text_changed(subscription_id)))
+    }
+    pub fn on_text_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_text_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_populating(&self, callback: impl FnMut(&mut AutoCompleteBoxPopulatingEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::auto_complete_box_populating_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_populating(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_populating(subscription_id)))
+    }
+    pub fn on_populating(self, scope: &crate::AppScope, callback: impl FnMut(&mut AutoCompleteBoxPopulatingEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_populating(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_drop_down_opening(&self, callback: impl FnMut(&mut AutoCompleteBoxDropDownOpeningEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::auto_complete_box_drop_down_opening_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_drop_down_opening(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_drop_down_opening(subscription_id)))
+    }
+    pub fn on_drop_down_opening(self, scope: &crate::AppScope, callback: impl FnMut(&mut AutoCompleteBoxDropDownOpeningEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_drop_down_opening(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_drop_down_opened(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::auto_complete_box_drop_down_opened_handler(move || {
             callback(());
@@ -3111,6 +3161,17 @@ impl AutoCompleteBox {
     }
     pub fn on_drop_down_opened(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_drop_down_opened(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_drop_down_closing(&self, callback: impl FnMut(&mut AutoCompleteBoxDropDownClosingEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::auto_complete_box_drop_down_closing_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_drop_down_closing(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_drop_down_closing(subscription_id)))
+    }
+    pub fn on_drop_down_closing(self, scope: &crate::AppScope, callback: impl FnMut(&mut AutoCompleteBoxDropDownClosingEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_drop_down_closing(callback)?);
         Ok(self)
     }
     pub fn subscribe_drop_down_closed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {

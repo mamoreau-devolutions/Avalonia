@@ -1218,6 +1218,7 @@ public static class ComSourceEmitter
                     ? $"_value.{property.Name}?.ToString()"
                     : $"_value.{property.Name}.ToString()",
             MarshallingKind.CharUtf16 => $"(ushort)_value.{property.Name}",
+            MarshallingKind.TimeSpanI64 => $"_value.{property.Name}.Ticks",
             MarshallingKind.Bool => $"_value.{property.Name} ? 1 : 0",
             MarshallingKind.NullableBool =>
                 $"!_value.{property.Name}.HasValue ? -1 : _value.{property.Name}.Value ? 1 : 0",
@@ -1270,6 +1271,7 @@ public static class ComSourceEmitter
             MarshallingKind.StringUtf16 when property.ManagedTypeName is not "System.String" =>
                 $"global::{property.ManagedTypeName}.Parse(value)",
             MarshallingKind.CharUtf16 => "(char)value",
+            MarshallingKind.TimeSpanI64 => "global::System.TimeSpan.FromTicks(value)",
             MarshallingKind.Bool => "value != 0",
             MarshallingKind.NullableBool =>
                 "value switch { -1 => null, 0 => false, 1 => true, _ => throw new global::System.ArgumentOutOfRangeException(nameof(value)) }",
@@ -1363,6 +1365,7 @@ public static class ComSourceEmitter
             MarshallingKind.NullableBool => "int",
             MarshallingKind.StringUtf16 => nullable ? "string?" : "string",
             MarshallingKind.Variant => "AvnVariant",
+            MarshallingKind.TimeSpanI64 => "long",
             MarshallingKind.ComInterface => (interfaceName is null ? "object" : SimpleName(interfaceName)) + (nullable ? "?" : ""),
             MarshallingKind.Brush => SimpleName(interfaceName!) + (nullable ? "?" : ""),
             MarshallingKind.Command => SimpleName(interfaceName!) + (nullable ? "?" : ""),

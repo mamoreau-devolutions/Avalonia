@@ -31,7 +31,6 @@ Avalonia.AvaloniaObject.Bind(DirectPropertyBase`1, IObservable`1): Not included 
 Avalonia.AvaloniaObject.Bind(DirectPropertyBase`1, IObservable`1): Not included by projection policy
 Avalonia.AvaloniaObject.CoerceValue(AvaloniaProperty): Not included by projection policy
 Avalonia.Controls.AutoCompleteBox.ItemTemplate: Not included by projection policy
-Avalonia.Controls.AutoCompleteBox.MinimumPopulateDelay: Not included by projection policy
 Avalonia.Controls.AutoCompleteBox.ValueMemberBinding: Not included by projection policy
 Avalonia.Controls.AutoCompleteBox.SelectedItem: Not included by projection policy
 Avalonia.Controls.AutoCompleteBox.Watermark: Not included by projection policy
@@ -42,11 +41,7 @@ Avalonia.Controls.AutoCompleteBox.ItemSelector: Not included by projection polic
 Avalonia.Controls.AutoCompleteBox.TextSelector: Not included by projection policy
 Avalonia.Controls.AutoCompleteBox.AsyncPopulator: Not included by projection policy
 Avalonia.Controls.AutoCompleteBox.ItemsSource: Not included by projection policy
-Avalonia.Controls.AutoCompleteBox.TextChanged: Not included by projection policy
-Avalonia.Controls.AutoCompleteBox.Populating: Not included by projection policy
 Avalonia.Controls.AutoCompleteBox.Populated: Not included by projection policy
-Avalonia.Controls.AutoCompleteBox.DropDownOpening: Not included by projection policy
-Avalonia.Controls.AutoCompleteBox.DropDownClosing: Not included by projection policy
 Avalonia.Controls.AutoCompleteBox.SelectionChanged: Not included by projection policy
 Avalonia.Controls.Border.BoxShadow: Not included by projection policy
 Avalonia.Controls.Border.Render(DrawingContext): Not included by projection policy

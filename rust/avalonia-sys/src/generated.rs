@@ -297,6 +297,173 @@ static I_AVN_COMMAND_CAN_EXECUTE_CHANGED_HANDLER_VTBL: IAvnCommandCanExecuteChan
     invoke: command_can_execute_changed_handler_invoke,
 };
 
+pub const I_AVN_AUTO_COMPLETE_BOX_TEXT_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x03E79A47, data2: 0x0885, data3: 0x5435, data4: [0x88, 0x0A, 0x7A, 0x15, 0x52, 0x93, 0x63, 0x9B] };
+
+#[repr(C)]
+struct IAvnAutoCompleteBoxTextChangedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnAutoCompleteBoxTextChangedHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnAutoCompleteBoxTextChangedHandler {
+    vtbl: *const IAvnAutoCompleteBoxTextChangedHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnAutoCompleteBoxTextChangedHandler {
+    const IID: Guid = I_AVN_AUTO_COMPLETE_BOX_TEXT_CHANGED_HANDLER_IID;
+}
+
+impl ComPtr<IAvnAutoCompleteBoxTextChangedHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_AUTO_COMPLETE_BOX_TEXT_CHANGED_HANDLER_VTBL: IAvnAutoCompleteBoxTextChangedHandlerVtbl = IAvnAutoCompleteBoxTextChangedHandlerVtbl {
+    query_interface: i_avn_auto_complete_box_text_changed_handler_query_interface,
+    add_ref: i_avn_auto_complete_box_text_changed_handler_add_ref,
+    release: i_avn_auto_complete_box_text_changed_handler_release,
+    invoke: i_avn_auto_complete_box_text_changed_handler_invoke,
+};
+
+pub fn auto_complete_box_text_changed_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnAutoCompleteBoxTextChangedHandler> {
+    crate::event_callback::create::<IAvnAutoCompleteBoxTextChangedHandler, ()>(IAvnAutoCompleteBoxTextChangedHandler { vtbl: &I_AVN_AUTO_COMPLETE_BOX_TEXT_CHANGED_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_text_changed_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnAutoCompleteBoxTextChangedHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_text_changed_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnAutoCompleteBoxTextChangedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_text_changed_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnAutoCompleteBoxTextChangedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_text_changed_handler_invoke(this: *mut IAvnAutoCompleteBoxTextChangedHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnAutoCompleteBoxTextChangedHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_AUTO_COMPLETE_BOX_POPULATING_HANDLER_IID: Guid = Guid { data1: 0x53E64265, data2: 0x6992, data3: 0x5A51, data4: [0xB5, 0x4C, 0xD9, 0x8D, 0xD6, 0x1F, 0x95, 0xF9] };
+
+#[derive(Debug)]
+pub struct AutoCompleteBoxPopulatingEventArgs {
+    pub cancel: bool,
+    pub parameter: Option<String>,
+}
+
+#[repr(C)]
+struct IAvnAutoCompleteBoxPopulatingHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnAutoCompleteBoxPopulatingHandler, cancel: *mut i32, parameter: *mut u16) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnAutoCompleteBoxPopulatingHandler { vtbl: *const IAvnAutoCompleteBoxPopulatingHandlerVtbl }
+
+unsafe impl ComInterface for IAvnAutoCompleteBoxPopulatingHandler { const IID: Guid = I_AVN_AUTO_COMPLETE_BOX_POPULATING_HANDLER_IID; }
+
+static I_AVN_AUTO_COMPLETE_BOX_POPULATING_HANDLER_VTBL: IAvnAutoCompleteBoxPopulatingHandlerVtbl = IAvnAutoCompleteBoxPopulatingHandlerVtbl {
+    query_interface: i_avn_auto_complete_box_populating_handler_query_interface,
+    add_ref: i_avn_auto_complete_box_populating_handler_add_ref,
+    release: i_avn_auto_complete_box_populating_handler_release,
+    invoke: i_avn_auto_complete_box_populating_handler_invoke,
+};
+
+pub fn auto_complete_box_populating_handler(callback: impl FnMut(&mut AutoCompleteBoxPopulatingEventArgs) -> Result<()> + Send + 'static) -> ComPtr<IAvnAutoCompleteBoxPopulatingHandler> {
+    crate::event_callback::create(IAvnAutoCompleteBoxPopulatingHandler { vtbl: &I_AVN_AUTO_COMPLETE_BOX_POPULATING_HANDLER_VTBL }, callback)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_populating_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnAutoCompleteBoxPopulatingHandler, AutoCompleteBoxPopulatingEventArgs>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_populating_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnAutoCompleteBoxPopulatingHandler, AutoCompleteBoxPopulatingEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_populating_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnAutoCompleteBoxPopulatingHandler, AutoCompleteBoxPopulatingEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_populating_handler_invoke(this: *mut IAvnAutoCompleteBoxPopulatingHandler, cancel: *mut i32, parameter: *mut u16) -> i32 {
+    if cancel.is_null() { return hresult::E_POINTER; }
+    let mut arguments = AutoCompleteBoxPopulatingEventArgs {
+        cancel: *cancel != 0,
+        parameter: crate::clone_utf16(parameter),
+    };
+    let hr = crate::event_callback::invoke::<IAvnAutoCompleteBoxPopulatingHandler, AutoCompleteBoxPopulatingEventArgs>(this, &mut arguments);
+    if hr >= 0 {
+        *cancel = i32::from(arguments.cancel);
+    }
+    hr
+}
+
+pub const I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_OPENING_HANDLER_IID: Guid = Guid { data1: 0x0A856166, data2: 0x2348, data3: 0x5059, data4: [0xA9, 0x95, 0xA3, 0x14, 0x2F, 0x8B, 0x6A, 0x12] };
+
+#[derive(Debug)]
+pub struct AutoCompleteBoxDropDownOpeningEventArgs {
+    pub cancel: bool,
+}
+
+#[repr(C)]
+struct IAvnAutoCompleteBoxDropDownOpeningHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnAutoCompleteBoxDropDownOpeningHandler, cancel: *mut i32) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnAutoCompleteBoxDropDownOpeningHandler { vtbl: *const IAvnAutoCompleteBoxDropDownOpeningHandlerVtbl }
+
+unsafe impl ComInterface for IAvnAutoCompleteBoxDropDownOpeningHandler { const IID: Guid = I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_OPENING_HANDLER_IID; }
+
+static I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_OPENING_HANDLER_VTBL: IAvnAutoCompleteBoxDropDownOpeningHandlerVtbl = IAvnAutoCompleteBoxDropDownOpeningHandlerVtbl {
+    query_interface: i_avn_auto_complete_box_drop_down_opening_handler_query_interface,
+    add_ref: i_avn_auto_complete_box_drop_down_opening_handler_add_ref,
+    release: i_avn_auto_complete_box_drop_down_opening_handler_release,
+    invoke: i_avn_auto_complete_box_drop_down_opening_handler_invoke,
+};
+
+pub fn auto_complete_box_drop_down_opening_handler(callback: impl FnMut(&mut AutoCompleteBoxDropDownOpeningEventArgs) -> Result<()> + Send + 'static) -> ComPtr<IAvnAutoCompleteBoxDropDownOpeningHandler> {
+    crate::event_callback::create(IAvnAutoCompleteBoxDropDownOpeningHandler { vtbl: &I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_OPENING_HANDLER_VTBL }, callback)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_drop_down_opening_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnAutoCompleteBoxDropDownOpeningHandler, AutoCompleteBoxDropDownOpeningEventArgs>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_drop_down_opening_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnAutoCompleteBoxDropDownOpeningHandler, AutoCompleteBoxDropDownOpeningEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_drop_down_opening_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnAutoCompleteBoxDropDownOpeningHandler, AutoCompleteBoxDropDownOpeningEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_drop_down_opening_handler_invoke(this: *mut IAvnAutoCompleteBoxDropDownOpeningHandler, cancel: *mut i32) -> i32 {
+    if cancel.is_null() { return hresult::E_POINTER; }
+    let mut arguments = AutoCompleteBoxDropDownOpeningEventArgs {
+        cancel: *cancel != 0,
+    };
+    let hr = crate::event_callback::invoke::<IAvnAutoCompleteBoxDropDownOpeningHandler, AutoCompleteBoxDropDownOpeningEventArgs>(this, &mut arguments);
+    if hr >= 0 {
+        *cancel = i32::from(arguments.cancel);
+    }
+    hr
+}
+
 pub const I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_OPENED_HANDLER_IID: Guid = Guid { data1: 0x48E353BF, data2: 0x246E, data3: 0x5FC7, data4: [0x9C, 0xF4, 0xDE, 0x08, 0x2C, 0xE3, 0x0E, 0xD8] };
 
 #[repr(C)]
@@ -350,6 +517,61 @@ unsafe extern "system" fn i_avn_auto_complete_box_drop_down_opened_handler_relea
 
 unsafe extern "system" fn i_avn_auto_complete_box_drop_down_opened_handler_invoke(this: *mut IAvnAutoCompleteBoxDropDownOpenedHandler) -> i32 {
     crate::event_callback::invoke::<IAvnAutoCompleteBoxDropDownOpenedHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_CLOSING_HANDLER_IID: Guid = Guid { data1: 0x22162FC3, data2: 0xF833, data3: 0x56BE, data4: [0xBB, 0x5F, 0xFA, 0x47, 0x13, 0x78, 0x62, 0xD0] };
+
+#[derive(Debug)]
+pub struct AutoCompleteBoxDropDownClosingEventArgs {
+    pub cancel: bool,
+}
+
+#[repr(C)]
+struct IAvnAutoCompleteBoxDropDownClosingHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnAutoCompleteBoxDropDownClosingHandler, cancel: *mut i32) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnAutoCompleteBoxDropDownClosingHandler { vtbl: *const IAvnAutoCompleteBoxDropDownClosingHandlerVtbl }
+
+unsafe impl ComInterface for IAvnAutoCompleteBoxDropDownClosingHandler { const IID: Guid = I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_CLOSING_HANDLER_IID; }
+
+static I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_CLOSING_HANDLER_VTBL: IAvnAutoCompleteBoxDropDownClosingHandlerVtbl = IAvnAutoCompleteBoxDropDownClosingHandlerVtbl {
+    query_interface: i_avn_auto_complete_box_drop_down_closing_handler_query_interface,
+    add_ref: i_avn_auto_complete_box_drop_down_closing_handler_add_ref,
+    release: i_avn_auto_complete_box_drop_down_closing_handler_release,
+    invoke: i_avn_auto_complete_box_drop_down_closing_handler_invoke,
+};
+
+pub fn auto_complete_box_drop_down_closing_handler(callback: impl FnMut(&mut AutoCompleteBoxDropDownClosingEventArgs) -> Result<()> + Send + 'static) -> ComPtr<IAvnAutoCompleteBoxDropDownClosingHandler> {
+    crate::event_callback::create(IAvnAutoCompleteBoxDropDownClosingHandler { vtbl: &I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_CLOSING_HANDLER_VTBL }, callback)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_drop_down_closing_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnAutoCompleteBoxDropDownClosingHandler, AutoCompleteBoxDropDownClosingEventArgs>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_drop_down_closing_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnAutoCompleteBoxDropDownClosingHandler, AutoCompleteBoxDropDownClosingEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_drop_down_closing_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnAutoCompleteBoxDropDownClosingHandler, AutoCompleteBoxDropDownClosingEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_drop_down_closing_handler_invoke(this: *mut IAvnAutoCompleteBoxDropDownClosingHandler, cancel: *mut i32) -> i32 {
+    if cancel.is_null() { return hresult::E_POINTER; }
+    let mut arguments = AutoCompleteBoxDropDownClosingEventArgs {
+        cancel: *cancel != 0,
+    };
+    let hr = crate::event_callback::invoke::<IAvnAutoCompleteBoxDropDownClosingHandler, AutoCompleteBoxDropDownClosingEventArgs>(this, &mut arguments);
+    if hr >= 0 {
+        *cancel = i32::from(arguments.cancel);
+    }
+    hr
 }
 
 pub const I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_CLOSED_HANDLER_IID: Guid = Guid { data1: 0x338294B4, data2: 0x2E9E, data3: 0x5494, data4: [0xB7, 0x84, 0xA3, 0xE0, 0x1C, 0xA0, 0x73, 0x2D] };
@@ -3382,7 +3604,7 @@ impl ComPtr<IAvnAvaloniaObject> {
     }
 }
 
-pub const I_AVN_AUTO_COMPLETE_BOX_IID: Guid = Guid { data1: 0x3283B102, data2: 0x3833, data3: 0x57BC, data4: [0xBA, 0x4E, 0xFC, 0x71, 0xDF, 0x45, 0x04, 0xA0] };
+pub const I_AVN_AUTO_COMPLETE_BOX_IID: Guid = Guid { data1: 0x7561A64D, data2: 0x0AFE, data3: 0x5DA1, data4: [0xA1, 0xD6, 0x6D, 0x06, 0x2E, 0xE4, 0x34, 0x7C] };
 
 #[repr(C)]
 struct IAvnAutoCompleteBoxVtbl {
@@ -3463,6 +3685,8 @@ struct IAvnAutoCompleteBoxVtbl {
     set_minimum_prefix_length: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i32) -> i32,
     get_is_text_completion_enabled: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut i32) -> i32,
     set_is_text_completion_enabled: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i32) -> i32,
+    get_minimum_populate_delay: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut i64) -> i32,
+    set_minimum_populate_delay: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
     get_max_drop_down_height: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut f64) -> i32,
     set_max_drop_down_height: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, f64) -> i32,
     get_is_drop_down_open: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut i32) -> i32,
@@ -3485,8 +3709,16 @@ struct IAvnAutoCompleteBoxVtbl {
     get_inner_right_content: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut IAvnControl) -> i32,
     set_inner_right_content: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnControl) -> i32,
     populate_complete: unsafe extern "system" fn(*mut IAvnAutoCompleteBox) -> i32,
+    advise_text_changed: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnAutoCompleteBoxTextChangedHandler, *mut i64) -> i32,
+    unadvise_text_changed: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
+    advise_populating: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnAutoCompleteBoxPopulatingHandler, *mut i64) -> i32,
+    unadvise_populating: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
+    advise_drop_down_opening: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnAutoCompleteBoxDropDownOpeningHandler, *mut i64) -> i32,
+    unadvise_drop_down_opening: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
     advise_drop_down_opened: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnAutoCompleteBoxDropDownOpenedHandler, *mut i64) -> i32,
     unadvise_drop_down_opened: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
+    advise_drop_down_closing: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnAutoCompleteBoxDropDownClosingHandler, *mut i64) -> i32,
+    unadvise_drop_down_closing: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
     advise_drop_down_closed: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnAutoCompleteBoxDropDownClosedHandler, *mut i64) -> i32,
     unadvise_drop_down_closed: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
 }
@@ -4016,6 +4248,20 @@ impl ComPtr<IAvnAutoCompleteBox> {
             hresult::check(hr)
         }
     }
+    pub fn get_minimum_populate_delay(&self) -> Result<i64> {
+        unsafe {
+            let mut value: i64 = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_minimum_populate_delay)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_minimum_populate_delay(&self, value: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_minimum_populate_delay)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
     pub fn get_max_drop_down_height(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -4170,6 +4416,45 @@ impl ComPtr<IAvnAutoCompleteBox> {
             hresult::check(hr)
         }
     }
+    pub fn advise_text_changed(&self, handler: &ComPtr<IAvnAutoCompleteBoxTextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_text_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_text_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_text_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_populating(&self, handler: &ComPtr<IAvnAutoCompleteBoxPopulatingHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_populating)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_populating(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_populating)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_drop_down_opening(&self, handler: &ComPtr<IAvnAutoCompleteBoxDropDownOpeningHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_drop_down_opening)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_drop_down_opening(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_drop_down_opening)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_drop_down_opened(&self, handler: &ComPtr<IAvnAutoCompleteBoxDropDownOpenedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -4180,6 +4465,19 @@ impl ComPtr<IAvnAutoCompleteBox> {
     pub fn unadvise_drop_down_opened(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_drop_down_opened)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_drop_down_closing(&self, handler: &ComPtr<IAvnAutoCompleteBoxDropDownClosingHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_drop_down_closing)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_drop_down_closing(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_drop_down_closing)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }

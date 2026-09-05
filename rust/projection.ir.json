@@ -28,8 +28,8 @@
       "name": "IAvnAutoCompleteBox",
       "fullName": "Avalonia.Host.Com.IAvnAutoCompleteBox",
       "kind": "Class",
-      "iid": "3283B102-3833-57BC-BA4E-FC71DF4504A0",
-      "abiVersion": 4,
+      "iid": "7561A64D-0AFE-5DA1-A1D6-6D062EE4347C",
+      "abiVersion": 5,
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.AutoCompleteBox",
       "isConstructible": true,
@@ -68,6 +68,15 @@
           "canWrite": true,
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
+          "isNullable": false
+        },
+        {
+          "name": "MinimumPopulateDelay",
+          "kind": "TimeSpanI64",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.TimeSpan",
           "isNullable": false
         },
         {
@@ -176,6 +185,56 @@
       ],
       "events": [
         {
+          "name": "TextChanged",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnAutoCompleteBoxTextChangedHandler",
+          "handlerInterfaceIid": "03E79A47-0885-5435-880A-7A155293639B",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Controls.TextChangedEventArgs\u003E",
+          "parameters": []
+        },
+        {
+          "name": "Populating",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnAutoCompleteBoxPopulatingHandler",
+          "handlerInterfaceIid": "53E64265-6992-5A51-B54C-D98DD61F95F9",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "Fields",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Controls.PopulatingEventArgs\u003E",
+          "parameters": [
+            {
+              "name": "Cancel",
+              "kind": "Bool",
+              "direction": "InOut",
+              "managedTypeName": "System.Boolean",
+              "isNullable": false
+            },
+            {
+              "name": "Parameter",
+              "kind": "StringUtf16",
+              "direction": "In",
+              "managedTypeName": "System.String",
+              "isNullable": true
+            }
+          ]
+        },
+        {
+          "name": "DropDownOpening",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnAutoCompleteBoxDropDownOpeningHandler",
+          "handlerInterfaceIid": "0A856166-2348-5059-A995-A3142F8B6A12",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "Fields",
+          "managedHandlerTypeName": "System.EventHandler\u003CSystem.ComponentModel.CancelEventArgs\u003E",
+          "parameters": [
+            {
+              "name": "Cancel",
+              "kind": "Bool",
+              "direction": "InOut",
+              "managedTypeName": "System.Boolean",
+              "isNullable": false
+            }
+          ]
+        },
+        {
           "name": "DropDownOpened",
           "handlerInterfaceName": "Avalonia.Host.Com.IAvnAutoCompleteBoxDropDownOpenedHandler",
           "handlerInterfaceIid": "48E353BF-246E-5FC7-9CF4-DE082CE30ED8",
@@ -183,6 +242,23 @@
           "payloadKind": "None",
           "managedHandlerTypeName": "System.EventHandler",
           "parameters": []
+        },
+        {
+          "name": "DropDownClosing",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnAutoCompleteBoxDropDownClosingHandler",
+          "handlerInterfaceIid": "22162FC3-F833-56BE-BB5F-FA47137862D0",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "Fields",
+          "managedHandlerTypeName": "System.EventHandler\u003CSystem.ComponentModel.CancelEventArgs\u003E",
+          "parameters": [
+            {
+              "name": "Cancel",
+              "kind": "Bool",
+              "direction": "InOut",
+              "managedTypeName": "System.Boolean",
+              "isNullable": false
+            }
+          ]
         },
         {
           "name": "DropDownClosed",
@@ -10482,11 +10558,6 @@
     },
     {
       "owner": "Avalonia.Controls.AutoCompleteBox",
-      "member": "MinimumPopulateDelay",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.AutoCompleteBox",
       "member": "ValueMemberBinding",
       "reason": "Not included by projection policy"
     },
@@ -10537,27 +10608,7 @@
     },
     {
       "owner": "Avalonia.Controls.AutoCompleteBox",
-      "member": "TextChanged",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.AutoCompleteBox",
-      "member": "Populating",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.AutoCompleteBox",
       "member": "Populated",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.AutoCompleteBox",
-      "member": "DropDownOpening",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.AutoCompleteBox",
-      "member": "DropDownClosing",
       "reason": "Not included by projection policy"
     },
     {

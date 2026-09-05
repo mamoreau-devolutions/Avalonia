@@ -661,6 +661,7 @@ fn event_argument_type(parameter: &ProjectedParameter) -> String {
     match parameter.kind.as_str() {
         "I32" => "i32".into(),
         "I64" => "i64".into(),
+        "TimeSpanI64" => "i64".into(),
         "F32" => "f32".into(),
         "F64" => "f64".into(),
         "Bool" => "bool".into(),
@@ -1056,7 +1057,7 @@ fn rust_abi_type(kind: &str, interface_name: Option<&str>, is_nullable: bool) ->
     match kind {
         "CharUtf16" => "u16".into(),
         "I32" | "Bool" | "NullableBool" => "i32".into(),
-        "I64" => "i64".into(),
+        "I64" | "TimeSpanI64" => "i64".into(),
         "F32" => "f32".into(),
         "F64" => "f64".into(),
         "StringUtf16" => "*mut u16".into(),
@@ -1077,7 +1078,7 @@ fn rust_abi_default(kind: &str) -> &'static str {
     }
     match kind {
         "F32" | "F64" => "0.0",
-        "I32" | "I64" | "Bool" | "NullableBool" | "CharUtf16" => "0",
+        "I32" | "I64" | "Bool" | "NullableBool" | "CharUtf16" | "TimeSpanI64" => "0",
         "Variant" => "AvnVariant::default()",
         _ => "ptr::null_mut()",
     }
@@ -1095,6 +1096,7 @@ fn rust_property_type(property: &ProjectedProperty) -> String {
         "CharUtf16" => "u16".into(),
         "I32" => "i32".into(),
         "I64" => "i64".into(),
+        "TimeSpanI64" => "i64".into(),
         "F32" => "f32".into(),
         "F64" => "f64".into(),
         "Bool" => "bool".into(),

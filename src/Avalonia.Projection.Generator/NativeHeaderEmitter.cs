@@ -393,6 +393,7 @@ public static class NativeHeaderEmitter
             MarshallingKind.CharUtf16 => "uint16_t",
             MarshallingKind.I32 or MarshallingKind.Bool or MarshallingKind.NullableBool => "int32_t",
             MarshallingKind.I64 => "int64_t",
+            MarshallingKind.TimeSpanI64 => "int64_t",
             MarshallingKind.F32 => "float",
             MarshallingKind.F64 => "double",
             MarshallingKind.StringUtf16 => "uint16_t*",

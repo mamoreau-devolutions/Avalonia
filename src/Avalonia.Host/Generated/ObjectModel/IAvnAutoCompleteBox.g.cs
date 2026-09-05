@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("3283B102-3833-57BC-BA4E-FC71DF4504A0")]
+[Guid("7561A64D-0AFE-5DA1-A1D6-6D062EE4347C")]
 public partial interface IAvnAutoCompleteBox : IAvnTemplatedControl
 {
     [PreserveSig]
@@ -26,6 +26,12 @@ public partial interface IAvnAutoCompleteBox : IAvnTemplatedControl
 
     [PreserveSig]
     int SetIsTextCompletionEnabled(int value);
+
+    [PreserveSig]
+    int GetMinimumPopulateDelay(out long value);
+
+    [PreserveSig]
+    int SetMinimumPopulateDelay(long value);
 
     [PreserveSig]
     int GetMaxDropDownHeight(out double value);
@@ -94,10 +100,34 @@ public partial interface IAvnAutoCompleteBox : IAvnTemplatedControl
     int PopulateComplete();
 
     [PreserveSig]
+    int AdviseTextChanged(IAvnAutoCompleteBoxTextChangedHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadviseTextChanged(long subscriptionId);
+
+    [PreserveSig]
+    int AdvisePopulating(IAvnAutoCompleteBoxPopulatingHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadvisePopulating(long subscriptionId);
+
+    [PreserveSig]
+    int AdviseDropDownOpening(IAvnAutoCompleteBoxDropDownOpeningHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadviseDropDownOpening(long subscriptionId);
+
+    [PreserveSig]
     int AdviseDropDownOpened(IAvnAutoCompleteBoxDropDownOpenedHandler? handler, out long subscriptionId);
 
     [PreserveSig]
     int UnadviseDropDownOpened(long subscriptionId);
+
+    [PreserveSig]
+    int AdviseDropDownClosing(IAvnAutoCompleteBoxDropDownClosingHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadviseDropDownClosing(long subscriptionId);
 
     [PreserveSig]
     int AdviseDropDownClosed(IAvnAutoCompleteBoxDropDownClosedHandler? handler, out long subscriptionId);
@@ -122,8 +152,16 @@ public sealed partial class AvnAutoCompleteBox : IAvnAutoCompleteBox
     private long _nextPointerEnteredSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnControlPointerExitedHandler Handler, global::System.Action Unsubscribe)> _pointerExitedSubscriptions = new();
     private long _nextPointerExitedSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnAutoCompleteBoxTextChangedHandler Handler, global::System.Action Unsubscribe)> _textChangedSubscriptions = new();
+    private long _nextTextChangedSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnAutoCompleteBoxPopulatingHandler Handler, global::System.Action Unsubscribe)> _populatingSubscriptions = new();
+    private long _nextPopulatingSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnAutoCompleteBoxDropDownOpeningHandler Handler, global::System.Action Unsubscribe)> _dropDownOpeningSubscriptions = new();
+    private long _nextDropDownOpeningSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnAutoCompleteBoxDropDownOpenedHandler Handler, global::System.Action Unsubscribe)> _dropDownOpenedSubscriptions = new();
     private long _nextDropDownOpenedSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnAutoCompleteBoxDropDownClosingHandler Handler, global::System.Action Unsubscribe)> _dropDownClosingSubscriptions = new();
+    private long _nextDropDownClosingSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnAutoCompleteBoxDropDownClosedHandler Handler, global::System.Action Unsubscribe)> _dropDownClosedSubscriptions = new();
     private long _nextDropDownClosedSubscriptionId;
 
@@ -1358,6 +1396,37 @@ public sealed partial class AvnAutoCompleteBox : IAvnAutoCompleteBox
         }
     }
 
+    public int GetMinimumPopulateDelay(out long value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.MinimumPopulateDelay.Ticks;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetMinimumPopulateDelay(long value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.MinimumPopulateDelay = global::System.TimeSpan.FromTicks(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetMaxDropDownHeight(out double value)
     {
         value = default!;
@@ -1699,6 +1768,148 @@ public sealed partial class AvnAutoCompleteBox : IAvnAutoCompleteBox
         }
     }
 
+    public int AdviseTextChanged(IAvnAutoCompleteBoxTextChangedHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<Avalonia.Controls.TextChangedEventArgs>((_, eventArgs) =>
+            {
+                var hr = handler.Invoke();
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.TextChanged += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextTextChangedSubscriptionId);
+            _textChangedSubscriptions.Add(subscriptionId, (handler, () => eventSource.TextChanged -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseTextChanged(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_textChangedSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdvisePopulating(IAvnAutoCompleteBoxPopulatingHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<Avalonia.Controls.PopulatingEventArgs>((_, eventArgs) =>
+            {
+                var cancel = eventArgs.Cancel ? 1 : 0;
+                var hr = handler.Invoke(ref cancel, eventArgs.Parameter);
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+                eventArgs.Cancel = cancel != 0;
+            });
+            eventSource.Populating += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextPopulatingSubscriptionId);
+            _populatingSubscriptions.Add(subscriptionId, (handler, () => eventSource.Populating -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadvisePopulating(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_populatingSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseDropDownOpening(IAvnAutoCompleteBoxDropDownOpeningHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<System.ComponentModel.CancelEventArgs>((_, eventArgs) =>
+            {
+                var cancel = eventArgs.Cancel ? 1 : 0;
+                var hr = handler.Invoke(ref cancel);
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+                eventArgs.Cancel = cancel != 0;
+            });
+            eventSource.DropDownOpening += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextDropDownOpeningSubscriptionId);
+            _dropDownOpeningSubscriptions.Add(subscriptionId, (handler, () => eventSource.DropDownOpening -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseDropDownOpening(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_dropDownOpeningSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int AdviseDropDownOpened(IAvnAutoCompleteBoxDropDownOpenedHandler? handler, out long subscriptionId)
     {
         subscriptionId = 0;
@@ -1734,6 +1945,54 @@ public sealed partial class AvnAutoCompleteBox : IAvnAutoCompleteBox
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             if (!_dropDownOpenedSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseDropDownClosing(IAvnAutoCompleteBoxDropDownClosingHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<System.ComponentModel.CancelEventArgs>((_, eventArgs) =>
+            {
+                var cancel = eventArgs.Cancel ? 1 : 0;
+                var hr = handler.Invoke(ref cancel);
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+                eventArgs.Cancel = cancel != 0;
+            });
+            eventSource.DropDownClosing += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextDropDownClosingSubscriptionId);
+            _dropDownClosingSubscriptions.Add(subscriptionId, (handler, () => eventSource.DropDownClosing -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseDropDownClosing(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_dropDownClosingSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
             subscription.Unsubscribe();
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
@@ -1823,12 +2082,36 @@ public sealed partial class AvnAutoCompleteBox : IAvnAutoCompleteBox
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
         }
         _pointerExitedSubscriptions.Clear();
+        foreach (var subscription in _textChangedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _textChangedSubscriptions.Clear();
+        foreach (var subscription in _populatingSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _populatingSubscriptions.Clear();
+        foreach (var subscription in _dropDownOpeningSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _dropDownOpeningSubscriptions.Clear();
         foreach (var subscription in _dropDownOpenedSubscriptions.Values)
         {
             subscription.Unsubscribe();
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
         }
         _dropDownOpenedSubscriptions.Clear();
+        foreach (var subscription in _dropDownClosingSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _dropDownClosingSubscriptions.Clear();
         foreach (var subscription in _dropDownClosedSubscriptions.Values)
         {
             subscription.Unsubscribe();

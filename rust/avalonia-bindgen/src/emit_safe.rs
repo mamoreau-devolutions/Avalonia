@@ -330,6 +330,8 @@ fn emit_type(
             .any(|projected_enum| projected_enum.full_name == property.managed_type_name);
         let safe_type = if is_enum {
             enum_name.to_string()
+        } else if property.kind == "TimeSpanI64" {
+            "std::time::Duration".to_string()
         } else if let Some(geometry) = geometry::find(&property.kind) {
             if property.is_nullable {
                 format!("Option<{}>", geometry.safe_name)
@@ -341,6 +343,8 @@ fn emit_type(
         };
         let raw_get = if is_enum {
             format!("{enum_name}::try_from(value)")
+        } else if property.kind == "TimeSpanI64" {
+            "Ok(std::time::Duration::from_nanos(value.clamp(0, i64::MAX / 100) as u64 * 100))".to_string()
         } else if let Some(geometry) = geometry::find(&property.kind) {
             if property.is_nullable {
                 format!("Ok({}::from_optional_abi(value))", geometry.safe_name)
@@ -352,6 +356,8 @@ fn emit_type(
         };
         let raw_set = if is_enum {
             "value as i32".to_string()
+        } else if property.kind == "TimeSpanI64" {
+            "(value.as_nanos() / 100).clamp(0, i64::MAX as u128) as i64".to_string()
         } else if let Some(geometry) = geometry::find(&property.kind) {
             if property.is_nullable {
                 format!("{}::to_optional_abi(value)", geometry.safe_name)
@@ -452,6 +458,12 @@ fn emit_property(
             "Variant" => out.push_str(&format!(
                 "    pub fn {getter}(&self) -> Result<Variant> {{\n\
                  \x20       Ok(Variant::from_abi(self.raw.get_{snake}()?))\n\
+                 \x20   }}\n"
+            )),
+            "TimeSpanI64" => out.push_str(&format!(
+                "    pub fn {getter}(&self) -> Result<std::time::Duration> {{\n\
+                 \x20       let ticks = self.raw.get_{snake}()?;\n\
+                 \x20       Ok(std::time::Duration::from_nanos(ticks.clamp(0, i64::MAX / 100) as u64 * 100))\n\
                  \x20   }}\n"
             )),
             "I32" if is_enum_property(property, flags_enums) => {
@@ -758,10 +770,10 @@ fn safe_property_input(
             "        let value = value.into().to_abi()?;\n".into(),
             "&value".into(),
         ),
-        "Variant" => (
-            "impl Into<Variant>".into(),
-            "        let value = value.into().to_abi()?;\n".into(),
-            "&value".into(),
+        "TimeSpanI64" => (
+            "std::time::Duration".into(),
+            "        let value = (value.as_nanos() / 100).clamp(0, i64::MAX as u128) as i64;\n".into(),
+            "value".into(),
         ),
         "I32" if is_enum_property(property, flags_enums) => (
             simple_name(property.managed_type_name.as_deref().unwrap()).into(),
@@ -798,6 +810,7 @@ fn rust_scalar_kind(kind: &str) -> &str {
         "CharUtf16" => "u16",
         "I32" => "i32",
         "I64" => "i64",
+        "TimeSpanI64" => "i64",
         "F32" => "f32",
         "F64" => "f64",
         "Bool" => "bool",

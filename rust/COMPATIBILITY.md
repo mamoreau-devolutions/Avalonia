@@ -347,6 +347,16 @@ reported as a gap with that reason instead of duplicating the base slot),
 and the safe layer honors nullable `ComInterface` method parameters in
 both directions.
 
+Wave U15 closes AutoCompleteBox's populate lifecycle (AutoCompleteBox 4 to
+5). `MinimumPopulateDelay` introduces `MarshallingKind.TimeSpanI64`
+(ordinal 22): a `TimeSpan` crosses as its int64 tick count, and the safe
+layer exposes `std::time::Duration` (100ns per tick). TextChanged crosses
+with no payload, and Populating crosses with the Cancel write-back plus
+the `Parameter` text; DropDownOpening/DropDownClosing carry the Cancel
+write-back. ItemTemplate, ValueMemberBinding, SelectedItem, the filter
+and selector delegates, AsyncPopulator and ItemsSource stay gaps: they
+are templates, bindings, delegates and an untyped object collection.
+
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and
 `IAvnNumericUpDown` each move from 2 to 3. Templates, filters, ItemsSource,

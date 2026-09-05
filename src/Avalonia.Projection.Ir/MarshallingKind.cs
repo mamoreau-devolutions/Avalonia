@@ -53,6 +53,12 @@ public enum MarshallingKind
     /// closed set `object` command parameters can carry across the ABI.
     /// </summary>
     Variant,
+
+    /// <summary>
+    /// Appended after Variant so every previously published ordinal stays put.
+    /// A <see cref="System.TimeSpan"/> carried as its int64 tick count.
+    /// </summary>
+    TimeSpanI64,
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
