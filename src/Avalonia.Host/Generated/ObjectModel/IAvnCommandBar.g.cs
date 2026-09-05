@@ -6,9 +6,27 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("2D38B051-D040-5D35-A6A4-9F7C4D6414AA")]
+[Guid("1A9B7C3D-4D24-5330-9F8F-D9D0BC712695")]
 public partial interface IAvnCommandBar : IAvnTemplatedControl
 {
+    [PreserveSig]
+    int GetVisiblePrimaryCommands(out IAvnControlList value);
+
+    [PreserveSig]
+    int GetOverflowItems(out IAvnControlList value);
+
+    [PreserveSig]
+    int GetPrimaryCommands(out IAvnControlList value);
+
+    [PreserveSig]
+    int SetPrimaryCommands(IAvnControlList value);
+
+    [PreserveSig]
+    int GetSecondaryCommands(out IAvnControlList value);
+
+    [PreserveSig]
+    int SetSecondaryCommands(IAvnControlList value);
+
     [PreserveSig]
     int GetContent(out IAvnControl? value);
 
@@ -720,6 +738,37 @@ public sealed partial class AvnCommandBar : IAvnCommandBar
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.IsLoaded ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetTag(out AvnVariant value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnVariant.FromObject(_value.Tag);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetTag(AvnVariant value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Tag = value.ToObject();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -1742,6 +1791,100 @@ public sealed partial class AvnCommandBar : IAvnCommandBar
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Padding = value.ToAvalonia();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetVisiblePrimaryCommands(out IAvnControlList value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnControlListMarshal.FromManaged(_value.VisiblePrimaryCommands);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetOverflowItems(out IAvnControlList value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnControlListMarshal.FromManaged(_value.OverflowItems);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetPrimaryCommands(out IAvnControlList value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnControlListMarshal.FromManaged(_value.PrimaryCommands);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetPrimaryCommands(IAvnControlList value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.PrimaryCommands = (global::System.Collections.Generic.IList<Avalonia.Controls.ICommandBarElement>?)(AvnControlListMarshal.ToManaged(value))!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetSecondaryCommands(out IAvnControlList value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnControlListMarshal.FromManaged(_value.SecondaryCommands);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetSecondaryCommands(IAvnControlList value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.SecondaryCommands = (global::System.Collections.Generic.IList<Avalonia.Controls.ICommandBarElement>?)(AvnControlListMarshal.ToManaged(value))!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

@@ -208,7 +208,10 @@ public class ComSourceEmitterTests
         var list = files["IAvnControlList.g.cs"];
         Assert.Contains("int GetAt(int index, out IAvnControl? value);", list, StringComparison.Ordinal);
         Assert.Contains("int Add(IAvnControl? value);", list, StringComparison.Ordinal);
-        Assert.Contains("ProjectionRuntime.Wrap((global::Avalonia.Controls.Control)_value[index]!)", list, StringComparison.Ordinal);
+        // The control list is host-implemented: the generated file carries the
+        // interface and the marshal routes through AvnControlList.
+        Assert.Contains("public static class AvnControlListMarshal", list, StringComparison.Ordinal);
+        Assert.Contains("AvnControlList.FromManaged(value);", list, StringComparison.Ordinal);
 
         var items = files["IAvnItemList.g.cs"];
         Assert.Contains("private readonly global::Avalonia.Controls.ItemCollection _value;", items, StringComparison.Ordinal);
@@ -627,7 +630,7 @@ public class ComSourceEmitterTests
         var buttonEnd = header.IndexOf("struct IAvnButton {", buttonStart, StringComparison.Ordinal);
         var buttonHeader = header[buttonStart..buttonEnd];
         Assert.Contains("get_object_id", buttonHeader, StringComparison.Ordinal);
-        Assert.Contains("#define I_AVN_BUTTON_ABI_VERSION 15", header, StringComparison.Ordinal);
+        Assert.Contains("#define I_AVN_BUTTON_ABI_VERSION 16", header, StringComparison.Ordinal);
         Assert.True(
             buttonHeader.IndexOf("get_object_id", StringComparison.Ordinal) <
             buttonHeader.IndexOf("get_classes", StringComparison.Ordinal));

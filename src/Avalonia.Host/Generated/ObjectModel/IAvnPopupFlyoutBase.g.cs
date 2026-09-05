@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("8E367D08-0CD3-55F1-AF3E-52764EE0FD1D")]
+[Guid("95076423-DA07-563E-B758-024C6F5FF0B0")]
 public partial interface IAvnPopupFlyoutBase : IAvnFlyoutBase
 {
     [PreserveSig]
@@ -53,6 +53,12 @@ public partial interface IAvnPopupFlyoutBase : IAvnFlyoutBase
 
     [PreserveSig]
     int SetOverlayDismissEventPassThrough(int value);
+
+    [PreserveSig]
+    int GetOverlayInputPassThroughElement(out IAvnControl? value);
+
+    [PreserveSig]
+    int SetOverlayInputPassThroughElement(IAvnControl? value);
 
     [PreserveSig]
     int GetPlacementConstraintAdjustment(out int value);
@@ -519,6 +525,37 @@ public sealed partial class AvnPopupFlyoutBase : IAvnPopupFlyoutBase
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.OverlayDismissEventPassThrough = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetOverlayInputPassThroughElement(out IAvnControl? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (IAvnControl?)ProjectionRuntime.Wrap(_value.OverlayInputPassThroughElement as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetOverlayInputPassThroughElement(IAvnControl? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.OverlayInputPassThroughElement = (global::Avalonia.Input.IInputElement)ProjectionRuntime.Unwrap(value)!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

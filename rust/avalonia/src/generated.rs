@@ -2684,11 +2684,11 @@ impl DateTimeList {
 }
 
 #[derive(Clone, Debug)]
-pub struct ItemList {
-    pub(crate) raw: sys::ComPtr<sys::IAvnItemList>,
+pub struct ControlList {
+    pub(crate) raw: sys::ComPtr<sys::IAvnControlList>,
 }
 
-impl ItemList {
+impl ControlList {
     pub fn len(&self) -> Result<usize> { Ok(self.raw.len()?) }
     pub fn is_empty(&self) -> Result<bool> { Ok(self.len()? == 0) }
     pub fn get(&self, index: usize) -> Result<Control> {
@@ -2703,11 +2703,11 @@ impl ItemList {
 }
 
 #[derive(Clone, Debug)]
-pub struct ControlList {
-    pub(crate) raw: sys::ComPtr<sys::IAvnControlList>,
+pub struct ItemList {
+    pub(crate) raw: sys::ComPtr<sys::IAvnItemList>,
 }
 
-impl ControlList {
+impl ItemList {
     pub fn len(&self) -> Result<usize> { Ok(self.raw.len()?) }
     pub fn is_empty(&self) -> Result<bool> { Ok(self.len()? == 0) }
     pub fn get(&self, index: usize) -> Result<Control> {
@@ -2949,6 +2949,17 @@ impl AutoCompleteBox {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -3705,6 +3716,17 @@ impl Border {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -4123,6 +4145,17 @@ impl Button {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -4724,6 +4757,17 @@ impl ButtonSpinner {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -5288,6 +5332,17 @@ impl Calendar {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -5914,6 +5969,17 @@ impl CalendarDatePicker {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -6605,6 +6671,17 @@ impl Canvas {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -6989,6 +7066,17 @@ impl Carousel {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -7590,6 +7678,17 @@ impl CheckBox {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -8220,6 +8319,17 @@ impl ComboBox {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -8899,6 +9009,17 @@ impl ComboBoxItem {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -9425,6 +9546,17 @@ impl CommandBar {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -9732,6 +9864,32 @@ impl CommandBar {
         self.set_padding(value)?;
         Ok(self)
     }
+    pub fn visible_primary_commands(&self) -> Result<ControlList> {
+        Ok(ControlList { raw: self.raw.get_visible_primary_commands()? })
+    }
+    pub fn overflow_items(&self) -> Result<ControlList> {
+        Ok(ControlList { raw: self.raw.get_overflow_items()? })
+    }
+    pub fn get_primary_commands(&self) -> Result<ControlList> {
+        Ok(ControlList { raw: self.raw.get_primary_commands()? })
+    }
+    pub fn set_primary_commands(&self, value: &ControlList) -> Result<()> {
+        Ok(self.raw.set_primary_commands(&value.raw)?)
+    }
+    pub fn primary_commands(self, value: &ControlList) -> Result<Self> {
+        self.set_primary_commands(value)?;
+        Ok(self)
+    }
+    pub fn get_secondary_commands(&self) -> Result<ControlList> {
+        Ok(ControlList { raw: self.raw.get_secondary_commands()? })
+    }
+    pub fn set_secondary_commands(&self, value: &ControlList) -> Result<()> {
+        Ok(self.raw.set_secondary_commands(&value.raw)?)
+    }
+    pub fn secondary_commands(self, value: &ControlList) -> Result<Self> {
+        self.set_secondary_commands(value)?;
+        Ok(self)
+    }
     pub fn get_content(&self) -> Result<Option<Control>> {
         Ok(self.raw.get_content()?.map(|raw| Control { raw }))
     }
@@ -10035,6 +10193,17 @@ impl CommandBarButton {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -10693,6 +10862,17 @@ impl CommandBarSeparator {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -11184,6 +11364,17 @@ impl CommandBarToggleButton {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -11871,6 +12062,17 @@ impl ContentControl {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -12389,6 +12591,17 @@ impl ContextMenu {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -13106,6 +13319,17 @@ impl Control {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -13436,6 +13660,17 @@ impl DatePicker {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -14024,6 +14259,17 @@ impl Decorator {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -14375,6 +14621,17 @@ impl DockPanel {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -14756,6 +15013,17 @@ impl DropDownButton {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -15357,6 +15625,17 @@ impl Expander {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -15963,6 +16242,17 @@ impl FlexPanel {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -16339,6 +16629,17 @@ impl Flyout {
         self.set_overlay_dismiss_event_pass_through(value)?;
         Ok(self)
     }
+    pub fn get_overlay_input_pass_through_element(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_overlay_input_pass_through_element()?.map(|raw| Control { raw }))
+    }
+    pub fn set_overlay_input_pass_through_element(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_overlay_input_pass_through_element(Some(&value))?)
+    }
+    pub fn overlay_input_pass_through_element(self, value: impl AsControl) -> Result<Self> {
+        self.set_overlay_input_pass_through_element(value)?;
+        Ok(self)
+    }
     pub fn get_placement_constraint_adjustment(&self) -> Result<i32> { Ok(self.raw.get_placement_constraint_adjustment()?) }
     pub fn set_placement_constraint_adjustment(&self, value: i32) -> Result<()> {
         Ok(self.raw.set_placement_constraint_adjustment(value)?)
@@ -16555,6 +16856,17 @@ impl Grid {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -16994,6 +17306,17 @@ impl GridSplitter {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -17548,6 +17871,17 @@ impl GroupBox {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -18087,6 +18421,17 @@ impl HyperlinkButton {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -18703,6 +19048,17 @@ impl IconElement {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -19178,6 +19534,17 @@ impl Image {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -19552,6 +19919,17 @@ impl ItemsControl {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -20067,6 +20445,17 @@ impl Label {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -20596,6 +20985,17 @@ impl LayoutTransformControl {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -20955,6 +21355,17 @@ impl ListBox {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -21547,6 +21958,17 @@ impl ListBoxItem {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -22073,6 +22495,17 @@ impl MaskedTextBox {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -22983,6 +23416,17 @@ impl Menu {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -23590,6 +24034,17 @@ impl MenuBase {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -24158,6 +24613,17 @@ impl MenuFlyout {
         self.set_overlay_dismiss_event_pass_through(value)?;
         Ok(self)
     }
+    pub fn get_overlay_input_pass_through_element(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_overlay_input_pass_through_element()?.map(|raw| Control { raw }))
+    }
+    pub fn set_overlay_input_pass_through_element(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_overlay_input_pass_through_element(Some(&value))?)
+    }
+    pub fn overlay_input_pass_through_element(self, value: impl AsControl) -> Result<Self> {
+        self.set_overlay_input_pass_through_element(value)?;
+        Ok(self)
+    }
     pub fn get_placement_constraint_adjustment(&self) -> Result<i32> { Ok(self.raw.get_placement_constraint_adjustment()?) }
     pub fn set_placement_constraint_adjustment(&self, value: i32) -> Result<()> {
         Ok(self.raw.set_placement_constraint_adjustment(value)?)
@@ -24380,6 +24846,17 @@ impl MenuItem {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -25121,6 +25598,17 @@ impl NotificationCard {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -25673,6 +26161,17 @@ impl WindowNotificationManager {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -26172,6 +26671,17 @@ impl NumericUpDown {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -26857,6 +27367,17 @@ impl Panel {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -27205,6 +27726,17 @@ impl PathIcon {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -27691,6 +28223,17 @@ impl PipsPager {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -28281,6 +28824,17 @@ impl HeaderedContentControl {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -28820,6 +29374,17 @@ impl HeaderedItemsControl {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -29356,6 +29921,17 @@ impl HeaderedSelectingItemsControl {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -29959,6 +30535,17 @@ impl Popup {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -30228,6 +30815,17 @@ impl Popup {
         self.set_overlay_dismiss_event_pass_through(value)?;
         Ok(self)
     }
+    pub fn get_overlay_input_pass_through_element(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_overlay_input_pass_through_element()?.map(|raw| Control { raw }))
+    }
+    pub fn set_overlay_input_pass_through_element(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_overlay_input_pass_through_element(Some(&value))?)
+    }
+    pub fn overlay_input_pass_through_element(self, value: impl AsControl) -> Result<Self> {
+        self.set_overlay_input_pass_through_element(value)?;
+        Ok(self)
+    }
     pub fn get_horizontal_offset(&self) -> Result<f64> { Ok(self.raw.get_horizontal_offset()?) }
     pub fn set_horizontal_offset(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_horizontal_offset(value)?)
@@ -30417,6 +31015,17 @@ impl PopupFlyoutBase {
     }
     pub fn overlay_dismiss_event_pass_through(self, value: bool) -> Result<Self> {
         self.set_overlay_dismiss_event_pass_through(value)?;
+        Ok(self)
+    }
+    pub fn get_overlay_input_pass_through_element(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_overlay_input_pass_through_element()?.map(|raw| Control { raw }))
+    }
+    pub fn set_overlay_input_pass_through_element(&self, value: impl AsControl) -> Result<()> {
+        let value = value.as_control()?;
+        Ok(self.raw.set_overlay_input_pass_through_element(Some(&value))?)
+    }
+    pub fn overlay_input_pass_through_element(self, value: impl AsControl) -> Result<Self> {
+        self.set_overlay_input_pass_through_element(value)?;
         Ok(self)
     }
     pub fn get_placement_constraint_adjustment(&self) -> Result<i32> { Ok(self.raw.get_placement_constraint_adjustment()?) }
@@ -30610,6 +31219,17 @@ impl RangeBase {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -31138,6 +31758,17 @@ impl SelectingItemsControl {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -31720,6 +32351,17 @@ impl TemplatedControl {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -32195,6 +32837,17 @@ impl Thumb {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -32703,6 +33356,17 @@ impl ToggleButton {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -33333,6 +33997,17 @@ impl UniformGrid {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -33721,6 +34396,17 @@ impl ProgressBar {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -34288,6 +34974,17 @@ impl RadioButton {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -34929,6 +35626,17 @@ impl RefreshContainer {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -35480,6 +36188,17 @@ impl RelativePanel {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -35882,6 +36601,17 @@ impl RepeatButton {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -36499,6 +37229,17 @@ impl ScrollViewer {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -37183,6 +37924,17 @@ impl SelectableTextBlock {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -37750,6 +38502,17 @@ impl Separator {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -38225,6 +38988,17 @@ impl Arc {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -38661,6 +39435,17 @@ impl Ellipse {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -39081,6 +39866,17 @@ impl Line {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -39521,6 +40317,17 @@ impl Path {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -39952,6 +40759,17 @@ impl Polygon {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -40394,6 +41212,17 @@ impl Polyline {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -40836,6 +41665,17 @@ impl Rectangle {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -41272,6 +42112,17 @@ impl Sector {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -41704,6 +42555,17 @@ impl Shape {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -42124,6 +42986,17 @@ impl Slider {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -42705,6 +43578,17 @@ impl Spinner {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -43242,6 +44126,17 @@ impl SplitButton {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -43815,6 +44710,17 @@ impl SplitView {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -44467,6 +45373,17 @@ impl StackPanel {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -44850,6 +45767,17 @@ impl TabControl {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -45491,6 +46419,17 @@ impl TabItem {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -46072,6 +47011,17 @@ impl TableView {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -46672,6 +47622,17 @@ impl TableViewCell {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -47393,6 +48354,17 @@ impl TableViewRow {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -47919,6 +48891,17 @@ impl TextBlock {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -48428,6 +49411,17 @@ impl TextBox {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -49285,6 +50279,17 @@ impl ThemeVariantScope {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -49647,6 +50652,17 @@ impl TimePicker {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -50191,6 +51207,17 @@ impl ToggleSplitButton {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -50785,6 +51812,17 @@ impl ToggleSwitch {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -51457,6 +52495,17 @@ impl ToolTip {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -52057,6 +53106,17 @@ impl TransitioningContentControl {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -52660,6 +53720,17 @@ impl TreeView {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -53234,6 +54305,17 @@ impl TreeViewItem {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -53813,6 +54895,17 @@ impl UserControl {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -54331,6 +55424,17 @@ impl Viewbox {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -54694,6 +55798,17 @@ impl Window {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)
@@ -55376,6 +56491,17 @@ impl WrapPanel {
         Ok(self)
     }
     pub fn is_loaded(&self) -> Result<bool> { Ok(self.raw.get_is_loaded()?) }
+    pub fn get_tag(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_tag()?))
+    }
+    pub fn set_tag(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_tag(&value)?)
+    }
+    pub fn tag(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_tag(value)?;
+        Ok(self)
+    }
     pub fn get_width(&self) -> Result<f64> { Ok(self.raw.get_width()?) }
     pub fn set_width(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_width(value)?)

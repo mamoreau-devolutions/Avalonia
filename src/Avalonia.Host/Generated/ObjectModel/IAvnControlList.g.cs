@@ -27,103 +27,12 @@ public partial interface IAvnControlList
     [PreserveSig]
     int Clear();
 }
-[GeneratedComClass]
-public sealed partial class AvnControlList : IAvnControlList
+
+public static class AvnControlListMarshal
 {
-    private readonly global::Avalonia.Controls.Controls _value;
+    public static IAvnControlList? FromManaged(object? value) =>
+        value is null ? null : Avalonia.Host.Com.AvnControlList.FromManaged(value);
 
-    internal AvnControlList(global::Avalonia.Controls.Controls value) => _value = value;
-
-    public static IAvnControlList? FromManaged(global::Avalonia.Controls.Controls? value) =>
-        value is null ? null : new AvnControlList(value);
-
-    public static global::Avalonia.Controls.Controls? ToManaged(IAvnControlList? value) =>
-        value is AvnControlList local ? local._value : null;
-
-    public int GetCount(out int value)
-    {
-        value = 0;
-        try
-        {
-            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
-            value = _value.Count;
-            return global::Avalonia.Host.HResults.S_OK;
-        }
-        catch (global::System.Exception e)
-        {
-            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
-        }
-    }
-
-    public int GetAt(int index, out IAvnControl? value)
-    {
-        value = null;
-        try
-        {
-            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
-            value = (IAvnControl)ProjectionRuntime.Wrap((global::Avalonia.Controls.Control)_value[index]!)!;
-            return global::Avalonia.Host.HResults.S_OK;
-        }
-        catch (global::System.Exception e)
-        {
-            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
-        }
-    }
-
-    public int Add(IAvnControl? value)
-    {
-        try
-        {
-            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
-            _value.Add((global::Avalonia.Controls.Control)ProjectionRuntime.Unwrap(value)!);
-            return global::Avalonia.Host.HResults.S_OK;
-        }
-        catch (global::System.Exception e)
-        {
-            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
-        }
-    }
-
-    public int IndexOf(IAvnControl? value, out int index)
-    {
-        index = -1;
-        try
-        {
-            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
-            index = _value.IndexOf((global::Avalonia.Controls.Control)ProjectionRuntime.Unwrap(value)!);
-            return global::Avalonia.Host.HResults.S_OK;
-        }
-        catch (global::System.Exception e)
-        {
-            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
-        }
-    }
-
-    public int RemoveAt(int index)
-    {
-        try
-        {
-            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
-            _value.RemoveAt(index);
-            return global::Avalonia.Host.HResults.S_OK;
-        }
-        catch (global::System.Exception e)
-        {
-            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
-        }
-    }
-
-    public int Clear()
-    {
-        try
-        {
-            global::Avalonia.Threading.Dispatcher.UIThread.VerifyAccess();
-            _value.Clear();
-            return global::Avalonia.Host.HResults.S_OK;
-        }
-        catch (global::System.Exception e)
-        {
-            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
-        }
-    }
+    public static object? ToManaged(IAvnControlList? value) =>
+        Avalonia.Host.Com.AvnControlList.ToManaged(value);
 }

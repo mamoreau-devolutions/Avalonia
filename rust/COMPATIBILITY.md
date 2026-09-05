@@ -552,6 +552,17 @@ the host's UTF-16 provider and report E_NOTIMPL without a host, exactly as
 the notification CCW's string getters do. The gap report drops to 177
 entries. Factory stays 13.
 
+Wave U30 projects the object lists and pass-through members. CommandBar's
+PrimaryCommands and SecondaryCommands cross as a new IAvnControlList — a
+host-implemented live adapter (AvnControlList) working through the
+non-generic IList the observable command collections implement, so reads
+observe the bar and mutations persist into it; VisiblePrimaryCommands and
+OverflowItems ride the same adapter as read-only views. Control.Tag crosses
+as a Variant, which grows Control's vtable, so Control and all 95
+descendants republish under fresh IIDs. Popup and PopupFlyoutBase's
+OverlayInputPassThroughElement cross as a control reference. The gap
+report drops to 170 entries. Factory stays 13.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A

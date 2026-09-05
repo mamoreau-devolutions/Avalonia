@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("C73357D8-3C3D-53E3-96B0-D266E9B91F58")]
+[Guid("06D79016-63D8-5035-B293-19969F0BB3C6")]
 public partial interface IAvnControl : IAvnStyledElement
 {
     [PreserveSig]
@@ -35,6 +35,12 @@ public partial interface IAvnControl : IAvnStyledElement
 
     [PreserveSig]
     int GetIsLoaded(out int value);
+
+    [PreserveSig]
+    int GetTag(out AvnVariant value);
+
+    [PreserveSig]
+    int SetTag(AvnVariant value);
 
     [PreserveSig]
     int GetWidth(out double value);
@@ -751,6 +757,37 @@ public sealed partial class AvnControl : IAvnControl
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.IsLoaded ? 1 : 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetTag(out AvnVariant value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnVariant.FromObject(_value.Tag);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetTag(AvnVariant value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Tag = value.ToObject();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

@@ -48,17 +48,12 @@ Avalonia.Controls.Carousel.PageTransition: By design: transitions are animation 
 Avalonia.Controls.ComboBox.HorizontalContentAlignment: By design: the new-hidden member duplicates the projected base
 Avalonia.Controls.ComboBox.VerticalContentAlignment: By design: the new-hidden member duplicates the projected base
 Avalonia.Controls.ComboBox.UpdateSelectionFromEvent(Control, RoutedEventArgs): By design: initialization and internal plumbing is owned by the host
-Avalonia.Controls.CommandBar.VisiblePrimaryCommands: By design: the read-only view over the command lists
-Avalonia.Controls.CommandBar.OverflowItems: By design: the read-only overflow view over the command lists
-Avalonia.Controls.CommandBar.PrimaryCommands: By design: the typed command-bar element list needs its own element ABI
-Avalonia.Controls.CommandBar.SecondaryCommands: By design: the typed command-bar element list needs its own element ABI
 Avalonia.Controls.ContentControl.Presenter: By design: template-part presenters are internal layout plumbing
 Avalonia.Controls.ContextMenu.CustomPopupPlacementCallback: By design: custom placement needs a callback with geometry out-parameters
 Avalonia.Controls.ContextMenu.Open(): By design: overrides the projected base slot
 Avalonia.Controls.ContextMenu.Close(): By design: the INotification content needs a typed notification ABI
 Avalonia.Controls.Control.FocusAdorner: By design: adorner plumbing is owned by the host
 Avalonia.Controls.Control.DataTemplates: By design: the default-template list is owned by the host
-Avalonia.Controls.Control.Tag: By design: an untyped user payload with no ABI shape
 Avalonia.Controls.Expander.ContentTransition: By design: transitions are animation internals owned by the host
 Avalonia.Controls.Flyout.FlyoutPresenterClasses: By design: styling is owned by the host
 Avalonia.Controls.Flyout.FlyoutPresenterTheme: By design: styling is owned by the host
@@ -107,10 +102,8 @@ Avalonia.Controls.Primitives.HeaderedSelectingItemsControl.HeaderPresenter: By d
 Avalonia.Controls.Primitives.Popup.OpenedPopups: By design: popup enumeration is owned by the host
 Avalonia.Controls.Primitives.Popup.DependencyResolver: By design: the resolver is not ABI surface
 Avalonia.Controls.Primitives.Popup.CustomPopupPlacementCallback: By design: custom placement needs a callback with geometry out-parameters
-Avalonia.Controls.Primitives.Popup.OverlayInputPassThroughElement: By design: input plumbing is owned by the host
 Avalonia.Controls.Primitives.Popup.IsInsidePopup(Visual): By design: visual-tree queries are owned by the host
 Avalonia.Controls.Primitives.PopupFlyoutBase.CustomPopupPlacementCallback: By design: custom placement needs a callback with geometry out-parameters
-Avalonia.Controls.Primitives.PopupFlyoutBase.OverlayInputPassThroughElement: By design: input plumbing is owned by the host
 Avalonia.Controls.Primitives.PopupFlyoutBase.ShowAt(Control): By design: the flyout base's virtual ShowAt pair needs pointer-event state
 Avalonia.Controls.Primitives.PopupFlyoutBase.ShowAt(Control, Boolean): By design: the flyout base's virtual ShowAt pair needs pointer-event state
 Avalonia.Controls.Primitives.PopupFlyoutBase.Hide(): By design: the flyout base's virtual Hide needs pointer-event state

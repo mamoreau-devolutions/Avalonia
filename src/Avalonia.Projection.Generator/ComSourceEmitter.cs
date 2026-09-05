@@ -1814,7 +1814,7 @@ public static class ComSourceEmitter
             MarshallingKind.TextSelector => $"{SimpleName(property.InterfaceName!)[1..]}.ToSelector(value)",
             MarshallingKind.Variant => "value.ToObject()",
             MarshallingKind.ComCollection => property.HostImplementationTypeName is { }
-                ? $"(global::{property.ManagedTypeName}?)({SimpleName(property.InterfaceName!)[1..]}Marshal.ToManaged(value))!"
+                ? $"(global::{CSharpManagedTypeName(property.ManagedTypeName)}?)({SimpleName(property.InterfaceName!)[1..]}Marshal.ToManaged(value))!"
                 : $"{SimpleName(property.InterfaceName!)[1..]}.ToManaged(value)",
             _ when GeometryMarshalling.IsGeometry(property.Kind) => "value.ToAvalonia()",
             _ => "value",
