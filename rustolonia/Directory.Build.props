@@ -1,0 +1,16 @@
+<Project>
+
+  <!--
+    The rustolonia subtree hosts the Rust bindings projects while they still build
+    against the in-repo Avalonia source. It mirrors src/Directory.Build.props so the
+    shared version, signing and analyzer imports keep applying (InternalsVisibleTo
+    into Avalonia.Controls relies on the host being signed with avalonia.snk). When
+    this directory becomes the root of its own repository, replace these imports
+    with a standalone build configuration.
+  -->
+  <Import Project="..\Directory.Build.props" />
+  <Import Project="..\build\SharedVersion.props" />
+  <Import Project="..\build\NetAnalyzers.props" />
+  <Import Project="..\build\ExternalConsumers.props" />
+
+</Project>

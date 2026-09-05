@@ -110,14 +110,14 @@ nCrunchTemp_*
 # CodeRush
 .cr/
 
-# Rust workspace
-rust/target/
+# Rust workspace (rustolonia)
+rustolonia/rust/target/
 # The app template is excluded from the workspace (it's copied out by
 # rust/new-app.ps1 / rust/new-app.sh) and builds/locks standalone.
-rust/templates/*/target/
-rust/templates/*/Cargo.lock
+rustolonia/rust/templates/*/target/
+rustolonia/rust/templates/*/Cargo.lock
 # Instantiated application scaffolds and packaged artifacts stay local.
-rust/artifacts/
+rustolonia/rust/artifacts/
 __pycache__/
 *.pyc
 
