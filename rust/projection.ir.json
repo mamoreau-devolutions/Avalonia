@@ -1,5 +1,5 @@
 {
-  "version": 14,
+  "version": 15,
   "sourceAssembly": "Avalonia.Base,Avalonia.Controls",
   "factoryIid": "15778134-9E9F-5BAF-98FF-5510778094BA",
   "factoryAbiVersion": 13,
@@ -9,6 +9,8 @@
   "commandInterfaceName": "Avalonia.Host.Com.IAvnCommand",
   "commandInterfaceIid": "FB93FAB9-2BAA-5AD2-95DC-0F261AF7B447",
   "commandAbiVersion": 1,
+  "commandHandlerInterfaceName": "Avalonia.Host.Com.IAvnCommandCanExecuteChangedHandler",
+  "commandHandlerInterfaceIid": "13E58040-B570-518F-A5F2-FE3EA80B4688",
   "types": [
     {
       "name": "IAvnAvaloniaObject",

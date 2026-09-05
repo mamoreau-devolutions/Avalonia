@@ -175,6 +175,8 @@ struct IAvnCommandVtbl {
     release: unsafe extern "system" fn(*mut IUnknown) -> u32,
     execute: unsafe extern "system" fn(*mut IAvnCommand) -> i32,
     can_execute: unsafe extern "system" fn(*mut IAvnCommand, *mut i32) -> i32,
+    advise_can_execute_changed: unsafe extern "system" fn(*mut IAvnCommand, *mut IAvnCommandCanExecuteChangedHandler, *mut i64) -> i32,
+    unadvise_can_execute_changed: unsafe extern "system" fn(*mut IAvnCommand, i64) -> i32,
 }
 
 #[repr(C)]
@@ -197,7 +199,77 @@ impl ComPtr<IAvnCommand> {
             hresult::check(hr).map(|_| value != 0)
         }
     }
+    pub fn advise_can_execute_changed(
+        &self,
+        handler: &ComPtr<IAvnCommandCanExecuteChangedHandler>,
+    ) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_can_execute_changed)(
+                self.as_raw(),
+                handler.as_raw(),
+                &mut subscription_id,
+            );
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_can_execute_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe { hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_can_execute_changed)(self.as_raw(), subscription_id)) }
+    }
 }
+
+pub const I_AVN_COMMAND_CAN_EXECUTE_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x13E58040, data2: 0xB570, data3: 0x518F, data4: [0xA5, 0xF2, 0xFE, 0x3E, 0xA8, 0x0B, 0x46, 0x88] };
+
+#[repr(C)]
+struct IAvnCommandCanExecuteChangedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnCommandCanExecuteChangedHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnCommandCanExecuteChangedHandler {
+    vtbl: *const IAvnCommandCanExecuteChangedHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnCommandCanExecuteChangedHandler {
+    const IID: Guid = I_AVN_COMMAND_CAN_EXECUTE_CHANGED_HANDLER_IID;
+}
+
+impl ComPtr<IAvnCommandCanExecuteChangedHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe { hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw())) }
+    }
+}
+
+pub fn command_can_execute_changed_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnCommandCanExecuteChangedHandler> {
+    crate::event_callback::create::<IAvnCommandCanExecuteChangedHandler, ()>(IAvnCommandCanExecuteChangedHandler { vtbl: &I_AVN_COMMAND_CAN_EXECUTE_CHANGED_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn command_can_execute_changed_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnCommandCanExecuteChangedHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn command_can_execute_changed_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnCommandCanExecuteChangedHandler, ()>(this)
+}
+
+unsafe extern "system" fn command_can_execute_changed_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnCommandCanExecuteChangedHandler, ()>(this)
+}
+
+unsafe extern "system" fn command_can_execute_changed_handler_invoke(this: *mut IAvnCommandCanExecuteChangedHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnCommandCanExecuteChangedHandler, ()>(this, &mut ())
+}
+
+#[rustfmt::skip]
+static I_AVN_COMMAND_CAN_EXECUTE_CHANGED_HANDLER_VTBL: IAvnCommandCanExecuteChangedHandlerVtbl = IAvnCommandCanExecuteChangedHandlerVtbl {
+    query_interface: command_can_execute_changed_handler_query_interface,
+    add_ref: command_can_execute_changed_handler_add_ref,
+    release: command_can_execute_changed_handler_release,
+    invoke: command_can_execute_changed_handler_invoke,
+};
 
 pub const I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_OPENED_HANDLER_IID: Guid = Guid { data1: 0x48E353BF, data2: 0x246E, data3: 0x5FC7, data4: [0x9C, 0xF4, 0xDE, 0x08, 0x2C, 0xE3, 0x0E, 0xD8] };
 

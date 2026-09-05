@@ -29,6 +29,7 @@ public static class ClrTypeExtractor
         var usesBrush = types.Any(type =>
             type.Properties.Any(property => property.Kind == MarshallingKind.Brush));
         var commandInterfaceName = CommandMarshalling.QualifiedInterfaceName(policy.ProjectionNamespace);
+        var commandHandlerInterfaceName = CommandMarshalling.QualifiedHandlerInterfaceName(policy.ProjectionNamespace);
         var usesCommand = types.Any(type =>
             type.Properties.Any(property => property.Kind == MarshallingKind.Command));
 
@@ -51,6 +52,10 @@ public static class ClrTypeExtractor
                 ? CreateDeterministicIid(commandInterfaceName, policy.GetAbiVersion(commandInterfaceName))
                 : null,
             CommandAbiVersion = policy.GetAbiVersion(commandInterfaceName),
+            CommandHandlerInterfaceName = usesCommand ? commandHandlerInterfaceName : null,
+            CommandHandlerInterfaceIid = usesCommand
+                ? CreateDeterministicIid(commandHandlerInterfaceName, 1)
+                : null,
             Types = types,
             Enums = ExtractEnums(selected, policy),
             AttachedProperties = attachedProperties,

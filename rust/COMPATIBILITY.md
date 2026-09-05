@@ -39,6 +39,13 @@ Version 14 adds optional `commandInterfaceName`, `commandInterfaceIid` and
 `MarshallingKind.Command` was appended after CharUtf16, so every previously
 published ordinal is unmoved.
 
+Version 15 adds the optional `commandHandlerInterfaceName` and
+`commandHandlerInterfaceIid` pair, present whenever `commandInterfaceName` is.
+It publishes the IID of `IAvnCommandCanExecuteChangedHandler` so the Rust
+bindgen can emit the handler interface and its CCW constructor without
+hardcoding the identity. Both fields are additive; a reader that ignores them
+sees the same vtables it always did.
+
 Version 13 adds two optional members, both host-side only. A projected property
 and an attached property may carry `stringConverterTypeName`, naming the host
 type that converts the member between its CLR type and the UTF-16 string in its
@@ -284,6 +291,19 @@ are Controls). `IAvnLabel` 3 to 4. Factory 13.
 no CommandParameter). Button and descendants 8 to 9 (or 4 to 5 for the wave D
 leaves), MenuItem 5 to 6, SplitButton/ToggleSplitButton 4 to 5, TrayIcon 1 to 2.
 Factory 13.
+
+Inbound commands close the loop: `avalonia_sys::command(execute, can_execute)`
+builds a Rust CCW implementing `IAvnCommand` (ref-counted, panic-safe closures,
+QI for IUnknown/IAvnCommand), and `Command::notify()` fires every live
+subscription when the Rust side re-queries `CanExecute`. The host's
+`CommandAdapter` (the `ToCommand` path for foreign `IAvnCommand` pointers)
+subscribes eagerly with a weak-referenced handler, so a Rust command handed to
+`Button::set_command` drives `CanExecuteChanged` end to end: the button
+enables/disables when `notify()` runs. The generated handler constructor
+`command_can_execute_changed_handler` mirrors the event-handler CCW pattern for
+host-to-Rust notifications. IR schema moves 14 to 15 for the paired
+`commandHandlerInterfaceName`/`commandHandlerInterfaceIid` fields. No ABI slot
+moves: the advise/unadvise pair was already in the U7 vtable layout.
 
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and

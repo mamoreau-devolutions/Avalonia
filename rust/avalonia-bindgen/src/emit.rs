@@ -246,6 +246,23 @@ fn emit_command(ir: &ProjectionIr) -> String {
         .as_deref()
         .expect("commandInterfaceIid for a projected command");
     let iid_const = format!("{}_IID", to_shouty(name));
+    let handler_name = simple_name(
+        ir.command_handler_interface_name
+            .as_deref()
+            .expect("commandHandlerInterfaceName for a projected command"),
+    );
+    let handler_iid = ir
+        .command_handler_interface_iid
+        .as_deref()
+        .expect("commandHandlerInterfaceIid for a projected command");
+    let handler_iid_const = format!("{}_IID", to_shouty(&handler_name));
+    let handler_stem = handler_name
+        .strip_prefix("IAvn")
+        .unwrap_or(&handler_name)
+        .strip_suffix("Handler")
+        .unwrap_or(&handler_name);
+    let handler_fn = format!("{}_handler", to_snake(handler_stem));
+    let handler_shouty = to_shouty(&handler_name);
     format!(
         "pub const {iid_const}: Guid = {iid_literal};\n\n\
          #[repr(C)]\n\
@@ -255,6 +272,8 @@ fn emit_command(ir: &ProjectionIr) -> String {
          \x20   release: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
          \x20   execute: unsafe extern \"system\" fn(*mut {name}) -> i32,\n\
          \x20   can_execute: unsafe extern \"system\" fn(*mut {name}, *mut i32) -> i32,\n\
+         \x20   advise_can_execute_changed: unsafe extern \"system\" fn(*mut {name}, *mut {handler_name}, *mut i64) -> i32,\n\
+         \x20   unadvise_can_execute_changed: unsafe extern \"system\" fn(*mut {name}, i64) -> i32,\n\
          }}\n\n\
          #[repr(C)]\n\
          pub struct {name} {{\n\
@@ -274,8 +293,68 @@ fn emit_command(ir: &ProjectionIr) -> String {
          \x20           hresult::check(hr).map(|_| value != 0)\n\
          \x20       }}\n\
          \x20   }}\n\
-         }}\n",
-        iid_literal = guid_literal(iid)
+         \x20   pub fn advise_can_execute_changed(\n\
+         \x20       &self,\n\
+         \x20       handler: &ComPtr<{handler_name}>,\n\
+         \x20   ) -> Result<i64> {{\n\
+         \x20       unsafe {{\n\
+         \x20           let mut subscription_id = 0i64;\n\
+         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_can_execute_changed)(\n\
+         \x20               self.as_raw(),\n\
+         \x20               handler.as_raw(),\n\
+         \x20               &mut subscription_id,\n\
+         \x20           );\n\
+         \x20           hresult::check(hr).map(|_| subscription_id)\n\
+         \x20       }}\n\
+         \x20   }}\n\
+         \x20   pub fn unadvise_can_execute_changed(&self, subscription_id: i64) -> Result<()> {{\n\
+         \x20       unsafe {{ hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_can_execute_changed)(self.as_raw(), subscription_id)) }}\n\
+         \x20   }}\n\
+         }}\n\n\
+         pub const {handler_iid_const}: Guid = {handler_iid_literal};\n\n\
+         #[repr(C)]\n\
+         struct {handler_name}Vtbl {{\n\
+         \x20   query_interface: unsafe extern \"system\" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,\n\
+         \x20   add_ref: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+         \x20   release: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+         \x20   invoke: unsafe extern \"system\" fn(*mut {handler_name}) -> i32,\n\
+         }}\n\n\
+         #[repr(C)]\n\
+         pub struct {handler_name} {{\n\
+         \x20   vtbl: *const {handler_name}Vtbl,\n\
+         }}\n\n\
+         unsafe impl ComInterface for {handler_name} {{\n\
+         \x20   const IID: Guid = {handler_iid_const};\n\
+         }}\n\n\
+         impl ComPtr<{handler_name}> {{\n\
+         \x20   pub fn invoke(&self) -> Result<()> {{\n\
+         \x20       unsafe {{ hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw())) }}\n\
+         \x20   }}\n\
+         }}\n\n\
+         pub fn {handler_fn}(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<{handler_name}> {{\n\
+         \x20   crate::event_callback::create::<{handler_name}, ()>({handler_name} {{ vtbl: &{handler_shouty}_VTBL }}, move |_| callback())\n\
+         }}\n\n\
+         unsafe extern \"system\" fn {handler_fn}_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {{\n\
+         \x20   crate::event_callback::query_interface::<{handler_name}, ()>(this, iid, result)\n\
+         }}\n\n\
+         unsafe extern \"system\" fn {handler_fn}_add_ref(this: *mut IUnknown) -> u32 {{\n\
+         \x20   crate::event_callback::add_ref::<{handler_name}, ()>(this)\n\
+         }}\n\n\
+         unsafe extern \"system\" fn {handler_fn}_release(this: *mut IUnknown) -> u32 {{\n\
+         \x20   crate::event_callback::release::<{handler_name}, ()>(this)\n\
+         }}\n\n\
+         unsafe extern \"system\" fn {handler_fn}_invoke(this: *mut {handler_name}) -> i32 {{\n\
+         \x20   crate::event_callback::invoke::<{handler_name}, ()>(this, &mut ())\n\
+         }}\n\n\
+         #[rustfmt::skip]\n\
+         static {handler_shouty}_VTBL: {handler_name}Vtbl = {handler_name}Vtbl {{\n\
+         \x20   query_interface: {handler_fn}_query_interface,\n\
+         \x20   add_ref: {handler_fn}_add_ref,\n\
+         \x20   release: {handler_fn}_release,\n\
+         \x20   invoke: {handler_fn}_invoke,\n\
+         }};\n",
+        iid_literal = guid_literal(iid),
+        handler_iid_literal = guid_literal(handler_iid),
     )
 }
 

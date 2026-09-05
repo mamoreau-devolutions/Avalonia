@@ -83,11 +83,28 @@ public sealed partial class AvnCommand : IAvnCommand
         return global::Avalonia.Host.HResults.S_OK;
     }
 
-    private sealed class CommandAdapter : global::System.Windows.Input.ICommand
+        private sealed partial class CommandAdapter : global::System.Windows.Input.ICommand
     {
         private readonly IAvnCommand _inner;
-        public CommandAdapter(IAvnCommand inner) => _inner = inner;
+        private readonly AdapterHandler? _handler;
+        private readonly long _subscriptionId;
+
+        public CommandAdapter(IAvnCommand inner)
+        {
+            _inner = inner;
+            // The subscription is best-effort: a command that does not
+            // implement AdviseCanExecuteChanged still works, it just never
+            // raises CanExecuteChanged.
+            var handler = new AdapterHandler(this);
+            if (_inner.AdviseCanExecuteChanged(handler, out var subscriptionId) >= 0)
+            {
+                _handler = handler;
+                _subscriptionId = subscriptionId;
+            }
+        }
+
         public event global::System.EventHandler? CanExecuteChanged;
+
         public bool CanExecute(object? parameter)
         {
             var hr = _inner.CanExecute(out var value);
@@ -95,11 +112,29 @@ public sealed partial class AvnCommand : IAvnCommand
                 global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
             return value != 0;
         }
+
         public void Execute(object? parameter)
         {
             var hr = _inner.Execute();
             if (hr < 0)
                 global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+        }
+
+        private void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, global::System.EventArgs.Empty);
+
+        [GeneratedComClass]
+        private sealed partial class AdapterHandler : IAvnCommandCanExecuteChangedHandler
+        {
+            private readonly global::System.WeakReference<CommandAdapter> _owner;
+
+            public AdapterHandler(CommandAdapter owner) => _owner = new global::System.WeakReference<CommandAdapter>(owner);
+
+            public int Invoke()
+            {
+                if (_owner.TryGetTarget(out var owner))
+                    owner.RaiseCanExecuteChanged();
+                return global::Avalonia.Host.HResults.S_OK;
+            }
         }
     }
 }

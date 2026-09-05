@@ -487,8 +487,8 @@ public class ComSourceEmitterTests
             "int AdviseClick(IAvnMenuItemClickHandler? handler",
             menuItem,
             StringComparison.Ordinal);
-        // An ICommand has no ABI shape, so no slot pretends to carry one.
-        Assert.DoesNotContain("SetCommand", menuItem, StringComparison.Ordinal);
+        // ICommand projects as IAvnCommand since the command wave.
+        Assert.Contains("int SetCommand(IAvnCommand? value);", menuItem, StringComparison.Ordinal);
 
         var splitView = files["IAvnSplitView.g.cs"];
         Assert.Contains(
@@ -627,7 +627,7 @@ public class ComSourceEmitterTests
         var buttonEnd = header.IndexOf("struct IAvnButton {", buttonStart, StringComparison.Ordinal);
         var buttonHeader = header[buttonStart..buttonEnd];
         Assert.Contains("get_object_id", buttonHeader, StringComparison.Ordinal);
-        Assert.Contains("#define I_AVN_BUTTON_ABI_VERSION 7", header, StringComparison.Ordinal);
+        Assert.Contains("#define I_AVN_BUTTON_ABI_VERSION 9", header, StringComparison.Ordinal);
         Assert.True(
             buttonHeader.IndexOf("get_object_id", StringComparison.Ordinal) <
             buttonHeader.IndexOf("get_classes", StringComparison.Ordinal));
