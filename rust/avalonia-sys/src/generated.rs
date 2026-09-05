@@ -4315,6 +4315,63 @@ unsafe extern "system" fn i_avn_toggle_split_button_is_checked_changed_handler_i
     crate::event_callback::invoke::<IAvnToggleSplitButtonIsCheckedChangedHandler, ()>(this, &mut ())
 }
 
+pub const I_AVN_TRANSITIONING_CONTENT_CONTROL_TRANSITION_COMPLETED_HANDLER_IID: Guid = Guid { data1: 0xFCAFA0A4, data2: 0x6D55, data3: 0x549B, data4: [0xBB, 0x64, 0x97, 0xF8, 0xD8, 0x66, 0xF4, 0x96] };
+
+#[derive(Debug)]
+pub struct TransitioningContentControlTransitionCompletedEventArgs {
+    pub from: AvnVariant,
+    pub to: AvnVariant,
+    pub has_run_to_completion: bool,
+}
+
+#[repr(C)]
+struct IAvnTransitioningContentControlTransitionCompletedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnTransitioningContentControlTransitionCompletedHandler, from: AvnVariant, to: AvnVariant, has_run_to_completion: i32) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnTransitioningContentControlTransitionCompletedHandler { vtbl: *const IAvnTransitioningContentControlTransitionCompletedHandlerVtbl }
+
+unsafe impl ComInterface for IAvnTransitioningContentControlTransitionCompletedHandler { const IID: Guid = I_AVN_TRANSITIONING_CONTENT_CONTROL_TRANSITION_COMPLETED_HANDLER_IID; }
+
+static I_AVN_TRANSITIONING_CONTENT_CONTROL_TRANSITION_COMPLETED_HANDLER_VTBL: IAvnTransitioningContentControlTransitionCompletedHandlerVtbl = IAvnTransitioningContentControlTransitionCompletedHandlerVtbl {
+    query_interface: i_avn_transitioning_content_control_transition_completed_handler_query_interface,
+    add_ref: i_avn_transitioning_content_control_transition_completed_handler_add_ref,
+    release: i_avn_transitioning_content_control_transition_completed_handler_release,
+    invoke: i_avn_transitioning_content_control_transition_completed_handler_invoke,
+};
+
+pub fn transitioning_content_control_transition_completed_handler(callback: impl FnMut(&mut TransitioningContentControlTransitionCompletedEventArgs) -> Result<()> + Send + 'static) -> ComPtr<IAvnTransitioningContentControlTransitionCompletedHandler> {
+    crate::event_callback::create(IAvnTransitioningContentControlTransitionCompletedHandler { vtbl: &I_AVN_TRANSITIONING_CONTENT_CONTROL_TRANSITION_COMPLETED_HANDLER_VTBL }, callback)
+}
+
+unsafe extern "system" fn i_avn_transitioning_content_control_transition_completed_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnTransitioningContentControlTransitionCompletedHandler, TransitioningContentControlTransitionCompletedEventArgs>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_transitioning_content_control_transition_completed_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnTransitioningContentControlTransitionCompletedHandler, TransitioningContentControlTransitionCompletedEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_transitioning_content_control_transition_completed_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnTransitioningContentControlTransitionCompletedHandler, TransitioningContentControlTransitionCompletedEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_transitioning_content_control_transition_completed_handler_invoke(this: *mut IAvnTransitioningContentControlTransitionCompletedHandler, from: AvnVariant, to: AvnVariant, has_run_to_completion: i32) -> i32 {
+    let mut arguments = TransitioningContentControlTransitionCompletedEventArgs {
+        from,
+        to,
+        has_run_to_completion: has_run_to_completion != 0,
+    };
+    let hr = crate::event_callback::invoke::<IAvnTransitioningContentControlTransitionCompletedHandler, TransitioningContentControlTransitionCompletedEventArgs>(this, &mut arguments);
+    if hr >= 0 {
+    }
+    hr
+}
+
 pub const I_AVN_TRAY_ICON_CLICKED_HANDLER_IID: Guid = Guid { data1: 0x912502B3, data2: 0xD535, data3: 0x59CC, data4: [0x8B, 0xC0, 0x32, 0x1B, 0x58, 0xA0, 0xBF, 0x1B] };
 
 #[repr(C)]
@@ -85542,7 +85599,7 @@ impl ComPtr<IAvnToolTip> {
     }
 }
 
-pub const I_AVN_TRANSITIONING_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x536940A8, data2: 0x4BD3, data3: 0x503A, data4: [0xAB, 0xE9, 0x82, 0x24, 0xBA, 0xD4, 0x88, 0xE0] };
+pub const I_AVN_TRANSITIONING_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x6A3336CC, data2: 0xB09A, data3: 0x5484, data4: [0xBB, 0x6B, 0x3E, 0x74, 0xC7, 0x62, 0xE5, 0x77] };
 
 #[repr(C)]
 struct IAvnTransitioningContentControlVtbl {
@@ -85653,6 +85710,8 @@ struct IAvnTransitioningContentControlVtbl {
     set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i32) -> i32,
     get_is_transition_reversed: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut i32) -> i32,
     set_is_transition_reversed: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i32) -> i32,
+    advise_transition_completed: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnTransitioningContentControlTransitionCompletedHandler, *mut i64) -> i32,
+    unadvise_transition_completed: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i64) -> i32,
 }
 
 #[repr(C)]
@@ -86384,6 +86443,19 @@ impl ComPtr<IAvnTransitioningContentControl> {
     pub fn set_is_transition_reversed(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_is_transition_reversed)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_transition_completed(&self, handler: &ComPtr<IAvnTransitioningContentControlTransitionCompletedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_transition_completed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_transition_completed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_transition_completed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }

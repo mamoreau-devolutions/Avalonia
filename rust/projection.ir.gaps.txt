@@ -146,7 +146,6 @@ Avalonia.Controls.ToggleSwitch.OffContentPresenter: By design: template-part pre
 Avalonia.Controls.ToggleSwitch.OnContentPresenter: By design: template-part presenters are internal layout plumbing
 Avalonia.Controls.ToggleSwitch.KnobTransitions: By design: animation internals owned by the host
 Avalonia.Controls.TransitioningContentControl.PageTransition: By design: transitions are animation internals owned by the host
-Avalonia.Controls.TransitioningContentControl.TransitionCompleted: By design: the transition payload has no event shape yet
 Avalonia.Controls.TrayIcon.Menu: By design: the imperative NativeMenu rides the view-model pipeline
 Avalonia.Controls.TrayIcon.NativeMenuExporter: By design: internal exporter plumbing
 Avalonia.Controls.TrayIcon.Dispose(): By design: lifetime is owned by the host

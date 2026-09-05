@@ -498,6 +498,8 @@ typedef struct IAvnToolTipStatics IAvnToolTipStatics;
 typedef struct IAvnToolTipStaticsVtbl IAvnToolTipStaticsVtbl;
 typedef struct IAvnTransitioningContentControl IAvnTransitioningContentControl;
 typedef struct IAvnTransitioningContentControlVtbl IAvnTransitioningContentControlVtbl;
+typedef struct IAvnTransitioningContentControlTransitionCompletedHandler IAvnTransitioningContentControlTransitionCompletedHandler;
+typedef struct IAvnTransitioningContentControlTransitionCompletedHandlerVtbl IAvnTransitioningContentControlTransitionCompletedHandlerVtbl;
 typedef struct IAvnTrayIcon IAvnTrayIcon;
 typedef struct IAvnTrayIconVtbl IAvnTrayIconVtbl;
 typedef struct IAvnTrayIconClickedHandler IAvnTrayIconClickedHandler;
@@ -1696,6 +1698,22 @@ struct IAvnToggleSplitButtonIsCheckedChangedHandlerVtbl {
 };
 struct IAvnToggleSplitButtonIsCheckedChangedHandler { const IAvnToggleSplitButtonIsCheckedChangedHandlerVtbl* vtbl; };
 #define I_AVN_TOGGLE_SPLIT_BUTTON_IS_CHECKED_CHANGED_HANDLER_VTABLE_SLOTS 4
+
+static const AvnGuid I_AVN_TRANSITIONING_CONTENT_CONTROL_TRANSITION_COMPLETED_HANDLER_IID = {
+    0xFCAFA0A4,
+    0x6D55,
+    0x549B,
+    { 0xBB, 0x64, 0x97, 0xF8, 0xD8, 0x66, 0xF4, 0x96 }
+};
+#define I_AVN_TRANSITIONING_CONTENT_CONTROL_TRANSITION_COMPLETED_HANDLER_ABI_VERSION 1
+struct IAvnTransitioningContentControlTransitionCompletedHandlerVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnTransitioningContentControlTransitionCompletedHandler* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnTransitioningContentControlTransitionCompletedHandler* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnTransitioningContentControlTransitionCompletedHandler* self); /* slot 2 */
+    AvnHResult (AVN_CALL *invoke)(IAvnTransitioningContentControlTransitionCompletedHandler* self, AvnVariant from, AvnVariant to, int32_t has_run_to_completion); /* slot 3 */
+};
+struct IAvnTransitioningContentControlTransitionCompletedHandler { const IAvnTransitioningContentControlTransitionCompletedHandlerVtbl* vtbl; };
+#define I_AVN_TRANSITIONING_CONTENT_CONTROL_TRANSITION_COMPLETED_HANDLER_VTABLE_SLOTS 4
 
 static const AvnGuid I_AVN_TRAY_ICON_CLICKED_HANDLER_IID = {
     0x912502B3,
@@ -13188,12 +13206,12 @@ struct IAvnToolTip { const IAvnToolTipVtbl* vtbl; };
 #define I_AVN_TOOL_TIP_VTABLE_SLOTS 105
 
 static const AvnGuid I_AVN_TRANSITIONING_CONTENT_CONTROL_IID = {
-    0x536940A8,
-    0x4BD3,
-    0x503A,
-    { 0xAB, 0xE9, 0x82, 0x24, 0xBA, 0xD4, 0x88, 0xE0 }
+    0x6A3336CC,
+    0xB09A,
+    0x5484,
+    { 0xBB, 0x6B, 0x3E, 0x74, 0xC7, 0x62, 0xE5, 0x77 }
 };
-#define I_AVN_TRANSITIONING_CONTENT_CONTROL_ABI_VERSION 9
+#define I_AVN_TRANSITIONING_CONTENT_CONTROL_ABI_VERSION 10
 struct IAvnTransitioningContentControlVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnTransitioningContentControl* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnTransitioningContentControl* self); /* slot 1 */
@@ -13302,9 +13320,11 @@ struct IAvnTransitioningContentControlVtbl {
     AvnHResult (AVN_CALL *set_vertical_content_alignment)(IAvnTransitioningContentControl* self, int32_t value); /* slot 104 */
     AvnHResult (AVN_CALL *get_is_transition_reversed)(IAvnTransitioningContentControl* self, int32_t* value); /* slot 105 */
     AvnHResult (AVN_CALL *set_is_transition_reversed)(IAvnTransitioningContentControl* self, int32_t value); /* slot 106 */
+    AvnHResult (AVN_CALL *advise_transition_completed)(IAvnTransitioningContentControl* self, IAvnTransitioningContentControlTransitionCompletedHandler* handler, int64_t* subscription_id); /* slot 107 */
+    AvnHResult (AVN_CALL *unadvise_transition_completed)(IAvnTransitioningContentControl* self, int64_t subscription_id); /* slot 108 */
 };
 struct IAvnTransitioningContentControl { const IAvnTransitioningContentControlVtbl* vtbl; };
-#define I_AVN_TRANSITIONING_CONTENT_CONTROL_VTABLE_SLOTS 107
+#define I_AVN_TRANSITIONING_CONTENT_CONTROL_VTABLE_SLOTS 109
 
 static const AvnGuid I_AVN_TRAY_ICON_IID = {
     0xC05739ED,

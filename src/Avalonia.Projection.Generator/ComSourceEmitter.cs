@@ -1755,6 +1755,7 @@ public static class ComSourceEmitter
             MarshallingKind.Bool => $"eventArgs.{parameter.Name} ? 1 : 0",
             MarshallingKind.NullableBool =>
                 $"!eventArgs.{parameter.Name}.HasValue ? -1 : eventArgs.{parameter.Name}.Value ? 1 : 0",
+            MarshallingKind.Variant => $"AvnVariant.FromObject(eventArgs.{parameter.Name})",
             _ when GeometryMarshalling.TryGet(parameter.Kind, out var geometry) =>
                 $"{geometry.AbiName}.FromAvalonia(eventArgs.{parameter.Name})",
             MarshallingKind.DateTimeI64 when parameter.IsNullable &&

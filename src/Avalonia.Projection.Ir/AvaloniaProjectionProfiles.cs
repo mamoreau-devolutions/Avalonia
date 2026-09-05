@@ -105,7 +105,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnTimePicker"] = 11,
             ["Avalonia.Host.Com.IAvnToggleSplitButton"] = 12,
             ["Avalonia.Host.Com.IAvnToolTip"] = 9,
-            ["Avalonia.Host.Com.IAvnTransitioningContentControl"] = 9,
+            ["Avalonia.Host.Com.IAvnTransitioningContentControl"] = 10,
             ["Avalonia.Host.Com.IAvnTreeView"] = 12,
             ["Avalonia.Host.Com.IAvnTreeViewItem"] = 12,
             ["Avalonia.Host.Com.IAvnUserControl"] = 9,
@@ -505,7 +505,7 @@ public static class AvaloniaProjectionProfiles
             ],
             ["Avalonia.Controls.Carousel"] =
                 ["IsSwipeEnabled", "ViewportFraction", "IsSwiping", "Next", "Previous"],
-            ["Avalonia.Controls.TransitioningContentControl"] = ["IsTransitionReversed"],
+            ["Avalonia.Controls.TransitioningContentControl"] = ["IsTransitionReversed", "TransitionCompleted"],
             ["Avalonia.Controls.Label"] = ["Target"],
             ["Avalonia.Controls.Separator"] = [],
             ["Avalonia.Controls.GroupBox"] = [],
@@ -1360,7 +1360,6 @@ public static class AvaloniaProjectionProfiles
                         ["TryGetResource"] = "the resource dictionary is not part of the projected model",
                         ["OnContentPresenter"] = "template-part presenters are internal layout plumbing",
                         ["OffContentPresenter"] = "template-part presenters are internal layout plumbing",
-                        ["TransitionCompleted"] = "the transition payload has no event shape yet",
                         ["Menu"] = "the imperative NativeMenu rides the view-model pipeline",
                         ["NativeMenuExporter"] = "internal exporter plumbing",
                         ["Dispose"] = "lifetime is owned by the host",
@@ -1608,6 +1607,18 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.TextBox.TextChanging"] = new()
             {
                 PayloadKind = EventPayloadKind.None,
+            },
+            // U31: the transition-completed payload is two variants and a completion
+            // flag, which the Fields machinery already carries.
+            ["Avalonia.Controls.TransitioningContentControl.TransitionCompleted"] = new()
+            {
+                PayloadKind = EventPayloadKind.Fields,
+                Parameters =
+                [
+                    new() { Name = "From" },
+                    new() { Name = "To" },
+                    new() { Name = "HasRunToCompletion" },
+                ],
             },
             ["Avalonia.Controls.CalendarDatePicker.DateValidationError"] = new()
             {

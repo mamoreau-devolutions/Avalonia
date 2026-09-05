@@ -563,6 +563,16 @@ descendants republish under fresh IIDs. Popup and PopupFlyoutBase's
 OverlayInputPassThroughElement cross as a control reference. The gap
 report drops to 170 entries. Factory stays 13.
 
+Wave U31 crosses the transition payload. TransitioningContentControl's
+TransitionCompleted rides the Fields machinery with two Variants (From/To)
+and the completion flag — the event-argument emitters gain a Variant case,
+on both the C# side (AvnVariant.FromObject) and the bindgen
+(event_argument_type), so any future object?-valued event field crosses the
+same way. A transition never runs in the headless host, so the payload is
+validated by the advise/unadvise pair and the generated slot signature.
+TransitioningContentControl republishes at 10. The gap report drops to 169
+entries. Factory stays 13.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A

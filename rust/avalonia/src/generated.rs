@@ -2626,6 +2626,7 @@ pub use sys::SpinnerSpinEventArgs;
 pub use sys::SplitViewPaneClosingEventArgs;
 pub use sys::SplitViewPaneOpeningEventArgs;
 pub use sys::TimePickerSelectedTimeChangedEventArgs;
+pub use sys::TransitioningContentControlTransitionCompletedEventArgs;
 pub use sys::WindowClosingEventArgs;
 
 #[derive(Clone, Debug)]
@@ -53473,6 +53474,17 @@ impl TransitioningContentControl {
     }
     pub fn transition_reversed(self, value: bool) -> Result<Self> {
         self.set_transition_reversed(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_transition_completed(&self, callback: impl FnMut(&mut TransitioningContentControlTransitionCompletedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::transitioning_content_control_transition_completed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_transition_completed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_transition_completed(subscription_id)))
+    }
+    pub fn on_transition_completed(self, scope: &crate::AppScope, callback: impl FnMut(&mut TransitioningContentControlTransitionCompletedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_transition_completed(callback)?);
         Ok(self)
     }
 }

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("536940A8-4BD3-503A-ABE9-8224BAD488E0")]
+[Guid("6A3336CC-B09A-5484-BB6B-3E74C762E577")]
 public partial interface IAvnTransitioningContentControl : IAvnContentControl
 {
     [PreserveSig]
@@ -14,6 +14,12 @@ public partial interface IAvnTransitioningContentControl : IAvnContentControl
 
     [PreserveSig]
     int SetIsTransitionReversed(int value);
+
+    [PreserveSig]
+    int AdviseTransitionCompleted(IAvnTransitioningContentControlTransitionCompletedHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadviseTransitionCompleted(long subscriptionId);
 
 }
 
@@ -46,6 +52,8 @@ public sealed partial class AvnTransitioningContentControl : IAvnTransitioningCo
     private long _nextPointerEnteredSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnControlPointerExitedHandler Handler, global::System.Action Unsubscribe)> _pointerExitedSubscriptions = new();
     private long _nextPointerExitedSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnTransitioningContentControlTransitionCompletedHandler Handler, global::System.Action Unsubscribe)> _transitionCompletedSubscriptions = new();
+    private long _nextTransitionCompletedSubscriptionId;
 
     internal AvnTransitioningContentControl(global::Avalonia.Controls.TransitioningContentControl value)
     {
@@ -1850,6 +1858,52 @@ public sealed partial class AvnTransitioningContentControl : IAvnTransitioningCo
         }
     }
 
+    public int AdviseTransitionCompleted(IAvnTransitioningContentControlTransitionCompletedHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<Avalonia.Controls.TransitionCompletedEventArgs>((_, eventArgs) =>
+            {
+                var hr = handler.Invoke(AvnVariant.FromObject(eventArgs.From), AvnVariant.FromObject(eventArgs.To), eventArgs.HasRunToCompletion ? 1 : 0);
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.TransitionCompleted += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextTransitionCompletedSubscriptionId);
+            _transitionCompletedSubscriptions.Add(subscriptionId, (handler, () => eventSource.TransitionCompleted -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseTransitionCompleted(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_transitionCompletedSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     private void ReleaseSubscriptions()
     {
         foreach (var subscription in _attachedToLogicalTreeSubscriptions.Values)
@@ -1924,5 +1978,11 @@ public sealed partial class AvnTransitioningContentControl : IAvnTransitioningCo
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
         }
         _pointerExitedSubscriptions.Clear();
+        foreach (var subscription in _transitionCompletedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _transitionCompletedSubscriptions.Clear();
     }
 }

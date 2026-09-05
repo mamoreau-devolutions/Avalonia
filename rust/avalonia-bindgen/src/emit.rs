@@ -1120,6 +1120,7 @@ fn event_argument_type(parameter: &ProjectedParameter) -> String {
         "F64" => "f64".into(),
         "Bool" => "bool".into(),
         "NullableBool" => "Option<bool>".into(),
+        "Variant" => "AvnVariant".into(),
         "StringUtf16" if parameter.is_nullable => "Option<String>".into(),
         "StringUtf16" => "String".into(),
         _ => panic!("unsupported event argument kind {}", parameter.kind),
