@@ -39,6 +39,12 @@ public partial interface IAvnTrayIcon : IAvnAvaloniaObject
     [PreserveSig]
     int SetIsVisible(int value);
 
+    [PreserveSig]
+    int AdviseClicked(IAvnTrayIconClickedHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadviseClicked(long subscriptionId);
+
 }
 
 [GeneratedComClass]
@@ -46,10 +52,13 @@ public sealed partial class AvnTrayIcon : IAvnTrayIcon
 {
     private readonly global::Avalonia.Host.Ownership.ProjectionObjectState _state;
     private global::Avalonia.Controls.TrayIcon _value => _state.GetTarget<global::Avalonia.Controls.TrayIcon>();
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnTrayIconClickedHandler Handler, global::System.Action Unsubscribe)> _clickedSubscriptions = new();
+    private long _nextClickedSubscriptionId;
 
     internal AvnTrayIcon(global::Avalonia.Controls.TrayIcon value)
     {
         _state = ProjectionRuntime.GetOrCreateState(value);
+        _state.RegisterCleanup(ReleaseSubscriptions);
         global::Avalonia.Host.ProjectionDiagnostics.WrapperCreated();
     }
 
@@ -236,5 +245,61 @@ public sealed partial class AvnTrayIcon : IAvnTrayIcon
         {
             return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
         }
+    }
+
+    public int AdviseClicked(IAvnTrayIconClickedHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler((_, eventArgs) =>
+            {
+                var hr = handler.Invoke();
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.Clicked += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextClickedSubscriptionId);
+            _clickedSubscriptions.Add(subscriptionId, (handler, () => eventSource.Clicked -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseClicked(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_clickedSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    private void ReleaseSubscriptions()
+    {
+        foreach (var subscription in _clickedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _clickedSubscriptions.Clear();
     }
 }

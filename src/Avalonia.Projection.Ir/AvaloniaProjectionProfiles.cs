@@ -334,7 +334,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.RadioButton"] = ["GroupName"],
             ["Avalonia.Controls.ToggleSwitch"] = ["OnContent", "OffContent", "OnContentTemplate", "OffContentTemplate"],
             ["Avalonia.Controls.Expander"] =
-                ["ExpandDirection", "IsExpanded", "Expanded", "Collapsed"],
+                ["ExpandDirection", "IsExpanded", "Expanded", "Collapsed", "Expanding", "Collapsing"],
             ["Avalonia.Controls.ListBox"] = ["SelectionMode", "SelectAll", "UnselectAll"],
             ["Avalonia.Controls.ComboBox"] =
             [
@@ -350,7 +350,7 @@ public static class AvaloniaProjectionProfiles
                 ["TabStripPlacement", "HorizontalContentAlignment", "VerticalContentAlignment", "SelectedContent", "ContentTemplate", "IndicatorTemplate", "SelectedContentTemplate"],
             // TabItem.TabStripPlacement is a Dock? that the TabControl writes; a nullable enum
             // has no ABI shape of its own, so only IsSelected crosses.
-            ["Avalonia.Controls.TabItem"] = ["IsSelected", "Icon", "IconTemplate"],
+            ["Avalonia.Controls.TabItem"] = ["IsSelected", "Icon", "IconTemplate", "IndicatorTemplate"],
             // TreeView derives from ItemsControl rather than SelectingItemsControl, so it carries
             // Items but no SelectedIndex. SelectedItem/SelectedItems are object/IList and stay in
             // the gap report.
@@ -398,7 +398,7 @@ public static class AvaloniaProjectionProfiles
             [
                 "IsPaneOpen", "DisplayMode", "PanePlacement", "OpenPaneLength",
                 "CompactPaneLength", "Pane", "PaneBackground", "UseLightDismissOverlayMode",
-                "PaneOpened", "PaneClosed", "PaneOpening", "PaneClosing",
+                "PaneOpened", "PaneClosed", "PaneOpening", "PaneClosing", "PaneTemplate",
             ],
             // SelectedDateChanged carries DateTimeOffset? fields and event payloads have no
             // converter hook, so it is a gap; the date properties themselves do cross.
@@ -448,7 +448,7 @@ public static class AvaloniaProjectionProfiles
                 "Open", "Opening", "Closing",
             ],
             ["Avalonia.Controls.MenuFlyout"] = ["Items", "ItemsSource", "ItemTemplate"],
-            ["Avalonia.Controls.Spinner"] = [],
+            ["Avalonia.Controls.Spinner"] = ["ValidSpinDirection", "Spin"],
             ["Avalonia.Controls.ButtonSpinner"] =
                 ["AllowSpin", "ShowButtonSpinner", "ButtonSpinnerLocation"],
             ["Avalonia.Controls.NumericUpDown"] =
@@ -530,12 +530,12 @@ public static class AvaloniaProjectionProfiles
                 "PlacementAnchor", "PlacementGravity", "PlacementConstraintAdjustment",
                 "PlacementRect",
             ],
-            ["Avalonia.Controls.TrayIcon"] = ["ToolTipText", "IsVisible", "Command", "CommandParameter", "Icon"],
+            ["Avalonia.Controls.TrayIcon"] = ["ToolTipText", "IsVisible", "Command", "CommandParameter", "Icon", "Clicked"],
             ["Avalonia.Controls.Notifications.WindowNotificationManager"] = ["Position", "MaxItems", "Show", "Close", "CloseAll"],
             ["Avalonia.Controls.Notifications.NotificationCard"] =
                 ["IsClosed", "NotificationType", "IsClosing", "Close", "NotificationClosed"],
             ["Avalonia.Controls.RefreshContainer"] =
-                ["PullDirection", "IsMouseEnabled", "RequestRefresh"],
+                ["PullDirection", "IsMouseEnabled", "RequestRefresh", "RefreshRequested"],
             ["Avalonia.Controls.CommandBar"] =
             [
                 "Content", "DefaultLabelPosition", "IsDynamicOverflowEnabled",
@@ -545,9 +545,9 @@ public static class AvaloniaProjectionProfiles
                 "Opening", "Opened", "Closing", "Closed",
             ],
             ["Avalonia.Controls.CommandBarButton"] =
-                ["Label", "IsCompact", "DynamicOverflowOrder", "LabelPosition", "IsInOverflow"],
+                ["Label", "IsCompact", "DynamicOverflowOrder", "LabelPosition", "IsInOverflow", "Icon"],
             ["Avalonia.Controls.CommandBarToggleButton"] =
-                ["Label", "IsCompact", "DynamicOverflowOrder", "LabelPosition", "IsInOverflow"],
+                ["Label", "IsCompact", "DynamicOverflowOrder", "LabelPosition", "IsInOverflow", "Icon"],
             ["Avalonia.Controls.CommandBarSeparator"] = ["IsCompact", "IsInOverflow"],
             ["Avalonia.Controls.PipsPager"] =
             [
@@ -570,7 +570,7 @@ public static class AvaloniaProjectionProfiles
             [
                 "Background", "BorderBrush", "BorderThickness", "CornerRadius", "FontSize",
                 "FontFamily", "FontStyle", "FontWeight", "FontStretch", "LetterSpacing",
-                "Foreground", "Padding", "FontFeatures",
+                "Foreground", "Padding", "FontFeatures", "BackgroundSizing",
             ],
             ["Avalonia.Controls.TextBox"] =
             [
@@ -603,7 +603,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.Primitives.RangeBase"] =
                 ["Minimum", "Maximum", "Value", "SmallChange", "LargeChange", "ValueChanged"],
             ["Avalonia.Controls.Slider"] =
-                ["Orientation", "IsDirectionReversed", "IsSnapToTickEnabled", "TickFrequency", "TickPlacement"],
+                ["Orientation", "IsDirectionReversed", "IsSnapToTickEnabled", "TickFrequency", "TickPlacement", "Ticks"],
             ["Avalonia.Controls.ProgressBar"] =
                 ["IsIndeterminate", "ShowProgressText", "ProgressTextFormat", "Orientation", "Percentage"],
         },
@@ -761,6 +761,12 @@ public static class AvaloniaProjectionProfiles
             {
                 Kind = MarshallingKind.StringUtf16,
                 StringConverterTypeName = "Avalonia.Host.Com.AvnWindowIcon",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.Slider.Ticks"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                StringConverterTypeName = "Avalonia.Host.Com.AvnDoubleList",
                 IsNullable = true,
             },
             ["Avalonia.Controls.AutoCompleteBox.SelectedItem"] = new()
@@ -1136,7 +1142,130 @@ public static class AvaloniaProjectionProfiles
                 IsNullable = true,
             },
         },
-        EventOverrides = new Dictionary<string, EventProjection>(StringComparer.Ordinal)
+                    ByDesignMembers = new Dictionary<string, string>(StringComparer.Ordinal)
+                    {
+                        ["ItemTemplate"] = "U19 projects the data templates; container themes are styling",
+                        ["ItemContainerTheme"] = "container themes are styling owned by the host",
+                        ["ItemsPanel"] = "the items panel is layout plumbing owned by the host",
+                        ["ItemContainerGenerator"] = "container generation is owned by the host",
+                        ["Presenter"] = "template-part presenters are internal layout plumbing",
+                        ["ItemsPanelRoot"] = "the realized panel root is internal layout plumbing",
+                        ["ItemsView"] = "the item view is internal plumbing",
+                        ["HeaderPresenter"] = "template-part presenters are internal layout plumbing",
+                        ["Template"] = "the control template (not a data template) is owned by the host",
+                        ["TemplateApplied"] = "control-template plumbing is owned by the host",
+                        ["ApplyTemplate"] = "control-template plumbing is owned by the host",
+                        ["TemplateSettings"] = "template settings are styling owned by the host",
+                        ["DefiningGeometry"] = "geometry internals are owned by the host",
+                        ["RenderedGeometry"] = "geometry internals are owned by the host",
+                        ["Render"] = "custom drawing is not part of the projected model",
+                        ["TextLayout"] = "the text layout engine is not part of the projected model",
+                        ["Inlines"] = "the inline text object model is not part of the projected model",
+                        ["DataTemplates"] = "the default-template list is owned by the host",
+                        ["Styles"] = "the style system is not projected; use the imperative surface",
+                        ["Resources"] = "the resource dictionary is not part of the projected model",
+                        ["Theme"] = "control themes are styling owned by the host",
+                        ["StyleKey"] = "styling is owned by the host",
+                        ["PageTransition"] = "transitions are animation internals owned by the host",
+                        ["LogicalChildren"] = "the logical tree is owned by the host",
+                        ["HotKey"] = "KeyGesture is not part of the projected model",
+                        ["InputGesture"] = "input gestures are not part of the projected model",
+                        ["DisplayMemberBinding"] = "bindings are not projected; use the imperative surface",
+                        ["ValueMemberBinding"] = "bindings are not projected; use the imperative surface",
+                        ["SelectedValueBinding"] = "bindings are not projected; use the imperative surface",
+                        ["FlyoutPresenterTheme"] = "styling is owned by the host",
+                        ["FlyoutPresenterClasses"] = "styling is owned by the host",
+                        ["CustomPopupPlacementCallback"] = "custom placement needs a callback with geometry out-parameters",
+                        ["OverlayInputPassThroughElement"] = "input plumbing is owned by the host",
+                        ["IsInsidePopup"] = "visual-tree queries are owned by the host",
+                        ["GetRealizedContainers"] = "realized-container enumeration is owned by the host",
+                        ["GetRealizedTreeContainers"] = "realized-container enumeration is owned by the host",
+                        ["PlatformImpl"] = "the platform implementation is not ABI surface",
+                        ["OwnedWindows"] = "window enumeration is owned by the host",
+                        ["DependencyResolver"] = "the resolver is not ABI surface",
+                        ["ShowDialog"] = "modal dialogs need the async-completion transport",
+                        ["AsyncPopulator"] = "async population needs the async-completion transport",
+                        ["ItemSelector"] = "the selector delegate needs another callback shape",
+                        ["TextSelector"] = "the selector delegate needs another callback shape",
+                        ["Show"] = "the INotification content needs a typed notification ABI",
+                        ["Close"] = "the INotification content needs a typed notification ABI",
+                        ["Spun"] = "obsolete alias of Spinned",
+                        ["OpenedPopups"] = "popup enumeration is owned by the host",
+                        ["MaskProvider"] = "mask internals are owned by the host",
+                        ["Culture"] = "globalization is owned by the host",
+                        ["NumberFormat"] = "globalization is owned by the host",
+                        ["ParsingNumberStyle"] = "globalization is owned by the host",
+                        ["TextConverter"] = "the converter is owned by the host",
+                        ["WindowDecorationsTheme"] = "theming is owned by the host",
+                        ["SystemDecorations"] = "decorations are owned by the platform chrome",
+                        ["Watermark"] = "obsolete alias of PlaceholderText",
+                        ["WatermarkForeground"] = "obsolete alias of PlaceholderForeground",
+                        ["UseFloatingWatermark"] = "obsolete alias of UseFloatingPlaceholder",
+                        ["TextDecorations"] = "the text decoration model is not part of the projected surface",
+                        ["PreparingContainer"] = "container lifecycle is owned by the host",
+                        ["ContainerPrepared"] = "container lifecycle is owned by the host",
+                        ["ContainerIndexChanged"] = "container lifecycle is owned by the host",
+                        ["ContainerClearing"] = "container lifecycle is owned by the host",
+                        ["SelectedDatesChanged"] = "the added/removed collection payload has no event shape yet",
+                        ["SelectedDateChanged"] = "the added/removed collection payload has no event shape yet",
+                        ["ResourcesChanged"] = "the resource dictionary is not part of the projected model",
+                        ["Populated"] = "the populated collection payload has no event shape yet",
+                        ["KnobTransitions"] = "animation internals owned by the host",
+                        ["Open"] = "the suppressed override of the base Open slot",
+                        ["ContentTransition"] = "transitions are animation internals owned by the host",
+                        ["PreviewContent"] = "preview plumbing is owned by the host",
+                        ["FocusAdorner"] = "adorner plumbing is owned by the host",
+                        ["Tag"] = "an untyped user payload with no ABI shape",
+                        ["LayoutTransform"] = "transform internals are owned by the host",
+                        ["TransformRoot"] = "transform internals are owned by the host",
+                        ["IsItemsHost"] = "layout plumbing owned by the host",
+                        ["Visualizer"] = "the visualizer is template plumbing owned by the host",
+                        ["PreviousButtonTheme"] = "styling is owned by the host",
+                        ["NextButtonTheme"] = "styling is owned by the host",
+                        ["VisiblePrimaryCommands"] = "the read-only view over the command lists",
+                        ["OverflowItems"] = "the read-only overflow view over the command lists",
+                        ["PrimaryCommands"] = "the typed command-bar element list needs its own element ABI",
+                        ["SecondaryCommands"] = "the typed command-bar element list needs its own element ABI",
+                        ["HorizontalContentAlignment"] = "the new-hidden member duplicates the projected base",
+                        ["VerticalContentAlignment"] = "the new-hidden member duplicates the projected base",
+                        ["PointerEnteredItem"] = "internal hover plumbing is owned by the host",
+                        ["PointerExitedItem"] = "internal hover plumbing is owned by the host",
+                        ["CoerceValue"] = "AvaloniaProperty plumbing is not projected",
+                        ["Selection"] = "the selection model is owned by the host",
+                        ["Scroll"] = "the scrolling contract is owned by the host",
+                        ["BoxShadow"] = "the multi-shadow model needs a shadow ABI shape",
+                        ["SelectionChanged"] = "the added/removed collection payload has no event shape yet",
+                        ["Columns"] = "the typed column list needs its own element ABI",
+                        ["Column"] = "the owning column is owned by the host",
+                        ["HeaderTheme"] = "styling is owned by the host",
+                        ["CellTheme"] = "styling is owned by the host",
+                        ["CellTemplate"] = "per-column templates are styling owned by the host",
+                        ["Binding"] = "bindings are not projected; use the imperative surface",
+                        ["TableView"] = "the owning table is owned by the host",
+                        ["HorizontalSnapPointsChanged"] = "snap points are layout plumbing owned by the host",
+                        ["VerticalSnapPointsChanged"] = "snap points are layout plumbing owned by the host",
+                        ["GetIrregularSnapPoints"] = "snap points are layout plumbing owned by the host",
+                        ["GetRegularSnapPoints"] = "snap points are layout plumbing owned by the host",
+                        ["TabStripPlacement"] = "a nullable enum has no ABI shape yet",
+                        ["TextChanging"] = "the undo-args payload has no event shape yet",
+                        ["RequestedThemeVariant"] = "the ThemeVariant struct has no ABI shape yet",
+                        ["ActualThemeVariant"] = "the ThemeVariant struct has no ABI shape yet",
+                        ["ApplyStyling"] = "styling is owned by the host",
+                        ["TryGetResource"] = "the resource dictionary is not part of the projected model",
+                        ["OnContentPresenter"] = "template-part presenters are internal layout plumbing",
+                        ["OffContentPresenter"] = "template-part presenters are internal layout plumbing",
+                        ["TransitionCompleted"] = "the transition payload has no event shape yet",
+                        ["Menu"] = "the imperative NativeMenu rides the view-model pipeline",
+                        ["NativeMenuExporter"] = "internal exporter plumbing",
+                        ["Dispose"] = "lifetime is owned by the host",
+                        ["BeginMoveDrag"] = "drag needs the pointer-event payload shape",
+                        ["BeginResizeDrag"] = "drag needs the pointer-event payload shape",
+                        ["SelectedTimeChanged"] = "the nullable TimeSpan payload has no event shape yet",
+                        ["SelectedItems"] = "the new-hidden member duplicates the projected base",
+                        ["ShowAt"] = "the flyout base's virtual ShowAt pair needs pointer-event state",
+                        ["Hide"] = "the flyout base's virtual Hide needs pointer-event state",
+                    },
+                    EventOverrides = new Dictionary<string, EventProjection>(StringComparer.Ordinal)
         {
             ["Avalonia.Controls.Button.Click"] = new()
             {
@@ -1276,6 +1405,29 @@ public static class AvaloniaProjectionProfiles
             {
                 PayloadKind = EventPayloadKind.Fields,
                 Parameters = [new() { Name = "Cancel", Direction = ParameterDirection.InOut }],
+            },
+            ["Avalonia.Controls.Expander.Expanding"] = new()
+            {
+                PayloadKind = EventPayloadKind.Fields,
+                Parameters = [new() { Name = "Cancel", Direction = ParameterDirection.InOut }],
+            },
+            ["Avalonia.Controls.Expander.Collapsing"] = new()
+            {
+                PayloadKind = EventPayloadKind.Fields,
+                Parameters = [new() { Name = "Cancel", Direction = ParameterDirection.InOut }],
+            },
+            ["Avalonia.Controls.RefreshContainer.RefreshRequested"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.TrayIcon.Clicked"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.Spinner.Spin"] = new()
+            {
+                PayloadKind = EventPayloadKind.Fields,
+                Parameters = [new() { Name = "Direction" }, new() { Name = "UsingMouseWheel" }],
             },
             ["Avalonia.Controls.AutoCompleteBox.TextChanged"] = new()
             {

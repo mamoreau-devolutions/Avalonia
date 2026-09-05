@@ -28,10 +28,22 @@ public partial interface IAvnExpander : IAvnHeaderedContentControl
     int UnadviseCollapsed(long subscriptionId);
 
     [PreserveSig]
+    int AdviseCollapsing(IAvnExpanderCollapsingHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadviseCollapsing(long subscriptionId);
+
+    [PreserveSig]
     int AdviseExpanded(IAvnExpanderExpandedHandler? handler, out long subscriptionId);
 
     [PreserveSig]
     int UnadviseExpanded(long subscriptionId);
+
+    [PreserveSig]
+    int AdviseExpanding(IAvnExpanderExpandingHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadviseExpanding(long subscriptionId);
 
 }
 
@@ -66,8 +78,12 @@ public sealed partial class AvnExpander : IAvnExpander
     private long _nextPointerExitedSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnExpanderCollapsedHandler Handler, global::System.Action Unsubscribe)> _collapsedSubscriptions = new();
     private long _nextCollapsedSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnExpanderCollapsingHandler Handler, global::System.Action Unsubscribe)> _collapsingSubscriptions = new();
+    private long _nextCollapsingSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnExpanderExpandedHandler Handler, global::System.Action Unsubscribe)> _expandedSubscriptions = new();
     private long _nextExpandedSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnExpanderExpandingHandler Handler, global::System.Action Unsubscribe)> _expandingSubscriptions = new();
+    private long _nextExpandingSubscriptionId;
 
     internal AvnExpander(global::Avalonia.Controls.Expander value)
     {
@@ -1267,6 +1283,37 @@ public sealed partial class AvnExpander : IAvnExpander
         }
     }
 
+    public int GetBackgroundSizing(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.BackgroundSizing;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetBackgroundSizing(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.BackgroundSizing = (global::Avalonia.Media.BackgroundSizing)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetBorderBrush(out IAvnBrush? value)
     {
         value = default!;
@@ -1933,6 +1980,54 @@ public sealed partial class AvnExpander : IAvnExpander
         }
     }
 
+    public int AdviseCollapsing(IAvnExpanderCollapsingHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<Avalonia.Interactivity.CancelRoutedEventArgs>((_, eventArgs) =>
+            {
+                var cancel = eventArgs.Cancel ? 1 : 0;
+                var hr = handler.Invoke(ref cancel);
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+                eventArgs.Cancel = cancel != 0;
+            });
+            eventSource.Collapsing += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextCollapsingSubscriptionId);
+            _collapsingSubscriptions.Add(subscriptionId, (handler, () => eventSource.Collapsing -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseCollapsing(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_collapsingSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int AdviseExpanded(IAvnExpanderExpandedHandler? handler, out long subscriptionId)
     {
         subscriptionId = 0;
@@ -1968,6 +2063,54 @@ public sealed partial class AvnExpander : IAvnExpander
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             if (!_expandedSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseExpanding(IAvnExpanderExpandingHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<Avalonia.Interactivity.CancelRoutedEventArgs>((_, eventArgs) =>
+            {
+                var cancel = eventArgs.Cancel ? 1 : 0;
+                var hr = handler.Invoke(ref cancel);
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+                eventArgs.Cancel = cancel != 0;
+            });
+            eventSource.Expanding += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextExpandingSubscriptionId);
+            _expandingSubscriptions.Add(subscriptionId, (handler, () => eventSource.Expanding -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseExpanding(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_expandingSubscriptions.Remove(subscriptionId, out var subscription))
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
             subscription.Unsubscribe();
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
@@ -2059,11 +2202,23 @@ public sealed partial class AvnExpander : IAvnExpander
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
         }
         _collapsedSubscriptions.Clear();
+        foreach (var subscription in _collapsingSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _collapsingSubscriptions.Clear();
         foreach (var subscription in _expandedSubscriptions.Values)
         {
             subscription.Unsubscribe();
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
         }
         _expandedSubscriptions.Clear();
+        foreach (var subscription in _expandingSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _expandingSubscriptions.Clear();
     }
 }

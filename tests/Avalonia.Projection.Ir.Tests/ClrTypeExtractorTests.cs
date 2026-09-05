@@ -203,7 +203,11 @@ public class ClrTypeExtractorTests
 
         var expander = Type(ir, "IAvnExpander");
         Assert.Equal("Avalonia.Host.Com.IAvnHeaderedContentControl", expander.BaseFullName);
-        Assert.Equal(2, expander.Events.Count);
+        // U25 added the vetoable Expanding/Collapsing pair.
+        Assert.Equal(4, expander.Events.Count);
+        Assert.Contains(expander.Events, @event =>
+            @event.Name == nameof(Expander.Expanding) &&
+            @event.Parameters.Single().Name == "Cancel");
 
         var items = Type(ir, "IAvnItemsControl").Properties.Single(p => p.Name == "Items");
         Assert.Equal("Avalonia.Host.Com.IAvnItemList", items.InterfaceName);
@@ -1475,8 +1479,10 @@ public class ClrTypeExtractorTests
 
         var content = Type(ir, "IAvnCommandBar").Properties.Single(p => p.Name == "Content");
         Assert.Equal(MarshallingKind.ComInterface, content.Kind);
+        // The command lists stay by design; U25 projects the button icons.
         Assert.DoesNotContain(Type(ir, "IAvnCommandBar").Properties, p => p.Name == "PrimaryCommands");
-        Assert.DoesNotContain(Type(ir, "IAvnCommandBarButton").Properties, p => p.Name == "Icon");
+        var buttonIcon = Type(ir, "IAvnCommandBarButton").Properties.Single(p => p.Name == "Icon");
+        Assert.Equal(MarshallingKind.Variant, buttonIcon.Kind);
 
         Assert.Equal(13, ir.FactoryAbiVersion);
     }

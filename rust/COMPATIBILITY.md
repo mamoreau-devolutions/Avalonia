@@ -476,6 +476,21 @@ populator stay gaps: selectors add another callback shape and the
 populator needs the async-completion transport. CCWs now free variant
 payloads only when a host is loaded. Factory stays 13.
 
+Wave U25 sweeps the last closable members and separates by-design gaps.
+Expander gains the vetoable Expanding/Collapsing pair, RefreshContainer
+gains RefreshRequested, TrayIcon gains Clicked, and Spinner gains Spin.
+Slider.Ticks crosses through the AvnDoubleList converter, Spinner gains
+ValidSpinDirection, TemplatedControl gains BackgroundSizing; TabItem
+gains IndicatorTemplate, SplitView gains PaneTemplate, and the CommandBar
+buttons gain Icon as a Variant. The gap report now distinguishes
+"By design: reason" — an architectural exclusion with its rationale
+(the property system, bindings, themes, internal plumbing, obsolete
+aliases, the suppressed ContextMenu.Open override) — from the few
+remaining marshalling boundaries: the INotification content overloads and
+the Show overload with Action callbacks, which need a typed notification
+ABI and a callback transport. The templated-control tree and the shape
+family republish under their fresh IIDs. Factory stays 13.
+
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and
 `IAvnNumericUpDown` each move from 2 to 3. Templates, filters, ItemsSource,

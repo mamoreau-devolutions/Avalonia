@@ -10,6 +10,12 @@ namespace Avalonia.Host.Com;
 public partial interface IAvnSlider : IAvnRangeBase
 {
     [PreserveSig]
+    int GetTicks(out string? value);
+
+    [PreserveSig]
+    int SetTicks(string? value);
+
+    [PreserveSig]
     int GetOrientation(out int value);
 
     [PreserveSig]
@@ -1271,6 +1277,37 @@ public sealed partial class AvnSlider : IAvnSlider
         }
     }
 
+    public int GetBackgroundSizing(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.BackgroundSizing;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetBackgroundSizing(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.BackgroundSizing = (global::Avalonia.Media.BackgroundSizing)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetBorderBrush(out IAvnBrush? value)
     {
         value = default!;
@@ -1836,6 +1873,37 @@ public sealed partial class AvnSlider : IAvnSlider
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
             subscription.Unsubscribe();
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetTicks(out string? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = global::Avalonia.Host.Com.AvnDoubleList.ToAbi(_value.Ticks);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetTicks(string? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Ticks = global::Avalonia.Host.Com.AvnDoubleList.FromAbi(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

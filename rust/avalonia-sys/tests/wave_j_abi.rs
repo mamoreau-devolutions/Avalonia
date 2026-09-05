@@ -18,7 +18,7 @@ fn command_bar_family_publishes_at_version_one() {
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
     }
-    for forbidden in ["*set_primary_commands)", "*set_icon)(IAvnCommandBarButton"] {
+    for forbidden in ["*set_primary_commands)"] {
         assert!(
             !HEADER.contains(forbidden),
             "header must not declare `{forbidden}`"

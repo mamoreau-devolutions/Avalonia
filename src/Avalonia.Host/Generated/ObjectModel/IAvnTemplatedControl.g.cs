@@ -16,6 +16,12 @@ public partial interface IAvnTemplatedControl : IAvnControl
     int SetBackground(IAvnBrush? value);
 
     [PreserveSig]
+    int GetBackgroundSizing(out int value);
+
+    [PreserveSig]
+    int SetBackgroundSizing(int value);
+
+    [PreserveSig]
     int GetBorderBrush(out IAvnBrush? value);
 
     [PreserveSig]
@@ -1309,6 +1315,37 @@ public sealed partial class AvnTemplatedControl : IAvnTemplatedControl
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Background = AvnBrush.ToBrush(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetBackgroundSizing(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.BackgroundSizing;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetBackgroundSizing(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.BackgroundSizing = (global::Avalonia.Media.BackgroundSizing)value;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

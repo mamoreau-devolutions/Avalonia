@@ -1,204 +1,192 @@
-Avalonia.AvaloniaObject.Item: Not included by projection policy
-Avalonia.AvaloniaObject.Item: Not included by projection policy
-Avalonia.AvaloniaObject.Dispatcher: Not included by projection policy
-Avalonia.AvaloniaObject.PropertyChanged: Not included by projection policy
-Avalonia.AvaloniaObject.CheckAccess(): Not included by projection policy
-Avalonia.AvaloniaObject.VerifyAccess(): Not included by projection policy
-Avalonia.AvaloniaObject.ClearValue(AvaloniaProperty): Not included by projection policy
-Avalonia.AvaloniaObject.ClearValue(AvaloniaProperty`1): Not included by projection policy
-Avalonia.AvaloniaObject.ClearValue(StyledProperty`1): Not included by projection policy
-Avalonia.AvaloniaObject.ClearValue(DirectPropertyBase`1): Not included by projection policy
-Avalonia.AvaloniaObject.Equals(Object): Not included by projection policy
-Avalonia.AvaloniaObject.GetHashCode(): Not included by projection policy
-Avalonia.AvaloniaObject.GetValue(AvaloniaProperty): Not included by projection policy
-Avalonia.AvaloniaObject.GetValue(StyledProperty`1): Not included by projection policy
-Avalonia.AvaloniaObject.GetValue(DirectPropertyBase`1): Not included by projection policy
-Avalonia.AvaloniaObject.GetBaseValue(StyledProperty`1): Not included by projection policy
-Avalonia.AvaloniaObject.IsAnimating(AvaloniaProperty): Not included by projection policy
-Avalonia.AvaloniaObject.IsSet(AvaloniaProperty): Not included by projection policy
-Avalonia.AvaloniaObject.SetValue(AvaloniaProperty, Object, BindingPriority): Not included by projection policy
-Avalonia.AvaloniaObject.SetValue(StyledProperty`1, T, BindingPriority): Not included by projection policy
-Avalonia.AvaloniaObject.SetValue(DirectPropertyBase`1, T): Not included by projection policy
-Avalonia.AvaloniaObject.SetCurrentValue(AvaloniaProperty, Object): Not included by projection policy
-Avalonia.AvaloniaObject.SetCurrentValue(StyledProperty`1, T): Not included by projection policy
-Avalonia.AvaloniaObject.Bind(AvaloniaProperty, BindingBase): Not included by projection policy
-Avalonia.AvaloniaObject.Bind(AvaloniaProperty, IObservable`1, BindingPriority): Not included by projection policy
-Avalonia.AvaloniaObject.Bind(StyledProperty`1, IObservable`1, BindingPriority): Not included by projection policy
-Avalonia.AvaloniaObject.Bind(StyledProperty`1, IObservable`1, BindingPriority): Not included by projection policy
-Avalonia.AvaloniaObject.Bind(StyledProperty`1, IObservable`1, BindingPriority): Not included by projection policy
-Avalonia.AvaloniaObject.Bind(DirectPropertyBase`1, IObservable`1): Not included by projection policy
-Avalonia.AvaloniaObject.Bind(DirectPropertyBase`1, IObservable`1): Not included by projection policy
-Avalonia.AvaloniaObject.Bind(DirectPropertyBase`1, IObservable`1): Not included by projection policy
-Avalonia.AvaloniaObject.CoerceValue(AvaloniaProperty): Not included by projection policy
-Avalonia.Controls.AutoCompleteBox.ValueMemberBinding: Not included by projection policy
-Avalonia.Controls.AutoCompleteBox.Watermark: Not included by projection policy
-Avalonia.Controls.AutoCompleteBox.WatermarkForeground: Not included by projection policy
-Avalonia.Controls.AutoCompleteBox.ItemSelector: Not included by projection policy
-Avalonia.Controls.AutoCompleteBox.TextSelector: Not included by projection policy
-Avalonia.Controls.AutoCompleteBox.AsyncPopulator: Not included by projection policy
-Avalonia.Controls.AutoCompleteBox.Populated: Not included by projection policy
-Avalonia.Controls.AutoCompleteBox.SelectionChanged: Not included by projection policy
-Avalonia.Controls.Border.BoxShadow: Not included by projection policy
-Avalonia.Controls.Border.Render(DrawingContext): Not included by projection policy
-Avalonia.Controls.Button.HotKey: Not included by projection policy
-Avalonia.Controls.Calendar.SelectedDatesChanged: Not included by projection policy
-Avalonia.Controls.Calendar.ToString(): Not included by projection policy
-Avalonia.Controls.CalendarDatePicker.TextConverter: Not included by projection policy
-Avalonia.Controls.CalendarDatePicker.Watermark: Not included by projection policy
-Avalonia.Controls.CalendarDatePicker.UseFloatingWatermark: Not included by projection policy
-Avalonia.Controls.CalendarDatePicker.WatermarkForeground: Not included by projection policy
-Avalonia.Controls.CalendarDatePicker.SelectedDateChanged: Not included by projection policy
-Avalonia.Controls.Carousel.PageTransition: Not included by projection policy
-Avalonia.Controls.ComboBox.HorizontalContentAlignment: Not included by projection policy
-Avalonia.Controls.ComboBox.VerticalContentAlignment: Not included by projection policy
-Avalonia.Controls.ComboBox.UpdateSelectionFromEvent(Control, RoutedEventArgs): Not included by projection policy
-Avalonia.Controls.CommandBar.VisiblePrimaryCommands: Not included by projection policy
-Avalonia.Controls.CommandBar.OverflowItems: Not included by projection policy
-Avalonia.Controls.CommandBar.PrimaryCommands: Not included by projection policy
-Avalonia.Controls.CommandBar.SecondaryCommands: Not included by projection policy
-Avalonia.Controls.CommandBarButton.Icon: Not included by projection policy
-Avalonia.Controls.CommandBarToggleButton.Icon: Not included by projection policy
-Avalonia.Controls.ContentControl.Presenter: Not included by projection policy
-Avalonia.Controls.ContextMenu.CustomPopupPlacementCallback: Not included by projection policy
+Avalonia.AvaloniaObject.Item: By design: the indexer is not an ABI member
+Avalonia.AvaloniaObject.Item: By design: the indexer is not an ABI member
+Avalonia.AvaloniaObject.Dispatcher: By design: threading is owned by the host
+Avalonia.AvaloniaObject.PropertyChanged: By design: not part of the projected model
+Avalonia.AvaloniaObject.CheckAccess(): By design: threading is owned by the host
+Avalonia.AvaloniaObject.VerifyAccess(): By design: threading is owned by the host
+Avalonia.AvaloniaObject.ClearValue(AvaloniaProperty): By design: AvaloniaProperty plumbing is not projected; use the named member instead
+Avalonia.AvaloniaObject.ClearValue(AvaloniaProperty`1): By design: AvaloniaProperty plumbing is not projected; use the named member instead
+Avalonia.AvaloniaObject.ClearValue(StyledProperty`1): By design: AvaloniaProperty plumbing is not projected; use the named member instead
+Avalonia.AvaloniaObject.ClearValue(DirectPropertyBase`1): By design: AvaloniaProperty plumbing is not projected; use the named member instead
+Avalonia.AvaloniaObject.Equals(Object): By design: identity and formatting members are not ABI surface
+Avalonia.AvaloniaObject.GetHashCode(): By design: identity and formatting members are not ABI surface
+Avalonia.AvaloniaObject.GetValue(AvaloniaProperty): By design: AvaloniaProperty plumbing is not projected; use the named member instead
+Avalonia.AvaloniaObject.GetValue(StyledProperty`1): By design: AvaloniaProperty plumbing is not projected; use the named member instead
+Avalonia.AvaloniaObject.GetValue(DirectPropertyBase`1): By design: AvaloniaProperty plumbing is not projected; use the named member instead
+Avalonia.AvaloniaObject.GetBaseValue(StyledProperty`1): By design: AvaloniaProperty plumbing is not projected; use the named member instead
+Avalonia.AvaloniaObject.IsAnimating(AvaloniaProperty): By design: AvaloniaProperty plumbing is not projected; use the named member instead
+Avalonia.AvaloniaObject.IsSet(AvaloniaProperty): By design: AvaloniaProperty plumbing is not projected; use the named member instead
+Avalonia.AvaloniaObject.SetValue(AvaloniaProperty, Object, BindingPriority): By design: AvaloniaProperty plumbing is not projected; use the named member instead
+Avalonia.AvaloniaObject.SetValue(StyledProperty`1, T, BindingPriority): By design: AvaloniaProperty plumbing is not projected; use the named member instead
+Avalonia.AvaloniaObject.SetValue(DirectPropertyBase`1, T): By design: AvaloniaProperty plumbing is not projected; use the named member instead
+Avalonia.AvaloniaObject.SetCurrentValue(AvaloniaProperty, Object): By design: AvaloniaProperty plumbing is not projected; use the named member instead
+Avalonia.AvaloniaObject.SetCurrentValue(StyledProperty`1, T): By design: AvaloniaProperty plumbing is not projected; use the named member instead
+Avalonia.AvaloniaObject.Bind(AvaloniaProperty, BindingBase): By design: the property system is not projected; use the imperative surface
+Avalonia.AvaloniaObject.Bind(AvaloniaProperty, IObservable`1, BindingPriority): By design: the property system is not projected; use the imperative surface
+Avalonia.AvaloniaObject.Bind(StyledProperty`1, IObservable`1, BindingPriority): By design: the property system is not projected; use the imperative surface
+Avalonia.AvaloniaObject.Bind(StyledProperty`1, IObservable`1, BindingPriority): By design: the property system is not projected; use the imperative surface
+Avalonia.AvaloniaObject.Bind(StyledProperty`1, IObservable`1, BindingPriority): By design: the property system is not projected; use the imperative surface
+Avalonia.AvaloniaObject.Bind(DirectPropertyBase`1, IObservable`1): By design: the property system is not projected; use the imperative surface
+Avalonia.AvaloniaObject.Bind(DirectPropertyBase`1, IObservable`1): By design: the property system is not projected; use the imperative surface
+Avalonia.AvaloniaObject.Bind(DirectPropertyBase`1, IObservable`1): By design: the property system is not projected; use the imperative surface
+Avalonia.AvaloniaObject.CoerceValue(AvaloniaProperty): By design: AvaloniaProperty plumbing is not projected
+Avalonia.Controls.AutoCompleteBox.ValueMemberBinding: By design: bindings are not projected; use the imperative surface
+Avalonia.Controls.AutoCompleteBox.Watermark: By design: obsolete alias of PlaceholderText
+Avalonia.Controls.AutoCompleteBox.WatermarkForeground: By design: obsolete alias of PlaceholderForeground
+Avalonia.Controls.AutoCompleteBox.ItemSelector: By design: the selector delegate needs another callback shape
+Avalonia.Controls.AutoCompleteBox.TextSelector: By design: the selector delegate needs another callback shape
+Avalonia.Controls.AutoCompleteBox.AsyncPopulator: By design: async population needs the async-completion transport
+Avalonia.Controls.AutoCompleteBox.Populated: By design: the populated collection payload has no event shape yet
+Avalonia.Controls.AutoCompleteBox.SelectionChanged: By design: the added/removed collection payload has no event shape yet
+Avalonia.Controls.Border.BoxShadow: By design: the multi-shadow model needs a shadow ABI shape
+Avalonia.Controls.Border.Render(DrawingContext): By design: custom drawing is not part of the projected model
+Avalonia.Controls.Button.HotKey: By design: KeyGesture is not part of the projected model
+Avalonia.Controls.Calendar.SelectedDatesChanged: By design: the added/removed collection payload has no event shape yet
+Avalonia.Controls.Calendar.ToString(): By design: identity and formatting members are not ABI surface
+Avalonia.Controls.CalendarDatePicker.TextConverter: By design: the converter is owned by the host
+Avalonia.Controls.CalendarDatePicker.Watermark: By design: obsolete alias of PlaceholderText
+Avalonia.Controls.CalendarDatePicker.UseFloatingWatermark: By design: obsolete alias of UseFloatingPlaceholder
+Avalonia.Controls.CalendarDatePicker.WatermarkForeground: By design: obsolete alias of PlaceholderForeground
+Avalonia.Controls.CalendarDatePicker.SelectedDateChanged: By design: the added/removed collection payload has no event shape yet
+Avalonia.Controls.Carousel.PageTransition: By design: transitions are animation internals owned by the host
+Avalonia.Controls.ComboBox.HorizontalContentAlignment: By design: the new-hidden member duplicates the projected base
+Avalonia.Controls.ComboBox.VerticalContentAlignment: By design: the new-hidden member duplicates the projected base
+Avalonia.Controls.ComboBox.UpdateSelectionFromEvent(Control, RoutedEventArgs): By design: initialization and internal plumbing is owned by the host
+Avalonia.Controls.CommandBar.VisiblePrimaryCommands: By design: the read-only view over the command lists
+Avalonia.Controls.CommandBar.OverflowItems: By design: the read-only overflow view over the command lists
+Avalonia.Controls.CommandBar.PrimaryCommands: By design: the typed command-bar element list needs its own element ABI
+Avalonia.Controls.CommandBar.SecondaryCommands: By design: the typed command-bar element list needs its own element ABI
+Avalonia.Controls.ContentControl.Presenter: By design: template-part presenters are internal layout plumbing
+Avalonia.Controls.ContextMenu.CustomPopupPlacementCallback: By design: custom placement needs a callback with geometry out-parameters
 Avalonia.Controls.ContextMenu.Open(): Overrides a projected base method
-Avalonia.Controls.ContextMenu.Close(): Not included by projection policy
-Avalonia.Controls.Control.FocusAdorner: Not included by projection policy
-Avalonia.Controls.Control.DataTemplates: Not included by projection policy
-Avalonia.Controls.Control.Tag: Not included by projection policy
-Avalonia.Controls.DatePicker.SelectedDateChanged: Not included by projection policy
-Avalonia.Controls.Expander.ContentTransition: Not included by projection policy
-Avalonia.Controls.Expander.Collapsing: Not included by projection policy
-Avalonia.Controls.Expander.Expanding: Not included by projection policy
-Avalonia.Controls.Flyout.FlyoutPresenterClasses: Not included by projection policy
-Avalonia.Controls.Flyout.FlyoutPresenterTheme: Not included by projection policy
-Avalonia.Controls.GridSplitter.PreviewContent: Not included by projection policy
-Avalonia.Controls.Image.Render(DrawingContext): Not included by projection policy
-Avalonia.Controls.ItemsControl.DisplayMemberBinding: Not included by projection policy
-Avalonia.Controls.ItemsControl.ItemContainerGenerator: Not included by projection policy
-Avalonia.Controls.ItemsControl.ItemContainerTheme: Not included by projection policy
-Avalonia.Controls.ItemsControl.ItemsPanel: Not included by projection policy
-Avalonia.Controls.ItemsControl.Presenter: Not included by projection policy
-Avalonia.Controls.ItemsControl.ItemsPanelRoot: Not included by projection policy
-Avalonia.Controls.ItemsControl.ItemsView: Not included by projection policy
-Avalonia.Controls.ItemsControl.PreparingContainer: Not included by projection policy
-Avalonia.Controls.ItemsControl.ContainerPrepared: Not included by projection policy
-Avalonia.Controls.ItemsControl.ContainerIndexChanged: Not included by projection policy
-Avalonia.Controls.ItemsControl.ContainerClearing: Not included by projection policy
-Avalonia.Controls.ItemsControl.GetRealizedContainers(): Not included by projection policy
-Avalonia.Controls.LayoutTransformControl.LayoutTransform: Not included by projection policy
-Avalonia.Controls.LayoutTransformControl.TransformRoot: Not included by projection policy
-Avalonia.Controls.ListBox.Scroll: Not included by projection policy
-Avalonia.Controls.ListBox.SelectedItems: Not included by projection policy
-Avalonia.Controls.ListBox.Selection: Not included by projection policy
-Avalonia.Controls.MaskedTextBox.Culture: Not included by projection policy
-Avalonia.Controls.MaskedTextBox.MaskProvider: Not included by projection policy
-Avalonia.Controls.Menu.Close(): Not included by projection policy
-Avalonia.Controls.Menu.Open(): Not included by projection policy
-Avalonia.Controls.MenuFlyout.FlyoutPresenterClasses: Not included by projection policy
-Avalonia.Controls.MenuFlyout.ItemContainerTheme: Not included by projection policy
-Avalonia.Controls.MenuFlyout.FlyoutPresenterTheme: Not included by projection policy
-Avalonia.Controls.MenuItem.HotKey: Not included by projection policy
-Avalonia.Controls.MenuItem.InputGesture: Not included by projection policy
-Avalonia.Controls.MenuItem.PointerEnteredItem: Not included by projection policy
-Avalonia.Controls.MenuItem.PointerExitedItem: Not included by projection policy
+Avalonia.Controls.ContextMenu.Close(): By design: the INotification content needs a typed notification ABI
+Avalonia.Controls.Control.FocusAdorner: By design: adorner plumbing is owned by the host
+Avalonia.Controls.Control.DataTemplates: By design: the default-template list is owned by the host
+Avalonia.Controls.Control.Tag: By design: an untyped user payload with no ABI shape
+Avalonia.Controls.DatePicker.SelectedDateChanged: By design: the added/removed collection payload has no event shape yet
+Avalonia.Controls.Expander.ContentTransition: By design: transitions are animation internals owned by the host
+Avalonia.Controls.Flyout.FlyoutPresenterClasses: By design: styling is owned by the host
+Avalonia.Controls.Flyout.FlyoutPresenterTheme: By design: styling is owned by the host
+Avalonia.Controls.GridSplitter.PreviewContent: By design: preview plumbing is owned by the host
+Avalonia.Controls.Image.Render(DrawingContext): By design: custom drawing is not part of the projected model
+Avalonia.Controls.ItemsControl.DisplayMemberBinding: By design: bindings are not projected; use the imperative surface
+Avalonia.Controls.ItemsControl.ItemContainerGenerator: By design: container generation is owned by the host
+Avalonia.Controls.ItemsControl.ItemContainerTheme: By design: container themes are styling owned by the host
+Avalonia.Controls.ItemsControl.ItemsPanel: By design: the items panel is layout plumbing owned by the host
+Avalonia.Controls.ItemsControl.Presenter: By design: template-part presenters are internal layout plumbing
+Avalonia.Controls.ItemsControl.ItemsPanelRoot: By design: the realized panel root is internal layout plumbing
+Avalonia.Controls.ItemsControl.ItemsView: By design: the item view is internal plumbing
+Avalonia.Controls.ItemsControl.PreparingContainer: By design: container lifecycle is owned by the host
+Avalonia.Controls.ItemsControl.ContainerPrepared: By design: container lifecycle is owned by the host
+Avalonia.Controls.ItemsControl.ContainerIndexChanged: By design: container lifecycle is owned by the host
+Avalonia.Controls.ItemsControl.ContainerClearing: By design: container lifecycle is owned by the host
+Avalonia.Controls.ItemsControl.GetRealizedContainers(): By design: realized-container enumeration is owned by the host
+Avalonia.Controls.LayoutTransformControl.LayoutTransform: By design: transform internals are owned by the host
+Avalonia.Controls.LayoutTransformControl.TransformRoot: By design: transform internals are owned by the host
+Avalonia.Controls.ListBox.Scroll: By design: the scrolling contract is owned by the host
+Avalonia.Controls.ListBox.SelectedItems: By design: the new-hidden member duplicates the projected base
+Avalonia.Controls.ListBox.Selection: By design: the selection model is owned by the host
+Avalonia.Controls.MaskedTextBox.Culture: By design: globalization is owned by the host
+Avalonia.Controls.MaskedTextBox.MaskProvider: By design: mask internals are owned by the host
+Avalonia.Controls.Menu.Close(): By design: the INotification content needs a typed notification ABI
+Avalonia.Controls.Menu.Open(): By design: the suppressed override of the base Open slot
+Avalonia.Controls.MenuFlyout.FlyoutPresenterClasses: By design: styling is owned by the host
+Avalonia.Controls.MenuFlyout.ItemContainerTheme: By design: container themes are styling owned by the host
+Avalonia.Controls.MenuFlyout.FlyoutPresenterTheme: By design: styling is owned by the host
+Avalonia.Controls.MenuItem.HotKey: By design: KeyGesture is not part of the projected model
+Avalonia.Controls.MenuItem.InputGesture: By design: input gestures are not part of the projected model
+Avalonia.Controls.MenuItem.PointerEnteredItem: By design: internal hover plumbing is owned by the host
+Avalonia.Controls.MenuItem.PointerExitedItem: By design: internal hover plumbing is owned by the host
 Avalonia.Controls.Notifications.WindowNotificationManager.Show(INotification): Parameter 'content': Type 'Avalonia.Controls.Notifications.INotification' is not marshallable
 Avalonia.Controls.Notifications.WindowNotificationManager.Show(Object, NotificationType, Nullable`1, Action, Action, String[]): Parameter 'onClick': Type 'System.Action' is not marshallable
 Avalonia.Controls.Notifications.WindowNotificationManager.Close(INotification): Parameter 'notification': Type 'Avalonia.Controls.Notifications.INotification' is not marshallable
-Avalonia.Controls.NumericUpDown.NumberFormat: Not included by projection policy
-Avalonia.Controls.NumericUpDown.ParsingNumberStyle: Not included by projection policy
-Avalonia.Controls.NumericUpDown.TextConverter: Not included by projection policy
-Avalonia.Controls.NumericUpDown.Watermark: Not included by projection policy
-Avalonia.Controls.NumericUpDown.WatermarkForeground: Not included by projection policy
-Avalonia.Controls.Panel.IsItemsHost: Not included by projection policy
-Avalonia.Controls.Panel.Render(DrawingContext): Not included by projection policy
-Avalonia.Controls.PipsPager.TemplateSettings: Not included by projection policy
-Avalonia.Controls.PipsPager.PreviousButtonTheme: Not included by projection policy
-Avalonia.Controls.PipsPager.NextButtonTheme: Not included by projection policy
-Avalonia.Controls.Primitives.HeaderedContentControl.HeaderPresenter: Not included by projection policy
-Avalonia.Controls.Primitives.HeaderedItemsControl.HeaderPresenter: Not included by projection policy
-Avalonia.Controls.Primitives.HeaderedSelectingItemsControl.HeaderPresenter: Not included by projection policy
-Avalonia.Controls.Primitives.Popup.OpenedPopups: Not included by projection policy
-Avalonia.Controls.Primitives.Popup.DependencyResolver: Not included by projection policy
-Avalonia.Controls.Primitives.Popup.CustomPopupPlacementCallback: Not included by projection policy
-Avalonia.Controls.Primitives.Popup.OverlayInputPassThroughElement: Not included by projection policy
-Avalonia.Controls.Primitives.Popup.IsInsidePopup(Visual): Not included by projection policy
-Avalonia.Controls.Primitives.PopupFlyoutBase.CustomPopupPlacementCallback: Not included by projection policy
-Avalonia.Controls.Primitives.PopupFlyoutBase.OverlayInputPassThroughElement: Not included by projection policy
-Avalonia.Controls.Primitives.PopupFlyoutBase.ShowAt(Control): Not included by projection policy
-Avalonia.Controls.Primitives.PopupFlyoutBase.ShowAt(Control, Boolean): Not included by projection policy
-Avalonia.Controls.Primitives.PopupFlyoutBase.Hide(): Not included by projection policy
-Avalonia.Controls.Primitives.SelectingItemsControl.SelectedValueBinding: Not included by projection policy
-Avalonia.Controls.Primitives.SelectingItemsControl.BeginInit(): Not included by projection policy
-Avalonia.Controls.Primitives.SelectingItemsControl.EndInit(): Not included by projection policy
-Avalonia.Controls.Primitives.SelectingItemsControl.UpdateSelectionFromEvent(Control, RoutedEventArgs): Not included by projection policy
-Avalonia.Controls.Primitives.TemplatedControl.BackgroundSizing: Not included by projection policy
-Avalonia.Controls.Primitives.TemplatedControl.Template: Not included by projection policy
-Avalonia.Controls.Primitives.TemplatedControl.TemplateApplied: Not included by projection policy
-Avalonia.Controls.Primitives.TemplatedControl.ApplyTemplate(): Not included by projection policy
-Avalonia.Controls.ProgressBar.TemplateSettings: Not included by projection policy
-Avalonia.Controls.RefreshContainer.Visualizer: Not included by projection policy
-Avalonia.Controls.RefreshContainer.RefreshRequested: Not included by projection policy
-Avalonia.Controls.Shapes.Shape.DefiningGeometry: Not included by projection policy
-Avalonia.Controls.Shapes.Shape.RenderedGeometry: Not included by projection policy
-Avalonia.Controls.Shapes.Shape.Render(DrawingContext): Not included by projection policy
-Avalonia.Controls.Slider.Ticks: Not included by projection policy
-Avalonia.Controls.Spinner.ValidSpinDirection: Not included by projection policy
-Avalonia.Controls.Spinner.Spin: Not included by projection policy
-Avalonia.Controls.SplitButton.HotKey: Not included by projection policy
-Avalonia.Controls.SplitView.PaneTemplate: Not included by projection policy
-Avalonia.Controls.SplitView.TemplateSettings: Not included by projection policy
-Avalonia.Controls.StackPanel.HorizontalSnapPointsChanged: Not included by projection policy
-Avalonia.Controls.StackPanel.VerticalSnapPointsChanged: Not included by projection policy
-Avalonia.Controls.StackPanel.GetIrregularSnapPoints(Orientation, SnapPointsAlignment): Not included by projection policy
-Avalonia.Controls.StackPanel.GetRegularSnapPoints(Orientation, SnapPointsAlignment, Double&): Not included by projection policy
-Avalonia.Controls.TabControl.PageTransition: Not included by projection policy
-Avalonia.Controls.TabControl.UpdateSelectionFromEvent(Control, RoutedEventArgs): Not included by projection policy
-Avalonia.Controls.TabItem.TabStripPlacement: Not included by projection policy
-Avalonia.Controls.TabItem.IndicatorTemplate: Not included by projection policy
-Avalonia.Controls.TableView.DisplayMemberBinding: Not included by projection policy
-Avalonia.Controls.TableView.ItemTemplate: Not included by projection policy
-Avalonia.Controls.TableView.Columns: Not included by projection policy
-Avalonia.Controls.TableViewCell.Column: Not included by projection policy
-Avalonia.Controls.TableViewColumn.HeaderTheme: Not included by projection policy
-Avalonia.Controls.TableViewColumn.CellTheme: Not included by projection policy
-Avalonia.Controls.TableViewColumn.CellTemplate: Not included by projection policy
-Avalonia.Controls.TableViewColumn.Binding: Not included by projection policy
-Avalonia.Controls.TableViewColumn.TableView: Not included by projection policy
-Avalonia.Controls.TextBlock.TextLayout: Not included by projection policy
-Avalonia.Controls.TextBlock.TextDecorations: Not included by projection policy
-Avalonia.Controls.TextBlock.Inlines: Not included by projection policy
-Avalonia.Controls.TextBlock.Render(DrawingContext): Not included by projection policy
-Avalonia.Controls.TextBox.Watermark: Not included by projection policy
-Avalonia.Controls.TextBox.UseFloatingWatermark: Not included by projection policy
-Avalonia.Controls.TextBox.WatermarkForeground: Not included by projection policy
-Avalonia.Controls.TextBox.TextChanging: Not included by projection policy
-Avalonia.Controls.ThemeVariantScope.RequestedThemeVariant: Not included by projection policy
-Avalonia.Controls.TimePicker.SelectedTimeChanged: Not included by projection policy
-Avalonia.Controls.ToggleSwitch.OffContentPresenter: Not included by projection policy
-Avalonia.Controls.ToggleSwitch.OnContentPresenter: Not included by projection policy
-Avalonia.Controls.ToggleSwitch.KnobTransitions: Not included by projection policy
-Avalonia.Controls.TransitioningContentControl.PageTransition: Not included by projection policy
-Avalonia.Controls.TransitioningContentControl.TransitionCompleted: Not included by projection policy
-Avalonia.Controls.TrayIcon.Menu: Not included by projection policy
-Avalonia.Controls.TrayIcon.NativeMenuExporter: Not included by projection policy
-Avalonia.Controls.TrayIcon.Clicked: Not included by projection policy
-Avalonia.Controls.TrayIcon.Dispose(): Not included by projection policy
-Avalonia.Controls.TreeView.GetRealizedTreeContainers(): Not included by projection policy
-Avalonia.Controls.TreeView.UpdateSelectionFromEvent(Control, RoutedEventArgs): Not included by projection policy
-Avalonia.Controls.Window.PlatformImpl: Not included by projection policy
-Avalonia.Controls.Window.OwnedWindows: Not included by projection policy
-Avalonia.Controls.Window.WindowDecorationsTheme: Not included by projection policy
-Avalonia.Controls.Window.SystemDecorations: Not included by projection policy
-Avalonia.Controls.Window.BeginMoveDrag(PointerPressedEventArgs): Not included by projection policy
-Avalonia.Controls.Window.BeginResizeDrag(WindowEdge, PointerPressedEventArgs): Not included by projection policy
-Avalonia.Controls.Window.ShowDialog(Window): Not included by projection policy
-Avalonia.Controls.Window.ShowDialog(Window): Not included by projection policy
-Avalonia.StyledElement.Styles: Not included by projection policy
-Avalonia.StyledElement.StyleKey: Not included by projection policy
-Avalonia.StyledElement.Resources: Not included by projection policy
-Avalonia.StyledElement.Theme: Not included by projection policy
-Avalonia.StyledElement.ActualThemeVariant: Not included by projection policy
-Avalonia.StyledElement.BeginInit(): Not included by projection policy
-Avalonia.StyledElement.EndInit(): Not included by projection policy
-Avalonia.StyledElement.ApplyStyling(): Not included by projection policy
-Avalonia.StyledElement.TryGetResource(Object, ThemeVariant, Object&): Not included by projection policy
+Avalonia.Controls.NumericUpDown.NumberFormat: By design: globalization is owned by the host
+Avalonia.Controls.NumericUpDown.ParsingNumberStyle: By design: globalization is owned by the host
+Avalonia.Controls.NumericUpDown.TextConverter: By design: the converter is owned by the host
+Avalonia.Controls.NumericUpDown.Watermark: By design: obsolete alias of PlaceholderText
+Avalonia.Controls.NumericUpDown.WatermarkForeground: By design: obsolete alias of PlaceholderForeground
+Avalonia.Controls.Panel.IsItemsHost: By design: layout plumbing owned by the host
+Avalonia.Controls.Panel.Render(DrawingContext): By design: custom drawing is not part of the projected model
+Avalonia.Controls.PipsPager.TemplateSettings: By design: template settings are styling owned by the host
+Avalonia.Controls.PipsPager.PreviousButtonTheme: By design: styling is owned by the host
+Avalonia.Controls.PipsPager.NextButtonTheme: By design: styling is owned by the host
+Avalonia.Controls.Primitives.HeaderedContentControl.HeaderPresenter: By design: template-part presenters are internal layout plumbing
+Avalonia.Controls.Primitives.HeaderedItemsControl.HeaderPresenter: By design: template-part presenters are internal layout plumbing
+Avalonia.Controls.Primitives.HeaderedSelectingItemsControl.HeaderPresenter: By design: template-part presenters are internal layout plumbing
+Avalonia.Controls.Primitives.Popup.OpenedPopups: By design: popup enumeration is owned by the host
+Avalonia.Controls.Primitives.Popup.DependencyResolver: By design: the resolver is not ABI surface
+Avalonia.Controls.Primitives.Popup.CustomPopupPlacementCallback: By design: custom placement needs a callback with geometry out-parameters
+Avalonia.Controls.Primitives.Popup.OverlayInputPassThroughElement: By design: input plumbing is owned by the host
+Avalonia.Controls.Primitives.Popup.IsInsidePopup(Visual): By design: visual-tree queries are owned by the host
+Avalonia.Controls.Primitives.PopupFlyoutBase.CustomPopupPlacementCallback: By design: custom placement needs a callback with geometry out-parameters
+Avalonia.Controls.Primitives.PopupFlyoutBase.OverlayInputPassThroughElement: By design: input plumbing is owned by the host
+Avalonia.Controls.Primitives.PopupFlyoutBase.ShowAt(Control): By design: the flyout base's virtual ShowAt pair needs pointer-event state
+Avalonia.Controls.Primitives.PopupFlyoutBase.ShowAt(Control, Boolean): By design: the flyout base's virtual ShowAt pair needs pointer-event state
+Avalonia.Controls.Primitives.PopupFlyoutBase.Hide(): By design: the flyout base's virtual Hide needs pointer-event state
+Avalonia.Controls.Primitives.SelectingItemsControl.SelectedValueBinding: By design: bindings are not projected; use the imperative surface
+Avalonia.Controls.Primitives.SelectingItemsControl.BeginInit(): By design: initialization and internal plumbing is owned by the host
+Avalonia.Controls.Primitives.SelectingItemsControl.EndInit(): By design: initialization and internal plumbing is owned by the host
+Avalonia.Controls.Primitives.SelectingItemsControl.UpdateSelectionFromEvent(Control, RoutedEventArgs): By design: initialization and internal plumbing is owned by the host
+Avalonia.Controls.Primitives.TemplatedControl.Template: By design: the control template (not a data template) is owned by the host
+Avalonia.Controls.Primitives.TemplatedControl.TemplateApplied: By design: control-template plumbing is owned by the host
+Avalonia.Controls.Primitives.TemplatedControl.ApplyTemplate(): By design: control-template plumbing is owned by the host
+Avalonia.Controls.ProgressBar.TemplateSettings: By design: template settings are styling owned by the host
+Avalonia.Controls.RefreshContainer.Visualizer: By design: the visualizer is template plumbing owned by the host
+Avalonia.Controls.Shapes.Shape.DefiningGeometry: By design: geometry internals are owned by the host
+Avalonia.Controls.Shapes.Shape.RenderedGeometry: By design: geometry internals are owned by the host
+Avalonia.Controls.Shapes.Shape.Render(DrawingContext): By design: custom drawing is not part of the projected model
+Avalonia.Controls.SplitButton.HotKey: By design: KeyGesture is not part of the projected model
+Avalonia.Controls.SplitView.TemplateSettings: By design: template settings are styling owned by the host
+Avalonia.Controls.StackPanel.HorizontalSnapPointsChanged: By design: snap points are layout plumbing owned by the host
+Avalonia.Controls.StackPanel.VerticalSnapPointsChanged: By design: snap points are layout plumbing owned by the host
+Avalonia.Controls.StackPanel.GetIrregularSnapPoints(Orientation, SnapPointsAlignment): By design: snap points are layout plumbing owned by the host
+Avalonia.Controls.StackPanel.GetRegularSnapPoints(Orientation, SnapPointsAlignment, Double&): By design: snap points are layout plumbing owned by the host
+Avalonia.Controls.TabControl.PageTransition: By design: transitions are animation internals owned by the host
+Avalonia.Controls.TabControl.UpdateSelectionFromEvent(Control, RoutedEventArgs): By design: initialization and internal plumbing is owned by the host
+Avalonia.Controls.TabItem.TabStripPlacement: By design: a nullable enum has no ABI shape yet
+Avalonia.Controls.TableView.DisplayMemberBinding: By design: bindings are not projected; use the imperative surface
+Avalonia.Controls.TableView.ItemTemplate: By design: U19 projects the data templates; container themes are styling
+Avalonia.Controls.TableView.Columns: By design: the typed column list needs its own element ABI
+Avalonia.Controls.TableViewCell.Column: By design: the owning column is owned by the host
+Avalonia.Controls.TableViewColumn.HeaderTheme: By design: styling is owned by the host
+Avalonia.Controls.TableViewColumn.CellTheme: By design: styling is owned by the host
+Avalonia.Controls.TableViewColumn.CellTemplate: By design: per-column templates are styling owned by the host
+Avalonia.Controls.TableViewColumn.Binding: By design: bindings are not projected; use the imperative surface
+Avalonia.Controls.TableViewColumn.TableView: By design: the owning table is owned by the host
+Avalonia.Controls.TextBlock.TextLayout: By design: the text layout engine is not part of the projected model
+Avalonia.Controls.TextBlock.TextDecorations: By design: the text decoration model is not part of the projected surface
+Avalonia.Controls.TextBlock.Inlines: By design: the inline text object model is not part of the projected model
+Avalonia.Controls.TextBlock.Render(DrawingContext): By design: custom drawing is not part of the projected model
+Avalonia.Controls.TextBox.Watermark: By design: obsolete alias of PlaceholderText
+Avalonia.Controls.TextBox.UseFloatingWatermark: By design: obsolete alias of UseFloatingPlaceholder
+Avalonia.Controls.TextBox.WatermarkForeground: By design: obsolete alias of PlaceholderForeground
+Avalonia.Controls.TextBox.TextChanging: By design: the undo-args payload has no event shape yet
+Avalonia.Controls.ThemeVariantScope.RequestedThemeVariant: By design: the ThemeVariant struct has no ABI shape yet
+Avalonia.Controls.TimePicker.SelectedTimeChanged: By design: the nullable TimeSpan payload has no event shape yet
+Avalonia.Controls.ToggleSwitch.OffContentPresenter: By design: template-part presenters are internal layout plumbing
+Avalonia.Controls.ToggleSwitch.OnContentPresenter: By design: template-part presenters are internal layout plumbing
+Avalonia.Controls.ToggleSwitch.KnobTransitions: By design: animation internals owned by the host
+Avalonia.Controls.TransitioningContentControl.PageTransition: By design: transitions are animation internals owned by the host
+Avalonia.Controls.TransitioningContentControl.TransitionCompleted: By design: the transition payload has no event shape yet
+Avalonia.Controls.TrayIcon.Menu: By design: the imperative NativeMenu rides the view-model pipeline
+Avalonia.Controls.TrayIcon.NativeMenuExporter: By design: internal exporter plumbing
+Avalonia.Controls.TrayIcon.Dispose(): By design: lifetime is owned by the host
+Avalonia.Controls.TreeView.GetRealizedTreeContainers(): By design: realized-container enumeration is owned by the host
+Avalonia.Controls.TreeView.UpdateSelectionFromEvent(Control, RoutedEventArgs): By design: initialization and internal plumbing is owned by the host
+Avalonia.Controls.Window.PlatformImpl: By design: the platform implementation is not ABI surface
+Avalonia.Controls.Window.OwnedWindows: By design: window enumeration is owned by the host
+Avalonia.Controls.Window.WindowDecorationsTheme: By design: theming is owned by the host
+Avalonia.Controls.Window.SystemDecorations: By design: decorations are owned by the platform chrome
+Avalonia.Controls.Window.BeginMoveDrag(PointerPressedEventArgs): By design: drag needs the pointer-event payload shape
+Avalonia.Controls.Window.BeginResizeDrag(WindowEdge, PointerPressedEventArgs): By design: drag needs the pointer-event payload shape
+Avalonia.Controls.Window.ShowDialog(Window): By design: modal dialogs need the async-completion transport
+Avalonia.Controls.Window.ShowDialog(Window): By design: modal dialogs need the async-completion transport
+Avalonia.StyledElement.Styles: By design: the style system is not projected; use the imperative surface
+Avalonia.StyledElement.StyleKey: By design: styling is owned by the host
+Avalonia.StyledElement.Resources: By design: the resource dictionary is not part of the projected model
+Avalonia.StyledElement.Theme: By design: control themes are styling owned by the host
+Avalonia.StyledElement.ActualThemeVariant: By design: the ThemeVariant struct has no ABI shape yet
+Avalonia.StyledElement.BeginInit(): By design: initialization and internal plumbing is owned by the host
+Avalonia.StyledElement.EndInit(): By design: initialization and internal plumbing is owned by the host
+Avalonia.StyledElement.ApplyStyling(): By design: styling is owned by the host
+Avalonia.StyledElement.TryGetResource(Object, ThemeVariant, Object&): By design: the resource dictionary is not part of the projected model

@@ -9,6 +9,18 @@ namespace Avalonia.Host.Com;
 [Guid("EE310DDD-E88A-5239-93D7-60FA645AD846")]
 public partial interface IAvnSpinner : IAvnContentControl
 {
+    [PreserveSig]
+    int GetValidSpinDirection(out int value);
+
+    [PreserveSig]
+    int SetValidSpinDirection(int value);
+
+    [PreserveSig]
+    int AdviseSpin(IAvnSpinnerSpinHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadviseSpin(long subscriptionId);
+
 }
 
 [GeneratedComClass]
@@ -40,6 +52,8 @@ public sealed partial class AvnSpinner : IAvnSpinner
     private long _nextPointerEnteredSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnControlPointerExitedHandler Handler, global::System.Action Unsubscribe)> _pointerExitedSubscriptions = new();
     private long _nextPointerExitedSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnSpinnerSpinHandler Handler, global::System.Action Unsubscribe)> _spinSubscriptions = new();
+    private long _nextSpinSubscriptionId;
 
     internal AvnSpinner(global::Avalonia.Controls.Spinner value)
     {
@@ -1239,6 +1253,37 @@ public sealed partial class AvnSpinner : IAvnSpinner
         }
     }
 
+    public int GetBackgroundSizing(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.BackgroundSizing;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetBackgroundSizing(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.BackgroundSizing = (global::Avalonia.Media.BackgroundSizing)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetBorderBrush(out IAvnBrush? value)
     {
         value = default!;
@@ -1735,6 +1780,83 @@ public sealed partial class AvnSpinner : IAvnSpinner
         }
     }
 
+    public int GetValidSpinDirection(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.ValidSpinDirection;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetValidSpinDirection(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ValidSpinDirection = (global::Avalonia.Controls.ValidSpinDirections)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseSpin(IAvnSpinnerSpinHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<Avalonia.Controls.SpinEventArgs>((_, eventArgs) =>
+            {
+                var hr = handler.Invoke((int)eventArgs.Direction, eventArgs.UsingMouseWheel ? 1 : 0);
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.Spin += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextSpinSubscriptionId);
+            _spinSubscriptions.Add(subscriptionId, (handler, () => eventSource.Spin -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseSpin(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_spinSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     private void ReleaseSubscriptions()
     {
         foreach (var subscription in _attachedToLogicalTreeSubscriptions.Values)
@@ -1809,5 +1931,11 @@ public sealed partial class AvnSpinner : IAvnSpinner
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
         }
         _pointerExitedSubscriptions.Clear();
+        foreach (var subscription in _spinSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _spinSubscriptions.Clear();
     }
 }

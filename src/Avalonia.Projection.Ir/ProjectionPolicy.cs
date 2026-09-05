@@ -51,6 +51,48 @@ public sealed class ProjectionPolicy
             members.Contains(member.Name, StringComparer.Ordinal);
     }
 
+    /// <summary>
+    /// Members the projection deliberately never publishes, with the reason
+    /// they are excluded by design rather than blocked. Members named here
+    /// appear in the gap report under "By design: reason" so a reader can
+    /// tell an architectural exclusion from a marshalling limitation.
+    /// </summary>
+    public IReadOnlyDictionary<string, string> ByDesignMembers { get; init; } =
+        new Dictionary<string, string>(StringComparer.Ordinal);
+
+    public bool TryGetByDesignReason(string memberName, out string? reason)
+    {
+        if (ByDesignMembers.TryGetValue(memberName, out reason))
+            return true;
+        // The AvaloniaProperty plumbing and equality members are excluded
+        // across every type without enumerating them per owner.
+        if (memberName is "Bind" or "GetValue" or "SetValue" or "SetCurrentValue" or
+            "ClearValue" or "GetBaseValue" or "IsSet" or "IsAnimating" or
+            "CheckAccess" or "VerifyAccess" or "Equals" or "GetHashCode" or "ToString" or
+            "BeginInit" or "EndInit" or "UpdateSelectionFromEvent" or "Item" or
+            "Dispatcher" or "PropertyChanged")
+        {
+            reason = memberName switch
+            {
+                "Bind" => "the property system is not projected; use the imperative surface",
+                "GetValue" or "SetValue" or "SetCurrentValue" or "ClearValue" or
+                    "GetBaseValue" or "IsSet" or "IsAnimating" =>
+                    "AvaloniaProperty plumbing is not projected; use the named member instead",
+                "CheckAccess" or "VerifyAccess" or "Dispatcher" =>
+                    "threading is owned by the host",
+                "Equals" or "GetHashCode" or "ToString" =>
+                    "identity and formatting members are not ABI surface",
+                "BeginInit" or "EndInit" or "UpdateSelectionFromEvent" =>
+                    "initialization and internal plumbing is owned by the host",
+                "Item" => "the indexer is not an ABI member",
+                _ => "not part of the projected model",
+            };
+            return true;
+        }
+        reason = null;
+        return false;
+    }
+
     public bool TryGetOverride(Type projectionOwner, MemberInfo member, out MarshallingOverride value) =>
         MemberOverrides.TryGetValue(
             $"{projectionOwner.FullName}.{member.Name}",

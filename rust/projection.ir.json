@@ -1354,6 +1354,15 @@
           "isNullable": true
         },
         {
+          "name": "Icon",
+          "kind": "Variant",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Object",
+          "isNullable": true
+        },
+        {
           "name": "IsCompact",
           "kind": "Bool",
           "canRead": true,
@@ -1442,6 +1451,15 @@
           "canWrite": true,
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.String",
+          "isNullable": true
+        },
+        {
+          "name": "Icon",
+          "kind": "Variant",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Object",
           "isNullable": true
         },
         {
@@ -2183,6 +2201,23 @@
           "parameters": []
         },
         {
+          "name": "Collapsing",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnExpanderCollapsingHandler",
+          "handlerInterfaceIid": "23F86EA7-FC78-5F3A-81B7-77322A31E8CC",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "Fields",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.CancelRoutedEventArgs\u003E",
+          "parameters": [
+            {
+              "name": "Cancel",
+              "kind": "Bool",
+              "direction": "InOut",
+              "managedTypeName": "System.Boolean",
+              "isNullable": false
+            }
+          ]
+        },
+        {
           "name": "Expanded",
           "handlerInterfaceName": "Avalonia.Host.Com.IAvnExpanderExpandedHandler",
           "handlerInterfaceIid": "9CB04F88-445A-51C5-81EC-9E5CFE52CED4",
@@ -2190,6 +2225,23 @@
           "payloadKind": "None",
           "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E",
           "parameters": []
+        },
+        {
+          "name": "Expanding",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnExpanderExpandingHandler",
+          "handlerInterfaceIid": "0423C4FE-EBEB-5AC3-B65C-C96E22CC3FE8",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "Fields",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.CancelRoutedEventArgs\u003E",
+          "parameters": [
+            {
+              "name": "Cancel",
+              "kind": "Bool",
+              "direction": "InOut",
+              "managedTypeName": "System.Boolean",
+              "isNullable": false
+            }
+          ]
         }
       ]
     },
@@ -4356,6 +4408,15 @@
           "isNullable": true
         },
         {
+          "name": "BackgroundSizing",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Media.BackgroundSizing",
+          "isNullable": false
+        },
+        {
           "name": "BorderBrush",
           "kind": "Brush",
           "canRead": true,
@@ -4757,7 +4818,17 @@
           "isNullable": false
         }
       ],
-      "events": []
+      "events": [
+        {
+          "name": "RefreshRequested",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnRefreshContainerRefreshRequestedHandler",
+          "handlerInterfaceIid": "663E85E2-7B79-5AD8-A614-6D0EAD49F241",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Controls.RefreshRequestedEventArgs\u003E",
+          "parameters": []
+        }
+      ]
     },
     {
       "name": "IAvnRelativePanel",
@@ -5563,6 +5634,16 @@
       "methods": [],
       "properties": [
         {
+          "name": "Ticks",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Collections.AvaloniaList\u00601[[System.Double, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "isNullable": true,
+          "stringConverterTypeName": "Avalonia.Host.Com.AvnDoubleList"
+        },
+        {
           "name": "Orientation",
           "kind": "I32",
           "canRead": true,
@@ -5620,8 +5701,43 @@
       "managedFullName": "Avalonia.Controls.Spinner",
       "isConstructible": false,
       "methods": [],
-      "properties": [],
-      "events": []
+      "properties": [
+        {
+          "name": "ValidSpinDirection",
+          "kind": "I32",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.ValidSpinDirections",
+          "isNullable": false
+        }
+      ],
+      "events": [
+        {
+          "name": "Spin",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnSpinnerSpinHandler",
+          "handlerInterfaceIid": "1A68CD22-F227-5940-8EC7-10C9B08A4532",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "Fields",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Controls.SpinEventArgs\u003E",
+          "parameters": [
+            {
+              "name": "Direction",
+              "kind": "I32",
+              "direction": "In",
+              "managedTypeName": "Avalonia.Controls.SpinDirection",
+              "isNullable": false
+            },
+            {
+              "name": "UsingMouseWheel",
+              "kind": "Bool",
+              "direction": "In",
+              "managedTypeName": "System.Boolean",
+              "isNullable": false
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "IAvnSplitButton",
@@ -5752,6 +5868,16 @@
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.Object",
           "isNullable": true
+        },
+        {
+          "name": "PaneTemplate",
+          "kind": "DataTemplate",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnDataTemplate",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Templates.IDataTemplate",
+          "isNullable": false
         },
         {
           "name": "UseLightDismissOverlayMode",
@@ -5979,6 +6105,16 @@
         },
         {
           "name": "IconTemplate",
+          "kind": "DataTemplate",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnDataTemplate",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Templates.IDataTemplate",
+          "isNullable": true
+        },
+        {
+          "name": "IndicatorTemplate",
           "kind": "DataTemplate",
           "canRead": true,
           "canWrite": true,
@@ -7080,7 +7216,17 @@
           "isNullable": false
         }
       ],
-      "events": []
+      "events": [
+        {
+          "name": "Clicked",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnTrayIconClickedHandler",
+          "handlerInterfaceIid": "912502B3-D535-59CC-8BC0-321B58A0BF1B",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler",
+          "parameters": []
+        }
+      ]
     },
     {
       "name": "IAvnTreeView",
@@ -8722,6 +8868,25 @@
         {
           "name": "Outside",
           "value": 3
+        }
+      ]
+    },
+    {
+      "name": "ValidSpinDirections",
+      "fullName": "Avalonia.Controls.ValidSpinDirections",
+      "isFlags": true,
+      "values": [
+        {
+          "name": "None",
+          "value": 0
+        },
+        {
+          "name": "Increase",
+          "value": 1
+        },
+        {
+          "name": "Decrease",
+          "value": 2
         }
       ]
     },
@@ -11301,312 +11466,302 @@
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "Item",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the indexer is not an ABI member"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "Item",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the indexer is not an ABI member"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "Dispatcher",
-      "reason": "Not included by projection policy"
+      "reason": "By design: threading is owned by the host"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "PropertyChanged",
-      "reason": "Not included by projection policy"
+      "reason": "By design: not part of the projected model"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "CheckAccess()",
-      "reason": "Not included by projection policy"
+      "reason": "By design: threading is owned by the host"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "VerifyAccess()",
-      "reason": "Not included by projection policy"
+      "reason": "By design: threading is owned by the host"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "ClearValue(AvaloniaProperty)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: AvaloniaProperty plumbing is not projected; use the named member instead"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "ClearValue(AvaloniaProperty\u00601)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: AvaloniaProperty plumbing is not projected; use the named member instead"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "ClearValue(StyledProperty\u00601)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: AvaloniaProperty plumbing is not projected; use the named member instead"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "ClearValue(DirectPropertyBase\u00601)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: AvaloniaProperty plumbing is not projected; use the named member instead"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "Equals(Object)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: identity and formatting members are not ABI surface"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "GetHashCode()",
-      "reason": "Not included by projection policy"
+      "reason": "By design: identity and formatting members are not ABI surface"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "GetValue(AvaloniaProperty)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: AvaloniaProperty plumbing is not projected; use the named member instead"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "GetValue(StyledProperty\u00601)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: AvaloniaProperty plumbing is not projected; use the named member instead"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "GetValue(DirectPropertyBase\u00601)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: AvaloniaProperty plumbing is not projected; use the named member instead"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "GetBaseValue(StyledProperty\u00601)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: AvaloniaProperty plumbing is not projected; use the named member instead"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "IsAnimating(AvaloniaProperty)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: AvaloniaProperty plumbing is not projected; use the named member instead"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "IsSet(AvaloniaProperty)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: AvaloniaProperty plumbing is not projected; use the named member instead"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "SetValue(AvaloniaProperty, Object, BindingPriority)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: AvaloniaProperty plumbing is not projected; use the named member instead"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "SetValue(StyledProperty\u00601, T, BindingPriority)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: AvaloniaProperty plumbing is not projected; use the named member instead"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "SetValue(DirectPropertyBase\u00601, T)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: AvaloniaProperty plumbing is not projected; use the named member instead"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "SetCurrentValue(AvaloniaProperty, Object)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: AvaloniaProperty plumbing is not projected; use the named member instead"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "SetCurrentValue(StyledProperty\u00601, T)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: AvaloniaProperty plumbing is not projected; use the named member instead"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "Bind(AvaloniaProperty, BindingBase)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the property system is not projected; use the imperative surface"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "Bind(AvaloniaProperty, IObservable\u00601, BindingPriority)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the property system is not projected; use the imperative surface"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "Bind(StyledProperty\u00601, IObservable\u00601, BindingPriority)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the property system is not projected; use the imperative surface"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "Bind(StyledProperty\u00601, IObservable\u00601, BindingPriority)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the property system is not projected; use the imperative surface"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "Bind(StyledProperty\u00601, IObservable\u00601, BindingPriority)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the property system is not projected; use the imperative surface"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "Bind(DirectPropertyBase\u00601, IObservable\u00601)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the property system is not projected; use the imperative surface"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "Bind(DirectPropertyBase\u00601, IObservable\u00601)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the property system is not projected; use the imperative surface"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "Bind(DirectPropertyBase\u00601, IObservable\u00601)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the property system is not projected; use the imperative surface"
     },
     {
       "owner": "Avalonia.AvaloniaObject",
       "member": "CoerceValue(AvaloniaProperty)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: AvaloniaProperty plumbing is not projected"
     },
     {
       "owner": "Avalonia.Controls.AutoCompleteBox",
       "member": "ValueMemberBinding",
-      "reason": "Not included by projection policy"
+      "reason": "By design: bindings are not projected; use the imperative surface"
     },
     {
       "owner": "Avalonia.Controls.AutoCompleteBox",
       "member": "Watermark",
-      "reason": "Not included by projection policy"
+      "reason": "By design: obsolete alias of PlaceholderText"
     },
     {
       "owner": "Avalonia.Controls.AutoCompleteBox",
       "member": "WatermarkForeground",
-      "reason": "Not included by projection policy"
+      "reason": "By design: obsolete alias of PlaceholderForeground"
     },
     {
       "owner": "Avalonia.Controls.AutoCompleteBox",
       "member": "ItemSelector",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the selector delegate needs another callback shape"
     },
     {
       "owner": "Avalonia.Controls.AutoCompleteBox",
       "member": "TextSelector",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the selector delegate needs another callback shape"
     },
     {
       "owner": "Avalonia.Controls.AutoCompleteBox",
       "member": "AsyncPopulator",
-      "reason": "Not included by projection policy"
+      "reason": "By design: async population needs the async-completion transport"
     },
     {
       "owner": "Avalonia.Controls.AutoCompleteBox",
       "member": "Populated",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the populated collection payload has no event shape yet"
     },
     {
       "owner": "Avalonia.Controls.AutoCompleteBox",
       "member": "SelectionChanged",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the added/removed collection payload has no event shape yet"
     },
     {
       "owner": "Avalonia.Controls.Border",
       "member": "BoxShadow",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the multi-shadow model needs a shadow ABI shape"
     },
     {
       "owner": "Avalonia.Controls.Border",
       "member": "Render(DrawingContext)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: custom drawing is not part of the projected model"
     },
     {
       "owner": "Avalonia.Controls.Button",
       "member": "HotKey",
-      "reason": "Not included by projection policy"
+      "reason": "By design: KeyGesture is not part of the projected model"
     },
     {
       "owner": "Avalonia.Controls.Calendar",
       "member": "SelectedDatesChanged",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the added/removed collection payload has no event shape yet"
     },
     {
       "owner": "Avalonia.Controls.Calendar",
       "member": "ToString()",
-      "reason": "Not included by projection policy"
+      "reason": "By design: identity and formatting members are not ABI surface"
     },
     {
       "owner": "Avalonia.Controls.CalendarDatePicker",
       "member": "TextConverter",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the converter is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.CalendarDatePicker",
       "member": "Watermark",
-      "reason": "Not included by projection policy"
+      "reason": "By design: obsolete alias of PlaceholderText"
     },
     {
       "owner": "Avalonia.Controls.CalendarDatePicker",
       "member": "UseFloatingWatermark",
-      "reason": "Not included by projection policy"
+      "reason": "By design: obsolete alias of UseFloatingPlaceholder"
     },
     {
       "owner": "Avalonia.Controls.CalendarDatePicker",
       "member": "WatermarkForeground",
-      "reason": "Not included by projection policy"
+      "reason": "By design: obsolete alias of PlaceholderForeground"
     },
     {
       "owner": "Avalonia.Controls.CalendarDatePicker",
       "member": "SelectedDateChanged",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the added/removed collection payload has no event shape yet"
     },
     {
       "owner": "Avalonia.Controls.Carousel",
       "member": "PageTransition",
-      "reason": "Not included by projection policy"
+      "reason": "By design: transitions are animation internals owned by the host"
     },
     {
       "owner": "Avalonia.Controls.ComboBox",
       "member": "HorizontalContentAlignment",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the new-hidden member duplicates the projected base"
     },
     {
       "owner": "Avalonia.Controls.ComboBox",
       "member": "VerticalContentAlignment",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the new-hidden member duplicates the projected base"
     },
     {
       "owner": "Avalonia.Controls.ComboBox",
       "member": "UpdateSelectionFromEvent(Control, RoutedEventArgs)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: initialization and internal plumbing is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.CommandBar",
       "member": "VisiblePrimaryCommands",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the read-only view over the command lists"
     },
     {
       "owner": "Avalonia.Controls.CommandBar",
       "member": "OverflowItems",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the read-only overflow view over the command lists"
     },
     {
       "owner": "Avalonia.Controls.CommandBar",
       "member": "PrimaryCommands",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the typed command-bar element list needs its own element ABI"
     },
     {
       "owner": "Avalonia.Controls.CommandBar",
       "member": "SecondaryCommands",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.CommandBarButton",
-      "member": "Icon",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.CommandBarToggleButton",
-      "member": "Icon",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the typed command-bar element list needs its own element ABI"
     },
     {
       "owner": "Avalonia.Controls.ContentControl",
       "member": "Presenter",
-      "reason": "Not included by projection policy"
+      "reason": "By design: template-part presenters are internal layout plumbing"
     },
     {
       "owner": "Avalonia.Controls.ContextMenu",
       "member": "CustomPopupPlacementCallback",
-      "reason": "Not included by projection policy"
+      "reason": "By design: custom placement needs a callback with geometry out-parameters"
     },
     {
       "owner": "Avalonia.Controls.ContextMenu",
@@ -11616,202 +11771,192 @@
     {
       "owner": "Avalonia.Controls.ContextMenu",
       "member": "Close()",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the INotification content needs a typed notification ABI"
     },
     {
       "owner": "Avalonia.Controls.Control",
       "member": "FocusAdorner",
-      "reason": "Not included by projection policy"
+      "reason": "By design: adorner plumbing is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.Control",
       "member": "DataTemplates",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the default-template list is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.Control",
       "member": "Tag",
-      "reason": "Not included by projection policy"
+      "reason": "By design: an untyped user payload with no ABI shape"
     },
     {
       "owner": "Avalonia.Controls.DatePicker",
       "member": "SelectedDateChanged",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the added/removed collection payload has no event shape yet"
     },
     {
       "owner": "Avalonia.Controls.Expander",
       "member": "ContentTransition",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Expander",
-      "member": "Collapsing",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Expander",
-      "member": "Expanding",
-      "reason": "Not included by projection policy"
+      "reason": "By design: transitions are animation internals owned by the host"
     },
     {
       "owner": "Avalonia.Controls.Flyout",
       "member": "FlyoutPresenterClasses",
-      "reason": "Not included by projection policy"
+      "reason": "By design: styling is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.Flyout",
       "member": "FlyoutPresenterTheme",
-      "reason": "Not included by projection policy"
+      "reason": "By design: styling is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.GridSplitter",
       "member": "PreviewContent",
-      "reason": "Not included by projection policy"
+      "reason": "By design: preview plumbing is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.Image",
       "member": "Render(DrawingContext)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: custom drawing is not part of the projected model"
     },
     {
       "owner": "Avalonia.Controls.ItemsControl",
       "member": "DisplayMemberBinding",
-      "reason": "Not included by projection policy"
+      "reason": "By design: bindings are not projected; use the imperative surface"
     },
     {
       "owner": "Avalonia.Controls.ItemsControl",
       "member": "ItemContainerGenerator",
-      "reason": "Not included by projection policy"
+      "reason": "By design: container generation is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.ItemsControl",
       "member": "ItemContainerTheme",
-      "reason": "Not included by projection policy"
+      "reason": "By design: container themes are styling owned by the host"
     },
     {
       "owner": "Avalonia.Controls.ItemsControl",
       "member": "ItemsPanel",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the items panel is layout plumbing owned by the host"
     },
     {
       "owner": "Avalonia.Controls.ItemsControl",
       "member": "Presenter",
-      "reason": "Not included by projection policy"
+      "reason": "By design: template-part presenters are internal layout plumbing"
     },
     {
       "owner": "Avalonia.Controls.ItemsControl",
       "member": "ItemsPanelRoot",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the realized panel root is internal layout plumbing"
     },
     {
       "owner": "Avalonia.Controls.ItemsControl",
       "member": "ItemsView",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the item view is internal plumbing"
     },
     {
       "owner": "Avalonia.Controls.ItemsControl",
       "member": "PreparingContainer",
-      "reason": "Not included by projection policy"
+      "reason": "By design: container lifecycle is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.ItemsControl",
       "member": "ContainerPrepared",
-      "reason": "Not included by projection policy"
+      "reason": "By design: container lifecycle is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.ItemsControl",
       "member": "ContainerIndexChanged",
-      "reason": "Not included by projection policy"
+      "reason": "By design: container lifecycle is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.ItemsControl",
       "member": "ContainerClearing",
-      "reason": "Not included by projection policy"
+      "reason": "By design: container lifecycle is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.ItemsControl",
       "member": "GetRealizedContainers()",
-      "reason": "Not included by projection policy"
+      "reason": "By design: realized-container enumeration is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.LayoutTransformControl",
       "member": "LayoutTransform",
-      "reason": "Not included by projection policy"
+      "reason": "By design: transform internals are owned by the host"
     },
     {
       "owner": "Avalonia.Controls.LayoutTransformControl",
       "member": "TransformRoot",
-      "reason": "Not included by projection policy"
+      "reason": "By design: transform internals are owned by the host"
     },
     {
       "owner": "Avalonia.Controls.ListBox",
       "member": "Scroll",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the scrolling contract is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.ListBox",
       "member": "SelectedItems",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the new-hidden member duplicates the projected base"
     },
     {
       "owner": "Avalonia.Controls.ListBox",
       "member": "Selection",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the selection model is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.MaskedTextBox",
       "member": "Culture",
-      "reason": "Not included by projection policy"
+      "reason": "By design: globalization is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.MaskedTextBox",
       "member": "MaskProvider",
-      "reason": "Not included by projection policy"
+      "reason": "By design: mask internals are owned by the host"
     },
     {
       "owner": "Avalonia.Controls.Menu",
       "member": "Close()",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the INotification content needs a typed notification ABI"
     },
     {
       "owner": "Avalonia.Controls.Menu",
       "member": "Open()",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the suppressed override of the base Open slot"
     },
     {
       "owner": "Avalonia.Controls.MenuFlyout",
       "member": "FlyoutPresenterClasses",
-      "reason": "Not included by projection policy"
+      "reason": "By design: styling is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.MenuFlyout",
       "member": "ItemContainerTheme",
-      "reason": "Not included by projection policy"
+      "reason": "By design: container themes are styling owned by the host"
     },
     {
       "owner": "Avalonia.Controls.MenuFlyout",
       "member": "FlyoutPresenterTheme",
-      "reason": "Not included by projection policy"
+      "reason": "By design: styling is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.MenuItem",
       "member": "HotKey",
-      "reason": "Not included by projection policy"
+      "reason": "By design: KeyGesture is not part of the projected model"
     },
     {
       "owner": "Avalonia.Controls.MenuItem",
       "member": "InputGesture",
-      "reason": "Not included by projection policy"
+      "reason": "By design: input gestures are not part of the projected model"
     },
     {
       "owner": "Avalonia.Controls.MenuItem",
       "member": "PointerEnteredItem",
-      "reason": "Not included by projection policy"
+      "reason": "By design: internal hover plumbing is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.MenuItem",
       "member": "PointerExitedItem",
-      "reason": "Not included by projection policy"
+      "reason": "By design: internal hover plumbing is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.Notifications.WindowNotificationManager",
@@ -11831,492 +11976,452 @@
     {
       "owner": "Avalonia.Controls.NumericUpDown",
       "member": "NumberFormat",
-      "reason": "Not included by projection policy"
+      "reason": "By design: globalization is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.NumericUpDown",
       "member": "ParsingNumberStyle",
-      "reason": "Not included by projection policy"
+      "reason": "By design: globalization is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.NumericUpDown",
       "member": "TextConverter",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the converter is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.NumericUpDown",
       "member": "Watermark",
-      "reason": "Not included by projection policy"
+      "reason": "By design: obsolete alias of PlaceholderText"
     },
     {
       "owner": "Avalonia.Controls.NumericUpDown",
       "member": "WatermarkForeground",
-      "reason": "Not included by projection policy"
+      "reason": "By design: obsolete alias of PlaceholderForeground"
     },
     {
       "owner": "Avalonia.Controls.Panel",
       "member": "IsItemsHost",
-      "reason": "Not included by projection policy"
+      "reason": "By design: layout plumbing owned by the host"
     },
     {
       "owner": "Avalonia.Controls.Panel",
       "member": "Render(DrawingContext)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: custom drawing is not part of the projected model"
     },
     {
       "owner": "Avalonia.Controls.PipsPager",
       "member": "TemplateSettings",
-      "reason": "Not included by projection policy"
+      "reason": "By design: template settings are styling owned by the host"
     },
     {
       "owner": "Avalonia.Controls.PipsPager",
       "member": "PreviousButtonTheme",
-      "reason": "Not included by projection policy"
+      "reason": "By design: styling is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.PipsPager",
       "member": "NextButtonTheme",
-      "reason": "Not included by projection policy"
+      "reason": "By design: styling is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.Primitives.HeaderedContentControl",
       "member": "HeaderPresenter",
-      "reason": "Not included by projection policy"
+      "reason": "By design: template-part presenters are internal layout plumbing"
     },
     {
       "owner": "Avalonia.Controls.Primitives.HeaderedItemsControl",
       "member": "HeaderPresenter",
-      "reason": "Not included by projection policy"
+      "reason": "By design: template-part presenters are internal layout plumbing"
     },
     {
       "owner": "Avalonia.Controls.Primitives.HeaderedSelectingItemsControl",
       "member": "HeaderPresenter",
-      "reason": "Not included by projection policy"
+      "reason": "By design: template-part presenters are internal layout plumbing"
     },
     {
       "owner": "Avalonia.Controls.Primitives.Popup",
       "member": "OpenedPopups",
-      "reason": "Not included by projection policy"
+      "reason": "By design: popup enumeration is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.Primitives.Popup",
       "member": "DependencyResolver",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the resolver is not ABI surface"
     },
     {
       "owner": "Avalonia.Controls.Primitives.Popup",
       "member": "CustomPopupPlacementCallback",
-      "reason": "Not included by projection policy"
+      "reason": "By design: custom placement needs a callback with geometry out-parameters"
     },
     {
       "owner": "Avalonia.Controls.Primitives.Popup",
       "member": "OverlayInputPassThroughElement",
-      "reason": "Not included by projection policy"
+      "reason": "By design: input plumbing is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.Primitives.Popup",
       "member": "IsInsidePopup(Visual)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: visual-tree queries are owned by the host"
     },
     {
       "owner": "Avalonia.Controls.Primitives.PopupFlyoutBase",
       "member": "CustomPopupPlacementCallback",
-      "reason": "Not included by projection policy"
+      "reason": "By design: custom placement needs a callback with geometry out-parameters"
     },
     {
       "owner": "Avalonia.Controls.Primitives.PopupFlyoutBase",
       "member": "OverlayInputPassThroughElement",
-      "reason": "Not included by projection policy"
+      "reason": "By design: input plumbing is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.Primitives.PopupFlyoutBase",
       "member": "ShowAt(Control)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the flyout base\u0027s virtual ShowAt pair needs pointer-event state"
     },
     {
       "owner": "Avalonia.Controls.Primitives.PopupFlyoutBase",
       "member": "ShowAt(Control, Boolean)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the flyout base\u0027s virtual ShowAt pair needs pointer-event state"
     },
     {
       "owner": "Avalonia.Controls.Primitives.PopupFlyoutBase",
       "member": "Hide()",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the flyout base\u0027s virtual Hide needs pointer-event state"
     },
     {
       "owner": "Avalonia.Controls.Primitives.SelectingItemsControl",
       "member": "SelectedValueBinding",
-      "reason": "Not included by projection policy"
+      "reason": "By design: bindings are not projected; use the imperative surface"
     },
     {
       "owner": "Avalonia.Controls.Primitives.SelectingItemsControl",
       "member": "BeginInit()",
-      "reason": "Not included by projection policy"
+      "reason": "By design: initialization and internal plumbing is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.Primitives.SelectingItemsControl",
       "member": "EndInit()",
-      "reason": "Not included by projection policy"
+      "reason": "By design: initialization and internal plumbing is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.Primitives.SelectingItemsControl",
       "member": "UpdateSelectionFromEvent(Control, RoutedEventArgs)",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Primitives.TemplatedControl",
-      "member": "BackgroundSizing",
-      "reason": "Not included by projection policy"
+      "reason": "By design: initialization and internal plumbing is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.Primitives.TemplatedControl",
       "member": "Template",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the control template (not a data template) is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.Primitives.TemplatedControl",
       "member": "TemplateApplied",
-      "reason": "Not included by projection policy"
+      "reason": "By design: control-template plumbing is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.Primitives.TemplatedControl",
       "member": "ApplyTemplate()",
-      "reason": "Not included by projection policy"
+      "reason": "By design: control-template plumbing is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.ProgressBar",
       "member": "TemplateSettings",
-      "reason": "Not included by projection policy"
+      "reason": "By design: template settings are styling owned by the host"
     },
     {
       "owner": "Avalonia.Controls.RefreshContainer",
       "member": "Visualizer",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.RefreshContainer",
-      "member": "RefreshRequested",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the visualizer is template plumbing owned by the host"
     },
     {
       "owner": "Avalonia.Controls.Shapes.Shape",
       "member": "DefiningGeometry",
-      "reason": "Not included by projection policy"
+      "reason": "By design: geometry internals are owned by the host"
     },
     {
       "owner": "Avalonia.Controls.Shapes.Shape",
       "member": "RenderedGeometry",
-      "reason": "Not included by projection policy"
+      "reason": "By design: geometry internals are owned by the host"
     },
     {
       "owner": "Avalonia.Controls.Shapes.Shape",
       "member": "Render(DrawingContext)",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Slider",
-      "member": "Ticks",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Spinner",
-      "member": "ValidSpinDirection",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Spinner",
-      "member": "Spin",
-      "reason": "Not included by projection policy"
+      "reason": "By design: custom drawing is not part of the projected model"
     },
     {
       "owner": "Avalonia.Controls.SplitButton",
       "member": "HotKey",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.SplitView",
-      "member": "PaneTemplate",
-      "reason": "Not included by projection policy"
+      "reason": "By design: KeyGesture is not part of the projected model"
     },
     {
       "owner": "Avalonia.Controls.SplitView",
       "member": "TemplateSettings",
-      "reason": "Not included by projection policy"
+      "reason": "By design: template settings are styling owned by the host"
     },
     {
       "owner": "Avalonia.Controls.StackPanel",
       "member": "HorizontalSnapPointsChanged",
-      "reason": "Not included by projection policy"
+      "reason": "By design: snap points are layout plumbing owned by the host"
     },
     {
       "owner": "Avalonia.Controls.StackPanel",
       "member": "VerticalSnapPointsChanged",
-      "reason": "Not included by projection policy"
+      "reason": "By design: snap points are layout plumbing owned by the host"
     },
     {
       "owner": "Avalonia.Controls.StackPanel",
       "member": "GetIrregularSnapPoints(Orientation, SnapPointsAlignment)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: snap points are layout plumbing owned by the host"
     },
     {
       "owner": "Avalonia.Controls.StackPanel",
       "member": "GetRegularSnapPoints(Orientation, SnapPointsAlignment, Double\u0026)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: snap points are layout plumbing owned by the host"
     },
     {
       "owner": "Avalonia.Controls.TabControl",
       "member": "PageTransition",
-      "reason": "Not included by projection policy"
+      "reason": "By design: transitions are animation internals owned by the host"
     },
     {
       "owner": "Avalonia.Controls.TabControl",
       "member": "UpdateSelectionFromEvent(Control, RoutedEventArgs)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: initialization and internal plumbing is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.TabItem",
       "member": "TabStripPlacement",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TabItem",
-      "member": "IndicatorTemplate",
-      "reason": "Not included by projection policy"
+      "reason": "By design: a nullable enum has no ABI shape yet"
     },
     {
       "owner": "Avalonia.Controls.TableView",
       "member": "DisplayMemberBinding",
-      "reason": "Not included by projection policy"
+      "reason": "By design: bindings are not projected; use the imperative surface"
     },
     {
       "owner": "Avalonia.Controls.TableView",
       "member": "ItemTemplate",
-      "reason": "Not included by projection policy"
+      "reason": "By design: U19 projects the data templates; container themes are styling"
     },
     {
       "owner": "Avalonia.Controls.TableView",
       "member": "Columns",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the typed column list needs its own element ABI"
     },
     {
       "owner": "Avalonia.Controls.TableViewCell",
       "member": "Column",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the owning column is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.TableViewColumn",
       "member": "HeaderTheme",
-      "reason": "Not included by projection policy"
+      "reason": "By design: styling is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.TableViewColumn",
       "member": "CellTheme",
-      "reason": "Not included by projection policy"
+      "reason": "By design: styling is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.TableViewColumn",
       "member": "CellTemplate",
-      "reason": "Not included by projection policy"
+      "reason": "By design: per-column templates are styling owned by the host"
     },
     {
       "owner": "Avalonia.Controls.TableViewColumn",
       "member": "Binding",
-      "reason": "Not included by projection policy"
+      "reason": "By design: bindings are not projected; use the imperative surface"
     },
     {
       "owner": "Avalonia.Controls.TableViewColumn",
       "member": "TableView",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the owning table is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.TextBlock",
       "member": "TextLayout",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the text layout engine is not part of the projected model"
     },
     {
       "owner": "Avalonia.Controls.TextBlock",
       "member": "TextDecorations",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the text decoration model is not part of the projected surface"
     },
     {
       "owner": "Avalonia.Controls.TextBlock",
       "member": "Inlines",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the inline text object model is not part of the projected model"
     },
     {
       "owner": "Avalonia.Controls.TextBlock",
       "member": "Render(DrawingContext)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: custom drawing is not part of the projected model"
     },
     {
       "owner": "Avalonia.Controls.TextBox",
       "member": "Watermark",
-      "reason": "Not included by projection policy"
+      "reason": "By design: obsolete alias of PlaceholderText"
     },
     {
       "owner": "Avalonia.Controls.TextBox",
       "member": "UseFloatingWatermark",
-      "reason": "Not included by projection policy"
+      "reason": "By design: obsolete alias of UseFloatingPlaceholder"
     },
     {
       "owner": "Avalonia.Controls.TextBox",
       "member": "WatermarkForeground",
-      "reason": "Not included by projection policy"
+      "reason": "By design: obsolete alias of PlaceholderForeground"
     },
     {
       "owner": "Avalonia.Controls.TextBox",
       "member": "TextChanging",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the undo-args payload has no event shape yet"
     },
     {
       "owner": "Avalonia.Controls.ThemeVariantScope",
       "member": "RequestedThemeVariant",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the ThemeVariant struct has no ABI shape yet"
     },
     {
       "owner": "Avalonia.Controls.TimePicker",
       "member": "SelectedTimeChanged",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the nullable TimeSpan payload has no event shape yet"
     },
     {
       "owner": "Avalonia.Controls.ToggleSwitch",
       "member": "OffContentPresenter",
-      "reason": "Not included by projection policy"
+      "reason": "By design: template-part presenters are internal layout plumbing"
     },
     {
       "owner": "Avalonia.Controls.ToggleSwitch",
       "member": "OnContentPresenter",
-      "reason": "Not included by projection policy"
+      "reason": "By design: template-part presenters are internal layout plumbing"
     },
     {
       "owner": "Avalonia.Controls.ToggleSwitch",
       "member": "KnobTransitions",
-      "reason": "Not included by projection policy"
+      "reason": "By design: animation internals owned by the host"
     },
     {
       "owner": "Avalonia.Controls.TransitioningContentControl",
       "member": "PageTransition",
-      "reason": "Not included by projection policy"
+      "reason": "By design: transitions are animation internals owned by the host"
     },
     {
       "owner": "Avalonia.Controls.TransitioningContentControl",
       "member": "TransitionCompleted",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the transition payload has no event shape yet"
     },
     {
       "owner": "Avalonia.Controls.TrayIcon",
       "member": "Menu",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the imperative NativeMenu rides the view-model pipeline"
     },
     {
       "owner": "Avalonia.Controls.TrayIcon",
       "member": "NativeMenuExporter",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TrayIcon",
-      "member": "Clicked",
-      "reason": "Not included by projection policy"
+      "reason": "By design: internal exporter plumbing"
     },
     {
       "owner": "Avalonia.Controls.TrayIcon",
       "member": "Dispose()",
-      "reason": "Not included by projection policy"
+      "reason": "By design: lifetime is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.TreeView",
       "member": "GetRealizedTreeContainers()",
-      "reason": "Not included by projection policy"
+      "reason": "By design: realized-container enumeration is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.TreeView",
       "member": "UpdateSelectionFromEvent(Control, RoutedEventArgs)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: initialization and internal plumbing is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.Window",
       "member": "PlatformImpl",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the platform implementation is not ABI surface"
     },
     {
       "owner": "Avalonia.Controls.Window",
       "member": "OwnedWindows",
-      "reason": "Not included by projection policy"
+      "reason": "By design: window enumeration is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.Window",
       "member": "WindowDecorationsTheme",
-      "reason": "Not included by projection policy"
+      "reason": "By design: theming is owned by the host"
     },
     {
       "owner": "Avalonia.Controls.Window",
       "member": "SystemDecorations",
-      "reason": "Not included by projection policy"
+      "reason": "By design: decorations are owned by the platform chrome"
     },
     {
       "owner": "Avalonia.Controls.Window",
       "member": "BeginMoveDrag(PointerPressedEventArgs)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: drag needs the pointer-event payload shape"
     },
     {
       "owner": "Avalonia.Controls.Window",
       "member": "BeginResizeDrag(WindowEdge, PointerPressedEventArgs)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: drag needs the pointer-event payload shape"
     },
     {
       "owner": "Avalonia.Controls.Window",
       "member": "ShowDialog(Window)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: modal dialogs need the async-completion transport"
     },
     {
       "owner": "Avalonia.Controls.Window",
       "member": "ShowDialog(Window)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: modal dialogs need the async-completion transport"
     },
     {
       "owner": "Avalonia.StyledElement",
       "member": "Styles",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the style system is not projected; use the imperative surface"
     },
     {
       "owner": "Avalonia.StyledElement",
       "member": "StyleKey",
-      "reason": "Not included by projection policy"
+      "reason": "By design: styling is owned by the host"
     },
     {
       "owner": "Avalonia.StyledElement",
       "member": "Resources",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the resource dictionary is not part of the projected model"
     },
     {
       "owner": "Avalonia.StyledElement",
       "member": "Theme",
-      "reason": "Not included by projection policy"
+      "reason": "By design: control themes are styling owned by the host"
     },
     {
       "owner": "Avalonia.StyledElement",
       "member": "ActualThemeVariant",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the ThemeVariant struct has no ABI shape yet"
     },
     {
       "owner": "Avalonia.StyledElement",
       "member": "BeginInit()",
-      "reason": "Not included by projection policy"
+      "reason": "By design: initialization and internal plumbing is owned by the host"
     },
     {
       "owner": "Avalonia.StyledElement",
       "member": "EndInit()",
-      "reason": "Not included by projection policy"
+      "reason": "By design: initialization and internal plumbing is owned by the host"
     },
     {
       "owner": "Avalonia.StyledElement",
       "member": "ApplyStyling()",
-      "reason": "Not included by projection policy"
+      "reason": "By design: styling is owned by the host"
     },
     {
       "owner": "Avalonia.StyledElement",
       "member": "TryGetResource(Object, ThemeVariant, Object\u0026)",
-      "reason": "Not included by projection policy"
+      "reason": "By design: the resource dictionary is not part of the projected model"
     }
   ]
 }

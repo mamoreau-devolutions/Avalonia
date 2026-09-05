@@ -1254,6 +1254,13 @@ impl TryFrom<i32> for TickPlacement {
     }
 }
 
+/// [Flags] ABI bits for `ValidSpinDirections`. Combined values are valid.
+pub mod valid_spin_directions {
+    pub const NONE: i32 = 0;
+    pub const INCREASE: i32 = 1;
+    pub const DECREASE: i32 = 2;
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum WindowCloseReason {
@@ -2607,11 +2614,14 @@ pub use sys::ContextMenuOpeningEventArgs;
 pub use sys::ContextMenuClosingEventArgs;
 pub use sys::ControlSizeChangedEventArgs;
 pub use sys::ControlKeyDownEventArgs;
+pub use sys::ExpanderCollapsingEventArgs;
+pub use sys::ExpanderExpandingEventArgs;
 pub use sys::NumericUpDownSpinnedEventArgs;
 pub use sys::PopupFlyoutBaseClosingEventArgs;
 pub use sys::ThumbDragStartedEventArgs;
 pub use sys::ThumbDragDeltaEventArgs;
 pub use sys::ThumbDragCompletedEventArgs;
+pub use sys::SpinnerSpinEventArgs;
 pub use sys::SplitViewPaneClosingEventArgs;
 pub use sys::SplitViewPaneOpeningEventArgs;
 pub use sys::WindowClosingEventArgs;
@@ -3105,6 +3115,17 @@ impl AutoCompleteBox {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -4233,6 +4254,17 @@ impl Button {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -4809,6 +4841,17 @@ impl ButtonSpinner {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -4973,6 +5016,25 @@ impl ButtonSpinner {
     }
     pub fn vertical_content_alignment(self, value: VerticalAlignment) -> Result<Self> {
         self.set_vertical_content_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_valid_spin_direction(&self) -> Result<i32> { Ok(self.raw.get_valid_spin_direction()?) }
+    pub fn set_valid_spin_direction(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_valid_spin_direction(value)?)
+    }
+    pub fn valid_spin_direction(self, value: i32) -> Result<Self> {
+        self.set_valid_spin_direction(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_spin(&self, callback: impl FnMut(&mut SpinnerSpinEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::spinner_spin_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_spin(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_spin(subscription_id)))
+    }
+    pub fn on_spin(self, scope: &crate::AppScope, callback: impl FnMut(&mut SpinnerSpinEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_spin(callback)?);
         Ok(self)
     }
     pub fn get_allow_spin(&self) -> Result<bool> { Ok(self.raw.get_allow_spin()?) }
@@ -5338,6 +5400,17 @@ impl Calendar {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -5950,6 +6023,17 @@ impl CalendarDatePicker {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -7010,6 +7094,17 @@ impl Carousel {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -7595,6 +7690,17 @@ impl CheckBox {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -8200,6 +8306,17 @@ impl ComboBox {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -8867,6 +8984,17 @@ impl ComboBoxItem {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -9377,6 +9505,17 @@ impl CommandBar {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -9975,6 +10114,17 @@ impl CommandBarButton {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -10222,6 +10372,17 @@ impl CommandBarButton {
     }
     pub fn label(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_label(value)?;
+        Ok(self)
+    }
+    pub fn get_icon(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_icon()?))
+    }
+    pub fn set_icon(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_icon(&value)?)
+    }
+    pub fn icon(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_icon(value)?;
         Ok(self)
     }
     pub fn get_is_compact(&self) -> Result<bool> { Ok(self.raw.get_is_compact()?) }
@@ -10595,6 +10756,17 @@ impl CommandBarSeparator {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -11074,6 +11246,17 @@ impl CommandBarToggleButton {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -11350,6 +11533,17 @@ impl CommandBarToggleButton {
     }
     pub fn label(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_label(value)?;
+        Ok(self)
+    }
+    pub fn get_icon(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_icon()?))
+    }
+    pub fn set_icon(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_icon(&value)?)
+    }
+    pub fn icon(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_icon(value)?;
         Ok(self)
     }
     pub fn get_is_compact(&self) -> Result<bool> { Ok(self.raw.get_is_compact()?) }
@@ -11723,6 +11917,17 @@ impl ContentControl {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -12227,6 +12432,17 @@ impl ContextMenu {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -13257,6 +13473,17 @@ impl DatePicker {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -14548,6 +14775,17 @@ impl DropDownButton {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -15124,6 +15362,17 @@ impl Expander {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -15343,6 +15592,17 @@ impl Expander {
         scope.retain_subscription(self.subscribe_collapsed(callback)?);
         Ok(self)
     }
+    pub fn subscribe_collapsing(&self, callback: impl FnMut(&mut ExpanderCollapsingEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::expander_collapsing_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_collapsing(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_collapsing(subscription_id)))
+    }
+    pub fn on_collapsing(self, scope: &crate::AppScope, callback: impl FnMut(&mut ExpanderCollapsingEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_collapsing(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_expanded(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::expander_expanded_handler(move || {
             callback(());
@@ -15354,6 +15614,17 @@ impl Expander {
     }
     pub fn on_expanded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_expanded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_expanding(&self, callback: impl FnMut(&mut ExpanderExpandingEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::expander_expanding_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_expanding(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_expanding(subscription_id)))
+    }
+    pub fn on_expanding(self, scope: &crate::AppScope, callback: impl FnMut(&mut ExpanderExpandingEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_expanding(callback)?);
         Ok(self)
     }
 }
@@ -16719,6 +16990,17 @@ impl GridSplitter {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -17259,6 +17541,17 @@ impl GroupBox {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -17782,6 +18075,17 @@ impl HyperlinkButton {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -18373,6 +18677,17 @@ impl IconElement {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -19207,6 +19522,17 @@ impl ItemsControl {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -19706,6 +20032,17 @@ impl Label {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -20579,6 +20916,17 @@ impl ListBox {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -21157,6 +21505,17 @@ impl ListBoxItem {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -21667,6 +22026,17 @@ impl MaskedTextBox {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -22552,6 +22922,17 @@ impl Menu {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -23143,6 +23524,17 @@ impl MenuBase {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -23921,6 +24313,17 @@ impl MenuItem {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -24626,6 +25029,17 @@ impl NotificationCard {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -25164,6 +25578,17 @@ impl WindowNotificationManager {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -25645,6 +26070,17 @@ impl NumericUpDown {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -26663,6 +27099,17 @@ impl PathIcon {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -27133,6 +27580,17 @@ impl PipsPager {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -27711,6 +28169,17 @@ impl HeaderedContentControl {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -28236,6 +28705,17 @@ impl HeaderedItemsControl {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -28756,6 +29236,17 @@ impl HeaderedSelectingItemsControl {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -29995,6 +30486,17 @@ impl RangeBase {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -30507,6 +31009,17 @@ impl SelectingItemsControl {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -31077,6 +31590,17 @@ impl TemplatedControl {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -31536,6 +32060,17 @@ impl Thumb {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -32030,6 +32565,17 @@ impl ToggleButton {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -33022,6 +33568,17 @@ impl ProgressBar {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -33573,6 +34130,17 @@ impl RadioButton {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -34191,6 +34759,17 @@ impl RefreshContainer {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -34377,6 +34956,19 @@ impl RefreshContainer {
         Ok(self)
     }
     pub fn request_refresh(&self) -> Result<()> { Ok(self.raw.request_refresh()?) }
+    pub fn subscribe_refresh_requested(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::refresh_container_refresh_requested_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_refresh_requested(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_refresh_requested(subscription_id)))
+    }
+    pub fn on_refresh_requested(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_refresh_requested(callback)?);
+        Ok(self)
+    }
 }
 
 impl AsControl for RefreshContainer {
@@ -35114,6 +35706,17 @@ impl RepeatButton {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -35704,6 +36307,17 @@ impl ScrollViewer {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -36938,6 +37552,17 @@ impl Separator {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -41273,6 +41898,17 @@ impl Slider {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -41447,6 +42083,17 @@ impl Slider {
     }
     pub fn on_value_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_value_changed(callback)?);
+        Ok(self)
+    }
+    pub fn get_ticks(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_ticks()?)) }
+    }
+    pub fn set_ticks(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_ticks(Some(&value))?)
+    }
+    pub fn ticks(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_ticks(value)?;
         Ok(self)
     }
     pub fn get_orientation(&self) -> Result<Orientation> {
@@ -41829,6 +42476,17 @@ impl Spinner {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -41993,6 +42651,25 @@ impl Spinner {
     }
     pub fn vertical_content_alignment(self, value: VerticalAlignment) -> Result<Self> {
         self.set_vertical_content_alignment(value)?;
+        Ok(self)
+    }
+    pub fn get_valid_spin_direction(&self) -> Result<i32> { Ok(self.raw.get_valid_spin_direction()?) }
+    pub fn set_valid_spin_direction(&self, value: i32) -> Result<()> {
+        Ok(self.raw.set_valid_spin_direction(value)?)
+    }
+    pub fn valid_spin_direction(self, value: i32) -> Result<Self> {
+        self.set_valid_spin_direction(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_spin(&self, callback: impl FnMut(&mut SpinnerSpinEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::spinner_spin_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_spin(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_spin(subscription_id)))
+    }
+    pub fn on_spin(self, scope: &crate::AppScope, callback: impl FnMut(&mut SpinnerSpinEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_spin(callback)?);
         Ok(self)
     }
 }
@@ -42331,6 +43008,17 @@ impl SplitButton {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -42881,6 +43569,17 @@ impl SplitView {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -43113,6 +43812,16 @@ impl SplitView {
     }
     pub fn pane(self, value: impl AsControl) -> Result<Self> {
         self.set_pane(value)?;
+        Ok(self)
+    }
+    pub fn get_pane_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_pane_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_pane_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_pane_template(value.map(|value| &value.raw))?)
+    }
+    pub fn pane_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_pane_template(value)?;
         Ok(self)
     }
     pub fn get_use_light_dismiss_overlay_mode(&self) -> Result<bool> { Ok(self.raw.get_use_light_dismiss_overlay_mode()?) }
@@ -43889,6 +44598,17 @@ impl TabControl {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -44516,6 +45236,17 @@ impl TabItem {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -44730,6 +45461,16 @@ impl TabItem {
     }
     pub fn icon_template(self, value: Option<&DataTemplate>) -> Result<Self> {
         self.set_icon_template(value)?;
+        Ok(self)
+    }
+    pub fn get_indicator_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_indicator_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_indicator_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_indicator_template(value.map(|value| &value.raw))?)
+    }
+    pub fn indicator_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_indicator_template(value)?;
         Ok(self)
     }
 }
@@ -45068,6 +45809,17 @@ impl TableView {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -45654,6 +46406,17 @@ impl TableViewCell {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -46358,6 +47121,17 @@ impl TableViewRow {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -47376,6 +48150,17 @@ impl TextBox {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -48556,6 +49341,17 @@ impl TimePicker {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -49073,6 +49869,17 @@ impl ToggleSplitButton {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -49642,6 +50449,17 @@ impl ToggleSwitch {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -50291,6 +51109,17 @@ impl ToolTip {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -50877,6 +51706,17 @@ impl TransitioningContentControl {
         self.set_background(value)?;
         Ok(self)
     }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
+        Ok(self)
+    }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
         self.raw.get_border_brush()?.as_ref().map(Brush::from_raw).transpose()
     }
@@ -51118,6 +51958,19 @@ impl TrayIcon {
     }
     pub fn visible(self, value: bool) -> Result<Self> {
         self.set_visible(value)?;
+        Ok(self)
+    }
+    pub fn subscribe_clicked(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::tray_icon_clicked_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_clicked(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_clicked(subscription_id)))
+    }
+    pub fn on_clicked(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_clicked(callback)?);
         Ok(self)
     }
 }
@@ -51451,6 +52304,17 @@ impl TreeView {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -52011,6 +52875,17 @@ impl TreeViewItem {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -52576,6 +53451,17 @@ impl UserControl {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {
@@ -53440,6 +54326,17 @@ impl Window {
     }
     pub fn background(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_background(value)?;
+        Ok(self)
+    }
+    pub fn get_background_sizing(&self) -> Result<BackgroundSizing> {
+        let value = self.raw.get_background_sizing()?;
+        BackgroundSizing::try_from(value)
+    }
+    pub fn set_background_sizing(&self, value: BackgroundSizing) -> Result<()> {
+        Ok(self.raw.set_background_sizing(value as i32)?)
+    }
+    pub fn background_sizing(self, value: BackgroundSizing) -> Result<Self> {
+        self.set_background_sizing(value)?;
         Ok(self)
     }
     pub fn get_border_brush(&self) -> Result<Option<Brush>> {

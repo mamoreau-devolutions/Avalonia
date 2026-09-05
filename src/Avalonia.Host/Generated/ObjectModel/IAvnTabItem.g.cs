@@ -27,6 +27,12 @@ public partial interface IAvnTabItem : IAvnHeaderedContentControl
     [PreserveSig]
     int SetIconTemplate(IAvnDataTemplate? value);
 
+    [PreserveSig]
+    int GetIndicatorTemplate(out IAvnDataTemplate? value);
+
+    [PreserveSig]
+    int SetIndicatorTemplate(IAvnDataTemplate? value);
+
 }
 
 [GeneratedComClass]
@@ -1257,6 +1263,37 @@ public sealed partial class AvnTabItem : IAvnTabItem
         }
     }
 
+    public int GetBackgroundSizing(out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (int)_value.BackgroundSizing;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetBackgroundSizing(int value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.BackgroundSizing = (global::Avalonia.Media.BackgroundSizing)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetBorderBrush(out IAvnBrush? value)
     {
         value = default!;
@@ -1900,6 +1937,37 @@ public sealed partial class AvnTabItem : IAvnTabItem
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.IconTemplate = AvnDataTemplate.ToTemplate(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetIndicatorTemplate(out IAvnDataTemplate? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnDataTemplate.FromTemplate(_value.IndicatorTemplate);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetIndicatorTemplate(IAvnDataTemplate? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.IndicatorTemplate = AvnDataTemplate.ToTemplate(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

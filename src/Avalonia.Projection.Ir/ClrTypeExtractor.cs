@@ -112,7 +112,10 @@ public static class ClrTypeExtractor
             if (!policy.Includes(type, property))
             {
                 if (property.DeclaringType == type)
-                    Skip(skipped, type, property.Name, "Not included by projection policy");
+                    Skip(skipped, type, property.Name,
+                        policy.TryGetByDesignReason(property.Name, out var byDesign)
+                            ? $"By design: {byDesign}"
+                            : "Not included by projection policy");
                 continue;
             }
 
@@ -166,7 +169,10 @@ public static class ClrTypeExtractor
             if (!policy.Includes(type, @event))
             {
                 if (@event.DeclaringType == type)
-                    Skip(skipped, type, @event.Name, "Not included by projection policy");
+                    Skip(skipped, type, @event.Name,
+                        policy.TryGetByDesignReason(@event.Name, out var byDesign)
+                            ? $"By design: {byDesign}"
+                            : "Not included by projection policy");
                 continue;
             }
 
@@ -277,7 +283,10 @@ public static class ClrTypeExtractor
             if (!policy.Includes(type, method))
             {
                 if (method.DeclaringType == type)
-                    Skip(skipped, type, FormatMethod(method), "Not included by projection policy");
+                    Skip(skipped, type, FormatMethod(method),
+                        policy.TryGetByDesignReason(method.Name, out var byDesign)
+                            ? $"By design: {byDesign}"
+                            : "Not included by projection policy");
                 continue;
             }
 
