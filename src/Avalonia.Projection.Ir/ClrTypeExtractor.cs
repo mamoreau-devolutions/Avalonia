@@ -359,7 +359,11 @@ public static class ClrTypeExtractor
 
             if (returnKind is not (
                 MarshallingKind.I32 or MarshallingKind.I64 or MarshallingKind.F32 or
-                MarshallingKind.F64 or MarshallingKind.Bool or MarshallingKind.StringUtf16))
+                MarshallingKind.F64 or MarshallingKind.Bool or MarshallingKind.StringUtf16 or
+                MarshallingKind.ComInterface or MarshallingKind.ComCollection or
+                MarshallingKind.Brush or MarshallingKind.Command or MarshallingKind.TimeSpanI64 or
+                MarshallingKind.DateTimeI64 or MarshallingKind.PixelPointI32 or
+                MarshallingKind.Variant))
             {
                 reason = $"Return type '{method.ReturnType.FullName}' is not supported for projected commands";
                 return false;
@@ -371,7 +375,8 @@ public static class ClrTypeExtractor
                 Kind = returnKind,
                 InterfaceName = returnInterface,
                 ManagedTypeName = method.ReturnType.FullName,
-                IsNullable = false,
+                IsNullable = !method.ReturnType.IsValueType ||
+                    Nullable.GetUnderlyingType(method.ReturnType) is not null,
                 Direction = ParameterDirection.Out,
             });
         }
@@ -467,6 +472,10 @@ public static class ClrTypeExtractor
             kind = MarshallingKind.StringUtf16;
         else if (type == typeof(TimeSpan))
             kind = MarshallingKind.TimeSpanI64;
+        else if (type == typeof(DateTime))
+            kind = MarshallingKind.DateTimeI64;
+        else if (type.FullName == "Avalonia.PixelPoint")
+            kind = MarshallingKind.PixelPointI32;
         else if (GeometryMarshalling.TryGetByManagedTypeName(type.FullName, out var geometry))
             kind = geometry.Kind;
         else if (BrushMarshalling.IsBrush(type.FullName))

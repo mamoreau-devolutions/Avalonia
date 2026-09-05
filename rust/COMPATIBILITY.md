@@ -369,6 +369,22 @@ control interfaces — bumps once and republishes under a fresh
 deterministic IID; Popup, TrayIcon and the flyout family do not derive
 from Control and keep their versions. Factory stays 13.
 
+Wave U17 widens the scalar and container surface. Two new kinds:
+`DateTimeI64` (ordinal 23) carries a DateTime as its int64 tick count,
+nullable as `AvnOptionalDateTime { has_value, ticks }` (SystemTime in the
+sys crate, with the .NET epoch offset); `PixelPointI32` (ordinal 24)
+carries an `Avalonia.PixelPoint` as the blittable `AvnPixelPoint { x, y }`
+(a `PixelPoint` safe struct). Window gains Position (Window 11 to 12);
+TextBox gains CaretBlinkInterval via the TimeSpan shape (TextBox 11 to
+12, MaskedTextBox and AutoCompleteBox republish); Calendar gains
+DisplayDateChanged carrying RemovedDate/AddedDate (Calendar 5 to 6).
+Methods may now return a COM interface: ItemsControl gains
+`ContainerFromIndexWithInt32` (returns a nullable `IAvnControl` as
+`Result<Option<Control>>`) and `IndexFromContainerWithControl` taking
+`&impl AsControl` (ItemsControl and every items descendant 8 to 9). The
+object-keyed lookups stay gaps with the rest of the untyped-collection
+family. Factory stays 13.
+
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and
 `IAvnNumericUpDown` each move from 2 to 3. Templates, filters, ItemsSource,

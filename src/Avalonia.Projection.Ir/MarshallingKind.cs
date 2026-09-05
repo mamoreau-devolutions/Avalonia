@@ -59,6 +59,18 @@ public enum MarshallingKind
     /// A <see cref="System.TimeSpan"/> carried as its int64 tick count.
     /// </summary>
     TimeSpanI64,
+
+    /// <summary>
+    /// Appended after TimeSpanI64 so every previously published ordinal stays put.
+    /// A <see cref="System.DateTime"/> carried as its int64 UTC tick count.
+    /// </summary>
+    DateTimeI64,
+
+    /// <summary>
+    /// Appended after DateTimeI64 so every previously published ordinal stays put.
+    /// A <see cref="Avalonia.PixelPoint"/> carried as two int32 components.
+    /// </summary>
+    PixelPointI32,
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]

@@ -64,18 +64,18 @@ fn tool_tip_tip_is_a_string_attached_property_beside_the_scalar_ones() {
 fn wave_a_interfaces_publish_abi_version_one_and_nothing_else_moved() {
     for expected in [
         "#define I_AVN_IMAGE_ABI_VERSION 3",
-        "#define I_AVN_HEADERED_ITEMS_CONTROL_ABI_VERSION 5",
-        "#define I_AVN_TAB_CONTROL_ABI_VERSION 5",
-        "#define I_AVN_TAB_ITEM_ABI_VERSION 4",
-        "#define I_AVN_TREE_VIEW_ABI_VERSION 5",
-        "#define I_AVN_TREE_VIEW_ITEM_ABI_VERSION 5",
+        "#define I_AVN_HEADERED_ITEMS_CONTROL_ABI_VERSION 6",
+        "#define I_AVN_TAB_CONTROL_ABI_VERSION 6",
+        "#define I_AVN_TAB_ITEM_ABI_VERSION 5",
+        "#define I_AVN_TREE_VIEW_ABI_VERSION 6",
+        "#define I_AVN_TREE_VIEW_ITEM_ABI_VERSION 6",
         "#define I_AVN_TOOL_TIP_ABI_VERSION 4",
         // Every base the new interfaces sit on kept the version whose flattened vtable it
         // still matches, so no shipped consumer has to requery anything but the factory.
         "#define I_AVN_AVALONIA_OBJECT_ABI_VERSION 2",
         "#define I_AVN_CONTROL_ABI_VERSION 5",
-        "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 8",
-        "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 8",
+        "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 9",
+        "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 9",
         "#define I_AVN_CONTENT_CONTROL_ABI_VERSION 8",
         "#define I_AVN_HEADERED_CONTENT_CONTROL_ABI_VERSION 8",
         // Only the factory grew slots. Wave B moved it again, from 3 to 4, for its own
@@ -103,12 +103,12 @@ fn wave_a_iids_are_fresh_and_distinct_from_every_shipped_one() {
         ),
         (
             "IAvnItemsControl",
-            "E61DDE0E-DE4F-5D63-B485-C9A8FB72537F",
+            "DF72ABBD-AF15-5597-BEF3-A41C1D3658DE",
             I_AVN_ITEMS_CONTROL_IID,
         ),
         (
             "IAvnSelectingItemsControl",
-            "0381D38A-B15F-53A5-8D29-BADCE2D1173D",
+            "A9E3792E-C8FB-5AB2-ACE4-FE1FAE684FBD",
             I_AVN_SELECTING_ITEMS_CONTROL_IID,
         ),
         (
@@ -123,6 +123,24 @@ fn wave_a_iids_are_fresh_and_distinct_from_every_shipped_one() {
         ),
     ] {
         assert_eq!(format_iid(&current), expected, "{name} changed its IID");
+    }
+
+    // The pre-U17 IIDs of the items lineage are retired: ItemsControl and
+    // SelectingItemsControl grew, and reusing those IIDs would let a stale
+    // consumer call slots the old contract never declared.
+    for (name, retired, current) in [
+        (
+            "IAvnItemsControl",
+            "E61DDE0E-DE4F-5D63-B485-C9A8FB72537F",
+            I_AVN_ITEMS_CONTROL_IID,
+        ),
+        (
+            "IAvnSelectingItemsControl",
+            "0381D38A-B15F-53A5-8D29-BADCE2D1173D",
+            I_AVN_SELECTING_ITEMS_CONTROL_IID,
+        ),
+    ] {
+        assert_ne!(format_iid(&current), retired, "{name} reused a retired IID");
     }
 
     let wave_a = [

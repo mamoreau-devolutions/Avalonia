@@ -16,6 +16,46 @@ pub fn emit_sys_module(ir: &ProjectionIr) -> String {
          use std::ptr;\n\n",
     );
     out.push_str(&geometry::emit_sys_structs());
+    out.push_str(
+        "/// Blittable ABI mirror of a nullable DateTime tick count.\n\
+         #[repr(C)]\n\
+         #[derive(Clone, Copy, Debug, Default, PartialEq)]\n\
+         pub struct AvnOptionalDateTime {\n\
+         \x20   pub has_value: i32,\n\
+         \x20   pub ticks: i64,\n\
+         }\n\n\
+         impl AvnOptionalDateTime {\n\
+         \x20   pub fn from_date_time(value: Option<std::time::SystemTime>) -> Self {\n\
+         \x20       match value {\n\
+         \x20           Some(time) => {\n\
+         \x20               let ticks = time\n\
+         \x20                   .duration_since(std::time::UNIX_EPOCH)\n\
+         \x20                   .map(|delta| delta.as_nanos() / 100)\n\
+         \x20                   .unwrap_or(0) as i64;\n\
+         \x20               Self { has_value: 1, ticks: ticks + DOTNET_EPOCH_OFFSET_TICKS }\n\
+         \x20           }\n\
+         \x20           None => Self::default(),\n\
+         \x20       }\n\
+         \x20   }\n\
+         \x20   pub fn to_date_time(self) -> Option<std::time::SystemTime> {\n\
+         \x20       if self.has_value == 0 {\n\
+         \x20           return None;\n\
+         \x20       }\n\
+         \x20       let unix_ticks = self.ticks - DOTNET_EPOCH_OFFSET_TICKS;\n\
+         \x20       let nanos = (unix_ticks.clamp(0, i64::MAX) as u128) * 100;\n\
+         \x20       Some(std::time::UNIX_EPOCH + std::time::Duration::from_nanos(nanos as u64))\n\
+         \x20   }\n\
+         }\n\n\
+         /// Ticks between 0001-01-01 and 1970-01-01 in 100ns units.\n\
+         pub const DOTNET_EPOCH_OFFSET_TICKS: i64 = 621_355_968_000_000_000;\n\n\
+         /// Blittable ABI mirror of Avalonia.PixelPoint.\n\
+         #[repr(C)]\n\
+         #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]\n\
+         pub struct AvnPixelPoint {\n\
+         \x20   pub x: i32,\n\
+         \x20   pub y: i32,\n\
+         }\n\n",
+    );
     if ir.types
         .iter()
         .any(|t| t.properties.iter().any(|p| p.kind == "Variant"))
@@ -662,6 +702,9 @@ fn event_argument_type(parameter: &ProjectedParameter) -> String {
         "I32" => "i32".into(),
         "I64" => "i64".into(),
         "TimeSpanI64" => "i64".into(),
+        "DateTimeI64" if parameter.is_nullable => "AvnOptionalDateTime".into(),
+        "DateTimeI64" => "i64".into(),
+        "PixelPointI32" => "AvnPixelPoint".into(),
         "F32" => "f32".into(),
         "F64" => "f64".into(),
         "Bool" => "bool".into(),
@@ -977,19 +1020,34 @@ fn emit_method(_ty: &ProjectedType, method: &ProjectedMethod) -> String {
     } else {
         let values = out_params
             .iter()
-            .map(|p| to_snake(&p.name))
+            .map(|p| rust_method_out_expression(p))
             .collect::<Vec<_>>();
         let value = if values.len() == 1 {
             values[0].clone()
         } else {
             format!("({})", values.join(", "))
         };
-        format!("hresult::check(hr).map(|_| {value})")
+        if out_params.iter().any(|p| p.kind == "ComInterface") {
+            format!("hresult::check(hr).and_then(|_| {value})")
+        } else {
+            format!("hresult::check(hr).map(|_| {value})")
+        }
     };
     format!(
         "    pub fn {snake}(&self{rust_args}) -> Result<{}> {{\n        unsafe {{\n{body}            {result}\n        }}\n    }}\n",
         rust_method_result_type(&out_params)
     )
+}
+
+fn rust_method_out_expression(parameter: &ProjectedParameter) -> String {
+    let name = to_snake(&parameter.name);
+    match parameter.kind.as_str() {
+        "ComInterface" if parameter.is_nullable => {
+            format!("if {name}.is_null() {{ Ok(None) }} else {{ Ok(Some(ComPtr::from_projected_raw({name})?)) }}")
+        }
+        "ComInterface" => format!("ComPtr::from_projected_raw({name})"),
+        _ => name,
+    }
 }
 
 fn vtbl_method_args(ty: &ProjectedType, method: &ProjectedMethod) -> String {
@@ -1058,6 +1116,8 @@ fn rust_abi_type(kind: &str, interface_name: Option<&str>, is_nullable: bool) ->
         "CharUtf16" => "u16".into(),
         "I32" | "Bool" | "NullableBool" => "i32".into(),
         "I64" | "TimeSpanI64" => "i64".into(),
+        "DateTimeI64" if is_nullable => "AvnOptionalDateTime".into(),
+        "DateTimeI64" => "i64".into(),
         "F32" => "f32".into(),
         "F64" => "f64".into(),
         "StringUtf16" => "*mut u16".into(),
@@ -1068,6 +1128,7 @@ fn rust_abi_type(kind: &str, interface_name: Option<&str>, is_nullable: bool) ->
             )
         }
         "Variant" => "AvnVariant".into(),
+        "PixelPointI32" => "AvnPixelPoint".into(),
         _ => "c_void".into(),
     }
 }
@@ -1078,8 +1139,9 @@ fn rust_abi_default(kind: &str) -> &'static str {
     }
     match kind {
         "F32" | "F64" => "0.0",
-        "I32" | "I64" | "Bool" | "NullableBool" | "CharUtf16" | "TimeSpanI64" => "0",
+        "I32" | "I64" | "Bool" | "NullableBool" | "CharUtf16" | "TimeSpanI64" | "DateTimeI64" => "0",
         "Variant" => "AvnVariant::default()",
+        "PixelPointI32" => "AvnPixelPoint::default()",
         _ => "ptr::null_mut()",
     }
 }
@@ -1097,6 +1159,8 @@ fn rust_property_type(property: &ProjectedProperty) -> String {
         "I32" => "i32".into(),
         "I64" => "i64".into(),
         "TimeSpanI64" => "i64".into(),
+        "DateTimeI64" => "i64".into(),
+        "PixelPointI32" => "AvnPixelPoint".into(),
         "F32" => "f32".into(),
         "F64" => "f64".into(),
         "Bool" => "bool".into(),
@@ -1154,6 +1218,7 @@ fn rust_property_input(property: &ProjectedProperty) -> (String, String) {
         ),
         "StringUtf16" => ("&[u16]".into(), "value.as_ptr().cast_mut()".into()),
         "Variant" => ("&AvnVariant".into(), "*value".into()),
+        "PixelPointI32" => ("AvnPixelPoint".into(), "value".into()),
         "ComInterface" | "ComCollection" if property.is_nullable => {
             let ty = simple_name(property.interface_name.as_deref().expect("interfaceName"));
             (
@@ -1219,18 +1284,29 @@ fn rust_parameter_call_value(parameter: &ProjectedParameter) -> String {
 }
 
 fn rust_method_result_type(parameters: &[&ProjectedParameter]) -> String {
+    fn result_type(parameter: &ProjectedParameter) -> String {
+        if parameter.kind == "ComInterface" {
+            let ty = simple_name(parameter.interface_name.as_deref().expect("interfaceName"));
+            return if parameter.is_nullable {
+                format!("Option<ComPtr<{ty}>>")
+            } else {
+                format!("ComPtr<{ty}>")
+            };
+        }
+        rust_abi_type(
+            &parameter.kind,
+            parameter.interface_name.as_deref(),
+            parameter.is_nullable,
+        )
+    }
     match parameters.len() {
         0 => "()".into(),
-        1 => rust_abi_type(
-            &parameters[0].kind,
-            parameters[0].interface_name.as_deref(),
-            parameters[0].is_nullable,
-        ),
+        1 => result_type(parameters[0]),
         _ => format!(
             "({})",
             parameters
                 .iter()
-                .map(|p| rust_abi_type(&p.kind, p.interface_name.as_deref(), p.is_nullable))
+                .map(|p| result_type(p))
                 .collect::<Vec<_>>()
                 .join(", ")
         ),

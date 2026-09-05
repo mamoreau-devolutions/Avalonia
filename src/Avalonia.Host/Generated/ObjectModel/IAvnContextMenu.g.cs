@@ -1372,6 +1372,38 @@ public sealed partial class AvnContextMenu : IAvnContextMenu
         }
     }
 
+    public int ContainerFromIndexWithInt32(int index, out IAvnControl? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (IAvnControl)ProjectionRuntime.Wrap(_value.ContainerFromIndex(index) as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int IndexFromContainerWithControl(IAvnControl container, out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.IndexFromContainer((global::Avalonia.Controls.Control)ProjectionRuntime.Unwrap(container)!);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int ScrollIntoViewWithInt32(int index)
     {
         try

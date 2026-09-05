@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("ECF09991-64E5-5A2B-8D80-E9FEBF874FE5")]
+[Guid("6C8F8231-F81F-5AA0-BD23-185C48A920D1")]
 public partial interface IAvnCarousel : IAvnSelectingItemsControl
 {
     [PreserveSig]
@@ -1308,6 +1308,38 @@ public sealed partial class AvnCarousel : IAvnCarousel
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.ItemCount;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int ContainerFromIndexWithInt32(int index, out IAvnControl? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (IAvnControl)ProjectionRuntime.Wrap(_value.ContainerFromIndex(index) as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int IndexFromContainerWithControl(IAvnControl container, out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.IndexFromContainer((global::Avalonia.Controls.Control)ProjectionRuntime.Unwrap(container)!);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

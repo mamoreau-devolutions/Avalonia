@@ -49,7 +49,6 @@ Avalonia.Controls.Button.HotKey: Not included by projection policy
 Avalonia.Controls.Calendar.SelectedDates: Not included by projection policy
 Avalonia.Controls.Calendar.BlackoutDates: Not included by projection policy
 Avalonia.Controls.Calendar.SelectedDatesChanged: Not included by projection policy
-Avalonia.Controls.Calendar.DisplayDateChanged: Not included by projection policy
 Avalonia.Controls.Calendar.ToString(): Not included by projection policy
 Avalonia.Controls.CalendarDatePicker.BlackoutDates: Not included by projection policy
 Avalonia.Controls.CalendarDatePicker.TextConverter: Not included by projection policy
@@ -100,9 +99,7 @@ Avalonia.Controls.ItemsControl.PreparingContainer: Not included by projection po
 Avalonia.Controls.ItemsControl.ContainerPrepared: Not included by projection policy
 Avalonia.Controls.ItemsControl.ContainerIndexChanged: Not included by projection policy
 Avalonia.Controls.ItemsControl.ContainerClearing: Not included by projection policy
-Avalonia.Controls.ItemsControl.ContainerFromIndex(Int32): Not included by projection policy
 Avalonia.Controls.ItemsControl.ContainerFromItem(Object): Not included by projection policy
-Avalonia.Controls.ItemsControl.IndexFromContainer(Control): Not included by projection policy
 Avalonia.Controls.ItemsControl.ItemFromContainer(Control): Not included by projection policy
 Avalonia.Controls.ItemsControl.GetRealizedContainers(): Not included by projection policy
 Avalonia.Controls.ItemsControl.ScrollIntoView(Object): Parameter 'item': Type 'System.Object' is not marshallable
@@ -212,7 +209,6 @@ Avalonia.Controls.TextBlock.TextDecorations: Not included by projection policy
 Avalonia.Controls.TextBlock.FontFeatures: Not included by projection policy
 Avalonia.Controls.TextBlock.Inlines: Not included by projection policy
 Avalonia.Controls.TextBlock.Render(DrawingContext): Not included by projection policy
-Avalonia.Controls.TextBox.CaretBlinkInterval: Not included by projection policy
 Avalonia.Controls.TextBox.Watermark: Not included by projection policy
 Avalonia.Controls.TextBox.UseFloatingWatermark: Not included by projection policy
 Avalonia.Controls.TextBox.WatermarkForeground: Not included by projection policy
@@ -242,7 +238,6 @@ Avalonia.Controls.Window.OwnedWindows: Not included by projection policy
 Avalonia.Controls.Window.WindowDecorationsTheme: Not included by projection policy
 Avalonia.Controls.Window.SystemDecorations: Not included by projection policy
 Avalonia.Controls.Window.Icon: Not included by projection policy
-Avalonia.Controls.Window.Position: Not included by projection policy
 Avalonia.Controls.Window.BeginMoveDrag(PointerPressedEventArgs): Not included by projection policy
 Avalonia.Controls.Window.BeginResizeDrag(WindowEdge, PointerPressedEventArgs): Not included by projection policy
 Avalonia.Controls.Window.Close(Object): Parameter 'dialogResult': Type 'System.Object' is not marshallable

@@ -9,6 +9,25 @@ pub fn emit_safe_module(ir: &ProjectionIr) -> String {
          use crate::{runtime::{with_factory, AsControl, EventSubscription}, Result};\n\n",
     );
     out.push_str(&geometry::emit_safe_structs());
+    out.push_str(
+        "/// Safe mirror of `Avalonia.PixelPoint`, marshalled as `sys::AvnPixelPoint`.\n\
+         #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]\n\
+         pub struct PixelPoint {\n\
+         \x20   pub x: i32,\n\
+         \x20   pub y: i32,\n\
+         }\n\n\
+         impl PixelPoint {\n\
+         \x20   pub const fn new(x: i32, y: i32) -> Self {\n\
+         \x20       Self { x, y }\n\
+         \x20   }\n\
+         \x20   pub(crate) fn from_abi(value: sys::AvnPixelPoint) -> Self {\n\
+         \x20       Self { x: value.x, y: value.y }\n\
+         \x20   }\n\
+         \x20   pub(crate) fn to_abi(self) -> sys::AvnPixelPoint {\n\
+         \x20       sys::AvnPixelPoint { x: self.x, y: self.y }\n\
+         \x20   }\n\
+         }\n\n",
+    );
     if ir.types
         .iter()
         .any(|t| t.properties.iter().any(|p| p.kind == "Variant"))
@@ -466,6 +485,11 @@ fn emit_property(
                  \x20       Ok(std::time::Duration::from_nanos(ticks.clamp(0, i64::MAX / 100) as u64 * 100))\n\
                  \x20   }}\n"
             )),
+            "PixelPointI32" => out.push_str(&format!(
+                "    pub fn {getter}(&self) -> Result<PixelPoint> {{\n\
+                 \x20       Ok(PixelPoint::from_abi(self.raw.get_{snake}()?))\n\
+                 \x20   }}\n"
+            )),
             "I32" if is_enum_property(property, flags_enums) => {
                 let enum_name = simple_name(property.managed_type_name.as_deref().unwrap());
                 out.push_str(&format!(
@@ -682,13 +706,31 @@ fn emit_method(ty: &ProjectedType, method: &crate::ir::ProjectedMethod) -> Strin
             "String".into(),
             format!("unsafe {{ sys::take_utf16(self.raw.{name}({call_arguments})?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }}"),
         ),
+        [output] if output.kind == "ComInterface" => {
+            let safe = interface_suffix(simple_name(
+                output.interface_name.as_deref().expect("interfaceName"),
+            ));
+            if output.is_nullable {
+                (
+                    format!("Option<{safe}>"),
+                    format!(
+                        "Ok(self.raw.{name}({call_arguments})?.map(|raw| {safe} {{ raw }}))"
+                    ),
+                )
+            } else {
+                (
+                    safe.to_string(),
+                    format!("Ok({safe} {{ raw: self.raw.{name}({call_arguments})? }})"),
+                )
+            }
+        }
         [output] => (
             rust_scalar_kind(&output.kind).into(),
             format!("Ok(self.raw.{name}({call_arguments})?)"),
         ),
         _ => ("()".into(), format!("Ok(self.raw.{name}({call_arguments})?)")),
     };
-    if setup.is_empty() {
+    if setup.is_empty() && !result_expr.contains('\n') {
         return format!(
             "    pub fn {name}(&self{separator}{arguments}) -> Result<{result_type}> {{ {result_expr} }}\n"
         );
@@ -773,6 +815,11 @@ fn safe_property_input(
         "TimeSpanI64" => (
             "std::time::Duration".into(),
             "        let value = (value.as_nanos() / 100).clamp(0, i64::MAX as u128) as i64;\n".into(),
+            "value".into(),
+        ),
+        "PixelPointI32" => (
+            "PixelPoint".into(),
+            "        let value = value.to_abi();\n".into(),
             "value".into(),
         ),
         "I32" if is_enum_property(property, flags_enums) => (

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("91236D0B-3F3B-5E71-BDDF-E38BF2341608")]
+[Guid("7B0FE231-FF7A-5789-8253-E59DA717E5AA")]
 public partial interface IAvnCalendar : IAvnTemplatedControl
 {
     [PreserveSig]
@@ -82,6 +82,12 @@ public partial interface IAvnCalendar : IAvnTemplatedControl
     int SetDisplayDateEnd(string? value);
 
     [PreserveSig]
+    int AdviseDisplayDateChanged(IAvnCalendarDisplayDateChangedHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadviseDisplayDateChanged(long subscriptionId);
+
+    [PreserveSig]
     int AdviseDisplayModeChanged(IAvnCalendarDisplayModeChangedHandler? handler, out long subscriptionId);
 
     [PreserveSig]
@@ -108,6 +114,8 @@ public sealed partial class AvnCalendar : IAvnCalendar
     private long _nextPointerEnteredSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnControlPointerExitedHandler Handler, global::System.Action Unsubscribe)> _pointerExitedSubscriptions = new();
     private long _nextPointerExitedSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnCalendarDisplayDateChangedHandler Handler, global::System.Action Unsubscribe)> _displayDateChangedSubscriptions = new();
+    private long _nextDisplayDateChangedSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnCalendarDisplayModeChangedHandler Handler, global::System.Action Unsubscribe)> _displayModeChangedSubscriptions = new();
     private long _nextDisplayModeChangedSubscriptionId;
 
@@ -1713,6 +1721,52 @@ public sealed partial class AvnCalendar : IAvnCalendar
         }
     }
 
+    public int AdviseDisplayDateChanged(IAvnCalendarDisplayDateChangedHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<Avalonia.Controls.CalendarDateChangedEventArgs>((_, eventArgs) =>
+            {
+                var hr = handler.Invoke(AvnOptionalDateTime.FromDateTime(eventArgs.RemovedDate), AvnOptionalDateTime.FromDateTime(eventArgs.AddedDate));
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.DisplayDateChanged += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextDisplayDateChangedSubscriptionId);
+            _displayDateChangedSubscriptions.Add(subscriptionId, (handler, () => eventSource.DisplayDateChanged -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseDisplayDateChanged(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_displayDateChangedSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int AdviseDisplayModeChanged(IAvnCalendarDisplayModeChangedHandler? handler, out long subscriptionId)
     {
         subscriptionId = 0;
@@ -1803,6 +1857,12 @@ public sealed partial class AvnCalendar : IAvnCalendar
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
         }
         _pointerExitedSubscriptions.Clear();
+        foreach (var subscription in _displayDateChangedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _displayDateChangedSubscriptions.Clear();
         foreach (var subscription in _displayModeChangedSubscriptions.Values)
         {
             subscription.Unsubscribe();

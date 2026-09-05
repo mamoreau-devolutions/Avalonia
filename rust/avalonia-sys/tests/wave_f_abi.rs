@@ -11,7 +11,7 @@ fn calendar_days_are_yyyy_mm_dd_strings() {
         "*set_display_mode)(IAvnCalendar* self, int32_t value)",
         "*create_calendar)(IAvnControlFactory* self, IAvnCalendar** value)",
         "*create_calendar_date_picker)(IAvnControlFactory* self, IAvnCalendarDatePicker** value)",
-        "#define I_AVN_CALENDAR_ABI_VERSION 5",
+        "#define I_AVN_CALENDAR_ABI_VERSION 6",
         "#define I_AVN_CALENDAR_DATE_PICKER_ABI_VERSION 5",
         "#define I_AVN_CONTROL_FACTORY_ABI_VERSION 13",
     ] {

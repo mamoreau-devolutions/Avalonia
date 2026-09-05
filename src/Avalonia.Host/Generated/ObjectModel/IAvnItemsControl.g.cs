@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("E61DDE0E-DE4F-5D63-B485-C9A8FB72537F")]
+[Guid("DF72ABBD-AF15-5597-BEF3-A41C1D3658DE")]
 public partial interface IAvnItemsControl : IAvnTemplatedControl
 {
     [PreserveSig]
@@ -14,6 +14,12 @@ public partial interface IAvnItemsControl : IAvnTemplatedControl
 
     [PreserveSig]
     int GetItemCount(out int value);
+
+    [PreserveSig]
+    int ContainerFromIndexWithInt32(int index, out IAvnControl? value);
+
+    [PreserveSig]
+    int IndexFromContainerWithControl(IAvnControl container, out int value);
 
     [PreserveSig]
     int ScrollIntoViewWithInt32(int index);
@@ -1294,6 +1300,38 @@ public sealed partial class AvnItemsControl : IAvnItemsControl
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = _value.ItemCount;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int ContainerFromIndexWithInt32(int index, out IAvnControl? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (IAvnControl)ProjectionRuntime.Wrap(_value.ContainerFromIndex(index) as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int IndexFromContainerWithControl(IAvnControl container, out int value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.IndexFromContainer((global::Avalonia.Controls.Control)ProjectionRuntime.Unwrap(container)!);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

@@ -250,6 +250,36 @@ public struct AvnOptionalVector
         HasValue != 0 ? Value.ToAvalonia() : null;
 }
 
+/// <summary>Blittable ABI mirror of <c>Avalonia.PixelPoint</c>.</summary>
+[StructLayout(LayoutKind.Sequential)]
+public struct AvnPixelPoint
+{
+    public int X;
+    public int Y;
+
+    public static AvnPixelPoint FromAvalonia(global::Avalonia.PixelPoint value) =>
+        new AvnPixelPoint { X = value.X, Y = value.Y };
+
+    public readonly global::Avalonia.PixelPoint ToAvalonia() =>
+        new global::Avalonia.PixelPoint(X, Y);
+}
+
+/// <summary>Nullable ABI wrapper of a DateTime tick count.</summary>
+[StructLayout(LayoutKind.Sequential)]
+public struct AvnOptionalDateTime
+{
+    public int HasValue;
+    public long Ticks;
+
+    public static AvnOptionalDateTime FromDateTime(global::System.DateTime? value) =>
+        value is { } inner
+            ? new AvnOptionalDateTime { HasValue = 1, Ticks = inner.Ticks }
+            : default;
+
+    public readonly global::System.DateTime? ToDateTime() =>
+        HasValue != 0 ? new global::System.DateTime(Ticks, global::System.DateTimeKind.Utc) : null;
+}
+
 /// <summary>Tagged scalar carrying object? command parameters.</summary>
 /// <remarks>
 /// Tag selects the payload slot: 0 none, 1 utf16, 2 i32, 3 f64, 4 bool.

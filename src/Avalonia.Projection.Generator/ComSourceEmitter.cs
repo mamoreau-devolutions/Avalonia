@@ -750,6 +750,36 @@ public static class ComSourceEmitter
             sb.AppendLine("}");
             sb.AppendLine();
         }
+        sb.AppendLine("/// <summary>Blittable ABI mirror of <c>Avalonia.PixelPoint</c>.</summary>");
+        sb.AppendLine("[StructLayout(LayoutKind.Sequential)]");
+        sb.AppendLine("public struct AvnPixelPoint");
+        sb.AppendLine("{");
+        sb.AppendLine("    public int X;");
+        sb.AppendLine("    public int Y;");
+        sb.AppendLine();
+        sb.AppendLine("    public static AvnPixelPoint FromAvalonia(global::Avalonia.PixelPoint value) =>");
+        sb.AppendLine("        new AvnPixelPoint { X = value.X, Y = value.Y };");
+        sb.AppendLine();
+        sb.AppendLine("    public readonly global::Avalonia.PixelPoint ToAvalonia() =>");
+        sb.AppendLine("        new global::Avalonia.PixelPoint(X, Y);");
+        sb.AppendLine("}");
+        sb.AppendLine();
+        sb.AppendLine("/// <summary>Nullable ABI wrapper of a DateTime tick count.</summary>");
+        sb.AppendLine("[StructLayout(LayoutKind.Sequential)]");
+        sb.AppendLine("public struct AvnOptionalDateTime");
+        sb.AppendLine("{");
+        sb.AppendLine("    public int HasValue;");
+        sb.AppendLine("    public long Ticks;");
+        sb.AppendLine();
+        sb.AppendLine("    public static AvnOptionalDateTime FromDateTime(global::System.DateTime? value) =>");
+        sb.AppendLine("        value is { } inner");
+        sb.AppendLine("            ? new AvnOptionalDateTime { HasValue = 1, Ticks = inner.Ticks }");
+        sb.AppendLine("            : default;");
+        sb.AppendLine();
+        sb.AppendLine("    public readonly global::System.DateTime? ToDateTime() =>");
+        sb.AppendLine("        HasValue != 0 ? new global::System.DateTime(Ticks, global::System.DateTimeKind.Utc) : null;");
+        sb.AppendLine("}");
+        sb.AppendLine();
         sb.AppendLine("/// <summary>Tagged scalar carrying object? command parameters.</summary>");
         sb.AppendLine("/// <remarks>");
         sb.AppendLine("/// Tag selects the payload slot: 0 none, 1 utf16, 2 i32, 3 f64, 4 bool.");
@@ -1219,6 +1249,8 @@ public static class ComSourceEmitter
                     : $"_value.{property.Name}.ToString()",
             MarshallingKind.CharUtf16 => $"(ushort)_value.{property.Name}",
             MarshallingKind.TimeSpanI64 => $"_value.{property.Name}.Ticks",
+            MarshallingKind.DateTimeI64 => $"_value.{property.Name}.Ticks",
+            MarshallingKind.PixelPointI32 => $"AvnPixelPoint.FromAvalonia(_value.{property.Name})",
             MarshallingKind.Bool => $"_value.{property.Name} ? 1 : 0",
             MarshallingKind.NullableBool =>
                 $"!_value.{property.Name}.HasValue ? -1 : _value.{property.Name}.Value ? 1 : 0",
@@ -1246,6 +1278,9 @@ public static class ComSourceEmitter
                 $"!eventArgs.{parameter.Name}.HasValue ? -1 : eventArgs.{parameter.Name}.Value ? 1 : 0",
             _ when GeometryMarshalling.TryGet(parameter.Kind, out var geometry) =>
                 $"{geometry.AbiName}.FromAvalonia(eventArgs.{parameter.Name})",
+            MarshallingKind.DateTimeI64 when parameter.IsNullable =>
+                $"AvnOptionalDateTime.FromDateTime(eventArgs.{parameter.Name})",
+            MarshallingKind.DateTimeI64 => $"eventArgs.{parameter.Name}.Ticks",
             _ => $"eventArgs.{parameter.Name}",
         };
 
@@ -1258,6 +1293,7 @@ public static class ComSourceEmitter
             MarshallingKind.NullableBool =>
                 $"{value} switch {{ -1 => null, 0 => false, 1 => true, _ => throw new global::System.ArgumentOutOfRangeException(nameof({value})) }}",
             _ when GeometryMarshalling.IsGeometry(parameter.Kind) => $"{value}.ToAvalonia()",
+            MarshallingKind.DateTimeI64 when parameter.IsNullable => $"{value}.ToDateTime()",
             _ => value,
         };
 
@@ -1272,6 +1308,8 @@ public static class ComSourceEmitter
                 $"global::{property.ManagedTypeName}.Parse(value)",
             MarshallingKind.CharUtf16 => "(char)value",
             MarshallingKind.TimeSpanI64 => "global::System.TimeSpan.FromTicks(value)",
+            MarshallingKind.DateTimeI64 => "new global::System.DateTime(value, global::System.DateTimeKind.Utc)",
+            MarshallingKind.PixelPointI32 => "value.ToAvalonia()",
             MarshallingKind.Bool => "value != 0",
             MarshallingKind.NullableBool =>
                 "value switch { -1 => null, 0 => false, 1 => true, _ => throw new global::System.ArgumentOutOfRangeException(nameof(value)) }",
@@ -1289,6 +1327,14 @@ public static class ComSourceEmitter
         {
             MarshallingKind.I32 when output.ManagedTypeName is not "System.Int32" => $"(int){call}",
             MarshallingKind.Bool => $"{call} ? 1 : 0",
+            MarshallingKind.ComInterface =>
+                $"({SimpleName(output.InterfaceName!)})ProjectionRuntime.Wrap({call} as global::Avalonia.AvaloniaObject)",
+            MarshallingKind.Brush =>
+                $"{SimpleName(output.InterfaceName!)[1..]}.FromBrush({call})",
+            MarshallingKind.Command =>
+                $"{SimpleName(output.InterfaceName!)[1..]}.FromCommand({call})",
+            MarshallingKind.TimeSpanI64 => $"{call}.Ticks",
+            MarshallingKind.PixelPointI32 => $"AvnPixelPoint.FromAvalonia({call})",
             _ => call,
         };
 
@@ -1366,6 +1412,8 @@ public static class ComSourceEmitter
             MarshallingKind.StringUtf16 => nullable ? "string?" : "string",
             MarshallingKind.Variant => "AvnVariant",
             MarshallingKind.TimeSpanI64 => "long",
+            MarshallingKind.DateTimeI64 => nullable ? "AvnOptionalDateTime" : "long",
+            MarshallingKind.PixelPointI32 => "AvnPixelPoint",
             MarshallingKind.ComInterface => (interfaceName is null ? "object" : SimpleName(interfaceName)) + (nullable ? "?" : ""),
             MarshallingKind.Brush => SimpleName(interfaceName!) + (nullable ? "?" : ""),
             MarshallingKind.Command => SimpleName(interfaceName!) + (nullable ? "?" : ""),

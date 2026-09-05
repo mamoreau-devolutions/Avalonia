@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("2C0399CB-27D7-54DE-9314-907A90EC5DCB")]
+[Guid("E91914AA-F65D-58D9-9F5C-479C099883B0")]
 public partial interface IAvnTextBox : IAvnTemplatedControl
 {
     [PreserveSig]
@@ -68,6 +68,12 @@ public partial interface IAvnTextBox : IAvnTemplatedControl
 
     [PreserveSig]
     int SetCaretBrush(IAvnBrush? value);
+
+    [PreserveSig]
+    int GetCaretBlinkInterval(out long value);
+
+    [PreserveSig]
+    int SetCaretBlinkInterval(long value);
 
     [PreserveSig]
     int GetSelectionStart(out int value);
@@ -1826,6 +1832,37 @@ public sealed partial class AvnTextBox : IAvnTextBox
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.CaretBrush = AvnBrush.ToBrush(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetCaretBlinkInterval(out long value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.CaretBlinkInterval.Ticks;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetCaretBlinkInterval(long value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.CaretBlinkInterval = global::System.TimeSpan.FromTicks(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

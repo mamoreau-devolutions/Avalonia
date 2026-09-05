@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("1321FEB8-E98F-5836-8125-ECF54EFA6BEF")]
+[Guid("A519486C-94FF-5C16-B3D0-1E9C25CE4A30")]
 public partial interface IAvnWindow : IAvnContentControl
 {
     [PreserveSig]
@@ -95,6 +95,12 @@ public partial interface IAvnWindow : IAvnContentControl
 
     [PreserveSig]
     int SetWindowStartupLocation(int value);
+
+    [PreserveSig]
+    int GetPosition(out AvnPixelPoint value);
+
+    [PreserveSig]
+    int SetPosition(AvnPixelPoint value);
 
     [PreserveSig]
     int GetIsDialog(out int value);
@@ -1907,6 +1913,37 @@ public sealed partial class AvnWindow : IAvnWindow
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.WindowStartupLocation = (global::Avalonia.Controls.WindowStartupLocation)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetPosition(out AvnPixelPoint value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnPixelPoint.FromAvalonia(_value.Position);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetPosition(AvnPixelPoint value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Position = value.ToAvalonia();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

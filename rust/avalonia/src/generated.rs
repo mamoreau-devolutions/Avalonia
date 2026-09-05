@@ -355,6 +355,25 @@ impl From<Vector> for sys::AvnVector {
     }
 }
 
+/// Safe mirror of `Avalonia.PixelPoint`, marshalled as `sys::AvnPixelPoint`.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct PixelPoint {
+    pub x: i32,
+    pub y: i32,
+}
+
+impl PixelPoint {
+    pub const fn new(x: i32, y: i32) -> Self {
+        Self { x, y }
+    }
+    pub(crate) fn from_abi(value: sys::AvnPixelPoint) -> Self {
+        Self { x: value.x, y: value.y }
+    }
+    pub(crate) fn to_abi(self) -> sys::AvnPixelPoint {
+        sys::AvnPixelPoint { x: self.x, y: self.y }
+    }
+}
+
 /// A command parameter: the closed set an `object` slot can carry.
 #[derive(Clone, Debug, PartialEq)]
 pub enum Variant {
@@ -2550,6 +2569,7 @@ impl TryFrom<i32> for CalendarWeekRule {
 pub use sys::AutoCompleteBoxPopulatingEventArgs;
 pub use sys::AutoCompleteBoxDropDownOpeningEventArgs;
 pub use sys::AutoCompleteBoxDropDownClosingEventArgs;
+pub use sys::CalendarDisplayDateChangedEventArgs;
 pub use sys::CalendarDisplayModeChangedEventArgs;
 pub use sys::ContextMenuOpeningEventArgs;
 pub use sys::ContextMenuClosingEventArgs;
@@ -4925,6 +4945,17 @@ impl Calendar {
         self.set_display_date_end(value)?;
         Ok(self)
     }
+    pub fn subscribe_display_date_changed(&self, callback: impl FnMut(&mut CalendarDisplayDateChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::calendar_display_date_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_display_date_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_display_date_changed(subscription_id)))
+    }
+    pub fn on_display_date_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut CalendarDisplayDateChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_display_date_changed(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_display_mode_changed(&self, callback: impl FnMut(&mut CalendarDisplayModeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
         let mut callback = callback;
         let handler = sys::calendar_display_mode_changed_handler(move |event| { callback(event); Ok(()) });
@@ -6178,6 +6209,11 @@ impl Carousel {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
+        let container = container.as_control()?;
+        Ok(self.raw.index_from_container_with_control(&container)?)
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
     pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
     pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
@@ -7119,6 +7155,11 @@ impl ComboBox {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
+        let container = container.as_control()?;
+        Ok(self.raw.index_from_container_with_control(&container)?)
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
     pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
     pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
@@ -10382,6 +10423,11 @@ impl ContextMenu {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
+        let container = container.as_control()?;
+        Ok(self.raw.index_from_container_with_control(&container)?)
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
     pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
     pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
@@ -15987,6 +16033,11 @@ impl ItemsControl {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
+        let container = container.as_control()?;
+        Ok(self.raw.index_from_container_with_control(&container)?)
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
 }
 
@@ -17047,6 +17098,11 @@ impl ListBox {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
+        let container = container.as_control()?;
+        Ok(self.raw.index_from_container_with_control(&container)?)
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
     pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
     pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
@@ -17967,6 +18023,18 @@ impl MaskedTextBox {
         self.set_caret_brush(value)?;
         Ok(self)
     }
+    pub fn get_caret_blink_interval(&self) -> Result<std::time::Duration> {
+        let ticks = self.raw.get_caret_blink_interval()?;
+        Ok(std::time::Duration::from_nanos(ticks.clamp(0, i64::MAX / 100) as u64 * 100))
+    }
+    pub fn set_caret_blink_interval(&self, value: std::time::Duration) -> Result<()> {
+        let value = (value.as_nanos() / 100).clamp(0, i64::MAX as u128) as i64;
+        Ok(self.raw.set_caret_blink_interval(value)?)
+    }
+    pub fn caret_blink_interval(self, value: std::time::Duration) -> Result<Self> {
+        self.set_caret_blink_interval(value)?;
+        Ok(self)
+    }
     pub fn get_selection_start(&self) -> Result<i32> { Ok(self.raw.get_selection_start()?) }
     pub fn set_selection_start(&self, value: i32) -> Result<()> {
         Ok(self.raw.set_selection_start(value)?)
@@ -18663,6 +18731,11 @@ impl Menu {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
+        let container = container.as_control()?;
+        Ok(self.raw.index_from_container_with_control(&container)?)
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
     pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
     pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
@@ -19109,6 +19182,11 @@ impl MenuBase {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
+        let container = container.as_control()?;
+        Ok(self.raw.index_from_container_with_control(&container)?)
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
     pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
     pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
@@ -19718,6 +19796,11 @@ impl MenuItem {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
+        let container = container.as_control()?;
+        Ok(self.raw.index_from_container_with_control(&container)?)
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
     pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
     pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
@@ -23185,6 +23268,11 @@ impl HeaderedItemsControl {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
+        let container = container.as_control()?;
+        Ok(self.raw.index_from_container_with_control(&container)?)
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
     pub fn get_header(&self) -> Result<Option<Control>> {
         Ok(self.raw.get_header()?.map(|raw| Control { raw }))
@@ -23572,6 +23660,11 @@ impl HeaderedSelectingItemsControl {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
+        let container = container.as_control()?;
+        Ok(self.raw.index_from_container_with_control(&container)?)
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
     pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
     pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
@@ -24989,6 +25082,11 @@ impl SelectingItemsControl {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
+        let container = container.as_control()?;
+        Ok(self.raw.index_from_container_with_control(&container)?)
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
     pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
     pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
@@ -35709,6 +35807,11 @@ impl TabControl {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
+        let container = container.as_control()?;
+        Ok(self.raw.index_from_container_with_control(&container)?)
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
     pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
     pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
@@ -36582,6 +36685,11 @@ impl TableView {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
+        let container = container.as_control()?;
+        Ok(self.raw.index_from_container_with_control(&container)?)
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
     pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
     pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
@@ -38427,6 +38535,18 @@ impl TextBox {
     }
     pub fn caret_brush(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_caret_brush(value)?;
+        Ok(self)
+    }
+    pub fn get_caret_blink_interval(&self) -> Result<std::time::Duration> {
+        let ticks = self.raw.get_caret_blink_interval()?;
+        Ok(std::time::Duration::from_nanos(ticks.clamp(0, i64::MAX / 100) as u64 * 100))
+    }
+    pub fn set_caret_blink_interval(&self, value: std::time::Duration) -> Result<()> {
+        let value = (value.as_nanos() / 100).clamp(0, i64::MAX as u128) as i64;
+        Ok(self.raw.set_caret_blink_interval(value)?)
+    }
+    pub fn caret_blink_interval(self, value: std::time::Duration) -> Result<Self> {
+        self.set_caret_blink_interval(value)?;
         Ok(self)
     }
     pub fn get_selection_start(&self) -> Result<i32> { Ok(self.raw.get_selection_start()?) }
@@ -41693,6 +41813,11 @@ impl TreeView {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
+        let container = container.as_control()?;
+        Ok(self.raw.index_from_container_with_control(&container)?)
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
     pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
     pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
@@ -42102,6 +42227,11 @@ impl TreeViewItem {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
+        let container = container.as_control()?;
+        Ok(self.raw.index_from_container_with_control(&container)?)
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
     pub fn get_header(&self) -> Result<Option<Control>> {
         Ok(self.raw.get_header()?.map(|raw| Control { raw }))
@@ -43358,6 +43488,17 @@ impl Window {
     }
     pub fn window_startup_location(self, value: WindowStartupLocation) -> Result<Self> {
         self.set_window_startup_location(value)?;
+        Ok(self)
+    }
+    pub fn get_position(&self) -> Result<PixelPoint> {
+        Ok(PixelPoint::from_abi(self.raw.get_position()?))
+    }
+    pub fn set_position(&self, value: PixelPoint) -> Result<()> {
+        let value = value.to_abi();
+        Ok(self.raw.set_position(value)?)
+    }
+    pub fn position(self, value: PixelPoint) -> Result<Self> {
+        self.set_position(value)?;
         Ok(self)
     }
     pub fn is_dialog(&self) -> Result<bool> { Ok(self.raw.get_is_dialog()?) }
