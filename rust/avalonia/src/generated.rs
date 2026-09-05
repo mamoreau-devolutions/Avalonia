@@ -3358,6 +3358,26 @@ impl AutoCompleteBox {
         self.set_placeholder_foreground(value)?;
         Ok(self)
     }
+    pub fn get_item_filter(&self) -> Result<Option<sys::ComPtr<sys::IAvnItemFilter>>> {
+        Ok(self.raw.get_item_filter()?)
+    }
+    pub fn set_item_filter(&self, value: Option<&sys::ComPtr<sys::IAvnItemFilter>>) -> Result<()> {
+        Ok(self.raw.set_item_filter(value)?)
+    }
+    pub fn item_filter(self, value: Option<&sys::ComPtr<sys::IAvnItemFilter>>) -> Result<Self> {
+        self.set_item_filter(value)?;
+        Ok(self)
+    }
+    pub fn get_text_filter(&self) -> Result<Option<sys::ComPtr<sys::IAvnTextFilter>>> {
+        Ok(self.raw.get_text_filter()?)
+    }
+    pub fn set_text_filter(&self, value: Option<&sys::ComPtr<sys::IAvnTextFilter>>) -> Result<()> {
+        Ok(self.raw.set_text_filter(value)?)
+    }
+    pub fn text_filter(self, value: Option<&sys::ComPtr<sys::IAvnTextFilter>>) -> Result<Self> {
+        self.set_text_filter(value)?;
+        Ok(self)
+    }
     pub fn get_items_source(&self) -> Result<Option<VariantList>> {
         Ok(self.raw.get_items_source()?.map(|raw| VariantList { raw }))
     }

@@ -1301,7 +1301,7 @@ public class ClrTypeExtractorTests
         Assert.Equal(9, Type(ir, "IAvnSelectableTextBlock").AbiVersion);
         Assert.True(Type(ir, "IAvnSelectableTextBlock").IsConstructible);
         Assert.Equal(8, Type(ir, "IAvnNumericUpDown").AbiVersion);
-        Assert.Equal(11, Type(ir, "IAvnAutoCompleteBox").AbiVersion);
+        Assert.Equal(12, Type(ir, "IAvnAutoCompleteBox").AbiVersion);
         Assert.Equal(12, Type(ir, "IAvnMaskedTextBox").AbiVersion);
 
         Assert.Equal("Avalonia.Host.Com.IAvnSpinner", Type(ir, "IAvnButtonSpinner").BaseFullName);
@@ -1647,7 +1647,7 @@ public class ClrTypeExtractorTests
     public void Wave_q_sweeps_leaf_input_scalars()
     {
         var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
-        Assert.Equal(11, Type(ir, "IAvnAutoCompleteBox").AbiVersion);
+        Assert.Equal(12, Type(ir, "IAvnAutoCompleteBox").AbiVersion);
         Assert.Contains(Type(ir, "IAvnAutoCompleteBox").Properties, p => p.Name == "SearchText");
         Assert.Equal(10, Type(ir, "IAvnCalendar").AbiVersion);
         Assert.Contains(Type(ir, "IAvnCalendar").Properties, p => p.Name == "IsWeekNumberVisible");

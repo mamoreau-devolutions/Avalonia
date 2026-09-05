@@ -464,6 +464,18 @@ SelectedDatesChanged/SelectedDateChanged events stay gaps: their
 SelectionChangedEventArgs carry added/removed collections the event
 payload cannot carry yet. Factory stays 13.
 
+Wave U24 projects AutoCompleteBox's filter delegates. Two kinds:
+`ItemFilter` (ordinal 26) wraps the object predicate as `IAvnItemFilter`
+whose invoke takes the search text and the item variant; `TextFilter`
+(ordinal 27) wraps the string predicate as `IAvnTextFilter` over two
+borrowed UTF-16 buffers. The host's `AvnItemFilter`/`AvnTextFilter` wrap
+managed delegates; a foreign interface converts back into the delegate, so
+the Rust CCWs — `avalonia_sys::item_filter`/`text_filter` — really filter
+items (AutoCompleteBox 11 to 12). The selector delegates and the async
+populator stay gaps: selectors add another callback shape and the
+populator needs the async-completion transport. CCWs now free variant
+payloads only when a host is loaded. Factory stays 13.
+
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and
 `IAvnNumericUpDown` each move from 2 to 3. Templates, filters, ItemsSource,

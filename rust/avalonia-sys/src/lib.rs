@@ -11,6 +11,7 @@ mod com;
 mod command;
 mod data_template;
 mod dispatcher;
+mod filters;
 mod echo;
 mod event_callback;
 mod factory;
@@ -29,6 +30,7 @@ pub use clipboard::{IAvnApplication4, IAvnClipboardData, IAVN_APPLICATION4_METHO
 pub use com::{ComInterface, ComPtr, IUnknown};
 pub use command::{command, Command};
 pub use data_template::{data_template, DataTemplate};
+pub use filters::{item_filter, text_filter, ItemFilter, TextFilter};
 pub use dispatcher::{action, IAvnAction, IAvnDispatcher};
 pub use echo::IAvnEcho;
 pub use factory::IAvnActivationFactory;
@@ -191,6 +193,16 @@ pub unsafe fn free_utf16(ptr: *mut u16) {
             .expect("Avalonia Host must be loaded before freeing ABI strings")(
             ptr.cast()
         );
+    }
+}
+
+/// Frees a host-owned UTF-16 buffer when a host has been loaded, and does
+/// nothing otherwise. CCWs use this for payload slots whose strings the host
+/// allocates: outside a host session (unit tests) there is no allocator to
+/// answer to.
+pub(crate) unsafe fn free_utf16_if_host(ptr: *mut u16) {
+    if !ptr.is_null() && FREE.get().is_some() {
+        free_utf16(ptr);
     }
 }
 

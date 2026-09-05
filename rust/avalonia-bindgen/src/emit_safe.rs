@@ -541,6 +541,16 @@ fn emit_property(
                  \x20       Ok(self.raw.get_{snake}()?.map(|raw| DataTemplate {{ raw }}))\n\
                  \x20   }}\n"
             )),
+            "ItemFilter" | "TextFilter" => {
+                let full = simple_name(
+                    property.interface_name.as_deref().expect("interfaceName"),
+                );
+                out.push_str(&format!(
+                    "    pub fn {getter}(&self) -> Result<Option<sys::ComPtr<sys::{full}>>> {{\n\
+                     \x20       Ok(self.raw.get_{snake}()?)\n\
+                     \x20   }}\n"
+                ));
+            }
             "Variant" => out.push_str(&format!(
                 "    pub fn {getter}(&self) -> Result<Variant> {{\n\
                  \x20       Ok(Variant::from_abi(self.raw.get_{snake}()?))\n\
@@ -905,6 +915,16 @@ fn safe_property_input(
             String::new(),
             "value.map(|value| &value.raw)".into(),
         ),
+        "ItemFilter" | "TextFilter" => {
+            let full = simple_name(
+                property.interface_name.as_deref().expect("interfaceName"),
+            );
+            (
+                format!("Option<&sys::ComPtr<sys::{full}>>"),
+                String::new(),
+                "value".into(),
+            )
+        }
         "Variant" => (
             "impl Into<Variant>".into(),
             "        let value = value.into().to_abi()?;\n".into(),

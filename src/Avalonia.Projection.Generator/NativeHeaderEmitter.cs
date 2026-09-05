@@ -168,6 +168,24 @@ public static class NativeHeaderEmitter
             EndInterface(sb, templateName, 5);
         }
 
+        if (ir.ItemFilterInterfaceName is { } itemFilterInterfaceName)
+        {
+            var name = SimpleName(itemFilterInterfaceName);
+            EmitIid(sb, name, ir.ItemFilterInterfaceIid!, 1);
+            BeginInterface(sb, name);
+            EmitSlot(sb, 3, "invoke", name, ["const uint16_t* search", "AvnVariant item", "int32_t* result"]);
+            EndInterface(sb, name, 4);
+        }
+
+        if (ir.TextFilterInterfaceName is { } textFilterInterfaceName)
+        {
+            var name = SimpleName(textFilterInterfaceName);
+            EmitIid(sb, name, ir.TextFilterInterfaceIid!, 1);
+            BeginInterface(sb, name);
+            EmitSlot(sb, 3, "invoke", name, ["const uint16_t* search", "const uint16_t* item", "int32_t* result"]);
+            EndInterface(sb, name, 4);
+        }
+
         foreach (var collection in collections)
         {
             var name = SimpleName(collection.InterfaceName!);
@@ -393,6 +411,8 @@ public static class NativeHeaderEmitter
             MarshallingKind.Brush => $"{SimpleName(interfaceName!)}**",
             MarshallingKind.Command => $"{SimpleName(interfaceName!)}**",
             MarshallingKind.DataTemplate => $"{SimpleName(interfaceName!)}**",
+            MarshallingKind.ItemFilter => $"{SimpleName(interfaceName!)}**",
+            MarshallingKind.TextFilter => $"{SimpleName(interfaceName!)}**",
             _ => $"{AbiType(kind, interfaceName, pointerForInterface: false, isNullable)}*",
         };
 
@@ -405,6 +425,8 @@ public static class NativeHeaderEmitter
             MarshallingKind.Brush => $"{SimpleName(interfaceName!)}*",
             MarshallingKind.Command => $"{SimpleName(interfaceName!)}*",
             MarshallingKind.DataTemplate => $"{SimpleName(interfaceName!)}*",
+            MarshallingKind.ItemFilter => $"{SimpleName(interfaceName!)}*",
+            MarshallingKind.TextFilter => $"{SimpleName(interfaceName!)}*",
             _ => AbiType(kind, interfaceName, pointerForInterface: false, isNullable),
         };
 
@@ -429,6 +451,8 @@ public static class NativeHeaderEmitter
             MarshallingKind.Brush => SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
             MarshallingKind.Command => SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
             MarshallingKind.DataTemplate => SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
+            MarshallingKind.ItemFilter => SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
+            MarshallingKind.TextFilter => SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
             MarshallingKind.Variant => "AvnVariant",
             _ when GeometryMarshalling.TryGet(kind, out var geometry) =>
                 isNullable ? geometry.OptionalAbiName : geometry.AbiName,

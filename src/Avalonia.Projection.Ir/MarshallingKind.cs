@@ -78,6 +78,20 @@ public enum MarshallingKind
     /// <c>Avalonia.Controls.Templates.IDataTemplate</c>.
     /// </summary>
     DataTemplate,
+
+    /// <summary>
+    /// Appended after DataTemplate so every previously published ordinal stays put.
+    /// A nano-COM <c>IAvnItemFilter</c> wrapping AutoCompleteBox's
+    /// <c>AutoCompleteFilterPredicate&lt;object?&gt;</c>.
+    /// </summary>
+    ItemFilter,
+
+    /// <summary>
+    /// Appended after ItemFilter so every previously published ordinal stays put.
+    /// A nano-COM <c>IAvnTextFilter</c> wrapping AutoCompleteBox's
+    /// <c>AutoCompleteFilterPredicate&lt;string?&gt;</c>.
+    /// </summary>
+    TextFilter,
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]

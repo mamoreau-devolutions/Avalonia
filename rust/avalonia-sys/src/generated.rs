@@ -377,6 +377,63 @@ impl ComPtr<IAvnDataTemplate> {
     }
 }
 
+pub const I_AVN_ITEM_FILTER_IID: Guid = Guid { data1: 0x9BE82183, data2: 0xF2F3, data3: 0x5F56, data4: [0x99, 0xC8, 0x53, 0x62, 0xF6, 0x0D, 0x6D, 0x7E] };
+
+#[repr(C)]
+struct IAvnItemFilterVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnItemFilter, *const u16, AvnVariant, *mut i32) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnItemFilter {
+    vtbl: *const IAvnItemFilterVtbl,
+}
+
+unsafe impl ComInterface for IAvnItemFilter {
+    const IID: Guid = I_AVN_ITEM_FILTER_IID;
+}
+
+impl ComPtr<IAvnItemFilter> {
+    pub fn invoke(&self, search: *const u16, item: AvnVariant) -> Result<bool> {
+        unsafe {
+            let mut result = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw(), search, item, &mut result);
+            hresult::check(hr).map(|_| result != 0)
+        }
+    }
+}
+pub const I_AVN_TEXT_FILTER_IID: Guid = Guid { data1: 0xD1548C05, data2: 0xE9AB, data3: 0x53C3, data4: [0x8D, 0x87, 0xA8, 0xBF, 0xEA, 0x3A, 0xBD, 0x9F] };
+
+#[repr(C)]
+struct IAvnTextFilterVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnTextFilter, *const u16, *const u16, *mut i32) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnTextFilter {
+    vtbl: *const IAvnTextFilterVtbl,
+}
+
+unsafe impl ComInterface for IAvnTextFilter {
+    const IID: Guid = I_AVN_TEXT_FILTER_IID;
+}
+
+impl ComPtr<IAvnTextFilter> {
+    pub fn invoke(&self, search: *const u16, item: *const u16) -> Result<bool> {
+        unsafe {
+            let mut result = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw(), search, item, &mut result);
+            hresult::check(hr).map(|_| result != 0)
+        }
+    }
+}
+
 pub const I_AVN_AUTO_COMPLETE_BOX_TEXT_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x03E79A47, data2: 0x0885, data3: 0x5435, data4: [0x88, 0x0A, 0x7A, 0x15, 0x52, 0x93, 0x63, 0x9B] };
 
 #[repr(C)]
@@ -4636,7 +4693,7 @@ impl ComPtr<IAvnAvaloniaObject> {
     }
 }
 
-pub const I_AVN_AUTO_COMPLETE_BOX_IID: Guid = Guid { data1: 0x6D38F0E7, data2: 0x8336, data3: 0x5E31, data4: [0x83, 0x1C, 0x10, 0x1F, 0x28, 0xEB, 0x17, 0x97] };
+pub const I_AVN_AUTO_COMPLETE_BOX_IID: Guid = Guid { data1: 0xB57C6EE0, data2: 0xB216, data3: 0x5F6B, data4: [0xBF, 0xCA, 0xA2, 0x06, 0x30, 0xD9, 0x04, 0xD5] };
 
 #[repr(C)]
 struct IAvnAutoCompleteBoxVtbl {
@@ -4759,6 +4816,10 @@ struct IAvnAutoCompleteBoxVtbl {
     set_placeholder_text: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut u16) -> i32,
     get_placeholder_foreground: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut IAvnBrush) -> i32,
     set_placeholder_foreground: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnBrush) -> i32,
+    get_item_filter: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut IAvnItemFilter) -> i32,
+    set_item_filter: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnItemFilter) -> i32,
+    get_text_filter: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut IAvnTextFilter) -> i32,
+    set_text_filter: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnTextFilter) -> i32,
     get_items_source: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut IAvnVariantList) -> i32,
     set_items_source: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnVariantList) -> i32,
     get_max_length: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut i32) -> i32,
@@ -5595,6 +5656,34 @@ impl ComPtr<IAvnAutoCompleteBox> {
     pub fn set_placeholder_foreground(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placeholder_foreground)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_item_filter(&self) -> Result<Option<ComPtr<IAvnItemFilter>>> {
+        unsafe {
+            let mut value: *mut IAvnItemFilter = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_item_filter)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_item_filter(&self, value: Option<&ComPtr<IAvnItemFilter>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_item_filter)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_text_filter(&self) -> Result<Option<ComPtr<IAvnTextFilter>>> {
+        unsafe {
+            let mut value: *mut IAvnTextFilter = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_text_filter)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_text_filter(&self, value: Option<&ComPtr<IAvnTextFilter>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_text_filter)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }

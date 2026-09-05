@@ -169,7 +169,7 @@ unsafe extern "system" fn command_execute(this: *mut IAvnCommand, parameter: Avn
     let object = this.cast::<CommandObject>();
     let hr = invoke_callback(&(*object).execute, |execute| execute(parameter));
     if parameter.tag == AvnVariant::TAG_UTF16 && !parameter.utf16.is_null() {
-        crate::free_utf16(parameter.utf16);
+        crate::free_utf16_if_host(parameter.utf16);
     }
     hr
 }
@@ -188,7 +188,7 @@ unsafe extern "system" fn command_can_execute(
         can_execute(parameter).map(|can| result = i32::from(can))
     });
     if parameter.tag == AvnVariant::TAG_UTF16 && !parameter.utf16.is_null() {
-        crate::free_utf16(parameter.utf16);
+        crate::free_utf16_if_host(parameter.utf16);
     }
     if hr == 0 {
         *value = result;

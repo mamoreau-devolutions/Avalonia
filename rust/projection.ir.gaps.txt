@@ -33,8 +33,6 @@ Avalonia.AvaloniaObject.CoerceValue(AvaloniaProperty): Not included by projectio
 Avalonia.Controls.AutoCompleteBox.ValueMemberBinding: Not included by projection policy
 Avalonia.Controls.AutoCompleteBox.Watermark: Not included by projection policy
 Avalonia.Controls.AutoCompleteBox.WatermarkForeground: Not included by projection policy
-Avalonia.Controls.AutoCompleteBox.ItemFilter: Not included by projection policy
-Avalonia.Controls.AutoCompleteBox.TextFilter: Not included by projection policy
 Avalonia.Controls.AutoCompleteBox.ItemSelector: Not included by projection policy
 Avalonia.Controls.AutoCompleteBox.TextSelector: Not included by projection policy
 Avalonia.Controls.AutoCompleteBox.AsyncPopulator: Not included by projection policy

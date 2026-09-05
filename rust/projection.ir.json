@@ -13,6 +13,10 @@
   "commandHandlerInterfaceIid": "13E58040-B570-518F-A5F2-FE3EA80B4688",
   "templateInterfaceName": "Avalonia.Host.Com.IAvnDataTemplate",
   "templateInterfaceIid": "C44D13A8-F9D7-52C9-9A28-B7B74D11E5E1",
+  "itemFilterInterfaceName": "Avalonia.Host.Com.IAvnItemFilter",
+  "itemFilterInterfaceIid": "9BE82183-F2F3-5F56-99C8-5362F60D6D7E",
+  "textFilterInterfaceName": "Avalonia.Host.Com.IAvnTextFilter",
+  "textFilterInterfaceIid": "D1548C05-E9AB-53C3-8D87-A8BFEA3ABD9F",
   "types": [
     {
       "name": "IAvnAvaloniaObject",
@@ -30,8 +34,8 @@
       "name": "IAvnAutoCompleteBox",
       "fullName": "Avalonia.Host.Com.IAvnAutoCompleteBox",
       "kind": "Class",
-      "iid": "6D38F0E7-8336-5E31-831C-101F28EB1797",
-      "abiVersion": 11,
+      "iid": "B57C6EE0-B216-5F6B-BFCA-A20630D904D5",
+      "abiVersion": 12,
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.AutoCompleteBox",
       "isConstructible": true,
@@ -172,6 +176,26 @@
           "interfaceIid": "FC7CCBAE-ED75-5C6D-8516-DF706E137ED3",
           "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Media.IBrush",
+          "isNullable": true
+        },
+        {
+          "name": "ItemFilter",
+          "kind": "ItemFilter",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnItemFilter",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.AutoCompleteFilterPredicate\u00601[[System.Object, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "isNullable": true
+        },
+        {
+          "name": "TextFilter",
+          "kind": "TextFilter",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnTextFilter",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.AutoCompleteFilterPredicate\u00601[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
           "isNullable": true
         },
         {
@@ -11447,16 +11471,6 @@
     {
       "owner": "Avalonia.Controls.AutoCompleteBox",
       "member": "WatermarkForeground",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.AutoCompleteBox",
-      "member": "ItemFilter",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.AutoCompleteBox",
-      "member": "TextFilter",
       "reason": "Not included by projection policy"
     },
     {

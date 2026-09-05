@@ -42,6 +42,16 @@ public sealed class ProjectionIr
     public string? TemplateInterfaceName { get; init; }
     public string? TemplateInterfaceIid { get; init; }
 
+    /// <summary>
+    /// The projected AutoCompleteBox filter interfaces, present only when a member
+    /// marshals as <see cref="MarshallingKind.ItemFilter"/> or
+    /// <see cref="MarshallingKind.TextFilter"/>.
+    /// </summary>
+    public string? ItemFilterInterfaceName { get; init; }
+    public string? ItemFilterInterfaceIid { get; init; }
+    public string? TextFilterInterfaceName { get; init; }
+    public string? TextFilterInterfaceIid { get; init; }
+
     public IReadOnlyList<ProjectedType> Types { get; init; } = [];
     public IReadOnlyList<ProjectedEnum> Enums { get; init; } = [];
     public IReadOnlyList<ProjectedAttachedProperty> AttachedProperties { get; init; } = [];

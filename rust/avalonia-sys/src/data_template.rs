@@ -142,7 +142,7 @@ unsafe extern "system" fn data_template_match(
         matches(data).map(|matched| result = i32::from(matched))
     });
     if data.tag == AvnVariant::TAG_UTF16 && !data.utf16.is_null() {
-        crate::free_utf16(data.utf16);
+        crate::free_utf16_if_host(data.utf16);
     }
     if hr == 0 {
         *value = result;

@@ -19,6 +19,14 @@ pub struct ProjectionIr {
     #[serde(default)]
     pub template_interface_iid: Option<String>,
     #[serde(default)]
+    pub item_filter_interface_name: Option<String>,
+    #[serde(default)]
+    pub item_filter_interface_iid: Option<String>,
+    #[serde(default)]
+    pub text_filter_interface_name: Option<String>,
+    #[serde(default)]
+    pub text_filter_interface_iid: Option<String>,
+    #[serde(default)]
     pub types: Vec<ProjectedType>,
     #[serde(default)]
     pub enums: Vec<ProjectedEnum>,

@@ -35,6 +35,12 @@ public static class ClrTypeExtractor
         var templateInterfaceName = TemplateMarshalling.QualifiedInterfaceName(policy.ProjectionNamespace);
         var usesTemplate = types.Any(type =>
             type.Properties.Any(property => property.Kind == MarshallingKind.DataTemplate));
+        var itemFilterInterfaceName = FilterMarshalling.QualifiedItemFilterInterfaceName(policy.ProjectionNamespace);
+        var textFilterInterfaceName = FilterMarshalling.QualifiedTextFilterInterfaceName(policy.ProjectionNamespace);
+        var usesItemFilter = types.Any(type =>
+            type.Properties.Any(property => property.Kind == MarshallingKind.ItemFilter));
+        var usesTextFilter = types.Any(type =>
+            type.Properties.Any(property => property.Kind == MarshallingKind.TextFilter));
 
         return new ProjectionIr
         {
@@ -62,6 +68,14 @@ public static class ClrTypeExtractor
             TemplateInterfaceName = usesTemplate ? templateInterfaceName : null,
             TemplateInterfaceIid = usesTemplate
                 ? CreateDeterministicIid(templateInterfaceName, policy.GetAbiVersion(templateInterfaceName))
+                : null,
+            ItemFilterInterfaceName = usesItemFilter ? itemFilterInterfaceName : null,
+            ItemFilterInterfaceIid = usesItemFilter
+                ? CreateDeterministicIid(itemFilterInterfaceName, 1)
+                : null,
+            TextFilterInterfaceName = usesTextFilter ? textFilterInterfaceName : null,
+            TextFilterInterfaceIid = usesTextFilter
+                ? CreateDeterministicIid(textFilterInterfaceName, 1)
                 : null,
             Types = types,
             Enums = ExtractEnums(selected, policy),
@@ -511,6 +525,16 @@ public static class ClrTypeExtractor
         {
             kind = MarshallingKind.DataTemplate;
             interfaceName = TemplateMarshalling.QualifiedInterfaceName(policy.ProjectionNamespace);
+        }
+        else if (FilterMarshalling.IsItemFilter(type))
+        {
+            kind = MarshallingKind.ItemFilter;
+            interfaceName = FilterMarshalling.QualifiedItemFilterInterfaceName(policy.ProjectionNamespace);
+        }
+        else if (FilterMarshalling.IsTextFilter(type))
+        {
+            kind = MarshallingKind.TextFilter;
+            interfaceName = FilterMarshalling.QualifiedTextFilterInterfaceName(policy.ProjectionNamespace);
         }
         else if (projectedNames.TryGetValue(type, out interfaceName))
             kind = MarshallingKind.ComInterface;

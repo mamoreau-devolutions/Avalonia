@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("6D38F0E7-8336-5E31-831C-101F28EB1797")]
+[Guid("B57C6EE0-B216-5F6B-BFCA-A20630D904D5")]
 public partial interface IAvnAutoCompleteBox : IAvnTemplatedControl
 {
     [PreserveSig]
@@ -89,6 +89,18 @@ public partial interface IAvnAutoCompleteBox : IAvnTemplatedControl
 
     [PreserveSig]
     int SetPlaceholderForeground(IAvnBrush? value);
+
+    [PreserveSig]
+    int GetItemFilter(out IAvnItemFilter? value);
+
+    [PreserveSig]
+    int SetItemFilter(IAvnItemFilter? value);
+
+    [PreserveSig]
+    int GetTextFilter(out IAvnTextFilter? value);
+
+    [PreserveSig]
+    int SetTextFilter(IAvnTextFilter? value);
 
     [PreserveSig]
     int GetItemsSource(out IAvnVariantList value);
@@ -2178,6 +2190,68 @@ public sealed partial class AvnAutoCompleteBox : IAvnAutoCompleteBox
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.PlaceholderForeground = AvnBrush.ToBrush(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetItemFilter(out IAvnItemFilter? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnItemFilter.FromPredicate(_value.ItemFilter);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetItemFilter(IAvnItemFilter? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ItemFilter = AvnItemFilter.ToPredicate(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetTextFilter(out IAvnTextFilter? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnTextFilter.FromPredicate(_value.TextFilter);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetTextFilter(IAvnTextFilter? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.TextFilter = AvnTextFilter.ToPredicate(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

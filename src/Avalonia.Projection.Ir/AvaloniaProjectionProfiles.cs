@@ -56,7 +56,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnWindow"] = 16,
             ["Avalonia.Host.Com.IAvnGrid"] = 10,
             // Previously version-1 templated types inherit the TemplatedControl bump.
-            ["Avalonia.Host.Com.IAvnAutoCompleteBox"] = 11,
+            ["Avalonia.Host.Com.IAvnAutoCompleteBox"] = 12,
             ["Avalonia.Host.Com.IAvnButtonSpinner"] = 7,
             ["Avalonia.Host.Com.IAvnCalendar"] = 10,
             ["Avalonia.Host.Com.IAvnCalendarDatePicker"] = 9,
@@ -469,6 +469,7 @@ public static class AvaloniaProjectionProfiles
                 "PopulateComplete", "DropDownOpened", "DropDownClosed",
                 "MinimumPopulateDelay", "TextChanged", "ItemsSource",
                 "Populating", "DropDownOpening", "DropDownClosing", "SelectedItem", "ItemTemplate",
+                "ItemFilter", "TextFilter",
             ],
             ["Avalonia.Controls.MaskedTextBox"] =
                 ["Mask", "AsciiOnly", "HidePromptOnLeave", "ResetOnPrompt", "ResetOnSpace",
@@ -1493,6 +1494,7 @@ public static class AvaloniaProjectionProfiles
         },
     };
 }
+
 
 
 

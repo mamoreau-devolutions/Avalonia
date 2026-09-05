@@ -41,6 +41,9 @@ public static class ComSourceEmitter
                 files[SimpleName(ir.CommandInterfaceName) + ".g.cs"] = EmitCommand(ir);
             if (ir.TemplateInterfaceName is not null)
                 files[SimpleName(ir.TemplateInterfaceName) + ".g.cs"] = EmitDataTemplate(ir);
+            if (ir.ItemFilterInterfaceName is not null ||
+                ir.TextFilterInterfaceName is not null)
+                files["AvnFilters.g.cs"] = EmitFilters(ir);
             files["IAvnControlFactory.g.cs"] = EmitFactory(ir);
             files["ProjectionAotRoots.g.cs"] = EmitAotRoots(ir);
         }
@@ -426,6 +429,14 @@ public static class ComSourceEmitter
         {
             sb.AppendLine($"    [global::System.Diagnostics.CodeAnalysis.DynamicDependency(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All, typeof({SimpleName(templateInterfaceName)[1..]}))]");
         }
+        if (ir.ItemFilterInterfaceName is { })
+        {
+            sb.AppendLine("    [global::System.Diagnostics.CodeAnalysis.DynamicDependency(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All, typeof(AvnItemFilter))]");
+        }
+        if (ir.TextFilterInterfaceName is { })
+        {
+            sb.AppendLine("    [global::System.Diagnostics.CodeAnalysis.DynamicDependency(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All, typeof(AvnTextFilter))]");
+        }
         foreach (var collection in ir.Types
                      .SelectMany(t => t.Properties)
                      .Where(p => p.Kind == MarshallingKind.ComCollection)
@@ -783,6 +794,99 @@ public static class ComSourceEmitter
         sb.AppendLine("    }");
         sb.AppendLine("}");
         return sb.ToString();
+    }
+
+    public static string EmitFilters(ProjectionIr ir)
+    {
+        var root = ir.Types.First(t => t.Kind == ProjectedTypeKind.Class && t.BaseFullName is null);
+        var sb = Header(root);
+        if (ir.ItemFilterInterfaceName is { } itemInterfaceName)
+        {
+            var name = SimpleName(itemInterfaceName);
+            sb.AppendLine("[GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]");
+            sb.AppendLine($"[Guid(\"{ir.ItemFilterInterfaceIid}\")]");
+            sb.AppendLine($"public partial interface {name}");
+            sb.AppendLine("{");
+            sb.AppendLine("    [PreserveSig]");
+            sb.AppendLine("    int Invoke(string? search, AvnVariant item, out int result);");
+            sb.AppendLine("}");
+            sb.AppendLine();
+            sb.AppendLine("[GeneratedComClass]");
+            sb.AppendLine("public sealed partial class AvnItemFilter : " + name);
+            sb.AppendLine("{");
+            sb.AppendLine("    private readonly global::Avalonia.Controls.AutoCompleteFilterPredicate<object?> _value;");
+            sb.AppendLine();
+            sb.AppendLine("    public AvnItemFilter(global::Avalonia.Controls.AutoCompleteFilterPredicate<object?> value) => _value = value;");
+            sb.AppendLine();
+            sb.AppendLine($"    public static {name}? FromPredicate(global::Avalonia.Controls.AutoCompleteFilterPredicate<object?>? value) =>");
+            sb.AppendLine("        value is null ? null : new AvnItemFilter(value);");
+            sb.AppendLine();
+            sb.AppendLine($"    public static global::Avalonia.Controls.AutoCompleteFilterPredicate<object?>? ToPredicate({name}? value) =>");
+            sb.AppendLine("        value switch");
+            sb.AppendLine("        {");
+            sb.AppendLine("            null => null,");
+            sb.AppendLine("            AvnItemFilter local => local._value,");
+            sb.AppendLine("            _ => (search, item) =>");
+            sb.AppendLine("            {");
+            sb.AppendLine("                var hr = value.Invoke(search, AvnVariant.FromObject(item), out var result);");
+            sb.AppendLine("                if (hr < 0)");
+            sb.AppendLine("                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);");
+            sb.AppendLine("                return result != 0;");
+            sb.AppendLine("            },");
+            sb.AppendLine("        };");
+            sb.AppendLine();
+            sb.AppendLine("    public int Invoke(string? search, AvnVariant item, out int result)");
+            sb.AppendLine("    {");
+            sb.AppendLine("        result = _value(search, item.ToObject()) ? 1 : 0;");
+            sb.AppendLine("        return global::Avalonia.Host.HResults.S_OK;");
+            sb.AppendLine("    }");
+            sb.AppendLine("}");
+            sb.AppendLine();
+        }
+        if (ir.TextFilterInterfaceName is { } textInterfaceName)
+        {
+            var name = SimpleName(textInterfaceName);
+            sb.AppendLine("[GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]");
+            sb.AppendLine($"[Guid(\"{ir.TextFilterInterfaceIid}\")]");
+            sb.AppendLine($"public partial interface {name}");
+            sb.AppendLine("{");
+            sb.AppendLine("    [PreserveSig]");
+            sb.AppendLine("    int Invoke(string? search, string? item, out int result);");
+            sb.AppendLine("}");
+            sb.AppendLine();
+            sb.AppendLine("[GeneratedComClass]");
+            sb.AppendLine("public sealed partial class AvnTextFilter : " + name);
+            sb.AppendLine("{");
+            sb.AppendLine("    private readonly global::Avalonia.Controls.AutoCompleteFilterPredicate<string?> _value;");
+            sb.AppendLine();
+            sb.AppendLine("    public AvnTextFilter(global::Avalonia.Controls.AutoCompleteFilterPredicate<string?> value) => _value = value;");
+            sb.AppendLine();
+            sb.AppendLine($"    public static {name}? FromPredicate(global::Avalonia.Controls.AutoCompleteFilterPredicate<string?>? value) =>");
+            sb.AppendLine("        value is null ? null : new AvnTextFilter(value);");
+            sb.AppendLine();
+            sb.AppendLine($"    public static global::Avalonia.Controls.AutoCompleteFilterPredicate<string?>? ToPredicate({name}? value) =>");
+            sb.AppendLine("        value switch");
+            sb.AppendLine("        {");
+            sb.AppendLine("            null => null,");
+            sb.AppendLine("            AvnTextFilter local => local._value,");
+            sb.AppendLine("            _ => (search, item) =>");
+            sb.AppendLine("            {");
+            sb.AppendLine("                var hr = value.Invoke(search, item, out var result);");
+            sb.AppendLine("                if (hr < 0)");
+            sb.AppendLine("                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);");
+            sb.AppendLine("                return result != 0;");
+            sb.AppendLine("            },");
+            sb.AppendLine("        };");
+            sb.AppendLine();
+            sb.AppendLine("    public int Invoke(string? search, string? item, out int result)");
+            sb.AppendLine("    {");
+            sb.AppendLine("        result = _value(search, item) ? 1 : 0;");
+            sb.AppendLine("        return global::Avalonia.Host.HResults.S_OK;");
+            sb.AppendLine("    }");
+            sb.AppendLine("}");
+            sb.AppendLine();
+        }
+        return sb.ToString().TrimEnd() + Environment.NewLine;
     }
 
     public static string EmitGeometryStructs(ProjectionIr ir)
@@ -1372,6 +1476,10 @@ public static class ComSourceEmitter
                 $"{SimpleName(property.InterfaceName!)[1..]}.FromCommand(_value.{property.Name})",
             MarshallingKind.DataTemplate =>
                 $"{SimpleName(property.InterfaceName!)[1..]}.FromTemplate(_value.{property.Name})",
+            MarshallingKind.ItemFilter =>
+                $"{SimpleName(property.InterfaceName!)[1..]}.FromPredicate(_value.{property.Name})",
+            MarshallingKind.TextFilter =>
+                $"{SimpleName(property.InterfaceName!)[1..]}.FromPredicate(_value.{property.Name})",
             MarshallingKind.Variant => $"AvnVariant.FromObject(_value.{property.Name})",
             MarshallingKind.ComCollection =>
                 property.HostImplementationTypeName is { }
@@ -1432,6 +1540,8 @@ public static class ComSourceEmitter
             MarshallingKind.Brush => $"{SimpleName(property.InterfaceName!)[1..]}.ToBrush(value)",
             MarshallingKind.Command => $"{SimpleName(property.InterfaceName!)[1..]}.ToCommand(value)",
             MarshallingKind.DataTemplate => $"{SimpleName(property.InterfaceName!)[1..]}.ToTemplate(value)",
+            MarshallingKind.ItemFilter => $"{SimpleName(property.InterfaceName!)[1..]}.ToPredicate(value)",
+            MarshallingKind.TextFilter => $"{SimpleName(property.InterfaceName!)[1..]}.ToPredicate(value)",
             MarshallingKind.Variant => "value.ToObject()",
             MarshallingKind.ComCollection => property.HostImplementationTypeName is { }
                 ? $"(global::{property.ManagedTypeName}?)({SimpleName(property.InterfaceName!)[1..]}Marshal.ToManaged(value))!"
@@ -1538,6 +1648,8 @@ public static class ComSourceEmitter
             MarshallingKind.Brush => SimpleName(interfaceName!) + (nullable ? "?" : ""),
             MarshallingKind.Command => SimpleName(interfaceName!) + (nullable ? "?" : ""),
             MarshallingKind.DataTemplate => SimpleName(interfaceName!) + (nullable ? "?" : ""),
+            MarshallingKind.ItemFilter => SimpleName(interfaceName!) + (nullable ? "?" : ""),
+            MarshallingKind.TextFilter => SimpleName(interfaceName!) + (nullable ? "?" : ""),
             MarshallingKind.ComCollection => SimpleName(interfaceName!),
             _ when GeometryMarshalling.TryGet(kind, out var geometry) =>
                 nullable ? geometry.OptionalAbiName : geometry.AbiName,
