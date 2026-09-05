@@ -2547,6 +2547,8 @@ impl TryFrom<i32> for CalendarWeekRule {
     }
 }
 
+pub use sys::ContextMenuOpeningEventArgs;
+pub use sys::ContextMenuClosingEventArgs;
 pub use sys::ControlKeyDownEventArgs;
 pub use sys::PopupFlyoutBaseClosingEventArgs;
 pub use sys::ThumbDragStartedEventArgs;
@@ -10049,6 +10051,32 @@ impl ContextMenu {
     }
     pub fn placement_target(self, value: impl AsControl) -> Result<Self> {
         self.set_placement_target(value)?;
+        Ok(self)
+    }
+    pub fn open_with_control(&self, control: Option<&impl AsControl>) -> Result<()> {
+        let control = control.map(|value| value.as_control()).transpose()?;
+        Ok(self.raw.open_with_control(control.as_ref())?)
+    }
+    pub fn subscribe_opening(&self, callback: impl FnMut(&mut ContextMenuOpeningEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::context_menu_opening_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_opening(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_opening(subscription_id)))
+    }
+    pub fn on_opening(self, scope: &crate::AppScope, callback: impl FnMut(&mut ContextMenuOpeningEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_opening(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_closing(&self, callback: impl FnMut(&mut ContextMenuClosingEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::context_menu_closing_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_closing(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_closing(subscription_id)))
+    }
+    pub fn on_closing(self, scope: &crate::AppScope, callback: impl FnMut(&mut ContextMenuClosingEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_closing(callback)?);
         Ok(self)
     }
 }

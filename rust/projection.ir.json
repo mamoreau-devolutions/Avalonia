@@ -1264,12 +1264,29 @@
       "name": "IAvnContextMenu",
       "fullName": "Avalonia.Host.Com.IAvnContextMenu",
       "kind": "Class",
-      "iid": "0B266866-BC3D-59F3-B195-FFADB8AEED40",
-      "abiVersion": 7,
+      "iid": "13FA26AB-A74B-53CF-A4D0-1909D262133D",
+      "abiVersion": 8,
       "baseFullName": "Avalonia.Host.Com.IAvnMenuBase",
       "managedFullName": "Avalonia.Controls.ContextMenu",
       "isConstructible": true,
-      "methods": [],
+      "methods": [
+        {
+          "name": "OpenWithControl",
+          "managedName": "Open",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": [
+            {
+              "name": "control",
+              "kind": "ComInterface",
+              "direction": "In",
+              "interfaceName": "Avalonia.Host.Com.IAvnControl",
+              "managedTypeName": "Avalonia.Controls.Control",
+              "isNullable": true
+            }
+          ]
+        }
+      ],
       "properties": [
         {
           "name": "HorizontalOffset",
@@ -1354,7 +1371,42 @@
           "isNullable": true
         }
       ],
-      "events": []
+      "events": [
+        {
+          "name": "Opening",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnContextMenuOpeningHandler",
+          "handlerInterfaceIid": "25E25F96-3DD6-5C15-A190-76E1E32A4A5D",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "Fields",
+          "managedHandlerTypeName": "System.ComponentModel.CancelEventHandler",
+          "parameters": [
+            {
+              "name": "Cancel",
+              "kind": "Bool",
+              "direction": "InOut",
+              "managedTypeName": "System.Boolean",
+              "isNullable": false
+            }
+          ]
+        },
+        {
+          "name": "Closing",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnContextMenuClosingHandler",
+          "handlerInterfaceIid": "A63F4035-2362-546D-8238-ED91D4F804CB",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "Fields",
+          "managedHandlerTypeName": "System.ComponentModel.CancelEventHandler",
+          "parameters": [
+            {
+              "name": "Cancel",
+              "kind": "Bool",
+              "direction": "InOut",
+              "managedTypeName": "System.Boolean",
+              "isNullable": false
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "IAvnControl",
@@ -10670,23 +10722,8 @@
     },
     {
       "owner": "Avalonia.Controls.ContextMenu",
-      "member": "Opening",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ContextMenu",
-      "member": "Closing",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ContextMenu",
       "member": "Open()",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ContextMenu",
-      "member": "Open(Control)",
-      "reason": "Not included by projection policy"
+      "reason": "Overrides a projected base method"
     },
     {
       "owner": "Avalonia.Controls.ContextMenu",

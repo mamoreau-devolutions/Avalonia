@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("0B266866-BC3D-59F3-B195-FFADB8AEED40")]
+[Guid("13FA26AB-A74B-53CF-A4D0-1909D262133D")]
 public partial interface IAvnContextMenu : IAvnMenuBase
 {
     [PreserveSig]
@@ -63,6 +63,21 @@ public partial interface IAvnContextMenu : IAvnMenuBase
     [PreserveSig]
     int SetPlacementTarget(IAvnControl? value);
 
+    [PreserveSig]
+    int OpenWithControl(IAvnControl? control);
+
+    [PreserveSig]
+    int AdviseOpening(IAvnContextMenuOpeningHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadviseOpening(long subscriptionId);
+
+    [PreserveSig]
+    int AdviseClosing(IAvnContextMenuClosingHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadviseClosing(long subscriptionId);
+
 }
 
 [GeneratedComClass]
@@ -86,6 +101,10 @@ public sealed partial class AvnContextMenu : IAvnContextMenu
     private long _nextOpenedSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnMenuBaseClosedHandler Handler, global::System.Action Unsubscribe)> _closedSubscriptions = new();
     private long _nextClosedSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnContextMenuOpeningHandler Handler, global::System.Action Unsubscribe)> _openingSubscriptions = new();
+    private long _nextOpeningSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnContextMenuClosingHandler Handler, global::System.Action Unsubscribe)> _closingSubscriptions = new();
+    private long _nextClosingSubscriptionId;
 
     internal AvnContextMenu(global::Avalonia.Controls.ContextMenu value)
     {
@@ -1859,6 +1878,117 @@ public sealed partial class AvnContextMenu : IAvnContextMenu
         }
     }
 
+    public int OpenWithControl(IAvnControl? control)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Open((global::Avalonia.Controls.Control)ProjectionRuntime.Unwrap(control)!);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseOpening(IAvnContextMenuOpeningHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.ComponentModel.CancelEventHandler((_, eventArgs) =>
+            {
+                var cancel = eventArgs.Cancel ? 1 : 0;
+                var hr = handler.Invoke(ref cancel);
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+                eventArgs.Cancel = cancel != 0;
+            });
+            eventSource.Opening += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextOpeningSubscriptionId);
+            _openingSubscriptions.Add(subscriptionId, (handler, () => eventSource.Opening -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseOpening(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_openingSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseClosing(IAvnContextMenuClosingHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.ComponentModel.CancelEventHandler((_, eventArgs) =>
+            {
+                var cancel = eventArgs.Cancel ? 1 : 0;
+                var hr = handler.Invoke(ref cancel);
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+                eventArgs.Cancel = cancel != 0;
+            });
+            eventSource.Closing += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextClosingSubscriptionId);
+            _closingSubscriptions.Add(subscriptionId, (handler, () => eventSource.Closing -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseClosing(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_closingSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     private void ReleaseSubscriptions()
     {
         foreach (var subscription in _loadedSubscriptions.Values)
@@ -1909,5 +2039,17 @@ public sealed partial class AvnContextMenu : IAvnContextMenu
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
         }
         _closedSubscriptions.Clear();
+        foreach (var subscription in _openingSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _openingSubscriptions.Clear();
+        foreach (var subscription in _closingSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _closingSubscriptions.Clear();
     }
 }

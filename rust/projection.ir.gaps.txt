@@ -79,10 +79,7 @@ Avalonia.Controls.CommandBarToggleButton.Icon: Not included by projection policy
 Avalonia.Controls.ContentControl.ContentTemplate: Not included by projection policy
 Avalonia.Controls.ContentControl.Presenter: Not included by projection policy
 Avalonia.Controls.ContextMenu.CustomPopupPlacementCallback: Not included by projection policy
-Avalonia.Controls.ContextMenu.Opening: Not included by projection policy
-Avalonia.Controls.ContextMenu.Closing: Not included by projection policy
-Avalonia.Controls.ContextMenu.Open(): Not included by projection policy
-Avalonia.Controls.ContextMenu.Open(Control): Not included by projection policy
+Avalonia.Controls.ContextMenu.Open(): Overrides a projected base method
 Avalonia.Controls.ContextMenu.Close(): Not included by projection policy
 Avalonia.Controls.Control.FocusAdorner: Not included by projection policy
 Avalonia.Controls.Control.DataTemplates: Not included by projection policy

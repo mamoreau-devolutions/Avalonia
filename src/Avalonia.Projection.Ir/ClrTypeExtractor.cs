@@ -257,6 +257,21 @@ public static class ClrTypeExtractor
                 continue;
             }
 
+            // A method that overrides a projected base method re-publishes the
+            // same ABI slot: the base interface already carries it, so the
+            // derived interface must not duplicate it. Only genuinely new
+            // overloads (a different ABI name through their parameters)
+            // project here.
+            var abiName = AbiMethodName(method);
+            var overridesProjectedBase =
+                method.GetBaseDefinition() != method &&
+                LineageProjectsMethod(type.BaseType, abiName, projectedNames, policy);
+            if (overridesProjectedBase)
+            {
+                Skip(skipped, type, FormatMethod(method), "Overrides a projected base method");
+                continue;
+            }
+
             if (!TryProjectMethod(method, projectedNames, policy, out var projected, out var reason))
             {
                 Skip(skipped, type, FormatMethod(method), reason!);
@@ -486,6 +501,35 @@ public static class ClrTypeExtractor
             baseType = baseType.BaseType;
         }
         return null;
+    }
+
+    /// <summary>
+    /// Whether a base type in the projected lineage already publishes a method
+    /// under the given ABI name, so an override must not re-publish it.
+    /// </summary>
+    private static bool LineageProjectsMethod(
+        Type? baseType,
+        string abiName,
+        IReadOnlyDictionary<Type, string> projectedNames,
+        ProjectionPolicy policy)
+    {
+        while (baseType is not null)
+        {
+            if (projectedNames.ContainsKey(baseType))
+            {
+                var flags = BindingFlags.Public | BindingFlags.Instance;
+                foreach (var candidate in baseType.GetMethods(flags))
+                {
+                    if (candidate.IsSpecialName ||
+                        !policy.Includes(baseType, candidate) ||
+                        AbiMethodName(candidate) != abiName)
+                        continue;
+                    return true;
+                }
+            }
+            baseType = baseType.BaseType;
+        }
+        return false;
     }
 
     private static bool IsNullable(PropertyInfo property) =>

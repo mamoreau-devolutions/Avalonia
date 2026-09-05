@@ -902,6 +902,116 @@ unsafe extern "system" fn i_avn_command_bar_closed_handler_invoke(this: *mut IAv
     crate::event_callback::invoke::<IAvnCommandBarClosedHandler, ()>(this, &mut ())
 }
 
+pub const I_AVN_CONTEXT_MENU_OPENING_HANDLER_IID: Guid = Guid { data1: 0x25E25F96, data2: 0x3DD6, data3: 0x5C15, data4: [0xA1, 0x90, 0x76, 0xE1, 0xE3, 0x2A, 0x4A, 0x5D] };
+
+#[derive(Debug)]
+pub struct ContextMenuOpeningEventArgs {
+    pub cancel: bool,
+}
+
+#[repr(C)]
+struct IAvnContextMenuOpeningHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnContextMenuOpeningHandler, cancel: *mut i32) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnContextMenuOpeningHandler { vtbl: *const IAvnContextMenuOpeningHandlerVtbl }
+
+unsafe impl ComInterface for IAvnContextMenuOpeningHandler { const IID: Guid = I_AVN_CONTEXT_MENU_OPENING_HANDLER_IID; }
+
+static I_AVN_CONTEXT_MENU_OPENING_HANDLER_VTBL: IAvnContextMenuOpeningHandlerVtbl = IAvnContextMenuOpeningHandlerVtbl {
+    query_interface: i_avn_context_menu_opening_handler_query_interface,
+    add_ref: i_avn_context_menu_opening_handler_add_ref,
+    release: i_avn_context_menu_opening_handler_release,
+    invoke: i_avn_context_menu_opening_handler_invoke,
+};
+
+pub fn context_menu_opening_handler(callback: impl FnMut(&mut ContextMenuOpeningEventArgs) -> Result<()> + Send + 'static) -> ComPtr<IAvnContextMenuOpeningHandler> {
+    crate::event_callback::create(IAvnContextMenuOpeningHandler { vtbl: &I_AVN_CONTEXT_MENU_OPENING_HANDLER_VTBL }, callback)
+}
+
+unsafe extern "system" fn i_avn_context_menu_opening_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnContextMenuOpeningHandler, ContextMenuOpeningEventArgs>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_context_menu_opening_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnContextMenuOpeningHandler, ContextMenuOpeningEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_context_menu_opening_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnContextMenuOpeningHandler, ContextMenuOpeningEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_context_menu_opening_handler_invoke(this: *mut IAvnContextMenuOpeningHandler, cancel: *mut i32) -> i32 {
+    if cancel.is_null() { return hresult::E_POINTER; }
+    let mut arguments = ContextMenuOpeningEventArgs {
+        cancel: *cancel != 0,
+    };
+    let hr = crate::event_callback::invoke::<IAvnContextMenuOpeningHandler, ContextMenuOpeningEventArgs>(this, &mut arguments);
+    if hr >= 0 {
+        *cancel = i32::from(arguments.cancel);
+    }
+    hr
+}
+
+pub const I_AVN_CONTEXT_MENU_CLOSING_HANDLER_IID: Guid = Guid { data1: 0xA63F4035, data2: 0x2362, data3: 0x546D, data4: [0x82, 0x38, 0xED, 0x91, 0xD4, 0xF8, 0x04, 0xCB] };
+
+#[derive(Debug)]
+pub struct ContextMenuClosingEventArgs {
+    pub cancel: bool,
+}
+
+#[repr(C)]
+struct IAvnContextMenuClosingHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnContextMenuClosingHandler, cancel: *mut i32) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnContextMenuClosingHandler { vtbl: *const IAvnContextMenuClosingHandlerVtbl }
+
+unsafe impl ComInterface for IAvnContextMenuClosingHandler { const IID: Guid = I_AVN_CONTEXT_MENU_CLOSING_HANDLER_IID; }
+
+static I_AVN_CONTEXT_MENU_CLOSING_HANDLER_VTBL: IAvnContextMenuClosingHandlerVtbl = IAvnContextMenuClosingHandlerVtbl {
+    query_interface: i_avn_context_menu_closing_handler_query_interface,
+    add_ref: i_avn_context_menu_closing_handler_add_ref,
+    release: i_avn_context_menu_closing_handler_release,
+    invoke: i_avn_context_menu_closing_handler_invoke,
+};
+
+pub fn context_menu_closing_handler(callback: impl FnMut(&mut ContextMenuClosingEventArgs) -> Result<()> + Send + 'static) -> ComPtr<IAvnContextMenuClosingHandler> {
+    crate::event_callback::create(IAvnContextMenuClosingHandler { vtbl: &I_AVN_CONTEXT_MENU_CLOSING_HANDLER_VTBL }, callback)
+}
+
+unsafe extern "system" fn i_avn_context_menu_closing_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnContextMenuClosingHandler, ContextMenuClosingEventArgs>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_context_menu_closing_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnContextMenuClosingHandler, ContextMenuClosingEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_context_menu_closing_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnContextMenuClosingHandler, ContextMenuClosingEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_context_menu_closing_handler_invoke(this: *mut IAvnContextMenuClosingHandler, cancel: *mut i32) -> i32 {
+    if cancel.is_null() { return hresult::E_POINTER; }
+    let mut arguments = ContextMenuClosingEventArgs {
+        cancel: *cancel != 0,
+    };
+    let hr = crate::event_callback::invoke::<IAvnContextMenuClosingHandler, ContextMenuClosingEventArgs>(this, &mut arguments);
+    if hr >= 0 {
+        *cancel = i32::from(arguments.cancel);
+    }
+    hr
+}
+
 pub const I_AVN_CONTROL_LOADED_HANDLER_IID: Guid = Guid { data1: 0x02529698, data2: 0xA53B, data3: 0x5691, data4: [0x93, 0xB1, 0x92, 0x0B, 0x19, 0x36, 0x4C, 0x5E] };
 
 #[repr(C)]
@@ -14565,7 +14675,7 @@ impl ComPtr<IAvnContentControl> {
     }
 }
 
-pub const I_AVN_CONTEXT_MENU_IID: Guid = Guid { data1: 0x0B266866, data2: 0xBC3D, data3: 0x59F3, data4: [0xB1, 0x95, 0xFF, 0xAD, 0xB8, 0xAE, 0xED, 0x40] };
+pub const I_AVN_CONTEXT_MENU_IID: Guid = Guid { data1: 0x13FA26AB, data2: 0xA74B, data3: 0x53CF, data4: [0xA4, 0xD0, 0x19, 0x09, 0xD2, 0x62, 0x13, 0x3D] };
 
 #[repr(C)]
 struct IAvnContextMenuVtbl {
@@ -14678,6 +14788,11 @@ struct IAvnContextMenuVtbl {
     set_placement_rect: unsafe extern "system" fn(*mut IAvnContextMenu, AvnOptionalRect) -> i32,
     get_placement_target: unsafe extern "system" fn(*mut IAvnContextMenu, *mut *mut IAvnControl) -> i32,
     set_placement_target: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnControl) -> i32,
+    open_with_control: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnControl) -> i32,
+    advise_opening: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnContextMenuOpeningHandler, *mut i64) -> i32,
+    unadvise_opening: unsafe extern "system" fn(*mut IAvnContextMenu, i64) -> i32,
+    advise_closing: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnContextMenuClosingHandler, *mut i64) -> i32,
+    unadvise_closing: unsafe extern "system" fn(*mut IAvnContextMenu, i64) -> i32,
 }
 
 #[repr(C)]
@@ -15423,6 +15538,38 @@ impl ComPtr<IAvnContextMenu> {
     pub fn set_placement_target(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placement_target)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn open_with_control(&self, control: Option<&ComPtr<IAvnControl>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().open_with_control)(self.as_raw(), control.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_opening(&self, handler: &ComPtr<IAvnContextMenuOpeningHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_opening)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_opening(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_opening)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_closing(&self, handler: &ComPtr<IAvnContextMenuClosingHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_closing)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_closing(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_closing)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }

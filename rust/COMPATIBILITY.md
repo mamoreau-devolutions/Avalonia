@@ -337,6 +337,16 @@ taking an `IAvnControl` (ScrollViewer 8 to 9). TabItem.TabStripPlacement
 stays a gap: `Dock?` is a nullable enum and the ABI has no nullable-int
 shape yet; a future `NullableI32` kind would unblock it.
 
+Wave U14 closes ContextMenu's open lifecycle (ContextMenu 7 to 8).
+`Open(Control?)` crosses as `OpenWithControl` — the safe layer takes
+`Option<&impl AsControl>` — and Opening/Closing cross with the Cancel
+write-back payload, the same `ref int Cancel` shape as PopupFlyoutBase and
+Window. The extractor now suppresses a method that overrides an already
+projected base method (ContextMenu's `Open()` override of MenuBase's is
+reported as a gap with that reason instead of duplicating the base slot),
+and the safe layer honors nullable `ComInterface` method parameters in
+both directions.
+
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and
 `IAvnNumericUpDown` each move from 2 to 3. Templates, filters, ItemsSource,

@@ -1207,7 +1207,7 @@ public class ClrTypeExtractorTests
         var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
 
         Assert.Equal(3, Type(ir, "IAvnMenuFlyout").AbiVersion);
-        Assert.Equal(7, Type(ir, "IAvnContextMenu").AbiVersion);
+        Assert.Equal(8, Type(ir, "IAvnContextMenu").AbiVersion);
         Assert.All(
             new[]
             {
@@ -1673,7 +1673,7 @@ public class ClrTypeExtractorTests
         Assert.Equal(9, Type(ir, "IAvnComboBox").AbiVersion);
         Assert.Equal(4, Type(ir, "IAvnDatePicker").AbiVersion);
         Assert.Contains(Type(ir, "IAvnDatePicker").Properties, p => p.Name == "VerticalContentAlignment");
-        Assert.Equal(7, Type(ir, "IAvnContextMenu").AbiVersion);
+        Assert.Equal(8, Type(ir, "IAvnContextMenu").AbiVersion);
         Assert.Equal(7, Type(ir, "IAvnProgressBar").AbiVersion);
         Assert.Contains(Type(ir, "IAvnProgressBar").Properties, p => p.Name == "Percentage");
         Assert.Equal(6, Type(ir, "IAvnStackPanel").AbiVersion);
@@ -1704,8 +1704,14 @@ public class ClrTypeExtractorTests
         var popupProp = flyoutBase.Properties.Single(p => p.Name == "Popup");
         Assert.Equal("Avalonia.Host.Com.IAvnPopup", popupProp.InterfaceName);
 
-        Assert.Equal(7, Type(ir, "IAvnContextMenu").AbiVersion);
+        Assert.Equal(8, Type(ir, "IAvnContextMenu").AbiVersion);
         Assert.Contains(Type(ir, "IAvnContextMenu").Properties, p => p.Name == "PlacementTarget");
+        var openWithControl = Type(ir, "IAvnContextMenu").Methods
+            .Single(m => m.Name == "OpenWithControl");
+        Assert.Equal(MarshallingKind.ComInterface, openWithControl.Parameters.Single().Kind);
+        Assert.Equal("Avalonia.Host.Com.IAvnControl", openWithControl.Parameters.Single().InterfaceName);
+        Assert.True(openWithControl.Parameters.Single().IsNullable);
+        Assert.Contains(Type(ir, "IAvnContextMenu").Events, e => e.Name == "Opening");
         Assert.Equal(13, ir.FactoryAbiVersion);
     }
 

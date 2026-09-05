@@ -184,6 +184,10 @@ typedef struct IAvnContentControl IAvnContentControl;
 typedef struct IAvnContentControlVtbl IAvnContentControlVtbl;
 typedef struct IAvnContextMenu IAvnContextMenu;
 typedef struct IAvnContextMenuVtbl IAvnContextMenuVtbl;
+typedef struct IAvnContextMenuClosingHandler IAvnContextMenuClosingHandler;
+typedef struct IAvnContextMenuClosingHandlerVtbl IAvnContextMenuClosingHandlerVtbl;
+typedef struct IAvnContextMenuOpeningHandler IAvnContextMenuOpeningHandler;
+typedef struct IAvnContextMenuOpeningHandlerVtbl IAvnContextMenuOpeningHandlerVtbl;
 typedef struct IAvnControl IAvnControl;
 typedef struct IAvnControlVtbl IAvnControlVtbl;
 typedef struct IAvnControlFactory IAvnControlFactory;
@@ -624,6 +628,38 @@ struct IAvnCommandBarOpeningHandlerVtbl {
 };
 struct IAvnCommandBarOpeningHandler { const IAvnCommandBarOpeningHandlerVtbl* vtbl; };
 #define I_AVN_COMMAND_BAR_OPENING_HANDLER_VTABLE_SLOTS 4
+
+static const AvnGuid I_AVN_CONTEXT_MENU_CLOSING_HANDLER_IID = {
+    0xA63F4035,
+    0x2362,
+    0x546D,
+    { 0x82, 0x38, 0xED, 0x91, 0xD4, 0xF8, 0x04, 0xCB }
+};
+#define I_AVN_CONTEXT_MENU_CLOSING_HANDLER_ABI_VERSION 1
+struct IAvnContextMenuClosingHandlerVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnContextMenuClosingHandler* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnContextMenuClosingHandler* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnContextMenuClosingHandler* self); /* slot 2 */
+    AvnHResult (AVN_CALL *invoke)(IAvnContextMenuClosingHandler* self, int32_t* cancel); /* slot 3 */
+};
+struct IAvnContextMenuClosingHandler { const IAvnContextMenuClosingHandlerVtbl* vtbl; };
+#define I_AVN_CONTEXT_MENU_CLOSING_HANDLER_VTABLE_SLOTS 4
+
+static const AvnGuid I_AVN_CONTEXT_MENU_OPENING_HANDLER_IID = {
+    0x25E25F96,
+    0x3DD6,
+    0x5C15,
+    { 0xA1, 0x90, 0x76, 0xE1, 0xE3, 0x2A, 0x4A, 0x5D }
+};
+#define I_AVN_CONTEXT_MENU_OPENING_HANDLER_ABI_VERSION 1
+struct IAvnContextMenuOpeningHandlerVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnContextMenuOpeningHandler* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnContextMenuOpeningHandler* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnContextMenuOpeningHandler* self); /* slot 2 */
+    AvnHResult (AVN_CALL *invoke)(IAvnContextMenuOpeningHandler* self, int32_t* cancel); /* slot 3 */
+};
+struct IAvnContextMenuOpeningHandler { const IAvnContextMenuOpeningHandlerVtbl* vtbl; };
+#define I_AVN_CONTEXT_MENU_OPENING_HANDLER_VTABLE_SLOTS 4
 
 static const AvnGuid I_AVN_CONTROL_KEY_DOWN_HANDLER_IID = {
     0x9232F26F,
@@ -3078,12 +3114,12 @@ struct IAvnContentControl { const IAvnContentControlVtbl* vtbl; };
 #define I_AVN_CONTENT_CONTROL_VTABLE_SLOTS 77
 
 static const AvnGuid I_AVN_CONTEXT_MENU_IID = {
-    0x0B266866,
-    0xBC3D,
-    0x59F3,
-    { 0xB1, 0x95, 0xFF, 0xAD, 0xB8, 0xAE, 0xED, 0x40 }
+    0x13FA26AB,
+    0xA74B,
+    0x53CF,
+    { 0xA4, 0xD0, 0x19, 0x09, 0xD2, 0x62, 0x13, 0x3D }
 };
-#define I_AVN_CONTEXT_MENU_ABI_VERSION 7
+#define I_AVN_CONTEXT_MENU_ABI_VERSION 8
 struct IAvnContextMenuVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnContextMenu* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnContextMenu* self); /* slot 1 */
@@ -3194,9 +3230,14 @@ struct IAvnContextMenuVtbl {
     AvnHResult (AVN_CALL *set_placement_rect)(IAvnContextMenu* self, AvnOptionalRect value); /* slot 106 */
     AvnHResult (AVN_CALL *get_placement_target)(IAvnContextMenu* self, IAvnControl** value); /* slot 107 */
     AvnHResult (AVN_CALL *set_placement_target)(IAvnContextMenu* self, IAvnControl* value); /* slot 108 */
+    AvnHResult (AVN_CALL *open_with_control)(IAvnContextMenu* self, IAvnControl* control); /* slot 109 */
+    AvnHResult (AVN_CALL *advise_opening)(IAvnContextMenu* self, IAvnContextMenuOpeningHandler* handler, int64_t* subscription_id); /* slot 110 */
+    AvnHResult (AVN_CALL *unadvise_opening)(IAvnContextMenu* self, int64_t subscription_id); /* slot 111 */
+    AvnHResult (AVN_CALL *advise_closing)(IAvnContextMenu* self, IAvnContextMenuClosingHandler* handler, int64_t* subscription_id); /* slot 112 */
+    AvnHResult (AVN_CALL *unadvise_closing)(IAvnContextMenu* self, int64_t subscription_id); /* slot 113 */
 };
 struct IAvnContextMenu { const IAvnContextMenuVtbl* vtbl; };
-#define I_AVN_CONTEXT_MENU_VTABLE_SLOTS 109
+#define I_AVN_CONTEXT_MENU_VTABLE_SLOTS 114
 
 static const AvnGuid I_AVN_CONTROL_IID = {
     0x82E7495D,

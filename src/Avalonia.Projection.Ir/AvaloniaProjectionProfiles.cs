@@ -66,7 +66,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnCommandBarButton"] = 5,
             ["Avalonia.Host.Com.IAvnCommandBarSeparator"] = 3,
             ["Avalonia.Host.Com.IAvnCommandBarToggleButton"] = 5,
-            ["Avalonia.Host.Com.IAvnContextMenu"] = 7,
+            ["Avalonia.Host.Com.IAvnContextMenu"] = 8,
             ["Avalonia.Host.Com.IAvnPopup"] = 5,
             ["Avalonia.Host.Com.IAvnTrayIcon"] = 3,
             ["Avalonia.Host.Com.IAvnPopupFlyoutBase"] = 3,
@@ -436,6 +436,7 @@ public static class AvaloniaProjectionProfiles
                 "PlacementTarget",
                 "PlacementAnchor", "PlacementGravity", "PlacementConstraintAdjustment",
                 "PlacementRect",
+                "Open", "Opening", "Closing",
             ],
             ["Avalonia.Controls.MenuFlyout"] = ["Items"],
             ["Avalonia.Controls.Spinner"] = [],
@@ -1117,6 +1118,16 @@ public static class AvaloniaProjectionProfiles
             // Closing is the one wave B event with a payload: the handler may veto the close
             // by writing back Cancel, exactly as Control.KeyDown writes back Handled.
             ["Avalonia.Controls.Primitives.PopupFlyoutBase.Closing"] = new()
+            {
+                PayloadKind = EventPayloadKind.Fields,
+                Parameters = [new() { Name = "Cancel", Direction = ParameterDirection.InOut }],
+            },
+            ["Avalonia.Controls.ContextMenu.Opening"] = new()
+            {
+                PayloadKind = EventPayloadKind.Fields,
+                Parameters = [new() { Name = "Cancel", Direction = ParameterDirection.InOut }],
+            },
+            ["Avalonia.Controls.ContextMenu.Closing"] = new()
             {
                 PayloadKind = EventPayloadKind.Fields,
                 Parameters = [new() { Name = "Cancel", Direction = ParameterDirection.InOut }],

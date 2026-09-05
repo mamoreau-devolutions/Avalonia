@@ -596,12 +596,20 @@ fn emit_method(ty: &ProjectedType, method: &crate::ir::ProjectedMethod) -> Strin
         .map(|parameter| {
             let parameter_name = to_snake(&parameter.name);
             if is_any_control(parameter) {
-                format!("{parameter_name}: &impl AsControl")
+                if parameter.is_nullable {
+                    format!("{parameter_name}: Option<&impl AsControl>")
+                } else {
+                    format!("{parameter_name}: &impl AsControl")
+                }
             } else if parameter.kind == "ComInterface" {
                 let safe = interface_suffix(simple_name(
                     parameter.interface_name.as_deref().expect("interfaceName"),
                 ));
-                format!("{parameter_name}: &{safe}")
+                if parameter.is_nullable {
+                    format!("{parameter_name}: Option<&{safe}>")
+                } else {
+                    format!("{parameter_name}: &{safe}")
+                }
             } else if let Some(geometry) = geometry::find(&parameter.kind) {
                 format!("{parameter_name}: {}", geometry.safe_name)
             } else {
@@ -615,7 +623,13 @@ fn emit_method(ty: &ProjectedType, method: &crate::ir::ProjectedMethod) -> Strin
         .filter(|parameter| is_any_control(parameter))
         .map(|parameter| {
             let parameter_name = to_snake(&parameter.name);
-            format!("        let {parameter_name} = {parameter_name}.as_control()?;\n")
+            if parameter.is_nullable {
+                format!(
+                    "        let {parameter_name} = {parameter_name}.map(|value| value.as_control()).transpose()?;\n"
+                )
+            } else {
+                format!("        let {parameter_name} = {parameter_name}.as_control()?;\n")
+            }
         })
         .collect::<String>();
     let call_arguments = ins
@@ -623,9 +637,17 @@ fn emit_method(ty: &ProjectedType, method: &crate::ir::ProjectedMethod) -> Strin
         .map(|parameter| {
             let parameter_name = to_snake(&parameter.name);
             if is_any_control(parameter) {
-                format!("&{parameter_name}")
+                if parameter.is_nullable {
+                    format!("{parameter_name}.as_ref()")
+                } else {
+                    format!("&{parameter_name}")
+                }
             } else if parameter.kind == "ComInterface" {
-                format!("&{parameter_name}.raw")
+                if parameter.is_nullable {
+                    format!("{parameter_name}.map(|value| &value.raw)")
+                } else {
+                    format!("&{parameter_name}.raw")
+                }
             } else if geometry::is_geometry(&parameter.kind) {
                 format!("{parameter_name}.into()")
             } else {
