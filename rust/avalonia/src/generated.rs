@@ -2605,11 +2605,15 @@ impl TryFrom<i32> for CalendarWeekRule {
 }
 
 pub use sys::AutoCompleteBoxPopulatingEventArgs;
+pub use sys::IAvnAutoCompleteBoxPopulatedArgs;
 pub use sys::AutoCompleteBoxDropDownOpeningEventArgs;
 pub use sys::AutoCompleteBoxDropDownClosingEventArgs;
+pub use sys::IAvnAutoCompleteBoxSelectionChangedArgs;
+pub use sys::IAvnCalendarSelectedDatesChangedArgs;
 pub use sys::CalendarDisplayDateChangedEventArgs;
 pub use sys::CalendarDisplayModeChangedEventArgs;
 pub use sys::CalendarDatePickerDateValidationErrorEventArgs;
+pub use sys::IAvnCalendarDatePickerSelectedDateChangedArgs;
 pub use sys::ContextMenuOpeningEventArgs;
 pub use sys::ContextMenuClosingEventArgs;
 pub use sys::ControlSizeChangedEventArgs;
@@ -3501,6 +3505,17 @@ impl AutoCompleteBox {
         scope.retain_subscription(self.subscribe_populating(callback)?);
         Ok(self)
     }
+    pub fn subscribe_populated(&self, callback: impl FnMut(&mut sys::ComPtr<sys::IAvnAutoCompleteBoxPopulatedArgs>) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::auto_complete_box_populated_handler(move |args| { callback(args); Ok(()) });
+        let subscription_id = self.raw.advise_populated(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_populated(subscription_id)))
+    }
+    pub fn on_populated(self, scope: &crate::AppScope, callback: impl FnMut(&mut sys::ComPtr<sys::IAvnAutoCompleteBoxPopulatedArgs>) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_populated(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_drop_down_opening(&self, callback: impl FnMut(&mut AutoCompleteBoxDropDownOpeningEventArgs) + Send + 'static) -> Result<EventSubscription> {
         let mut callback = callback;
         let handler = sys::auto_complete_box_drop_down_opening_handler(move |event| { callback(event); Ok(()) });
@@ -3547,6 +3562,17 @@ impl AutoCompleteBox {
     }
     pub fn on_drop_down_closed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_drop_down_closed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_selection_changed(&self, callback: impl FnMut(&mut sys::ComPtr<sys::IAvnAutoCompleteBoxSelectionChangedArgs>) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::auto_complete_box_selection_changed_handler(move |args| { callback(args); Ok(()) });
+        let subscription_id = self.raw.advise_selection_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_selection_changed(subscription_id)))
+    }
+    pub fn on_selection_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut sys::ComPtr<sys::IAvnAutoCompleteBoxSelectionChangedArgs>) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_selection_changed(callback)?);
         Ok(self)
     }
 }
@@ -5780,6 +5806,17 @@ impl Calendar {
         self.set_display_date_end(value)?;
         Ok(self)
     }
+    pub fn subscribe_selected_dates_changed(&self, callback: impl FnMut(&mut sys::ComPtr<sys::IAvnCalendarSelectedDatesChangedArgs>) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::calendar_selected_dates_changed_handler(move |args| { callback(args); Ok(()) });
+        let subscription_id = self.raw.advise_selected_dates_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_selected_dates_changed(subscription_id)))
+    }
+    pub fn on_selected_dates_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut sys::ComPtr<sys::IAvnCalendarSelectedDatesChangedArgs>) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_selected_dates_changed(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_display_date_changed(&self, callback: impl FnMut(&mut CalendarDisplayDateChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
         let mut callback = callback;
         let handler = sys::calendar_display_date_changed_handler(move |event| { callback(event); Ok(()) });
@@ -6502,6 +6539,17 @@ impl CalendarDatePicker {
     }
     pub fn on_date_validation_error(self, scope: &crate::AppScope, callback: impl FnMut(&mut CalendarDatePickerDateValidationErrorEventArgs) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_date_validation_error(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_selected_date_changed(&self, callback: impl FnMut(&mut sys::ComPtr<sys::IAvnCalendarDatePickerSelectedDateChangedArgs>) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::calendar_date_picker_selected_date_changed_handler(move |args| { callback(args); Ok(()) });
+        let subscription_id = self.raw.advise_selected_date_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_selected_date_changed(subscription_id)))
+    }
+    pub fn on_selected_date_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut sys::ComPtr<sys::IAvnCalendarDatePickerSelectedDateChangedArgs>) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_selected_date_changed(callback)?);
         Ok(self)
     }
 }

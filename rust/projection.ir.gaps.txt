@@ -34,16 +34,12 @@ Avalonia.Controls.AutoCompleteBox.ValueMemberBinding: By design: bindings are no
 Avalonia.Controls.AutoCompleteBox.Watermark: By design: obsolete alias of PlaceholderText
 Avalonia.Controls.AutoCompleteBox.WatermarkForeground: By design: obsolete alias of PlaceholderForeground
 Avalonia.Controls.AutoCompleteBox.AsyncPopulator: By design: async population needs the async-completion transport
-Avalonia.Controls.AutoCompleteBox.Populated: By design: the populated collection payload has no event shape yet
-Avalonia.Controls.AutoCompleteBox.SelectionChanged: By design: the added/removed collection payload has no event shape yet
 Avalonia.Controls.Border.Render(DrawingContext): By design: custom drawing is not part of the projected model
-Avalonia.Controls.Calendar.SelectedDatesChanged: By design: the added/removed collection payload has no event shape yet
 Avalonia.Controls.Calendar.ToString(): By design: identity and formatting members are not ABI surface
 Avalonia.Controls.CalendarDatePicker.TextConverter: By design: the converter is owned by the host
 Avalonia.Controls.CalendarDatePicker.Watermark: By design: obsolete alias of PlaceholderText
 Avalonia.Controls.CalendarDatePicker.UseFloatingWatermark: By design: obsolete alias of UseFloatingPlaceholder
 Avalonia.Controls.CalendarDatePicker.WatermarkForeground: By design: obsolete alias of PlaceholderForeground
-Avalonia.Controls.CalendarDatePicker.SelectedDateChanged: By design: the added/removed collection payload has no event shape yet
 Avalonia.Controls.Carousel.PageTransition: By design: transitions are animation internals owned by the host
 Avalonia.Controls.ComboBox.HorizontalContentAlignment: By design: the new-hidden member duplicates the projected base
 Avalonia.Controls.ComboBox.VerticalContentAlignment: By design: the new-hidden member duplicates the projected base

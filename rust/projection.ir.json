@@ -303,6 +303,25 @@
           ]
         },
         {
+          "name": "Populated",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnAutoCompleteBoxPopulatedHandler",
+          "handlerInterfaceIid": "698DE303-DC70-5541-9A1C-DCC8829FF6A1",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "Args",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Controls.PopulatedEventArgs\u003E",
+          "argsInterfaceName": "Avalonia.Host.Com.IAvnAutoCompleteBoxPopulatedArgs",
+          "argsInterfaceIid": "EBB37207-4673-5D46-8A65-60863B87380E",
+          "parameters": [
+            {
+              "name": "Data",
+              "kind": "Variant",
+              "direction": "In",
+              "managedTypeName": "System.Collections.IEnumerable",
+              "isNullable": false
+            }
+          ]
+        },
+        {
           "name": "DropDownOpening",
           "handlerInterfaceName": "Avalonia.Host.Com.IAvnAutoCompleteBoxDropDownOpeningHandler",
           "handlerInterfaceIid": "0A856166-2348-5059-A995-A3142F8B6A12",
@@ -353,6 +372,32 @@
           "payloadKind": "None",
           "managedHandlerTypeName": "System.EventHandler",
           "parameters": []
+        },
+        {
+          "name": "SelectionChanged",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnAutoCompleteBoxSelectionChangedHandler",
+          "handlerInterfaceIid": "A6B06471-91B1-53F2-9544-06FFF5949E72",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "Args",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Controls.SelectionChangedEventArgs\u003E",
+          "argsInterfaceName": "Avalonia.Host.Com.IAvnAutoCompleteBoxSelectionChangedArgs",
+          "argsInterfaceIid": "23285627-33AB-5F2A-9461-1B7D17DEED68",
+          "parameters": [
+            {
+              "name": "AddedItems",
+              "kind": "Variant",
+              "direction": "In",
+              "managedTypeName": "System.Collections.IList",
+              "isNullable": false
+            },
+            {
+              "name": "RemovedItems",
+              "kind": "Variant",
+              "direction": "In",
+              "managedTypeName": "System.Collections.IList",
+              "isNullable": false
+            }
+          ]
         }
       ]
     },
@@ -731,6 +776,32 @@
       ],
       "events": [
         {
+          "name": "SelectedDatesChanged",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnCalendarSelectedDatesChangedHandler",
+          "handlerInterfaceIid": "36A63A9E-EA78-5F39-9533-6C939E9BC4D1",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "Args",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Controls.SelectionChangedEventArgs\u003E",
+          "argsInterfaceName": "Avalonia.Host.Com.IAvnCalendarSelectedDatesChangedArgs",
+          "argsInterfaceIid": "6255CA5E-DF54-5EEC-A4F4-34044577AE85",
+          "parameters": [
+            {
+              "name": "AddedItems",
+              "kind": "Variant",
+              "direction": "In",
+              "managedTypeName": "System.Collections.IList",
+              "isNullable": false
+            },
+            {
+              "name": "RemovedItems",
+              "kind": "Variant",
+              "direction": "In",
+              "managedTypeName": "System.Collections.IList",
+              "isNullable": false
+            }
+          ]
+        },
+        {
           "name": "DisplayDateChanged",
           "handlerInterfaceName": "Avalonia.Host.Com.IAvnCalendarDisplayDateChangedHandler",
           "handlerInterfaceIid": "0D117D48-940A-5796-A82F-B15E31CC51C1",
@@ -1011,6 +1082,32 @@
               "kind": "Bool",
               "direction": "InOut",
               "managedTypeName": "System.Boolean",
+              "isNullable": false
+            }
+          ]
+        },
+        {
+          "name": "SelectedDateChanged",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnCalendarDatePickerSelectedDateChangedHandler",
+          "handlerInterfaceIid": "F858AFA0-12BA-5E22-AED9-E8869218DECD",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "Args",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Controls.SelectionChangedEventArgs\u003E",
+          "argsInterfaceName": "Avalonia.Host.Com.IAvnCalendarDatePickerSelectedDateChangedArgs",
+          "argsInterfaceIid": "80F7B3EB-F408-5597-88C1-C8405B36A477",
+          "parameters": [
+            {
+              "name": "AddedItems",
+              "kind": "Variant",
+              "direction": "In",
+              "managedTypeName": "System.Collections.IList",
+              "isNullable": false
+            },
+            {
+              "name": "RemovedItems",
+              "kind": "Variant",
+              "direction": "In",
+              "managedTypeName": "System.Collections.IList",
               "isNullable": false
             }
           ]
@@ -11956,24 +12053,9 @@
       "reason": "By design: async population needs the async-completion transport"
     },
     {
-      "owner": "Avalonia.Controls.AutoCompleteBox",
-      "member": "Populated",
-      "reason": "By design: the populated collection payload has no event shape yet"
-    },
-    {
-      "owner": "Avalonia.Controls.AutoCompleteBox",
-      "member": "SelectionChanged",
-      "reason": "By design: the added/removed collection payload has no event shape yet"
-    },
-    {
       "owner": "Avalonia.Controls.Border",
       "member": "Render(DrawingContext)",
       "reason": "By design: custom drawing is not part of the projected model"
-    },
-    {
-      "owner": "Avalonia.Controls.Calendar",
-      "member": "SelectedDatesChanged",
-      "reason": "By design: the added/removed collection payload has no event shape yet"
     },
     {
       "owner": "Avalonia.Controls.Calendar",
@@ -11999,11 +12081,6 @@
       "owner": "Avalonia.Controls.CalendarDatePicker",
       "member": "WatermarkForeground",
       "reason": "By design: obsolete alias of PlaceholderForeground"
-    },
-    {
-      "owner": "Avalonia.Controls.CalendarDatePicker",
-      "member": "SelectedDateChanged",
-      "reason": "By design: the added/removed collection payload has no event shape yet"
     },
     {
       "owner": "Avalonia.Controls.Carousel",

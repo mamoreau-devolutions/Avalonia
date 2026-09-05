@@ -115,7 +115,19 @@ pub fn emit_safe_module(ir: &ProjectionIr) -> String {
 
     let mut event_argument_types = Vec::new();
     for event in ir.types.iter().flat_map(|ty| ty.events.iter()) {
-        if !event.parameters.is_empty() {
+        if event.payload_kind == "Args" {
+            let name = simple_name(
+                event
+                    .args_interface_name
+                    .as_deref()
+                    .expect("argsInterfaceName"),
+            )
+            .to_string();
+            if !event_argument_types.contains(&name) {
+                out.push_str(&format!("pub use sys::{name};\n"));
+                event_argument_types.push(name);
+            }
+        } else if !event.parameters.is_empty() {
             let name = event_arguments_name(event);
             if !event_argument_types.contains(&name) {
                 out.push_str(&format!("pub use sys::{name};\n"));
@@ -613,6 +625,35 @@ fn emit_property(
 }
 
 fn emit_event(event: &ProjectedEvent) -> String {
+    if event.payload_kind == "Args" {
+        // The callback receives the args interface wrapper with count/getter methods.
+        let event_name = to_snake(&event.name);
+        let args_name = simple_name(
+            event
+                .args_interface_name
+                .as_deref()
+                .expect("argsInterfaceName"),
+        );
+        let handler_name = simple_name(&event.handler_interface_name)
+            .strip_prefix("IAvn")
+            .unwrap_or_else(|| simple_name(&event.handler_interface_name))
+            .strip_suffix("Handler")
+            .unwrap_or_else(|| simple_name(&event.handler_interface_name));
+        let handler_function = format!("{}_handler", to_snake(handler_name));
+        return format!(
+            "    pub fn subscribe_{event_name}(&self, callback: impl FnMut(&mut sys::ComPtr<sys::{args_name}>) + Send + 'static) -> Result<EventSubscription> {{\n\
+             \x20       let mut callback = callback;\n\
+             \x20       let handler = sys::{handler_function}(move |args| {{ callback(args); Ok(()) }});\n\
+             \x20       let subscription_id = self.raw.advise_{event_name}(&handler)?;\n\
+             \x20       let source = self.raw.clone();\n\
+             \x20       Ok(EventSubscription::new(move || source.unadvise_{event_name}(subscription_id)))\n\
+             \x20   }}\n\
+             \x20   pub fn on_{event_name}(self, scope: &crate::AppScope, callback: impl FnMut(&mut sys::ComPtr<sys::{args_name}>) + Send + 'static) -> Result<Self> {{\n\
+              \x20       scope.retain_subscription(self.subscribe_{event_name}(callback)?);\n\
+              \x20       Ok(self)\n\
+              \x20   }}\n"
+        );
+    }
     if !event.parameters.is_empty() {
         let event_name = to_snake(&event.name);
         let args_name = event_arguments_name(event);

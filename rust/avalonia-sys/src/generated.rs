@@ -736,6 +736,86 @@ unsafe extern "system" fn i_avn_auto_complete_box_populating_handler_invoke(this
     hr
 }
 
+pub const I_AVN_AUTO_COMPLETE_BOX_POPULATED_ARGS_IID: Guid = Guid { data1: 0xEBB37207, data2: 0x4673, data3: 0x5D46, data4: [0x8A, 0x65, 0x60, 0x86, 0x3B, 0x87, 0x38, 0x0E] };
+
+#[repr(C)]
+struct IAvnAutoCompleteBoxPopulatedArgsVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_data_count: unsafe extern "system" fn(*mut IAvnAutoCompleteBoxPopulatedArgs, *mut i32) -> i32,
+    get_data_at: unsafe extern "system" fn(*mut IAvnAutoCompleteBoxPopulatedArgs, i32, *mut AvnVariant) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnAutoCompleteBoxPopulatedArgs { vtbl: *const IAvnAutoCompleteBoxPopulatedArgsVtbl }
+
+unsafe impl ComInterface for IAvnAutoCompleteBoxPopulatedArgs { const IID: Guid = I_AVN_AUTO_COMPLETE_BOX_POPULATED_ARGS_IID; }
+
+impl ComPtr<IAvnAutoCompleteBoxPopulatedArgs> {
+    pub fn data_count(&self) -> Result<i32> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_count)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn data_at(&self, index: i32) -> Result<AvnVariant> {
+        unsafe {
+            let mut value = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_data_at)(self.as_raw(), index, &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+}
+
+pub const I_AVN_AUTO_COMPLETE_BOX_POPULATED_HANDLER_IID: Guid = Guid { data1: 0x698DE303, data2: 0xDC70, data3: 0x5541, data4: [0x9A, 0x1C, 0xDC, 0xC8, 0x82, 0x9F, 0xF6, 0xA1] };
+
+#[repr(C)]
+struct IAvnAutoCompleteBoxPopulatedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnAutoCompleteBoxPopulatedHandler, *mut IAvnAutoCompleteBoxPopulatedArgs) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnAutoCompleteBoxPopulatedHandler { vtbl: *const IAvnAutoCompleteBoxPopulatedHandlerVtbl }
+
+unsafe impl ComInterface for IAvnAutoCompleteBoxPopulatedHandler { const IID: Guid = I_AVN_AUTO_COMPLETE_BOX_POPULATED_HANDLER_IID; }
+
+static I_AVN_AUTO_COMPLETE_BOX_POPULATED_HANDLER_VTBL: IAvnAutoCompleteBoxPopulatedHandlerVtbl = IAvnAutoCompleteBoxPopulatedHandlerVtbl {
+    query_interface: i_avn_auto_complete_box_populated_handler_query_interface,
+    add_ref: i_avn_auto_complete_box_populated_handler_add_ref,
+    release: i_avn_auto_complete_box_populated_handler_release,
+    invoke: i_avn_auto_complete_box_populated_handler_invoke,
+};
+
+pub fn auto_complete_box_populated_handler(callback: impl FnMut(&mut ComPtr<IAvnAutoCompleteBoxPopulatedArgs>) -> Result<()> + Send + 'static) -> ComPtr<IAvnAutoCompleteBoxPopulatedHandler> {
+    crate::event_callback::create(IAvnAutoCompleteBoxPopulatedHandler { vtbl: &I_AVN_AUTO_COMPLETE_BOX_POPULATED_HANDLER_VTBL }, callback)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_populated_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnAutoCompleteBoxPopulatedHandler, ComPtr<IAvnAutoCompleteBoxPopulatedArgs>>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_populated_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnAutoCompleteBoxPopulatedHandler, ComPtr<IAvnAutoCompleteBoxPopulatedArgs>>(this)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_populated_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnAutoCompleteBoxPopulatedHandler, ComPtr<IAvnAutoCompleteBoxPopulatedArgs>>(this)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_populated_handler_invoke(this: *mut IAvnAutoCompleteBoxPopulatedHandler, args: *mut IAvnAutoCompleteBoxPopulatedArgs) -> i32 {
+    let mut arguments = match unsafe { ComPtr::from_raw(args) } {
+        Some(arguments) => arguments,
+        None => return hresult::E_POINTER,
+    };
+    let hr = crate::event_callback::invoke::<IAvnAutoCompleteBoxPopulatedHandler, ComPtr<IAvnAutoCompleteBoxPopulatedArgs>>(this, &mut arguments);
+    hr
+}
+
 pub const I_AVN_AUTO_COMPLETE_BOX_DROP_DOWN_OPENING_HANDLER_IID: Guid = Guid { data1: 0x0A856166, data2: 0x2348, data3: 0x5059, data4: [0xA9, 0x95, 0xA3, 0x14, 0x2F, 0x8B, 0x6A, 0x12] };
 
 #[derive(Debug)]
@@ -956,6 +1036,102 @@ unsafe extern "system" fn i_avn_auto_complete_box_drop_down_closed_handler_invok
     crate::event_callback::invoke::<IAvnAutoCompleteBoxDropDownClosedHandler, ()>(this, &mut ())
 }
 
+pub const I_AVN_AUTO_COMPLETE_BOX_SELECTION_CHANGED_ARGS_IID: Guid = Guid { data1: 0x23285627, data2: 0x33AB, data3: 0x5F2A, data4: [0x94, 0x61, 0x1B, 0x7D, 0x17, 0xDE, 0xED, 0x68] };
+
+#[repr(C)]
+struct IAvnAutoCompleteBoxSelectionChangedArgsVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_added_items_count: unsafe extern "system" fn(*mut IAvnAutoCompleteBoxSelectionChangedArgs, *mut i32) -> i32,
+    get_added_items_at: unsafe extern "system" fn(*mut IAvnAutoCompleteBoxSelectionChangedArgs, i32, *mut AvnVariant) -> i32,
+    get_removed_items_count: unsafe extern "system" fn(*mut IAvnAutoCompleteBoxSelectionChangedArgs, *mut i32) -> i32,
+    get_removed_items_at: unsafe extern "system" fn(*mut IAvnAutoCompleteBoxSelectionChangedArgs, i32, *mut AvnVariant) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnAutoCompleteBoxSelectionChangedArgs { vtbl: *const IAvnAutoCompleteBoxSelectionChangedArgsVtbl }
+
+unsafe impl ComInterface for IAvnAutoCompleteBoxSelectionChangedArgs { const IID: Guid = I_AVN_AUTO_COMPLETE_BOX_SELECTION_CHANGED_ARGS_IID; }
+
+impl ComPtr<IAvnAutoCompleteBoxSelectionChangedArgs> {
+    pub fn added_items_count(&self) -> Result<i32> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_added_items_count)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn added_items_at(&self, index: i32) -> Result<AvnVariant> {
+        unsafe {
+            let mut value = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_added_items_at)(self.as_raw(), index, &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn removed_items_count(&self) -> Result<i32> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_removed_items_count)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn removed_items_at(&self, index: i32) -> Result<AvnVariant> {
+        unsafe {
+            let mut value = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_removed_items_at)(self.as_raw(), index, &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+}
+
+pub const I_AVN_AUTO_COMPLETE_BOX_SELECTION_CHANGED_HANDLER_IID: Guid = Guid { data1: 0xA6B06471, data2: 0x91B1, data3: 0x53F2, data4: [0x95, 0x44, 0x06, 0xFF, 0xF5, 0x94, 0x9E, 0x72] };
+
+#[repr(C)]
+struct IAvnAutoCompleteBoxSelectionChangedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnAutoCompleteBoxSelectionChangedHandler, *mut IAvnAutoCompleteBoxSelectionChangedArgs) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnAutoCompleteBoxSelectionChangedHandler { vtbl: *const IAvnAutoCompleteBoxSelectionChangedHandlerVtbl }
+
+unsafe impl ComInterface for IAvnAutoCompleteBoxSelectionChangedHandler { const IID: Guid = I_AVN_AUTO_COMPLETE_BOX_SELECTION_CHANGED_HANDLER_IID; }
+
+static I_AVN_AUTO_COMPLETE_BOX_SELECTION_CHANGED_HANDLER_VTBL: IAvnAutoCompleteBoxSelectionChangedHandlerVtbl = IAvnAutoCompleteBoxSelectionChangedHandlerVtbl {
+    query_interface: i_avn_auto_complete_box_selection_changed_handler_query_interface,
+    add_ref: i_avn_auto_complete_box_selection_changed_handler_add_ref,
+    release: i_avn_auto_complete_box_selection_changed_handler_release,
+    invoke: i_avn_auto_complete_box_selection_changed_handler_invoke,
+};
+
+pub fn auto_complete_box_selection_changed_handler(callback: impl FnMut(&mut ComPtr<IAvnAutoCompleteBoxSelectionChangedArgs>) -> Result<()> + Send + 'static) -> ComPtr<IAvnAutoCompleteBoxSelectionChangedHandler> {
+    crate::event_callback::create(IAvnAutoCompleteBoxSelectionChangedHandler { vtbl: &I_AVN_AUTO_COMPLETE_BOX_SELECTION_CHANGED_HANDLER_VTBL }, callback)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_selection_changed_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnAutoCompleteBoxSelectionChangedHandler, ComPtr<IAvnAutoCompleteBoxSelectionChangedArgs>>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_selection_changed_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnAutoCompleteBoxSelectionChangedHandler, ComPtr<IAvnAutoCompleteBoxSelectionChangedArgs>>(this)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_selection_changed_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnAutoCompleteBoxSelectionChangedHandler, ComPtr<IAvnAutoCompleteBoxSelectionChangedArgs>>(this)
+}
+
+unsafe extern "system" fn i_avn_auto_complete_box_selection_changed_handler_invoke(this: *mut IAvnAutoCompleteBoxSelectionChangedHandler, args: *mut IAvnAutoCompleteBoxSelectionChangedArgs) -> i32 {
+    let mut arguments = match unsafe { ComPtr::from_raw(args) } {
+        Some(arguments) => arguments,
+        None => return hresult::E_POINTER,
+    };
+    let hr = crate::event_callback::invoke::<IAvnAutoCompleteBoxSelectionChangedHandler, ComPtr<IAvnAutoCompleteBoxSelectionChangedArgs>>(this, &mut arguments);
+    hr
+}
+
 pub const I_AVN_BUTTON_CLICK_HANDLER_IID: Guid = Guid { data1: 0x4D76B167, data2: 0xC926, data3: 0x5DBD, data4: [0x86, 0xF0, 0xEF, 0x35, 0x2D, 0x9C, 0xBF, 0x9B] };
 
 #[repr(C)]
@@ -1009,6 +1185,102 @@ unsafe extern "system" fn i_avn_button_click_handler_release(this: *mut IUnknown
 
 unsafe extern "system" fn i_avn_button_click_handler_invoke(this: *mut IAvnButtonClickHandler) -> i32 {
     crate::event_callback::invoke::<IAvnButtonClickHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_CALENDAR_SELECTED_DATES_CHANGED_ARGS_IID: Guid = Guid { data1: 0x6255CA5E, data2: 0xDF54, data3: 0x5EEC, data4: [0xA4, 0xF4, 0x34, 0x04, 0x45, 0x77, 0xAE, 0x85] };
+
+#[repr(C)]
+struct IAvnCalendarSelectedDatesChangedArgsVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_added_items_count: unsafe extern "system" fn(*mut IAvnCalendarSelectedDatesChangedArgs, *mut i32) -> i32,
+    get_added_items_at: unsafe extern "system" fn(*mut IAvnCalendarSelectedDatesChangedArgs, i32, *mut AvnVariant) -> i32,
+    get_removed_items_count: unsafe extern "system" fn(*mut IAvnCalendarSelectedDatesChangedArgs, *mut i32) -> i32,
+    get_removed_items_at: unsafe extern "system" fn(*mut IAvnCalendarSelectedDatesChangedArgs, i32, *mut AvnVariant) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnCalendarSelectedDatesChangedArgs { vtbl: *const IAvnCalendarSelectedDatesChangedArgsVtbl }
+
+unsafe impl ComInterface for IAvnCalendarSelectedDatesChangedArgs { const IID: Guid = I_AVN_CALENDAR_SELECTED_DATES_CHANGED_ARGS_IID; }
+
+impl ComPtr<IAvnCalendarSelectedDatesChangedArgs> {
+    pub fn added_items_count(&self) -> Result<i32> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_added_items_count)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn added_items_at(&self, index: i32) -> Result<AvnVariant> {
+        unsafe {
+            let mut value = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_added_items_at)(self.as_raw(), index, &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn removed_items_count(&self) -> Result<i32> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_removed_items_count)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn removed_items_at(&self, index: i32) -> Result<AvnVariant> {
+        unsafe {
+            let mut value = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_removed_items_at)(self.as_raw(), index, &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+}
+
+pub const I_AVN_CALENDAR_SELECTED_DATES_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x36A63A9E, data2: 0xEA78, data3: 0x5F39, data4: [0x95, 0x33, 0x6C, 0x93, 0x9E, 0x9B, 0xC4, 0xD1] };
+
+#[repr(C)]
+struct IAvnCalendarSelectedDatesChangedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnCalendarSelectedDatesChangedHandler, *mut IAvnCalendarSelectedDatesChangedArgs) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnCalendarSelectedDatesChangedHandler { vtbl: *const IAvnCalendarSelectedDatesChangedHandlerVtbl }
+
+unsafe impl ComInterface for IAvnCalendarSelectedDatesChangedHandler { const IID: Guid = I_AVN_CALENDAR_SELECTED_DATES_CHANGED_HANDLER_IID; }
+
+static I_AVN_CALENDAR_SELECTED_DATES_CHANGED_HANDLER_VTBL: IAvnCalendarSelectedDatesChangedHandlerVtbl = IAvnCalendarSelectedDatesChangedHandlerVtbl {
+    query_interface: i_avn_calendar_selected_dates_changed_handler_query_interface,
+    add_ref: i_avn_calendar_selected_dates_changed_handler_add_ref,
+    release: i_avn_calendar_selected_dates_changed_handler_release,
+    invoke: i_avn_calendar_selected_dates_changed_handler_invoke,
+};
+
+pub fn calendar_selected_dates_changed_handler(callback: impl FnMut(&mut ComPtr<IAvnCalendarSelectedDatesChangedArgs>) -> Result<()> + Send + 'static) -> ComPtr<IAvnCalendarSelectedDatesChangedHandler> {
+    crate::event_callback::create(IAvnCalendarSelectedDatesChangedHandler { vtbl: &I_AVN_CALENDAR_SELECTED_DATES_CHANGED_HANDLER_VTBL }, callback)
+}
+
+unsafe extern "system" fn i_avn_calendar_selected_dates_changed_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnCalendarSelectedDatesChangedHandler, ComPtr<IAvnCalendarSelectedDatesChangedArgs>>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_calendar_selected_dates_changed_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnCalendarSelectedDatesChangedHandler, ComPtr<IAvnCalendarSelectedDatesChangedArgs>>(this)
+}
+
+unsafe extern "system" fn i_avn_calendar_selected_dates_changed_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnCalendarSelectedDatesChangedHandler, ComPtr<IAvnCalendarSelectedDatesChangedArgs>>(this)
+}
+
+unsafe extern "system" fn i_avn_calendar_selected_dates_changed_handler_invoke(this: *mut IAvnCalendarSelectedDatesChangedHandler, args: *mut IAvnCalendarSelectedDatesChangedArgs) -> i32 {
+    let mut arguments = match unsafe { ComPtr::from_raw(args) } {
+        Some(arguments) => arguments,
+        None => return hresult::E_POINTER,
+    };
+    let hr = crate::event_callback::invoke::<IAvnCalendarSelectedDatesChangedHandler, ComPtr<IAvnCalendarSelectedDatesChangedArgs>>(this, &mut arguments);
+    hr
 }
 
 pub const I_AVN_CALENDAR_DISPLAY_DATE_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x0D117D48, data2: 0x940A, data3: 0x5796, data4: [0xA8, 0x2F, 0xB1, 0x5E, 0x31, 0xCC, 0x51, 0xC1] };
@@ -1285,6 +1557,102 @@ unsafe extern "system" fn i_avn_calendar_date_picker_date_validation_error_handl
     if hr >= 0 {
         *throw_exception = i32::from(arguments.throw_exception);
     }
+    hr
+}
+
+pub const I_AVN_CALENDAR_DATE_PICKER_SELECTED_DATE_CHANGED_ARGS_IID: Guid = Guid { data1: 0x80F7B3EB, data2: 0xF408, data3: 0x5597, data4: [0x88, 0xC1, 0xC8, 0x40, 0x5B, 0x36, 0xA4, 0x77] };
+
+#[repr(C)]
+struct IAvnCalendarDatePickerSelectedDateChangedArgsVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_added_items_count: unsafe extern "system" fn(*mut IAvnCalendarDatePickerSelectedDateChangedArgs, *mut i32) -> i32,
+    get_added_items_at: unsafe extern "system" fn(*mut IAvnCalendarDatePickerSelectedDateChangedArgs, i32, *mut AvnVariant) -> i32,
+    get_removed_items_count: unsafe extern "system" fn(*mut IAvnCalendarDatePickerSelectedDateChangedArgs, *mut i32) -> i32,
+    get_removed_items_at: unsafe extern "system" fn(*mut IAvnCalendarDatePickerSelectedDateChangedArgs, i32, *mut AvnVariant) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnCalendarDatePickerSelectedDateChangedArgs { vtbl: *const IAvnCalendarDatePickerSelectedDateChangedArgsVtbl }
+
+unsafe impl ComInterface for IAvnCalendarDatePickerSelectedDateChangedArgs { const IID: Guid = I_AVN_CALENDAR_DATE_PICKER_SELECTED_DATE_CHANGED_ARGS_IID; }
+
+impl ComPtr<IAvnCalendarDatePickerSelectedDateChangedArgs> {
+    pub fn added_items_count(&self) -> Result<i32> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_added_items_count)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn added_items_at(&self, index: i32) -> Result<AvnVariant> {
+        unsafe {
+            let mut value = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_added_items_at)(self.as_raw(), index, &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn removed_items_count(&self) -> Result<i32> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_removed_items_count)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn removed_items_at(&self, index: i32) -> Result<AvnVariant> {
+        unsafe {
+            let mut value = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_removed_items_at)(self.as_raw(), index, &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+}
+
+pub const I_AVN_CALENDAR_DATE_PICKER_SELECTED_DATE_CHANGED_HANDLER_IID: Guid = Guid { data1: 0xF858AFA0, data2: 0x12BA, data3: 0x5E22, data4: [0xAE, 0xD9, 0xE8, 0x86, 0x92, 0x18, 0xDE, 0xCD] };
+
+#[repr(C)]
+struct IAvnCalendarDatePickerSelectedDateChangedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnCalendarDatePickerSelectedDateChangedHandler, *mut IAvnCalendarDatePickerSelectedDateChangedArgs) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnCalendarDatePickerSelectedDateChangedHandler { vtbl: *const IAvnCalendarDatePickerSelectedDateChangedHandlerVtbl }
+
+unsafe impl ComInterface for IAvnCalendarDatePickerSelectedDateChangedHandler { const IID: Guid = I_AVN_CALENDAR_DATE_PICKER_SELECTED_DATE_CHANGED_HANDLER_IID; }
+
+static I_AVN_CALENDAR_DATE_PICKER_SELECTED_DATE_CHANGED_HANDLER_VTBL: IAvnCalendarDatePickerSelectedDateChangedHandlerVtbl = IAvnCalendarDatePickerSelectedDateChangedHandlerVtbl {
+    query_interface: i_avn_calendar_date_picker_selected_date_changed_handler_query_interface,
+    add_ref: i_avn_calendar_date_picker_selected_date_changed_handler_add_ref,
+    release: i_avn_calendar_date_picker_selected_date_changed_handler_release,
+    invoke: i_avn_calendar_date_picker_selected_date_changed_handler_invoke,
+};
+
+pub fn calendar_date_picker_selected_date_changed_handler(callback: impl FnMut(&mut ComPtr<IAvnCalendarDatePickerSelectedDateChangedArgs>) -> Result<()> + Send + 'static) -> ComPtr<IAvnCalendarDatePickerSelectedDateChangedHandler> {
+    crate::event_callback::create(IAvnCalendarDatePickerSelectedDateChangedHandler { vtbl: &I_AVN_CALENDAR_DATE_PICKER_SELECTED_DATE_CHANGED_HANDLER_VTBL }, callback)
+}
+
+unsafe extern "system" fn i_avn_calendar_date_picker_selected_date_changed_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnCalendarDatePickerSelectedDateChangedHandler, ComPtr<IAvnCalendarDatePickerSelectedDateChangedArgs>>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_calendar_date_picker_selected_date_changed_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnCalendarDatePickerSelectedDateChangedHandler, ComPtr<IAvnCalendarDatePickerSelectedDateChangedArgs>>(this)
+}
+
+unsafe extern "system" fn i_avn_calendar_date_picker_selected_date_changed_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnCalendarDatePickerSelectedDateChangedHandler, ComPtr<IAvnCalendarDatePickerSelectedDateChangedArgs>>(this)
+}
+
+unsafe extern "system" fn i_avn_calendar_date_picker_selected_date_changed_handler_invoke(this: *mut IAvnCalendarDatePickerSelectedDateChangedHandler, args: *mut IAvnCalendarDatePickerSelectedDateChangedArgs) -> i32 {
+    let mut arguments = match unsafe { ComPtr::from_raw(args) } {
+        Some(arguments) => arguments,
+        None => return hresult::E_POINTER,
+    };
+    let hr = crate::event_callback::invoke::<IAvnCalendarDatePickerSelectedDateChangedHandler, ComPtr<IAvnCalendarDatePickerSelectedDateChangedArgs>>(this, &mut arguments);
     hr
 }
 
@@ -5529,6 +5897,8 @@ struct IAvnAutoCompleteBoxVtbl {
     unadvise_text_changed: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
     advise_populating: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnAutoCompleteBoxPopulatingHandler, *mut i64) -> i32,
     unadvise_populating: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
+    advise_populated: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnAutoCompleteBoxPopulatedHandler, *mut i64) -> i32,
+    unadvise_populated: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
     advise_drop_down_opening: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnAutoCompleteBoxDropDownOpeningHandler, *mut i64) -> i32,
     unadvise_drop_down_opening: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
     advise_drop_down_opened: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnAutoCompleteBoxDropDownOpenedHandler, *mut i64) -> i32,
@@ -5537,6 +5907,8 @@ struct IAvnAutoCompleteBoxVtbl {
     unadvise_drop_down_closing: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
     advise_drop_down_closed: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnAutoCompleteBoxDropDownClosedHandler, *mut i64) -> i32,
     unadvise_drop_down_closed: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
+    advise_selection_changed: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnAutoCompleteBoxSelectionChangedHandler, *mut i64) -> i32,
+    unadvise_selection_changed: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
 }
 
 #[repr(C)]
@@ -6535,6 +6907,19 @@ impl ComPtr<IAvnAutoCompleteBox> {
             hresult::check(hr)
         }
     }
+    pub fn advise_populated(&self, handler: &ComPtr<IAvnAutoCompleteBoxPopulatedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_populated)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_populated(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_populated)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_drop_down_opening(&self, handler: &ComPtr<IAvnAutoCompleteBoxDropDownOpeningHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -6584,6 +6969,19 @@ impl ComPtr<IAvnAutoCompleteBox> {
     pub fn unadvise_drop_down_closed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_drop_down_closed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_selection_changed(&self, handler: &ComPtr<IAvnAutoCompleteBoxSelectionChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_selection_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_selection_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_selection_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -9273,6 +9671,8 @@ struct IAvnCalendarVtbl {
     get_blackout_dates: unsafe extern "system" fn(*mut IAvnCalendar, *mut *mut IAvnDateTimeList) -> i32,
     get_display_date_end: unsafe extern "system" fn(*mut IAvnCalendar, *mut *mut u16) -> i32,
     set_display_date_end: unsafe extern "system" fn(*mut IAvnCalendar, *mut u16) -> i32,
+    advise_selected_dates_changed: unsafe extern "system" fn(*mut IAvnCalendar, *mut IAvnCalendarSelectedDatesChangedHandler, *mut i64) -> i32,
+    unadvise_selected_dates_changed: unsafe extern "system" fn(*mut IAvnCalendar, i64) -> i32,
     advise_display_date_changed: unsafe extern "system" fn(*mut IAvnCalendar, *mut IAvnCalendarDisplayDateChangedHandler, *mut i64) -> i32,
     unadvise_display_date_changed: unsafe extern "system" fn(*mut IAvnCalendar, i64) -> i32,
     advise_display_mode_changed: unsafe extern "system" fn(*mut IAvnCalendar, *mut IAvnCalendarDisplayModeChangedHandler, *mut i64) -> i32,
@@ -10125,6 +10525,19 @@ impl ComPtr<IAvnCalendar> {
             hresult::check(hr)
         }
     }
+    pub fn advise_selected_dates_changed(&self, handler: &ComPtr<IAvnCalendarSelectedDatesChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_selected_dates_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_selected_dates_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_selected_dates_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_display_date_changed(&self, handler: &ComPtr<IAvnCalendarDisplayDateChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -10296,6 +10709,8 @@ struct IAvnCalendarDatePickerVtbl {
     unadvise_calendar_opened: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i64) -> i32,
     advise_date_validation_error: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut IAvnCalendarDatePickerDateValidationErrorHandler, *mut i64) -> i32,
     unadvise_date_validation_error: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i64) -> i32,
+    advise_selected_date_changed: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut IAvnCalendarDatePickerSelectedDateChangedHandler, *mut i64) -> i32,
+    unadvise_selected_date_changed: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i64) -> i32,
 }
 
 #[repr(C)]
@@ -11248,6 +11663,19 @@ impl ComPtr<IAvnCalendarDatePicker> {
     pub fn unadvise_date_validation_error(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_date_validation_error)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_selected_date_changed(&self, handler: &ComPtr<IAvnCalendarDatePickerSelectedDateChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_selected_date_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_selected_date_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_selected_date_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }

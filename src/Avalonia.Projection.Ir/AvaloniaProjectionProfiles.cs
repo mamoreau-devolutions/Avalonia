@@ -475,6 +475,7 @@ public static class AvaloniaProjectionProfiles
                 "MinimumPopulateDelay", "TextChanged", "ItemsSource",
                 "Populating", "DropDownOpening", "DropDownClosing", "SelectedItem", "ItemTemplate",
                 "ItemFilter", "TextFilter", "ItemSelector", "TextSelector",
+                "SelectionChanged", "Populated",
             ],
             ["Avalonia.Controls.MaskedTextBox"] =
                 ["Mask", "AsciiOnly", "HidePromptOnLeave", "ResetOnPrompt", "ResetOnSpace",
@@ -491,7 +492,7 @@ public static class AvaloniaProjectionProfiles
                 "DisplayMode", "SelectionMode", "IsTodayHighlighted", "FirstDayOfWeek",
                 "HeaderBackground", "IsWeekNumberVisible", "WeekNumberRule",
                 "AllowTapRangeSelection", "DisplayModeChanged", "DisplayDateChanged",
-                "SelectedDates", "BlackoutDates",
+                "SelectedDates", "BlackoutDates", "SelectedDatesChanged",
             ],
             ["Avalonia.Controls.CalendarDatePicker"] =
             [
@@ -501,7 +502,7 @@ public static class AvaloniaProjectionProfiles
                 "FirstDayOfWeek", "UseFloatingPlaceholder", "PlaceholderForeground",
                 "DateValidationError",
                 "HorizontalContentAlignment", "VerticalContentAlignment", "WeekNumberRule",
-                "CalendarOpened", "CalendarClosed", "Clear", "BlackoutDates",
+                "CalendarOpened", "CalendarClosed", "Clear", "BlackoutDates", "SelectedDateChanged",
             ],
             ["Avalonia.Controls.Carousel"] =
                 ["IsSwipeEnabled", "ViewportFraction", "IsSwiping", "Next", "Previous"],
@@ -1322,10 +1323,7 @@ public static class AvaloniaProjectionProfiles
                         ["ContainerPrepared"] = "container lifecycle is owned by the host",
                         ["ContainerIndexChanged"] = "container lifecycle is owned by the host",
                         ["ContainerClearing"] = "container lifecycle is owned by the host",
-                        ["SelectedDatesChanged"] = "the added/removed collection payload has no event shape yet",
-                        ["SelectedDateChanged"] = "the added/removed collection payload has no event shape yet",
                         ["ResourcesChanged"] = "the resource dictionary is not part of the projected model",
-                        ["Populated"] = "the populated collection payload has no event shape yet",
                         ["KnobTransitions"] = "animation internals owned by the host",
                         ["Open"] = "the suppressed override of the base Open slot",
                         ["ContentTransition"] = "transitions are animation internals owned by the host",
@@ -1618,6 +1616,40 @@ public static class AvaloniaProjectionProfiles
                     new() { Name = "From" },
                     new() { Name = "To" },
                     new() { Name = "HasRunToCompletion" },
+                ],
+            },
+            // U32: the collection payloads cross as a host-implemented args interface
+            // whose count/getter slots expose the items as Variants.
+            ["Avalonia.Controls.AutoCompleteBox.SelectionChanged"] = new()
+            {
+                PayloadKind = EventPayloadKind.Args,
+                Parameters =
+                [
+                    new() { Name = "AddedItems" },
+                    new() { Name = "RemovedItems" },
+                ],
+            },
+            ["Avalonia.Controls.AutoCompleteBox.Populated"] = new()
+            {
+                PayloadKind = EventPayloadKind.Args,
+                Parameters = [new() { Name = "Data" }],
+            },
+            ["Avalonia.Controls.Calendar.SelectedDatesChanged"] = new()
+            {
+                PayloadKind = EventPayloadKind.Args,
+                Parameters =
+                [
+                    new() { Name = "AddedItems" },
+                    new() { Name = "RemovedItems" },
+                ],
+            },
+            ["Avalonia.Controls.CalendarDatePicker.SelectedDateChanged"] = new()
+            {
+                PayloadKind = EventPayloadKind.Args,
+                Parameters =
+                [
+                    new() { Name = "AddedItems" },
+                    new() { Name = "RemovedItems" },
                 ],
             },
             ["Avalonia.Controls.CalendarDatePicker.DateValidationError"] = new()

@@ -110,6 +110,10 @@ pub struct ProjectedEvent {
     pub payload_kind: String,
     pub managed_handler_type_name: Option<String>,
     #[serde(default)]
+    pub args_interface_name: Option<String>,
+    #[serde(default)]
+    pub args_interface_iid: Option<String>,
+    #[serde(default)]
     pub parameters: Vec<ProjectedParameter>,
 }
 

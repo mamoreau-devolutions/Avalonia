@@ -31,6 +31,9 @@ public static class NativeHeaderEmitter
             .ToArray();
 
         var names = events.Select(@event => SimpleName(@event.HandlerInterfaceName))
+            .Concat(events
+                .Where(@event => @event.ArgsInterfaceName is not null)
+                .Select(@event => SimpleName(@event.ArgsInterfaceName!)))
             .Concat(collections.Select(property => SimpleName(property.InterfaceName!)))
             .Concat(types.Select(type => type.Name))
             .Concat(statics.Select(group => SimpleName(group.Key)))
@@ -124,9 +127,31 @@ public static class NativeHeaderEmitter
         foreach (var @event in events)
         {
             var name = SimpleName(@event.HandlerInterfaceName);
+            if (@event.PayloadKind == EventPayloadKind.Args && @event.ArgsInterfaceName is { } argsFullName)
+            {
+                // The args interface: one count/getter pair per projected property.
+                var argsName = SimpleName(argsFullName);
+                EmitIid(sb, argsName, @event.ArgsInterfaceIid!, 1);
+                BeginInterface(sb, argsName);
+                var slot = 3;
+                foreach (var parameter in @event.Parameters)
+                {
+                    EmitSlot(sb, slot, $"get_{Snake(parameter.Name)}_count", argsName, ["int32_t* value"]);
+                    slot++;
+                    EmitSlot(sb, slot, $"get_{Snake(parameter.Name)}_at", argsName, ["int32_t index", "AvnVariant* value"]);
+                    slot++;
+                }
+                EndInterface(sb, argsName, slot);
+
+                EmitIid(sb, name, @event.HandlerInterfaceIid, @event.HandlerInterfaceAbiVersion);
+                BeginInterface(sb, name);
+                EmitSlot(sb, 3, "invoke", name, [$"{argsName}* args"]);
+                EndInterface(sb, name, 4);
+                continue;
+            }
+            var arguments = @event.Parameters.Select(EventParameter).ToArray();
             EmitIid(sb, name, @event.HandlerInterfaceIid, @event.HandlerInterfaceAbiVersion);
             BeginInterface(sb, name);
-            var arguments = @event.Parameters.Select(EventParameter).ToArray();
             EmitSlot(sb, 3, "invoke", name, arguments);
             EndInterface(sb, name, 4);
         }

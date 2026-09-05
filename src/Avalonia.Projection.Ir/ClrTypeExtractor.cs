@@ -220,6 +220,42 @@ public static class ClrTypeExtractor
             var handlerInterfaceName =
                 $"{policy.ProjectionNamespace}.IAvn{type.Name}{@event.Name}Handler";
             var eventParameters = new List<ProjectedParameter>();
+            if (eventProjection.PayloadKind == EventPayloadKind.Args)
+            {
+                var invokeParameters = @event.EventHandlerType!.GetMethod("Invoke")!.GetParameters();
+                if (invokeParameters.Length < 2)
+                {
+                    Skip(skipped, type, @event.Name,
+                        "Args event projection requires event arguments");
+                    continue;
+                }
+                var eventArgsType = invokeParameters[1].ParameterType;
+                var missing = eventProjection.Parameters
+                    .Where(parameter => eventArgsType.GetProperty(
+                        parameter.Name,
+                        BindingFlags.Public | BindingFlags.Instance) is null)
+                    .ToList();
+                if (missing.Count > 0)
+                {
+                    Skip(skipped, type, @event.Name,
+                        $"Args event argument property '{missing[0].Name}' was not found");
+                    continue;
+                }
+                foreach (var parameter in eventProjection.Parameters)
+                {
+                    var property = eventArgsType.GetProperty(
+                        parameter.Name,
+                        BindingFlags.Public | BindingFlags.Instance)!;
+                    eventParameters.Add(new ProjectedParameter
+                    {
+                        Name = property.Name,
+                        Kind = MarshallingKind.Variant,
+                        ManagedTypeName = property.PropertyType.FullName,
+                        IsNullable = IsNullable(property),
+                        Direction = ParameterDirection.In,
+                    });
+                }
+            }
             if (eventProjection.PayloadKind == EventPayloadKind.Fields)
             {
                 var invokeParameters = @event.EventHandlerType!.GetMethod("Invoke")!.GetParameters();
@@ -300,6 +336,12 @@ public static class ClrTypeExtractor
                 PayloadKind = eventProjection.PayloadKind,
                 ManagedHandlerTypeName = @event.EventHandlerType is { } handlerType
                     ? ManagedTypeName(handlerType)
+                    : null,
+                ArgsInterfaceName = eventProjection.PayloadKind == EventPayloadKind.Args
+                    ? $"{policy.ProjectionNamespace}.IAvn{type.Name}{@event.Name}Args"
+                    : null,
+                ArgsInterfaceIid = eventProjection.PayloadKind == EventPayloadKind.Args
+                    ? CreateDeterministicIid($"{policy.ProjectionNamespace}.IAvn{type.Name}{@event.Name}Args")
                     : null,
                 Parameters = eventParameters,
             });

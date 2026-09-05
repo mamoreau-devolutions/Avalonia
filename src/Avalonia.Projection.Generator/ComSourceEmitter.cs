@@ -230,9 +230,86 @@ public static class ComSourceEmitter
         sb.AppendLine("#nullable enable");
         sb.AppendLine("using System.Runtime.InteropServices;");
         sb.AppendLine("using System.Runtime.InteropServices.Marshalling;");
+        if (@event.PayloadKind == EventPayloadKind.Args)
+            sb.AppendLine("using System.Linq;");
         sb.AppendLine();
         sb.AppendLine($"namespace {ns};");
         sb.AppendLine();
+        if (@event.PayloadKind == EventPayloadKind.Args && @event.ArgsInterfaceName is { } argsFullName)
+        {
+            var argsName = SimpleName(argsFullName);
+            var argsIid = @event.ArgsInterfaceIid!;
+            // The args interface: one count/getter pair per projected property.
+            sb.AppendLine("[GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]");
+            sb.AppendLine($"[Guid(\"{argsIid}\")]");
+            sb.AppendLine($"public partial interface {argsName}");
+            sb.AppendLine("{");
+            foreach (var parameter in @event.Parameters)
+            {
+                sb.AppendLine("    [PreserveSig]");
+                sb.AppendLine($"    int Get{parameter.Name}Count(out int value);");
+                sb.AppendLine();
+                sb.AppendLine("    [PreserveSig]");
+                sb.AppendLine($"    int Get{parameter.Name}At(int index, out AvnVariant value);");
+                sb.AppendLine();
+            }
+            sb.AppendLine("}");
+            sb.AppendLine();
+            // The host wrapper exposes the CLR event args' collections live.
+            sb.AppendLine("[GeneratedComClass]");
+            sb.AppendLine($"public sealed partial class {argsName[1..]} : {argsName}");
+            sb.AppendLine("{");
+            sb.AppendLine($"    private readonly global::System.Collections.IEnumerable?[] _collections = new global::System.Collections.IEnumerable?[{@event.Parameters.Count}];");
+            sb.AppendLine();
+            sb.AppendLine($"    internal {argsName[1..]}(global::System.Collections.IEnumerable?[] collections) => _collections = collections;");
+            sb.AppendLine();
+            for (var i = 0; i < @event.Parameters.Count; i++)
+            {
+                var parameter = @event.Parameters[i];
+                sb.AppendLine($"    public int Get{parameter.Name}Count(out int value)");
+                sb.AppendLine("    {");
+                sb.AppendLine("        value = 0;");
+                sb.AppendLine("        try");
+                sb.AppendLine("        {");
+                sb.AppendLine($"            value = _collections[{i}]?.Cast<object?>().Count() ?? 0;");
+                sb.AppendLine("            return global::Avalonia.Host.HResults.S_OK;");
+                sb.AppendLine("        }");
+                sb.AppendLine("        catch (global::System.Exception e)");
+                sb.AppendLine("        {");
+                sb.AppendLine("            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);");
+                sb.AppendLine("        }");
+                sb.AppendLine("    }");
+                sb.AppendLine();
+                sb.AppendLine($"    public int Get{parameter.Name}At(int index, out AvnVariant value)");
+                sb.AppendLine("    {");
+                sb.AppendLine("        value = default;");
+                sb.AppendLine("        try");
+                sb.AppendLine("        {");
+                sb.AppendLine($"            var item = _collections[{i}]?.Cast<object?>().ElementAtOrDefault(index);");
+                sb.AppendLine("            if (index < 0 || item is null)");
+                sb.AppendLine("                return global::Avalonia.Host.HResults.E_INVALIDARG;");
+                sb.AppendLine("            value = AvnVariant.FromObject(item);");
+                sb.AppendLine("            return global::Avalonia.Host.HResults.S_OK;");
+                sb.AppendLine("        }");
+                sb.AppendLine("        catch (global::System.Exception e)");
+                sb.AppendLine("        {");
+                sb.AppendLine("            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);");
+                sb.AppendLine("        }");
+                sb.AppendLine("    }");
+                sb.AppendLine();
+            }
+            sb.AppendLine("}");
+            sb.AppendLine();
+            // The handler receives the args interface.
+            sb.AppendLine("[GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]");
+            sb.AppendLine($"[Guid(\"{@event.HandlerInterfaceIid}\")]");
+            sb.AppendLine($"public partial interface {name}");
+            sb.AppendLine("{");
+            sb.AppendLine("    [PreserveSig]");
+            sb.AppendLine($"    int Invoke({argsName} args);");
+            sb.AppendLine("}");
+            return sb.ToString();
+        }
         sb.AppendLine("[GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]");
         sb.AppendLine($"[Guid(\"{@event.HandlerInterfaceIid}\")]");
         sb.AppendLine($"public partial interface {name}");
@@ -1660,17 +1737,31 @@ public static class ComSourceEmitter
         sb.AppendLine("            var eventSource = _value;");
         sb.AppendLine($"            var callback = new global::{@event.ManagedHandlerTypeName}((_, eventArgs) =>");
         sb.AppendLine("            {");
-        foreach (var parameter in @event.Parameters.Where(p => p.Direction == ParameterDirection.InOut))
-            sb.AppendLine($"                var {LowerFirst(parameter.Name)} = {EventReadExpression(parameter)};");
-        var arguments = string.Join(", ", @event.Parameters.Select(parameter =>
-            parameter.Direction == ParameterDirection.InOut
-                ? $"ref {LowerFirst(parameter.Name)}"
-                : EventReadExpression(parameter)));
-        sb.AppendLine($"                var hr = handler.Invoke({arguments});");
-        sb.AppendLine("                if (hr < 0)");
-        sb.AppendLine("                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);");
-        foreach (var parameter in @event.Parameters.Where(p => p.Direction == ParameterDirection.InOut))
-            sb.AppendLine($"                eventArgs.{parameter.Name} = {EventWriteExpression(parameter, LowerFirst(parameter.Name))};");
+        if (@event.PayloadKind == EventPayloadKind.Args && @event.ArgsInterfaceName is { } argsFullName)
+        {
+            var argsName = SimpleName(argsFullName);
+            sb.AppendLine($"                var args = new {argsName[1..]}(new global::System.Collections.IEnumerable?[]");
+            sb.Append("                {");
+            sb.Append(string.Join(", ", @event.Parameters.Select(p => $"eventArgs.{p.Name}")));
+            sb.AppendLine("});");
+            sb.AppendLine("                var hr = handler.Invoke(args);");
+            sb.AppendLine("                if (hr < 0)");
+            sb.AppendLine("                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);");
+        }
+        else
+        {
+            foreach (var parameter in @event.Parameters.Where(p => p.Direction == ParameterDirection.InOut))
+                sb.AppendLine($"                var {LowerFirst(parameter.Name)} = {EventReadExpression(parameter)};");
+            var arguments = string.Join(", ", @event.Parameters.Select(parameter =>
+                parameter.Direction == ParameterDirection.InOut
+                    ? $"ref {LowerFirst(parameter.Name)}"
+                    : EventReadExpression(parameter)));
+            sb.AppendLine($"                var hr = handler.Invoke({arguments});");
+            sb.AppendLine("                if (hr < 0)");
+            sb.AppendLine("                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);");
+            foreach (var parameter in @event.Parameters.Where(p => p.Direction == ParameterDirection.InOut))
+                sb.AppendLine($"                eventArgs.{parameter.Name} = {EventWriteExpression(parameter, LowerFirst(parameter.Name))};");
+        }
         sb.AppendLine("            });");
         sb.AppendLine($"            eventSource.{name} += callback;");
         sb.AppendLine($"            subscriptionId = global::System.Threading.Interlocked.Increment(ref _next{name}SubscriptionId);");

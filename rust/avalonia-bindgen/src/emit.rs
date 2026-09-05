@@ -903,6 +903,9 @@ fn emit_interface(ir: &ProjectionIr, ty: &ProjectedType) -> String {
 }
 
 fn emit_event_handler(event: &ProjectedEvent) -> String {
+    if event.payload_kind == "Args" {
+        return emit_args_event_handler(event);
+    }
     if !event.parameters.is_empty() {
         return emit_field_event_handler(event);
     }
@@ -957,6 +960,109 @@ fn emit_event_handler(event: &ProjectedEvent) -> String {
          }}\n",
         iid = guid_literal(&event.handler_interface_iid),
         shouty = to_shouty(name),
+        handler_fn = event_handler_function(event),
+    )
+}
+
+fn emit_args_event_handler(event: &ProjectedEvent) -> String {
+    assert_eq!(event.payload_kind, "Args", "args handler requires Args payload kind");
+    let args_full = event
+        .args_interface_name
+        .as_deref()
+        .expect("argsInterfaceName");
+    let args_iid = event
+        .args_interface_iid
+        .as_deref()
+        .expect("argsInterfaceIid");
+    let args_name = simple_name(args_full);
+    let args_iid_const = format!("{}_IID", to_shouty(args_name));
+    let name = simple_name(&event.handler_interface_name);
+    let iid_const = format!("{}_IID", to_shouty(name));
+    let shouty = to_shouty(name);
+    let stem = to_snake(name);
+
+    // The args interface: count/getter pairs, exposed as safe methods on the
+    // raw pointer the handler receives.
+    let mut args_slots = String::new();
+    let mut args_methods = String::new();
+    let mut slot = 3;
+    for parameter in &event.parameters {
+        let prop = to_snake(&parameter.name);
+        args_slots.push_str(&format!(
+            "    get_{prop}_count: unsafe extern \"system\" fn(*mut {args_name}, *mut i32) -> i32,\n\
+             \x20   get_{prop}_at: unsafe extern \"system\" fn(*mut {args_name}, i32, *mut AvnVariant) -> i32,\n"
+        ));
+        args_methods.push_str(&format!(
+            "    pub fn {prop}_count(&self) -> Result<i32> {{\n\
+             \x20       unsafe {{\n\
+             \x20           let mut value = 0;\n\
+             \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_{prop}_count)(self.as_raw(), &mut value);\n\
+             \x20           hresult::check(hr).map(|_| value)\n\
+             \x20       }}\n\
+             \x20   }}\n\
+             \x20   pub fn {prop}_at(&self, index: i32) -> Result<AvnVariant> {{\n\
+             \x20       unsafe {{\n\
+             \x20           let mut value = AvnVariant::default();\n\
+             \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_{prop}_at)(self.as_raw(), index, &mut value);\n\
+             \x20           hresult::check(hr).map(|_| value)\n\
+             \x20       }}\n\
+             \x20   }}\n"
+        ));
+        slot += 2;
+    }
+
+    format!(
+        "pub const {args_iid_const}: Guid = {args_iid_literal};\n\n\
+         #[repr(C)]\n\
+         struct {args_name}Vtbl {{\n\
+         \x20   query_interface: unsafe extern \"system\" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,\n\
+         \x20   add_ref: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+         \x20   release: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+         {args_slots}}}\n\n\
+         #[repr(C)]\n\
+         pub struct {args_name} {{ vtbl: *const {args_name}Vtbl }}\n\n\
+         unsafe impl ComInterface for {args_name} {{ const IID: Guid = {args_iid_const}; }}\n\n\
+         impl ComPtr<{args_name}> {{\n\
+         {args_methods}}}\n\n\
+         pub const {iid_const}: Guid = {iid};\n\n\
+         #[repr(C)]\n\
+         struct {name}Vtbl {{\n\
+         \x20   query_interface: unsafe extern \"system\" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,\n\
+         \x20   add_ref: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+         \x20   release: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+         \x20   invoke: unsafe extern \"system\" fn(*mut {name}, *mut {args_name}) -> i32,\n\
+         }}\n\n\
+         #[repr(C)]\n\
+         pub struct {name} {{ vtbl: *const {name}Vtbl }}\n\n\
+         unsafe impl ComInterface for {name} {{ const IID: Guid = {iid_const}; }}\n\n\
+         static {shouty}_VTBL: {name}Vtbl = {name}Vtbl {{\n\
+         \x20   query_interface: {stem}_query_interface,\n\
+         \x20   add_ref: {stem}_add_ref,\n\
+         \x20   release: {stem}_release,\n\
+         \x20   invoke: {stem}_invoke,\n\
+         }};\n\n\
+         pub fn {handler_fn}(callback: impl FnMut(&mut ComPtr<{args_name}>) -> Result<()> + Send + 'static) -> ComPtr<{name}> {{\n\
+         \x20   crate::event_callback::create({name} {{ vtbl: &{shouty}_VTBL }}, callback)\n\
+         }}\n\n\
+         unsafe extern \"system\" fn {stem}_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {{\n\
+         \x20   crate::event_callback::query_interface::<{name}, ComPtr<{args_name}>>(this, iid, result)\n\
+         }}\n\n\
+         unsafe extern \"system\" fn {stem}_add_ref(this: *mut IUnknown) -> u32 {{\n\
+         \x20   crate::event_callback::add_ref::<{name}, ComPtr<{args_name}>>(this)\n\
+         }}\n\n\
+         unsafe extern \"system\" fn {stem}_release(this: *mut IUnknown) -> u32 {{\n\
+         \x20   crate::event_callback::release::<{name}, ComPtr<{args_name}>>(this)\n\
+         }}\n\n\
+         unsafe extern \"system\" fn {stem}_invoke(this: *mut {name}, args: *mut {args_name}) -> i32 {{\n\
+         \x20   let mut arguments = match unsafe {{ ComPtr::from_raw(args) }} {{\n\
+         \x20       Some(arguments) => arguments,\n\
+         \x20       None => return hresult::E_POINTER,\n\
+         \x20   }};\n\
+         \x20   let hr = crate::event_callback::invoke::<{name}, ComPtr<{args_name}>>(this, &mut arguments);\n\
+         \x20   hr\n\
+         }}\n",
+        iid = guid_literal(&event.handler_interface_iid),
+        args_iid_literal = guid_literal(args_iid),
         handler_fn = event_handler_function(event),
     )
 }

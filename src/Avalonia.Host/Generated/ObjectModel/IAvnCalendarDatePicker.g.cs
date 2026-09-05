@@ -135,6 +135,12 @@ public partial interface IAvnCalendarDatePicker : IAvnTemplatedControl
     [PreserveSig]
     int UnadviseDateValidationError(long subscriptionId);
 
+    [PreserveSig]
+    int AdviseSelectedDateChanged(IAvnCalendarDatePickerSelectedDateChangedHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadviseSelectedDateChanged(long subscriptionId);
+
 }
 
 [GeneratedComClass]
@@ -172,6 +178,8 @@ public sealed partial class AvnCalendarDatePicker : IAvnCalendarDatePicker
     private long _nextCalendarOpenedSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnCalendarDatePickerDateValidationErrorHandler Handler, global::System.Action Unsubscribe)> _dateValidationErrorSubscriptions = new();
     private long _nextDateValidationErrorSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnCalendarDatePickerSelectedDateChangedHandler Handler, global::System.Action Unsubscribe)> _selectedDateChangedSubscriptions = new();
+    private long _nextSelectedDateChangedSubscriptionId;
 
     internal AvnCalendarDatePicker(global::Avalonia.Controls.CalendarDatePicker value)
     {
@@ -2519,6 +2527,54 @@ public sealed partial class AvnCalendarDatePicker : IAvnCalendarDatePicker
         }
     }
 
+    public int AdviseSelectedDateChanged(IAvnCalendarDatePickerSelectedDateChangedHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<Avalonia.Controls.SelectionChangedEventArgs>((_, eventArgs) =>
+            {
+                var args = new AvnCalendarDatePickerSelectedDateChangedArgs(new global::System.Collections.IEnumerable?[]
+                {eventArgs.AddedItems, eventArgs.RemovedItems});
+                var hr = handler.Invoke(args);
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.SelectedDateChanged += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextSelectedDateChangedSubscriptionId);
+            _selectedDateChangedSubscriptions.Add(subscriptionId, (handler, () => eventSource.SelectedDateChanged -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseSelectedDateChanged(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_selectedDateChangedSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     private void ReleaseSubscriptions()
     {
         foreach (var subscription in _attachedToLogicalTreeSubscriptions.Values)
@@ -2611,5 +2667,11 @@ public sealed partial class AvnCalendarDatePicker : IAvnCalendarDatePicker
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
         }
         _dateValidationErrorSubscriptions.Clear();
+        foreach (var subscription in _selectedDateChangedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _selectedDateChangedSubscriptions.Clear();
     }
 }

@@ -573,6 +573,18 @@ validated by the advise/unadvise pair and the generated slot signature.
 TransitioningContentControl republishes at 10. The gap report drops to 169
 entries. Factory stays 13.
 
+Wave U32 crosses the collection event payloads with a new
+`EventPayloadKind.Args`: the handler receives a host-implemented args
+interface whose `Get{Name}Count`/`Get{Name}At` slots expose each projected
+collection property as Variants, live over the CLR event args. Four events
+cross — AutoCompleteBox.SelectionChanged and Populated,
+Calendar.SelectedDatesChanged, CalendarDatePicker.SelectedDateChanged —
+and the bindgen emits the args interface with safe count/getter methods on
+the Rust side (`subscribe_selection_changed` receives a
+`ComPtr<IAvnSelectionChangedArgs>`-shaped wrapper). AutoCompleteBox (15),
+Calendar (12) and CalendarDatePicker (11) republish. The gap report drops
+to 165 entries. Factory stays 13.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A
