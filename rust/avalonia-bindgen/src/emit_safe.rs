@@ -9,6 +9,12 @@ pub fn emit_safe_module(ir: &ProjectionIr) -> String {
          use crate::{runtime::{with_factory, AsControl, EventSubscription}, Result};\n\n",
     );
     out.push_str(&geometry::emit_safe_structs());
+    if ir.types
+        .iter()
+        .any(|t| t.properties.iter().any(|p| p.kind == "Variant"))
+    {
+        out.push_str(&crate::variant::emit_safe_enum());
+    }
     if ir.brush_interface_name.is_some() {
         out.push_str(&emit_brush());
     }
@@ -443,6 +449,11 @@ fn emit_property(
                  \x20       Ok(self.raw.get_{snake}()?)\n\
                  \x20   }}\n"
             )),
+            "Variant" => out.push_str(&format!(
+                "    pub fn {getter}(&self) -> Result<Variant> {{\n\
+                 \x20       Ok(Variant::from_abi(self.raw.get_{snake}()?))\n\
+                 \x20   }}\n"
+            )),
             "I32" if is_enum_property(property, flags_enums) => {
                 let enum_name = simple_name(property.managed_type_name.as_deref().unwrap());
                 out.push_str(&format!(
@@ -719,6 +730,16 @@ fn safe_property_input(
             "Option<&sys::ComPtr<sys::IAvnCommand>>".into(),
             String::new(),
             "value".into(),
+        ),
+        "Variant" => (
+            "impl Into<Variant>".into(),
+            "        let value = value.into().to_abi()?;\n".into(),
+            "&value".into(),
+        ),
+        "Variant" => (
+            "impl Into<Variant>".into(),
+            "        let value = value.into().to_abi()?;\n".into(),
+            "&value".into(),
         ),
         "I32" if is_enum_property(property, flags_enums) => (
             simple_name(property.managed_type_name.as_deref().unwrap()).into(),

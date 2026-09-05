@@ -62,7 +62,7 @@ fn a_closing_flyout_carries_a_writable_cancel_field() {
 }
 
 #[test]
-fn the_menu_pair_is_imperative_and_carries_no_icommand() {
+fn the_menu_pair_is_imperative_and_its_commands_cross() {
     for expected in [
         "*open)(IAvnMenuBase* self)",
         "*close)(IAvnMenuBase* self)",
@@ -72,6 +72,8 @@ fn the_menu_pair_is_imperative_and_carries_no_icommand() {
         "*set_icon)(IAvnMenuItem* self, IAvnControl* value)",
         "*set_header)(IAvnHeaderedSelectingItemsControl* self, IAvnControl* value)",
         "*advise_click)(IAvnMenuItem* self, IAvnMenuItemClickHandler* handler, int64_t* subscription_id)",
+        "*set_command)(IAvnMenuItem* self, IAvnCommand* value)",
+        "*set_command_parameter)(IAvnMenuItem* self, AvnVariant value)",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
     }
@@ -82,7 +84,6 @@ fn the_menu_pair_is_imperative_and_carries_no_icommand() {
         "IAvnMenuBase must not publish a set_is_open"
     );
     for forbidden in [
-        "*set_command_parameter)(IAvnMenuItem",
         "*set_hot_key)(IAvnMenuItem",
         "*set_input_gesture)(IAvnMenuItem",
     ] {
@@ -171,7 +172,7 @@ fn wave_b_interfaces_publish_abi_version_one_and_nothing_else_moved() {
         "#define I_AVN_FLYOUT_ABI_VERSION 3",
         "#define I_AVN_MENU_BASE_ABI_VERSION 4",
         "#define I_AVN_MENU_ABI_VERSION 4",
-        "#define I_AVN_MENU_ITEM_ABI_VERSION 6",
+        "#define I_AVN_MENU_ITEM_ABI_VERSION 7",
         "#define I_AVN_HEADERED_SELECTING_ITEMS_CONTROL_ABI_VERSION 4",
         "#define I_AVN_SPLIT_VIEW_ABI_VERSION 3",
         "#define I_AVN_DATE_PICKER_ABI_VERSION 4",

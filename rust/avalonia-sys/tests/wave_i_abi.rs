@@ -14,12 +14,13 @@ fn overlay_controls_publish_at_version_one() {
         "*close)(IAvnPopup* self)",
         "*set_tool_tip_text)(IAvnTrayIcon* self, const uint16_t* value)",
         "*set_command)(IAvnTrayIcon* self, IAvnCommand* value)",
+        "*set_command_parameter)(IAvnTrayIcon* self, AvnVariant value)",
         "*set_max_items)(IAvnWindowNotificationManager* self, int32_t value)",
         "*set_pull_direction)(IAvnRefreshContainer* self, int32_t value)",
         "*create_popup)(IAvnControlFactory* self, IAvnPopup** value)",
         "*create_tray_icon)(IAvnControlFactory* self, IAvnTrayIcon** value)",
         "#define I_AVN_POPUP_ABI_VERSION 5",
-        "#define I_AVN_TRAY_ICON_ABI_VERSION 2",
+        "#define I_AVN_TRAY_ICON_ABI_VERSION 3",
         "#define I_AVN_CONTROL_FACTORY_ABI_VERSION 13",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");

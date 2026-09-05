@@ -51,7 +51,6 @@ Avalonia.Controls.AutoCompleteBox.SelectionChanged: Not included by projection p
 Avalonia.Controls.Border.BoxShadow: Not included by projection policy
 Avalonia.Controls.Border.Render(DrawingContext): Not included by projection policy
 Avalonia.Controls.Button.HotKey: Not included by projection policy
-Avalonia.Controls.Button.CommandParameter: Not included by projection policy
 Avalonia.Controls.Calendar.SelectedDates: Not included by projection policy
 Avalonia.Controls.Calendar.BlackoutDates: Not included by projection policy
 Avalonia.Controls.Calendar.SelectedDatesChanged: Not included by projection policy
@@ -136,7 +135,6 @@ Avalonia.Controls.MenuFlyout.ItemTemplate: Not included by projection policy
 Avalonia.Controls.MenuFlyout.ItemContainerTheme: Not included by projection policy
 Avalonia.Controls.MenuFlyout.FlyoutPresenterTheme: Not included by projection policy
 Avalonia.Controls.MenuItem.HotKey: Not included by projection policy
-Avalonia.Controls.MenuItem.CommandParameter: Not included by projection policy
 Avalonia.Controls.MenuItem.InputGesture: Not included by projection policy
 Avalonia.Controls.MenuItem.PointerEnteredItem: Not included by projection policy
 Avalonia.Controls.MenuItem.PointerExitedItem: Not included by projection policy
@@ -201,7 +199,6 @@ Avalonia.Controls.Shapes.Shape.Render(DrawingContext): Not included by projectio
 Avalonia.Controls.Slider.Ticks: Not included by projection policy
 Avalonia.Controls.Spinner.ValidSpinDirection: Not included by projection policy
 Avalonia.Controls.Spinner.Spin: Not included by projection policy
-Avalonia.Controls.SplitButton.CommandParameter: Not included by projection policy
 Avalonia.Controls.SplitButton.HotKey: Not included by projection policy
 Avalonia.Controls.SplitView.PaneTemplate: Not included by projection policy
 Avalonia.Controls.SplitView.TemplateSettings: Not included by projection policy
@@ -250,7 +247,6 @@ Avalonia.Controls.ToggleSwitch.OnContentTemplate: Not included by projection pol
 Avalonia.Controls.ToggleSwitch.KnobTransitions: Not included by projection policy
 Avalonia.Controls.TransitioningContentControl.PageTransition: Not included by projection policy
 Avalonia.Controls.TransitioningContentControl.TransitionCompleted: Not included by projection policy
-Avalonia.Controls.TrayIcon.CommandParameter: Not included by projection policy
 Avalonia.Controls.TrayIcon.Menu: Not included by projection policy
 Avalonia.Controls.TrayIcon.Icon: Not included by projection policy
 Avalonia.Controls.TrayIcon.NativeMenuExporter: Not included by projection policy

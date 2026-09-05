@@ -305,6 +305,19 @@ host-to-Rust notifications. IR schema moves 14 to 15 for the paired
 `commandHandlerInterfaceName`/`commandHandlerInterfaceIid` fields. No ABI slot
 moves: the advise/unadvise pair was already in the U7 vtable layout.
 
+CommandParameter crosses as a tagged scalar, `MarshallingKind.Variant`
+(ordinal 21, appended after Command): `AvnVariant` is a blittable struct
+(tag + utf16 pointer + i32 + f64) carrying the closed set an `object`
+parameter can hold — null, string, i32, f64, bool, with in-range longs
+narrowing to i32. Getters return the struct with a host-allocated string
+(Rust releases it through `take_utf16`/`free_utf16`); setters receive a
+borrowed pointer the host reads synchronously. The safe crate exposes
+`Variant` with `From` conversions and `button.command_parameter("save")`
+ergonomics; a `VariantAbi` guard releases the UTF-16 allocation on drop.
+Button family 9 to 10 (Button/ToggleButton/CheckBox/RadioButton/ToggleSwitch),
+MenuItem 6 to 7, SplitButton and ToggleSplitButton 5 to 6, TrayIcon 2 to 3,
+each republished under its fresh deterministic IID. Factory stays 13.
+
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and
 `IAvnNumericUpDown` each move from 2 to 3. Templates, filters, ItemsSource,

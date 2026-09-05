@@ -2,6 +2,7 @@ mod emit;
 mod emit_safe;
 mod geometry;
 mod ir;
+mod variant;
 
 pub use emit::emit_sys_module;
 pub use emit_safe::emit_safe_module;

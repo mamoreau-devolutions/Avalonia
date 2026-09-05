@@ -153,6 +153,45 @@ pub(crate) fn alloc_utf16(value: &str) -> Option<*mut u16> {
     }
 }
 
+/// Allocates a host-owned, null-terminated UTF-16 buffer of `length` UTF-16
+/// units (not including the terminator) via `avn_alloc_utf16`. The caller
+/// writes the units and releases the buffer with [`free_utf16`].
+///
+/// # Panics
+/// Panics if called before a `Host` has been loaded.
+pub fn alloc_utf16_raw(length: i32) -> Option<*mut u16> {
+    let alloc = ALLOC_UTF16
+        .get()
+        .expect("Avalonia Host must be loaded before allocating ABI strings");
+    if length < 0 {
+        return None;
+    }
+    unsafe {
+        let buffer = alloc(length);
+        if buffer.is_null() {
+            None
+        } else {
+            *buffer = 0;
+            Some(buffer)
+        }
+    }
+}
+
+/// Releases a host-owned UTF-16 buffer allocated by `avn_alloc_utf16`
+/// (including via [`alloc_utf16_raw`]).
+///
+/// # Safety
+/// `ptr` must be null or allocated by the loaded Avalonia host, and must not
+/// be freed twice.
+pub unsafe fn free_utf16(ptr: *mut u16) {
+    if !ptr.is_null() {
+        FREE.get()
+            .expect("Avalonia Host must be loaded before freeing ABI strings")(
+            ptr.cast()
+        );
+    }
+}
+
 pub struct Host {
     // Successful hosts deliberately remain loaded for the process lifetime:
     // FREE/ALLOC_UTF16 are process-wide ABI callbacks and may service strings

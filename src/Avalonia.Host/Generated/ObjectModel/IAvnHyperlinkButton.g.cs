@@ -1334,6 +1334,37 @@ public sealed partial class AvnHyperlinkButton : IAvnHyperlinkButton
         }
     }
 
+    public int GetCommandParameter(out AvnVariant value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnVariant.FromObject(_value.CommandParameter);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetCommandParameter(AvnVariant value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.CommandParameter = value.ToObject();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetIsDefault(out int value)
     {
         value = default!;

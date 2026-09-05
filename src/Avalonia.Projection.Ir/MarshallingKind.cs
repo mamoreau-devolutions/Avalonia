@@ -46,6 +46,13 @@ public enum MarshallingKind
     /// A nano-COM <c>IAvnCommand</c> wrapping <c>System.Windows.Input.ICommand</c>.
     /// </summary>
     Command,
+
+    /// <summary>
+    /// Appended after Command so every previously published ordinal stays put.
+    /// A tagged scalar: None, UTF-16 text, I32, F64 or Bool, matching the
+    /// closed set `object` command parameters can carry across the ABI.
+    /// </summary>
+    Variant,
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]

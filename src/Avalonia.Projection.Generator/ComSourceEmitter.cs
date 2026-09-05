@@ -736,6 +736,72 @@ public static class ComSourceEmitter
             sb.AppendLine("}");
             sb.AppendLine();
         }
+        sb.AppendLine("/// <summary>Tagged scalar carrying object? command parameters.</summary>");
+        sb.AppendLine("/// <remarks>");
+        sb.AppendLine("/// Tag selects the payload slot: 0 none, 1 utf16, 2 i32, 3 f64, 4 bool.");
+        sb.AppendLine("/// The UTF-16 payload is host-allocated for getters (Rust releases it with");
+        sb.AppendLine("/// avn_free) and borrowed for setters and inbound parameters.");
+        sb.AppendLine("/// </remarks>");
+        sb.AppendLine("[StructLayout(LayoutKind.Sequential)]");
+        sb.AppendLine("public struct AvnVariant");
+        sb.AppendLine("{");
+        sb.AppendLine("    public int Tag;");
+        sb.AppendLine("    public nint Utf16;");
+        sb.AppendLine("    public int I32;");
+        sb.AppendLine("    public double F64;");
+        sb.AppendLine();
+        sb.AppendLine("    public const int TagNone = 0;");
+        sb.AppendLine("    public const int TagUtf16 = 1;");
+        sb.AppendLine("    public const int TagI32 = 2;");
+        sb.AppendLine("    public const int TagF64 = 3;");
+        sb.AppendLine("    public const int TagBool = 4;");
+        sb.AppendLine();
+        sb.AppendLine("    public static AvnVariant FromObject(object? value) =>");
+        sb.AppendLine("        value switch");
+        sb.AppendLine("        {");
+        sb.AppendLine("            null => default,");
+        sb.AppendLine("            string text => new AvnVariant { Tag = TagUtf16, Utf16 = (nint)Marshal.StringToCoTaskMemUni(text) },");
+        sb.AppendLine("            int i => new AvnVariant { Tag = TagI32, I32 = i },");
+        sb.AppendLine("            long l when l is >= int.MinValue and <= int.MaxValue =>");
+        sb.AppendLine("                new AvnVariant { Tag = TagI32, I32 = (int)l },");
+        sb.AppendLine("            double d => new AvnVariant { Tag = TagF64, F64 = d },");
+        sb.AppendLine("            bool b => new AvnVariant { Tag = TagBool, I32 = b ? 1 : 0 },");
+        sb.AppendLine("            _ => new AvnVariant { Tag = TagUtf16, Utf16 = (nint)Marshal.StringToCoTaskMemUni(value.ToString() ?? string.Empty) },");
+        sb.AppendLine("        };");
+        sb.AppendLine();
+        sb.AppendLine("    public static AvnVariant FromBorrowedUtf16(nint value) =>");
+        sb.AppendLine("        value == 0");
+        sb.AppendLine("            ? default");
+        sb.AppendLine("            : new AvnVariant { Tag = TagUtf16, Utf16 = value };");
+        sb.AppendLine();
+        sb.AppendLine("    public readonly object? ToObject() => Tag switch");
+        sb.AppendLine("    {");
+        sb.AppendLine("        TagUtf16 when Utf16 != 0 => Marshal.PtrToStringUni(Utf16),");
+        sb.AppendLine("        TagUtf16 => null,");
+        sb.AppendLine("        TagI32 => I32,");
+        sb.AppendLine("        TagF64 => F64,");
+        sb.AppendLine("        TagBool => I32 != 0,");
+        sb.AppendLine("        _ => null,");
+        sb.AppendLine("    };");
+        sb.AppendLine();
+        sb.AppendLine("    public void FreeUtf16()");
+        sb.AppendLine("    {");
+        sb.AppendLine("        if (Tag == TagUtf16 && Utf16 != 0)");
+        sb.AppendLine("        {");
+        sb.AppendLine("            Marshal.FreeCoTaskMem(Utf16);");
+        sb.AppendLine("            Utf16 = 0;");
+        sb.AppendLine("            Tag = TagNone;");
+        sb.AppendLine("        }");
+        sb.AppendLine("    }");
+        sb.AppendLine();
+        sb.AppendLine("    public static bool IsSupported(object? value) => value switch");
+        sb.AppendLine("    {");
+        sb.AppendLine("        null or string or int or bool or double => true,");
+        sb.AppendLine("        long l => l is >= int.MinValue and <= int.MaxValue,");
+        sb.AppendLine("        _ => false,");
+        sb.AppendLine("    };");
+        sb.AppendLine("}");
+        sb.AppendLine();
         return sb.ToString().TrimEnd() + Environment.NewLine;
     }
 
@@ -1147,6 +1213,7 @@ public static class ComSourceEmitter
                 $"{SimpleName(property.InterfaceName!)[1..]}.FromBrush(_value.{property.Name})",
             MarshallingKind.Command =>
                 $"{SimpleName(property.InterfaceName!)[1..]}.FromCommand(_value.{property.Name})",
+            MarshallingKind.Variant => $"AvnVariant.FromObject(_value.{property.Name})",
             MarshallingKind.ComCollection =>
                 $"new {SimpleName(property.InterfaceName!)[1..]}(_value.{property.Name})",
             _ when GeometryMarshalling.TryGet(property.Kind, out var geometry) =>
@@ -1196,6 +1263,7 @@ public static class ComSourceEmitter
                 $"(global::{property.ManagedTypeName})ProjectionRuntime.Unwrap(value)!",
             MarshallingKind.Brush => $"{SimpleName(property.InterfaceName!)[1..]}.ToBrush(value)",
             MarshallingKind.Command => $"{SimpleName(property.InterfaceName!)[1..]}.ToCommand(value)",
+            MarshallingKind.Variant => "value.ToObject()",
             _ when GeometryMarshalling.IsGeometry(property.Kind) => "value.ToAvalonia()",
             _ => "value",
         };
@@ -1280,6 +1348,7 @@ public static class ComSourceEmitter
             MarshallingKind.Bool => "int",
             MarshallingKind.NullableBool => "int",
             MarshallingKind.StringUtf16 => nullable ? "string?" : "string",
+            MarshallingKind.Variant => "AvnVariant",
             MarshallingKind.ComInterface => (interfaceName is null ? "object" : SimpleName(interfaceName)) + (nullable ? "?" : ""),
             MarshallingKind.Brush => SimpleName(interfaceName!) + (nullable ? "?" : ""),
             MarshallingKind.Command => SimpleName(interfaceName!) + (nullable ? "?" : ""),
@@ -1340,3 +1409,4 @@ public static class ComSourceEmitter
     private static string LowerFirst(string value) =>
         char.ToLowerInvariant(value[0]) + value[1..];
 }
+

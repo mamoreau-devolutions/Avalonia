@@ -43,11 +43,11 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnContentControl"] = 7,
             ["Avalonia.Host.Com.IAvnHeaderedContentControl"] = 7,
             ["Avalonia.Host.Com.IAvnExpander"] = 7,
-            ["Avalonia.Host.Com.IAvnButton"] = 9,
-            ["Avalonia.Host.Com.IAvnToggleButton"] = 9,
-            ["Avalonia.Host.Com.IAvnCheckBox"] = 9,
-            ["Avalonia.Host.Com.IAvnRadioButton"] = 9,
-            ["Avalonia.Host.Com.IAvnToggleSwitch"] = 9,
+            ["Avalonia.Host.Com.IAvnButton"] = 10,
+            ["Avalonia.Host.Com.IAvnToggleButton"] = 10,
+            ["Avalonia.Host.Com.IAvnCheckBox"] = 10,
+            ["Avalonia.Host.Com.IAvnRadioButton"] = 10,
+            ["Avalonia.Host.Com.IAvnToggleSwitch"] = 10,
             ["Avalonia.Host.Com.IAvnListBox"] = 8,
             ["Avalonia.Host.Com.IAvnComboBox"] = 9,
             ["Avalonia.Host.Com.IAvnListBoxItem"] = 7,
@@ -67,7 +67,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnCommandBarToggleButton"] = 5,
             ["Avalonia.Host.Com.IAvnContextMenu"] = 7,
             ["Avalonia.Host.Com.IAvnPopup"] = 5,
-            ["Avalonia.Host.Com.IAvnTrayIcon"] = 2,
+            ["Avalonia.Host.Com.IAvnTrayIcon"] = 3,
             ["Avalonia.Host.Com.IAvnPopupFlyoutBase"] = 3,
             ["Avalonia.Host.Com.IAvnFlyout"] = 3,
             ["Avalonia.Host.Com.IAvnMenuFlyout"] = 3,
@@ -83,7 +83,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnMaskedTextBox"] = 7,
             ["Avalonia.Host.Com.IAvnMenu"] = 4,
             ["Avalonia.Host.Com.IAvnMenuBase"] = 4,
-            ["Avalonia.Host.Com.IAvnMenuItem"] = 6,
+            ["Avalonia.Host.Com.IAvnMenuItem"] = 7,
             ["Avalonia.Host.Com.IAvnNotificationCard"] = 4,
             ["Avalonia.Host.Com.IAvnNumericUpDown"] = 4,
             ["Avalonia.Host.Com.IAvnPathIcon"] = 3,
@@ -92,7 +92,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnRepeatButton"] = 5,
             ["Avalonia.Host.Com.IAvnSeparator"] = 3,
             ["Avalonia.Host.Com.IAvnSpinner"] = 3,
-            ["Avalonia.Host.Com.IAvnSplitButton"] = 5,
+            ["Avalonia.Host.Com.IAvnSplitButton"] = 6,
             ["Avalonia.Host.Com.IAvnSplitView"] = 3,
             ["Avalonia.Host.Com.IAvnTabControl"] = 4,
             ["Avalonia.Host.Com.IAvnTabItem"] = 3,
@@ -101,7 +101,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnTableViewRow"] = 3,
             ["Avalonia.Host.Com.IAvnThumb"] = 4,
             ["Avalonia.Host.Com.IAvnTimePicker"] = 4,
-            ["Avalonia.Host.Com.IAvnToggleSplitButton"] = 5,
+            ["Avalonia.Host.Com.IAvnToggleSplitButton"] = 6,
             ["Avalonia.Host.Com.IAvnToolTip"] = 3,
             ["Avalonia.Host.Com.IAvnTransitioningContentControl"] = 3,
             ["Avalonia.Host.Com.IAvnTreeView"] = 4,
@@ -319,7 +319,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.Image"] =
                 ["Source", "Stretch", "StretchDirection", "BlendMode"],
             ["Avalonia.Controls.Button"] =
-                ["ClickMode", "IsDefault", "IsCancel", "IsPressed", "Click", "Flyout", "Command"],
+                ["ClickMode", "IsDefault", "IsCancel", "IsPressed", "Click", "Flyout", "Command", "CommandParameter"],
             ["Avalonia.Controls.Primitives.ToggleButton"] =
                 ["IsChecked", "IsThreeState", "IsCheckedChanged"],
             ["Avalonia.Controls.CheckBox"] = [],
@@ -374,11 +374,12 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.MenuBase"] = ["IsOpen", "Open", "Close", "Opened", "Closed"],
             ["Avalonia.Controls.Menu"] = [],
             // Command and CommandParameter are an ICommand and an object; HotKey and
-            // InputGesture are KeyGestures. All four stay in the gap report. Click is the
-            // imperative equivalent and it does cross.
+            // InputGesture are KeyGestures. Command and CommandParameter cross; the
+            // gestures stay in the gap report.
             ["Avalonia.Controls.MenuItem"] =
             [
                 "Command",
+                "CommandParameter",
                 "Icon", "IsSelected", "IsSubMenuOpen", "StaysOpenOnClick", "ToggleType",
                 "IsChecked", "GroupName", "Click", "SubmenuOpened",
                 "HasSubMenu", "IsTopLevel", "Open", "Close",
@@ -425,7 +426,7 @@ public static class AvaloniaProjectionProfiles
             ],
             ["Avalonia.Controls.RepeatButton"] = ["Interval", "Delay"],
             ["Avalonia.Controls.DropDownButton"] = [],
-            ["Avalonia.Controls.SplitButton"] = ["Click", "Flyout", "Command"],
+            ["Avalonia.Controls.SplitButton"] = ["Click", "Flyout", "Command", "CommandParameter"],
             ["Avalonia.Controls.ToggleSplitButton"] = ["IsChecked", "IsCheckedChanged"],
             ["Avalonia.Controls.HyperlinkButton"] = ["IsVisited", "NavigateUri"],
             ["Avalonia.Controls.ContextMenu"] =
@@ -512,7 +513,7 @@ public static class AvaloniaProjectionProfiles
                 "PlacementAnchor", "PlacementGravity", "PlacementConstraintAdjustment",
                 "PlacementRect",
             ],
-            ["Avalonia.Controls.TrayIcon"] = ["ToolTipText", "IsVisible", "Command"],
+            ["Avalonia.Controls.TrayIcon"] = ["ToolTipText", "IsVisible", "Command", "CommandParameter"],
             ["Avalonia.Controls.Notifications.WindowNotificationManager"] = ["Position", "MaxItems"],
             ["Avalonia.Controls.Notifications.NotificationCard"] =
                 ["IsClosed", "NotificationType", "IsClosing", "Close"],
@@ -601,6 +602,34 @@ public static class AvaloniaProjectionProfiles
                 ElementInterfaceName = "Avalonia.Host.Com.IAvnControl",
                 ElementKind = MarshallingKind.ComInterface,
                 IsNullable = false,
+            },
+            // CommandParameter is object?: the ABI carries a tagged scalar that
+            // covers the values a command parameter can hold without a full
+            // object-model bridge — null, text, i32, f64, bool.
+            ["Avalonia.Controls.Button.CommandParameter"] = new()
+            {
+                Kind = MarshallingKind.Variant,
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.MenuItem.CommandParameter"] = new()
+            {
+                Kind = MarshallingKind.Variant,
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.SplitButton.CommandParameter"] = new()
+            {
+                Kind = MarshallingKind.Variant,
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.ToggleSplitButton.CommandParameter"] = new()
+            {
+                Kind = MarshallingKind.Variant,
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.TrayIcon.CommandParameter"] = new()
+            {
+                Kind = MarshallingKind.Variant,
+                IsNullable = true,
             },
             ["Avalonia.Controls.ItemsControl.Items"] = new()
             {

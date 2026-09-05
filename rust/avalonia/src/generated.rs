@@ -355,6 +355,107 @@ impl From<Vector> for sys::AvnVector {
     }
 }
 
+/// A command parameter: the closed set an `object` slot can carry.
+#[derive(Clone, Debug, PartialEq)]
+pub enum Variant {
+    None,
+    Utf16(String),
+    I32(i32),
+    F64(f64),
+    Bool(bool),
+}
+
+impl From<&str> for Variant {
+    fn from(value: &str) -> Self {
+        Variant::Utf16(value.to_string())
+    }
+}
+
+impl From<String> for Variant {
+    fn from(value: String) -> Self {
+        Variant::Utf16(value)
+    }
+}
+
+impl From<i32> for Variant {
+    fn from(value: i32) -> Self {
+        Variant::I32(value)
+    }
+}
+
+impl From<f64> for Variant {
+    fn from(value: f64) -> Self {
+        Variant::F64(value)
+    }
+}
+
+impl From<bool> for Variant {
+    fn from(value: bool) -> Self {
+        Variant::Bool(value)
+    }
+}
+
+impl Variant {
+    /// Converts to a guard holding the ABI struct, allocating UTF-16
+    /// with the host allocator when the payload is a string. The guard
+    /// releases the allocation when dropped, after the call returns.
+    pub(crate) fn to_abi(&self) -> Result<VariantAbi> {
+        match self {
+            Variant::None => Ok(VariantAbi::default()),
+            Variant::I32(value) => Ok(VariantAbi { inner: sys::AvnVariant { tag: sys::AvnVariant::TAG_I32, i32: *value, ..Default::default() } }),
+            Variant::F64(value) => Ok(VariantAbi { inner: sys::AvnVariant { tag: sys::AvnVariant::TAG_F64, f64: *value, ..Default::default() } }),
+            Variant::Bool(value) => Ok(VariantAbi { inner: sys::AvnVariant { tag: sys::AvnVariant::TAG_BOOL, i32: i32::from(*value), ..Default::default() } }),
+            Variant::Utf16(value) => {
+                let ptr = sys::alloc_utf16_raw(value.len() as i32)
+                    .ok_or_else(|| sys::Error(sys::E_FAIL))?;
+                let mut cursor = ptr;
+                for unit in value.encode_utf16().chain(Some(0)) {
+                    unsafe { *cursor = unit; cursor = cursor.add(1); }
+                }
+                Ok(VariantAbi { inner: sys::AvnVariant { tag: sys::AvnVariant::TAG_UTF16, utf16: ptr, ..Default::default() } })
+            }
+        }
+    }
+
+    /// Reads an ABI struct, releasing a host-allocated UTF-16 payload.
+    pub(crate) fn from_abi(value: sys::AvnVariant) -> Self {
+        match value.tag {
+            sys::AvnVariant::TAG_UTF16 => unsafe {
+                Variant::Utf16(sys::take_utf16(value.utf16).unwrap_or_default())
+            },
+            sys::AvnVariant::TAG_I32 => Variant::I32(value.i32),
+            sys::AvnVariant::TAG_F64 => Variant::F64(value.f64),
+            sys::AvnVariant::TAG_BOOL => Variant::Bool(value.i32 != 0),
+            _ => Variant::None,
+        }
+    }
+}
+
+/// Owns an ABI variant, releasing its UTF-16 allocation on drop.
+pub struct VariantAbi {
+    inner: sys::AvnVariant,
+}
+
+impl Default for VariantAbi {
+    fn default() -> Self {
+        Self { inner: sys::AvnVariant::default() }
+    }
+}
+
+impl std::ops::Deref for VariantAbi {
+    type Target = sys::AvnVariant;
+    fn deref(&self) -> &sys::AvnVariant {
+        &self.inner
+    }
+}
+
+impl Drop for VariantAbi {
+    fn drop(&mut self) {
+        if self.inner.tag == sys::AvnVariant::TAG_UTF16 && !self.inner.utf16.is_null() {
+            unsafe { sys::free_utf16(self.inner.utf16) };
+        }
+    }
+}
 /// A solid colour brush: the only brush shape that crosses the ABI.
 ///
 /// `Background`, `BorderBrush` and `Foreground` are carried as a colour plus an
@@ -3717,6 +3818,17 @@ impl Button {
         self.set_command(value)?;
         Ok(self)
     }
+    pub fn get_command_parameter(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_command_parameter()?))
+    }
+    pub fn set_command_parameter(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_command_parameter(&value)?)
+    }
+    pub fn command_parameter(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_command_parameter(value)?;
+        Ok(self)
+    }
     pub fn get_is_default(&self) -> Result<bool> { Ok(self.raw.get_is_default()?) }
     pub fn set_default(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_default(value)?)
@@ -6258,6 +6370,17 @@ impl CheckBox {
         self.set_command(value)?;
         Ok(self)
     }
+    pub fn get_command_parameter(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_command_parameter()?))
+    }
+    pub fn set_command_parameter(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_command_parameter(&value)?)
+    }
+    pub fn command_parameter(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_command_parameter(value)?;
+        Ok(self)
+    }
     pub fn get_is_default(&self) -> Result<bool> { Ok(self.raw.get_is_default()?) }
     pub fn set_default(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_default(value)?)
@@ -8015,6 +8138,17 @@ impl CommandBarButton {
         self.set_command(value)?;
         Ok(self)
     }
+    pub fn get_command_parameter(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_command_parameter()?))
+    }
+    pub fn set_command_parameter(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_command_parameter(&value)?)
+    }
+    pub fn command_parameter(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_command_parameter(value)?;
+        Ok(self)
+    }
     pub fn get_is_default(&self) -> Result<bool> { Ok(self.raw.get_is_default()?) }
     pub fn set_default(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_default(value)?)
@@ -8855,6 +8989,17 @@ impl CommandBarToggleButton {
     }
     pub fn command(self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<Self> {
         self.set_command(value)?;
+        Ok(self)
+    }
+    pub fn get_command_parameter(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_command_parameter()?))
+    }
+    pub fn set_command_parameter(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_command_parameter(&value)?)
+    }
+    pub fn command_parameter(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_command_parameter(value)?;
         Ok(self)
     }
     pub fn get_is_default(&self) -> Result<bool> { Ok(self.raw.get_is_default()?) }
@@ -11428,6 +11573,17 @@ impl DropDownButton {
         self.set_command(value)?;
         Ok(self)
     }
+    pub fn get_command_parameter(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_command_parameter()?))
+    }
+    pub fn set_command_parameter(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_command_parameter(&value)?)
+    }
+    pub fn command_parameter(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_command_parameter(value)?;
+        Ok(self)
+    }
     pub fn get_is_default(&self) -> Result<bool> { Ok(self.raw.get_is_default()?) }
     pub fn set_default(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_default(value)?)
@@ -13905,6 +14061,17 @@ impl HyperlinkButton {
     }
     pub fn command(self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<Self> {
         self.set_command(value)?;
+        Ok(self)
+    }
+    pub fn get_command_parameter(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_command_parameter()?))
+    }
+    pub fn set_command_parameter(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_command_parameter(&value)?)
+    }
+    pub fn command_parameter(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_command_parameter(value)?;
         Ok(self)
     }
     pub fn get_is_default(&self) -> Result<bool> { Ok(self.raw.get_is_default()?) }
@@ -18524,6 +18691,17 @@ impl MenuItem {
     }
     pub fn command(self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<Self> {
         self.set_command(value)?;
+        Ok(self)
+    }
+    pub fn get_command_parameter(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_command_parameter()?))
+    }
+    pub fn set_command_parameter(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_command_parameter(&value)?)
+    }
+    pub fn command_parameter(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_command_parameter(value)?;
         Ok(self)
     }
     pub fn get_icon(&self) -> Result<Option<Control>> {
@@ -24580,6 +24758,17 @@ impl ToggleButton {
         self.set_command(value)?;
         Ok(self)
     }
+    pub fn get_command_parameter(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_command_parameter()?))
+    }
+    pub fn set_command_parameter(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_command_parameter(&value)?)
+    }
+    pub fn command_parameter(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_command_parameter(value)?;
+        Ok(self)
+    }
     pub fn get_is_default(&self) -> Result<bool> { Ok(self.raw.get_is_default()?) }
     pub fn set_default(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_default(value)?)
@@ -25759,6 +25948,17 @@ impl RadioButton {
         self.set_command(value)?;
         Ok(self)
     }
+    pub fn get_command_parameter(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_command_parameter()?))
+    }
+    pub fn set_command_parameter(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_command_parameter(&value)?)
+    }
+    pub fn command_parameter(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_command_parameter(value)?;
+        Ok(self)
+    }
     pub fn get_is_default(&self) -> Result<bool> { Ok(self.raw.get_is_default()?) }
     pub fn set_default(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_default(value)?)
@@ -26922,6 +27122,17 @@ impl RepeatButton {
     }
     pub fn command(self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<Self> {
         self.set_command(value)?;
+        Ok(self)
+    }
+    pub fn get_command_parameter(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_command_parameter()?))
+    }
+    pub fn set_command_parameter(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_command_parameter(&value)?)
+    }
+    pub fn command_parameter(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_command_parameter(value)?;
         Ok(self)
     }
     pub fn get_is_default(&self) -> Result<bool> { Ok(self.raw.get_is_default()?) }
@@ -32285,6 +32496,17 @@ impl SplitButton {
         self.set_command(value)?;
         Ok(self)
     }
+    pub fn get_command_parameter(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_command_parameter()?))
+    }
+    pub fn set_command_parameter(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_command_parameter(&value)?)
+    }
+    pub fn command_parameter(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_command_parameter(value)?;
+        Ok(self)
+    }
     pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
         Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
     }
@@ -37269,6 +37491,17 @@ impl ToggleSplitButton {
         self.set_command(value)?;
         Ok(self)
     }
+    pub fn get_command_parameter(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_command_parameter()?))
+    }
+    pub fn set_command_parameter(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_command_parameter(&value)?)
+    }
+    pub fn command_parameter(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_command_parameter(value)?;
+        Ok(self)
+    }
     pub fn get_flyout(&self) -> Result<Option<FlyoutBase>> {
         Ok(self.raw.get_flyout()?.map(|raw| FlyoutBase { raw }))
     }
@@ -37708,6 +37941,17 @@ impl ToggleSwitch {
     }
     pub fn command(self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<Self> {
         self.set_command(value)?;
+        Ok(self)
+    }
+    pub fn get_command_parameter(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_command_parameter()?))
+    }
+    pub fn set_command_parameter(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_command_parameter(&value)?)
+    }
+    pub fn command_parameter(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_command_parameter(value)?;
         Ok(self)
     }
     pub fn get_is_default(&self) -> Result<bool> { Ok(self.raw.get_is_default()?) }
@@ -38669,6 +38913,17 @@ impl TrayIcon {
     }
     pub fn command(self, value: Option<&sys::ComPtr<sys::IAvnCommand>>) -> Result<Self> {
         self.set_command(value)?;
+        Ok(self)
+    }
+    pub fn get_command_parameter(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_command_parameter()?))
+    }
+    pub fn set_command_parameter(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_command_parameter(&value)?)
+    }
+    pub fn command_parameter(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_command_parameter(value)?;
         Ok(self)
     }
     pub fn get_tool_tip_text(&self) -> Result<Option<String>> {

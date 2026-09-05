@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("A47AB795-2D16-5F5D-914C-D9641520B7E9")]
+[Guid("EE2A808D-2C6F-5FF3-9FFD-6EFEF3210E4E")]
 public partial interface IAvnButton : IAvnContentControl
 {
     [PreserveSig]
@@ -20,6 +20,12 @@ public partial interface IAvnButton : IAvnContentControl
 
     [PreserveSig]
     int SetCommand(IAvnCommand? value);
+
+    [PreserveSig]
+    int GetCommandParameter(out AvnVariant value);
+
+    [PreserveSig]
+    int SetCommandParameter(AvnVariant value);
 
     [PreserveSig]
     int GetIsDefault(out int value);
@@ -1353,6 +1359,37 @@ public sealed partial class AvnButton : IAvnButton
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Command = AvnCommand.ToCommand(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetCommandParameter(out AvnVariant value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnVariant.FromObject(_value.CommandParameter);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetCommandParameter(AvnVariant value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.CommandParameter = value.ToObject();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

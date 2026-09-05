@@ -94,11 +94,11 @@ fn widened_interfaces_publish_abi_version_five() {
         "#define I_AVN_CONTENT_CONTROL_ABI_VERSION 7",
         "#define I_AVN_HEADERED_CONTENT_CONTROL_ABI_VERSION 7",
         "#define I_AVN_EXPANDER_ABI_VERSION 7",
-        "#define I_AVN_BUTTON_ABI_VERSION 9",
-        "#define I_AVN_TOGGLE_BUTTON_ABI_VERSION 9",
-        "#define I_AVN_CHECK_BOX_ABI_VERSION 9",
-        "#define I_AVN_RADIO_BUTTON_ABI_VERSION 9",
-        "#define I_AVN_TOGGLE_SWITCH_ABI_VERSION 9",
+        "#define I_AVN_BUTTON_ABI_VERSION 10",
+        "#define I_AVN_TOGGLE_BUTTON_ABI_VERSION 10",
+        "#define I_AVN_CHECK_BOX_ABI_VERSION 10",
+        "#define I_AVN_RADIO_BUTTON_ABI_VERSION 10",
+        "#define I_AVN_TOGGLE_SWITCH_ABI_VERSION 10",
         "#define I_AVN_LIST_BOX_ABI_VERSION 8",
         "#define I_AVN_LIST_BOX_ITEM_ABI_VERSION 7",
         "#define I_AVN_COMBO_BOX_ABI_VERSION 9",
@@ -222,6 +222,16 @@ fn widened_interfaces_republish_under_fresh_iids() {
             "ACF92675-F4CB-553B-9700-58360FEE0232",
             I_AVN_COMBO_BOX_IID,
         ),
+        (
+            "IAvnButton",
+            "A47AB795-2D16-5F5D-914C-D9641520B7E9",
+            I_AVN_BUTTON_IID,
+        ),
+        (
+            "IAvnToggleButton",
+            "4B6CC48D-00FF-569F-A965-FE8C6B86C502",
+            I_AVN_TOGGLE_BUTTON_IID,
+        ),
     ] {
         assert_ne!(format_iid(&current), retired, "{name} reused a retired IID");
     }
@@ -235,12 +245,12 @@ fn widened_interfaces_republish_under_fresh_iids() {
         ),
         (
             "IAvnButton",
-            "A47AB795-2D16-5F5D-914C-D9641520B7E9",
+            "EE2A808D-2C6F-5FF3-9FFD-6EFEF3210E4E",
             I_AVN_BUTTON_IID,
         ),
         (
             "IAvnToggleButton",
-            "4B6CC48D-00FF-569F-A965-FE8C6B86C502",
+            "6E46D960-3762-595C-9950-E16204F4E400",
             I_AVN_TOGGLE_BUTTON_IID,
         ),
         (

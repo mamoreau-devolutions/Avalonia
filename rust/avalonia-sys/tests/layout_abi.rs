@@ -46,7 +46,7 @@ fn widened_interfaces_publish_their_layout_abi_version() {
         // and the window overlay-chrome pass widened the leaf to 8 without disturbing
         // the content control or factory ABI.
         "#define I_AVN_WINDOW_ABI_VERSION 10",
-        "#define I_AVN_BUTTON_ABI_VERSION 9",
+        "#define I_AVN_BUTTON_ABI_VERSION 10",
         // AvaloniaObject projects no members, so its vtable never moved.
         "#define I_AVN_AVALONIA_OBJECT_ABI_VERSION 2",
     ] {

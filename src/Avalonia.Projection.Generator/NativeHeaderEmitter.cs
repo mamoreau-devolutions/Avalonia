@@ -85,6 +85,16 @@ public static class NativeHeaderEmitter
             sb.AppendLine();
         }
 
+        sb.AppendLine("/* Tagged scalar carrying object? command parameters. */");
+        sb.AppendLine("/* tag: 0 none, 1 utf16, 2 i32, 3 f64, 4 bool. */");
+        sb.AppendLine("typedef struct AvnVariant {");
+        sb.AppendLine("    int32_t tag;");
+        sb.AppendLine("    const uint16_t* utf16;");
+        sb.AppendLine("    int32_t i32;");
+        sb.AppendLine("    double f64;");
+        sb.AppendLine("} AvnVariant;");
+        sb.AppendLine();
+
         foreach (var name in names)
         {
             sb.AppendLine($"typedef struct {name} {name};");
@@ -390,6 +400,7 @@ public static class NativeHeaderEmitter
                 SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
             MarshallingKind.Brush => SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
             MarshallingKind.Command => SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
+            MarshallingKind.Variant => "AvnVariant",
             _ when GeometryMarshalling.TryGet(kind, out var geometry) =>
                 isNullable ? geometry.OptionalAbiName : geometry.AbiName,
             _ => throw new InvalidOperationException($"Unsupported ABI kind '{kind}'."),

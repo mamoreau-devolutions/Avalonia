@@ -1,4 +1,5 @@
 use crate::geometry;
+use crate::variant;
 use crate::ir::{
     ProjectedAttachedProperty, ProjectedEvent, ProjectedMethod, ProjectedParameter,
     ProjectedProperty, ProjectedType, ProjectionIr,
@@ -15,6 +16,13 @@ pub fn emit_sys_module(ir: &ProjectionIr) -> String {
          use std::ptr;\n\n",
     );
     out.push_str(&geometry::emit_sys_structs());
+    if ir.types
+        .iter()
+        .any(|t| t.properties.iter().any(|p| p.kind == "Variant"))
+    {
+        out.push_str(&variant::emit_sys_struct());
+        out.push('\n');
+    }
     if ir.brush_interface_name.is_some() {
         out.push_str(&emit_brush(ir));
         out.push('\n');
@@ -1058,6 +1066,7 @@ fn rust_abi_type(kind: &str, interface_name: Option<&str>, is_nullable: bool) ->
                 simple_name(interface_name.expect("interfaceName"))
             )
         }
+        "Variant" => "AvnVariant".into(),
         _ => "c_void".into(),
     }
 }
@@ -1069,6 +1078,7 @@ fn rust_abi_default(kind: &str) -> &'static str {
     match kind {
         "F32" | "F64" => "0.0",
         "I32" | "I64" | "Bool" | "NullableBool" | "CharUtf16" => "0",
+        "Variant" => "AvnVariant::default()",
         _ => "ptr::null_mut()",
     }
 }
@@ -1103,6 +1113,7 @@ fn rust_property_type(property: &ProjectedProperty) -> String {
             "Option<ComPtr<{}>>",
             simple_name(property.interface_name.as_deref().expect("interfaceName"))
         ),
+        "Variant" => "AvnVariant".into(),
         _ => "()".into(),
     }
 }
@@ -1113,6 +1124,7 @@ fn rust_property_result(property: &ProjectedProperty) -> String {
         "NullableBool" => {
             "match value { -1 => Ok(None), 0 => Ok(Some(false)), 1 => Ok(Some(true)), _ => Err(Error(hresult::E_INVALIDARG)) }".into()
         }
+        "Variant" => "Ok(value)".into(),
         "ComInterface" if property.is_nullable => {
             "if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }".into()
         }
@@ -1139,6 +1151,7 @@ fn rust_property_input(property: &ProjectedProperty) -> (String, String) {
             "value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut())".into(),
         ),
         "StringUtf16" => ("&[u16]".into(), "value.as_ptr().cast_mut()".into()),
+        "Variant" => ("&AvnVariant".into(), "*value".into()),
         "ComInterface" | "ComCollection" if property.is_nullable => {
             let ty = simple_name(property.interface_name.as_deref().expect("interfaceName"));
             (

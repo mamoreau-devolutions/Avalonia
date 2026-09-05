@@ -249,3 +249,69 @@ public struct AvnOptionalVector
     public readonly global::Avalonia.Vector? ToAvalonia() =>
         HasValue != 0 ? Value.ToAvalonia() : null;
 }
+
+/// <summary>Tagged scalar carrying object? command parameters.</summary>
+/// <remarks>
+/// Tag selects the payload slot: 0 none, 1 utf16, 2 i32, 3 f64, 4 bool.
+/// The UTF-16 payload is host-allocated for getters (Rust releases it with
+/// avn_free) and borrowed for setters and inbound parameters.
+/// </remarks>
+[StructLayout(LayoutKind.Sequential)]
+public struct AvnVariant
+{
+    public int Tag;
+    public nint Utf16;
+    public int I32;
+    public double F64;
+
+    public const int TagNone = 0;
+    public const int TagUtf16 = 1;
+    public const int TagI32 = 2;
+    public const int TagF64 = 3;
+    public const int TagBool = 4;
+
+    public static AvnVariant FromObject(object? value) =>
+        value switch
+        {
+            null => default,
+            string text => new AvnVariant { Tag = TagUtf16, Utf16 = (nint)Marshal.StringToCoTaskMemUni(text) },
+            int i => new AvnVariant { Tag = TagI32, I32 = i },
+            long l when l is >= int.MinValue and <= int.MaxValue =>
+                new AvnVariant { Tag = TagI32, I32 = (int)l },
+            double d => new AvnVariant { Tag = TagF64, F64 = d },
+            bool b => new AvnVariant { Tag = TagBool, I32 = b ? 1 : 0 },
+            _ => new AvnVariant { Tag = TagUtf16, Utf16 = (nint)Marshal.StringToCoTaskMemUni(value.ToString() ?? string.Empty) },
+        };
+
+    public static AvnVariant FromBorrowedUtf16(nint value) =>
+        value == 0
+            ? default
+            : new AvnVariant { Tag = TagUtf16, Utf16 = value };
+
+    public readonly object? ToObject() => Tag switch
+    {
+        TagUtf16 when Utf16 != 0 => Marshal.PtrToStringUni(Utf16),
+        TagUtf16 => null,
+        TagI32 => I32,
+        TagF64 => F64,
+        TagBool => I32 != 0,
+        _ => null,
+    };
+
+    public void FreeUtf16()
+    {
+        if (Tag == TagUtf16 && Utf16 != 0)
+        {
+            Marshal.FreeCoTaskMem(Utf16);
+            Utf16 = 0;
+            Tag = TagNone;
+        }
+    }
+
+    public static bool IsSupported(object? value) => value switch
+    {
+        null or string or int or bool or double => true,
+        long l => l is >= int.MinValue and <= int.MaxValue,
+        _ => false,
+    };
+}

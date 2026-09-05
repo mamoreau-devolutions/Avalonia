@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("9FB9F403-5A98-56B9-99FA-920A9EA47007")]
+[Guid("A7305BAD-060A-5178-AF34-8688DB875B31")]
 public partial interface IAvnSplitButton : IAvnContentControl
 {
     [PreserveSig]
@@ -14,6 +14,12 @@ public partial interface IAvnSplitButton : IAvnContentControl
 
     [PreserveSig]
     int SetCommand(IAvnCommand? value);
+
+    [PreserveSig]
+    int GetCommandParameter(out AvnVariant value);
+
+    [PreserveSig]
+    int SetCommandParameter(AvnVariant value);
 
     [PreserveSig]
     int GetFlyout(out IAvnFlyoutBase? value);
@@ -1301,6 +1307,37 @@ public sealed partial class AvnSplitButton : IAvnSplitButton
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Command = AvnCommand.ToCommand(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetCommandParameter(out AvnVariant value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnVariant.FromObject(_value.CommandParameter);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetCommandParameter(AvnVariant value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.CommandParameter = value.ToObject();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

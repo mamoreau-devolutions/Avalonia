@@ -22,24 +22,23 @@ fn repeat_button_and_hyperlink_are_buttons() {
 }
 
 #[test]
-fn split_button_carries_click_and_no_icommand() {
+fn split_button_carries_click_and_command() {
     for expected in [
         "*advise_click)(IAvnSplitButton* self, IAvnSplitButtonClickHandler* handler, int64_t* subscription_id)",
         "*set_is_checked)(IAvnToggleSplitButton* self, int32_t value)",
+        "*set_command)(IAvnSplitButton* self, IAvnCommand* value)",
+        "*set_command_parameter)(IAvnSplitButton* self, AvnVariant value)",
+        "*set_command)(IAvnToggleSplitButton* self, IAvnCommand* value)",
+        "*set_command_parameter)(IAvnToggleSplitButton* self, AvnVariant value)",
         "*create_split_button)(IAvnControlFactory* self, IAvnSplitButton** value)",
         "*create_toggle_split_button)(IAvnControlFactory* self, IAvnToggleSplitButton** value)",
         "*create_context_menu)(IAvnControlFactory* self, IAvnContextMenu** value)",
         "*create_menu_flyout)(IAvnControlFactory* self, IAvnMenuFlyout** value)",
+        "#define I_AVN_SPLIT_BUTTON_ABI_VERSION 6",
+        "#define I_AVN_TOGGLE_SPLIT_BUTTON_ABI_VERSION 6",
         "#define I_AVN_CONTROL_FACTORY_ABI_VERSION 13",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
-    }
-
-    for forbidden in ["*set_command_parameter)(IAvnSplitButton"] {
-        assert!(
-            !HEADER.contains(forbidden),
-            "header must not declare `{forbidden}`"
-        );
     }
 }
 
@@ -51,7 +50,7 @@ fn menu_flyout_items_use_the_existing_item_list() {
         "*set_horizontal_offset)(IAvnContextMenu* self, double value)",
         "#define I_AVN_MENU_FLYOUT_ABI_VERSION 3",
         "#define I_AVN_CONTEXT_MENU_ABI_VERSION 7",
-        "#define I_AVN_BUTTON_ABI_VERSION 9",
+        "#define I_AVN_BUTTON_ABI_VERSION 10",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
     }

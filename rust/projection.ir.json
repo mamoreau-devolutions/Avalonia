@@ -271,8 +271,8 @@
       "name": "IAvnButton",
       "fullName": "Avalonia.Host.Com.IAvnButton",
       "kind": "Class",
-      "iid": "A47AB795-2D16-5F5D-914C-D9641520B7E9",
-      "abiVersion": 9,
+      "iid": "EE2A808D-2C6F-5FF3-9FFD-6EFEF3210E4E",
+      "abiVersion": 10,
       "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
       "managedFullName": "Avalonia.Controls.Button",
       "isConstructible": true,
@@ -295,6 +295,15 @@
           "interfaceName": "Avalonia.Host.Com.IAvnCommand",
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.Windows.Input.ICommand",
+          "isNullable": true
+        },
+        {
+          "name": "CommandParameter",
+          "kind": "Variant",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Object",
           "isNullable": true
         },
         {
@@ -789,8 +798,8 @@
       "name": "IAvnCheckBox",
       "fullName": "Avalonia.Host.Com.IAvnCheckBox",
       "kind": "Class",
-      "iid": "3EDB0298-B20B-5035-A7B7-0599F47F305D",
-      "abiVersion": 9,
+      "iid": "87BCFC2E-FAC2-531D-88FA-F03C3E6D48AD",
+      "abiVersion": 10,
       "baseFullName": "Avalonia.Host.Com.IAvnToggleButton",
       "managedFullName": "Avalonia.Controls.CheckBox",
       "isConstructible": true,
@@ -2472,8 +2481,8 @@
       "name": "IAvnMenuItem",
       "fullName": "Avalonia.Host.Com.IAvnMenuItem",
       "kind": "Class",
-      "iid": "AEF37812-2637-5667-831C-4ACA9776E036",
-      "abiVersion": 6,
+      "iid": "62E74992-C111-5FDA-B998-9F4A3B674A8D",
+      "abiVersion": 7,
       "baseFullName": "Avalonia.Host.Com.IAvnHeaderedSelectingItemsControl",
       "managedFullName": "Avalonia.Controls.MenuItem",
       "isConstructible": true,
@@ -2502,6 +2511,15 @@
           "interfaceName": "Avalonia.Host.Com.IAvnCommand",
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.Windows.Input.ICommand",
+          "isNullable": true
+        },
+        {
+          "name": "CommandParameter",
+          "kind": "Variant",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Object",
           "isNullable": true
         },
         {
@@ -3841,8 +3859,8 @@
       "name": "IAvnToggleButton",
       "fullName": "Avalonia.Host.Com.IAvnToggleButton",
       "kind": "Class",
-      "iid": "4B6CC48D-00FF-569F-A965-FE8C6B86C502",
-      "abiVersion": 9,
+      "iid": "6E46D960-3762-595C-9950-E16204F4E400",
+      "abiVersion": 10,
       "baseFullName": "Avalonia.Host.Com.IAvnButton",
       "managedFullName": "Avalonia.Controls.Primitives.ToggleButton",
       "isConstructible": true,
@@ -4001,8 +4019,8 @@
       "name": "IAvnRadioButton",
       "fullName": "Avalonia.Host.Com.IAvnRadioButton",
       "kind": "Class",
-      "iid": "D5527821-5EC6-55DD-BD26-22CD38825CF3",
-      "abiVersion": 9,
+      "iid": "19E5AD81-C085-5DA3-AD05-EA74BDA6B560",
+      "abiVersion": 10,
       "baseFullName": "Avalonia.Host.Com.IAvnToggleButton",
       "managedFullName": "Avalonia.Controls.RadioButton",
       "isConstructible": true,
@@ -4847,8 +4865,8 @@
       "name": "IAvnSplitButton",
       "fullName": "Avalonia.Host.Com.IAvnSplitButton",
       "kind": "Class",
-      "iid": "9FB9F403-5A98-56B9-99FA-920A9EA47007",
-      "abiVersion": 5,
+      "iid": "A7305BAD-060A-5178-AF34-8688DB875B31",
+      "abiVersion": 6,
       "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
       "managedFullName": "Avalonia.Controls.SplitButton",
       "isConstructible": true,
@@ -4862,6 +4880,15 @@
           "interfaceName": "Avalonia.Host.Com.IAvnCommand",
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.Windows.Input.ICommand",
+          "isNullable": true
+        },
+        {
+          "name": "CommandParameter",
+          "kind": "Variant",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Object",
           "isNullable": true
         },
         {
@@ -5992,8 +6019,8 @@
       "name": "IAvnToggleSplitButton",
       "fullName": "Avalonia.Host.Com.IAvnToggleSplitButton",
       "kind": "Class",
-      "iid": "8F7552C3-8EA6-5748-9D1E-D65EF114CBC4",
-      "abiVersion": 5,
+      "iid": "3F3FC868-C393-5834-9B57-16132373DE1C",
+      "abiVersion": 6,
       "baseFullName": "Avalonia.Host.Com.IAvnSplitButton",
       "managedFullName": "Avalonia.Controls.ToggleSplitButton",
       "isConstructible": true,
@@ -6025,8 +6052,8 @@
       "name": "IAvnToggleSwitch",
       "fullName": "Avalonia.Host.Com.IAvnToggleSwitch",
       "kind": "Class",
-      "iid": "5AFFE550-813F-50CE-AC52-177DE84E2227",
-      "abiVersion": 9,
+      "iid": "25A80BAD-DD11-579D-8774-6470C27AC8C6",
+      "abiVersion": 10,
       "baseFullName": "Avalonia.Host.Com.IAvnToggleButton",
       "managedFullName": "Avalonia.Controls.ToggleSwitch",
       "isConstructible": true,
@@ -6095,8 +6122,8 @@
       "name": "IAvnTrayIcon",
       "fullName": "Avalonia.Host.Com.IAvnTrayIcon",
       "kind": "Class",
-      "iid": "CCCCAE86-B19E-565E-ADCE-36AC342A74C1",
-      "abiVersion": 2,
+      "iid": "C05739ED-7716-5E87-90AD-96CCBA60429C",
+      "abiVersion": 3,
       "baseFullName": "Avalonia.Host.Com.IAvnAvaloniaObject",
       "managedFullName": "Avalonia.Controls.TrayIcon",
       "isConstructible": true,
@@ -6110,6 +6137,15 @@
           "interfaceName": "Avalonia.Host.Com.IAvnCommand",
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.Windows.Input.ICommand",
+          "isNullable": true
+        },
+        {
+          "name": "CommandParameter",
+          "kind": "Variant",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "System.Object",
           "isNullable": true
         },
         {
@@ -10405,11 +10441,6 @@
       "reason": "Not included by projection policy"
     },
     {
-      "owner": "Avalonia.Controls.Button",
-      "member": "CommandParameter",
-      "reason": "Not included by projection policy"
-    },
-    {
       "owner": "Avalonia.Controls.Calendar",
       "member": "SelectedDates",
       "reason": "Not included by projection policy"
@@ -10831,11 +10862,6 @@
     },
     {
       "owner": "Avalonia.Controls.MenuItem",
-      "member": "CommandParameter",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.MenuItem",
       "member": "InputGesture",
       "reason": "Not included by projection policy"
     },
@@ -11156,11 +11182,6 @@
     },
     {
       "owner": "Avalonia.Controls.SplitButton",
-      "member": "CommandParameter",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.SplitButton",
       "member": "HotKey",
       "reason": "Not included by projection policy"
     },
@@ -11397,11 +11418,6 @@
     {
       "owner": "Avalonia.Controls.TransitioningContentControl",
       "member": "TransitionCompleted",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TrayIcon",
-      "member": "CommandParameter",
       "reason": "Not included by projection policy"
     },
     {
