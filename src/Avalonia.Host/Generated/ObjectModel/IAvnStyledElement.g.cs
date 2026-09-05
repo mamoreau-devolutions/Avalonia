@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("52B157BF-839E-5307-9CE0-491FD61FF603")]
+[Guid("CECDC9F8-5DA4-5670-8F6F-FECA0F77A087")]
 public partial interface IAvnStyledElement : IAvnAvaloniaObject
 {
     [PreserveSig]
@@ -18,6 +18,12 @@ public partial interface IAvnStyledElement : IAvnAvaloniaObject
     [PreserveSig]
     int GetClasses(out IAvnStringList value);
 
+    [PreserveSig]
+    int AdviseDataContextChanged(IAvnStyledElementDataContextChangedHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadviseDataContextChanged(long subscriptionId);
+
 }
 
 [GeneratedComClass]
@@ -25,10 +31,13 @@ public sealed partial class AvnStyledElement : IAvnStyledElement
 {
     private readonly global::Avalonia.Host.Ownership.ProjectionObjectState _state;
     private global::Avalonia.StyledElement _value => _state.GetTarget<global::Avalonia.StyledElement>();
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnStyledElementDataContextChangedHandler Handler, global::System.Action Unsubscribe)> _dataContextChangedSubscriptions = new();
+    private long _nextDataContextChangedSubscriptionId;
 
     internal AvnStyledElement(global::Avalonia.StyledElement value)
     {
         _state = ProjectionRuntime.GetOrCreateState(value);
+        _state.RegisterCleanup(ReleaseSubscriptions);
         global::Avalonia.Host.ProjectionDiagnostics.WrapperCreated();
     }
 
@@ -107,5 +116,61 @@ public sealed partial class AvnStyledElement : IAvnStyledElement
         {
             return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
         }
+    }
+
+    public int AdviseDataContextChanged(IAvnStyledElementDataContextChangedHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler((_, eventArgs) =>
+            {
+                var hr = handler.Invoke();
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.DataContextChanged += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextDataContextChangedSubscriptionId);
+            _dataContextChangedSubscriptions.Add(subscriptionId, (handler, () => eventSource.DataContextChanged -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseDataContextChanged(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_dataContextChangedSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    private void ReleaseSubscriptions()
+    {
+        foreach (var subscription in _dataContextChangedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _dataContextChangedSubscriptions.Clear();
     }
 }

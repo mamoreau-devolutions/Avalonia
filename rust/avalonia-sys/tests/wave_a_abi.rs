@@ -26,7 +26,7 @@ fn image_source_is_published_as_a_utf16_string_slot() {
         "*set_stretch)(IAvnImage* self, int32_t value)",
         "*set_stretch_direction)(IAvnImage* self, int32_t value)",
         "*set_blend_mode)(IAvnImage* self, int32_t value)",
-        "#define I_AVN_IMAGE_ABI_VERSION 2",
+        "#define I_AVN_IMAGE_ABI_VERSION 3",
     ] {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
     }
@@ -63,21 +63,21 @@ fn tool_tip_tip_is_a_string_attached_property_beside_the_scalar_ones() {
 #[test]
 fn wave_a_interfaces_publish_abi_version_one_and_nothing_else_moved() {
     for expected in [
-        "#define I_AVN_IMAGE_ABI_VERSION 2",
-        "#define I_AVN_HEADERED_ITEMS_CONTROL_ABI_VERSION 4",
-        "#define I_AVN_TAB_CONTROL_ABI_VERSION 4",
-        "#define I_AVN_TAB_ITEM_ABI_VERSION 3",
-        "#define I_AVN_TREE_VIEW_ABI_VERSION 4",
-        "#define I_AVN_TREE_VIEW_ITEM_ABI_VERSION 4",
-        "#define I_AVN_TOOL_TIP_ABI_VERSION 3",
+        "#define I_AVN_IMAGE_ABI_VERSION 3",
+        "#define I_AVN_HEADERED_ITEMS_CONTROL_ABI_VERSION 5",
+        "#define I_AVN_TAB_CONTROL_ABI_VERSION 5",
+        "#define I_AVN_TAB_ITEM_ABI_VERSION 4",
+        "#define I_AVN_TREE_VIEW_ABI_VERSION 5",
+        "#define I_AVN_TREE_VIEW_ITEM_ABI_VERSION 5",
+        "#define I_AVN_TOOL_TIP_ABI_VERSION 4",
         // Every base the new interfaces sit on kept the version whose flattened vtable it
         // still matches, so no shipped consumer has to requery anything but the factory.
         "#define I_AVN_AVALONIA_OBJECT_ABI_VERSION 2",
-        "#define I_AVN_CONTROL_ABI_VERSION 4",
-        "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 7",
-        "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 7",
-        "#define I_AVN_CONTENT_CONTROL_ABI_VERSION 7",
-        "#define I_AVN_HEADERED_CONTENT_CONTROL_ABI_VERSION 7",
+        "#define I_AVN_CONTROL_ABI_VERSION 5",
+        "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 8",
+        "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 8",
+        "#define I_AVN_CONTENT_CONTROL_ABI_VERSION 8",
+        "#define I_AVN_HEADERED_CONTENT_CONTROL_ABI_VERSION 8",
         // Only the factory grew slots. Wave B moved it again, from 3 to 4, for its own
         // creators; every wave A interface still publishes at version 1.
         "#define I_AVN_CONTROL_FACTORY_ABI_VERSION 13",
@@ -98,27 +98,27 @@ fn wave_a_iids_are_fresh_and_distinct_from_every_shipped_one() {
         ),
         (
             "IAvnControl",
-            "82E7495D-EC39-5401-8EB6-862A4FD2C6B7",
+            "C08EBEE5-BDFD-5A33-9024-B64C139D1088",
             I_AVN_CONTROL_IID,
         ),
         (
             "IAvnItemsControl",
-            "266FAE15-E701-5220-AA28-FFEAB61ED3F7",
+            "E61DDE0E-DE4F-5D63-B485-C9A8FB72537F",
             I_AVN_ITEMS_CONTROL_IID,
         ),
         (
             "IAvnSelectingItemsControl",
-            "9E0E63B7-6A89-5073-8DC9-1B5A435E4F22",
+            "0381D38A-B15F-53A5-8D29-BADCE2D1173D",
             I_AVN_SELECTING_ITEMS_CONTROL_IID,
         ),
         (
             "IAvnContentControl",
-            "2D229F2A-B6EE-5835-A8EC-BA98838E1EF5",
+            "19B9E7BE-B20C-5CC9-95D7-2FC93E1910E6",
             I_AVN_CONTENT_CONTROL_IID,
         ),
         (
             "IAvnHeaderedContentControl",
-            "070EFA6A-7C6E-5A69-B9ED-48501E7FAEF8",
+            "CD8011E8-DE74-594C-80BB-D16B21210AC9",
             I_AVN_HEADERED_CONTENT_CONTROL_IID,
         ),
     ] {

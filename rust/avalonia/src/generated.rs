@@ -2550,13 +2550,17 @@ impl TryFrom<i32> for CalendarWeekRule {
 pub use sys::AutoCompleteBoxPopulatingEventArgs;
 pub use sys::AutoCompleteBoxDropDownOpeningEventArgs;
 pub use sys::AutoCompleteBoxDropDownClosingEventArgs;
+pub use sys::CalendarDisplayModeChangedEventArgs;
 pub use sys::ContextMenuOpeningEventArgs;
 pub use sys::ContextMenuClosingEventArgs;
+pub use sys::ControlSizeChangedEventArgs;
 pub use sys::ControlKeyDownEventArgs;
 pub use sys::PopupFlyoutBaseClosingEventArgs;
 pub use sys::ThumbDragStartedEventArgs;
 pub use sys::ThumbDragDeltaEventArgs;
 pub use sys::ThumbDragCompletedEventArgs;
+pub use sys::SplitViewPaneClosingEventArgs;
+pub use sys::SplitViewPaneOpeningEventArgs;
 pub use sys::WindowClosingEventArgs;
 
 #[derive(Clone, Debug)]
@@ -2665,6 +2669,19 @@ impl AutoCompleteBox {
     }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
@@ -2815,6 +2832,17 @@ impl AutoCompleteBox {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -3219,6 +3247,19 @@ impl Border {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -3368,6 +3409,17 @@ impl Border {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -3516,6 +3568,19 @@ impl Button {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -3665,6 +3730,17 @@ impl Button {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -3964,6 +4040,19 @@ impl ButtonSpinner {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -4113,6 +4202,17 @@ impl ButtonSpinner {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -4367,6 +4467,19 @@ impl Calendar {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -4516,6 +4629,17 @@ impl Calendar {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -4801,6 +4925,17 @@ impl Calendar {
         self.set_display_date_end(value)?;
         Ok(self)
     }
+    pub fn subscribe_display_mode_changed(&self, callback: impl FnMut(&mut CalendarDisplayModeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::calendar_display_mode_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_display_mode_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_display_mode_changed(subscription_id)))
+    }
+    pub fn on_display_mode_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut CalendarDisplayModeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_display_mode_changed(callback)?);
+        Ok(self)
+    }
 }
 
 impl AsControl for Calendar {
@@ -4832,6 +4967,19 @@ impl CalendarDatePicker {
     }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
@@ -4982,6 +5130,17 @@ impl CalendarDatePicker {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -5378,6 +5537,19 @@ impl Canvas {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -5527,6 +5699,17 @@ impl Canvas {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -5652,6 +5835,19 @@ impl Carousel {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -5801,6 +5997,17 @@ impl Carousel {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -6068,6 +6275,19 @@ impl CheckBox {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -6217,6 +6437,17 @@ impl CheckBox {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -6545,6 +6776,19 @@ impl ComboBox {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -6694,6 +6938,17 @@ impl ComboBox {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -7026,6 +7281,19 @@ impl ComboBoxItem {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -7175,6 +7443,17 @@ impl ComboBoxItem {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -7410,6 +7689,19 @@ impl CommandBar {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -7559,6 +7851,17 @@ impl CommandBar {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -7888,6 +8191,19 @@ impl CommandBarButton {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -8037,6 +8353,17 @@ impl CommandBarButton {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -8382,6 +8709,19 @@ impl CommandBarSeparator {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -8531,6 +8871,17 @@ impl CommandBarSeparator {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -8741,6 +9092,19 @@ impl CommandBarToggleButton {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -8890,6 +9254,17 @@ impl CommandBarToggleButton {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -9264,6 +9639,19 @@ impl ContentControl {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -9413,6 +9801,17 @@ impl ContentControl {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -9640,6 +10039,19 @@ impl ContextMenu {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -9789,6 +10201,17 @@ impl ContextMenu {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -10172,6 +10595,19 @@ impl Control {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -10321,6 +10757,17 @@ impl Control {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -10392,6 +10839,19 @@ impl DatePicker {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -10541,6 +11001,17 @@ impl DatePicker {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -10837,6 +11308,19 @@ impl Decorator {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -10986,6 +11470,17 @@ impl Decorator {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -11078,6 +11573,19 @@ impl DockPanel {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -11227,6 +11735,17 @@ impl DockPanel {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -11349,6 +11868,19 @@ impl DropDownButton {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -11498,6 +12030,17 @@ impl DropDownButton {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -11797,6 +12340,19 @@ impl Expander {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -11946,6 +12502,17 @@ impl Expander {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -12229,6 +12796,19 @@ impl FlexPanel {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -12378,6 +12958,17 @@ impl FlexPanel {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -12701,6 +13292,19 @@ impl Grid {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -12850,6 +13454,17 @@ impl Grid {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -13030,6 +13645,19 @@ impl GridSplitter {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -13179,6 +13807,17 @@ impl GridSplitter {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -13452,6 +14091,19 @@ impl GroupBox {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -13601,6 +14253,17 @@ impl GroupBox {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -13839,6 +14502,19 @@ impl HyperlinkButton {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -13988,6 +14664,17 @@ impl HyperlinkButton {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -14302,6 +14989,19 @@ impl IconElement {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -14451,6 +15151,17 @@ impl IconElement {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -14645,6 +15356,19 @@ impl Image {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -14794,6 +15518,17 @@ impl Image {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -14909,6 +15644,19 @@ impl ItemsControl {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -15058,6 +15806,17 @@ impl ItemsControl {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -15261,6 +16020,19 @@ impl Label {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -15410,6 +16182,17 @@ impl Label {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -15648,6 +16431,19 @@ impl LayoutTransformControl {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -15797,6 +16593,17 @@ impl LayoutTransformControl {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -15897,6 +16704,19 @@ impl ListBox {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -16046,6 +16866,17 @@ impl ListBox {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -16304,6 +17135,19 @@ impl ListBoxItem {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -16453,6 +17297,17 @@ impl ListBoxItem {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -16688,6 +17543,19 @@ impl MaskedTextBox {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -16837,6 +17705,17 @@ impl MaskedTextBox {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -17441,6 +18320,19 @@ impl Menu {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -17590,6 +18482,17 @@ impl Menu {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -17863,6 +18766,19 @@ impl MenuBase {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -18012,6 +18928,17 @@ impl MenuBase {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -18448,6 +19375,19 @@ impl MenuItem {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -18597,6 +19537,17 @@ impl MenuItem {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -18972,6 +19923,19 @@ impl NotificationCard {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -19121,6 +20085,17 @@ impl NotificationCard {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -19337,6 +20312,19 @@ impl NotificationCard {
         Ok(self)
     }
     pub fn close(&self) -> Result<()> { Ok(self.raw.close()?) }
+    pub fn subscribe_notification_closed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::notification_card_notification_closed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_notification_closed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_notification_closed(subscription_id)))
+    }
+    pub fn on_notification_closed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_notification_closed(callback)?);
+        Ok(self)
+    }
 }
 
 impl AsControl for NotificationCard {
@@ -19368,6 +20356,19 @@ impl WindowNotificationManager {
     }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
@@ -19518,6 +20519,17 @@ impl WindowNotificationManager {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -19731,6 +20743,19 @@ impl NumericUpDown {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -19880,6 +20905,17 @@ impl NumericUpDown {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -20273,6 +21309,19 @@ impl Panel {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -20422,6 +21471,17 @@ impl Panel {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -20511,6 +21571,19 @@ impl PathIcon {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -20660,6 +21733,17 @@ impl PathIcon {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -20865,6 +21949,19 @@ impl PipsPager {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -21014,6 +22111,17 @@ impl PipsPager {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -21323,6 +22431,19 @@ impl HeaderedContentControl {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -21472,6 +22593,17 @@ impl HeaderedContentControl {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -21710,6 +22842,19 @@ impl HeaderedItemsControl {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -21859,6 +23004,17 @@ impl HeaderedItemsControl {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -22073,6 +23229,19 @@ impl HeaderedSelectingItemsControl {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -22222,6 +23391,17 @@ impl HeaderedSelectingItemsControl {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -22481,6 +23661,19 @@ impl Popup {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -22630,6 +23823,17 @@ impl Popup {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -23022,6 +24226,19 @@ impl RangeBase {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -23171,6 +24388,17 @@ impl RangeBase {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -23418,6 +24646,19 @@ impl SelectingItemsControl {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -23567,6 +24808,17 @@ impl SelectingItemsControl {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -23815,6 +25067,19 @@ impl TemplatedControl {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -23964,6 +25229,17 @@ impl TemplatedControl {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -24158,6 +25434,19 @@ impl Thumb {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -24307,6 +25596,17 @@ impl Thumb {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -24534,6 +25834,19 @@ impl ToggleButton {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -24683,6 +25996,17 @@ impl ToggleButton {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -25011,6 +26335,19 @@ impl UniformGrid {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -25160,6 +26497,17 @@ impl UniformGrid {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -25289,6 +26637,19 @@ impl ProgressBar {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -25438,6 +26799,17 @@ impl ProgressBar {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -25724,6 +27096,19 @@ impl RadioButton {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -25873,6 +27258,17 @@ impl RadioButton {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -26212,6 +27608,19 @@ impl RefreshContainer {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -26361,6 +27770,17 @@ impl RefreshContainer {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -26608,6 +28028,19 @@ impl RelativePanel {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -26757,6 +28190,17 @@ impl RelativePanel {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -26900,6 +28344,19 @@ impl RepeatButton {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -27049,6 +28506,17 @@ impl RepeatButton {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -27364,6 +28832,19 @@ impl ScrollViewer {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -27513,6 +28994,17 @@ impl ScrollViewer {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -27906,6 +29398,19 @@ impl SelectableTextBlock {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -28055,6 +29560,17 @@ impl SelectableTextBlock {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -28352,6 +29868,19 @@ impl Separator {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -28501,6 +30030,17 @@ impl Separator {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -28695,6 +30235,19 @@ impl Arc {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -28844,6 +30397,17 @@ impl Arc {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -29010,6 +30574,19 @@ impl Ellipse {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -29159,6 +30736,17 @@ impl Ellipse {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -29309,6 +30897,19 @@ impl Line {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -29458,6 +31059,17 @@ impl Line {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -29628,6 +31240,19 @@ impl Path {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -29777,6 +31402,17 @@ impl Path {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -29938,6 +31574,19 @@ impl Polygon {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -30087,6 +31736,17 @@ impl Polygon {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -30248,6 +31908,19 @@ impl Polyline {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -30397,6 +32070,17 @@ impl Polyline {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -30558,6 +32242,19 @@ impl Rectangle {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -30707,6 +32404,17 @@ impl Rectangle {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -30873,6 +32581,19 @@ impl Sector {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -31022,6 +32743,17 @@ impl Sector {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -31184,6 +32916,19 @@ impl Shape {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -31333,6 +33078,17 @@ impl Shape {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -31483,6 +33239,19 @@ impl Slider {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -31632,6 +33401,17 @@ impl Slider {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -31921,6 +33701,19 @@ impl Spinner {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -32070,6 +33863,17 @@ impl Spinner {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -32297,6 +34101,19 @@ impl SplitButton {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -32446,6 +34263,17 @@ impl SplitButton {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -32717,6 +34545,19 @@ impl SplitView {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -32866,6 +34707,17 @@ impl SplitView {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -33150,6 +35002,17 @@ impl SplitView {
         scope.retain_subscription(self.subscribe_pane_closed(callback)?);
         Ok(self)
     }
+    pub fn subscribe_pane_closing(&self, callback: impl FnMut(&mut SplitViewPaneClosingEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::split_view_pane_closing_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_pane_closing(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pane_closing(subscription_id)))
+    }
+    pub fn on_pane_closing(self, scope: &crate::AppScope, callback: impl FnMut(&mut SplitViewPaneClosingEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pane_closing(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_pane_opened(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::split_view_pane_opened_handler(move || {
             callback(());
@@ -33161,6 +35024,17 @@ impl SplitView {
     }
     pub fn on_pane_opened(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_pane_opened(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_pane_opening(&self, callback: impl FnMut(&mut SplitViewPaneOpeningEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::split_view_pane_opening_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_pane_opening(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_pane_opening(subscription_id)))
+    }
+    pub fn on_pane_opening(self, scope: &crate::AppScope, callback: impl FnMut(&mut SplitViewPaneOpeningEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_pane_opening(callback)?);
         Ok(self)
     }
 }
@@ -33194,6 +35068,19 @@ impl StackPanel {
     }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
@@ -33344,6 +35231,17 @@ impl StackPanel {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -33468,6 +35366,19 @@ impl TabControl {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -33617,6 +35528,17 @@ impl TabControl {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -33898,6 +35820,19 @@ impl TabItem {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -34047,6 +35982,17 @@ impl TabItem {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -34293,6 +36239,19 @@ impl TableView {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -34442,6 +36401,17 @@ impl TableView {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -34708,6 +36678,19 @@ impl TableViewCell {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -34857,6 +36840,17 @@ impl TableViewCell {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -35084,6 +37078,19 @@ impl TableViewColumn {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_header(&self) -> Result<Option<Control>> {
         Ok(self.raw.get_header()?.map(|raw| Control { raw }))
     }
@@ -35177,6 +37184,19 @@ impl TableViewRow {
     }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
     }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
@@ -35327,6 +37347,17 @@ impl TableViewRow {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -35562,6 +37593,19 @@ impl TextBlock {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -35711,6 +37755,17 @@ impl TextBlock {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -35950,6 +38005,19 @@ impl TextBox {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -36099,6 +38167,17 @@ impl TextBox {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -36650,6 +38729,19 @@ impl ThemeVariantScope {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -36799,6 +38891,17 @@ impl ThemeVariantScope {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -36891,6 +38994,19 @@ impl TimePicker {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -37040,6 +39156,17 @@ impl TimePicker {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -37292,6 +39419,19 @@ impl ToggleSplitButton {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -37441,6 +39581,17 @@ impl ToggleSplitButton {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -37733,6 +39884,19 @@ impl ToggleSwitch {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -37882,6 +40046,17 @@ impl ToggleSwitch {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -38232,6 +40407,19 @@ impl ToolTip {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -38381,6 +40569,17 @@ impl ToolTip {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -38690,6 +40889,19 @@ impl TransitioningContentControl {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -38839,6 +41051,17 @@ impl TransitioningContentControl {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -39127,6 +41350,19 @@ impl TreeView {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -39276,6 +41512,17 @@ impl TreeView {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -39512,6 +41759,19 @@ impl TreeViewItem {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -39661,6 +41921,17 @@ impl TreeViewItem {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -39918,6 +42189,19 @@ impl UserControl {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -40067,6 +42351,17 @@ impl UserControl {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -40294,6 +42589,19 @@ impl Viewbox {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -40443,6 +42751,17 @@ impl Viewbox {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -40547,6 +42866,19 @@ impl Window {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -40696,6 +43028,17 @@ impl Window {
     }
     pub fn on_unloaded(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
         Ok(self)
     }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
@@ -41064,6 +43407,19 @@ impl WrapPanel {
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
     }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
     pub fn get_is_visible(&self) -> Result<bool> { Ok(self.raw.get_is_visible()?) }
     pub fn set_visible(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_visible(value)?)
@@ -41215,6 +43571,17 @@ impl WrapPanel {
         scope.retain_subscription(self.subscribe_unloaded(callback)?);
         Ok(self)
     }
+    pub fn subscribe_size_changed(&self, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::control_size_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_size_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_size_changed(subscription_id)))
+    }
+    pub fn on_size_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut ControlSizeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_size_changed(callback)?);
+        Ok(self)
+    }
     pub fn subscribe_key_down(&self, callback: impl FnMut(&mut ControlKeyDownEventArgs) + Send + 'static) -> Result<EventSubscription> {
         let mut callback = callback;
         let handler = sys::control_key_down_handler(move |event| { callback(event); Ok(()) });
@@ -41355,5 +43722,18 @@ impl StyledElement {
     }
     pub fn classes(&self) -> Result<StringList> {
         Ok(StringList { raw: self.raw.get_classes()? })
+    }
+    pub fn subscribe_data_context_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::styled_element_data_context_changed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_data_context_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_data_context_changed(subscription_id)))
+    }
+    pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
     }
 }

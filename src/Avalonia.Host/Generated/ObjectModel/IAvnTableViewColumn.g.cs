@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("E17F1C8C-CEA3-51A4-8A06-AD8599CDDA0D")]
+[Guid("13A07ADB-66D4-5286-9C43-59931C3E5BB1")]
 public partial interface IAvnTableViewColumn : IAvnStyledElement
 {
     [PreserveSig]
@@ -64,10 +64,13 @@ public sealed partial class AvnTableViewColumn : IAvnTableViewColumn
 {
     private readonly global::Avalonia.Host.Ownership.ProjectionObjectState _state;
     private global::Avalonia.Controls.TableViewColumn _value => _state.GetTarget<global::Avalonia.Controls.TableViewColumn>();
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnStyledElementDataContextChangedHandler Handler, global::System.Action Unsubscribe)> _dataContextChangedSubscriptions = new();
+    private long _nextDataContextChangedSubscriptionId;
 
     internal AvnTableViewColumn(global::Avalonia.Controls.TableViewColumn value)
     {
         _state = ProjectionRuntime.GetOrCreateState(value);
+        _state.RegisterCleanup(ReleaseSubscriptions);
         global::Avalonia.Host.ProjectionDiagnostics.WrapperCreated();
     }
 
@@ -140,6 +143,52 @@ public sealed partial class AvnTableViewColumn : IAvnTableViewColumn
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = new AvnStringList(_value.Classes);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int AdviseDataContextChanged(IAvnStyledElementDataContextChangedHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler((_, eventArgs) =>
+            {
+                var hr = handler.Invoke();
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.DataContextChanged += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextDataContextChangedSubscriptionId);
+            _dataContextChangedSubscriptions.Add(subscriptionId, (handler, () => eventSource.DataContextChanged -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseDataContextChanged(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_dataContextChangedSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -395,5 +444,15 @@ public sealed partial class AvnTableViewColumn : IAvnTableViewColumn
         {
             return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
         }
+    }
+
+    private void ReleaseSubscriptions()
+    {
+        foreach (var subscription in _dataContextChangedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _dataContextChangedSubscriptions.Clear();
     }
 }

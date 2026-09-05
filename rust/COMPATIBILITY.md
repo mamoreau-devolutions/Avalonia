@@ -357,6 +357,18 @@ write-back. ItemTemplate, ValueMemberBinding, SelectedItem, the filter
 and selector delegates, AsyncPopulator and ItemsSource stay gaps: they
 are templates, bindings, delegates and an untyped object collection.
 
+Wave U16 grows the base interfaces, so every control republishes.
+StyledElement 3 to 4 adds DataContextChanged (no payload); Control 4 to 5
+adds SizeChanged, whose handler carries NewSize and PreviousSize as
+`AvnSize` values — resize feedback reaches Rust on every control.
+SplitView 3 to 4 adds PaneOpening/PaneClosing (Cancel write-back) beside
+its existing PaneOpened/PaneClosed; Calendar 4 to 5 adds DisplayModeChanged
+(OldMode/NewMode as i32); NotificationCard 4 to 5 adds NotificationClosed
+(no payload). Every StyledElement and Control descendant — all 100+
+control interfaces — bumps once and republishes under a fresh
+deterministic IID; Popup, TrayIcon and the flyout family do not derive
+from Control and keep their versions. Factory stays 13.
+
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and
 `IAvnNumericUpDown` each move from 2 to 3. Templates, filters, ItemsSource,

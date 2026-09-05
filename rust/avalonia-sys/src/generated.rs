@@ -684,6 +684,61 @@ unsafe extern "system" fn i_avn_button_click_handler_invoke(this: *mut IAvnButto
     crate::event_callback::invoke::<IAvnButtonClickHandler, ()>(this, &mut ())
 }
 
+pub const I_AVN_CALENDAR_DISPLAY_MODE_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x62C33917, data2: 0x066A, data3: 0x5B62, data4: [0x9C, 0x98, 0x8E, 0xDF, 0x1B, 0xB5, 0xF2, 0xA8] };
+
+#[derive(Debug)]
+pub struct CalendarDisplayModeChangedEventArgs {
+    pub old_mode: i32,
+    pub new_mode: i32,
+}
+
+#[repr(C)]
+struct IAvnCalendarDisplayModeChangedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnCalendarDisplayModeChangedHandler, old_mode: i32, new_mode: i32) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnCalendarDisplayModeChangedHandler { vtbl: *const IAvnCalendarDisplayModeChangedHandlerVtbl }
+
+unsafe impl ComInterface for IAvnCalendarDisplayModeChangedHandler { const IID: Guid = I_AVN_CALENDAR_DISPLAY_MODE_CHANGED_HANDLER_IID; }
+
+static I_AVN_CALENDAR_DISPLAY_MODE_CHANGED_HANDLER_VTBL: IAvnCalendarDisplayModeChangedHandlerVtbl = IAvnCalendarDisplayModeChangedHandlerVtbl {
+    query_interface: i_avn_calendar_display_mode_changed_handler_query_interface,
+    add_ref: i_avn_calendar_display_mode_changed_handler_add_ref,
+    release: i_avn_calendar_display_mode_changed_handler_release,
+    invoke: i_avn_calendar_display_mode_changed_handler_invoke,
+};
+
+pub fn calendar_display_mode_changed_handler(callback: impl FnMut(&mut CalendarDisplayModeChangedEventArgs) -> Result<()> + Send + 'static) -> ComPtr<IAvnCalendarDisplayModeChangedHandler> {
+    crate::event_callback::create(IAvnCalendarDisplayModeChangedHandler { vtbl: &I_AVN_CALENDAR_DISPLAY_MODE_CHANGED_HANDLER_VTBL }, callback)
+}
+
+unsafe extern "system" fn i_avn_calendar_display_mode_changed_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnCalendarDisplayModeChangedHandler, CalendarDisplayModeChangedEventArgs>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_calendar_display_mode_changed_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnCalendarDisplayModeChangedHandler, CalendarDisplayModeChangedEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_calendar_display_mode_changed_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnCalendarDisplayModeChangedHandler, CalendarDisplayModeChangedEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_calendar_display_mode_changed_handler_invoke(this: *mut IAvnCalendarDisplayModeChangedHandler, old_mode: i32, new_mode: i32) -> i32 {
+    let mut arguments = CalendarDisplayModeChangedEventArgs {
+        old_mode,
+        new_mode,
+    };
+    let hr = crate::event_callback::invoke::<IAvnCalendarDisplayModeChangedHandler, CalendarDisplayModeChangedEventArgs>(this, &mut arguments);
+    if hr >= 0 {
+    }
+    hr
+}
+
 pub const I_AVN_CALENDAR_DATE_PICKER_CALENDAR_CLOSED_HANDLER_IID: Guid = Guid { data1: 0xBE1A8386, data2: 0xE73B, data3: 0x5FC4, data4: [0x84, 0xAA, 0x92, 0xAD, 0x4F, 0x0D, 0x79, 0xDC] };
 
 #[repr(C)]
@@ -1344,6 +1399,61 @@ unsafe extern "system" fn i_avn_control_unloaded_handler_invoke(this: *mut IAvnC
     crate::event_callback::invoke::<IAvnControlUnloadedHandler, ()>(this, &mut ())
 }
 
+pub const I_AVN_CONTROL_SIZE_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x415D0DCB, data2: 0xCC4B, data3: 0x5047, data4: [0xAC, 0xA3, 0xC1, 0x48, 0x75, 0x0F, 0x8B, 0x46] };
+
+#[derive(Debug)]
+pub struct ControlSizeChangedEventArgs {
+    pub new_size: AvnSize,
+    pub previous_size: AvnSize,
+}
+
+#[repr(C)]
+struct IAvnControlSizeChangedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnControlSizeChangedHandler, new_size: AvnSize, previous_size: AvnSize) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnControlSizeChangedHandler { vtbl: *const IAvnControlSizeChangedHandlerVtbl }
+
+unsafe impl ComInterface for IAvnControlSizeChangedHandler { const IID: Guid = I_AVN_CONTROL_SIZE_CHANGED_HANDLER_IID; }
+
+static I_AVN_CONTROL_SIZE_CHANGED_HANDLER_VTBL: IAvnControlSizeChangedHandlerVtbl = IAvnControlSizeChangedHandlerVtbl {
+    query_interface: i_avn_control_size_changed_handler_query_interface,
+    add_ref: i_avn_control_size_changed_handler_add_ref,
+    release: i_avn_control_size_changed_handler_release,
+    invoke: i_avn_control_size_changed_handler_invoke,
+};
+
+pub fn control_size_changed_handler(callback: impl FnMut(&mut ControlSizeChangedEventArgs) -> Result<()> + Send + 'static) -> ComPtr<IAvnControlSizeChangedHandler> {
+    crate::event_callback::create(IAvnControlSizeChangedHandler { vtbl: &I_AVN_CONTROL_SIZE_CHANGED_HANDLER_VTBL }, callback)
+}
+
+unsafe extern "system" fn i_avn_control_size_changed_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnControlSizeChangedHandler, ControlSizeChangedEventArgs>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_control_size_changed_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnControlSizeChangedHandler, ControlSizeChangedEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_control_size_changed_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnControlSizeChangedHandler, ControlSizeChangedEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_control_size_changed_handler_invoke(this: *mut IAvnControlSizeChangedHandler, new_size: AvnSize, previous_size: AvnSize) -> i32 {
+    let mut arguments = ControlSizeChangedEventArgs {
+        new_size,
+        previous_size,
+    };
+    let hr = crate::event_callback::invoke::<IAvnControlSizeChangedHandler, ControlSizeChangedEventArgs>(this, &mut arguments);
+    if hr >= 0 {
+    }
+    hr
+}
+
 pub const I_AVN_CONTROL_KEY_DOWN_HANDLER_IID: Guid = Guid { data1: 0x9232F26F, data2: 0x2F3B, data3: 0x5BA2, data4: [0xB0, 0x98, 0xE4, 0xCB, 0x6B, 0x26, 0xBD, 0xA3] };
 
 #[derive(Debug)]
@@ -1845,6 +1955,61 @@ unsafe extern "system" fn i_avn_menu_item_submenu_opened_handler_release(this: *
 
 unsafe extern "system" fn i_avn_menu_item_submenu_opened_handler_invoke(this: *mut IAvnMenuItemSubmenuOpenedHandler) -> i32 {
     crate::event_callback::invoke::<IAvnMenuItemSubmenuOpenedHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_NOTIFICATION_CARD_NOTIFICATION_CLOSED_HANDLER_IID: Guid = Guid { data1: 0x1F29B70B, data2: 0xA866, data3: 0x5873, data4: [0x8E, 0x3D, 0x00, 0xBC, 0x10, 0xA4, 0x0F, 0x2D] };
+
+#[repr(C)]
+struct IAvnNotificationCardNotificationClosedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnNotificationCardNotificationClosedHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnNotificationCardNotificationClosedHandler {
+    vtbl: *const IAvnNotificationCardNotificationClosedHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnNotificationCardNotificationClosedHandler {
+    const IID: Guid = I_AVN_NOTIFICATION_CARD_NOTIFICATION_CLOSED_HANDLER_IID;
+}
+
+impl ComPtr<IAvnNotificationCardNotificationClosedHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_NOTIFICATION_CARD_NOTIFICATION_CLOSED_HANDLER_VTBL: IAvnNotificationCardNotificationClosedHandlerVtbl = IAvnNotificationCardNotificationClosedHandlerVtbl {
+    query_interface: i_avn_notification_card_notification_closed_handler_query_interface,
+    add_ref: i_avn_notification_card_notification_closed_handler_add_ref,
+    release: i_avn_notification_card_notification_closed_handler_release,
+    invoke: i_avn_notification_card_notification_closed_handler_invoke,
+};
+
+pub fn notification_card_notification_closed_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnNotificationCardNotificationClosedHandler> {
+    crate::event_callback::create::<IAvnNotificationCardNotificationClosedHandler, ()>(IAvnNotificationCardNotificationClosedHandler { vtbl: &I_AVN_NOTIFICATION_CARD_NOTIFICATION_CLOSED_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_notification_card_notification_closed_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnNotificationCardNotificationClosedHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_notification_card_notification_closed_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnNotificationCardNotificationClosedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_notification_card_notification_closed_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnNotificationCardNotificationClosedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_notification_card_notification_closed_handler_invoke(this: *mut IAvnNotificationCardNotificationClosedHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnNotificationCardNotificationClosedHandler, ()>(this, &mut ())
 }
 
 pub const I_AVN_NUMERIC_UP_DOWN_VALUE_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x68A72F63, data2: 0xB469, data3: 0x5312, data4: [0x92, 0x5F, 0xF7, 0xFC, 0xCF, 0x35, 0xA0, 0xDF] };
@@ -2831,6 +2996,61 @@ unsafe extern "system" fn i_avn_split_view_pane_closed_handler_invoke(this: *mut
     crate::event_callback::invoke::<IAvnSplitViewPaneClosedHandler, ()>(this, &mut ())
 }
 
+pub const I_AVN_SPLIT_VIEW_PANE_CLOSING_HANDLER_IID: Guid = Guid { data1: 0x2931C5C0, data2: 0xE2F2, data3: 0x58D3, data4: [0xA3, 0x25, 0x6F, 0xCC, 0x08, 0xF7, 0xD8, 0x68] };
+
+#[derive(Debug)]
+pub struct SplitViewPaneClosingEventArgs {
+    pub cancel: bool,
+}
+
+#[repr(C)]
+struct IAvnSplitViewPaneClosingHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnSplitViewPaneClosingHandler, cancel: *mut i32) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnSplitViewPaneClosingHandler { vtbl: *const IAvnSplitViewPaneClosingHandlerVtbl }
+
+unsafe impl ComInterface for IAvnSplitViewPaneClosingHandler { const IID: Guid = I_AVN_SPLIT_VIEW_PANE_CLOSING_HANDLER_IID; }
+
+static I_AVN_SPLIT_VIEW_PANE_CLOSING_HANDLER_VTBL: IAvnSplitViewPaneClosingHandlerVtbl = IAvnSplitViewPaneClosingHandlerVtbl {
+    query_interface: i_avn_split_view_pane_closing_handler_query_interface,
+    add_ref: i_avn_split_view_pane_closing_handler_add_ref,
+    release: i_avn_split_view_pane_closing_handler_release,
+    invoke: i_avn_split_view_pane_closing_handler_invoke,
+};
+
+pub fn split_view_pane_closing_handler(callback: impl FnMut(&mut SplitViewPaneClosingEventArgs) -> Result<()> + Send + 'static) -> ComPtr<IAvnSplitViewPaneClosingHandler> {
+    crate::event_callback::create(IAvnSplitViewPaneClosingHandler { vtbl: &I_AVN_SPLIT_VIEW_PANE_CLOSING_HANDLER_VTBL }, callback)
+}
+
+unsafe extern "system" fn i_avn_split_view_pane_closing_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnSplitViewPaneClosingHandler, SplitViewPaneClosingEventArgs>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_split_view_pane_closing_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnSplitViewPaneClosingHandler, SplitViewPaneClosingEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_split_view_pane_closing_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnSplitViewPaneClosingHandler, SplitViewPaneClosingEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_split_view_pane_closing_handler_invoke(this: *mut IAvnSplitViewPaneClosingHandler, cancel: *mut i32) -> i32 {
+    if cancel.is_null() { return hresult::E_POINTER; }
+    let mut arguments = SplitViewPaneClosingEventArgs {
+        cancel: *cancel != 0,
+    };
+    let hr = crate::event_callback::invoke::<IAvnSplitViewPaneClosingHandler, SplitViewPaneClosingEventArgs>(this, &mut arguments);
+    if hr >= 0 {
+        *cancel = i32::from(arguments.cancel);
+    }
+    hr
+}
+
 pub const I_AVN_SPLIT_VIEW_PANE_OPENED_HANDLER_IID: Guid = Guid { data1: 0x3D24DB63, data2: 0x45CC, data3: 0x581B, data4: [0x87, 0x34, 0xEF, 0xEC, 0xDC, 0x25, 0xA6, 0x81] };
 
 #[repr(C)]
@@ -2884,6 +3104,61 @@ unsafe extern "system" fn i_avn_split_view_pane_opened_handler_release(this: *mu
 
 unsafe extern "system" fn i_avn_split_view_pane_opened_handler_invoke(this: *mut IAvnSplitViewPaneOpenedHandler) -> i32 {
     crate::event_callback::invoke::<IAvnSplitViewPaneOpenedHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_SPLIT_VIEW_PANE_OPENING_HANDLER_IID: Guid = Guid { data1: 0x059A7233, data2: 0x1634, data3: 0x5BA4, data4: [0x9F, 0x2A, 0xB5, 0xC9, 0x74, 0x1D, 0xE3, 0x09] };
+
+#[derive(Debug)]
+pub struct SplitViewPaneOpeningEventArgs {
+    pub cancel: bool,
+}
+
+#[repr(C)]
+struct IAvnSplitViewPaneOpeningHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnSplitViewPaneOpeningHandler, cancel: *mut i32) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnSplitViewPaneOpeningHandler { vtbl: *const IAvnSplitViewPaneOpeningHandlerVtbl }
+
+unsafe impl ComInterface for IAvnSplitViewPaneOpeningHandler { const IID: Guid = I_AVN_SPLIT_VIEW_PANE_OPENING_HANDLER_IID; }
+
+static I_AVN_SPLIT_VIEW_PANE_OPENING_HANDLER_VTBL: IAvnSplitViewPaneOpeningHandlerVtbl = IAvnSplitViewPaneOpeningHandlerVtbl {
+    query_interface: i_avn_split_view_pane_opening_handler_query_interface,
+    add_ref: i_avn_split_view_pane_opening_handler_add_ref,
+    release: i_avn_split_view_pane_opening_handler_release,
+    invoke: i_avn_split_view_pane_opening_handler_invoke,
+};
+
+pub fn split_view_pane_opening_handler(callback: impl FnMut(&mut SplitViewPaneOpeningEventArgs) -> Result<()> + Send + 'static) -> ComPtr<IAvnSplitViewPaneOpeningHandler> {
+    crate::event_callback::create(IAvnSplitViewPaneOpeningHandler { vtbl: &I_AVN_SPLIT_VIEW_PANE_OPENING_HANDLER_VTBL }, callback)
+}
+
+unsafe extern "system" fn i_avn_split_view_pane_opening_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnSplitViewPaneOpeningHandler, SplitViewPaneOpeningEventArgs>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_split_view_pane_opening_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnSplitViewPaneOpeningHandler, SplitViewPaneOpeningEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_split_view_pane_opening_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnSplitViewPaneOpeningHandler, SplitViewPaneOpeningEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_split_view_pane_opening_handler_invoke(this: *mut IAvnSplitViewPaneOpeningHandler, cancel: *mut i32) -> i32 {
+    if cancel.is_null() { return hresult::E_POINTER; }
+    let mut arguments = SplitViewPaneOpeningEventArgs {
+        cancel: *cancel != 0,
+    };
+    let hr = crate::event_callback::invoke::<IAvnSplitViewPaneOpeningHandler, SplitViewPaneOpeningEventArgs>(this, &mut arguments);
+    if hr >= 0 {
+        *cancel = i32::from(arguments.cancel);
+    }
+    hr
 }
 
 pub const I_AVN_TEXT_BOX_COPYING_TO_CLIPBOARD_HANDLER_IID: Guid = Guid { data1: 0xF367E5D4, data2: 0xB10F, data3: 0x5BFC, data4: [0x9B, 0x1B, 0x12, 0x1A, 0x76, 0x50, 0xF6, 0xA2] };
@@ -3385,6 +3660,61 @@ unsafe extern "system" fn i_avn_window_closing_handler_invoke(this: *mut IAvnWin
     hr
 }
 
+pub const I_AVN_STYLED_ELEMENT_DATA_CONTEXT_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x622D4F08, data2: 0x5DE5, data3: 0x5A44, data4: [0xAA, 0x40, 0xE2, 0x5A, 0x22, 0x4E, 0x41, 0x1D] };
+
+#[repr(C)]
+struct IAvnStyledElementDataContextChangedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnStyledElementDataContextChangedHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnStyledElementDataContextChangedHandler {
+    vtbl: *const IAvnStyledElementDataContextChangedHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnStyledElementDataContextChangedHandler {
+    const IID: Guid = I_AVN_STYLED_ELEMENT_DATA_CONTEXT_CHANGED_HANDLER_IID;
+}
+
+impl ComPtr<IAvnStyledElementDataContextChangedHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_STYLED_ELEMENT_DATA_CONTEXT_CHANGED_HANDLER_VTBL: IAvnStyledElementDataContextChangedHandlerVtbl = IAvnStyledElementDataContextChangedHandlerVtbl {
+    query_interface: i_avn_styled_element_data_context_changed_handler_query_interface,
+    add_ref: i_avn_styled_element_data_context_changed_handler_add_ref,
+    release: i_avn_styled_element_data_context_changed_handler_release,
+    invoke: i_avn_styled_element_data_context_changed_handler_invoke,
+};
+
+pub fn styled_element_data_context_changed_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnStyledElementDataContextChangedHandler> {
+    crate::event_callback::create::<IAvnStyledElementDataContextChangedHandler, ()>(IAvnStyledElementDataContextChangedHandler { vtbl: &I_AVN_STYLED_ELEMENT_DATA_CONTEXT_CHANGED_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_styled_element_data_context_changed_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnStyledElementDataContextChangedHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_styled_element_data_context_changed_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnStyledElementDataContextChangedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_styled_element_data_context_changed_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnStyledElementDataContextChangedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_styled_element_data_context_changed_handler_invoke(this: *mut IAvnStyledElementDataContextChangedHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnStyledElementDataContextChangedHandler, ()>(this, &mut ())
+}
+
 pub const I_AVN_ITEM_LIST_IID: Guid = Guid { data1: 0x59A429A7, data2: 0xCF8A, data3: 0x5EB0, data4: [0xB6, 0x15, 0x91, 0x2A, 0x3D, 0xEF, 0x07, 0x04] };
 
 #[repr(C)]
@@ -3604,7 +3934,7 @@ impl ComPtr<IAvnAvaloniaObject> {
     }
 }
 
-pub const I_AVN_AUTO_COMPLETE_BOX_IID: Guid = Guid { data1: 0x7561A64D, data2: 0x0AFE, data3: 0x5DA1, data4: [0xA1, 0xD6, 0x6D, 0x06, 0x2E, 0xE4, 0x34, 0x7C] };
+pub const I_AVN_AUTO_COMPLETE_BOX_IID: Guid = Guid { data1: 0x8D97BEB4, data2: 0xC4E9, data3: 0x57E7, data4: [0xAA, 0xE6, 0x14, 0x8B, 0x90, 0x18, 0x1A, 0x72] };
 
 #[repr(C)]
 struct IAvnAutoCompleteBoxVtbl {
@@ -3616,6 +3946,8 @@ struct IAvnAutoCompleteBoxVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut f64) -> i32,
@@ -3649,6 +3981,8 @@ struct IAvnAutoCompleteBoxVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -3767,6 +4101,19 @@ impl ComPtr<IAvnAutoCompleteBox> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -3996,6 +4343,19 @@ impl ComPtr<IAvnAutoCompleteBox> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -4496,7 +4856,7 @@ impl ComPtr<IAvnAutoCompleteBox> {
     }
 }
 
-pub const I_AVN_BORDER_IID: Guid = Guid { data1: 0x8CBDF7CD, data2: 0x7FB0, data3: 0x5E65, data4: [0x97, 0xA7, 0xCD, 0xA1, 0xA7, 0x91, 0xC1, 0x22] };
+pub const I_AVN_BORDER_IID: Guid = Guid { data1: 0x1E178E71, data2: 0x29A9, data3: 0x5B37, data4: [0x8F, 0x5C, 0x5C, 0x24, 0xAD, 0x56, 0x92, 0x58] };
 
 #[repr(C)]
 struct IAvnBorderVtbl {
@@ -4508,6 +4868,8 @@ struct IAvnBorderVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnBorder, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnBorder, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnBorder, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnBorder, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnBorder, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnBorder, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnBorder, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnBorder, *mut f64) -> i32,
@@ -4541,6 +4903,8 @@ struct IAvnBorderVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnBorder, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnBorder, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnBorder, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnBorder, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnBorder, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnBorder, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnBorder, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnBorder, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -4608,6 +4972,19 @@ impl ComPtr<IAvnBorder> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -4837,6 +5214,19 @@ impl ComPtr<IAvnBorder> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -4987,7 +5377,7 @@ impl ComPtr<IAvnBorder> {
     }
 }
 
-pub const I_AVN_BUTTON_IID: Guid = Guid { data1: 0xEE2A808D, data2: 0x2C6F, data3: 0x5FF3, data4: [0x9F, 0xFD, 0x6E, 0xFE, 0xF3, 0x21, 0x0E, 0x4E] };
+pub const I_AVN_BUTTON_IID: Guid = Guid { data1: 0x54D1FFF0, data2: 0x3CE1, data3: 0x5196, data4: [0x83, 0xDF, 0xAB, 0xBD, 0xE8, 0x81, 0xA2, 0x48] };
 
 #[repr(C)]
 struct IAvnButtonVtbl {
@@ -4999,6 +5389,8 @@ struct IAvnButtonVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnButton, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnButton, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnButton, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnButton, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnButton, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnButton, *mut f64) -> i32,
@@ -5032,6 +5424,8 @@ struct IAvnButtonVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnButton, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnButton, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnButton, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnButton, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -5129,6 +5523,19 @@ impl ComPtr<IAvnButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -5358,6 +5765,19 @@ impl ComPtr<IAvnButton> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -5717,7 +6137,7 @@ impl ComPtr<IAvnButton> {
     }
 }
 
-pub const I_AVN_BUTTON_SPINNER_IID: Guid = Guid { data1: 0x6A6BE978, data2: 0x6ACE, data3: 0x539E, data4: [0x84, 0xF2, 0x89, 0x75, 0x7C, 0x0F, 0xCF, 0xEB] };
+pub const I_AVN_BUTTON_SPINNER_IID: Guid = Guid { data1: 0x95A7A2F6, data2: 0xFAC0, data3: 0x5642, data4: [0xB9, 0xA8, 0x65, 0xAE, 0x25, 0x32, 0xFD, 0x07] };
 
 #[repr(C)]
 struct IAvnButtonSpinnerVtbl {
@@ -5729,6 +6149,8 @@ struct IAvnButtonSpinnerVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnButtonSpinner, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnButtonSpinner, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut f64) -> i32,
@@ -5762,6 +6184,8 @@ struct IAvnButtonSpinnerVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnButtonSpinner, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnButtonSpinner, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnButtonSpinner, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnButtonSpinner, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -5850,6 +6274,19 @@ impl ComPtr<IAvnButtonSpinner> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -6079,6 +6516,19 @@ impl ComPtr<IAvnButtonSpinner> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -6375,7 +6825,7 @@ impl ComPtr<IAvnButtonSpinner> {
     }
 }
 
-pub const I_AVN_CALENDAR_IID: Guid = Guid { data1: 0x11C507E4, data2: 0x134D, data3: 0x5CDD, data4: [0xA6, 0x84, 0x38, 0x66, 0x45, 0xEB, 0x8F, 0x5E] };
+pub const I_AVN_CALENDAR_IID: Guid = Guid { data1: 0x91236D0B, data2: 0x3F3B, data3: 0x5E71, data4: [0xBD, 0xDF, 0xE3, 0x8B, 0xF2, 0x34, 0x16, 0x08] };
 
 #[repr(C)]
 struct IAvnCalendarVtbl {
@@ -6387,6 +6837,8 @@ struct IAvnCalendarVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnCalendar, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnCalendar, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnCalendar, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnCalendar, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnCalendar, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnCalendar, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnCalendar, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCalendar, *mut f64) -> i32,
@@ -6420,6 +6872,8 @@ struct IAvnCalendarVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnCalendar, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnCalendar, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnCalendar, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnCalendar, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnCalendar, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnCalendar, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnCalendar, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnCalendar, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -6474,6 +6928,8 @@ struct IAvnCalendarVtbl {
     set_display_date_start: unsafe extern "system" fn(*mut IAvnCalendar, *mut u16) -> i32,
     get_display_date_end: unsafe extern "system" fn(*mut IAvnCalendar, *mut *mut u16) -> i32,
     set_display_date_end: unsafe extern "system" fn(*mut IAvnCalendar, *mut u16) -> i32,
+    advise_display_mode_changed: unsafe extern "system" fn(*mut IAvnCalendar, *mut IAvnCalendarDisplayModeChangedHandler, *mut i64) -> i32,
+    unadvise_display_mode_changed: unsafe extern "system" fn(*mut IAvnCalendar, i64) -> i32,
 }
 
 #[repr(C)]
@@ -6520,6 +6976,19 @@ impl ComPtr<IAvnCalendar> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -6749,6 +7218,19 @@ impl ComPtr<IAvnCalendar> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -7127,9 +7609,22 @@ impl ComPtr<IAvnCalendar> {
             hresult::check(hr)
         }
     }
+    pub fn advise_display_mode_changed(&self, handler: &ComPtr<IAvnCalendarDisplayModeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_display_mode_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_display_mode_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_display_mode_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
 }
 
-pub const I_AVN_CALENDAR_DATE_PICKER_IID: Guid = Guid { data1: 0x0C4CEE73, data2: 0x1939, data3: 0x512D, data4: [0x8A, 0x6A, 0x56, 0x03, 0x8F, 0x96, 0x9C, 0x80] };
+pub const I_AVN_CALENDAR_DATE_PICKER_IID: Guid = Guid { data1: 0x00337BF6, data2: 0xD844, data3: 0x502E, data4: [0xA7, 0xF1, 0x2D, 0x28, 0x36, 0x99, 0x60, 0x43] };
 
 #[repr(C)]
 struct IAvnCalendarDatePickerVtbl {
@@ -7141,6 +7636,8 @@ struct IAvnCalendarDatePickerVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut f64) -> i32,
@@ -7174,6 +7671,8 @@ struct IAvnCalendarDatePickerVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -7289,6 +7788,19 @@ impl ComPtr<IAvnCalendarDatePicker> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -7518,6 +8030,19 @@ impl ComPtr<IAvnCalendarDatePicker> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -8000,7 +8525,7 @@ impl ComPtr<IAvnCalendarDatePicker> {
     }
 }
 
-pub const I_AVN_CANVAS_IID: Guid = Guid { data1: 0x3FCDAC92, data2: 0x9070, data3: 0x5460, data4: [0x99, 0xF7, 0xBF, 0x91, 0x61, 0x15, 0x50, 0x79] };
+pub const I_AVN_CANVAS_IID: Guid = Guid { data1: 0x0409B750, data2: 0x0EFD, data3: 0x511C, data4: [0x81, 0xEE, 0x85, 0x57, 0xC6, 0x86, 0x35, 0x5C] };
 
 #[repr(C)]
 struct IAvnCanvasVtbl {
@@ -8012,6 +8537,8 @@ struct IAvnCanvasVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnCanvas, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnCanvas, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnCanvas, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnCanvas, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnCanvas, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnCanvas, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnCanvas, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCanvas, *mut f64) -> i32,
@@ -8045,6 +8572,8 @@ struct IAvnCanvasVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnCanvas, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnCanvas, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnCanvas, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnCanvas, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnCanvas, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnCanvas, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnCanvas, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnCanvas, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -8100,6 +8629,19 @@ impl ComPtr<IAvnCanvas> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -8332,6 +8874,19 @@ impl ComPtr<IAvnCanvas> {
             hresult::check(hr)
         }
     }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -8395,7 +8950,7 @@ impl ComPtr<IAvnCanvas> {
     }
 }
 
-pub const I_AVN_CAROUSEL_IID: Guid = Guid { data1: 0xB3A6F28E, data2: 0x71B6, data3: 0x5043, data4: [0xA9, 0x0C, 0xBF, 0x9B, 0x42, 0xCA, 0x23, 0x12] };
+pub const I_AVN_CAROUSEL_IID: Guid = Guid { data1: 0xECF09991, data2: 0x64E5, data3: 0x5A2B, data4: [0x8D, 0x80, 0xE9, 0xFE, 0xBF, 0x87, 0x4F, 0xE5] };
 
 #[repr(C)]
 struct IAvnCarouselVtbl {
@@ -8407,6 +8962,8 @@ struct IAvnCarouselVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnCarousel, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnCarousel, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnCarousel, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnCarousel, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnCarousel, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnCarousel, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCarousel, *mut f64) -> i32,
@@ -8440,6 +8997,8 @@ struct IAvnCarouselVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnCarousel, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnCarousel, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnCarousel, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnCarousel, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -8538,6 +9097,19 @@ impl ComPtr<IAvnCarousel> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_is_visible(&self) -> Result<bool> {
         unsafe {
             let mut value: i32 = 0;
@@ -8765,6 +9337,19 @@ impl ComPtr<IAvnCarousel> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -9116,7 +9701,7 @@ impl ComPtr<IAvnCarousel> {
     }
 }
 
-pub const I_AVN_CHECK_BOX_IID: Guid = Guid { data1: 0x87BCFC2E, data2: 0xFAC2, data3: 0x531D, data4: [0x88, 0xFA, 0xF0, 0x3C, 0x3E, 0x6D, 0x48, 0xAD] };
+pub const I_AVN_CHECK_BOX_IID: Guid = Guid { data1: 0x0D575576, data2: 0x5D6A, data3: 0x500E, data4: [0x81, 0x8B, 0xA0, 0xEE, 0x76, 0xE3, 0xCD, 0x1A] };
 
 #[repr(C)]
 struct IAvnCheckBoxVtbl {
@@ -9128,6 +9713,8 @@ struct IAvnCheckBoxVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnCheckBox, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnCheckBox, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnCheckBox, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnCheckBox, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnCheckBox, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnCheckBox, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCheckBox, *mut f64) -> i32,
@@ -9161,6 +9748,8 @@ struct IAvnCheckBoxVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnCheckBox, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnCheckBox, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnCheckBox, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnCheckBox, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -9264,6 +9853,19 @@ impl ComPtr<IAvnCheckBox> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -9493,6 +10095,19 @@ impl ComPtr<IAvnCheckBox> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -9893,7 +10508,7 @@ impl ComPtr<IAvnCheckBox> {
     }
 }
 
-pub const I_AVN_COMBO_BOX_IID: Guid = Guid { data1: 0x151EDFBA, data2: 0xD25F, data3: 0x5E3D, data4: [0x86, 0x4F, 0x57, 0x2B, 0x91, 0xC0, 0x48, 0xF8] };
+pub const I_AVN_COMBO_BOX_IID: Guid = Guid { data1: 0x29752265, data2: 0xBD30, data3: 0x5EE3, data4: [0x8B, 0x2A, 0x96, 0xF9, 0xE1, 0xFE, 0x78, 0x5E] };
 
 #[repr(C)]
 struct IAvnComboBoxVtbl {
@@ -9905,6 +10520,8 @@ struct IAvnComboBoxVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnComboBox, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnComboBox, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnComboBox, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnComboBox, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnComboBox, *mut f64) -> i32,
@@ -9938,6 +10555,8 @@ struct IAvnComboBoxVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnComboBox, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnComboBox, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnComboBox, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnComboBox, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -10044,6 +10663,19 @@ impl ComPtr<IAvnComboBox> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -10273,6 +10905,19 @@ impl ComPtr<IAvnComboBox> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -10692,7 +11337,7 @@ impl ComPtr<IAvnComboBox> {
     }
 }
 
-pub const I_AVN_COMBO_BOX_ITEM_IID: Guid = Guid { data1: 0xBA6A6174, data2: 0x31FB, data3: 0x529F, data4: [0xB3, 0xD4, 0xE2, 0xD5, 0xAC, 0x81, 0x90, 0x06] };
+pub const I_AVN_COMBO_BOX_ITEM_IID: Guid = Guid { data1: 0xDBC41C36, data2: 0x1263, data3: 0x50C7, data4: [0x9D, 0xC3, 0x47, 0xA2, 0x7B, 0x0A, 0x40, 0x07] };
 
 #[repr(C)]
 struct IAvnComboBoxItemVtbl {
@@ -10704,6 +11349,8 @@ struct IAvnComboBoxItemVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnComboBoxItem, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnComboBoxItem, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut f64) -> i32,
@@ -10737,6 +11384,8 @@ struct IAvnComboBoxItemVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnComboBoxItem, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnComboBoxItem, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnComboBoxItem, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnComboBoxItem, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -10821,6 +11470,19 @@ impl ComPtr<IAvnComboBoxItem> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -11050,6 +11712,19 @@ impl ComPtr<IAvnComboBoxItem> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -11318,7 +11993,7 @@ impl ComPtr<IAvnComboBoxItem> {
     }
 }
 
-pub const I_AVN_COMMAND_BAR_IID: Guid = Guid { data1: 0x8853C1F6, data2: 0x3E2B, data3: 0x5B5C, data4: [0x9C, 0xE5, 0x30, 0x5A, 0x55, 0x80, 0x74, 0x1A] };
+pub const I_AVN_COMMAND_BAR_IID: Guid = Guid { data1: 0x3D0B5E33, data2: 0xB5E1, data3: 0x54AB, data4: [0x96, 0xA8, 0xD5, 0xA2, 0x14, 0x4B, 0x23, 0x40] };
 
 #[repr(C)]
 struct IAvnCommandBarVtbl {
@@ -11330,6 +12005,8 @@ struct IAvnCommandBarVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnCommandBar, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnCommandBar, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnCommandBar, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnCommandBar, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnCommandBar, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnCommandBar, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnCommandBar, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCommandBar, *mut f64) -> i32,
@@ -11363,6 +12040,8 @@ struct IAvnCommandBarVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnCommandBar, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnCommandBar, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnCommandBar, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnCommandBar, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnCommandBar, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnCommandBar, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnCommandBar, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnCommandBar, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -11467,6 +12146,19 @@ impl ComPtr<IAvnCommandBar> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -11696,6 +12388,19 @@ impl ComPtr<IAvnCommandBar> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -12102,7 +12807,7 @@ impl ComPtr<IAvnCommandBar> {
     }
 }
 
-pub const I_AVN_COMMAND_BAR_BUTTON_IID: Guid = Guid { data1: 0x79ECE92B, data2: 0xB507, data3: 0x5D64, data4: [0x90, 0xF2, 0x0D, 0xB4, 0x5A, 0x7F, 0xA0, 0x6D] };
+pub const I_AVN_COMMAND_BAR_BUTTON_IID: Guid = Guid { data1: 0xE96CF1F6, data2: 0xA4EA, data3: 0x5AB1, data4: [0xA6, 0x40, 0xF0, 0x01, 0x57, 0x46, 0x35, 0x3D] };
 
 #[repr(C)]
 struct IAvnCommandBarButtonVtbl {
@@ -12114,6 +12819,8 @@ struct IAvnCommandBarButtonVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnCommandBarButton, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnCommandBarButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut f64) -> i32,
@@ -12147,6 +12854,8 @@ struct IAvnCommandBarButtonVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnCommandBarButton, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnCommandBarButton, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnCommandBarButton, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnCommandBarButton, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -12254,6 +12963,19 @@ impl ComPtr<IAvnCommandBarButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -12483,6 +13205,19 @@ impl ComPtr<IAvnCommandBarButton> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -12912,7 +13647,7 @@ impl ComPtr<IAvnCommandBarButton> {
     }
 }
 
-pub const I_AVN_COMMAND_BAR_SEPARATOR_IID: Guid = Guid { data1: 0x5859273F, data2: 0x9C0D, data3: 0x5630, data4: [0xB2, 0xE1, 0x97, 0x0A, 0x3C, 0x5C, 0xC5, 0xC8] };
+pub const I_AVN_COMMAND_BAR_SEPARATOR_IID: Guid = Guid { data1: 0xF98BA39F, data2: 0x9032, data3: 0x5AEE, data4: [0x87, 0xAA, 0x1B, 0xA8, 0xAF, 0x21, 0xE3, 0x9C] };
 
 #[repr(C)]
 struct IAvnCommandBarSeparatorVtbl {
@@ -12924,6 +13659,8 @@ struct IAvnCommandBarSeparatorVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut f64) -> i32,
@@ -12957,6 +13694,8 @@ struct IAvnCommandBarSeparatorVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -13037,6 +13776,19 @@ impl ComPtr<IAvnCommandBarSeparator> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -13266,6 +14018,19 @@ impl ComPtr<IAvnCommandBarSeparator> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -13506,7 +14271,7 @@ impl ComPtr<IAvnCommandBarSeparator> {
     }
 }
 
-pub const I_AVN_COMMAND_BAR_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0xD4E7FE62, data2: 0x9B9A, data3: 0x56D0, data4: [0xAF, 0x9E, 0x48, 0x67, 0x0B, 0x8F, 0x74, 0xC6] };
+pub const I_AVN_COMMAND_BAR_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0x3C34AD1B, data2: 0x13F3, data3: 0x51D6, data4: [0x8A, 0xCC, 0xCA, 0x0A, 0x7D, 0xC8, 0xF4, 0x62] };
 
 #[repr(C)]
 struct IAvnCommandBarToggleButtonVtbl {
@@ -13518,6 +14283,8 @@ struct IAvnCommandBarToggleButtonVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut f64) -> i32,
@@ -13551,6 +14318,8 @@ struct IAvnCommandBarToggleButtonVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -13664,6 +14433,19 @@ impl ComPtr<IAvnCommandBarToggleButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -13893,6 +14675,19 @@ impl ComPtr<IAvnCommandBarToggleButton> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -14363,7 +15158,7 @@ impl ComPtr<IAvnCommandBarToggleButton> {
     }
 }
 
-pub const I_AVN_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x2D229F2A, data2: 0xB6EE, data3: 0x5835, data4: [0xA8, 0xEC, 0xBA, 0x98, 0x83, 0x8E, 0x1E, 0xF5] };
+pub const I_AVN_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x19B9E7BE, data2: 0xB20C, data3: 0x5CC9, data4: [0x95, 0xD7, 0x2F, 0xC9, 0x3E, 0x19, 0x10, 0xE6] };
 
 #[repr(C)]
 struct IAvnContentControlVtbl {
@@ -14375,6 +15170,8 @@ struct IAvnContentControlVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnContentControl, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnContentControl, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnContentControl, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnContentControl, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnContentControl, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnContentControl, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnContentControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnContentControl, *mut f64) -> i32,
@@ -14408,6 +15205,8 @@ struct IAvnContentControlVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnContentControl, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnContentControl, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnContentControl, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnContentControl, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnContentControl, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnContentControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnContentControl, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnContentControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -14490,6 +15289,19 @@ impl ComPtr<IAvnContentControl> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -14719,6 +15531,19 @@ impl ComPtr<IAvnContentControl> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -14973,7 +15798,7 @@ impl ComPtr<IAvnContentControl> {
     }
 }
 
-pub const I_AVN_CONTEXT_MENU_IID: Guid = Guid { data1: 0x13FA26AB, data2: 0xA74B, data3: 0x53CF, data4: [0xA4, 0xD0, 0x19, 0x09, 0xD2, 0x62, 0x13, 0x3D] };
+pub const I_AVN_CONTEXT_MENU_IID: Guid = Guid { data1: 0x4C8141C7, data2: 0xF084, data3: 0x52C7, data4: [0x96, 0xA8, 0x9D, 0x17, 0x8B, 0x35, 0x9D, 0x5D] };
 
 #[repr(C)]
 struct IAvnContextMenuVtbl {
@@ -14985,6 +15810,8 @@ struct IAvnContextMenuVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnContextMenu, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnContextMenu, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnContextMenu, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnContextMenu, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnContextMenu, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnContextMenu, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnContextMenu, *mut f64) -> i32,
@@ -15018,6 +15845,8 @@ struct IAvnContextMenuVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnContextMenu, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnContextMenu, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnContextMenu, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnContextMenu, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -15137,6 +15966,19 @@ impl ComPtr<IAvnContextMenu> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -15366,6 +16208,19 @@ impl ComPtr<IAvnContextMenu> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -15873,7 +16728,7 @@ impl ComPtr<IAvnContextMenu> {
     }
 }
 
-pub const I_AVN_CONTROL_IID: Guid = Guid { data1: 0x82E7495D, data2: 0xEC39, data3: 0x5401, data4: [0x8E, 0xB6, 0x86, 0x2A, 0x4F, 0xD2, 0xC6, 0xB7] };
+pub const I_AVN_CONTROL_IID: Guid = Guid { data1: 0xC08EBEE5, data2: 0xBDFD, data3: 0x5A33, data4: [0x90, 0x24, 0xB6, 0x4C, 0x13, 0x9D, 0x10, 0x88] };
 
 #[repr(C)]
 struct IAvnControlVtbl {
@@ -15885,6 +16740,8 @@ struct IAvnControlVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnControl, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnControl, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnControl, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnControl, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnControl, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnControl, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnControl, *mut f64) -> i32,
@@ -15918,6 +16775,8 @@ struct IAvnControlVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnControl, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnControl, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnControl, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnControl, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnControl, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnControl, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -15970,6 +16829,19 @@ impl ComPtr<IAvnControl> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -16202,6 +17074,19 @@ impl ComPtr<IAvnControl> {
             hresult::check(hr)
         }
     }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -16243,7 +17128,7 @@ impl ComPtr<IAvnControl> {
     }
 }
 
-pub const I_AVN_DATE_PICKER_IID: Guid = Guid { data1: 0x7F06AD94, data2: 0x0BD6, data3: 0x52B0, data4: [0x81, 0x38, 0x16, 0xA7, 0x46, 0xF0, 0xFE, 0xAD] };
+pub const I_AVN_DATE_PICKER_IID: Guid = Guid { data1: 0xCD4220DE, data2: 0x78CD, data3: 0x5415, data4: [0xB4, 0xF1, 0x01, 0x01, 0x81, 0x1A, 0xDB, 0x58] };
 
 #[repr(C)]
 struct IAvnDatePickerVtbl {
@@ -16255,6 +17140,8 @@ struct IAvnDatePickerVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnDatePicker, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnDatePicker, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnDatePicker, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnDatePicker, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnDatePicker, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnDatePicker, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnDatePicker, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnDatePicker, *mut f64) -> i32,
@@ -16288,6 +17175,8 @@ struct IAvnDatePickerVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnDatePicker, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnDatePicker, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnDatePicker, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnDatePicker, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnDatePicker, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnDatePicker, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnDatePicker, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnDatePicker, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -16387,6 +17276,19 @@ impl ComPtr<IAvnDatePicker> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_is_visible(&self) -> Result<bool> {
         unsafe {
             let mut value: i32 = 0;
@@ -16614,6 +17516,19 @@ impl ComPtr<IAvnDatePicker> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -16972,7 +17887,7 @@ impl ComPtr<IAvnDatePicker> {
     }
 }
 
-pub const I_AVN_DECORATOR_IID: Guid = Guid { data1: 0xE926933F, data2: 0xDA8E, data3: 0x51DC, data4: [0xB5, 0x04, 0x9B, 0x17, 0x9F, 0xBC, 0xF1, 0x7F] };
+pub const I_AVN_DECORATOR_IID: Guid = Guid { data1: 0x6F451C6A, data2: 0xA333, data3: 0x530E, data4: [0xAB, 0x23, 0xF5, 0x13, 0xB3, 0x50, 0xF2, 0xA7] };
 
 #[repr(C)]
 struct IAvnDecoratorVtbl {
@@ -16984,6 +17899,8 @@ struct IAvnDecoratorVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnDecorator, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnDecorator, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnDecorator, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnDecorator, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnDecorator, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnDecorator, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnDecorator, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnDecorator, *mut f64) -> i32,
@@ -17017,6 +17934,8 @@ struct IAvnDecoratorVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnDecorator, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnDecorator, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnDecorator, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnDecorator, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnDecorator, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnDecorator, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnDecorator, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnDecorator, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -17073,6 +17992,19 @@ impl ComPtr<IAvnDecorator> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -17302,6 +18234,19 @@ impl ComPtr<IAvnDecorator> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -17374,7 +18319,7 @@ impl ComPtr<IAvnDecorator> {
     }
 }
 
-pub const I_AVN_DOCK_PANEL_IID: Guid = Guid { data1: 0xC91C1A41, data2: 0x750C, data3: 0x577F, data4: [0xBB, 0x06, 0x65, 0xBA, 0x41, 0x9C, 0xE1, 0x95] };
+pub const I_AVN_DOCK_PANEL_IID: Guid = Guid { data1: 0x7EA01BC8, data2: 0xDF04, data3: 0x5F91, data4: [0xB4, 0x93, 0x3E, 0xF9, 0xE0, 0x40, 0xAA, 0xAA] };
 
 #[repr(C)]
 struct IAvnDockPanelVtbl {
@@ -17386,6 +18331,8 @@ struct IAvnDockPanelVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnDockPanel, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnDockPanel, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnDockPanel, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnDockPanel, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnDockPanel, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnDockPanel, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnDockPanel, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnDockPanel, *mut f64) -> i32,
@@ -17419,6 +18366,8 @@ struct IAvnDockPanelVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnDockPanel, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnDockPanel, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnDockPanel, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnDockPanel, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnDockPanel, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnDockPanel, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnDockPanel, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnDockPanel, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -17480,6 +18429,19 @@ impl ComPtr<IAvnDockPanel> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -17709,6 +18671,19 @@ impl ComPtr<IAvnDockPanel> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -17817,7 +18792,7 @@ impl ComPtr<IAvnDockPanel> {
     }
 }
 
-pub const I_AVN_DROP_DOWN_BUTTON_IID: Guid = Guid { data1: 0xBFC9AA65, data2: 0x7E71, data3: 0x53EB, data4: [0x9C, 0xA5, 0xD6, 0x87, 0x26, 0xDC, 0x6A, 0xC2] };
+pub const I_AVN_DROP_DOWN_BUTTON_IID: Guid = Guid { data1: 0xADC57B2D, data2: 0xE0BB, data3: 0x59B1, data4: [0x97, 0x68, 0xC5, 0x59, 0xB4, 0xE6, 0x21, 0x28] };
 
 #[repr(C)]
 struct IAvnDropDownButtonVtbl {
@@ -17829,6 +18804,8 @@ struct IAvnDropDownButtonVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnDropDownButton, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnDropDownButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut f64) -> i32,
@@ -17862,6 +18839,8 @@ struct IAvnDropDownButtonVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnDropDownButton, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnDropDownButton, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnDropDownButton, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnDropDownButton, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -17959,6 +18938,19 @@ impl ComPtr<IAvnDropDownButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -18188,6 +19180,19 @@ impl ComPtr<IAvnDropDownButton> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -18547,7 +19552,7 @@ impl ComPtr<IAvnDropDownButton> {
     }
 }
 
-pub const I_AVN_EXPANDER_IID: Guid = Guid { data1: 0x9E2809BA, data2: 0x34CB, data3: 0x5720, data4: [0xB7, 0x6D, 0x2D, 0xA4, 0x8D, 0x5E, 0xB8, 0xBB] };
+pub const I_AVN_EXPANDER_IID: Guid = Guid { data1: 0x41357269, data2: 0x231C, data3: 0x5B50, data4: [0xB6, 0x8F, 0xEC, 0xBF, 0x35, 0x64, 0xE7, 0x2E] };
 
 #[repr(C)]
 struct IAvnExpanderVtbl {
@@ -18559,6 +19564,8 @@ struct IAvnExpanderVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnExpander, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnExpander, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnExpander, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnExpander, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnExpander, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnExpander, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnExpander, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnExpander, *mut f64) -> i32,
@@ -18592,6 +19599,8 @@ struct IAvnExpanderVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnExpander, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnExpander, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnExpander, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnExpander, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnExpander, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnExpander, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnExpander, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnExpander, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -18684,6 +19693,19 @@ impl ComPtr<IAvnExpander> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -18913,6 +19935,19 @@ impl ComPtr<IAvnExpander> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -19235,7 +20270,7 @@ impl ComPtr<IAvnExpander> {
     }
 }
 
-pub const I_AVN_FLEX_PANEL_IID: Guid = Guid { data1: 0xD891A45A, data2: 0x220E, data3: 0x508D, data4: [0xB3, 0xE6, 0xE7, 0x7B, 0xEE, 0xC4, 0x84, 0x8E] };
+pub const I_AVN_FLEX_PANEL_IID: Guid = Guid { data1: 0xCB2E1BCC, data2: 0xD543, data3: 0x5303, data4: [0x94, 0x23, 0xCC, 0xE6, 0x9B, 0x5A, 0x31, 0x29] };
 
 #[repr(C)]
 struct IAvnFlexPanelVtbl {
@@ -19247,6 +20282,8 @@ struct IAvnFlexPanelVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnFlexPanel, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnFlexPanel, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut f64) -> i32,
@@ -19280,6 +20317,8 @@ struct IAvnFlexPanelVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnFlexPanel, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnFlexPanel, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnFlexPanel, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnFlexPanel, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -19349,6 +20388,19 @@ impl ComPtr<IAvnFlexPanel> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -19578,6 +20630,19 @@ impl ComPtr<IAvnFlexPanel> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -20031,7 +21096,7 @@ impl ComPtr<IAvnFlyout> {
     }
 }
 
-pub const I_AVN_GRID_IID: Guid = Guid { data1: 0x2A6D0A68, data2: 0xFF32, data3: 0x559F, data4: [0xA5, 0xB0, 0x87, 0x1C, 0x53, 0x70, 0x21, 0x80] };
+pub const I_AVN_GRID_IID: Guid = Guid { data1: 0x640FD901, data2: 0xE118, data3: 0x5A1F, data4: [0xA9, 0x94, 0x13, 0xC9, 0xE6, 0x3D, 0xB1, 0x54] };
 
 #[repr(C)]
 struct IAvnGridVtbl {
@@ -20043,6 +21108,8 @@ struct IAvnGridVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnGrid, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnGrid, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnGrid, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnGrid, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnGrid, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnGrid, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnGrid, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnGrid, *mut f64) -> i32,
@@ -20076,6 +21143,8 @@ struct IAvnGridVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnGrid, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnGrid, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnGrid, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnGrid, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnGrid, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnGrid, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnGrid, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnGrid, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -20141,6 +21210,19 @@ impl ComPtr<IAvnGrid> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -20370,6 +21452,19 @@ impl ComPtr<IAvnGrid> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -20506,7 +21601,7 @@ impl ComPtr<IAvnGrid> {
     }
 }
 
-pub const I_AVN_GRID_SPLITTER_IID: Guid = Guid { data1: 0xFB7311EE, data2: 0xA6E2, data3: 0x5F6C, data4: [0xB3, 0x1F, 0x2C, 0x60, 0x6E, 0xF4, 0x18, 0x78] };
+pub const I_AVN_GRID_SPLITTER_IID: Guid = Guid { data1: 0x36356CB6, data2: 0x3195, data3: 0x5A6D, data4: [0x8B, 0xF9, 0x8E, 0x7A, 0x0F, 0x8F, 0xB3, 0xD0] };
 
 #[repr(C)]
 struct IAvnGridSplitterVtbl {
@@ -20518,6 +21613,8 @@ struct IAvnGridSplitterVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnGridSplitter, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnGridSplitter, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut f64) -> i32,
@@ -20551,6 +21648,8 @@ struct IAvnGridSplitterVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnGridSplitter, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnGridSplitter, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnGridSplitter, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnGridSplitter, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -20643,6 +21742,19 @@ impl ComPtr<IAvnGridSplitter> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -20872,6 +21984,19 @@ impl ComPtr<IAvnGridSplitter> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -21193,7 +22318,7 @@ impl ComPtr<IAvnGridSplitter> {
     }
 }
 
-pub const I_AVN_GROUP_BOX_IID: Guid = Guid { data1: 0x487BC2E6, data2: 0xEF6F, data3: 0x5D6F, data4: [0x8B, 0x01, 0xDB, 0x2D, 0x88, 0xD7, 0xC3, 0xC5] };
+pub const I_AVN_GROUP_BOX_IID: Guid = Guid { data1: 0xD91F9125, data2: 0x6792, data3: 0x5C26, data4: [0x9C, 0x5B, 0x61, 0x4A, 0xFA, 0x86, 0xFE, 0xA1] };
 
 #[repr(C)]
 struct IAvnGroupBoxVtbl {
@@ -21205,6 +22330,8 @@ struct IAvnGroupBoxVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnGroupBox, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnGroupBox, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnGroupBox, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnGroupBox, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnGroupBox, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnGroupBox, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnGroupBox, *mut f64) -> i32,
@@ -21238,6 +22365,8 @@ struct IAvnGroupBoxVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnGroupBox, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnGroupBox, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnGroupBox, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnGroupBox, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -21322,6 +22451,19 @@ impl ComPtr<IAvnGroupBox> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -21551,6 +22693,19 @@ impl ComPtr<IAvnGroupBox> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -21819,7 +22974,7 @@ impl ComPtr<IAvnGroupBox> {
     }
 }
 
-pub const I_AVN_HYPERLINK_BUTTON_IID: Guid = Guid { data1: 0x471B3BAE, data2: 0x2E59, data3: 0x5955, data4: [0x97, 0x38, 0xF8, 0x54, 0xF5, 0xEB, 0xA8, 0x27] };
+pub const I_AVN_HYPERLINK_BUTTON_IID: Guid = Guid { data1: 0xDCDA7BBF, data2: 0x0E90, data3: 0x554A, data4: [0xB9, 0x57, 0x7E, 0xC1, 0x97, 0x77, 0x2A, 0xC4] };
 
 #[repr(C)]
 struct IAvnHyperlinkButtonVtbl {
@@ -21831,6 +22986,8 @@ struct IAvnHyperlinkButtonVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnHyperlinkButton, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnHyperlinkButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut f64) -> i32,
@@ -21864,6 +23021,8 @@ struct IAvnHyperlinkButtonVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnHyperlinkButton, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnHyperlinkButton, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnHyperlinkButton, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnHyperlinkButton, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -21965,6 +23124,19 @@ impl ComPtr<IAvnHyperlinkButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -22194,6 +23366,19 @@ impl ComPtr<IAvnHyperlinkButton> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -22581,7 +23766,7 @@ impl ComPtr<IAvnHyperlinkButton> {
     }
 }
 
-pub const I_AVN_ICON_ELEMENT_IID: Guid = Guid { data1: 0x685141CE, data2: 0xD115, data3: 0x53BB, data4: [0x8C, 0xBA, 0x0E, 0xFC, 0xF8, 0x9D, 0xE8, 0x71] };
+pub const I_AVN_ICON_ELEMENT_IID: Guid = Guid { data1: 0x5BC3EEDB, data2: 0xFE4A, data3: 0x5181, data4: [0xA2, 0xDC, 0x95, 0xB6, 0x18, 0x85, 0x41, 0x95] };
 
 #[repr(C)]
 struct IAvnIconElementVtbl {
@@ -22593,6 +23778,8 @@ struct IAvnIconElementVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnIconElement, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnIconElement, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnIconElement, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnIconElement, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnIconElement, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnIconElement, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnIconElement, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnIconElement, *mut f64) -> i32,
@@ -22626,6 +23813,8 @@ struct IAvnIconElementVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnIconElement, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnIconElement, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnIconElement, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnIconElement, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnIconElement, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnIconElement, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnIconElement, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnIconElement, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -22702,6 +23891,19 @@ impl ComPtr<IAvnIconElement> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -22931,6 +24133,19 @@ impl ComPtr<IAvnIconElement> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -23143,7 +24358,7 @@ impl ComPtr<IAvnIconElement> {
     }
 }
 
-pub const I_AVN_IMAGE_IID: Guid = Guid { data1: 0x471FA068, data2: 0x6C69, data3: 0x5AAB, data4: [0x96, 0xC0, 0x29, 0x07, 0x3F, 0xFB, 0x3C, 0x89] };
+pub const I_AVN_IMAGE_IID: Guid = Guid { data1: 0x28C7572A, data2: 0xD101, data3: 0x5AF7, data4: [0xA1, 0xD5, 0xB7, 0xD2, 0xA5, 0xF7, 0xDF, 0x15] };
 
 #[repr(C)]
 struct IAvnImageVtbl {
@@ -23155,6 +24370,8 @@ struct IAvnImageVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnImage, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnImage, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnImage, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnImage, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnImage, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnImage, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnImage, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnImage, *mut f64) -> i32,
@@ -23188,6 +24405,8 @@ struct IAvnImageVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnImage, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnImage, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnImage, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnImage, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnImage, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnImage, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnImage, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnImage, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -23248,6 +24467,19 @@ impl ComPtr<IAvnImage> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -23477,6 +24709,19 @@ impl ComPtr<IAvnImage> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -23577,7 +24822,7 @@ impl ComPtr<IAvnImage> {
     }
 }
 
-pub const I_AVN_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x266FAE15, data2: 0xE701, data3: 0x5220, data4: [0xAA, 0x28, 0xFF, 0xEA, 0xB6, 0x1E, 0xD3, 0xF7] };
+pub const I_AVN_ITEMS_CONTROL_IID: Guid = Guid { data1: 0xE61DDE0E, data2: 0xDE4F, data3: 0x5D63, data4: [0xB4, 0x85, 0xC9, 0xA8, 0xFB, 0x72, 0x53, 0x7F] };
 
 #[repr(C)]
 struct IAvnItemsControlVtbl {
@@ -23589,6 +24834,8 @@ struct IAvnItemsControlVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnItemsControl, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnItemsControl, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnItemsControl, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnItemsControl, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnItemsControl, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnItemsControl, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnItemsControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnItemsControl, *mut f64) -> i32,
@@ -23622,6 +24869,8 @@ struct IAvnItemsControlVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnItemsControl, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnItemsControl, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnItemsControl, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnItemsControl, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnItemsControl, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnItemsControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnItemsControl, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnItemsControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -23701,6 +24950,19 @@ impl ComPtr<IAvnItemsControl> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -23930,6 +25192,19 @@ impl ComPtr<IAvnItemsControl> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -24164,7 +25439,7 @@ impl ComPtr<IAvnItemsControl> {
     }
 }
 
-pub const I_AVN_LABEL_IID: Guid = Guid { data1: 0x03D8AC49, data2: 0x5620, data3: 0x5547, data4: [0x8B, 0x33, 0x91, 0xCB, 0xFC, 0x4A, 0x13, 0x4D] };
+pub const I_AVN_LABEL_IID: Guid = Guid { data1: 0x1C6E5959, data2: 0x82E6, data3: 0x5D0D, data4: [0x9E, 0x64, 0x3E, 0x04, 0x41, 0x19, 0xC5, 0x66] };
 
 #[repr(C)]
 struct IAvnLabelVtbl {
@@ -24176,6 +25451,8 @@ struct IAvnLabelVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnLabel, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnLabel, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnLabel, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnLabel, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnLabel, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnLabel, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnLabel, *mut f64) -> i32,
@@ -24209,6 +25486,8 @@ struct IAvnLabelVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnLabel, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnLabel, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnLabel, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnLabel, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -24293,6 +25572,19 @@ impl ComPtr<IAvnLabel> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -24522,6 +25814,19 @@ impl ComPtr<IAvnLabel> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -24790,7 +26095,7 @@ impl ComPtr<IAvnLabel> {
     }
 }
 
-pub const I_AVN_LAYOUT_TRANSFORM_CONTROL_IID: Guid = Guid { data1: 0xFCA3934D, data2: 0x99C5, data3: 0x5CDC, data4: [0xAC, 0x44, 0xF2, 0x25, 0xE4, 0xE2, 0xEF, 0x3D] };
+pub const I_AVN_LAYOUT_TRANSFORM_CONTROL_IID: Guid = Guid { data1: 0xB1D4D444, data2: 0x0E38, data3: 0x5FBE, data4: [0xBD, 0x6A, 0x55, 0x2A, 0x5F, 0x42, 0xFC, 0xCC] };
 
 #[repr(C)]
 struct IAvnLayoutTransformControlVtbl {
@@ -24802,6 +26107,8 @@ struct IAvnLayoutTransformControlVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut f64) -> i32,
@@ -24835,6 +26142,8 @@ struct IAvnLayoutTransformControlVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -24893,6 +26202,19 @@ impl ComPtr<IAvnLayoutTransformControl> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -25125,6 +26447,19 @@ impl ComPtr<IAvnLayoutTransformControl> {
             hresult::check(hr)
         }
     }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -25208,7 +26543,7 @@ impl ComPtr<IAvnLayoutTransformControl> {
     }
 }
 
-pub const I_AVN_LIST_BOX_IID: Guid = Guid { data1: 0x6355CFDF, data2: 0x4550, data3: 0x570A, data4: [0xAD, 0xDD, 0xA5, 0xD5, 0xAA, 0x0B, 0x2D, 0x2E] };
+pub const I_AVN_LIST_BOX_IID: Guid = Guid { data1: 0x15949BBD, data2: 0x87BC, data3: 0x53EE, data4: [0xBD, 0x6A, 0xD4, 0xA4, 0x58, 0x71, 0x42, 0x90] };
 
 #[repr(C)]
 struct IAvnListBoxVtbl {
@@ -25220,6 +26555,8 @@ struct IAvnListBoxVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnListBox, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnListBox, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnListBox, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnListBox, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnListBox, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnListBox, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnListBox, *mut f64) -> i32,
@@ -25253,6 +26590,8 @@ struct IAvnListBoxVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnListBox, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnListBox, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnListBox, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnListBox, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -25348,6 +26687,19 @@ impl ComPtr<IAvnListBox> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_is_visible(&self) -> Result<bool> {
         unsafe {
             let mut value: i32 = 0;
@@ -25575,6 +26927,19 @@ impl ComPtr<IAvnListBox> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -25904,7 +27269,7 @@ impl ComPtr<IAvnListBox> {
     }
 }
 
-pub const I_AVN_LIST_BOX_ITEM_IID: Guid = Guid { data1: 0x0A9448A4, data2: 0xC789, data3: 0x57E2, data4: [0x95, 0x55, 0x60, 0x6A, 0x08, 0xC0, 0x92, 0xCF] };
+pub const I_AVN_LIST_BOX_ITEM_IID: Guid = Guid { data1: 0xC24F8EE8, data2: 0x43DC, data3: 0x5924, data4: [0xB1, 0x26, 0x04, 0x7B, 0xAF, 0x81, 0x7F, 0x32] };
 
 #[repr(C)]
 struct IAvnListBoxItemVtbl {
@@ -25916,6 +27281,8 @@ struct IAvnListBoxItemVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnListBoxItem, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnListBoxItem, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut f64) -> i32,
@@ -25949,6 +27316,8 @@ struct IAvnListBoxItemVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnListBoxItem, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnListBoxItem, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnListBoxItem, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnListBoxItem, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -26033,6 +27402,19 @@ impl ComPtr<IAvnListBoxItem> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -26262,6 +27644,19 @@ impl ComPtr<IAvnListBoxItem> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -26530,7 +27925,7 @@ impl ComPtr<IAvnListBoxItem> {
     }
 }
 
-pub const I_AVN_MASKED_TEXT_BOX_IID: Guid = Guid { data1: 0x5EC5632E, data2: 0x068C, data3: 0x5B66, data4: [0xB1, 0xBD, 0x4F, 0x93, 0xB4, 0x74, 0x1B, 0xB6] };
+pub const I_AVN_MASKED_TEXT_BOX_IID: Guid = Guid { data1: 0xCD1D6CA5, data2: 0xB172, data3: 0x5F4F, data4: [0xB4, 0xCF, 0xAD, 0xCA, 0x65, 0x2C, 0x36, 0x67] };
 
 #[repr(C)]
 struct IAvnMaskedTextBoxVtbl {
@@ -26542,6 +27937,8 @@ struct IAvnMaskedTextBoxVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut f64) -> i32,
@@ -26575,6 +27972,8 @@ struct IAvnMaskedTextBoxVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -26750,6 +28149,19 @@ impl ComPtr<IAvnMaskedTextBox> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -26979,6 +28391,19 @@ impl ComPtr<IAvnMaskedTextBox> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -27878,7 +29303,7 @@ impl ComPtr<IAvnMaskedTextBox> {
     }
 }
 
-pub const I_AVN_MENU_IID: Guid = Guid { data1: 0x3AE47AF3, data2: 0xBBC0, data3: 0x55D9, data4: [0x91, 0x3F, 0x07, 0x6B, 0x7C, 0x9A, 0x56, 0xE8] };
+pub const I_AVN_MENU_IID: Guid = Guid { data1: 0x87D808D7, data2: 0xA1F1, data3: 0x5C1B, data4: [0xB4, 0xC2, 0x59, 0x49, 0x99, 0x58, 0xB0, 0xA1] };
 
 #[repr(C)]
 struct IAvnMenuVtbl {
@@ -27890,6 +29315,8 @@ struct IAvnMenuVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnMenu, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnMenu, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnMenu, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnMenu, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnMenu, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnMenu, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnMenu, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnMenu, *mut f64) -> i32,
@@ -27923,6 +29350,8 @@ struct IAvnMenuVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnMenu, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnMenu, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnMenu, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnMenu, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnMenu, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnMenu, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnMenu, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnMenu, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -28019,6 +29448,19 @@ impl ComPtr<IAvnMenu> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -28248,6 +29690,19 @@ impl ComPtr<IAvnMenu> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -28597,7 +30052,7 @@ impl ComPtr<IAvnMenu> {
     }
 }
 
-pub const I_AVN_MENU_BASE_IID: Guid = Guid { data1: 0xCEAF4CFD, data2: 0x0A4C, data3: 0x5481, data4: [0x86, 0x73, 0x50, 0xF0, 0x78, 0xE7, 0x35, 0x73] };
+pub const I_AVN_MENU_BASE_IID: Guid = Guid { data1: 0x32BBAFDE, data2: 0x3882, data3: 0x5D77, data4: [0xAC, 0x67, 0x0D, 0x3E, 0x68, 0x9D, 0xAC, 0x17] };
 
 #[repr(C)]
 struct IAvnMenuBaseVtbl {
@@ -28609,6 +30064,8 @@ struct IAvnMenuBaseVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnMenuBase, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnMenuBase, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnMenuBase, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnMenuBase, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnMenuBase, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnMenuBase, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnMenuBase, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnMenuBase, *mut f64) -> i32,
@@ -28642,6 +30099,8 @@ struct IAvnMenuBaseVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnMenuBase, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnMenuBase, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnMenuBase, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnMenuBase, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnMenuBase, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnMenuBase, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnMenuBase, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnMenuBase, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -28738,6 +30197,19 @@ impl ComPtr<IAvnMenuBase> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -28967,6 +30439,19 @@ impl ComPtr<IAvnMenuBase> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -29598,7 +31083,7 @@ impl ComPtr<IAvnMenuFlyout> {
     }
 }
 
-pub const I_AVN_MENU_ITEM_IID: Guid = Guid { data1: 0x62E74992, data2: 0xC111, data3: 0x5FDA, data4: [0xB9, 0x98, 0x9F, 0x4A, 0x3B, 0x67, 0x4A, 0x8D] };
+pub const I_AVN_MENU_ITEM_IID: Guid = Guid { data1: 0x2BDBCA64, data2: 0x744A, data3: 0x5163, data4: [0x80, 0x7C, 0xFD, 0x4F, 0xE4, 0x60, 0x76, 0xB3] };
 
 #[repr(C)]
 struct IAvnMenuItemVtbl {
@@ -29610,6 +31095,8 @@ struct IAvnMenuItemVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnMenuItem, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnMenuItem, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnMenuItem, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnMenuItem, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnMenuItem, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnMenuItem, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnMenuItem, *mut f64) -> i32,
@@ -29643,6 +31130,8 @@ struct IAvnMenuItemVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnMenuItem, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnMenuItem, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnMenuItem, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnMenuItem, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -29760,6 +31249,19 @@ impl ComPtr<IAvnMenuItem> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -29989,6 +31491,19 @@ impl ComPtr<IAvnMenuItem> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -30486,7 +32001,7 @@ impl ComPtr<IAvnMenuItem> {
     }
 }
 
-pub const I_AVN_NOTIFICATION_CARD_IID: Guid = Guid { data1: 0xBEDB9BA8, data2: 0x3CBC, data3: 0x5D58, data4: [0x8A, 0xDB, 0x96, 0x55, 0x8A, 0xE3, 0xC9, 0x69] };
+pub const I_AVN_NOTIFICATION_CARD_IID: Guid = Guid { data1: 0xD74E09FC, data2: 0x44C2, data3: 0x5307, data4: [0xB0, 0x36, 0x54, 0xC8, 0xD9, 0x4B, 0x22, 0x72] };
 
 #[repr(C)]
 struct IAvnNotificationCardVtbl {
@@ -30498,6 +32013,8 @@ struct IAvnNotificationCardVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnNotificationCard, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnNotificationCard, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut f64) -> i32,
@@ -30531,6 +32048,8 @@ struct IAvnNotificationCardVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnNotificationCard, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnNotificationCard, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnNotificationCard, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnNotificationCard, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -30573,6 +32092,8 @@ struct IAvnNotificationCardVtbl {
     get_notification_type: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut i32) -> i32,
     set_notification_type: unsafe extern "system" fn(*mut IAvnNotificationCard, i32) -> i32,
     close: unsafe extern "system" fn(*mut IAvnNotificationCard) -> i32,
+    advise_notification_closed: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut IAvnNotificationCardNotificationClosedHandler, *mut i64) -> i32,
+    unadvise_notification_closed: unsafe extern "system" fn(*mut IAvnNotificationCard, i64) -> i32,
 }
 
 #[repr(C)]
@@ -30619,6 +32140,19 @@ impl ComPtr<IAvnNotificationCard> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -30848,6 +32382,19 @@ impl ComPtr<IAvnNotificationCard> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -31142,9 +32689,22 @@ impl ComPtr<IAvnNotificationCard> {
             hresult::check(hr)
         }
     }
+    pub fn advise_notification_closed(&self, handler: &ComPtr<IAvnNotificationCardNotificationClosedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_notification_closed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_notification_closed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_notification_closed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
 }
 
-pub const I_AVN_WINDOW_NOTIFICATION_MANAGER_IID: Guid = Guid { data1: 0x4F5B9E71, data2: 0x475C, data3: 0x5297, data4: [0x89, 0xDE, 0x55, 0xE0, 0x79, 0xBB, 0xF4, 0xD9] };
+pub const I_AVN_WINDOW_NOTIFICATION_MANAGER_IID: Guid = Guid { data1: 0xCE088644, data2: 0x6F44, data3: 0x56B9, data4: [0xB1, 0xB1, 0xC6, 0x18, 0xD5, 0xA6, 0xE6, 0xC4] };
 
 #[repr(C)]
 struct IAvnWindowNotificationManagerVtbl {
@@ -31156,6 +32716,8 @@ struct IAvnWindowNotificationManagerVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut f64) -> i32,
@@ -31189,6 +32751,8 @@ struct IAvnWindowNotificationManagerVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -31269,6 +32833,19 @@ impl ComPtr<IAvnWindowNotificationManager> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -31498,6 +33075,19 @@ impl ComPtr<IAvnWindowNotificationManager> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -31738,7 +33328,7 @@ impl ComPtr<IAvnWindowNotificationManager> {
     }
 }
 
-pub const I_AVN_NUMERIC_UP_DOWN_IID: Guid = Guid { data1: 0xC486FD9B, data2: 0x9743, data3: 0x5403, data4: [0xA4, 0x35, 0x3A, 0xBC, 0x83, 0x32, 0x0F, 0x98] };
+pub const I_AVN_NUMERIC_UP_DOWN_IID: Guid = Guid { data1: 0xB6C53446, data2: 0x9D28, data3: 0x5924, data4: [0xB4, 0x98, 0xF2, 0x55, 0xDB, 0x12, 0xBC, 0x51] };
 
 #[repr(C)]
 struct IAvnNumericUpDownVtbl {
@@ -31750,6 +33340,8 @@ struct IAvnNumericUpDownVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnNumericUpDown, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnNumericUpDown, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut f64) -> i32,
@@ -31783,6 +33375,8 @@ struct IAvnNumericUpDownVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnNumericUpDown, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnNumericUpDown, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnNumericUpDown, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnNumericUpDown, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -31897,6 +33491,19 @@ impl ComPtr<IAvnNumericUpDown> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -32126,6 +33733,19 @@ impl ComPtr<IAvnNumericUpDown> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -32603,7 +34223,7 @@ impl ComPtr<IAvnNumericUpDown> {
     }
 }
 
-pub const I_AVN_PANEL_IID: Guid = Guid { data1: 0xA66DB44C, data2: 0x3C52, data3: 0x5E8F, data4: [0x8D, 0x94, 0x8C, 0x6C, 0x32, 0x2E, 0x74, 0x4B] };
+pub const I_AVN_PANEL_IID: Guid = Guid { data1: 0xA53A845E, data2: 0x0789, data3: 0x51DA, data4: [0x9E, 0x82, 0xFA, 0xF9, 0x66, 0x22, 0xA5, 0x6A] };
 
 #[repr(C)]
 struct IAvnPanelVtbl {
@@ -32615,6 +34235,8 @@ struct IAvnPanelVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnPanel, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnPanel, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnPanel, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnPanel, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnPanel, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnPanel, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnPanel, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnPanel, *mut f64) -> i32,
@@ -32648,6 +34270,8 @@ struct IAvnPanelVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnPanel, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnPanel, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnPanel, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnPanel, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnPanel, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnPanel, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnPanel, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnPanel, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -32703,6 +34327,19 @@ impl ComPtr<IAvnPanel> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -32935,6 +34572,19 @@ impl ComPtr<IAvnPanel> {
             hresult::check(hr)
         }
     }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -32998,7 +34648,7 @@ impl ComPtr<IAvnPanel> {
     }
 }
 
-pub const I_AVN_PATH_ICON_IID: Guid = Guid { data1: 0x5969C5F1, data2: 0xE409, data3: 0x5B18, data4: [0x9F, 0xE7, 0x9E, 0x71, 0x98, 0x71, 0x8B, 0x7A] };
+pub const I_AVN_PATH_ICON_IID: Guid = Guid { data1: 0xF6F4EAC3, data2: 0x3609, data3: 0x58E3, data4: [0xB8, 0x74, 0x2F, 0xA0, 0xC8, 0xE3, 0x4A, 0x89] };
 
 #[repr(C)]
 struct IAvnPathIconVtbl {
@@ -33010,6 +34660,8 @@ struct IAvnPathIconVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnPathIcon, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnPathIcon, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnPathIcon, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnPathIcon, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnPathIcon, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnPathIcon, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnPathIcon, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnPathIcon, *mut f64) -> i32,
@@ -33043,6 +34695,8 @@ struct IAvnPathIconVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnPathIcon, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnPathIcon, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnPathIcon, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnPathIcon, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnPathIcon, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnPathIcon, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnPathIcon, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnPathIcon, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -33123,6 +34777,19 @@ impl ComPtr<IAvnPathIcon> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_is_visible(&self) -> Result<bool> {
         unsafe {
             let mut value: i32 = 0;
@@ -33350,6 +35017,19 @@ impl ComPtr<IAvnPathIcon> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -33576,7 +35256,7 @@ impl ComPtr<IAvnPathIcon> {
     }
 }
 
-pub const I_AVN_PIPS_PAGER_IID: Guid = Guid { data1: 0x2D66F914, data2: 0xFCAA, data3: 0x5FBD, data4: [0xAD, 0x94, 0xA5, 0x47, 0x17, 0xFF, 0xB3, 0xB8] };
+pub const I_AVN_PIPS_PAGER_IID: Guid = Guid { data1: 0xEFDEA4BD, data2: 0x3982, data3: 0x5AF4, data4: [0xBE, 0xF2, 0x30, 0xB4, 0xC3, 0x4C, 0x66, 0xD0] };
 
 #[repr(C)]
 struct IAvnPipsPagerVtbl {
@@ -33588,6 +35268,8 @@ struct IAvnPipsPagerVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnPipsPager, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnPipsPager, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnPipsPager, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnPipsPager, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnPipsPager, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnPipsPager, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnPipsPager, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnPipsPager, *mut f64) -> i32,
@@ -33621,6 +35303,8 @@ struct IAvnPipsPagerVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnPipsPager, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnPipsPager, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnPipsPager, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnPipsPager, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnPipsPager, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnPipsPager, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnPipsPager, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnPipsPager, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -33711,6 +35395,19 @@ impl ComPtr<IAvnPipsPager> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -33940,6 +35637,19 @@ impl ComPtr<IAvnPipsPager> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -34355,7 +36065,7 @@ impl ComPtr<IAvnFlyoutBase> {
     }
 }
 
-pub const I_AVN_HEADERED_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x070EFA6A, data2: 0x7C6E, data3: 0x5A69, data4: [0xB9, 0xED, 0x48, 0x50, 0x1E, 0x7F, 0xAE, 0xF8] };
+pub const I_AVN_HEADERED_CONTENT_CONTROL_IID: Guid = Guid { data1: 0xCD8011E8, data2: 0xDE74, data3: 0x594C, data4: [0x80, 0xBB, 0xD1, 0x6B, 0x21, 0x21, 0x0A, 0xC9] };
 
 #[repr(C)]
 struct IAvnHeaderedContentControlVtbl {
@@ -34367,6 +36077,8 @@ struct IAvnHeaderedContentControlVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut f64) -> i32,
@@ -34400,6 +36112,8 @@ struct IAvnHeaderedContentControlVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -34484,6 +36198,19 @@ impl ComPtr<IAvnHeaderedContentControl> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -34713,6 +36440,19 @@ impl ComPtr<IAvnHeaderedContentControl> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -34981,7 +36721,7 @@ impl ComPtr<IAvnHeaderedContentControl> {
     }
 }
 
-pub const I_AVN_HEADERED_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x5702F481, data2: 0x00DC, data3: 0x5E0F, data4: [0xB4, 0xF2, 0xF3, 0x68, 0x7F, 0xA6, 0xCD, 0xB3] };
+pub const I_AVN_HEADERED_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x51E8B52A, data2: 0xB3B0, data3: 0x51FF, data4: [0xAE, 0x98, 0x42, 0xF1, 0x99, 0x4A, 0xBE, 0x3A] };
 
 #[repr(C)]
 struct IAvnHeaderedItemsControlVtbl {
@@ -34993,6 +36733,8 @@ struct IAvnHeaderedItemsControlVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut f64) -> i32,
@@ -35026,6 +36768,8 @@ struct IAvnHeaderedItemsControlVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -35107,6 +36851,19 @@ impl ComPtr<IAvnHeaderedItemsControl> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -35336,6 +37093,19 @@ impl ComPtr<IAvnHeaderedItemsControl> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -35584,7 +37354,7 @@ impl ComPtr<IAvnHeaderedItemsControl> {
     }
 }
 
-pub const I_AVN_HEADERED_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x00E6E8A1, data2: 0xBF08, data3: 0x5CA9, data4: [0x9C, 0x29, 0xCC, 0x62, 0x5E, 0x3D, 0x25, 0x6C] };
+pub const I_AVN_HEADERED_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x747ED02A, data2: 0xBB2A, data3: 0x5D42, data4: [0x95, 0xDB, 0x77, 0xA5, 0x21, 0x54, 0x18, 0x75] };
 
 #[repr(C)]
 struct IAvnHeaderedSelectingItemsControlVtbl {
@@ -35596,6 +37366,8 @@ struct IAvnHeaderedSelectingItemsControlVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut f64) -> i32,
@@ -35629,6 +37401,8 @@ struct IAvnHeaderedSelectingItemsControlVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -35720,6 +37494,19 @@ impl ComPtr<IAvnHeaderedSelectingItemsControl> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -35949,6 +37736,19 @@ impl ComPtr<IAvnHeaderedSelectingItemsControl> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -36278,6 +38078,8 @@ struct IAvnPopupVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnPopup, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnPopup, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnPopup, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnPopup, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnPopup, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnPopup, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnPopup, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnPopup, *mut f64) -> i32,
@@ -36311,6 +38113,8 @@ struct IAvnPopupVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnPopup, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnPopup, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnPopup, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnPopup, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnPopup, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnPopup, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnPopup, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnPopup, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -36405,6 +38209,19 @@ impl ComPtr<IAvnPopup> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -36634,6 +38451,19 @@ impl ComPtr<IAvnPopup> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -37243,7 +39073,7 @@ impl ComPtr<IAvnPopupFlyoutBase> {
     }
 }
 
-pub const I_AVN_RANGE_BASE_IID: Guid = Guid { data1: 0x697D205C, data2: 0xBCD7, data3: 0x5235, data4: [0xA2, 0xA7, 0x0D, 0x9E, 0xF5, 0xC0, 0xF9, 0xD5] };
+pub const I_AVN_RANGE_BASE_IID: Guid = Guid { data1: 0x85BDD970, data2: 0xF724, data3: 0x565B, data4: [0x9E, 0x46, 0xAD, 0x85, 0xF6, 0x48, 0xAA, 0xBA] };
 
 #[repr(C)]
 struct IAvnRangeBaseVtbl {
@@ -37255,6 +39085,8 @@ struct IAvnRangeBaseVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnRangeBase, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnRangeBase, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnRangeBase, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnRangeBase, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnRangeBase, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnRangeBase, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnRangeBase, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnRangeBase, *mut f64) -> i32,
@@ -37288,6 +39120,8 @@ struct IAvnRangeBaseVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnRangeBase, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnRangeBase, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnRangeBase, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnRangeBase, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnRangeBase, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnRangeBase, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnRangeBase, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnRangeBase, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -37376,6 +39210,19 @@ impl ComPtr<IAvnRangeBase> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -37605,6 +39452,19 @@ impl ComPtr<IAvnRangeBase> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -37900,7 +39760,7 @@ impl ComPtr<IAvnRangeBase> {
     }
 }
 
-pub const I_AVN_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x9E0E63B7, data2: 0x6A89, data3: 0x5073, data4: [0x8D, 0xC9, 0x1B, 0x5A, 0x43, 0x5E, 0x4F, 0x22] };
+pub const I_AVN_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x0381D38A, data2: 0xB15F, data3: 0x53A5, data4: [0x8D, 0x29, 0xBA, 0xDC, 0xE2, 0xD1, 0x17, 0x3D] };
 
 #[repr(C)]
 struct IAvnSelectingItemsControlVtbl {
@@ -37912,6 +39772,8 @@ struct IAvnSelectingItemsControlVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut f64) -> i32,
@@ -37945,6 +39807,8 @@ struct IAvnSelectingItemsControlVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -38034,6 +39898,19 @@ impl ComPtr<IAvnSelectingItemsControl> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -38263,6 +40140,19 @@ impl ComPtr<IAvnSelectingItemsControl> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -38566,7 +40456,7 @@ impl ComPtr<IAvnSelectingItemsControl> {
     }
 }
 
-pub const I_AVN_TEMPLATED_CONTROL_IID: Guid = Guid { data1: 0x1778CB20, data2: 0xC613, data3: 0x5979, data4: [0x86, 0xD6, 0xA2, 0x15, 0xF6, 0xB0, 0x5E, 0x2D] };
+pub const I_AVN_TEMPLATED_CONTROL_IID: Guid = Guid { data1: 0x5CEB0D84, data2: 0x9B87, data3: 0x5198, data4: [0xA8, 0x86, 0x0C, 0xD3, 0xBD, 0xE0, 0x5F, 0x1D] };
 
 #[repr(C)]
 struct IAvnTemplatedControlVtbl {
@@ -38578,6 +40468,8 @@ struct IAvnTemplatedControlVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnTemplatedControl, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnTemplatedControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut f64) -> i32,
@@ -38611,6 +40503,8 @@ struct IAvnTemplatedControlVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnTemplatedControl, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnTemplatedControl, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnTemplatedControl, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTemplatedControl, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -38687,6 +40581,19 @@ impl ComPtr<IAvnTemplatedControl> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -38916,6 +40823,19 @@ impl ComPtr<IAvnTemplatedControl> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -39128,7 +41048,7 @@ impl ComPtr<IAvnTemplatedControl> {
     }
 }
 
-pub const I_AVN_THUMB_IID: Guid = Guid { data1: 0x76FE925F, data2: 0xC530, data3: 0x5A8D, data4: [0x9A, 0xBC, 0x2C, 0x91, 0x5C, 0x6B, 0xCF, 0x9C] };
+pub const I_AVN_THUMB_IID: Guid = Guid { data1: 0x6E33A490, data2: 0x9557, data3: 0x582D, data4: [0xA7, 0x55, 0xB3, 0xBF, 0x75, 0xD5, 0xB5, 0xC1] };
 
 #[repr(C)]
 struct IAvnThumbVtbl {
@@ -39140,6 +41060,8 @@ struct IAvnThumbVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnThumb, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnThumb, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnThumb, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnThumb, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnThumb, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnThumb, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnThumb, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnThumb, *mut f64) -> i32,
@@ -39173,6 +41095,8 @@ struct IAvnThumbVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnThumb, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnThumb, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnThumb, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnThumb, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnThumb, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnThumb, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnThumb, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnThumb, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -39255,6 +41179,19 @@ impl ComPtr<IAvnThumb> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -39484,6 +41421,19 @@ impl ComPtr<IAvnThumb> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -39735,7 +41685,7 @@ impl ComPtr<IAvnThumb> {
     }
 }
 
-pub const I_AVN_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0x6E46D960, data2: 0x3762, data3: 0x595C, data4: [0x99, 0x50, 0xE1, 0x62, 0x04, 0xF4, 0xE4, 0x00] };
+pub const I_AVN_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0x0062AB96, data2: 0xAC7F, data3: 0x5660, data4: [0x88, 0x19, 0xC6, 0xAC, 0x80, 0xD8, 0x3B, 0xB4] };
 
 #[repr(C)]
 struct IAvnToggleButtonVtbl {
@@ -39747,6 +41697,8 @@ struct IAvnToggleButtonVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnToggleButton, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnToggleButton, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnToggleButton, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnToggleButton, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnToggleButton, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnToggleButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnToggleButton, *mut f64) -> i32,
@@ -39780,6 +41732,8 @@ struct IAvnToggleButtonVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnToggleButton, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnToggleButton, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnToggleButton, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnToggleButton, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -39883,6 +41837,19 @@ impl ComPtr<IAvnToggleButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -40112,6 +42079,19 @@ impl ComPtr<IAvnToggleButton> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -40512,7 +42492,7 @@ impl ComPtr<IAvnToggleButton> {
     }
 }
 
-pub const I_AVN_UNIFORM_GRID_IID: Guid = Guid { data1: 0x12DD4BFC, data2: 0x89D8, data3: 0x571D, data4: [0x95, 0xC1, 0xE9, 0x83, 0xF9, 0xDD, 0xFB, 0x88] };
+pub const I_AVN_UNIFORM_GRID_IID: Guid = Guid { data1: 0xCB6F4DF5, data2: 0xB029, data3: 0x5509, data4: [0xA8, 0x82, 0x94, 0x4D, 0x6B, 0x80, 0xB5, 0x6A] };
 
 #[repr(C)]
 struct IAvnUniformGridVtbl {
@@ -40524,6 +42504,8 @@ struct IAvnUniformGridVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnUniformGrid, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnUniformGrid, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut f64) -> i32,
@@ -40557,6 +42539,8 @@ struct IAvnUniformGridVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnUniformGrid, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnUniformGrid, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnUniformGrid, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnUniformGrid, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -40622,6 +42606,19 @@ impl ComPtr<IAvnUniformGrid> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -40851,6 +42848,19 @@ impl ComPtr<IAvnUniformGrid> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -40987,7 +42997,7 @@ impl ComPtr<IAvnUniformGrid> {
     }
 }
 
-pub const I_AVN_PROGRESS_BAR_IID: Guid = Guid { data1: 0x229693D2, data2: 0x326A, data3: 0x5415, data4: [0xA8, 0xD5, 0x3E, 0x13, 0x44, 0xF3, 0x31, 0x48] };
+pub const I_AVN_PROGRESS_BAR_IID: Guid = Guid { data1: 0x3658F69A, data2: 0xB0C4, data3: 0x5718, data4: [0xBD, 0x60, 0x60, 0xE2, 0xE0, 0x86, 0x87, 0x90] };
 
 #[repr(C)]
 struct IAvnProgressBarVtbl {
@@ -40999,6 +43009,8 @@ struct IAvnProgressBarVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnProgressBar, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnProgressBar, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnProgressBar, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnProgressBar, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnProgressBar, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnProgressBar, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnProgressBar, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnProgressBar, *mut f64) -> i32,
@@ -41032,6 +43044,8 @@ struct IAvnProgressBarVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnProgressBar, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnProgressBar, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnProgressBar, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnProgressBar, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnProgressBar, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnProgressBar, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnProgressBar, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnProgressBar, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -41129,6 +43143,19 @@ impl ComPtr<IAvnProgressBar> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -41358,6 +43385,19 @@ impl ComPtr<IAvnProgressBar> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -41717,7 +43757,7 @@ impl ComPtr<IAvnProgressBar> {
     }
 }
 
-pub const I_AVN_RADIO_BUTTON_IID: Guid = Guid { data1: 0x19E5AD81, data2: 0xC085, data3: 0x5DA3, data4: [0xAD, 0x05, 0xEA, 0x74, 0xBD, 0xA6, 0xB5, 0x60] };
+pub const I_AVN_RADIO_BUTTON_IID: Guid = Guid { data1: 0x7E7B545A, data2: 0x1409, data3: 0x5F84, data4: [0x98, 0x0A, 0x5E, 0x9F, 0x3D, 0x5D, 0x24, 0xE6] };
 
 #[repr(C)]
 struct IAvnRadioButtonVtbl {
@@ -41729,6 +43769,8 @@ struct IAvnRadioButtonVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnRadioButton, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnRadioButton, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnRadioButton, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnRadioButton, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnRadioButton, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnRadioButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnRadioButton, *mut f64) -> i32,
@@ -41762,6 +43804,8 @@ struct IAvnRadioButtonVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnRadioButton, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnRadioButton, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnRadioButton, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnRadioButton, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -41867,6 +43911,19 @@ impl ComPtr<IAvnRadioButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -42096,6 +44153,19 @@ impl ComPtr<IAvnRadioButton> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -42510,7 +44580,7 @@ impl ComPtr<IAvnRadioButton> {
     }
 }
 
-pub const I_AVN_REFRESH_CONTAINER_IID: Guid = Guid { data1: 0xE61AE098, data2: 0x3BFC, data3: 0x5128, data4: [0xBD, 0x03, 0xFA, 0xCD, 0x48, 0xA1, 0xB0, 0x85] };
+pub const I_AVN_REFRESH_CONTAINER_IID: Guid = Guid { data1: 0x41F8FE6D, data2: 0x3199, data3: 0x524B, data4: [0x80, 0xEB, 0xAD, 0x6F, 0x94, 0x5C, 0x47, 0x99] };
 
 #[repr(C)]
 struct IAvnRefreshContainerVtbl {
@@ -42522,6 +44592,8 @@ struct IAvnRefreshContainerVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnRefreshContainer, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnRefreshContainer, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut f64) -> i32,
@@ -42555,6 +44627,8 @@ struct IAvnRefreshContainerVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnRefreshContainer, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnRefreshContainer, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnRefreshContainer, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnRefreshContainer, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -42642,6 +44716,19 @@ impl ComPtr<IAvnRefreshContainer> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -42871,6 +44958,19 @@ impl ComPtr<IAvnRefreshContainer> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -43159,7 +45259,7 @@ impl ComPtr<IAvnRefreshContainer> {
     }
 }
 
-pub const I_AVN_RELATIVE_PANEL_IID: Guid = Guid { data1: 0x49879823, data2: 0x0BD7, data3: 0x5F66, data4: [0xA3, 0x83, 0xD9, 0x5A, 0x6D, 0xE5, 0x71, 0xFC] };
+pub const I_AVN_RELATIVE_PANEL_IID: Guid = Guid { data1: 0x09A9821B, data2: 0xDA17, data3: 0x504E, data4: [0xA3, 0xF1, 0x41, 0x7C, 0x7F, 0x70, 0x8E, 0xC2] };
 
 #[repr(C)]
 struct IAvnRelativePanelVtbl {
@@ -43171,6 +45271,8 @@ struct IAvnRelativePanelVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnRelativePanel, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnRelativePanel, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut f64) -> i32,
@@ -43204,6 +45306,8 @@ struct IAvnRelativePanelVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnRelativePanel, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnRelativePanel, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnRelativePanel, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnRelativePanel, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -43259,6 +45363,19 @@ impl ComPtr<IAvnRelativePanel> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -43491,6 +45608,19 @@ impl ComPtr<IAvnRelativePanel> {
             hresult::check(hr)
         }
     }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -43554,7 +45684,7 @@ impl ComPtr<IAvnRelativePanel> {
     }
 }
 
-pub const I_AVN_REPEAT_BUTTON_IID: Guid = Guid { data1: 0xCCB2A943, data2: 0x5B7E, data3: 0x5EF4, data4: [0xA6, 0x8D, 0xC3, 0x87, 0x61, 0x33, 0x75, 0x2A] };
+pub const I_AVN_REPEAT_BUTTON_IID: Guid = Guid { data1: 0xA362AFEF, data2: 0xA733, data3: 0x57C2, data4: [0xBA, 0xBB, 0xA2, 0xD0, 0x39, 0xB7, 0xC5, 0x14] };
 
 #[repr(C)]
 struct IAvnRepeatButtonVtbl {
@@ -43566,6 +45696,8 @@ struct IAvnRepeatButtonVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnRepeatButton, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnRepeatButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut f64) -> i32,
@@ -43599,6 +45731,8 @@ struct IAvnRepeatButtonVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnRepeatButton, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnRepeatButton, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnRepeatButton, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnRepeatButton, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -43702,6 +45836,19 @@ impl ComPtr<IAvnRepeatButton> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_is_visible(&self) -> Result<bool> {
         unsafe {
             let mut value: i32 = 0;
@@ -43929,6 +46076,19 @@ impl ComPtr<IAvnRepeatButton> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -44316,7 +46476,7 @@ impl ComPtr<IAvnRepeatButton> {
     }
 }
 
-pub const I_AVN_SCROLL_VIEWER_IID: Guid = Guid { data1: 0x8CB86977, data2: 0xE9B3, data3: 0x519F, data4: [0x91, 0xB7, 0x99, 0x80, 0x42, 0xC9, 0x98, 0x94] };
+pub const I_AVN_SCROLL_VIEWER_IID: Guid = Guid { data1: 0x42EEDC1A, data2: 0x53C8, data3: 0x5C42, data4: [0xB8, 0x7F, 0x18, 0x81, 0x80, 0x34, 0x9E, 0xAD] };
 
 #[repr(C)]
 struct IAvnScrollViewerVtbl {
@@ -44328,6 +46488,8 @@ struct IAvnScrollViewerVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnScrollViewer, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnScrollViewer, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut f64) -> i32,
@@ -44361,6 +46523,8 @@ struct IAvnScrollViewerVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnScrollViewer, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnScrollViewer, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnScrollViewer, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnScrollViewer, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -44488,6 +46652,19 @@ impl ComPtr<IAvnScrollViewer> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -44717,6 +46894,19 @@ impl ComPtr<IAvnScrollViewer> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -45280,7 +47470,7 @@ impl ComPtr<IAvnScrollViewer> {
     }
 }
 
-pub const I_AVN_SELECTABLE_TEXT_BLOCK_IID: Guid = Guid { data1: 0x64DADF29, data2: 0xB8E9, data3: 0x5B35, data4: [0x87, 0xF2, 0xD4, 0x92, 0x4D, 0xE7, 0xEC, 0x48] };
+pub const I_AVN_SELECTABLE_TEXT_BLOCK_IID: Guid = Guid { data1: 0x9ED96EF2, data2: 0xFA0B, data3: 0x5819, data4: [0x93, 0x51, 0x3E, 0x45, 0x3C, 0xF5, 0xFE, 0x40] };
 
 #[repr(C)]
 struct IAvnSelectableTextBlockVtbl {
@@ -45292,6 +47482,8 @@ struct IAvnSelectableTextBlockVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut f64) -> i32,
@@ -45325,6 +47517,8 @@ struct IAvnSelectableTextBlockVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -45426,6 +47620,19 @@ impl ComPtr<IAvnSelectableTextBlock> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -45655,6 +47862,19 @@ impl ComPtr<IAvnSelectableTextBlock> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -46040,7 +48260,7 @@ impl ComPtr<IAvnSelectableTextBlock> {
     }
 }
 
-pub const I_AVN_SEPARATOR_IID: Guid = Guid { data1: 0xEA4F057C, data2: 0xA24E, data3: 0x5433, data4: [0x81, 0x47, 0x00, 0xC2, 0x5E, 0x65, 0xFB, 0xF1] };
+pub const I_AVN_SEPARATOR_IID: Guid = Guid { data1: 0x2500084E, data2: 0xE298, data3: 0x51A6, data4: [0x90, 0xF4, 0x23, 0xC6, 0xC5, 0x34, 0x57, 0x64] };
 
 #[repr(C)]
 struct IAvnSeparatorVtbl {
@@ -46052,6 +48272,8 @@ struct IAvnSeparatorVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnSeparator, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnSeparator, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnSeparator, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnSeparator, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnSeparator, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnSeparator, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnSeparator, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnSeparator, *mut f64) -> i32,
@@ -46085,6 +48307,8 @@ struct IAvnSeparatorVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnSeparator, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnSeparator, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnSeparator, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnSeparator, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnSeparator, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnSeparator, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnSeparator, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnSeparator, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -46161,6 +48385,19 @@ impl ComPtr<IAvnSeparator> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -46390,6 +48627,19 @@ impl ComPtr<IAvnSeparator> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -46602,7 +48852,7 @@ impl ComPtr<IAvnSeparator> {
     }
 }
 
-pub const I_AVN_ARC_IID: Guid = Guid { data1: 0xA64DB855, data2: 0xEEBF, data3: 0x5D4A, data4: [0xB3, 0x5F, 0x69, 0x73, 0x9B, 0x6A, 0xE7, 0xCA] };
+pub const I_AVN_ARC_IID: Guid = Guid { data1: 0x10774292, data2: 0x8762, data3: 0x51B9, data4: [0xAB, 0x36, 0x1C, 0xDE, 0x16, 0x00, 0x04, 0x11] };
 
 #[repr(C)]
 struct IAvnArcVtbl {
@@ -46614,6 +48864,8 @@ struct IAvnArcVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnArc, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnArc, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnArc, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnArc, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnArc, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnArc, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnArc, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnArc, *mut f64) -> i32,
@@ -46647,6 +48899,8 @@ struct IAvnArcVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnArc, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnArc, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnArc, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnArc, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnArc, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnArc, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnArc, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnArc, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -46719,6 +48973,19 @@ impl ComPtr<IAvnArc> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -46948,6 +49215,19 @@ impl ComPtr<IAvnArc> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -47132,7 +49412,7 @@ impl ComPtr<IAvnArc> {
     }
 }
 
-pub const I_AVN_ELLIPSE_IID: Guid = Guid { data1: 0x7067CB2F, data2: 0x7F47, data3: 0x5DC5, data4: [0xB1, 0x54, 0x76, 0x8A, 0xA8, 0xBD, 0x05, 0x93] };
+pub const I_AVN_ELLIPSE_IID: Guid = Guid { data1: 0xB7BD2EB2, data2: 0x25B1, data3: 0x57AA, data4: [0x92, 0x43, 0x95, 0x74, 0xB2, 0xEC, 0xEA, 0x65] };
 
 #[repr(C)]
 struct IAvnEllipseVtbl {
@@ -47144,6 +49424,8 @@ struct IAvnEllipseVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnEllipse, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnEllipse, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnEllipse, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnEllipse, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnEllipse, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnEllipse, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnEllipse, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnEllipse, *mut f64) -> i32,
@@ -47177,6 +49459,8 @@ struct IAvnEllipseVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnEllipse, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnEllipse, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnEllipse, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnEllipse, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnEllipse, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnEllipse, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnEllipse, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnEllipse, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -47245,6 +49529,19 @@ impl ComPtr<IAvnEllipse> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -47474,6 +49771,19 @@ impl ComPtr<IAvnEllipse> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -47630,7 +49940,7 @@ impl ComPtr<IAvnEllipse> {
     }
 }
 
-pub const I_AVN_LINE_IID: Guid = Guid { data1: 0xAF0B0109, data2: 0x4E30, data3: 0x5F61, data4: [0xBA, 0x0A, 0xE8, 0xC5, 0xCB, 0xAC, 0x8B, 0x54] };
+pub const I_AVN_LINE_IID: Guid = Guid { data1: 0x42B2F47B, data2: 0xB081, data3: 0x5CD2, data4: [0xB9, 0x3D, 0x32, 0xEB, 0x73, 0x9C, 0x07, 0x7F] };
 
 #[repr(C)]
 struct IAvnLineVtbl {
@@ -47642,6 +49952,8 @@ struct IAvnLineVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnLine, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnLine, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnLine, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnLine, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnLine, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnLine, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnLine, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnLine, *mut f64) -> i32,
@@ -47675,6 +49987,8 @@ struct IAvnLineVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnLine, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnLine, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnLine, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnLine, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnLine, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnLine, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnLine, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnLine, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -47747,6 +50061,19 @@ impl ComPtr<IAvnLine> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -47976,6 +50303,19 @@ impl ComPtr<IAvnLine> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -48160,7 +50500,7 @@ impl ComPtr<IAvnLine> {
     }
 }
 
-pub const I_AVN_PATH_IID: Guid = Guid { data1: 0xA5DCC730, data2: 0x496B, data3: 0x5891, data4: [0x96, 0xAD, 0x16, 0xD2, 0xA0, 0x9C, 0xD1, 0x55] };
+pub const I_AVN_PATH_IID: Guid = Guid { data1: 0xA5D9CE4C, data2: 0xE78A, data3: 0x5015, data4: [0x8F, 0x3F, 0x6F, 0x9D, 0x4C, 0x8E, 0x22, 0x65] };
 
 #[repr(C)]
 struct IAvnPathVtbl {
@@ -48172,6 +50512,8 @@ struct IAvnPathVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnPath, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnPath, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnPath, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnPath, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnPath, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnPath, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnPath, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnPath, *mut f64) -> i32,
@@ -48205,6 +50547,8 @@ struct IAvnPathVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnPath, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnPath, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnPath, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnPath, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnPath, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnPath, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnPath, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnPath, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -48275,6 +50619,19 @@ impl ComPtr<IAvnPath> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -48504,6 +50861,19 @@ impl ComPtr<IAvnPath> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -48674,7 +51044,7 @@ impl ComPtr<IAvnPath> {
     }
 }
 
-pub const I_AVN_POLYGON_IID: Guid = Guid { data1: 0xE6DD016D, data2: 0x26F8, data3: 0x560B, data4: [0x95, 0xB6, 0x1A, 0x68, 0x23, 0x92, 0xBC, 0x09] };
+pub const I_AVN_POLYGON_IID: Guid = Guid { data1: 0x598DDB7A, data2: 0x0AE3, data3: 0x50E4, data4: [0x88, 0x90, 0x28, 0x01, 0x17, 0x64, 0xB2, 0xB1] };
 
 #[repr(C)]
 struct IAvnPolygonVtbl {
@@ -48686,6 +51056,8 @@ struct IAvnPolygonVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnPolygon, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnPolygon, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnPolygon, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnPolygon, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnPolygon, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnPolygon, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnPolygon, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnPolygon, *mut f64) -> i32,
@@ -48719,6 +51091,8 @@ struct IAvnPolygonVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnPolygon, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnPolygon, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnPolygon, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnPolygon, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnPolygon, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnPolygon, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnPolygon, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnPolygon, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -48791,6 +51165,19 @@ impl ComPtr<IAvnPolygon> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_is_visible(&self) -> Result<bool> {
         unsafe {
             let mut value: i32 = 0;
@@ -49021,6 +51408,19 @@ impl ComPtr<IAvnPolygon> {
             hresult::check(hr)
         }
     }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -49188,7 +51588,7 @@ impl ComPtr<IAvnPolygon> {
     }
 }
 
-pub const I_AVN_POLYLINE_IID: Guid = Guid { data1: 0x893D539F, data2: 0x6493, data3: 0x5532, data4: [0xBD, 0x16, 0x35, 0x74, 0x00, 0xEE, 0xD8, 0x0B] };
+pub const I_AVN_POLYLINE_IID: Guid = Guid { data1: 0x1685F289, data2: 0x1445, data3: 0x5C4F, data4: [0x8A, 0x9E, 0x34, 0xAF, 0x74, 0xF6, 0x49, 0xE1] };
 
 #[repr(C)]
 struct IAvnPolylineVtbl {
@@ -49200,6 +51600,8 @@ struct IAvnPolylineVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnPolyline, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnPolyline, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnPolyline, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnPolyline, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnPolyline, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnPolyline, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnPolyline, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnPolyline, *mut f64) -> i32,
@@ -49233,6 +51635,8 @@ struct IAvnPolylineVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnPolyline, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnPolyline, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnPolyline, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnPolyline, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnPolyline, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnPolyline, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnPolyline, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnPolyline, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -49305,6 +51709,19 @@ impl ComPtr<IAvnPolyline> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_is_visible(&self) -> Result<bool> {
         unsafe {
             let mut value: i32 = 0;
@@ -49535,6 +51952,19 @@ impl ComPtr<IAvnPolyline> {
             hresult::check(hr)
         }
     }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -49702,7 +52132,7 @@ impl ComPtr<IAvnPolyline> {
     }
 }
 
-pub const I_AVN_RECTANGLE_IID: Guid = Guid { data1: 0x0B13A220, data2: 0xDEE0, data3: 0x53FC, data4: [0xA7, 0xB3, 0x2F, 0x6E, 0xD6, 0x3E, 0x10, 0x2F] };
+pub const I_AVN_RECTANGLE_IID: Guid = Guid { data1: 0xC1FF1F84, data2: 0x343D, data3: 0x55D4, data4: [0xBE, 0x1A, 0x8F, 0x7E, 0x53, 0xD0, 0x75, 0xED] };
 
 #[repr(C)]
 struct IAvnRectangleVtbl {
@@ -49714,6 +52144,8 @@ struct IAvnRectangleVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnRectangle, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnRectangle, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnRectangle, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnRectangle, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnRectangle, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnRectangle, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnRectangle, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnRectangle, *mut f64) -> i32,
@@ -49747,6 +52179,8 @@ struct IAvnRectangleVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnRectangle, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnRectangle, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnRectangle, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnRectangle, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnRectangle, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnRectangle, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnRectangle, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnRectangle, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -49821,6 +52255,19 @@ impl ComPtr<IAvnRectangle> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_is_visible(&self) -> Result<bool> {
         unsafe {
             let mut value: i32 = 0;
@@ -50048,6 +52495,19 @@ impl ComPtr<IAvnRectangle> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -50232,7 +52692,7 @@ impl ComPtr<IAvnRectangle> {
     }
 }
 
-pub const I_AVN_SECTOR_IID: Guid = Guid { data1: 0xD0F311C0, data2: 0xA041, data3: 0x586B, data4: [0xB0, 0x7D, 0x25, 0x73, 0xD5, 0xEC, 0x93, 0x68] };
+pub const I_AVN_SECTOR_IID: Guid = Guid { data1: 0x2695DD39, data2: 0x34A9, data3: 0x5F1A, data4: [0xBF, 0x8F, 0xAA, 0xF9, 0xD7, 0xFB, 0x04, 0x24] };
 
 #[repr(C)]
 struct IAvnSectorVtbl {
@@ -50244,6 +52704,8 @@ struct IAvnSectorVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnSector, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnSector, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnSector, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnSector, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnSector, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnSector, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnSector, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnSector, *mut f64) -> i32,
@@ -50277,6 +52739,8 @@ struct IAvnSectorVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnSector, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnSector, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnSector, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnSector, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnSector, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnSector, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnSector, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnSector, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -50349,6 +52813,19 @@ impl ComPtr<IAvnSector> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -50578,6 +53055,19 @@ impl ComPtr<IAvnSector> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -50762,7 +53252,7 @@ impl ComPtr<IAvnSector> {
     }
 }
 
-pub const I_AVN_SHAPE_IID: Guid = Guid { data1: 0xD7B89215, data2: 0xFEEB, data3: 0x5459, data4: [0x83, 0x95, 0x7C, 0xCB, 0x1B, 0xF4, 0x8A, 0xB7] };
+pub const I_AVN_SHAPE_IID: Guid = Guid { data1: 0x6A38FC4E, data2: 0x1348, data3: 0x5045, data4: [0xAA, 0xD3, 0x99, 0x85, 0xCF, 0xD2, 0x17, 0x89] };
 
 #[repr(C)]
 struct IAvnShapeVtbl {
@@ -50774,6 +53264,8 @@ struct IAvnShapeVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnShape, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnShape, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnShape, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnShape, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnShape, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnShape, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnShape, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnShape, *mut f64) -> i32,
@@ -50807,6 +53299,8 @@ struct IAvnShapeVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnShape, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnShape, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnShape, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnShape, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnShape, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnShape, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnShape, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnShape, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -50875,6 +53369,19 @@ impl ComPtr<IAvnShape> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -51104,6 +53611,19 @@ impl ComPtr<IAvnShape> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -51260,7 +53780,7 @@ impl ComPtr<IAvnShape> {
     }
 }
 
-pub const I_AVN_SLIDER_IID: Guid = Guid { data1: 0x4CF7FCE8, data2: 0xACE5, data3: 0x5CAD, data4: [0x94, 0xF6, 0xF4, 0x0F, 0xDA, 0x7A, 0xF1, 0x15] };
+pub const I_AVN_SLIDER_IID: Guid = Guid { data1: 0xE6DF67A7, data2: 0xE58D, data3: 0x54D9, data4: [0x9D, 0x27, 0x0D, 0xB4, 0x3F, 0xA3, 0x0C, 0xA1] };
 
 #[repr(C)]
 struct IAvnSliderVtbl {
@@ -51272,6 +53792,8 @@ struct IAvnSliderVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnSlider, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnSlider, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnSlider, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnSlider, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnSlider, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnSlider, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnSlider, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnSlider, *mut f64) -> i32,
@@ -51305,6 +53827,8 @@ struct IAvnSliderVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnSlider, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnSlider, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnSlider, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnSlider, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnSlider, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnSlider, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnSlider, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnSlider, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -51403,6 +53927,19 @@ impl ComPtr<IAvnSlider> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -51632,6 +54169,19 @@ impl ComPtr<IAvnSlider> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -51997,7 +54547,7 @@ impl ComPtr<IAvnSlider> {
     }
 }
 
-pub const I_AVN_SPINNER_IID: Guid = Guid { data1: 0xD9C76469, data2: 0xBDB9, data3: 0x55DF, data4: [0x9B, 0xC4, 0x6E, 0xAF, 0xFA, 0xDD, 0x84, 0x34] };
+pub const I_AVN_SPINNER_IID: Guid = Guid { data1: 0x07BF99EA, data2: 0x0675, data3: 0x5E34, data4: [0x89, 0x82, 0x3B, 0x23, 0x9E, 0x52, 0x16, 0xBA] };
 
 #[repr(C)]
 struct IAvnSpinnerVtbl {
@@ -52009,6 +54559,8 @@ struct IAvnSpinnerVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnSpinner, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnSpinner, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnSpinner, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnSpinner, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnSpinner, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnSpinner, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnSpinner, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnSpinner, *mut f64) -> i32,
@@ -52042,6 +54594,8 @@ struct IAvnSpinnerVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnSpinner, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnSpinner, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnSpinner, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnSpinner, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnSpinner, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnSpinner, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnSpinner, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnSpinner, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -52124,6 +54678,19 @@ impl ComPtr<IAvnSpinner> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -52353,6 +54920,19 @@ impl ComPtr<IAvnSpinner> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -52607,7 +55187,7 @@ impl ComPtr<IAvnSpinner> {
     }
 }
 
-pub const I_AVN_SPLIT_BUTTON_IID: Guid = Guid { data1: 0xA7305BAD, data2: 0x060A, data3: 0x5178, data4: [0xAF, 0x34, 0x86, 0x88, 0xDB, 0x87, 0x5B, 0x31] };
+pub const I_AVN_SPLIT_BUTTON_IID: Guid = Guid { data1: 0x0DE9CB41, data2: 0x0990, data3: 0x5B09, data4: [0xA3, 0x7A, 0x29, 0xF1, 0x72, 0x32, 0xC0, 0x20] };
 
 #[repr(C)]
 struct IAvnSplitButtonVtbl {
@@ -52619,6 +55199,8 @@ struct IAvnSplitButtonVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnSplitButton, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnSplitButton, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnSplitButton, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnSplitButton, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnSplitButton, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnSplitButton, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnSplitButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnSplitButton, *mut f64) -> i32,
@@ -52652,6 +55234,8 @@ struct IAvnSplitButtonVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnSplitButton, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnSplitButton, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnSplitButton, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnSplitButton, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnSplitButton, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnSplitButton, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnSplitButton, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnSplitButton, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -52742,6 +55326,19 @@ impl ComPtr<IAvnSplitButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -52971,6 +55568,19 @@ impl ComPtr<IAvnSplitButton> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -53280,7 +55890,7 @@ impl ComPtr<IAvnSplitButton> {
     }
 }
 
-pub const I_AVN_SPLIT_VIEW_IID: Guid = Guid { data1: 0x0C9C08BE, data2: 0x9C25, data3: 0x5CAC, data4: [0xB3, 0xE8, 0xAA, 0x28, 0x3A, 0x43, 0x19, 0x19] };
+pub const I_AVN_SPLIT_VIEW_IID: Guid = Guid { data1: 0xEB7B0BD1, data2: 0xCB20, data3: 0x597C, data4: [0x90, 0xCC, 0x9F, 0x2D, 0x51, 0x8E, 0x1B, 0x34] };
 
 #[repr(C)]
 struct IAvnSplitViewVtbl {
@@ -53292,6 +55902,8 @@ struct IAvnSplitViewVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnSplitView, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnSplitView, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnSplitView, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnSplitView, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnSplitView, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnSplitView, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnSplitView, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnSplitView, *mut f64) -> i32,
@@ -53325,6 +55937,8 @@ struct IAvnSplitViewVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnSplitView, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnSplitView, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnSplitView, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnSplitView, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnSplitView, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnSplitView, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnSplitView, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnSplitView, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -53379,8 +55993,12 @@ struct IAvnSplitViewVtbl {
     set_use_light_dismiss_overlay_mode: unsafe extern "system" fn(*mut IAvnSplitView, i32) -> i32,
     advise_pane_closed: unsafe extern "system" fn(*mut IAvnSplitView, *mut IAvnSplitViewPaneClosedHandler, *mut i64) -> i32,
     unadvise_pane_closed: unsafe extern "system" fn(*mut IAvnSplitView, i64) -> i32,
+    advise_pane_closing: unsafe extern "system" fn(*mut IAvnSplitView, *mut IAvnSplitViewPaneClosingHandler, *mut i64) -> i32,
+    unadvise_pane_closing: unsafe extern "system" fn(*mut IAvnSplitView, i64) -> i32,
     advise_pane_opened: unsafe extern "system" fn(*mut IAvnSplitView, *mut IAvnSplitViewPaneOpenedHandler, *mut i64) -> i32,
     unadvise_pane_opened: unsafe extern "system" fn(*mut IAvnSplitView, i64) -> i32,
+    advise_pane_opening: unsafe extern "system" fn(*mut IAvnSplitView, *mut IAvnSplitViewPaneOpeningHandler, *mut i64) -> i32,
+    unadvise_pane_opening: unsafe extern "system" fn(*mut IAvnSplitView, i64) -> i32,
 }
 
 #[repr(C)]
@@ -53427,6 +56045,19 @@ impl ComPtr<IAvnSplitView> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -53656,6 +56287,19 @@ impl ComPtr<IAvnSplitView> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -54033,6 +56677,19 @@ impl ComPtr<IAvnSplitView> {
             hresult::check(hr)
         }
     }
+    pub fn advise_pane_closing(&self, handler: &ComPtr<IAvnSplitViewPaneClosingHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pane_closing)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pane_closing(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pane_closing)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_pane_opened(&self, handler: &ComPtr<IAvnSplitViewPaneOpenedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -54046,9 +56703,22 @@ impl ComPtr<IAvnSplitView> {
             hresult::check(hr)
         }
     }
+    pub fn advise_pane_opening(&self, handler: &ComPtr<IAvnSplitViewPaneOpeningHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_pane_opening)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_pane_opening(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_pane_opening)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
 }
 
-pub const I_AVN_STACK_PANEL_IID: Guid = Guid { data1: 0xB9102549, data2: 0xF805, data3: 0x54B9, data4: [0x8A, 0x4E, 0x65, 0x49, 0x9B, 0xEE, 0x64, 0x37] };
+pub const I_AVN_STACK_PANEL_IID: Guid = Guid { data1: 0x8BF1FE7D, data2: 0x6043, data3: 0x569D, data4: [0x91, 0x77, 0xD4, 0x04, 0xD6, 0x7F, 0xF2, 0x6F] };
 
 #[repr(C)]
 struct IAvnStackPanelVtbl {
@@ -54060,6 +56730,8 @@ struct IAvnStackPanelVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnStackPanel, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnStackPanel, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnStackPanel, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnStackPanel, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnStackPanel, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnStackPanel, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnStackPanel, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnStackPanel, *mut f64) -> i32,
@@ -54093,6 +56765,8 @@ struct IAvnStackPanelVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnStackPanel, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnStackPanel, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnStackPanel, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnStackPanel, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnStackPanel, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnStackPanel, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnStackPanel, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnStackPanel, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -54156,6 +56830,19 @@ impl ComPtr<IAvnStackPanel> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -54385,6 +57072,19 @@ impl ComPtr<IAvnStackPanel> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -54507,7 +57207,7 @@ impl ComPtr<IAvnStackPanel> {
     }
 }
 
-pub const I_AVN_TAB_CONTROL_IID: Guid = Guid { data1: 0xB0C6EFAF, data2: 0x8F86, data3: 0x584A, data4: [0x8A, 0xF0, 0x06, 0x62, 0x97, 0x0B, 0x59, 0x7B] };
+pub const I_AVN_TAB_CONTROL_IID: Guid = Guid { data1: 0x67EF03BD, data2: 0x6768, data3: 0x565C, data4: [0x8E, 0x7C, 0x6F, 0x55, 0x93, 0xE9, 0xE4, 0x93] };
 
 #[repr(C)]
 struct IAvnTabControlVtbl {
@@ -54519,6 +57219,8 @@ struct IAvnTabControlVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnTabControl, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnTabControl, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTabControl, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnTabControl, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnTabControl, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnTabControl, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnTabControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTabControl, *mut f64) -> i32,
@@ -54552,6 +57254,8 @@ struct IAvnTabControlVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnTabControl, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnTabControl, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnTabControl, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnTabControl, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnTabControl, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTabControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTabControl, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTabControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -54647,6 +57351,19 @@ impl ComPtr<IAvnTabControl> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -54876,6 +57593,19 @@ impl ComPtr<IAvnTabControl> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -55221,7 +57951,7 @@ impl ComPtr<IAvnTabControl> {
     }
 }
 
-pub const I_AVN_TAB_ITEM_IID: Guid = Guid { data1: 0x1C7A24F7, data2: 0x5E14, data3: 0x5981, data4: [0x8E, 0xFF, 0x60, 0xAA, 0x50, 0xF7, 0xD7, 0xD4] };
+pub const I_AVN_TAB_ITEM_IID: Guid = Guid { data1: 0x64B0BF1B, data2: 0x409E, data3: 0x53F9, data4: [0xA2, 0xB3, 0x86, 0xA0, 0x78, 0x4A, 0xC5, 0x89] };
 
 #[repr(C)]
 struct IAvnTabItemVtbl {
@@ -55233,6 +57963,8 @@ struct IAvnTabItemVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnTabItem, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnTabItem, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTabItem, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnTabItem, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnTabItem, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnTabItem, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnTabItem, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTabItem, *mut f64) -> i32,
@@ -55266,6 +57998,8 @@ struct IAvnTabItemVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnTabItem, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnTabItem, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnTabItem, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnTabItem, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnTabItem, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTabItem, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTabItem, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTabItem, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -55352,6 +58086,19 @@ impl ComPtr<IAvnTabItem> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -55581,6 +58328,19 @@ impl ComPtr<IAvnTabItem> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -55863,7 +58623,7 @@ impl ComPtr<IAvnTabItem> {
     }
 }
 
-pub const I_AVN_TABLE_VIEW_IID: Guid = Guid { data1: 0x4D0435C8, data2: 0xC782, data3: 0x5FDA, data4: [0x8C, 0xCB, 0x2C, 0xB8, 0x23, 0xA4, 0x3B, 0x7A] };
+pub const I_AVN_TABLE_VIEW_IID: Guid = Guid { data1: 0x2DD44209, data2: 0x8B22, data3: 0x5FAB, data4: [0x8F, 0x4E, 0xF4, 0x34, 0x6B, 0x91, 0xD6, 0x17] };
 
 #[repr(C)]
 struct IAvnTableViewVtbl {
@@ -55875,6 +58635,8 @@ struct IAvnTableViewVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnTableView, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnTableView, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTableView, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnTableView, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnTableView, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnTableView, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnTableView, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTableView, *mut f64) -> i32,
@@ -55908,6 +58670,8 @@ struct IAvnTableViewVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnTableView, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnTableView, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnTableView, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnTableView, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnTableView, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTableView, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTableView, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTableView, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -56003,6 +58767,19 @@ impl ComPtr<IAvnTableView> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -56232,6 +59009,19 @@ impl ComPtr<IAvnTableView> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -56575,7 +59365,7 @@ impl ComPtr<IAvnTableView> {
     }
 }
 
-pub const I_AVN_TABLE_VIEW_CELL_IID: Guid = Guid { data1: 0xEF4B5794, data2: 0xDF8D, data3: 0x5F67, data4: [0x99, 0xF9, 0x2E, 0xDA, 0xBF, 0x1A, 0x32, 0xA7] };
+pub const I_AVN_TABLE_VIEW_CELL_IID: Guid = Guid { data1: 0x229DFF1E, data2: 0x179B, data3: 0x5762, data4: [0xA4, 0xF0, 0xD6, 0x5F, 0xCB, 0x14, 0x91, 0x2A] };
 
 #[repr(C)]
 struct IAvnTableViewCellVtbl {
@@ -56587,6 +59377,8 @@ struct IAvnTableViewCellVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnTableViewCell, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnTableViewCell, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut f64) -> i32,
@@ -56620,6 +59412,8 @@ struct IAvnTableViewCellVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnTableViewCell, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnTableViewCell, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnTableViewCell, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTableViewCell, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -56702,6 +59496,19 @@ impl ComPtr<IAvnTableViewCell> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -56931,6 +59738,19 @@ impl ComPtr<IAvnTableViewCell> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -57185,7 +60005,7 @@ impl ComPtr<IAvnTableViewCell> {
     }
 }
 
-pub const I_AVN_TABLE_VIEW_COLUMN_IID: Guid = Guid { data1: 0xE17F1C8C, data2: 0xCEA3, data3: 0x51A4, data4: [0x8A, 0x06, 0xAD, 0x85, 0x99, 0xCD, 0xDA, 0x0D] };
+pub const I_AVN_TABLE_VIEW_COLUMN_IID: Guid = Guid { data1: 0x13A07ADB, data2: 0x66D4, data3: 0x5286, data4: [0x9C, 0x43, 0x59, 0x93, 0x1C, 0x3E, 0x5B, 0xB1] };
 
 #[repr(C)]
 struct IAvnTableViewColumnVtbl {
@@ -57197,6 +60017,8 @@ struct IAvnTableViewColumnVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnTableViewColumn, i64) -> i32,
     get_header: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut *mut IAvnControl) -> i32,
     set_header: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut IAvnControl) -> i32,
     get_width: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut *mut u16) -> i32,
@@ -57259,6 +60081,19 @@ impl ComPtr<IAvnTableViewColumn> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_header(&self) -> Result<Option<ComPtr<IAvnControl>>> {
@@ -57377,7 +60212,7 @@ impl ComPtr<IAvnTableViewColumn> {
     }
 }
 
-pub const I_AVN_TABLE_VIEW_ROW_IID: Guid = Guid { data1: 0x77D8135A, data2: 0x51C5, data3: 0x5225, data4: [0x94, 0xF3, 0x94, 0x83, 0x9A, 0x67, 0x4B, 0xDE] };
+pub const I_AVN_TABLE_VIEW_ROW_IID: Guid = Guid { data1: 0xD544BAAB, data2: 0x2EDF, data3: 0x5886, data4: [0x8A, 0xB2, 0x68, 0x77, 0x79, 0x7E, 0xEC, 0xA6] };
 
 #[repr(C)]
 struct IAvnTableViewRowVtbl {
@@ -57389,6 +60224,8 @@ struct IAvnTableViewRowVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnTableViewRow, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnTableViewRow, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut f64) -> i32,
@@ -57422,6 +60259,8 @@ struct IAvnTableViewRowVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnTableViewRow, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnTableViewRow, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnTableViewRow, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTableViewRow, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -57506,6 +60345,19 @@ impl ComPtr<IAvnTableViewRow> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -57735,6 +60587,19 @@ impl ComPtr<IAvnTableViewRow> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -58003,7 +60868,7 @@ impl ComPtr<IAvnTableViewRow> {
     }
 }
 
-pub const I_AVN_TEXT_BLOCK_IID: Guid = Guid { data1: 0x89F4FFBF, data2: 0x8672, data3: 0x5A0E, data4: [0xB2, 0xE0, 0xDA, 0x4A, 0x3F, 0x2C, 0x12, 0xA2] };
+pub const I_AVN_TEXT_BLOCK_IID: Guid = Guid { data1: 0xF67A2595, data2: 0xFAAE, data3: 0x5779, data4: [0xB2, 0x0F, 0xB1, 0xBC, 0x0A, 0xF4, 0x0E, 0x53] };
 
 #[repr(C)]
 struct IAvnTextBlockVtbl {
@@ -58015,6 +60880,8 @@ struct IAvnTextBlockVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnTextBlock, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnTextBlock, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTextBlock, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnTextBlock, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnTextBlock, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnTextBlock, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnTextBlock, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTextBlock, *mut f64) -> i32,
@@ -58048,6 +60915,8 @@ struct IAvnTextBlockVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnTextBlock, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnTextBlock, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnTextBlock, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnTextBlock, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnTextBlock, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTextBlock, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTextBlock, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTextBlock, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -58134,6 +61003,19 @@ impl ComPtr<IAvnTextBlock> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -58363,6 +61245,19 @@ impl ComPtr<IAvnTextBlock> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -58645,7 +61540,7 @@ impl ComPtr<IAvnTextBlock> {
     }
 }
 
-pub const I_AVN_TEXT_BOX_IID: Guid = Guid { data1: 0xBED2F9C1, data2: 0x483B, data3: 0x5D76, data4: [0x8F, 0x75, 0x5B, 0xF2, 0x30, 0x6C, 0xFB, 0x67] };
+pub const I_AVN_TEXT_BOX_IID: Guid = Guid { data1: 0x2C0399CB, data2: 0x27D7, data3: 0x54DE, data4: [0x93, 0x14, 0x90, 0x7A, 0x90, 0xEC, 0x5D, 0xCB] };
 
 #[repr(C)]
 struct IAvnTextBoxVtbl {
@@ -58657,6 +61552,8 @@ struct IAvnTextBoxVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnTextBox, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnTextBox, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTextBox, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnTextBox, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnTextBox, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTextBox, *mut f64) -> i32,
@@ -58690,6 +61587,8 @@ struct IAvnTextBoxVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnTextBox, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnTextBox, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnTextBox, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTextBox, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -58851,6 +61750,19 @@ impl ComPtr<IAvnTextBox> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -59080,6 +61992,19 @@ impl ComPtr<IAvnTextBox> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -59879,7 +62804,7 @@ impl ComPtr<IAvnTextBox> {
     }
 }
 
-pub const I_AVN_THEME_VARIANT_SCOPE_IID: Guid = Guid { data1: 0x6B8223DE, data2: 0x4F86, data3: 0x5921, data4: [0xBA, 0xD1, 0x39, 0xD6, 0xD3, 0x3D, 0x0B, 0x10] };
+pub const I_AVN_THEME_VARIANT_SCOPE_IID: Guid = Guid { data1: 0x10B14B19, data2: 0x60BF, data3: 0x54D7, data4: [0xA0, 0xA8, 0x4C, 0xD7, 0xDD, 0x76, 0xD7, 0xD0] };
 
 #[repr(C)]
 struct IAvnThemeVariantScopeVtbl {
@@ -59891,6 +62816,8 @@ struct IAvnThemeVariantScopeVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnThemeVariantScope, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnThemeVariantScope, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut f64) -> i32,
@@ -59924,6 +62851,8 @@ struct IAvnThemeVariantScopeVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnThemeVariantScope, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnThemeVariantScope, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnThemeVariantScope, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnThemeVariantScope, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -59980,6 +62909,19 @@ impl ComPtr<IAvnThemeVariantScope> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -60212,6 +63154,19 @@ impl ComPtr<IAvnThemeVariantScope> {
             hresult::check(hr)
         }
     }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -60281,7 +63236,7 @@ impl ComPtr<IAvnThemeVariantScope> {
     }
 }
 
-pub const I_AVN_TIME_PICKER_IID: Guid = Guid { data1: 0x60009974, data2: 0x2307, data3: 0x5DB3, data4: [0x93, 0x1F, 0x79, 0x65, 0xFD, 0x21, 0x76, 0xB5] };
+pub const I_AVN_TIME_PICKER_IID: Guid = Guid { data1: 0x8D06A1BE, data2: 0x8BBD, data3: 0x5CD1, data4: [0x98, 0xC5, 0x3F, 0xB0, 0x7B, 0xA8, 0x7B, 0x7C] };
 
 #[repr(C)]
 struct IAvnTimePickerVtbl {
@@ -60293,6 +63248,8 @@ struct IAvnTimePickerVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnTimePicker, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnTimePicker, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTimePicker, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnTimePicker, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnTimePicker, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnTimePicker, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnTimePicker, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTimePicker, *mut f64) -> i32,
@@ -60326,6 +63283,8 @@ struct IAvnTimePickerVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnTimePicker, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnTimePicker, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnTimePicker, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnTimePicker, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnTimePicker, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTimePicker, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTimePicker, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTimePicker, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -60417,6 +63376,19 @@ impl ComPtr<IAvnTimePicker> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_is_visible(&self) -> Result<bool> {
         unsafe {
             let mut value: i32 = 0;
@@ -60644,6 +63616,19 @@ impl ComPtr<IAvnTimePicker> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -60946,7 +63931,7 @@ impl ComPtr<IAvnTimePicker> {
     }
 }
 
-pub const I_AVN_TOGGLE_SPLIT_BUTTON_IID: Guid = Guid { data1: 0x3F3FC868, data2: 0xC393, data3: 0x5834, data4: [0x9B, 0x57, 0x16, 0x13, 0x23, 0x73, 0xDE, 0x1C] };
+pub const I_AVN_TOGGLE_SPLIT_BUTTON_IID: Guid = Guid { data1: 0x14958A43, data2: 0x250E, data3: 0x58D5, data4: [0xA7, 0xC7, 0x54, 0xAE, 0x7F, 0x6F, 0xBB, 0xD1] };
 
 #[repr(C)]
 struct IAvnToggleSplitButtonVtbl {
@@ -60958,6 +63943,8 @@ struct IAvnToggleSplitButtonVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnToggleSplitButton, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnToggleSplitButton, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut f64) -> i32,
@@ -60991,6 +63978,8 @@ struct IAvnToggleSplitButtonVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnToggleSplitButton, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnToggleSplitButton, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnToggleSplitButton, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnToggleSplitButton, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -61085,6 +64074,19 @@ impl ComPtr<IAvnToggleSplitButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -61314,6 +64316,19 @@ impl ComPtr<IAvnToggleSplitButton> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -61650,7 +64665,7 @@ impl ComPtr<IAvnToggleSplitButton> {
     }
 }
 
-pub const I_AVN_TOGGLE_SWITCH_IID: Guid = Guid { data1: 0x25A80BAD, data2: 0xDD11, data3: 0x579D, data4: [0x87, 0x74, 0x64, 0x70, 0xC2, 0x7A, 0xC8, 0xC6] };
+pub const I_AVN_TOGGLE_SWITCH_IID: Guid = Guid { data1: 0x4C3CE0A2, data2: 0xD44A, data3: 0x5C94, data4: [0xAD, 0x57, 0x18, 0xDA, 0x98, 0x54, 0xAE, 0x75] };
 
 #[repr(C)]
 struct IAvnToggleSwitchVtbl {
@@ -61662,6 +64677,8 @@ struct IAvnToggleSwitchVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnToggleSwitch, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnToggleSwitch, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut f64) -> i32,
@@ -61695,6 +64712,8 @@ struct IAvnToggleSwitchVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnToggleSwitch, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnToggleSwitch, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnToggleSwitch, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnToggleSwitch, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -61802,6 +64821,19 @@ impl ComPtr<IAvnToggleSwitch> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -62031,6 +65063,19 @@ impl ComPtr<IAvnToggleSwitch> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -62459,7 +65504,7 @@ impl ComPtr<IAvnToggleSwitch> {
     }
 }
 
-pub const I_AVN_TOOL_TIP_IID: Guid = Guid { data1: 0x1567103D, data2: 0x03B5, data3: 0x51A8, data4: [0xA3, 0x8F, 0xAD, 0xEE, 0x27, 0x41, 0xF0, 0xCE] };
+pub const I_AVN_TOOL_TIP_IID: Guid = Guid { data1: 0x6D9850CE, data2: 0x3EE0, data3: 0x53BD, data4: [0x98, 0xC3, 0x54, 0x93, 0xCF, 0xCE, 0xED, 0x2B] };
 
 #[repr(C)]
 struct IAvnToolTipVtbl {
@@ -62471,6 +65516,8 @@ struct IAvnToolTipVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnToolTip, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnToolTip, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnToolTip, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnToolTip, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnToolTip, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnToolTip, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnToolTip, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnToolTip, *mut f64) -> i32,
@@ -62504,6 +65551,8 @@ struct IAvnToolTipVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnToolTip, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnToolTip, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnToolTip, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnToolTip, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnToolTip, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnToolTip, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnToolTip, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnToolTip, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -62586,6 +65635,19 @@ impl ComPtr<IAvnToolTip> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -62815,6 +65877,19 @@ impl ComPtr<IAvnToolTip> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -63069,7 +66144,7 @@ impl ComPtr<IAvnToolTip> {
     }
 }
 
-pub const I_AVN_TRANSITIONING_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x0B974218, data2: 0xD860, data3: 0x5122, data4: [0xBC, 0x61, 0xAE, 0xA6, 0x5B, 0x05, 0xDE, 0x7C] };
+pub const I_AVN_TRANSITIONING_CONTENT_CONTROL_IID: Guid = Guid { data1: 0xF88BD1B5, data2: 0x5E71, data3: 0x505F, data4: [0xAF, 0x5D, 0x06, 0x90, 0xA0, 0xA4, 0xF8, 0x83] };
 
 #[repr(C)]
 struct IAvnTransitioningContentControlVtbl {
@@ -63081,6 +66156,8 @@ struct IAvnTransitioningContentControlVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut f64) -> i32,
@@ -63114,6 +66191,8 @@ struct IAvnTransitioningContentControlVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -63198,6 +66277,19 @@ impl ComPtr<IAvnTransitioningContentControl> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -63427,6 +66519,19 @@ impl ComPtr<IAvnTransitioningContentControl> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -63796,7 +66901,7 @@ impl ComPtr<IAvnTrayIcon> {
     }
 }
 
-pub const I_AVN_TREE_VIEW_IID: Guid = Guid { data1: 0x662E54E6, data2: 0x2CB4, data3: 0x585C, data4: [0x8C, 0xE7, 0xA3, 0xFE, 0x2D, 0x3F, 0x58, 0x38] };
+pub const I_AVN_TREE_VIEW_IID: Guid = Guid { data1: 0xB1D9952A, data2: 0x79A8, data3: 0x55D9, data4: [0xA0, 0x1D, 0x07, 0x4A, 0x82, 0x92, 0x9A, 0xC4] };
 
 #[repr(C)]
 struct IAvnTreeViewVtbl {
@@ -63808,6 +66913,8 @@ struct IAvnTreeViewVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnTreeView, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnTreeView, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTreeView, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnTreeView, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnTreeView, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnTreeView, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTreeView, *mut f64) -> i32,
@@ -63841,6 +66948,8 @@ struct IAvnTreeViewVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnTreeView, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnTreeView, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnTreeView, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTreeView, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -63930,6 +67039,19 @@ impl ComPtr<IAvnTreeView> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -64159,6 +67281,19 @@ impl ComPtr<IAvnTreeView> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -64458,7 +67593,7 @@ impl ComPtr<IAvnTreeView> {
     }
 }
 
-pub const I_AVN_TREE_VIEW_ITEM_IID: Guid = Guid { data1: 0x33D8152A, data2: 0x31F9, data3: 0x5356, data4: [0x89, 0x55, 0xE2, 0x48, 0xFB, 0x07, 0x8D, 0x13] };
+pub const I_AVN_TREE_VIEW_ITEM_IID: Guid = Guid { data1: 0x9BDFB550, data2: 0x724C, data3: 0x5CD7, data4: [0x8A, 0x40, 0xC3, 0x32, 0x63, 0xC2, 0x2D, 0x20] };
 
 #[repr(C)]
 struct IAvnTreeViewItemVtbl {
@@ -64470,6 +67605,8 @@ struct IAvnTreeViewItemVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnTreeViewItem, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnTreeViewItem, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut f64) -> i32,
@@ -64503,6 +67640,8 @@ struct IAvnTreeViewItemVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnTreeViewItem, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnTreeViewItem, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnTreeViewItem, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnTreeViewItem, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -64593,6 +67732,19 @@ impl ComPtr<IAvnTreeViewItem> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -64822,6 +67974,19 @@ impl ComPtr<IAvnTreeViewItem> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -65132,7 +68297,7 @@ impl ComPtr<IAvnTreeViewItem> {
     }
 }
 
-pub const I_AVN_USER_CONTROL_IID: Guid = Guid { data1: 0xB61B153D, data2: 0xEC8B, data3: 0x54C4, data4: [0x87, 0xBA, 0x28, 0x3F, 0xD7, 0xCC, 0xF9, 0xEB] };
+pub const I_AVN_USER_CONTROL_IID: Guid = Guid { data1: 0xF1D118E1, data2: 0x0A97, data3: 0x5A5E, data4: [0x88, 0x6E, 0x10, 0x61, 0x6A, 0x21, 0x0E, 0x75] };
 
 #[repr(C)]
 struct IAvnUserControlVtbl {
@@ -65144,6 +68309,8 @@ struct IAvnUserControlVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnUserControl, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnUserControl, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnUserControl, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnUserControl, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnUserControl, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnUserControl, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnUserControl, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnUserControl, *mut f64) -> i32,
@@ -65177,6 +68344,8 @@ struct IAvnUserControlVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnUserControl, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnUserControl, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnUserControl, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnUserControl, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnUserControl, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnUserControl, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnUserControl, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnUserControl, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -65259,6 +68428,19 @@ impl ComPtr<IAvnUserControl> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -65488,6 +68670,19 @@ impl ComPtr<IAvnUserControl> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -65742,7 +68937,7 @@ impl ComPtr<IAvnUserControl> {
     }
 }
 
-pub const I_AVN_VIEWBOX_IID: Guid = Guid { data1: 0xCDC2A914, data2: 0x1F29, data3: 0x5A49, data4: [0xB1, 0xDE, 0x16, 0xB3, 0x44, 0x07, 0xE2, 0x70] };
+pub const I_AVN_VIEWBOX_IID: Guid = Guid { data1: 0xE5AE8212, data2: 0xBFC0, data3: 0x57E8, data4: [0xA3, 0x92, 0x60, 0x47, 0xEF, 0xEA, 0xE9, 0x54] };
 
 #[repr(C)]
 struct IAvnViewboxVtbl {
@@ -65754,6 +68949,8 @@ struct IAvnViewboxVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnViewbox, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnViewbox, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnViewbox, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnViewbox, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnViewbox, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnViewbox, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnViewbox, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnViewbox, *mut f64) -> i32,
@@ -65787,6 +68984,8 @@ struct IAvnViewboxVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnViewbox, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnViewbox, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnViewbox, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnViewbox, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnViewbox, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnViewbox, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnViewbox, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnViewbox, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -65845,6 +69044,19 @@ impl ComPtr<IAvnViewbox> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -66077,6 +69289,19 @@ impl ComPtr<IAvnViewbox> {
             hresult::check(hr)
         }
     }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -66160,7 +69385,7 @@ impl ComPtr<IAvnViewbox> {
     }
 }
 
-pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0xF5E5AEB8, data2: 0xFB6D, data3: 0x5AF1, data4: [0xAE, 0x35, 0x33, 0xB4, 0x1F, 0xC6, 0xFC, 0xF1] };
+pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0x1321FEB8, data2: 0xE98F, data3: 0x5836, data4: [0x81, 0x25, 0xEC, 0xF5, 0x4E, 0xFA, 0x6B, 0xEF] };
 
 #[repr(C)]
 struct IAvnWindowVtbl {
@@ -66172,6 +69397,8 @@ struct IAvnWindowVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnWindow, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnWindow, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnWindow, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnWindow, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnWindow, *mut f64) -> i32,
@@ -66205,6 +69432,8 @@ struct IAvnWindowVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnWindow, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnWindow, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnWindow, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnWindow, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -66325,6 +69554,19 @@ impl ComPtr<IAvnWindow> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn get_is_visible(&self) -> Result<bool> {
         unsafe {
             let mut value: i32 = 0;
@@ -66552,6 +69794,19 @@ impl ComPtr<IAvnWindow> {
     pub fn unadvise_unloaded(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_unloaded)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -67057,7 +70312,7 @@ impl ComPtr<IAvnWindow> {
     }
 }
 
-pub const I_AVN_WRAP_PANEL_IID: Guid = Guid { data1: 0x62F0588C, data2: 0x31F3, data3: 0x59FA, data4: [0xBF, 0xE6, 0x0D, 0x38, 0x09, 0xF8, 0x39, 0x70] };
+pub const I_AVN_WRAP_PANEL_IID: Guid = Guid { data1: 0x661CF2A6, data2: 0x31B7, data3: 0x537C, data4: [0x86, 0x30, 0x21, 0xE5, 0x06, 0xAF, 0xB4, 0x42] };
 
 #[repr(C)]
 struct IAvnWrapPanelVtbl {
@@ -67069,6 +70324,8 @@ struct IAvnWrapPanelVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnWrapPanel, i64) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut i32) -> i32,
     set_is_visible: unsafe extern "system" fn(*mut IAvnWrapPanel, i32) -> i32,
     get_opacity: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut f64) -> i32,
@@ -67102,6 +70359,8 @@ struct IAvnWrapPanelVtbl {
     unadvise_loaded: unsafe extern "system" fn(*mut IAvnWrapPanel, i64) -> i32,
     advise_unloaded: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut IAvnControlUnloadedHandler, *mut i64) -> i32,
     unadvise_unloaded: unsafe extern "system" fn(*mut IAvnWrapPanel, i64) -> i32,
+    advise_size_changed: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut IAvnControlSizeChangedHandler, *mut i64) -> i32,
+    unadvise_size_changed: unsafe extern "system" fn(*mut IAvnWrapPanel, i64) -> i32,
     advise_key_down: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut IAvnControlKeyDownHandler, *mut i64) -> i32,
     unadvise_key_down: unsafe extern "system" fn(*mut IAvnWrapPanel, i64) -> i32,
     advise_pointer_entered: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut IAvnControlPointerEnteredHandler, *mut i64) -> i32,
@@ -67169,6 +70428,19 @@ impl ComPtr<IAvnWrapPanel> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
     pub fn get_is_visible(&self) -> Result<bool> {
@@ -67401,6 +70673,19 @@ impl ComPtr<IAvnWrapPanel> {
             hresult::check(hr)
         }
     }
+    pub fn advise_size_changed(&self, handler: &ComPtr<IAvnControlSizeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_size_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_size_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_size_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
     pub fn advise_key_down(&self, handler: &ComPtr<IAvnControlKeyDownHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -67548,7 +70833,7 @@ impl ComPtr<IAvnWrapPanel> {
     }
 }
 
-pub const I_AVN_STYLED_ELEMENT_IID: Guid = Guid { data1: 0x52B157BF, data2: 0x839E, data3: 0x5307, data4: [0x9C, 0xE0, 0x49, 0x1F, 0xD6, 0x1F, 0xF6, 0x03] };
+pub const I_AVN_STYLED_ELEMENT_IID: Guid = Guid { data1: 0xCECDC9F8, data2: 0x5DA4, data3: 0x5670, data4: [0x8F, 0x6F, 0xFE, 0xCA, 0x0F, 0x77, 0xA0, 0x87] };
 
 #[repr(C)]
 struct IAvnStyledElementVtbl {
@@ -67560,6 +70845,8 @@ struct IAvnStyledElementVtbl {
     get_name: unsafe extern "system" fn(*mut IAvnStyledElement, *mut *mut u16) -> i32,
     set_name: unsafe extern "system" fn(*mut IAvnStyledElement, *mut u16) -> i32,
     get_classes: unsafe extern "system" fn(*mut IAvnStyledElement, *mut *mut IAvnStringList) -> i32,
+    advise_data_context_changed: unsafe extern "system" fn(*mut IAvnStyledElement, *mut IAvnStyledElementDataContextChangedHandler, *mut i64) -> i32,
+    unadvise_data_context_changed: unsafe extern "system" fn(*mut IAvnStyledElement, i64) -> i32,
 }
 
 #[repr(C)]
@@ -67606,6 +70893,19 @@ impl ComPtr<IAvnStyledElement> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_classes)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
+    pub fn advise_data_context_changed(&self, handler: &ComPtr<IAvnStyledElementDataContextChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_data_context_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_data_context_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_data_context_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
 }
