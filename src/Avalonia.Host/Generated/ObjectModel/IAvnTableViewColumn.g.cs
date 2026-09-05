@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("990EDF7E-9D9F-5723-85B9-F177940EC0A0")]
+[Guid("C3667189-5478-5139-99ED-9B0D42B51222")]
 public partial interface IAvnTableViewColumn : IAvnStyledElement
 {
     [PreserveSig]
@@ -238,6 +238,22 @@ public sealed partial class AvnTableViewColumn : IAvnTableViewColumn
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = (IAvnStyledElement?)ProjectionRuntime.Wrap(_value.Parent as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetActualThemeVariant(out string? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = global::Avalonia.Host.Com.AvnThemeVariant.ToAbi(_value.ActualThemeVariant);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

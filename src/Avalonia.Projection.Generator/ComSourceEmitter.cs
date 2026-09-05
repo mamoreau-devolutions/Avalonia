@@ -1319,7 +1319,9 @@ public static class ComSourceEmitter
                 MarshallingKind.StringUtf16 when property.StringConverterTypeName is { } converter =>
                     $"global::{converter}.FromAbi(value)",
                 MarshallingKind.StringUtf16 when property.ManagedTypeName != "System.String" =>
-                    $"global::{property.ManagedTypeName}.Parse(value)",
+                    property.IsNullable
+                        ? $"value is null ? null : global::{property.ManagedTypeName}.Parse(value)"
+                        : $"global::{property.ManagedTypeName}.Parse(value)",
                 _ when GeometryMarshalling.IsGeometry(property.Kind) => "value.ToAvalonia()",
                 _ => "value",
             };
@@ -1658,7 +1660,9 @@ public static class ComSourceEmitter
             MarshallingKind.StringUtf16 when property.StringConverterTypeName is { } converter =>
                 $"global::{converter}.FromAbi(value)",
             MarshallingKind.StringUtf16 when property.ManagedTypeName is not "System.String" =>
-                $"global::{property.ManagedTypeName}.Parse(value)",
+                property.IsNullable
+                    ? $"value is null ? null : global::{property.ManagedTypeName}.Parse(value)"
+                    : $"global::{property.ManagedTypeName}.Parse(value)",
             MarshallingKind.CharUtf16 => "(char)value",
             MarshallingKind.TimeSpanI64 => "global::System.TimeSpan.FromTicks(value)",
             MarshallingKind.DateTimeI64 => "new global::System.DateTime(value, global::System.DateTimeKind.Utc)",

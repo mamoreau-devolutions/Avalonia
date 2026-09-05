@@ -2829,6 +2829,9 @@ impl AutoCompleteBox {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -3562,6 +3565,9 @@ impl Border {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -3913,6 +3919,17 @@ impl Border {
         self.set_corner_radius(value)?;
         Ok(self)
     }
+    pub fn get_box_shadow(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_box_shadow()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_box_shadow(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_box_shadow(&value)?)
+    }
+    pub fn box_shadow(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_box_shadow(value)?;
+        Ok(self)
+    }
     pub fn clip_to_bounds_radius(&self) -> Result<CornerRadius> {
         Ok(self.raw.get_clip_to_bounds_radius()?.into())
     }
@@ -3965,6 +3982,9 @@ impl Button {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -4452,6 +4472,17 @@ impl Button {
         self.set_command(value)?;
         Ok(self)
     }
+    pub fn get_hot_key(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_hot_key()?)) }
+    }
+    pub fn set_hot_key(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_hot_key(Some(&value))?)
+    }
+    pub fn hot_key(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_hot_key(value)?;
+        Ok(self)
+    }
     pub fn get_command_parameter(&self) -> Result<Variant> {
         Ok(Variant::from_abi(self.raw.get_command_parameter()?))
     }
@@ -4552,6 +4583,9 @@ impl ButtonSpinner {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -5113,6 +5147,9 @@ impl Calendar {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -5736,6 +5773,9 @@ impl CalendarDatePicker {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -6425,6 +6465,9 @@ impl Canvas {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -6805,6 +6848,9 @@ impl Carousel {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -7404,6 +7450,9 @@ impl CheckBox {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -7890,6 +7939,17 @@ impl CheckBox {
         self.set_command(value)?;
         Ok(self)
     }
+    pub fn get_hot_key(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_hot_key()?)) }
+    }
+    pub fn set_hot_key(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_hot_key(Some(&value))?)
+    }
+    pub fn hot_key(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_hot_key(value)?;
+        Ok(self)
+    }
     pub fn get_command_parameter(&self) -> Result<Variant> {
         Ok(Variant::from_abi(self.raw.get_command_parameter()?))
     }
@@ -8019,6 +8079,9 @@ impl ComboBox {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -8696,6 +8759,9 @@ impl ComboBoxItem {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -9218,6 +9284,9 @@ impl CommandBar {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -9826,6 +9895,9 @@ impl CommandBarButton {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -10312,6 +10384,17 @@ impl CommandBarButton {
         self.set_command(value)?;
         Ok(self)
     }
+    pub fn get_hot_key(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_hot_key()?)) }
+    }
+    pub fn set_hot_key(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_hot_key(Some(&value))?)
+    }
+    pub fn hot_key(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_hot_key(value)?;
+        Ok(self)
+    }
     pub fn get_command_parameter(&self) -> Result<Variant> {
         Ok(Variant::from_abi(self.raw.get_command_parameter()?))
     }
@@ -10469,6 +10552,9 @@ impl CommandBarSeparator {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -10958,6 +11044,9 @@ impl CommandBarToggleButton {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -11444,6 +11533,17 @@ impl CommandBarToggleButton {
         self.set_command(value)?;
         Ok(self)
     }
+    pub fn get_hot_key(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_hot_key()?)) }
+    }
+    pub fn set_hot_key(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_hot_key(Some(&value))?)
+    }
+    pub fn hot_key(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_hot_key(value)?;
+        Ok(self)
+    }
     pub fn get_command_parameter(&self) -> Result<Variant> {
         Ok(Variant::from_abi(self.raw.get_command_parameter()?))
     }
@@ -11630,6 +11730,9 @@ impl ContentControl {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -12145,6 +12248,9 @@ impl ContextMenu {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -12860,6 +12966,9 @@ impl Control {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -13186,6 +13295,9 @@ impl DatePicker {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -13761,6 +13873,9 @@ impl Decorator {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -14108,6 +14223,9 @@ impl DockPanel {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -14486,6 +14604,9 @@ impl DropDownButton {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -14973,6 +15094,17 @@ impl DropDownButton {
         self.set_command(value)?;
         Ok(self)
     }
+    pub fn get_hot_key(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_hot_key()?)) }
+    }
+    pub fn set_hot_key(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_hot_key(Some(&value))?)
+    }
+    pub fn hot_key(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_hot_key(value)?;
+        Ok(self)
+    }
     pub fn get_command_parameter(&self) -> Result<Variant> {
         Ok(Variant::from_abi(self.raw.get_command_parameter()?))
     }
@@ -15073,6 +15205,9 @@ impl Expander {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -15677,6 +15812,9 @@ impl FlexPanel {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -16266,6 +16404,9 @@ impl Grid {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -16701,6 +16842,9 @@ impl GridSplitter {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -17253,6 +17397,9 @@ impl GroupBox {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -17789,6 +17936,9 @@ impl HyperlinkButton {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -18275,6 +18425,17 @@ impl HyperlinkButton {
         self.set_command(value)?;
         Ok(self)
     }
+    pub fn get_hot_key(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_hot_key()?)) }
+    }
+    pub fn set_hot_key(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_hot_key(Some(&value))?)
+    }
+    pub fn hot_key(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_hot_key(value)?;
+        Ok(self)
+    }
     pub fn get_command_parameter(&self) -> Result<Variant> {
         Ok(Variant::from_abi(self.raw.get_command_parameter()?))
     }
@@ -18390,6 +18551,9 @@ impl IconElement {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -18863,6 +19027,9 @@ impl Image {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -19233,6 +19400,9 @@ impl ItemsControl {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -19745,6 +19915,9 @@ impl Label {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -20272,6 +20445,9 @@ impl LayoutTransformControl {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -20627,6 +20803,9 @@ impl ListBox {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -21217,6 +21396,9 @@ impl ListBoxItem {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -21739,6 +21921,9 @@ impl MaskedTextBox {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -22634,6 +22819,9 @@ impl Menu {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -23237,6 +23425,9 @@ impl MenuBase {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -24025,6 +24216,9 @@ impl MenuItem {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -24585,6 +24779,17 @@ impl MenuItem {
         self.set_command(value)?;
         Ok(self)
     }
+    pub fn get_hot_key(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_hot_key()?)) }
+    }
+    pub fn set_hot_key(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_hot_key(Some(&value))?)
+    }
+    pub fn hot_key(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_hot_key(value)?;
+        Ok(self)
+    }
     pub fn get_command_parameter(&self) -> Result<Variant> {
         Ok(Variant::from_abi(self.raw.get_command_parameter()?))
     }
@@ -24605,6 +24810,17 @@ impl MenuItem {
     }
     pub fn icon(self, value: impl AsControl) -> Result<Self> {
         self.set_icon(value)?;
+        Ok(self)
+    }
+    pub fn get_input_gesture(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_input_gesture()?)) }
+    }
+    pub fn set_input_gesture(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_input_gesture(Some(&value))?)
+    }
+    pub fn input_gesture(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_input_gesture(value)?;
         Ok(self)
     }
     pub fn get_is_selected(&self) -> Result<bool> { Ok(self.raw.get_is_selected()?) }
@@ -24740,6 +24956,9 @@ impl NotificationCard {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -25290,6 +25509,9 @@ impl WindowNotificationManager {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -25785,6 +26007,9 @@ impl NumericUpDown {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -26468,6 +26693,9 @@ impl Panel {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -26812,6 +27040,9 @@ impl PathIcon {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -27295,6 +27526,9 @@ impl PipsPager {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -27883,6 +28117,9 @@ impl HeaderedContentControl {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -28419,6 +28656,9 @@ impl HeaderedItemsControl {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -28951,6 +29191,9 @@ impl HeaderedSelectingItemsControl {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -29551,6 +29794,9 @@ impl Popup {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -30200,6 +30446,9 @@ impl RangeBase {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -30724,6 +30973,9 @@ impl SelectingItemsControl {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -31304,6 +31556,9 @@ impl TemplatedControl {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -31775,6 +32030,9 @@ impl Thumb {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -32281,6 +32539,9 @@ impl ToggleButton {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -32767,6 +33028,17 @@ impl ToggleButton {
         self.set_command(value)?;
         Ok(self)
     }
+    pub fn get_hot_key(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_hot_key()?)) }
+    }
+    pub fn set_hot_key(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_hot_key(Some(&value))?)
+    }
+    pub fn hot_key(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_hot_key(value)?;
+        Ok(self)
+    }
     pub fn get_command_parameter(&self) -> Result<Variant> {
         Ok(Variant::from_abi(self.raw.get_command_parameter()?))
     }
@@ -32896,6 +33168,9 @@ impl UniformGrid {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -33281,6 +33556,9 @@ impl ProgressBar {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -33846,6 +34124,9 @@ impl RadioButton {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -34332,6 +34613,17 @@ impl RadioButton {
         self.set_command(value)?;
         Ok(self)
     }
+    pub fn get_hot_key(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_hot_key()?)) }
+    }
+    pub fn set_hot_key(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_hot_key(Some(&value))?)
+    }
+    pub fn hot_key(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_hot_key(value)?;
+        Ok(self)
+    }
     pub fn get_command_parameter(&self) -> Result<Variant> {
         Ok(Variant::from_abi(self.raw.get_command_parameter()?))
     }
@@ -34472,6 +34764,9 @@ impl RefreshContainer {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -35021,6 +35316,9 @@ impl RelativePanel {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -35419,6 +35717,9 @@ impl RepeatButton {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -35906,6 +36207,17 @@ impl RepeatButton {
         self.set_command(value)?;
         Ok(self)
     }
+    pub fn get_hot_key(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_hot_key()?)) }
+    }
+    pub fn set_hot_key(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_hot_key(Some(&value))?)
+    }
+    pub fn hot_key(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_hot_key(value)?;
+        Ok(self)
+    }
     pub fn get_command_parameter(&self) -> Result<Variant> {
         Ok(Variant::from_abi(self.raw.get_command_parameter()?))
     }
@@ -36022,6 +36334,9 @@ impl ScrollViewer {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -36704,6 +37019,9 @@ impl SelectableTextBlock {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -37268,6 +37586,9 @@ impl Separator {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -37740,6 +38061,9 @@ impl Arc {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -38173,6 +38497,9 @@ impl Ellipse {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -38589,6 +38916,9 @@ impl Line {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -39027,6 +39357,9 @@ impl Path {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -39454,6 +39787,9 @@ impl Polygon {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -39894,6 +40230,9 @@ impl Polyline {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -40333,6 +40672,9 @@ impl Rectangle {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -40766,6 +41108,9 @@ impl Sector {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -41195,6 +41540,9 @@ impl Shape {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -41611,6 +41959,9 @@ impl Slider {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -42190,6 +42541,9 @@ impl Spinner {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -42724,6 +43078,9 @@ impl SplitButton {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -43220,6 +43577,17 @@ impl SplitButton {
         self.set_flyout(value)?;
         Ok(self)
     }
+    pub fn get_hot_key(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_hot_key()?)) }
+    }
+    pub fn set_hot_key(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_hot_key(Some(&value))?)
+    }
+    pub fn hot_key(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_hot_key(value)?;
+        Ok(self)
+    }
     pub fn subscribe_click(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::split_button_click_handler(move || {
             callback(());
@@ -43282,6 +43650,9 @@ impl SplitView {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -43932,6 +44303,9 @@ impl StackPanel {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -44311,6 +44685,9 @@ impl TabControl {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -44950,6 +45327,9 @@ impl TabItem {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -45436,6 +45816,9 @@ impl TabItem {
         self.set_header_template(value)?;
         Ok(self)
     }
+    pub fn tab_strip_placement(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_tab_strip_placement()?)) }
+    }
     pub fn get_is_selected(&self) -> Result<bool> { Ok(self.raw.get_is_selected()?) }
     pub fn set_selected(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_is_selected(value)?)
@@ -45524,6 +45907,9 @@ impl TableView {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -46122,6 +46508,9 @@ impl TableViewCell {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -46637,6 +47026,9 @@ impl TableViewColumn {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -46836,6 +47228,9 @@ impl TableViewRow {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -47360,6 +47755,9 @@ impl TextBlock {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -47865,6 +48263,9 @@ impl TextBox {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -48707,6 +49108,9 @@ impl ThemeVariantScope {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -49005,6 +49409,17 @@ impl ThemeVariantScope {
         self.set_padding(value)?;
         Ok(self)
     }
+    pub fn get_requested_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_requested_theme_variant()?)) }
+    }
+    pub fn set_requested_theme_variant(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_requested_theme_variant(Some(&value))?)
+    }
+    pub fn requested_theme_variant(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_requested_theme_variant(value)?;
+        Ok(self)
+    }
 }
 
 impl AsControl for ThemeVariantScope {
@@ -49054,6 +49469,9 @@ impl TimePicker {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -49585,6 +50003,9 @@ impl ToggleSplitButton {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -50081,6 +50502,17 @@ impl ToggleSplitButton {
         self.set_flyout(value)?;
         Ok(self)
     }
+    pub fn get_hot_key(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_hot_key()?)) }
+    }
+    pub fn set_hot_key(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_hot_key(Some(&value))?)
+    }
+    pub fn hot_key(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_hot_key(value)?;
+        Ok(self)
+    }
     pub fn subscribe_click(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::split_button_click_handler(move || {
             callback(());
@@ -50164,6 +50596,9 @@ impl ToggleSwitch {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -50651,6 +51086,17 @@ impl ToggleSwitch {
         self.set_command(value)?;
         Ok(self)
     }
+    pub fn get_hot_key(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_hot_key()?)) }
+    }
+    pub fn set_hot_key(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_hot_key(Some(&value))?)
+    }
+    pub fn hot_key(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_hot_key(value)?;
+        Ok(self)
+    }
     pub fn get_command_parameter(&self) -> Result<Variant> {
         Ok(Variant::from_abi(self.raw.get_command_parameter()?))
     }
@@ -50822,6 +51268,9 @@ impl ToolTip {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -51419,6 +51868,9 @@ impl TransitioningContentControl {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -52020,6 +52472,9 @@ impl TreeView {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -52590,6 +53045,9 @@ impl TreeViewItem {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -53167,6 +53625,9 @@ impl UserControl {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -53682,6 +54143,9 @@ impl Viewbox {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -54041,6 +54505,9 @@ impl Window {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
@@ -54721,6 +55188,9 @@ impl WrapPanel {
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
     }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
+    }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {
             callback(());
@@ -55119,6 +55589,9 @@ impl StyledElement {
     }
     pub fn parent(&self) -> Result<Option<StyledElement>> {
         Ok(self.raw.get_parent()?.map(|raw| StyledElement { raw }))
+    }
+    pub fn actual_theme_variant(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_actual_theme_variant()?)) }
     }
     pub fn subscribe_attached_to_logical_tree(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::styled_element_attached_to_logical_tree_handler(move || {

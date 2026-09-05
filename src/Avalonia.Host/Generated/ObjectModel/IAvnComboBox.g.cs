@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("4884731F-B774-5BBD-9CE5-A3FAD658A0E6")]
+[Guid("870B46AC-EB0C-59E9-ABB7-7334E0E2340F")]
 public partial interface IAvnComboBox : IAvnSelectingItemsControl
 {
     [PreserveSig]
@@ -262,6 +262,22 @@ public sealed partial class AvnComboBox : IAvnComboBox
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = (IAvnStyledElement?)ProjectionRuntime.Wrap(_value.Parent as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetActualThemeVariant(out string? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = global::Avalonia.Host.Com.AvnThemeVariant.ToAbi(_value.ActualThemeVariant);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("4262B197-29CE-5433-816A-F2D188389853")]
+[Guid("383D0620-1A23-575B-B609-391608903CB1")]
 public partial interface IAvnStyledElement : IAvnAvaloniaObject
 {
     [PreserveSig]
@@ -32,6 +32,9 @@ public partial interface IAvnStyledElement : IAvnAvaloniaObject
 
     [PreserveSig]
     int GetParent(out IAvnStyledElement? value);
+
+    [PreserveSig]
+    int GetActualThemeVariant(out string? value);
 
     [PreserveSig]
     int AdviseAttachedToLogicalTree(IAvnStyledElementAttachedToLogicalTreeHandler? handler, out long subscriptionId);
@@ -244,6 +247,22 @@ public sealed partial class AvnStyledElement : IAvnStyledElement
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = (IAvnStyledElement?)ProjectionRuntime.Wrap(_value.Parent as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetActualThemeVariant(out string? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = global::Avalonia.Host.Com.AvnThemeVariant.ToAbi(_value.ActualThemeVariant);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

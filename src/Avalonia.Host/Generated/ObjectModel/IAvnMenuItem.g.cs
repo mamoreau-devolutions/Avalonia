@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("3E72BC2B-7768-56BA-A2D0-A6EC451D703E")]
+[Guid("5BC47168-5E56-5E93-B601-7895590FC3E3")]
 public partial interface IAvnMenuItem : IAvnHeaderedSelectingItemsControl
 {
     [PreserveSig]
@@ -14,6 +14,12 @@ public partial interface IAvnMenuItem : IAvnHeaderedSelectingItemsControl
 
     [PreserveSig]
     int SetCommand(IAvnCommand? value);
+
+    [PreserveSig]
+    int GetHotKey(out string? value);
+
+    [PreserveSig]
+    int SetHotKey(string? value);
 
     [PreserveSig]
     int GetCommandParameter(out AvnVariant value);
@@ -26,6 +32,12 @@ public partial interface IAvnMenuItem : IAvnHeaderedSelectingItemsControl
 
     [PreserveSig]
     int SetIcon(IAvnControl? value);
+
+    [PreserveSig]
+    int GetInputGesture(out string? value);
+
+    [PreserveSig]
+    int SetInputGesture(string? value);
 
     [PreserveSig]
     int GetIsSelected(out int value);
@@ -280,6 +292,22 @@ public sealed partial class AvnMenuItem : IAvnMenuItem
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = (IAvnStyledElement?)ProjectionRuntime.Wrap(_value.Parent as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetActualThemeVariant(out string? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = global::Avalonia.Host.Com.AvnThemeVariant.ToAbi(_value.ActualThemeVariant);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -2239,6 +2267,37 @@ public sealed partial class AvnMenuItem : IAvnMenuItem
         }
     }
 
+    public int GetHotKey(out string? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.HotKey?.ToString();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetHotKey(string? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.HotKey = value is null ? null : global::Avalonia.Input.KeyGesture.Parse(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetCommandParameter(out AvnVariant value)
     {
         value = default!;
@@ -2293,6 +2352,37 @@ public sealed partial class AvnMenuItem : IAvnMenuItem
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Icon = (global::System.Object)ProjectionRuntime.Unwrap(value)!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetInputGesture(out string? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.InputGesture?.ToString();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetInputGesture(string? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.InputGesture = value is null ? null : global::Avalonia.Input.KeyGesture.Parse(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

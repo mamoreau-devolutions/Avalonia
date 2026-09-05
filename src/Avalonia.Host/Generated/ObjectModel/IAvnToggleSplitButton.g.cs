@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("E2A7D977-1C3A-5EDA-A352-FBBC012948EE")]
+[Guid("00D24D40-4958-50CD-99CE-517CE26DAB43")]
 public partial interface IAvnToggleSplitButton : IAvnSplitButton
 {
     [PreserveSig]
@@ -212,6 +212,22 @@ public sealed partial class AvnToggleSplitButton : IAvnToggleSplitButton
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = (IAvnStyledElement?)ProjectionRuntime.Wrap(_value.Parent as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetActualThemeVariant(out string? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = global::Avalonia.Host.Com.AvnThemeVariant.ToAbi(_value.ActualThemeVariant);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -1867,6 +1883,37 @@ public sealed partial class AvnToggleSplitButton : IAvnToggleSplitButton
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Flyout = (global::Avalonia.Controls.Primitives.FlyoutBase)ProjectionRuntime.Unwrap(value)!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetHotKey(out string? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.HotKey?.ToString();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetHotKey(string? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.HotKey = value is null ? null : global::Avalonia.Input.KeyGesture.Parse(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

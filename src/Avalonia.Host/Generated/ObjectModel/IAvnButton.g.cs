@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("A2FCED22-F50A-5C8F-B965-704A348C33EF")]
+[Guid("752C5A2F-9DCF-5AB8-99CB-CA9484BB24F2")]
 public partial interface IAvnButton : IAvnContentControl
 {
     [PreserveSig]
@@ -20,6 +20,12 @@ public partial interface IAvnButton : IAvnContentControl
 
     [PreserveSig]
     int SetCommand(IAvnCommand? value);
+
+    [PreserveSig]
+    int GetHotKey(out string? value);
+
+    [PreserveSig]
+    int SetHotKey(string? value);
 
     [PreserveSig]
     int GetCommandParameter(out AvnVariant value);
@@ -243,6 +249,22 @@ public sealed partial class AvnButton : IAvnButton
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = (IAvnStyledElement?)ProjectionRuntime.Wrap(_value.Parent as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetActualThemeVariant(out string? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = global::Avalonia.Host.Com.AvnThemeVariant.ToAbi(_value.ActualThemeVariant);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -1867,6 +1889,37 @@ public sealed partial class AvnButton : IAvnButton
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Command = AvnCommand.ToCommand(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetHotKey(out string? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = _value.HotKey?.ToString();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetHotKey(string? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.HotKey = value is null ? null : global::Avalonia.Input.KeyGesture.Parse(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

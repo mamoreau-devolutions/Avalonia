@@ -6,9 +6,15 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("84FFEBDD-6FD0-57D6-AD5B-948AD9CCF9E9")]
+[Guid("D911D81B-28B5-5A8B-BFCE-6947A99C898D")]
 public partial interface IAvnThemeVariantScope : IAvnDecorator
 {
+    [PreserveSig]
+    int GetRequestedThemeVariant(out string? value);
+
+    [PreserveSig]
+    int SetRequestedThemeVariant(string? value);
+
 }
 
 [GeneratedComClass]
@@ -196,6 +202,22 @@ public sealed partial class AvnThemeVariantScope : IAvnThemeVariantScope
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = (IAvnStyledElement?)ProjectionRuntime.Wrap(_value.Parent as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetActualThemeVariant(out string? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = global::Avalonia.Host.Com.AvnThemeVariant.ToAbi(_value.ActualThemeVariant);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -1262,6 +1284,37 @@ public sealed partial class AvnThemeVariantScope : IAvnThemeVariantScope
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Padding = value.ToAvalonia();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetRequestedThemeVariant(out string? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = global::Avalonia.Host.Com.AvnThemeVariant.ToAbi(_value.RequestedThemeVariant);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetRequestedThemeVariant(string? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.RequestedThemeVariant = global::Avalonia.Host.Com.AvnThemeVariant.FromAbi(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

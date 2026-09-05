@@ -511,6 +511,20 @@ content overloads and the Action-carrying Show overload cross through
 the notification CCW's handler slots; every remaining gap in the report
 is now by-design with its rationale. Factory stays 13.
 
+Wave U27 projects the scalar value models. KeyGesture crosses through its
+own Parse/ToString round-trip as an ordinary UTF-16 string — Button.HotKey,
+SplitButton.HotKey, MenuItem.HotKey and MenuItem.InputGesture — and the
+emitter now null-guards a nullable Parse so clearing the gesture works.
+ThemeVariant crosses through the AvnThemeVariant host converter ("Light",
+"Dark", "Default"; null = unset) for ThemeVariantScope.RequestedThemeVariant
+and StyledElement.ActualThemeVariant; Border.BoxShadow crosses through
+AvnBoxShadows (the comma-separated list BoxShadows prints, split on
+top-level commas); TabItem.TabStripPlacement crosses through AvnDock as a
+nullable dock name (read-only, the CLR setter is internal). StyledElement
+grows a slot, so it and all 97 descendants republish under fresh IIDs.
+The gap report drops from 190 to 182 entries, every one by-design. Factory
+stays 13.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A

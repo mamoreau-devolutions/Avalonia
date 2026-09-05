@@ -6,9 +6,12 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("82654BE5-3931-50DE-8FFF-22249421EFF1")]
+[Guid("38AA4717-C94C-5681-8419-EC7FAA4BD103")]
 public partial interface IAvnTabItem : IAvnHeaderedContentControl
 {
+    [PreserveSig]
+    int GetTabStripPlacement(out string? value);
+
     [PreserveSig]
     int GetIsSelected(out int value);
 
@@ -220,6 +223,22 @@ public sealed partial class AvnTabItem : IAvnTabItem
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = (IAvnStyledElement?)ProjectionRuntime.Wrap(_value.Parent as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetActualThemeVariant(out string? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = global::Avalonia.Host.Com.AvnThemeVariant.ToAbi(_value.ActualThemeVariant);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -1844,6 +1863,22 @@ public sealed partial class AvnTabItem : IAvnTabItem
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.HeaderTemplate = AvnDataTemplate.ToTemplate(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetTabStripPlacement(out string? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = global::Avalonia.Host.Com.AvnDock.ToAbi(_value.TabStripPlacement);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

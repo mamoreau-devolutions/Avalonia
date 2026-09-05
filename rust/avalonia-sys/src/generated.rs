@@ -5072,7 +5072,7 @@ impl ComPtr<IAvnAvaloniaObject> {
     }
 }
 
-pub const I_AVN_AUTO_COMPLETE_BOX_IID: Guid = Guid { data1: 0xB57C6EE0, data2: 0xB216, data3: 0x5F6B, data4: [0xBF, 0xCA, 0xA2, 0x06, 0x30, 0xD9, 0x04, 0xD5] };
+pub const I_AVN_AUTO_COMPLETE_BOX_IID: Guid = Guid { data1: 0x72A6C818, data2: 0xEDA1, data3: 0x5ABA, data4: [0xBE, 0xDE, 0x1C, 0x46, 0x31, 0x4B, 0xD0, 0x98] };
 
 #[repr(C)]
 struct IAvnAutoCompleteBoxVtbl {
@@ -5089,6 +5089,7 @@ struct IAvnAutoCompleteBoxVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -5306,6 +5307,14 @@ impl ComPtr<IAvnAutoCompleteBox> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -6224,7 +6233,7 @@ impl ComPtr<IAvnAutoCompleteBox> {
     }
 }
 
-pub const I_AVN_BORDER_IID: Guid = Guid { data1: 0xF1BD3859, data2: 0xB8DE, data3: 0x550E, data4: [0x8D, 0x39, 0xA6, 0x7E, 0xFA, 0x9A, 0x11, 0xFE] };
+pub const I_AVN_BORDER_IID: Guid = Guid { data1: 0xE6C1AF67, data2: 0xEE15, data3: 0x5111, data4: [0xB7, 0xC8, 0x3E, 0xA8, 0xCC, 0xB3, 0x7F, 0x37] };
 
 #[repr(C)]
 struct IAvnBorderVtbl {
@@ -6241,6 +6250,7 @@ struct IAvnBorderVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnBorder, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnBorder, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnBorder, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnBorder, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnBorder, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnBorder, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnBorder, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -6308,6 +6318,8 @@ struct IAvnBorderVtbl {
     set_border_thickness: unsafe extern "system" fn(*mut IAvnBorder, AvnThickness) -> i32,
     get_corner_radius: unsafe extern "system" fn(*mut IAvnBorder, *mut AvnCornerRadius) -> i32,
     set_corner_radius: unsafe extern "system" fn(*mut IAvnBorder, AvnCornerRadius) -> i32,
+    get_box_shadow: unsafe extern "system" fn(*mut IAvnBorder, *mut *mut u16) -> i32,
+    set_box_shadow: unsafe extern "system" fn(*mut IAvnBorder, *mut u16) -> i32,
     get_clip_to_bounds_radius: unsafe extern "system" fn(*mut IAvnBorder, *mut AvnCornerRadius) -> i32,
 }
 
@@ -6393,6 +6405,14 @@ impl ComPtr<IAvnBorder> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -6853,6 +6873,20 @@ impl ComPtr<IAvnBorder> {
             hresult::check(hr)
         }
     }
+    pub fn get_box_shadow(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_box_shadow)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_box_shadow(&self, value: &[u16]) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_box_shadow)(self.as_raw(), value.as_ptr().cast_mut());
+            hresult::check(hr)
+        }
+    }
     pub fn get_clip_to_bounds_radius(&self) -> Result<AvnCornerRadius> {
         unsafe {
             let mut value: AvnCornerRadius = Default::default();
@@ -6863,7 +6897,7 @@ impl ComPtr<IAvnBorder> {
     }
 }
 
-pub const I_AVN_BUTTON_IID: Guid = Guid { data1: 0xA2FCED22, data2: 0xF50A, data3: 0x5C8F, data4: [0xB9, 0x65, 0x70, 0x4A, 0x34, 0x8C, 0x33, 0xEF] };
+pub const I_AVN_BUTTON_IID: Guid = Guid { data1: 0x752C5A2F, data2: 0x9DCF, data3: 0x5AB8, data4: [0x99, 0xCB, 0xCA, 0x94, 0x84, 0xBB, 0x24, 0xF2] };
 
 #[repr(C)]
 struct IAvnButtonVtbl {
@@ -6880,6 +6914,7 @@ struct IAvnButtonVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnButton, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnButton, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnButton, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnButton, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnButton, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -6973,6 +7008,8 @@ struct IAvnButtonVtbl {
     set_click_mode: unsafe extern "system" fn(*mut IAvnButton, i32) -> i32,
     get_command: unsafe extern "system" fn(*mut IAvnButton, *mut *mut IAvnCommand) -> i32,
     set_command: unsafe extern "system" fn(*mut IAvnButton, *mut IAvnCommand) -> i32,
+    get_hot_key: unsafe extern "system" fn(*mut IAvnButton, *mut *mut u16) -> i32,
+    set_hot_key: unsafe extern "system" fn(*mut IAvnButton, *mut u16) -> i32,
     get_command_parameter: unsafe extern "system" fn(*mut IAvnButton, *mut AvnVariant) -> i32,
     set_command_parameter: unsafe extern "system" fn(*mut IAvnButton, AvnVariant) -> i32,
     get_is_default: unsafe extern "system" fn(*mut IAvnButton, *mut i32) -> i32,
@@ -7068,6 +7105,14 @@ impl ComPtr<IAvnButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -7710,6 +7755,20 @@ impl ComPtr<IAvnButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_hot_key(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_hot_key)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_hot_key(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_hot_key)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_command_parameter(&self) -> Result<AvnVariant> {
         unsafe {
             let mut value: AvnVariant = AvnVariant::default();
@@ -7789,7 +7848,7 @@ impl ComPtr<IAvnButton> {
     }
 }
 
-pub const I_AVN_BUTTON_SPINNER_IID: Guid = Guid { data1: 0x64EAB4B2, data2: 0x5C83, data3: 0x5422, data4: [0x96, 0xBC, 0x46, 0xFF, 0xBE, 0x3C, 0xFE, 0x09] };
+pub const I_AVN_BUTTON_SPINNER_IID: Guid = Guid { data1: 0x09A2AA32, data2: 0x753A, data3: 0x5045, data4: [0x8E, 0xAE, 0xCA, 0x61, 0xA6, 0xA4, 0xA2, 0xD7] };
 
 #[repr(C)]
 struct IAvnButtonSpinnerVtbl {
@@ -7806,6 +7865,7 @@ struct IAvnButtonSpinnerVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnButtonSpinner, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -7989,6 +8049,14 @@ impl ComPtr<IAvnButtonSpinner> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -8674,7 +8742,7 @@ impl ComPtr<IAvnButtonSpinner> {
     }
 }
 
-pub const I_AVN_CALENDAR_IID: Guid = Guid { data1: 0xE75BAB94, data2: 0x5A50, data3: 0x539D, data4: [0x99, 0xE3, 0x23, 0x7C, 0x73, 0x85, 0xE0, 0x5C] };
+pub const I_AVN_CALENDAR_IID: Guid = Guid { data1: 0x7D404A98, data2: 0xE117, data3: 0x5B44, data4: [0xB0, 0xA4, 0xFD, 0xF4, 0x9C, 0xE2, 0xB5, 0xB6] };
 
 #[repr(C)]
 struct IAvnCalendarVtbl {
@@ -8691,6 +8759,7 @@ struct IAvnCalendarVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnCalendar, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnCalendar, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnCalendar, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnCalendar, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCalendar, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCalendar, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCalendar, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -8886,6 +8955,14 @@ impl ComPtr<IAvnCalendar> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -9656,7 +9733,7 @@ impl ComPtr<IAvnCalendar> {
     }
 }
 
-pub const I_AVN_CALENDAR_DATE_PICKER_IID: Guid = Guid { data1: 0x6A20C08A, data2: 0x54D2, data3: 0x5871, data4: [0x84, 0xEB, 0xC9, 0xF2, 0x54, 0xEB, 0x17, 0x9F] };
+pub const I_AVN_CALENDAR_DATE_PICKER_IID: Guid = Guid { data1: 0x8E29E14A, data2: 0x7523, data3: 0x5EB5, data4: [0xB8, 0x4D, 0x71, 0xF6, 0x97, 0x05, 0x64, 0x73] };
 
 #[repr(C)]
 struct IAvnCalendarDatePickerVtbl {
@@ -9673,6 +9750,7 @@ struct IAvnCalendarDatePickerVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -9880,6 +9958,14 @@ impl ComPtr<IAvnCalendarDatePicker> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -10731,7 +10817,7 @@ impl ComPtr<IAvnCalendarDatePicker> {
     }
 }
 
-pub const I_AVN_CANVAS_IID: Guid = Guid { data1: 0x51E07B3F, data2: 0x08B8, data3: 0x5B02, data4: [0x8C, 0xA5, 0xD4, 0x19, 0x6E, 0x71, 0x71, 0xDE] };
+pub const I_AVN_CANVAS_IID: Guid = Guid { data1: 0x5CF5A0DE, data2: 0xEBEA, data3: 0x5EDA, data4: [0x94, 0x45, 0xC6, 0xF2, 0x24, 0x20, 0xB1, 0x61] };
 
 #[repr(C)]
 struct IAvnCanvasVtbl {
@@ -10748,6 +10834,7 @@ struct IAvnCanvasVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnCanvas, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnCanvas, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnCanvas, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnCanvas, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCanvas, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCanvas, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCanvas, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -10888,6 +10975,14 @@ impl ComPtr<IAvnCanvas> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -11274,7 +11369,7 @@ impl ComPtr<IAvnCanvas> {
     }
 }
 
-pub const I_AVN_CAROUSEL_IID: Guid = Guid { data1: 0x9765D686, data2: 0x1AB5, data3: 0x5885, data4: [0x9F, 0x72, 0xEA, 0xCD, 0x43, 0x2C, 0x79, 0x4F] };
+pub const I_AVN_CAROUSEL_IID: Guid = Guid { data1: 0xB118498F, data2: 0xAF04, data3: 0x54C5, data4: [0xAD, 0xCD, 0x75, 0x73, 0xCB, 0x42, 0x72, 0x4D] };
 
 #[repr(C)]
 struct IAvnCarouselVtbl {
@@ -11291,6 +11386,7 @@ struct IAvnCarouselVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnCarousel, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnCarousel, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnCarousel, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnCarousel, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCarousel, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -11489,6 +11585,14 @@ impl ComPtr<IAvnCarousel> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -12278,7 +12382,7 @@ impl ComPtr<IAvnCarousel> {
     }
 }
 
-pub const I_AVN_CHECK_BOX_IID: Guid = Guid { data1: 0x5915B948, data2: 0x78FF, data3: 0x5020, data4: [0xBB, 0x15, 0x0A, 0xED, 0x85, 0xA2, 0x70, 0xAE] };
+pub const I_AVN_CHECK_BOX_IID: Guid = Guid { data1: 0x54B72C8D, data2: 0xC3A9, data3: 0x5F16, data4: [0xBA, 0x74, 0x02, 0x4E, 0xCC, 0x9F, 0x7C, 0xD1] };
 
 #[repr(C)]
 struct IAvnCheckBoxVtbl {
@@ -12295,6 +12399,7 @@ struct IAvnCheckBoxVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnCheckBox, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnCheckBox, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnCheckBox, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnCheckBox, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCheckBox, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -12388,6 +12493,8 @@ struct IAvnCheckBoxVtbl {
     set_click_mode: unsafe extern "system" fn(*mut IAvnCheckBox, i32) -> i32,
     get_command: unsafe extern "system" fn(*mut IAvnCheckBox, *mut *mut IAvnCommand) -> i32,
     set_command: unsafe extern "system" fn(*mut IAvnCheckBox, *mut IAvnCommand) -> i32,
+    get_hot_key: unsafe extern "system" fn(*mut IAvnCheckBox, *mut *mut u16) -> i32,
+    set_hot_key: unsafe extern "system" fn(*mut IAvnCheckBox, *mut u16) -> i32,
     get_command_parameter: unsafe extern "system" fn(*mut IAvnCheckBox, *mut AvnVariant) -> i32,
     set_command_parameter: unsafe extern "system" fn(*mut IAvnCheckBox, AvnVariant) -> i32,
     get_is_default: unsafe extern "system" fn(*mut IAvnCheckBox, *mut i32) -> i32,
@@ -12489,6 +12596,14 @@ impl ComPtr<IAvnCheckBox> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -13131,6 +13246,20 @@ impl ComPtr<IAvnCheckBox> {
             hresult::check(hr)
         }
     }
+    pub fn get_hot_key(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_hot_key)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_hot_key(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_hot_key)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_command_parameter(&self) -> Result<AvnVariant> {
         unsafe {
             let mut value: AvnVariant = AvnVariant::default();
@@ -13251,7 +13380,7 @@ impl ComPtr<IAvnCheckBox> {
     }
 }
 
-pub const I_AVN_COMBO_BOX_IID: Guid = Guid { data1: 0x4884731F, data2: 0xB774, data3: 0x5BBD, data4: [0x9C, 0xE5, 0xA3, 0xFA, 0xD6, 0x58, 0xA0, 0xE6] };
+pub const I_AVN_COMBO_BOX_IID: Guid = Guid { data1: 0x870B46AC, data2: 0xEB0C, data3: 0x59E9, data4: [0xAB, 0xB7, 0x73, 0x34, 0xE0, 0xE2, 0x34, 0x0F] };
 
 #[repr(C)]
 struct IAvnComboBoxVtbl {
@@ -13268,6 +13397,7 @@ struct IAvnComboBoxVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnComboBox, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnComboBox, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -13479,6 +13609,14 @@ impl ComPtr<IAvnComboBox> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -14358,7 +14496,7 @@ impl ComPtr<IAvnComboBox> {
     }
 }
 
-pub const I_AVN_COMBO_BOX_ITEM_IID: Guid = Guid { data1: 0xF45BE45D, data2: 0x5939, data3: 0x5D89, data4: [0xA7, 0x91, 0x59, 0x93, 0x8D, 0xA6, 0x49, 0xF8] };
+pub const I_AVN_COMBO_BOX_ITEM_IID: Guid = Guid { data1: 0xCA9648A6, data2: 0x6A11, data3: 0x5797, data4: [0xAA, 0x22, 0x2D, 0x99, 0x67, 0xB1, 0x85, 0xD7] };
 
 #[repr(C)]
 struct IAvnComboBoxItemVtbl {
@@ -14375,6 +14513,7 @@ struct IAvnComboBoxItemVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnComboBoxItem, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -14550,6 +14689,14 @@ impl ComPtr<IAvnComboBoxItem> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -15180,7 +15327,7 @@ impl ComPtr<IAvnComboBoxItem> {
     }
 }
 
-pub const I_AVN_COMMAND_BAR_IID: Guid = Guid { data1: 0x3DD9BFAA, data2: 0xA67E, data3: 0x5E0E, data4: [0x85, 0x2B, 0x18, 0xE1, 0xCF, 0x77, 0x0D, 0x24] };
+pub const I_AVN_COMMAND_BAR_IID: Guid = Guid { data1: 0x2D38B051, data2: 0xD040, data3: 0x5D35, data4: [0xA6, 0xA4, 0x9F, 0x7C, 0x4D, 0x64, 0x14, 0xAA] };
 
 #[repr(C)]
 struct IAvnCommandBarVtbl {
@@ -15197,6 +15344,7 @@ struct IAvnCommandBarVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnCommandBar, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnCommandBar, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnCommandBar, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnCommandBar, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBar, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBar, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBar, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -15390,6 +15538,14 @@ impl ComPtr<IAvnCommandBar> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -16144,7 +16300,7 @@ impl ComPtr<IAvnCommandBar> {
     }
 }
 
-pub const I_AVN_COMMAND_BAR_BUTTON_IID: Guid = Guid { data1: 0xBEBF42AC, data2: 0x4D10, data3: 0x52FA, data4: [0x80, 0x87, 0x33, 0xFD, 0xCF, 0x27, 0x3D, 0x80] };
+pub const I_AVN_COMMAND_BAR_BUTTON_IID: Guid = Guid { data1: 0xD3C2F3F1, data2: 0x316D, data3: 0x540B, data4: [0x84, 0xE2, 0xE7, 0x0D, 0xF4, 0xE6, 0x29, 0x8D] };
 
 #[repr(C)]
 struct IAvnCommandBarButtonVtbl {
@@ -16161,6 +16317,7 @@ struct IAvnCommandBarButtonVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBarButton, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -16254,6 +16411,8 @@ struct IAvnCommandBarButtonVtbl {
     set_click_mode: unsafe extern "system" fn(*mut IAvnCommandBarButton, i32) -> i32,
     get_command: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut *mut IAvnCommand) -> i32,
     set_command: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut IAvnCommand) -> i32,
+    get_hot_key: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut *mut u16) -> i32,
+    set_hot_key: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut u16) -> i32,
     get_command_parameter: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut AvnVariant) -> i32,
     set_command_parameter: unsafe extern "system" fn(*mut IAvnCommandBarButton, AvnVariant) -> i32,
     get_is_default: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut i32) -> i32,
@@ -16361,6 +16520,14 @@ impl ComPtr<IAvnCommandBarButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -17003,6 +17170,20 @@ impl ComPtr<IAvnCommandBarButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_hot_key(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_hot_key)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_hot_key(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_hot_key)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_command_parameter(&self) -> Result<AvnVariant> {
         unsafe {
             let mut value: AvnVariant = AvnVariant::default();
@@ -17166,7 +17347,7 @@ impl ComPtr<IAvnCommandBarButton> {
     }
 }
 
-pub const I_AVN_COMMAND_BAR_SEPARATOR_IID: Guid = Guid { data1: 0x9B36B39E, data2: 0x4200, data3: 0x5E2C, data4: [0xAF, 0x0C, 0x31, 0xBB, 0x7D, 0x4B, 0x10, 0xE2] };
+pub const I_AVN_COMMAND_BAR_SEPARATOR_IID: Guid = Guid { data1: 0x4AE88BA2, data2: 0x745B, data3: 0x551D, data4: [0x86, 0x22, 0x32, 0x25, 0x01, 0x48, 0x6F, 0x5D] };
 
 #[repr(C)]
 struct IAvnCommandBarSeparatorVtbl {
@@ -17183,6 +17364,7 @@ struct IAvnCommandBarSeparatorVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -17354,6 +17536,14 @@ impl ComPtr<IAvnCommandBarSeparator> {
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
         }
     }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -17940,7 +18130,7 @@ impl ComPtr<IAvnCommandBarSeparator> {
     }
 }
 
-pub const I_AVN_COMMAND_BAR_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0x1EF614E0, data2: 0xEE73, data3: 0x582E, data4: [0xAC, 0x5C, 0xC4, 0x25, 0xAB, 0x11, 0x25, 0x43] };
+pub const I_AVN_COMMAND_BAR_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0x04DA4C13, data2: 0x5268, data3: 0x5F1D, data4: [0x99, 0x31, 0xA4, 0xA8, 0x99, 0x85, 0x68, 0x87] };
 
 #[repr(C)]
 struct IAvnCommandBarToggleButtonVtbl {
@@ -17957,6 +18147,7 @@ struct IAvnCommandBarToggleButtonVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -18050,6 +18241,8 @@ struct IAvnCommandBarToggleButtonVtbl {
     set_click_mode: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, i32) -> i32,
     get_command: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut *mut IAvnCommand) -> i32,
     set_command: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut IAvnCommand) -> i32,
+    get_hot_key: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut *mut u16) -> i32,
+    set_hot_key: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut u16) -> i32,
     get_command_parameter: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut AvnVariant) -> i32,
     set_command_parameter: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, AvnVariant) -> i32,
     get_is_default: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut i32) -> i32,
@@ -18163,6 +18356,14 @@ impl ComPtr<IAvnCommandBarToggleButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -18802,6 +19003,20 @@ impl ComPtr<IAvnCommandBarToggleButton> {
     pub fn set_command(&self, value: Option<&ComPtr<IAvnCommand>>) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_command)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_hot_key(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_hot_key)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_hot_key(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_hot_key)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
             hresult::check(hr)
         }
     }
@@ -19009,7 +19224,7 @@ impl ComPtr<IAvnCommandBarToggleButton> {
     }
 }
 
-pub const I_AVN_CONTENT_CONTROL_IID: Guid = Guid { data1: 0xE0DAFF21, data2: 0x8977, data3: 0x520E, data4: [0xAB, 0xBD, 0x8A, 0x49, 0xDD, 0x02, 0xE5, 0x50] };
+pub const I_AVN_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x7A8DF97D, data2: 0x609D, data3: 0x5DDA, data4: [0x87, 0x32, 0x79, 0x10, 0xC3, 0xC2, 0x01, 0xF4] };
 
 #[repr(C)]
 struct IAvnContentControlVtbl {
@@ -19026,6 +19241,7 @@ struct IAvnContentControlVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnContentControl, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnContentControl, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnContentControl, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnContentControl, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnContentControl, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnContentControl, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnContentControl, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -19199,6 +19415,14 @@ impl ComPtr<IAvnContentControl> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -19815,7 +20039,7 @@ impl ComPtr<IAvnContentControl> {
     }
 }
 
-pub const I_AVN_CONTEXT_MENU_IID: Guid = Guid { data1: 0x9AE7F9BF, data2: 0x56FC, data3: 0x54C8, data4: [0x84, 0x7E, 0x04, 0xFD, 0xAC, 0x32, 0x95, 0xE8] };
+pub const I_AVN_CONTEXT_MENU_IID: Guid = Guid { data1: 0xF3678494, data2: 0x9F88, data3: 0x5DCE, data4: [0x9E, 0x58, 0x66, 0x1D, 0x18, 0xF3, 0x3E, 0x76] };
 
 #[repr(C)]
 struct IAvnContextMenuVtbl {
@@ -19832,6 +20056,7 @@ struct IAvnContextMenuVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnContextMenu, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnContextMenu, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnContextMenu, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnContextMenu, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnContextMenu, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -20053,6 +20278,14 @@ impl ComPtr<IAvnContextMenu> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -20998,7 +21231,7 @@ impl ComPtr<IAvnContextMenu> {
     }
 }
 
-pub const I_AVN_CONTROL_IID: Guid = Guid { data1: 0xF2ED1EA6, data2: 0x3316, data3: 0x5722, data4: [0x8F, 0x27, 0x74, 0xEE, 0xBA, 0x88, 0xF1, 0x69] };
+pub const I_AVN_CONTROL_IID: Guid = Guid { data1: 0xC73357D8, data2: 0x3C3D, data3: 0x53E3, data4: [0x96, 0xB0, 0xD2, 0x66, 0xE9, 0xB9, 0x1F, 0x58] };
 
 #[repr(C)]
 struct IAvnControlVtbl {
@@ -21015,6 +21248,7 @@ struct IAvnControlVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnControl, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnControl, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnControl, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnControl, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnControl, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnControl, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnControl, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -21152,6 +21386,14 @@ impl ComPtr<IAvnControl> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -21516,7 +21758,7 @@ impl ComPtr<IAvnControl> {
     }
 }
 
-pub const I_AVN_DATE_PICKER_IID: Guid = Guid { data1: 0x0DAB7688, data2: 0x4EA8, data3: 0x5CFA, data4: [0x93, 0x79, 0xC4, 0x5E, 0x69, 0xE9, 0x83, 0xCA] };
+pub const I_AVN_DATE_PICKER_IID: Guid = Guid { data1: 0x5FB7F36A, data2: 0x84C5, data3: 0x5F05, data4: [0x90, 0xBC, 0x86, 0x64, 0x45, 0x67, 0x65, 0x22] };
 
 #[repr(C)]
 struct IAvnDatePickerVtbl {
@@ -21533,6 +21775,7 @@ struct IAvnDatePickerVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnDatePicker, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnDatePicker, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnDatePicker, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnDatePicker, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnDatePicker, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnDatePicker, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnDatePicker, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -21719,6 +21962,14 @@ impl ComPtr<IAvnDatePicker> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -22425,7 +22676,7 @@ impl ComPtr<IAvnDatePicker> {
     }
 }
 
-pub const I_AVN_DECORATOR_IID: Guid = Guid { data1: 0xDD955852, data2: 0x5E22, data3: 0x5BAF, data4: [0x9E, 0xDF, 0x9D, 0xDB, 0xC1, 0xC8, 0xD9, 0x92] };
+pub const I_AVN_DECORATOR_IID: Guid = Guid { data1: 0x72C35F15, data2: 0x5E8D, data3: 0x5B3C, data4: [0x80, 0x19, 0x78, 0x3D, 0xBB, 0x6A, 0x45, 0x29] };
 
 #[repr(C)]
 struct IAvnDecoratorVtbl {
@@ -22442,6 +22693,7 @@ struct IAvnDecoratorVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnDecorator, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnDecorator, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnDecorator, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnDecorator, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnDecorator, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnDecorator, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnDecorator, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -22583,6 +22835,14 @@ impl ComPtr<IAvnDecorator> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -22975,7 +23235,7 @@ impl ComPtr<IAvnDecorator> {
     }
 }
 
-pub const I_AVN_DOCK_PANEL_IID: Guid = Guid { data1: 0x8AF92F5E, data2: 0x61D4, data3: 0x5FDF, data4: [0x81, 0xE0, 0x8B, 0xB9, 0x7A, 0x2E, 0x19, 0xDD] };
+pub const I_AVN_DOCK_PANEL_IID: Guid = Guid { data1: 0x41CBB66E, data2: 0x8CC5, data3: 0x587D, data4: [0x90, 0x7F, 0x91, 0x77, 0xB2, 0x69, 0x88, 0x8F] };
 
 #[repr(C)]
 struct IAvnDockPanelVtbl {
@@ -22992,6 +23252,7 @@ struct IAvnDockPanelVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnDockPanel, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnDockPanel, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnDockPanel, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnDockPanel, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnDockPanel, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnDockPanel, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnDockPanel, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -23138,6 +23399,14 @@ impl ComPtr<IAvnDockPanel> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -23566,7 +23835,7 @@ impl ComPtr<IAvnDockPanel> {
     }
 }
 
-pub const I_AVN_DROP_DOWN_BUTTON_IID: Guid = Guid { data1: 0x7DE98BBA, data2: 0x9C4B, data3: 0x5828, data4: [0x83, 0xED, 0xD5, 0x6C, 0x4A, 0xF8, 0xE0, 0x89] };
+pub const I_AVN_DROP_DOWN_BUTTON_IID: Guid = Guid { data1: 0x8BA4B8FA, data2: 0x1DE0, data3: 0x56F5, data4: [0x90, 0x61, 0xBD, 0x61, 0x2F, 0xAF, 0xFD, 0xA6] };
 
 #[repr(C)]
 struct IAvnDropDownButtonVtbl {
@@ -23583,6 +23852,7 @@ struct IAvnDropDownButtonVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnDropDownButton, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -23676,6 +23946,8 @@ struct IAvnDropDownButtonVtbl {
     set_click_mode: unsafe extern "system" fn(*mut IAvnDropDownButton, i32) -> i32,
     get_command: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut *mut IAvnCommand) -> i32,
     set_command: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut IAvnCommand) -> i32,
+    get_hot_key: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut *mut u16) -> i32,
+    set_hot_key: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut u16) -> i32,
     get_command_parameter: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut AvnVariant) -> i32,
     set_command_parameter: unsafe extern "system" fn(*mut IAvnDropDownButton, AvnVariant) -> i32,
     get_is_default: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut i32) -> i32,
@@ -23771,6 +24043,14 @@ impl ComPtr<IAvnDropDownButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -24413,6 +24693,20 @@ impl ComPtr<IAvnDropDownButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_hot_key(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_hot_key)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_hot_key(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_hot_key)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_command_parameter(&self) -> Result<AvnVariant> {
         unsafe {
             let mut value: AvnVariant = AvnVariant::default();
@@ -24492,7 +24786,7 @@ impl ComPtr<IAvnDropDownButton> {
     }
 }
 
-pub const I_AVN_EXPANDER_IID: Guid = Guid { data1: 0xFD9D09E0, data2: 0xD668, data3: 0x52C2, data4: [0x99, 0x95, 0xFC, 0x14, 0x1E, 0x2D, 0x55, 0xE9] };
+pub const I_AVN_EXPANDER_IID: Guid = Guid { data1: 0x2E2FC4AC, data2: 0x0035, data3: 0x5244, data4: [0xA5, 0x87, 0xB9, 0x80, 0x4C, 0x14, 0x5F, 0x53] };
 
 #[repr(C)]
 struct IAvnExpanderVtbl {
@@ -24509,6 +24803,7 @@ struct IAvnExpanderVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnExpander, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnExpander, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnExpander, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnExpander, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnExpander, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnExpander, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnExpander, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -24698,6 +24993,14 @@ impl ComPtr<IAvnExpander> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -25422,7 +25725,7 @@ impl ComPtr<IAvnExpander> {
     }
 }
 
-pub const I_AVN_FLEX_PANEL_IID: Guid = Guid { data1: 0x5A141E76, data2: 0xB946, data3: 0x56F3, data4: [0xAD, 0xE4, 0x59, 0xD2, 0xCE, 0x95, 0x4A, 0xFA] };
+pub const I_AVN_FLEX_PANEL_IID: Guid = Guid { data1: 0x2EDF7B2B, data2: 0x72C0, data3: 0x5AA0, data4: [0x9B, 0xE9, 0x13, 0xFF, 0x52, 0x08, 0x89, 0x20] };
 
 #[repr(C)]
 struct IAvnFlexPanelVtbl {
@@ -25439,6 +25742,7 @@ struct IAvnFlexPanelVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnFlexPanel, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnFlexPanel, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -25593,6 +25897,14 @@ impl ComPtr<IAvnFlexPanel> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -26382,7 +26694,7 @@ impl ComPtr<IAvnFlyout> {
     }
 }
 
-pub const I_AVN_GRID_IID: Guid = Guid { data1: 0xCF3FCD13, data2: 0x3A75, data3: 0x541C, data4: [0xA2, 0xCF, 0x6C, 0xFB, 0xEF, 0x7B, 0xDB, 0xF5] };
+pub const I_AVN_GRID_IID: Guid = Guid { data1: 0x05600989, data2: 0x554C, data3: 0x5DD8, data4: [0x8D, 0xED, 0xF3, 0xFD, 0xFE, 0x66, 0x57, 0xA2] };
 
 #[repr(C)]
 struct IAvnGridVtbl {
@@ -26399,6 +26711,7 @@ struct IAvnGridVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnGrid, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnGrid, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnGrid, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnGrid, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnGrid, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnGrid, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnGrid, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -26549,6 +26862,14 @@ impl ComPtr<IAvnGrid> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -27005,7 +27326,7 @@ impl ComPtr<IAvnGrid> {
     }
 }
 
-pub const I_AVN_GRID_SPLITTER_IID: Guid = Guid { data1: 0xB50542FF, data2: 0xDB12, data3: 0x5C03, data4: [0x8A, 0x46, 0x14, 0xA4, 0x4A, 0xDE, 0xA8, 0xB2] };
+pub const I_AVN_GRID_SPLITTER_IID: Guid = Guid { data1: 0x67299B72, data2: 0xCB39, data3: 0x534F, data4: [0xB3, 0xB4, 0xE2, 0xC2, 0x80, 0x05, 0x0E, 0x2B] };
 
 #[repr(C)]
 struct IAvnGridSplitterVtbl {
@@ -27022,6 +27343,7 @@ struct IAvnGridSplitterVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnGridSplitter, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -27203,6 +27525,14 @@ impl ComPtr<IAvnGridSplitter> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -27872,7 +28202,7 @@ impl ComPtr<IAvnGridSplitter> {
     }
 }
 
-pub const I_AVN_GROUP_BOX_IID: Guid = Guid { data1: 0x9DC736A6, data2: 0x0F31, data3: 0x5CA3, data4: [0x8B, 0xF4, 0x3F, 0xBE, 0x65, 0xD2, 0xD1, 0xED] };
+pub const I_AVN_GROUP_BOX_IID: Guid = Guid { data1: 0x9701A605, data2: 0x3CC5, data3: 0x5F8A, data4: [0x98, 0x90, 0xC4, 0xBC, 0x2A, 0xF3, 0x79, 0x08] };
 
 #[repr(C)]
 struct IAvnGroupBoxVtbl {
@@ -27889,6 +28219,7 @@ struct IAvnGroupBoxVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnGroupBox, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnGroupBox, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnGroupBox, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnGroupBox, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnGroupBox, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnGroupBox, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -28066,6 +28397,14 @@ impl ComPtr<IAvnGroupBox> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -28710,7 +29049,7 @@ impl ComPtr<IAvnGroupBox> {
     }
 }
 
-pub const I_AVN_HYPERLINK_BUTTON_IID: Guid = Guid { data1: 0xF15FD006, data2: 0xD4D3, data3: 0x5436, data4: [0xB7, 0xDC, 0xCF, 0x0B, 0xD4, 0x0A, 0x83, 0x71] };
+pub const I_AVN_HYPERLINK_BUTTON_IID: Guid = Guid { data1: 0xE9F28DDD, data2: 0x9D84, data3: 0x56B3, data4: [0xBB, 0x39, 0x42, 0x57, 0x2F, 0x72, 0x4E, 0x31] };
 
 #[repr(C)]
 struct IAvnHyperlinkButtonVtbl {
@@ -28727,6 +29066,7 @@ struct IAvnHyperlinkButtonVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnHyperlinkButton, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -28820,6 +29160,8 @@ struct IAvnHyperlinkButtonVtbl {
     set_click_mode: unsafe extern "system" fn(*mut IAvnHyperlinkButton, i32) -> i32,
     get_command: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut *mut IAvnCommand) -> i32,
     set_command: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut IAvnCommand) -> i32,
+    get_hot_key: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut *mut u16) -> i32,
+    set_hot_key: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut u16) -> i32,
     get_command_parameter: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut AvnVariant) -> i32,
     set_command_parameter: unsafe extern "system" fn(*mut IAvnHyperlinkButton, AvnVariant) -> i32,
     get_is_default: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut i32) -> i32,
@@ -28919,6 +29261,14 @@ impl ComPtr<IAvnHyperlinkButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -29561,6 +29911,20 @@ impl ComPtr<IAvnHyperlinkButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_hot_key(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_hot_key)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_hot_key(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_hot_key)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_command_parameter(&self) -> Result<AvnVariant> {
         unsafe {
             let mut value: AvnVariant = AvnVariant::default();
@@ -29668,7 +30032,7 @@ impl ComPtr<IAvnHyperlinkButton> {
     }
 }
 
-pub const I_AVN_ICON_ELEMENT_IID: Guid = Guid { data1: 0x3FECCECA, data2: 0x0A5E, data3: 0x5DAE, data4: [0xB4, 0xB6, 0xDD, 0x44, 0x8D, 0xC6, 0x80, 0xED] };
+pub const I_AVN_ICON_ELEMENT_IID: Guid = Guid { data1: 0xC0F16F7E, data2: 0x9E72, data3: 0x5AEB, data4: [0x86, 0xA2, 0x7B, 0xBA, 0xDB, 0x6B, 0xE2, 0x9F] };
 
 #[repr(C)]
 struct IAvnIconElementVtbl {
@@ -29685,6 +30049,7 @@ struct IAvnIconElementVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnIconElement, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnIconElement, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnIconElement, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnIconElement, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnIconElement, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnIconElement, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnIconElement, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -29850,6 +30215,14 @@ impl ComPtr<IAvnIconElement> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -30410,7 +30783,7 @@ impl ComPtr<IAvnIconElement> {
     }
 }
 
-pub const I_AVN_IMAGE_IID: Guid = Guid { data1: 0xB56C6BBA, data2: 0x6F8E, data3: 0x5298, data4: [0xA5, 0x0F, 0x91, 0x96, 0xF6, 0x42, 0x21, 0x8A] };
+pub const I_AVN_IMAGE_IID: Guid = Guid { data1: 0x6261AC01, data2: 0x477A, data3: 0x5A70, data4: [0xB0, 0xEA, 0xAB, 0x45, 0x62, 0x15, 0xDB, 0x31] };
 
 #[repr(C)]
 struct IAvnImageVtbl {
@@ -30427,6 +30800,7 @@ struct IAvnImageVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnImage, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnImage, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnImage, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnImage, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnImage, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnImage, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnImage, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -30572,6 +30946,14 @@ impl ComPtr<IAvnImage> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -30992,7 +31374,7 @@ impl ComPtr<IAvnImage> {
     }
 }
 
-pub const I_AVN_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x367D7D0F, data2: 0x3313, data3: 0x57D6, data4: [0xB4, 0x8D, 0xC7, 0x4E, 0xBE, 0x85, 0x1C, 0x4A] };
+pub const I_AVN_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x9C4451EB, data2: 0xFDF9, data3: 0x589F, data4: [0xBA, 0x9E, 0xC7, 0x22, 0xC0, 0xE4, 0x22, 0xDD] };
 
 #[repr(C)]
 struct IAvnItemsControlVtbl {
@@ -31009,6 +31391,7 @@ struct IAvnItemsControlVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnItemsControl, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnItemsControl, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnItemsControl, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnItemsControl, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnItemsControl, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnItemsControl, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnItemsControl, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -31186,6 +31569,14 @@ impl ComPtr<IAvnItemsControl> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -31830,7 +32221,7 @@ impl ComPtr<IAvnItemsControl> {
     }
 }
 
-pub const I_AVN_LABEL_IID: Guid = Guid { data1: 0x5631686D, data2: 0xD8AF, data3: 0x5D0C, data4: [0x94, 0xA2, 0xCE, 0x58, 0xD6, 0x42, 0xBE, 0xF2] };
+pub const I_AVN_LABEL_IID: Guid = Guid { data1: 0xF2CDF833, data2: 0xB528, data3: 0x55A6, data4: [0xBD, 0x48, 0xD8, 0x3F, 0x1C, 0x1F, 0x35, 0x40] };
 
 #[repr(C)]
 struct IAvnLabelVtbl {
@@ -31847,6 +32238,7 @@ struct IAvnLabelVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnLabel, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnLabel, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnLabel, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnLabel, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnLabel, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnLabel, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -32022,6 +32414,14 @@ impl ComPtr<IAvnLabel> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -32652,7 +33052,7 @@ impl ComPtr<IAvnLabel> {
     }
 }
 
-pub const I_AVN_LAYOUT_TRANSFORM_CONTROL_IID: Guid = Guid { data1: 0xA8EFDD77, data2: 0xA51E, data3: 0x5108, data4: [0xA9, 0x6D, 0x88, 0xE6, 0x2C, 0x83, 0x23, 0x38] };
+pub const I_AVN_LAYOUT_TRANSFORM_CONTROL_IID: Guid = Guid { data1: 0x25D00DDC, data2: 0xAC20, data3: 0x5EF1, data4: [0x9E, 0x5E, 0x7D, 0x73, 0x12, 0xDE, 0x01, 0xF4] };
 
 #[repr(C)]
 struct IAvnLayoutTransformControlVtbl {
@@ -32669,6 +33069,7 @@ struct IAvnLayoutTransformControlVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnLayoutTransformControl, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -32812,6 +33213,14 @@ impl ComPtr<IAvnLayoutTransformControl> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -33218,7 +33627,7 @@ impl ComPtr<IAvnLayoutTransformControl> {
     }
 }
 
-pub const I_AVN_LIST_BOX_IID: Guid = Guid { data1: 0x85E428BD, data2: 0x6F6C, data3: 0x5208, data4: [0xB4, 0x27, 0x79, 0xD4, 0xE6, 0x0B, 0x6F, 0x03] };
+pub const I_AVN_LIST_BOX_IID: Guid = Guid { data1: 0xB70C086E, data2: 0x2AF5, data3: 0x5399, data4: [0xA0, 0xEA, 0xC3, 0x99, 0x62, 0x32, 0x36, 0x2F] };
 
 #[repr(C)]
 struct IAvnListBoxVtbl {
@@ -33235,6 +33644,7 @@ struct IAvnListBoxVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnListBox, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnListBox, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnListBox, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnListBox, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnListBox, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -33430,6 +33840,14 @@ impl ComPtr<IAvnListBox> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -34197,7 +34615,7 @@ impl ComPtr<IAvnListBox> {
     }
 }
 
-pub const I_AVN_LIST_BOX_ITEM_IID: Guid = Guid { data1: 0x5E91DD56, data2: 0x3339, data3: 0x5D0D, data4: [0xA0, 0xD9, 0x92, 0xA5, 0x20, 0xBC, 0x08, 0x38] };
+pub const I_AVN_LIST_BOX_ITEM_IID: Guid = Guid { data1: 0x33F3145C, data2: 0x953D, data3: 0x5B79, data4: [0x97, 0x2F, 0x7F, 0xB6, 0x47, 0x40, 0xA4, 0x4D] };
 
 #[repr(C)]
 struct IAvnListBoxItemVtbl {
@@ -34214,6 +34632,7 @@ struct IAvnListBoxItemVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnListBoxItem, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -34389,6 +34808,14 @@ impl ComPtr<IAvnListBoxItem> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -35019,7 +35446,7 @@ impl ComPtr<IAvnListBoxItem> {
     }
 }
 
-pub const I_AVN_MASKED_TEXT_BOX_IID: Guid = Guid { data1: 0xC58AA7B4, data2: 0x0358, data3: 0x538C, data4: [0xA3, 0xA5, 0x4C, 0xBB, 0xDF, 0xA4, 0x4B, 0xEF] };
+pub const I_AVN_MASKED_TEXT_BOX_IID: Guid = Guid { data1: 0x0C1AB301, data2: 0xA74A, data3: 0x53B5, data4: [0xBE, 0x95, 0xDF, 0xD8, 0x37, 0x22, 0xB3, 0x4D] };
 
 #[repr(C)]
 struct IAvnMaskedTextBoxVtbl {
@@ -35036,6 +35463,7 @@ struct IAvnMaskedTextBoxVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -35302,6 +35730,14 @@ impl ComPtr<IAvnMaskedTextBox> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -36563,7 +36999,7 @@ impl ComPtr<IAvnMaskedTextBox> {
     }
 }
 
-pub const I_AVN_MENU_IID: Guid = Guid { data1: 0xC1761683, data2: 0xC40F, data3: 0x543D, data4: [0xB1, 0x07, 0x4E, 0xE0, 0x79, 0x57, 0xE4, 0x9D] };
+pub const I_AVN_MENU_IID: Guid = Guid { data1: 0x1ACA5A30, data2: 0x3E39, data3: 0x5252, data4: [0x98, 0x3D, 0x94, 0x58, 0x50, 0xB5, 0xFE, 0x34] };
 
 #[repr(C)]
 struct IAvnMenuVtbl {
@@ -36580,6 +37016,7 @@ struct IAvnMenuVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnMenu, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnMenu, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnMenu, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnMenu, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnMenu, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnMenu, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnMenu, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -36778,6 +37215,14 @@ impl ComPtr<IAvnMenu> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -37565,7 +38010,7 @@ impl ComPtr<IAvnMenu> {
     }
 }
 
-pub const I_AVN_MENU_BASE_IID: Guid = Guid { data1: 0xAADAD2DE, data2: 0xC32B, data3: 0x56F4, data4: [0x9B, 0xB7, 0xF6, 0x63, 0xA9, 0x4B, 0x29, 0xD9] };
+pub const I_AVN_MENU_BASE_IID: Guid = Guid { data1: 0x6316CC7F, data2: 0xF5EF, data3: 0x50D1, data4: [0x91, 0x92, 0x81, 0x5C, 0xFE, 0xF9, 0xF6, 0x88] };
 
 #[repr(C)]
 struct IAvnMenuBaseVtbl {
@@ -37582,6 +38027,7 @@ struct IAvnMenuBaseVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnMenuBase, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnMenuBase, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnMenuBase, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnMenuBase, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnMenuBase, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnMenuBase, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnMenuBase, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -37780,6 +38226,14 @@ impl ComPtr<IAvnMenuBase> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -38881,7 +39335,7 @@ impl ComPtr<IAvnMenuFlyout> {
     }
 }
 
-pub const I_AVN_MENU_ITEM_IID: Guid = Guid { data1: 0x3E72BC2B, data2: 0x7768, data3: 0x56BA, data4: [0xA2, 0xD0, 0xA6, 0xEC, 0x45, 0x1D, 0x70, 0x3E] };
+pub const I_AVN_MENU_ITEM_IID: Guid = Guid { data1: 0x5BC47168, data2: 0x5E56, data3: 0x5E93, data4: [0xB6, 0x01, 0x78, 0x95, 0x59, 0x0F, 0xC3, 0xE3] };
 
 #[repr(C)]
 struct IAvnMenuItemVtbl {
@@ -38898,6 +39352,7 @@ struct IAvnMenuItemVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnMenuItem, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnMenuItem, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnMenuItem, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnMenuItem, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnMenuItem, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -39011,10 +39466,14 @@ struct IAvnMenuItemVtbl {
     set_header_template: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnDataTemplate) -> i32,
     get_command: unsafe extern "system" fn(*mut IAvnMenuItem, *mut *mut IAvnCommand) -> i32,
     set_command: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnCommand) -> i32,
+    get_hot_key: unsafe extern "system" fn(*mut IAvnMenuItem, *mut *mut u16) -> i32,
+    set_hot_key: unsafe extern "system" fn(*mut IAvnMenuItem, *mut u16) -> i32,
     get_command_parameter: unsafe extern "system" fn(*mut IAvnMenuItem, *mut AvnVariant) -> i32,
     set_command_parameter: unsafe extern "system" fn(*mut IAvnMenuItem, AvnVariant) -> i32,
     get_icon: unsafe extern "system" fn(*mut IAvnMenuItem, *mut *mut IAvnControl) -> i32,
     set_icon: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnControl) -> i32,
+    get_input_gesture: unsafe extern "system" fn(*mut IAvnMenuItem, *mut *mut u16) -> i32,
+    set_input_gesture: unsafe extern "system" fn(*mut IAvnMenuItem, *mut u16) -> i32,
     get_is_selected: unsafe extern "system" fn(*mut IAvnMenuItem, *mut i32) -> i32,
     set_is_selected: unsafe extern "system" fn(*mut IAvnMenuItem, i32) -> i32,
     get_is_sub_menu_open: unsafe extern "system" fn(*mut IAvnMenuItem, *mut i32) -> i32,
@@ -39119,6 +39578,14 @@ impl ComPtr<IAvnMenuItem> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -39900,6 +40367,20 @@ impl ComPtr<IAvnMenuItem> {
             hresult::check(hr)
         }
     }
+    pub fn get_hot_key(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_hot_key)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_hot_key(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_hot_key)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_command_parameter(&self) -> Result<AvnVariant> {
         unsafe {
             let mut value: AvnVariant = AvnVariant::default();
@@ -39925,6 +40406,20 @@ impl ComPtr<IAvnMenuItem> {
     pub fn set_icon(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_icon)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_input_gesture(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_input_gesture)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_input_gesture(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_input_gesture)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
             hresult::check(hr)
         }
     }
@@ -40068,7 +40563,7 @@ impl ComPtr<IAvnMenuItem> {
     }
 }
 
-pub const I_AVN_NOTIFICATION_CARD_IID: Guid = Guid { data1: 0x3D0378EC, data2: 0x3A23, data3: 0x5DBF, data4: [0xA4, 0xDA, 0xCC, 0xF3, 0x8E, 0x3C, 0x4B, 0xBE] };
+pub const I_AVN_NOTIFICATION_CARD_IID: Guid = Guid { data1: 0xED2CF2D3, data2: 0x3AF3, data3: 0x558F, data4: [0x8D, 0xC3, 0x80, 0xE4, 0xA9, 0x57, 0x0B, 0xD1] };
 
 #[repr(C)]
 struct IAvnNotificationCardVtbl {
@@ -40085,6 +40580,7 @@ struct IAvnNotificationCardVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnNotificationCard, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -40266,6 +40762,14 @@ impl ComPtr<IAvnNotificationCard> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -40937,7 +41441,7 @@ impl ComPtr<IAvnNotificationCard> {
     }
 }
 
-pub const I_AVN_WINDOW_NOTIFICATION_MANAGER_IID: Guid = Guid { data1: 0xD5D728D2, data2: 0x1465, data3: 0x55A7, data4: [0xA9, 0x3B, 0x99, 0x5E, 0x1D, 0x55, 0xE8, 0x75] };
+pub const I_AVN_WINDOW_NOTIFICATION_MANAGER_IID: Guid = Guid { data1: 0xA11AB4C0, data2: 0x966F, data3: 0x53EA, data4: [0x8A, 0xB3, 0x92, 0xB8, 0xAF, 0x2B, 0x9C, 0x4F] };
 
 #[repr(C)]
 struct IAvnWindowNotificationManagerVtbl {
@@ -40954,6 +41458,7 @@ struct IAvnWindowNotificationManagerVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -41128,6 +41633,14 @@ impl ComPtr<IAvnWindowNotificationManager> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -41746,7 +42259,7 @@ impl ComPtr<IAvnWindowNotificationManager> {
     }
 }
 
-pub const I_AVN_NUMERIC_UP_DOWN_IID: Guid = Guid { data1: 0x763B4D52, data2: 0xA8A8, data3: 0x5149, data4: [0xA5, 0x0C, 0xD7, 0x5F, 0xD5, 0x8E, 0xA5, 0xB7] };
+pub const I_AVN_NUMERIC_UP_DOWN_IID: Guid = Guid { data1: 0x44E70B5F, data2: 0xD78F, data3: 0x5E1F, data4: [0xA1, 0x87, 0x97, 0x0E, 0xE5, 0xCB, 0x42, 0xFD] };
 
 #[repr(C)]
 struct IAvnNumericUpDownVtbl {
@@ -41763,6 +42276,7 @@ struct IAvnNumericUpDownVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnNumericUpDown, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -41968,6 +42482,14 @@ impl ComPtr<IAvnNumericUpDown> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -42806,7 +43328,7 @@ impl ComPtr<IAvnNumericUpDown> {
     }
 }
 
-pub const I_AVN_PANEL_IID: Guid = Guid { data1: 0x2FB35E2A, data2: 0x67C3, data3: 0x519B, data4: [0x87, 0xC7, 0xB0, 0xD4, 0x89, 0xAA, 0xAC, 0xD6] };
+pub const I_AVN_PANEL_IID: Guid = Guid { data1: 0x2DCE07C5, data2: 0x443B, data3: 0x5C2A, data4: [0x9F, 0x0B, 0x52, 0x16, 0x05, 0xDC, 0x79, 0x8F] };
 
 #[repr(C)]
 struct IAvnPanelVtbl {
@@ -42823,6 +43345,7 @@ struct IAvnPanelVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnPanel, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnPanel, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnPanel, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnPanel, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPanel, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPanel, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnPanel, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -42963,6 +43486,14 @@ impl ComPtr<IAvnPanel> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -43349,7 +43880,7 @@ impl ComPtr<IAvnPanel> {
     }
 }
 
-pub const I_AVN_PATH_ICON_IID: Guid = Guid { data1: 0x27C348B2, data2: 0x6FB1, data3: 0x5DDC, data4: [0x90, 0x9F, 0xB6, 0x92, 0x0D, 0x7B, 0x0B, 0x7B] };
+pub const I_AVN_PATH_ICON_IID: Guid = Guid { data1: 0x3F71A1FA, data2: 0x0DBD, data3: 0x504F, data4: [0xBD, 0x02, 0x0F, 0x5A, 0xE7, 0xF7, 0x49, 0xC2] };
 
 #[repr(C)]
 struct IAvnPathIconVtbl {
@@ -43366,6 +43897,7 @@ struct IAvnPathIconVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnPathIcon, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnPathIcon, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnPathIcon, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnPathIcon, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPathIcon, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPathIcon, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnPathIcon, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -43533,6 +44065,14 @@ impl ComPtr<IAvnPathIcon> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -44107,7 +44647,7 @@ impl ComPtr<IAvnPathIcon> {
     }
 }
 
-pub const I_AVN_PIPS_PAGER_IID: Guid = Guid { data1: 0xE9030A8C, data2: 0x9206, data3: 0x56CA, data4: [0x8C, 0x7A, 0x83, 0xAC, 0xAC, 0x04, 0x64, 0x15] };
+pub const I_AVN_PIPS_PAGER_IID: Guid = Guid { data1: 0xA031255B, data2: 0x7F76, data3: 0x53D2, data4: [0x8E, 0x7E, 0x42, 0xDA, 0x38, 0x5F, 0xD8, 0x01] };
 
 #[repr(C)]
 struct IAvnPipsPagerVtbl {
@@ -44124,6 +44664,7 @@ struct IAvnPipsPagerVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnPipsPager, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnPipsPager, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnPipsPager, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnPipsPager, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPipsPager, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPipsPager, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnPipsPager, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -44303,6 +44844,14 @@ impl ComPtr<IAvnPipsPager> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -45066,7 +45615,7 @@ impl ComPtr<IAvnFlyoutBase> {
     }
 }
 
-pub const I_AVN_HEADERED_CONTENT_CONTROL_IID: Guid = Guid { data1: 0xDD26C352, data2: 0xA4AF, data3: 0x5B89, data4: [0x8E, 0xC7, 0x84, 0x87, 0x01, 0x22, 0xC8, 0x20] };
+pub const I_AVN_HEADERED_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x7E84676C, data2: 0x062A, data3: 0x58E9, data4: [0x88, 0x64, 0x82, 0x11, 0xF7, 0xE7, 0xA7, 0x4A] };
 
 #[repr(C)]
 struct IAvnHeaderedContentControlVtbl {
@@ -45083,6 +45632,7 @@ struct IAvnHeaderedContentControlVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -45260,6 +45810,14 @@ impl ComPtr<IAvnHeaderedContentControl> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -45904,7 +46462,7 @@ impl ComPtr<IAvnHeaderedContentControl> {
     }
 }
 
-pub const I_AVN_HEADERED_ITEMS_CONTROL_IID: Guid = Guid { data1: 0xEE6D5C12, data2: 0x1EE4, data3: 0x5031, data4: [0x95, 0xF8, 0xAB, 0x17, 0xD1, 0xF7, 0x45, 0x90] };
+pub const I_AVN_HEADERED_ITEMS_CONTROL_IID: Guid = Guid { data1: 0xD742457E, data2: 0x1F77, data3: 0x5EAB, data4: [0xA0, 0x39, 0x41, 0x90, 0xEE, 0x7D, 0x20, 0xEA] };
 
 #[repr(C)]
 struct IAvnHeaderedItemsControlVtbl {
@@ -45921,6 +46479,7 @@ struct IAvnHeaderedItemsControlVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -46102,6 +46661,14 @@ impl ComPtr<IAvnHeaderedItemsControl> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -46774,7 +47341,7 @@ impl ComPtr<IAvnHeaderedItemsControl> {
     }
 }
 
-pub const I_AVN_HEADERED_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x0FF67225, data2: 0x4489, data3: 0x53C5, data4: [0x9A, 0x8D, 0x65, 0xBC, 0x9E, 0xD5, 0xB4, 0xA7] };
+pub const I_AVN_HEADERED_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0xB0EA5685, data2: 0xE78E, data3: 0x5848, data4: [0x8D, 0xB4, 0xD1, 0xB2, 0xB2, 0xD7, 0x9A, 0x0D] };
 
 #[repr(C)]
 struct IAvnHeaderedSelectingItemsControlVtbl {
@@ -46791,6 +47358,7 @@ struct IAvnHeaderedSelectingItemsControlVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -46986,6 +47554,14 @@ impl ComPtr<IAvnHeaderedSelectingItemsControl> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -47755,7 +48331,7 @@ impl ComPtr<IAvnHeaderedSelectingItemsControl> {
     }
 }
 
-pub const I_AVN_POPUP_IID: Guid = Guid { data1: 0x20F9B7E4, data2: 0x9C5A, data3: 0x5ABA, data4: [0xAA, 0xD9, 0x40, 0xF2, 0x3A, 0xCE, 0x1D, 0x6E] };
+pub const I_AVN_POPUP_IID: Guid = Guid { data1: 0xE4449BCE, data2: 0x9A15, data3: 0x59E9, data4: [0xAB, 0x50, 0x85, 0xE9, 0x24, 0x62, 0xDB, 0x7E] };
 
 #[repr(C)]
 struct IAvnPopupVtbl {
@@ -47772,6 +48348,7 @@ struct IAvnPopupVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnPopup, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnPopup, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnPopup, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnPopup, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPopup, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPopup, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnPopup, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -47951,6 +48528,14 @@ impl ComPtr<IAvnPopup> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -48880,7 +49465,7 @@ impl ComPtr<IAvnPopupFlyoutBase> {
     }
 }
 
-pub const I_AVN_RANGE_BASE_IID: Guid = Guid { data1: 0xBF44AF70, data2: 0xBA35, data3: 0x5FC9, data4: [0xA2, 0x41, 0x60, 0x49, 0x83, 0xB7, 0xF1, 0xFE] };
+pub const I_AVN_RANGE_BASE_IID: Guid = Guid { data1: 0xC0AAA6E5, data2: 0xFAF5, data3: 0x546B, data4: [0x9B, 0xBF, 0x1E, 0x58, 0x76, 0xCD, 0x74, 0x57] };
 
 #[repr(C)]
 struct IAvnRangeBaseVtbl {
@@ -48897,6 +49482,7 @@ struct IAvnRangeBaseVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnRangeBase, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnRangeBase, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnRangeBase, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnRangeBase, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnRangeBase, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnRangeBase, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnRangeBase, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -49074,6 +49660,14 @@ impl ComPtr<IAvnRangeBase> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -49717,7 +50311,7 @@ impl ComPtr<IAvnRangeBase> {
     }
 }
 
-pub const I_AVN_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x63F01962, data2: 0x6D43, data3: 0x59DA, data4: [0x90, 0x4F, 0x13, 0xF9, 0xAC, 0x95, 0x96, 0x5C] };
+pub const I_AVN_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0xBC8883C2, data2: 0xBD4A, data3: 0x522A, data4: [0x93, 0x5A, 0xCD, 0xF4, 0x0B, 0xDD, 0x9E, 0x15] };
 
 #[repr(C)]
 struct IAvnSelectingItemsControlVtbl {
@@ -49734,6 +50328,7 @@ struct IAvnSelectingItemsControlVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -49925,6 +50520,14 @@ impl ComPtr<IAvnSelectingItemsControl> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -50666,7 +51269,7 @@ impl ComPtr<IAvnSelectingItemsControl> {
     }
 }
 
-pub const I_AVN_TEMPLATED_CONTROL_IID: Guid = Guid { data1: 0xBF739BF7, data2: 0x567C, data3: 0x5E23, data4: [0x8D, 0x2E, 0x3C, 0x8F, 0x23, 0xE7, 0x77, 0x16] };
+pub const I_AVN_TEMPLATED_CONTROL_IID: Guid = Guid { data1: 0x90187577, data2: 0xAB2E, data3: 0x5246, data4: [0x81, 0x63, 0x81, 0x4D, 0x19, 0xAC, 0x8E, 0x65] };
 
 #[repr(C)]
 struct IAvnTemplatedControlVtbl {
@@ -50683,6 +51286,7 @@ struct IAvnTemplatedControlVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTemplatedControl, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -50848,6 +51452,14 @@ impl ComPtr<IAvnTemplatedControl> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -51408,7 +52020,7 @@ impl ComPtr<IAvnTemplatedControl> {
     }
 }
 
-pub const I_AVN_THUMB_IID: Guid = Guid { data1: 0xC8C9F7EF, data2: 0xC366, data3: 0x531F, data4: [0x96, 0x4F, 0xB0, 0xB9, 0xA4, 0xB8, 0x82, 0xD5] };
+pub const I_AVN_THUMB_IID: Guid = Guid { data1: 0xE13122B7, data2: 0x6BC6, data3: 0x50F6, data4: [0x89, 0x99, 0x35, 0x8A, 0xA7, 0xB4, 0xB6, 0x69] };
 
 #[repr(C)]
 struct IAvnThumbVtbl {
@@ -51425,6 +52037,7 @@ struct IAvnThumbVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnThumb, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnThumb, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnThumb, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnThumb, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnThumb, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnThumb, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnThumb, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -51596,6 +52209,14 @@ impl ComPtr<IAvnThumb> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -52195,7 +52816,7 @@ impl ComPtr<IAvnThumb> {
     }
 }
 
-pub const I_AVN_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0x7DD1BC50, data2: 0x8046, data3: 0x51F1, data4: [0x8D, 0x5A, 0xD3, 0x25, 0x29, 0x68, 0xB9, 0xC2] };
+pub const I_AVN_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0x1BCBB498, data2: 0xE062, data3: 0x5E31, data4: [0xAD, 0xF0, 0xD8, 0xBB, 0x80, 0x9F, 0x45, 0x00] };
 
 #[repr(C)]
 struct IAvnToggleButtonVtbl {
@@ -52212,6 +52833,7 @@ struct IAvnToggleButtonVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnToggleButton, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnToggleButton, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnToggleButton, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnToggleButton, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnToggleButton, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -52305,6 +52927,8 @@ struct IAvnToggleButtonVtbl {
     set_click_mode: unsafe extern "system" fn(*mut IAvnToggleButton, i32) -> i32,
     get_command: unsafe extern "system" fn(*mut IAvnToggleButton, *mut *mut IAvnCommand) -> i32,
     set_command: unsafe extern "system" fn(*mut IAvnToggleButton, *mut IAvnCommand) -> i32,
+    get_hot_key: unsafe extern "system" fn(*mut IAvnToggleButton, *mut *mut u16) -> i32,
+    set_hot_key: unsafe extern "system" fn(*mut IAvnToggleButton, *mut u16) -> i32,
     get_command_parameter: unsafe extern "system" fn(*mut IAvnToggleButton, *mut AvnVariant) -> i32,
     set_command_parameter: unsafe extern "system" fn(*mut IAvnToggleButton, AvnVariant) -> i32,
     get_is_default: unsafe extern "system" fn(*mut IAvnToggleButton, *mut i32) -> i32,
@@ -52406,6 +53030,14 @@ impl ComPtr<IAvnToggleButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -53048,6 +53680,20 @@ impl ComPtr<IAvnToggleButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_hot_key(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_hot_key)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_hot_key(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_hot_key)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_command_parameter(&self) -> Result<AvnVariant> {
         unsafe {
             let mut value: AvnVariant = AvnVariant::default();
@@ -53168,7 +53814,7 @@ impl ComPtr<IAvnToggleButton> {
     }
 }
 
-pub const I_AVN_UNIFORM_GRID_IID: Guid = Guid { data1: 0x33B8085C, data2: 0xB6F7, data3: 0x51E8, data4: [0xBE, 0x54, 0x28, 0xB2, 0xB4, 0xD4, 0xB0, 0x55] };
+pub const I_AVN_UNIFORM_GRID_IID: Guid = Guid { data1: 0x5C414891, data2: 0x969C, data3: 0x508C, data4: [0x9F, 0x2F, 0xA7, 0xCE, 0xA6, 0x10, 0x8E, 0x0D] };
 
 #[repr(C)]
 struct IAvnUniformGridVtbl {
@@ -53185,6 +53831,7 @@ struct IAvnUniformGridVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnUniformGrid, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnUniformGrid, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -53335,6 +53982,14 @@ impl ComPtr<IAvnUniformGrid> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -53791,7 +54446,7 @@ impl ComPtr<IAvnUniformGrid> {
     }
 }
 
-pub const I_AVN_PROGRESS_BAR_IID: Guid = Guid { data1: 0x840CEA59, data2: 0x8B57, data3: 0x5315, data4: [0xB8, 0xA4, 0xA1, 0x6E, 0x0B, 0xF0, 0x73, 0x14] };
+pub const I_AVN_PROGRESS_BAR_IID: Guid = Guid { data1: 0x59D47F19, data2: 0x2346, data3: 0x5F6D, data4: [0x86, 0x51, 0x74, 0xC6, 0xE3, 0x9B, 0x8D, 0x58] };
 
 #[repr(C)]
 struct IAvnProgressBarVtbl {
@@ -53808,6 +54463,7 @@ struct IAvnProgressBarVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnProgressBar, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnProgressBar, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnProgressBar, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnProgressBar, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnProgressBar, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnProgressBar, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnProgressBar, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -53994,6 +54650,14 @@ impl ComPtr<IAvnProgressBar> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -54701,7 +55365,7 @@ impl ComPtr<IAvnProgressBar> {
     }
 }
 
-pub const I_AVN_RADIO_BUTTON_IID: Guid = Guid { data1: 0xB3DD5A2C, data2: 0x8208, data3: 0x52B8, data4: [0x99, 0x0A, 0x21, 0x96, 0x1D, 0x59, 0x03, 0x85] };
+pub const I_AVN_RADIO_BUTTON_IID: Guid = Guid { data1: 0x33ED0D1E, data2: 0x1C48, data3: 0x5B74, data4: [0x97, 0xB1, 0xF8, 0xC1, 0x6C, 0xE9, 0x41, 0x9B] };
 
 #[repr(C)]
 struct IAvnRadioButtonVtbl {
@@ -54718,6 +55382,7 @@ struct IAvnRadioButtonVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnRadioButton, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnRadioButton, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnRadioButton, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnRadioButton, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnRadioButton, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -54811,6 +55476,8 @@ struct IAvnRadioButtonVtbl {
     set_click_mode: unsafe extern "system" fn(*mut IAvnRadioButton, i32) -> i32,
     get_command: unsafe extern "system" fn(*mut IAvnRadioButton, *mut *mut IAvnCommand) -> i32,
     set_command: unsafe extern "system" fn(*mut IAvnRadioButton, *mut IAvnCommand) -> i32,
+    get_hot_key: unsafe extern "system" fn(*mut IAvnRadioButton, *mut *mut u16) -> i32,
+    set_hot_key: unsafe extern "system" fn(*mut IAvnRadioButton, *mut u16) -> i32,
     get_command_parameter: unsafe extern "system" fn(*mut IAvnRadioButton, *mut AvnVariant) -> i32,
     set_command_parameter: unsafe extern "system" fn(*mut IAvnRadioButton, AvnVariant) -> i32,
     get_is_default: unsafe extern "system" fn(*mut IAvnRadioButton, *mut i32) -> i32,
@@ -54914,6 +55581,14 @@ impl ComPtr<IAvnRadioButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -55556,6 +56231,20 @@ impl ComPtr<IAvnRadioButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_hot_key(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_hot_key)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_hot_key(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_hot_key)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_command_parameter(&self) -> Result<AvnVariant> {
         unsafe {
             let mut value: AvnVariant = AvnVariant::default();
@@ -55690,7 +56379,7 @@ impl ComPtr<IAvnRadioButton> {
     }
 }
 
-pub const I_AVN_REFRESH_CONTAINER_IID: Guid = Guid { data1: 0x9B5D4C79, data2: 0x8F23, data3: 0x58E3, data4: [0x89, 0x18, 0x84, 0x42, 0x79, 0xD9, 0x40, 0x23] };
+pub const I_AVN_REFRESH_CONTAINER_IID: Guid = Guid { data1: 0x2ADFFAD5, data2: 0x4934, data3: 0x57AF, data4: [0xA0, 0x28, 0xE6, 0x08, 0x7A, 0x2A, 0x9C, 0x05] };
 
 #[repr(C)]
 struct IAvnRefreshContainerVtbl {
@@ -55707,6 +56396,7 @@ struct IAvnRefreshContainerVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnRefreshContainer, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -55887,6 +56577,14 @@ impl ComPtr<IAvnRefreshContainer> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -56550,7 +57248,7 @@ impl ComPtr<IAvnRefreshContainer> {
     }
 }
 
-pub const I_AVN_RELATIVE_PANEL_IID: Guid = Guid { data1: 0x4CF648DB, data2: 0xA5CF, data3: 0x5FD7, data4: [0x8E, 0x69, 0xA6, 0x28, 0x4F, 0x3A, 0x35, 0x10] };
+pub const I_AVN_RELATIVE_PANEL_IID: Guid = Guid { data1: 0x8A9D91BC, data2: 0x1E22, data3: 0x5BC4, data4: [0xB3, 0x56, 0x60, 0x80, 0x1C, 0xD4, 0x16, 0x94] };
 
 #[repr(C)]
 struct IAvnRelativePanelVtbl {
@@ -56567,6 +57265,7 @@ struct IAvnRelativePanelVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnRelativePanel, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnRelativePanel, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -56707,6 +57406,14 @@ impl ComPtr<IAvnRelativePanel> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -57093,7 +57800,7 @@ impl ComPtr<IAvnRelativePanel> {
     }
 }
 
-pub const I_AVN_REPEAT_BUTTON_IID: Guid = Guid { data1: 0xCB2CECC2, data2: 0xC9BB, data3: 0x5EC5, data4: [0xB7, 0x61, 0x10, 0x71, 0x11, 0x9C, 0xFF, 0x7B] };
+pub const I_AVN_REPEAT_BUTTON_IID: Guid = Guid { data1: 0xF020359F, data2: 0x6191, data3: 0x598E, data4: [0xB6, 0x4B, 0xF2, 0x34, 0x5B, 0x56, 0x4B, 0x5E] };
 
 #[repr(C)]
 struct IAvnRepeatButtonVtbl {
@@ -57110,6 +57817,7 @@ struct IAvnRepeatButtonVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnRepeatButton, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -57203,6 +57911,8 @@ struct IAvnRepeatButtonVtbl {
     set_click_mode: unsafe extern "system" fn(*mut IAvnRepeatButton, i32) -> i32,
     get_command: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut *mut IAvnCommand) -> i32,
     set_command: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut IAvnCommand) -> i32,
+    get_hot_key: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut *mut u16) -> i32,
+    set_hot_key: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut u16) -> i32,
     get_command_parameter: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut AvnVariant) -> i32,
     set_command_parameter: unsafe extern "system" fn(*mut IAvnRepeatButton, AvnVariant) -> i32,
     get_is_default: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut i32) -> i32,
@@ -57302,6 +58012,14 @@ impl ComPtr<IAvnRepeatButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -57944,6 +58662,20 @@ impl ComPtr<IAvnRepeatButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_hot_key(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_hot_key)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_hot_key(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_hot_key)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_command_parameter(&self) -> Result<AvnVariant> {
         unsafe {
             let mut value: AvnVariant = AvnVariant::default();
@@ -58051,7 +58783,7 @@ impl ComPtr<IAvnRepeatButton> {
     }
 }
 
-pub const I_AVN_SCROLL_VIEWER_IID: Guid = Guid { data1: 0x48334642, data2: 0x8A93, data3: 0x557A, data4: [0x9C, 0x7B, 0xE5, 0xBE, 0x88, 0x59, 0x11, 0xD6] };
+pub const I_AVN_SCROLL_VIEWER_IID: Guid = Guid { data1: 0xF12B4A5F, data2: 0x27EE, data3: 0x584A, data4: [0xAC, 0x1E, 0xF0, 0x11, 0x06, 0x94, 0xEA, 0x58] };
 
 #[repr(C)]
 struct IAvnScrollViewerVtbl {
@@ -58068,6 +58800,7 @@ struct IAvnScrollViewerVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnScrollViewer, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -58286,6 +59019,14 @@ impl ComPtr<IAvnScrollViewer> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -59211,7 +59952,7 @@ impl ComPtr<IAvnScrollViewer> {
     }
 }
 
-pub const I_AVN_SELECTABLE_TEXT_BLOCK_IID: Guid = Guid { data1: 0x5371BB28, data2: 0x69F1, data3: 0x5A32, data4: [0x84, 0x01, 0x64, 0xC3, 0x0A, 0xA0, 0x52, 0x19] };
+pub const I_AVN_SELECTABLE_TEXT_BLOCK_IID: Guid = Guid { data1: 0x9E12E7BE, data2: 0xFE7A, data3: 0x5AA4, data4: [0xA4, 0x17, 0x91, 0xFF, 0x10, 0x3A, 0xD2, 0xE7] };
 
 #[repr(C)]
 struct IAvnSelectableTextBlockVtbl {
@@ -59228,6 +59969,7 @@ struct IAvnSelectableTextBlockVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -59416,6 +60158,14 @@ impl ComPtr<IAvnSelectableTextBlock> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -60135,7 +60885,7 @@ impl ComPtr<IAvnSelectableTextBlock> {
     }
 }
 
-pub const I_AVN_SEPARATOR_IID: Guid = Guid { data1: 0x15CDA434, data2: 0xE2F8, data3: 0x52B1, data4: [0xBF, 0x9A, 0xB8, 0xAC, 0x87, 0x15, 0xDC, 0xC6] };
+pub const I_AVN_SEPARATOR_IID: Guid = Guid { data1: 0x8FE1707F, data2: 0xB2D3, data3: 0x5B03, data4: [0xA1, 0x1C, 0xF6, 0xFB, 0xE9, 0x3C, 0x52, 0x17] };
 
 #[repr(C)]
 struct IAvnSeparatorVtbl {
@@ -60152,6 +60902,7 @@ struct IAvnSeparatorVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnSeparator, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnSeparator, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnSeparator, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnSeparator, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSeparator, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSeparator, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnSeparator, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -60317,6 +61068,14 @@ impl ComPtr<IAvnSeparator> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -60877,7 +61636,7 @@ impl ComPtr<IAvnSeparator> {
     }
 }
 
-pub const I_AVN_ARC_IID: Guid = Guid { data1: 0x6184D82D, data2: 0x4C6B, data3: 0x5DB8, data4: [0x94, 0x07, 0x8A, 0x55, 0x3A, 0xDF, 0x72, 0x05] };
+pub const I_AVN_ARC_IID: Guid = Guid { data1: 0x44B73E00, data2: 0xB20F, data3: 0x50DC, data4: [0x96, 0x06, 0x7B, 0x33, 0x5E, 0xB7, 0x53, 0x4A] };
 
 #[repr(C)]
 struct IAvnArcVtbl {
@@ -60894,6 +61653,7 @@ struct IAvnArcVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnArc, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnArc, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnArc, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnArc, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnArc, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnArc, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnArc, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -61053,6 +61813,14 @@ impl ComPtr<IAvnArc> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -61571,7 +62339,7 @@ impl ComPtr<IAvnArc> {
     }
 }
 
-pub const I_AVN_ELLIPSE_IID: Guid = Guid { data1: 0x95FD79D2, data2: 0x94A7, data3: 0x51BD, data4: [0xA7, 0x85, 0x8A, 0x52, 0xBC, 0x67, 0x76, 0xCA] };
+pub const I_AVN_ELLIPSE_IID: Guid = Guid { data1: 0x64379A4F, data2: 0xBEFC, data3: 0x5752, data4: [0xBD, 0x04, 0xF7, 0x3F, 0xF4, 0x87, 0x06, 0x7C] };
 
 #[repr(C)]
 struct IAvnEllipseVtbl {
@@ -61588,6 +62356,7 @@ struct IAvnEllipseVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnEllipse, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnEllipse, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnEllipse, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnEllipse, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnEllipse, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnEllipse, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnEllipse, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -61743,6 +62512,14 @@ impl ComPtr<IAvnEllipse> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -62233,7 +63010,7 @@ impl ComPtr<IAvnEllipse> {
     }
 }
 
-pub const I_AVN_LINE_IID: Guid = Guid { data1: 0xA4CF6D9A, data2: 0xB768, data3: 0x56B5, data4: [0xAD, 0x74, 0xB8, 0xF4, 0xD3, 0xAF, 0xB2, 0x56] };
+pub const I_AVN_LINE_IID: Guid = Guid { data1: 0x8A10B608, data2: 0xBF70, data3: 0x5C86, data4: [0xAA, 0x86, 0x0B, 0x88, 0x00, 0x14, 0xA8, 0x31] };
 
 #[repr(C)]
 struct IAvnLineVtbl {
@@ -62250,6 +63027,7 @@ struct IAvnLineVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnLine, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnLine, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnLine, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnLine, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnLine, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnLine, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnLine, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -62409,6 +63187,14 @@ impl ComPtr<IAvnLine> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -62927,7 +63713,7 @@ impl ComPtr<IAvnLine> {
     }
 }
 
-pub const I_AVN_PATH_IID: Guid = Guid { data1: 0x3848E44D, data2: 0xEABA, data3: 0x5D9E, data4: [0x8B, 0xC1, 0xAB, 0xA0, 0x23, 0xA2, 0xD4, 0xE3] };
+pub const I_AVN_PATH_IID: Guid = Guid { data1: 0x58FA157E, data2: 0xB276, data3: 0x5ABA, data4: [0x84, 0x16, 0x74, 0x91, 0xF0, 0xFC, 0x03, 0x50] };
 
 #[repr(C)]
 struct IAvnPathVtbl {
@@ -62944,6 +63730,7 @@ struct IAvnPathVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnPath, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnPath, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnPath, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnPath, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPath, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPath, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnPath, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -63101,6 +63888,14 @@ impl ComPtr<IAvnPath> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -63605,7 +64400,7 @@ impl ComPtr<IAvnPath> {
     }
 }
 
-pub const I_AVN_POLYGON_IID: Guid = Guid { data1: 0x1767677B, data2: 0x15FE, data3: 0x5208, data4: [0xA4, 0x87, 0x75, 0x38, 0xC2, 0x6F, 0x30, 0xFD] };
+pub const I_AVN_POLYGON_IID: Guid = Guid { data1: 0xE8B66EA6, data2: 0x7319, data3: 0x5BF8, data4: [0xA7, 0x6A, 0x7A, 0xAC, 0x47, 0xBC, 0xDC, 0xA8] };
 
 #[repr(C)]
 struct IAvnPolygonVtbl {
@@ -63622,6 +64417,7 @@ struct IAvnPolygonVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnPolygon, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnPolygon, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnPolygon, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnPolygon, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPolygon, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPolygon, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnPolygon, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -63783,6 +64579,14 @@ impl ComPtr<IAvnPolygon> {
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
         }
     }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -64299,7 +65103,7 @@ impl ComPtr<IAvnPolygon> {
     }
 }
 
-pub const I_AVN_POLYLINE_IID: Guid = Guid { data1: 0x7535A453, data2: 0xDFCB, data3: 0x5683, data4: [0xAE, 0x65, 0x17, 0xF9, 0x86, 0x4B, 0x39, 0x70] };
+pub const I_AVN_POLYLINE_IID: Guid = Guid { data1: 0x7C481E21, data2: 0xA5EB, data3: 0x5AB4, data4: [0xB5, 0xA2, 0xA1, 0xF4, 0x9A, 0x17, 0xDE, 0x59] };
 
 #[repr(C)]
 struct IAvnPolylineVtbl {
@@ -64316,6 +65120,7 @@ struct IAvnPolylineVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnPolyline, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnPolyline, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnPolyline, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnPolyline, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPolyline, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnPolyline, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnPolyline, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -64477,6 +65282,14 @@ impl ComPtr<IAvnPolyline> {
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
         }
     }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -64993,7 +65806,7 @@ impl ComPtr<IAvnPolyline> {
     }
 }
 
-pub const I_AVN_RECTANGLE_IID: Guid = Guid { data1: 0x0E4294C9, data2: 0x3A86, data3: 0x59F7, data4: [0xAD, 0x34, 0x59, 0x06, 0xBB, 0xD9, 0x7F, 0x1D] };
+pub const I_AVN_RECTANGLE_IID: Guid = Guid { data1: 0xF154F96D, data2: 0x9E1C, data3: 0x5D42, data4: [0x80, 0x62, 0x83, 0x35, 0x8E, 0x86, 0x48, 0x1B] };
 
 #[repr(C)]
 struct IAvnRectangleVtbl {
@@ -65010,6 +65823,7 @@ struct IAvnRectangleVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnRectangle, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnRectangle, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnRectangle, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnRectangle, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnRectangle, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnRectangle, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnRectangle, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -65169,6 +65983,14 @@ impl ComPtr<IAvnRectangle> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -65687,7 +66509,7 @@ impl ComPtr<IAvnRectangle> {
     }
 }
 
-pub const I_AVN_SECTOR_IID: Guid = Guid { data1: 0xA76BE3A9, data2: 0x0A8E, data3: 0x571F, data4: [0x8C, 0xEC, 0x92, 0x0D, 0xF7, 0xE5, 0x5E, 0xE9] };
+pub const I_AVN_SECTOR_IID: Guid = Guid { data1: 0xD3CCA09A, data2: 0xC8A4, data3: 0x5F99, data4: [0x89, 0xCE, 0x3D, 0xB0, 0x13, 0x24, 0x87, 0x08] };
 
 #[repr(C)]
 struct IAvnSectorVtbl {
@@ -65704,6 +66526,7 @@ struct IAvnSectorVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnSector, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnSector, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnSector, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnSector, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSector, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSector, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnSector, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -65863,6 +66686,14 @@ impl ComPtr<IAvnSector> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -66381,7 +67212,7 @@ impl ComPtr<IAvnSector> {
     }
 }
 
-pub const I_AVN_SHAPE_IID: Guid = Guid { data1: 0xF3C02254, data2: 0x88B5, data3: 0x566E, data4: [0x86, 0xD1, 0x73, 0xA6, 0xF9, 0x43, 0x3E, 0xCE] };
+pub const I_AVN_SHAPE_IID: Guid = Guid { data1: 0x56981FBE, data2: 0x7715, data3: 0x566B, data4: [0xBB, 0x1D, 0x9E, 0xEB, 0xEF, 0x69, 0x7A, 0xA3] };
 
 #[repr(C)]
 struct IAvnShapeVtbl {
@@ -66398,6 +67229,7 @@ struct IAvnShapeVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnShape, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnShape, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnShape, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnShape, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnShape, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnShape, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnShape, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -66553,6 +67385,14 @@ impl ComPtr<IAvnShape> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -67043,7 +67883,7 @@ impl ComPtr<IAvnShape> {
     }
 }
 
-pub const I_AVN_SLIDER_IID: Guid = Guid { data1: 0x8F29BC3B, data2: 0x3208, data3: 0x571A, data4: [0xA9, 0x79, 0x33, 0xA2, 0x0B, 0xF5, 0x65, 0x89] };
+pub const I_AVN_SLIDER_IID: Guid = Guid { data1: 0x51ABFCEA, data2: 0x0012, data3: 0x5D1C, data4: [0xAA, 0x74, 0x67, 0xD6, 0x48, 0x45, 0xC8, 0xD7] };
 
 #[repr(C)]
 struct IAvnSliderVtbl {
@@ -67060,6 +67900,7 @@ struct IAvnSliderVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnSlider, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnSlider, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnSlider, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnSlider, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSlider, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSlider, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnSlider, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -67249,6 +68090,14 @@ impl ComPtr<IAvnSlider> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -67976,7 +68825,7 @@ impl ComPtr<IAvnSlider> {
     }
 }
 
-pub const I_AVN_SPINNER_IID: Guid = Guid { data1: 0xEE310DDD, data2: 0xE88A, data3: 0x5239, data4: [0x93, 0xD7, 0x60, 0xFA, 0x64, 0x5A, 0xD8, 0x46] };
+pub const I_AVN_SPINNER_IID: Guid = Guid { data1: 0xCB918781, data2: 0x2700, data3: 0x5CBD, data4: [0x99, 0xD3, 0x79, 0xDC, 0x74, 0xBB, 0x2C, 0xED] };
 
 #[repr(C)]
 struct IAvnSpinnerVtbl {
@@ -67993,6 +68842,7 @@ struct IAvnSpinnerVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnSpinner, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnSpinner, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnSpinner, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnSpinner, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSpinner, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSpinner, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnSpinner, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -68170,6 +69020,14 @@ impl ComPtr<IAvnSpinner> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -68813,7 +69671,7 @@ impl ComPtr<IAvnSpinner> {
     }
 }
 
-pub const I_AVN_SPLIT_BUTTON_IID: Guid = Guid { data1: 0x4C34DEBE, data2: 0xF289, data3: 0x53E1, data4: [0xAF, 0xAA, 0x78, 0xFF, 0x15, 0xC6, 0x96, 0xFD] };
+pub const I_AVN_SPLIT_BUTTON_IID: Guid = Guid { data1: 0xDC94A83B, data2: 0x87B9, data3: 0x5FE2, data4: [0x8F, 0xEC, 0x7A, 0xB0, 0xB7, 0xE5, 0x8D, 0x12] };
 
 #[repr(C)]
 struct IAvnSplitButtonVtbl {
@@ -68830,6 +69688,7 @@ struct IAvnSplitButtonVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnSplitButton, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnSplitButton, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnSplitButton, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnSplitButton, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSplitButton, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSplitButton, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnSplitButton, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -68925,6 +69784,8 @@ struct IAvnSplitButtonVtbl {
     set_command_parameter: unsafe extern "system" fn(*mut IAvnSplitButton, AvnVariant) -> i32,
     get_flyout: unsafe extern "system" fn(*mut IAvnSplitButton, *mut *mut IAvnFlyoutBase) -> i32,
     set_flyout: unsafe extern "system" fn(*mut IAvnSplitButton, *mut IAvnFlyoutBase) -> i32,
+    get_hot_key: unsafe extern "system" fn(*mut IAvnSplitButton, *mut *mut u16) -> i32,
+    set_hot_key: unsafe extern "system" fn(*mut IAvnSplitButton, *mut u16) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnSplitButton, *mut IAvnSplitButtonClickHandler, *mut i64) -> i32,
     unadvise_click: unsafe extern "system" fn(*mut IAvnSplitButton, i64) -> i32,
 }
@@ -69011,6 +69872,14 @@ impl ComPtr<IAvnSplitButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -69667,6 +70536,20 @@ impl ComPtr<IAvnSplitButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_hot_key(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_hot_key)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_hot_key(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_hot_key)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn advise_click(&self, handler: &ComPtr<IAvnSplitButtonClickHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -69682,7 +70565,7 @@ impl ComPtr<IAvnSplitButton> {
     }
 }
 
-pub const I_AVN_SPLIT_VIEW_IID: Guid = Guid { data1: 0x87AC7D81, data2: 0x0BFE, data3: 0x511B, data4: [0x90, 0xFA, 0x9B, 0x33, 0x2D, 0x47, 0x77, 0xA5] };
+pub const I_AVN_SPLIT_VIEW_IID: Guid = Guid { data1: 0x479DF0CB, data2: 0x0A05, data3: 0x57C9, data4: [0xB1, 0x6D, 0xDF, 0x26, 0xC3, 0xB7, 0x23, 0xC3] };
 
 #[repr(C)]
 struct IAvnSplitViewVtbl {
@@ -69699,6 +70582,7 @@ struct IAvnSplitViewVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnSplitView, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnSplitView, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnSplitView, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnSplitView, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSplitView, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnSplitView, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnSplitView, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -69898,6 +70782,14 @@ impl ComPtr<IAvnSplitView> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -70692,7 +71584,7 @@ impl ComPtr<IAvnSplitView> {
     }
 }
 
-pub const I_AVN_STACK_PANEL_IID: Guid = Guid { data1: 0x06DEF48F, data2: 0x0009, data3: 0x59F5, data4: [0xBD, 0x84, 0xCD, 0xBC, 0x19, 0x21, 0x6C, 0x8D] };
+pub const I_AVN_STACK_PANEL_IID: Guid = Guid { data1: 0x6204A5D9, data2: 0x2146, data3: 0x5268, data4: [0x8D, 0x55, 0x72, 0xAE, 0xA9, 0x11, 0xFC, 0xC4] };
 
 #[repr(C)]
 struct IAvnStackPanelVtbl {
@@ -70709,6 +71601,7 @@ struct IAvnStackPanelVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnStackPanel, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnStackPanel, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnStackPanel, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnStackPanel, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnStackPanel, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnStackPanel, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnStackPanel, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -70857,6 +71750,14 @@ impl ComPtr<IAvnStackPanel> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -71299,7 +72200,7 @@ impl ComPtr<IAvnStackPanel> {
     }
 }
 
-pub const I_AVN_TAB_CONTROL_IID: Guid = Guid { data1: 0x55BE846B, data2: 0xE7F9, data3: 0x5394, data4: [0x90, 0xCA, 0xC4, 0xFE, 0xCC, 0xBC, 0x6D, 0x36] };
+pub const I_AVN_TAB_CONTROL_IID: Guid = Guid { data1: 0x39B56926, data2: 0x1CE5, data3: 0x50D0, data4: [0x81, 0xEC, 0x44, 0x73, 0x68, 0xD7, 0x76, 0x50] };
 
 #[repr(C)]
 struct IAvnTabControlVtbl {
@@ -71316,6 +72217,7 @@ struct IAvnTabControlVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnTabControl, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnTabControl, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnTabControl, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnTabControl, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTabControl, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTabControl, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTabControl, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -71519,6 +72421,14 @@ impl ComPtr<IAvnTabControl> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -72346,7 +73256,7 @@ impl ComPtr<IAvnTabControl> {
     }
 }
 
-pub const I_AVN_TAB_ITEM_IID: Guid = Guid { data1: 0x82654BE5, data2: 0x3931, data3: 0x50DE, data4: [0x8F, 0xFF, 0x22, 0x24, 0x94, 0x21, 0xEF, 0xF1] };
+pub const I_AVN_TAB_ITEM_IID: Guid = Guid { data1: 0x38AA4717, data2: 0xC94C, data3: 0x5681, data4: [0x84, 0x19, 0xEC, 0x7F, 0xAA, 0x4B, 0xD1, 0x03] };
 
 #[repr(C)]
 struct IAvnTabItemVtbl {
@@ -72363,6 +73273,7 @@ struct IAvnTabItemVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnTabItem, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnTabItem, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnTabItem, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnTabItem, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTabItem, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTabItem, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTabItem, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -72456,6 +73367,7 @@ struct IAvnTabItemVtbl {
     set_header: unsafe extern "system" fn(*mut IAvnTabItem, *mut IAvnControl) -> i32,
     get_header_template: unsafe extern "system" fn(*mut IAvnTabItem, *mut *mut IAvnDataTemplate) -> i32,
     set_header_template: unsafe extern "system" fn(*mut IAvnTabItem, *mut IAvnDataTemplate) -> i32,
+    get_tab_strip_placement: unsafe extern "system" fn(*mut IAvnTabItem, *mut *mut u16) -> i32,
     get_is_selected: unsafe extern "system" fn(*mut IAvnTabItem, *mut i32) -> i32,
     set_is_selected: unsafe extern "system" fn(*mut IAvnTabItem, i32) -> i32,
     get_icon: unsafe extern "system" fn(*mut IAvnTabItem, *mut AvnVariant) -> i32,
@@ -72548,6 +73460,14 @@ impl ComPtr<IAvnTabItem> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -73190,6 +74110,14 @@ impl ComPtr<IAvnTabItem> {
             hresult::check(hr)
         }
     }
+    pub fn get_tab_strip_placement(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_tab_strip_placement)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
     pub fn get_is_selected(&self) -> Result<bool> {
         unsafe {
             let mut value: i32 = 0;
@@ -73248,7 +74176,7 @@ impl ComPtr<IAvnTabItem> {
     }
 }
 
-pub const I_AVN_TABLE_VIEW_IID: Guid = Guid { data1: 0x392653F7, data2: 0x38D0, data3: 0x5CFA, data4: [0xA8, 0x95, 0x55, 0xF0, 0x19, 0x41, 0x2F, 0x67] };
+pub const I_AVN_TABLE_VIEW_IID: Guid = Guid { data1: 0x821BBBB0, data2: 0xD39A, data3: 0x59BF, data4: [0xA0, 0xC5, 0xD2, 0xF9, 0x06, 0xC0, 0x97, 0xB4] };
 
 #[repr(C)]
 struct IAvnTableViewVtbl {
@@ -73265,6 +74193,7 @@ struct IAvnTableViewVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnTableView, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnTableView, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnTableView, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnTableView, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTableView, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTableView, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTableView, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -73462,6 +74391,14 @@ impl ComPtr<IAvnTableView> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -74243,7 +75180,7 @@ impl ComPtr<IAvnTableView> {
     }
 }
 
-pub const I_AVN_TABLE_VIEW_CELL_IID: Guid = Guid { data1: 0x022C4C5D, data2: 0x40DC, data3: 0x5A7B, data4: [0x98, 0x7B, 0x49, 0xFC, 0x04, 0x1E, 0xB5, 0x4E] };
+pub const I_AVN_TABLE_VIEW_CELL_IID: Guid = Guid { data1: 0xDCE07AFA, data2: 0xF57E, data3: 0x51BE, data4: [0xA8, 0x48, 0x9C, 0x3D, 0xAE, 0xB0, 0x7F, 0xF7] };
 
 #[repr(C)]
 struct IAvnTableViewCellVtbl {
@@ -74260,6 +75197,7 @@ struct IAvnTableViewCellVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTableViewCell, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -74433,6 +75371,14 @@ impl ComPtr<IAvnTableViewCell> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -75049,7 +75995,7 @@ impl ComPtr<IAvnTableViewCell> {
     }
 }
 
-pub const I_AVN_TABLE_VIEW_COLUMN_IID: Guid = Guid { data1: 0x990EDF7E, data2: 0x9D9F, data3: 0x5723, data4: [0x85, 0xB9, 0xF1, 0x77, 0x94, 0x0E, 0xC0, 0xA0] };
+pub const I_AVN_TABLE_VIEW_COLUMN_IID: Guid = Guid { data1: 0xC3667189, data2: 0x5478, data3: 0x5139, data4: [0x99, 0xED, 0x9B, 0x0D, 0x42, 0xB5, 0x12, 0x22] };
 
 #[repr(C)]
 struct IAvnTableViewColumnVtbl {
@@ -75066,6 +76012,7 @@ struct IAvnTableViewColumnVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTableViewColumn, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTableViewColumn, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -75180,6 +76127,14 @@ impl ComPtr<IAvnTableViewColumn> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -75390,7 +76345,7 @@ impl ComPtr<IAvnTableViewColumn> {
     }
 }
 
-pub const I_AVN_TABLE_VIEW_ROW_IID: Guid = Guid { data1: 0x9B58649B, data2: 0xA602, data3: 0x5C4A, data4: [0xA7, 0xE0, 0xE1, 0x67, 0x9E, 0xE8, 0x21, 0xE4] };
+pub const I_AVN_TABLE_VIEW_ROW_IID: Guid = Guid { data1: 0x09639F3C, data2: 0xC4AF, data3: 0x5333, data4: [0x93, 0x1F, 0xD9, 0x0E, 0x3D, 0x8F, 0xC1, 0x86] };
 
 #[repr(C)]
 struct IAvnTableViewRowVtbl {
@@ -75407,6 +76362,7 @@ struct IAvnTableViewRowVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTableViewRow, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -75582,6 +76538,14 @@ impl ComPtr<IAvnTableViewRow> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -76212,7 +77176,7 @@ impl ComPtr<IAvnTableViewRow> {
     }
 }
 
-pub const I_AVN_TEXT_BLOCK_IID: Guid = Guid { data1: 0xCF4DB500, data2: 0x9FB3, data3: 0x5739, data4: [0xAA, 0x61, 0x27, 0xC5, 0x92, 0x7B, 0x15, 0x15] };
+pub const I_AVN_TEXT_BLOCK_IID: Guid = Guid { data1: 0x035A0C16, data2: 0x4677, data3: 0x58D9, data4: [0xA2, 0x39, 0xF0, 0x16, 0x4D, 0x27, 0x3F, 0xCC] };
 
 #[repr(C)]
 struct IAvnTextBlockVtbl {
@@ -76229,6 +77193,7 @@ struct IAvnTextBlockVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnTextBlock, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnTextBlock, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnTextBlock, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnTextBlock, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTextBlock, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTextBlock, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTextBlock, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -76402,6 +77367,14 @@ impl ComPtr<IAvnTextBlock> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -77018,7 +77991,7 @@ impl ComPtr<IAvnTextBlock> {
     }
 }
 
-pub const I_AVN_TEXT_BOX_IID: Guid = Guid { data1: 0xF9AAC3B5, data2: 0xFD08, data3: 0x5D95, data4: [0x90, 0xB6, 0xF6, 0x90, 0x2B, 0x92, 0x3D, 0xEA] };
+pub const I_AVN_TEXT_BOX_IID: Guid = Guid { data1: 0x477DB397, data2: 0xE368, data3: 0x5FCD, data4: [0xB1, 0xC5, 0xF7, 0x85, 0xF3, 0xD6, 0xAC, 0x58] };
 
 #[repr(C)]
 struct IAvnTextBoxVtbl {
@@ -77035,6 +78008,7 @@ struct IAvnTextBoxVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnTextBox, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnTextBox, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnTextBox, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTextBox, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -77287,6 +78261,14 @@ impl ComPtr<IAvnTextBox> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -78448,7 +79430,7 @@ impl ComPtr<IAvnTextBox> {
     }
 }
 
-pub const I_AVN_THEME_VARIANT_SCOPE_IID: Guid = Guid { data1: 0x84FFEBDD, data2: 0x6FD0, data3: 0x57D6, data4: [0xAD, 0x5B, 0x94, 0x8A, 0xD9, 0xCC, 0xF9, 0xE9] };
+pub const I_AVN_THEME_VARIANT_SCOPE_IID: Guid = Guid { data1: 0xD911D81B, data2: 0x28B5, data3: 0x5A8B, data4: [0xBF, 0xCE, 0x69, 0x47, 0xA9, 0x9C, 0x89, 0x8D] };
 
 #[repr(C)]
 struct IAvnThemeVariantScopeVtbl {
@@ -78465,6 +79447,7 @@ struct IAvnThemeVariantScopeVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnThemeVariantScope, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -78522,6 +79505,8 @@ struct IAvnThemeVariantScopeVtbl {
     set_child: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut IAvnControl) -> i32,
     get_padding: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut AvnThickness) -> i32,
     set_padding: unsafe extern "system" fn(*mut IAvnThemeVariantScope, AvnThickness) -> i32,
+    get_requested_theme_variant: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut *mut u16) -> i32,
+    set_requested_theme_variant: unsafe extern "system" fn(*mut IAvnThemeVariantScope, *mut u16) -> i32,
 }
 
 #[repr(C)]
@@ -78606,6 +79591,14 @@ impl ComPtr<IAvnThemeVariantScope> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -78996,9 +79989,23 @@ impl ComPtr<IAvnThemeVariantScope> {
             hresult::check(hr)
         }
     }
+    pub fn get_requested_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_requested_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_requested_theme_variant(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_requested_theme_variant)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
 }
 
-pub const I_AVN_TIME_PICKER_IID: Guid = Guid { data1: 0xB52FCE9D, data2: 0x9E86, data3: 0x56DE, data4: [0x9B, 0x85, 0x66, 0x19, 0x62, 0x28, 0x83, 0x40] };
+pub const I_AVN_TIME_PICKER_IID: Guid = Guid { data1: 0xF8ABF027, data2: 0x98FB, data3: 0x50B3, data4: [0xB8, 0x36, 0x34, 0xAD, 0xCB, 0x26, 0x02, 0x3D] };
 
 #[repr(C)]
 struct IAvnTimePickerVtbl {
@@ -79015,6 +80022,7 @@ struct IAvnTimePickerVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnTimePicker, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnTimePicker, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnTimePicker, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnTimePicker, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTimePicker, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTimePicker, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTimePicker, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -79193,6 +80201,14 @@ impl ComPtr<IAvnTimePicker> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -79843,7 +80859,7 @@ impl ComPtr<IAvnTimePicker> {
     }
 }
 
-pub const I_AVN_TOGGLE_SPLIT_BUTTON_IID: Guid = Guid { data1: 0xE2A7D977, data2: 0x1C3A, data3: 0x5EDA, data4: [0xA3, 0x52, 0xFB, 0xBC, 0x01, 0x29, 0x48, 0xEE] };
+pub const I_AVN_TOGGLE_SPLIT_BUTTON_IID: Guid = Guid { data1: 0x00D24D40, data2: 0x4958, data3: 0x50CD, data4: [0x99, 0xCE, 0x51, 0x7C, 0xE2, 0x6D, 0xAB, 0x43] };
 
 #[repr(C)]
 struct IAvnToggleSplitButtonVtbl {
@@ -79860,6 +80876,7 @@ struct IAvnToggleSplitButtonVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnToggleSplitButton, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -79955,6 +80972,8 @@ struct IAvnToggleSplitButtonVtbl {
     set_command_parameter: unsafe extern "system" fn(*mut IAvnToggleSplitButton, AvnVariant) -> i32,
     get_flyout: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut *mut IAvnFlyoutBase) -> i32,
     set_flyout: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut IAvnFlyoutBase) -> i32,
+    get_hot_key: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut *mut u16) -> i32,
+    set_hot_key: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut u16) -> i32,
     advise_click: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut IAvnSplitButtonClickHandler, *mut i64) -> i32,
     unadvise_click: unsafe extern "system" fn(*mut IAvnToggleSplitButton, i64) -> i32,
     get_is_checked: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut i32) -> i32,
@@ -80045,6 +81064,14 @@ impl ComPtr<IAvnToggleSplitButton> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -80701,6 +81728,20 @@ impl ComPtr<IAvnToggleSplitButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_hot_key(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_hot_key)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_hot_key(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_hot_key)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn advise_click(&self, handler: &ComPtr<IAvnSplitButtonClickHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -80743,7 +81784,7 @@ impl ComPtr<IAvnToggleSplitButton> {
     }
 }
 
-pub const I_AVN_TOGGLE_SWITCH_IID: Guid = Guid { data1: 0x1348B787, data2: 0xF8C9, data3: 0x531B, data4: [0xAA, 0x59, 0x9C, 0x0C, 0xA5, 0x93, 0x94, 0xA2] };
+pub const I_AVN_TOGGLE_SWITCH_IID: Guid = Guid { data1: 0xEE1C2170, data2: 0xFBB8, data3: 0x5129, data4: [0xA5, 0x17, 0x35, 0xD1, 0x61, 0x59, 0xAC, 0xBD] };
 
 #[repr(C)]
 struct IAvnToggleSwitchVtbl {
@@ -80760,6 +81801,7 @@ struct IAvnToggleSwitchVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnToggleSwitch, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -80853,6 +81895,8 @@ struct IAvnToggleSwitchVtbl {
     set_click_mode: unsafe extern "system" fn(*mut IAvnToggleSwitch, i32) -> i32,
     get_command: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut *mut IAvnCommand) -> i32,
     set_command: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut IAvnCommand) -> i32,
+    get_hot_key: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut *mut u16) -> i32,
+    set_hot_key: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut u16) -> i32,
     get_command_parameter: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut AvnVariant) -> i32,
     set_command_parameter: unsafe extern "system" fn(*mut IAvnToggleSwitch, AvnVariant) -> i32,
     get_is_default: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut i32) -> i32,
@@ -80962,6 +82006,14 @@ impl ComPtr<IAvnToggleSwitch> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -81604,6 +82656,20 @@ impl ComPtr<IAvnToggleSwitch> {
             hresult::check(hr)
         }
     }
+    pub fn get_hot_key(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_hot_key)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_hot_key(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_hot_key)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_command_parameter(&self) -> Result<AvnVariant> {
         unsafe {
             let mut value: AvnVariant = AvnVariant::default();
@@ -81780,7 +82846,7 @@ impl ComPtr<IAvnToggleSwitch> {
     }
 }
 
-pub const I_AVN_TOOL_TIP_IID: Guid = Guid { data1: 0xBE9C6EC8, data2: 0x91D2, data3: 0x5F78, data4: [0xB1, 0x0C, 0x10, 0xF4, 0x7B, 0x06, 0x30, 0x51] };
+pub const I_AVN_TOOL_TIP_IID: Guid = Guid { data1: 0xD71B4D84, data2: 0x3C36, data3: 0x5DFC, data4: [0xBB, 0x9D, 0x5E, 0x2B, 0x2C, 0x77, 0x66, 0x1C] };
 
 #[repr(C)]
 struct IAvnToolTipVtbl {
@@ -81797,6 +82863,7 @@ struct IAvnToolTipVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnToolTip, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnToolTip, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnToolTip, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnToolTip, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnToolTip, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnToolTip, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnToolTip, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -81970,6 +83037,14 @@ impl ComPtr<IAvnToolTip> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -82586,7 +83661,7 @@ impl ComPtr<IAvnToolTip> {
     }
 }
 
-pub const I_AVN_TRANSITIONING_CONTENT_CONTROL_IID: Guid = Guid { data1: 0xDC8A503C, data2: 0x0F8C, data3: 0x521E, data4: [0xAA, 0x06, 0x30, 0xFD, 0xA2, 0x4A, 0xF7, 0x82] };
+pub const I_AVN_TRANSITIONING_CONTENT_CONTROL_IID: Guid = Guid { data1: 0xB0897D9E, data2: 0x2457, data3: 0x5599, data4: [0xAC, 0x57, 0x98, 0x7A, 0x17, 0x89, 0x1C, 0xB5] };
 
 #[repr(C)]
 struct IAvnTransitioningContentControlVtbl {
@@ -82603,6 +83678,7 @@ struct IAvnTransitioningContentControlVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -82778,6 +83854,14 @@ impl ComPtr<IAvnTransitioningContentControl> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -83540,7 +84624,7 @@ impl ComPtr<IAvnTrayIcon> {
     }
 }
 
-pub const I_AVN_TREE_VIEW_IID: Guid = Guid { data1: 0x55FBE939, data2: 0x4991, data3: 0x5799, data4: [0x9B, 0x97, 0xE0, 0x2C, 0x45, 0xA7, 0xC5, 0xCE] };
+pub const I_AVN_TREE_VIEW_IID: Guid = Guid { data1: 0x429B6166, data2: 0x93D8, data3: 0x5C3A, data4: [0xAC, 0xCD, 0x6F, 0x0D, 0xC4, 0xB0, 0x9F, 0x74] };
 
 #[repr(C)]
 struct IAvnTreeViewVtbl {
@@ -83557,6 +84641,7 @@ struct IAvnTreeViewVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnTreeView, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnTreeView, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnTreeView, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnTreeView, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTreeView, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -83750,6 +84835,14 @@ impl ComPtr<IAvnTreeView> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -84501,7 +85594,7 @@ impl ComPtr<IAvnTreeView> {
     }
 }
 
-pub const I_AVN_TREE_VIEW_ITEM_IID: Guid = Guid { data1: 0xCD34AC5C, data2: 0xD06B, data3: 0x5236, data4: [0xAA, 0x46, 0x91, 0x15, 0x9E, 0x3B, 0x96, 0x19] };
+pub const I_AVN_TREE_VIEW_ITEM_IID: Guid = Guid { data1: 0x83BE9453, data2: 0xEC64, data3: 0x588A, data4: [0x83, 0xDF, 0x4D, 0x33, 0x19, 0x82, 0x6D, 0x9D] };
 
 #[repr(C)]
 struct IAvnTreeViewItemVtbl {
@@ -84518,6 +85611,7 @@ struct IAvnTreeViewItemVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnTreeViewItem, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -84708,6 +85802,14 @@ impl ComPtr<IAvnTreeViewItem> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -85442,7 +86544,7 @@ impl ComPtr<IAvnTreeViewItem> {
     }
 }
 
-pub const I_AVN_USER_CONTROL_IID: Guid = Guid { data1: 0xD2E51CF9, data2: 0x2C52, data3: 0x58A6, data4: [0x85, 0xEF, 0x69, 0xBF, 0xB7, 0xDB, 0x08, 0xE6] };
+pub const I_AVN_USER_CONTROL_IID: Guid = Guid { data1: 0x2B78A65D, data2: 0x92E5, data3: 0x50C2, data4: [0x83, 0x46, 0x69, 0xC1, 0x1A, 0x50, 0x29, 0x1A] };
 
 #[repr(C)]
 struct IAvnUserControlVtbl {
@@ -85459,6 +86561,7 @@ struct IAvnUserControlVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnUserControl, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnUserControl, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnUserControl, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnUserControl, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnUserControl, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnUserControl, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnUserControl, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -85632,6 +86735,14 @@ impl ComPtr<IAvnUserControl> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -86248,7 +87359,7 @@ impl ComPtr<IAvnUserControl> {
     }
 }
 
-pub const I_AVN_VIEWBOX_IID: Guid = Guid { data1: 0x64FA83DF, data2: 0x7D36, data3: 0x5426, data4: [0xB9, 0x6A, 0x99, 0xFC, 0x42, 0x35, 0x8F, 0xB8] };
+pub const I_AVN_VIEWBOX_IID: Guid = Guid { data1: 0xDBE5256B, data2: 0xBE6C, data3: 0x53BD, data4: [0xA0, 0x42, 0xE7, 0xC7, 0x94, 0x82, 0x8B, 0x89] };
 
 #[repr(C)]
 struct IAvnViewboxVtbl {
@@ -86265,6 +87376,7 @@ struct IAvnViewboxVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnViewbox, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnViewbox, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnViewbox, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnViewbox, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnViewbox, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnViewbox, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnViewbox, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -86408,6 +87520,14 @@ impl ComPtr<IAvnViewbox> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -86814,7 +87934,7 @@ impl ComPtr<IAvnViewbox> {
     }
 }
 
-pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0x4788E114, data2: 0x77CC, data3: 0x59F7, data4: [0xA0, 0xB3, 0xDF, 0x3B, 0xC1, 0x93, 0x7C, 0x1B] };
+pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0xE0A4929B, data2: 0x9D25, data3: 0x57B2, data4: [0x92, 0x99, 0xB5, 0x5F, 0x8A, 0xDA, 0xFA, 0xF5] };
 
 #[repr(C)]
 struct IAvnWindowVtbl {
@@ -86831,6 +87951,7 @@ struct IAvnWindowVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnWindow, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnWindow, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnWindow, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnWindow, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -87045,6 +88166,14 @@ impl ComPtr<IAvnWindow> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -87946,7 +89075,7 @@ impl ComPtr<IAvnWindow> {
     }
 }
 
-pub const I_AVN_WRAP_PANEL_IID: Guid = Guid { data1: 0x5D628CDD, data2: 0xE8CC, data3: 0x5D5D, data4: [0x9A, 0xC5, 0x46, 0x77, 0x0B, 0xE0, 0x5E, 0xA8] };
+pub const I_AVN_WRAP_PANEL_IID: Guid = Guid { data1: 0x06EEE108, data2: 0xF971, data3: 0x5B13, data4: [0x9E, 0x58, 0xE4, 0xF8, 0xC5, 0xC4, 0xBB, 0xD9] };
 
 #[repr(C)]
 struct IAvnWrapPanelVtbl {
@@ -87963,6 +89092,7 @@ struct IAvnWrapPanelVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnWrapPanel, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnWrapPanel, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -88115,6 +89245,14 @@ impl ComPtr<IAvnWrapPanel> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {
@@ -88585,7 +89723,7 @@ impl ComPtr<IAvnWrapPanel> {
     }
 }
 
-pub const I_AVN_STYLED_ELEMENT_IID: Guid = Guid { data1: 0x4262B197, data2: 0x29CE, data3: 0x5433, data4: [0x81, 0x6A, 0xF2, 0xD1, 0x88, 0x38, 0x98, 0x53] };
+pub const I_AVN_STYLED_ELEMENT_IID: Guid = Guid { data1: 0x383D0620, data2: 0x1A23, data3: 0x575B, data4: [0xB6, 0x09, 0x39, 0x16, 0x08, 0x90, 0x3C, 0xB1] };
 
 #[repr(C)]
 struct IAvnStyledElementVtbl {
@@ -88602,6 +89740,7 @@ struct IAvnStyledElementVtbl {
     get_is_initialized: unsafe extern "system" fn(*mut IAvnStyledElement, *mut i32) -> i32,
     get_templated_parent: unsafe extern "system" fn(*mut IAvnStyledElement, *mut *mut IAvnAvaloniaObject) -> i32,
     get_parent: unsafe extern "system" fn(*mut IAvnStyledElement, *mut *mut IAvnStyledElement) -> i32,
+    get_actual_theme_variant: unsafe extern "system" fn(*mut IAvnStyledElement, *mut *mut u16) -> i32,
     advise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnStyledElement, *mut IAvnStyledElementAttachedToLogicalTreeHandler, *mut i64) -> i32,
     unadvise_attached_to_logical_tree: unsafe extern "system" fn(*mut IAvnStyledElement, i64) -> i32,
     advise_detached_from_logical_tree: unsafe extern "system" fn(*mut IAvnStyledElement, *mut IAvnStyledElementDetachedFromLogicalTreeHandler, *mut i64) -> i32,
@@ -88698,6 +89837,14 @@ impl ComPtr<IAvnStyledElement> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_parent)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_actual_theme_variant(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_actual_theme_variant)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
         }
     }
     pub fn advise_attached_to_logical_tree(&self, handler: &ComPtr<IAvnStyledElementAttachedToLogicalTreeHandler>) -> Result<i64> {

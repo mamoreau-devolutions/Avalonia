@@ -38,9 +38,7 @@ Avalonia.Controls.AutoCompleteBox.TextSelector: By design: the selector delegate
 Avalonia.Controls.AutoCompleteBox.AsyncPopulator: By design: async population needs the async-completion transport
 Avalonia.Controls.AutoCompleteBox.Populated: By design: the populated collection payload has no event shape yet
 Avalonia.Controls.AutoCompleteBox.SelectionChanged: By design: the added/removed collection payload has no event shape yet
-Avalonia.Controls.Border.BoxShadow: By design: the multi-shadow model needs a shadow ABI shape
 Avalonia.Controls.Border.Render(DrawingContext): By design: custom drawing is not part of the projected model
-Avalonia.Controls.Button.HotKey: By design: KeyGesture is not part of the projected model
 Avalonia.Controls.Calendar.SelectedDatesChanged: By design: the added/removed collection payload has no event shape yet
 Avalonia.Controls.Calendar.ToString(): By design: identity and formatting members are not ABI surface
 Avalonia.Controls.CalendarDatePicker.TextConverter: By design: the converter is owned by the host
@@ -93,8 +91,6 @@ Avalonia.Controls.Menu.Open(): By design: the suppressed override of the base Op
 Avalonia.Controls.MenuFlyout.FlyoutPresenterClasses: By design: styling is owned by the host
 Avalonia.Controls.MenuFlyout.ItemContainerTheme: By design: container themes are styling owned by the host
 Avalonia.Controls.MenuFlyout.FlyoutPresenterTheme: By design: styling is owned by the host
-Avalonia.Controls.MenuItem.HotKey: By design: KeyGesture is not part of the projected model
-Avalonia.Controls.MenuItem.InputGesture: By design: input gestures are not part of the projected model
 Avalonia.Controls.MenuItem.PointerEnteredItem: By design: internal hover plumbing is owned by the host
 Avalonia.Controls.MenuItem.PointerExitedItem: By design: internal hover plumbing is owned by the host
 Avalonia.Controls.Notifications.WindowNotificationManager.Show(Object, NotificationType, Nullable`1, Action, Action, String[]): By design: System.Action parameters ride the notification CCW's handler slots instead
@@ -133,7 +129,6 @@ Avalonia.Controls.RefreshContainer.Visualizer: By design: the visualizer is temp
 Avalonia.Controls.Shapes.Shape.DefiningGeometry: By design: geometry internals are owned by the host
 Avalonia.Controls.Shapes.Shape.RenderedGeometry: By design: geometry internals are owned by the host
 Avalonia.Controls.Shapes.Shape.Render(DrawingContext): By design: custom drawing is not part of the projected model
-Avalonia.Controls.SplitButton.HotKey: By design: KeyGesture is not part of the projected model
 Avalonia.Controls.SplitView.TemplateSettings: By design: template settings are styling owned by the host
 Avalonia.Controls.StackPanel.HorizontalSnapPointsChanged: By design: snap points are layout plumbing owned by the host
 Avalonia.Controls.StackPanel.VerticalSnapPointsChanged: By design: snap points are layout plumbing owned by the host
@@ -141,7 +136,6 @@ Avalonia.Controls.StackPanel.GetIrregularSnapPoints(Orientation, SnapPointsAlign
 Avalonia.Controls.StackPanel.GetRegularSnapPoints(Orientation, SnapPointsAlignment, Double&): By design: snap points are layout plumbing owned by the host
 Avalonia.Controls.TabControl.PageTransition: By design: transitions are animation internals owned by the host
 Avalonia.Controls.TabControl.UpdateSelectionFromEvent(Control, RoutedEventArgs): By design: initialization and internal plumbing is owned by the host
-Avalonia.Controls.TabItem.TabStripPlacement: By design: a nullable enum has no ABI shape yet
 Avalonia.Controls.TableView.DisplayMemberBinding: By design: bindings are not projected; use the imperative surface
 Avalonia.Controls.TableView.ItemTemplate: By design: U19 projects the data templates; container themes are styling
 Avalonia.Controls.TableView.Columns: By design: the typed column list needs its own element ABI
@@ -159,7 +153,6 @@ Avalonia.Controls.TextBox.Watermark: By design: obsolete alias of PlaceholderTex
 Avalonia.Controls.TextBox.UseFloatingWatermark: By design: obsolete alias of UseFloatingPlaceholder
 Avalonia.Controls.TextBox.WatermarkForeground: By design: obsolete alias of PlaceholderForeground
 Avalonia.Controls.TextBox.TextChanging: By design: the undo-args payload has no event shape yet
-Avalonia.Controls.ThemeVariantScope.RequestedThemeVariant: By design: the ThemeVariant struct has no ABI shape yet
 Avalonia.Controls.TimePicker.SelectedTimeChanged: By design: the nullable TimeSpan payload has no event shape yet
 Avalonia.Controls.ToggleSwitch.OffContentPresenter: By design: template-part presenters are internal layout plumbing
 Avalonia.Controls.ToggleSwitch.OnContentPresenter: By design: template-part presenters are internal layout plumbing
@@ -183,7 +176,6 @@ Avalonia.StyledElement.Styles: By design: the style system is not projected; use
 Avalonia.StyledElement.StyleKey: By design: styling is owned by the host
 Avalonia.StyledElement.Resources: By design: the resource dictionary is not part of the projected model
 Avalonia.StyledElement.Theme: By design: control themes are styling owned by the host
-Avalonia.StyledElement.ActualThemeVariant: By design: the ThemeVariant struct has no ABI shape yet
 Avalonia.StyledElement.BeginInit(): By design: initialization and internal plumbing is owned by the host
 Avalonia.StyledElement.EndInit(): By design: initialization and internal plumbing is owned by the host
 Avalonia.StyledElement.ApplyStyling(): By design: styling is owned by the host

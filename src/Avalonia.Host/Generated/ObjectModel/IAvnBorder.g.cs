@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("F1BD3859-B8DE-550E-8D39-A67EFA9A11FE")]
+[Guid("E6C1AF67-EE15-5111-B7C8-3EA8CCB37F37")]
 public partial interface IAvnBorder : IAvnDecorator
 {
     [PreserveSig]
@@ -38,6 +38,12 @@ public partial interface IAvnBorder : IAvnDecorator
 
     [PreserveSig]
     int SetCornerRadius(AvnCornerRadius value);
+
+    [PreserveSig]
+    int GetBoxShadow(out string value);
+
+    [PreserveSig]
+    int SetBoxShadow(string value);
 
     [PreserveSig]
     int GetClipToBoundsRadius(out AvnCornerRadius value);
@@ -229,6 +235,22 @@ public sealed partial class AvnBorder : IAvnBorder
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = (IAvnStyledElement?)ProjectionRuntime.Wrap(_value.Parent as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetActualThemeVariant(out string? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = global::Avalonia.Host.Com.AvnThemeVariant.ToAbi(_value.ActualThemeVariant);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -1450,6 +1472,37 @@ public sealed partial class AvnBorder : IAvnBorder
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.CornerRadius = value.ToAvalonia();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetBoxShadow(out string value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = global::Avalonia.Host.Com.AvnBoxShadows.ToAbi(_value.BoxShadow);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetBoxShadow(string value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.BoxShadow = global::Avalonia.Host.Com.AvnBoxShadows.FromAbi(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
