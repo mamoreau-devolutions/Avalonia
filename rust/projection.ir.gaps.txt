@@ -43,11 +43,8 @@ Avalonia.Controls.AutoCompleteBox.SelectionChanged: Not included by projection p
 Avalonia.Controls.Border.BoxShadow: Not included by projection policy
 Avalonia.Controls.Border.Render(DrawingContext): Not included by projection policy
 Avalonia.Controls.Button.HotKey: Not included by projection policy
-Avalonia.Controls.Calendar.SelectedDates: Not included by projection policy
-Avalonia.Controls.Calendar.BlackoutDates: Not included by projection policy
 Avalonia.Controls.Calendar.SelectedDatesChanged: Not included by projection policy
 Avalonia.Controls.Calendar.ToString(): Not included by projection policy
-Avalonia.Controls.CalendarDatePicker.BlackoutDates: Not included by projection policy
 Avalonia.Controls.CalendarDatePicker.TextConverter: Not included by projection policy
 Avalonia.Controls.CalendarDatePicker.Watermark: Not included by projection policy
 Avalonia.Controls.CalendarDatePicker.UseFloatingWatermark: Not included by projection policy

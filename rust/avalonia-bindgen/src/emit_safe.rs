@@ -255,6 +255,28 @@ fn emit_collection(property: &ProjectedProperty) -> String {
              \x20       Ok(self.raw.index_of(*value)?.is_some())\n\
              \x20   }\n",
         ),
+        Some("DateTimeI64") => out.push_str(
+            "    pub fn get(&self, index: usize) -> Result<std::time::SystemTime> {\n\
+             \x20       let ticks = self.raw.get(index)?;\n\
+             \x20       let unix_ticks = ticks - sys::DOTNET_EPOCH_OFFSET_TICKS;\n\
+             \x20       let nanos = (unix_ticks.clamp(0, i64::MAX) as u128) * 100;\n\
+             \x20       Ok(std::time::UNIX_EPOCH + std::time::Duration::from_nanos(nanos as u64))\n\
+             \x20   }\n\
+             \x20   pub fn add(&self, value: std::time::SystemTime) -> Result<()> {\n\
+             \x20       let ticks = value\n\
+             \x20           .duration_since(std::time::UNIX_EPOCH)\n\
+             \x20           .map(|delta| delta.as_nanos() / 100)\n\
+             \x20           .unwrap_or(0) as i64;\n\
+             \x20       Ok(self.raw.add(ticks + sys::DOTNET_EPOCH_OFFSET_TICKS)?)\n\
+             \x20   }\n\
+             \x20   pub fn contains(&self, value: std::time::SystemTime) -> Result<bool> {\n\
+             \x20       let ticks = value\n\
+             \x20           .duration_since(std::time::UNIX_EPOCH)\n\
+             \x20           .map(|delta| delta.as_nanos() / 100)\n\
+             \x20           .unwrap_or(0) as i64;\n\
+             \x20       Ok(self.raw.index_of(ticks + sys::DOTNET_EPOCH_OFFSET_TICKS)?.is_some())\n\
+             \x20   }\n",
+        ),
         kind => panic!("unsupported safe collection element kind {kind:?}"),
     }
     out.push_str(

@@ -511,8 +511,8 @@
       "name": "IAvnCalendar",
       "fullName": "Avalonia.Host.Com.IAvnCalendar",
       "kind": "Class",
-      "iid": "3B735E53-DF0B-5D44-8FCD-C571725C1BAE",
-      "abiVersion": 9,
+      "iid": "E75BAB94-5A50-539D-99E3-237C7385E05C",
+      "abiVersion": 10,
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.Calendar",
       "isConstructible": true,
@@ -603,6 +603,19 @@
           "stringConverterTypeName": "Avalonia.Host.Com.AvnCalendarDate"
         },
         {
+          "name": "SelectedDates",
+          "kind": "ComCollection",
+          "canRead": true,
+          "canWrite": false,
+          "interfaceName": "Avalonia.Host.Com.IAvnDateTimeList",
+          "interfaceIid": "B658E870-3FAB-5BA7-AB02-2FC7B764C889",
+          "interfaceAbiVersion": 1,
+          "elementKind": "DateTimeI64",
+          "managedTypeName": "Avalonia.Controls.Primitives.SelectedDatesCollection",
+          "isNullable": false,
+          "hostImplementationTypeName": "Avalonia.Host.Com.AvnDateList"
+        },
+        {
           "name": "DisplayDate",
           "kind": "StringUtf16",
           "canRead": true,
@@ -621,6 +634,19 @@
           "managedTypeName": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
           "isNullable": true,
           "stringConverterTypeName": "Avalonia.Host.Com.AvnCalendarDate"
+        },
+        {
+          "name": "BlackoutDates",
+          "kind": "ComCollection",
+          "canRead": true,
+          "canWrite": false,
+          "interfaceName": "Avalonia.Host.Com.IAvnDateTimeList",
+          "interfaceIid": "B658E870-3FAB-5BA7-AB02-2FC7B764C889",
+          "interfaceAbiVersion": 1,
+          "elementKind": "DateTimeI64",
+          "managedTypeName": "Avalonia.Controls.Primitives.CalendarBlackoutDatesCollection",
+          "isNullable": false,
+          "hostImplementationTypeName": "Avalonia.Host.Com.AvnDateList"
         },
         {
           "name": "DisplayDateEnd",
@@ -688,8 +714,8 @@
       "name": "IAvnCalendarDatePicker",
       "fullName": "Avalonia.Host.Com.IAvnCalendarDatePicker",
       "kind": "Class",
-      "iid": "A48CB466-A936-5D7A-A34B-FFD9D6BEA153",
-      "abiVersion": 8,
+      "iid": "6A20C08A-54D2-5871-84EB-C9F254EB179F",
+      "abiVersion": 9,
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.CalendarDatePicker",
       "isConstructible": true,
@@ -703,6 +729,19 @@
         }
       ],
       "properties": [
+        {
+          "name": "BlackoutDates",
+          "kind": "ComCollection",
+          "canRead": true,
+          "canWrite": false,
+          "interfaceName": "Avalonia.Host.Com.IAvnDateTimeList",
+          "interfaceIid": "B658E870-3FAB-5BA7-AB02-2FC7B764C889",
+          "interfaceAbiVersion": 1,
+          "elementKind": "DateTimeI64",
+          "managedTypeName": "Avalonia.Controls.Primitives.CalendarBlackoutDatesCollection",
+          "isNullable": false,
+          "hostImplementationTypeName": "Avalonia.Host.Com.AvnDateList"
+        },
         {
           "name": "DisplayDate",
           "kind": "StringUtf16",
@@ -11462,27 +11501,12 @@
     },
     {
       "owner": "Avalonia.Controls.Calendar",
-      "member": "SelectedDates",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Calendar",
-      "member": "BlackoutDates",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Calendar",
       "member": "SelectedDatesChanged",
       "reason": "Not included by projection policy"
     },
     {
       "owner": "Avalonia.Controls.Calendar",
       "member": "ToString()",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.CalendarDatePicker",
-      "member": "BlackoutDates",
       "reason": "Not included by projection policy"
     },
     {

@@ -1709,7 +1709,7 @@ public sealed partial class AvnSelectingItemsControl : IAvnSelectingItemsControl
         {
             using var call = _state.EnterCall();
             _value.VerifyAccess();
-            _value.ItemsSource = AvnVariantListMarshal.ToManaged(value);
+            _value.ItemsSource = (global::System.Collections.IEnumerable?)(AvnVariantListMarshal.ToManaged(value))!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

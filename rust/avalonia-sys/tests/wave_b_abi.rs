@@ -128,7 +128,9 @@ fn the_pickers_carry_dates_and_times_as_utf16_strings() {
         assert!(HEADER.contains(expected), "header is missing `{expected}`");
     }
 
-    for forbidden in ["AvnDateTime", "AvnTimeSpan", "IAvnDateTimeOffset"] {
+    // U23 introduced IAvnDateTimeList (dates as tick collections); the raw
+    // AvnDateTime/AvnTimeSpan structs and the DateTimeOffset interface stay out.
+    for forbidden in ["typedef struct AvnDateTime", "AvnTimeSpan", "IAvnDateTimeOffset"] {
         assert!(
             !HEADER.contains(forbidden),
             "header must not declare `{forbidden}`"

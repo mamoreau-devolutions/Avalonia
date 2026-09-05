@@ -6,9 +6,12 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("A48CB466-A936-5D7A-A34B-FFD9D6BEA153")]
+[Guid("6A20C08A-54D2-5871-84EB-C9F254EB179F")]
 public partial interface IAvnCalendarDatePicker : IAvnTemplatedControl
 {
+    [PreserveSig]
+    int GetBlackoutDates(out IAvnDateTimeList value);
+
     [PreserveSig]
     int GetDisplayDate(out string value);
 
@@ -1732,6 +1735,22 @@ public sealed partial class AvnCalendarDatePicker : IAvnCalendarDatePicker
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Padding = value.ToAvalonia();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetBlackoutDates(out IAvnDateTimeList value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnDateTimeListMarshal.FromManaged(_value.BlackoutDates);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

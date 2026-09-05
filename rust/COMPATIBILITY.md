@@ -453,6 +453,17 @@ collection's Parse exists but its ToString is inherited, so the converter
 owns both halves). The templated-control tree and the shape family
 republish under their fresh IIDs. Factory stays 13.
 
+Wave U23 projects the calendar date collections. Calendar.SelectedDates
+and BlackoutDates, and CalendarDatePicker.BlackoutDates, cross as the
+host-implemented `IAvnDateTimeList` whose elements are int64 DateTime
+tick counts: the `AvnDateList` adapter reads the live collection and
+writes through to it because the calendar owns the storage (Calendar 9
+to 10, CalendarDatePicker 8 to 9). The safe crate exposes
+SystemTime elements with the .NET epoch offset. The
+SelectedDatesChanged/SelectedDateChanged events stay gaps: their
+SelectionChangedEventArgs carry added/removed collections the event
+payload cannot carry yet. Factory stays 13.
+
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and
 `IAvnNumericUpDown` each move from 2 to 3. Templates, filters, ItemsSource,

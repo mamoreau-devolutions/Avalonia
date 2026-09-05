@@ -988,13 +988,15 @@ public static class ComSourceEmitter
         {
             // A host-implemented collection: the interface is generated here; the
             // class lives in the host assembly and owns the adaptation semantics.
+            // The marshal signatures are typed object? so every member sharing
+            // the interface can route through it regardless of CLR collection type.
             sb.AppendLine();
             sb.AppendLine($"public static class {interfaceName[1..]}Marshal");
             sb.AppendLine("{");
-            sb.AppendLine($"    public static {interfaceName}? FromManaged(global::{managedCollectionName}? value) =>");
+            sb.AppendLine($"    public static {interfaceName}? FromManaged(object? value) =>");
             sb.AppendLine($"        value is null ? null : {hostType}.FromManaged(value);");
             sb.AppendLine();
-            sb.AppendLine($"    public static global::{managedCollectionName}? ToManaged({interfaceName}? value) =>");
+            sb.AppendLine($"    public static object? ToManaged({interfaceName}? value) =>");
             sb.AppendLine($"        {hostType}.ToManaged(value);");
             sb.AppendLine("}");
             sb.AppendLine();
@@ -1432,7 +1434,7 @@ public static class ComSourceEmitter
             MarshallingKind.DataTemplate => $"{SimpleName(property.InterfaceName!)[1..]}.ToTemplate(value)",
             MarshallingKind.Variant => "value.ToObject()",
             MarshallingKind.ComCollection => property.HostImplementationTypeName is { }
-                ? $"{SimpleName(property.InterfaceName!)[1..]}Marshal.ToManaged(value)"
+                ? $"(global::{property.ManagedTypeName}?)({SimpleName(property.InterfaceName!)[1..]}Marshal.ToManaged(value))!"
                 : $"{SimpleName(property.InterfaceName!)[1..]}.ToManaged(value)",
             _ when GeometryMarshalling.IsGeometry(property.Kind) => "value.ToAvalonia()",
             _ => "value",

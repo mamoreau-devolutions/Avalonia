@@ -1715,7 +1715,7 @@ public sealed partial class AvnTreeView : IAvnTreeView
         {
             using var call = _state.EnterCall();
             _value.VerifyAccess();
-            _value.ItemsSource = AvnVariantListMarshal.ToManaged(value);
+            _value.ItemsSource = (global::System.Collections.IEnumerable?)(AvnVariantListMarshal.ToManaged(value))!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -1964,7 +1964,7 @@ public sealed partial class AvnTreeView : IAvnTreeView
         {
             using var call = _state.EnterCall();
             _value.VerifyAccess();
-            _value.SelectedItems = AvnSelectedVariantListMarshal.ToManaged(value);
+            _value.SelectedItems = (global::System.Collections.IList?)(AvnSelectedVariantListMarshal.ToManaged(value))!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

@@ -58,8 +58,8 @@ public static class AvaloniaProjectionProfiles
             // Previously version-1 templated types inherit the TemplatedControl bump.
             ["Avalonia.Host.Com.IAvnAutoCompleteBox"] = 11,
             ["Avalonia.Host.Com.IAvnButtonSpinner"] = 7,
-            ["Avalonia.Host.Com.IAvnCalendar"] = 9,
-            ["Avalonia.Host.Com.IAvnCalendarDatePicker"] = 8,
+            ["Avalonia.Host.Com.IAvnCalendar"] = 10,
+            ["Avalonia.Host.Com.IAvnCalendarDatePicker"] = 9,
             ["Avalonia.Host.Com.IAvnCarousel"] = 11,
             ["Avalonia.Host.Com.IAvnCommandBar"] = 9,
             ["Avalonia.Host.Com.IAvnCommand"] = 2,
@@ -485,6 +485,7 @@ public static class AvaloniaProjectionProfiles
                 "DisplayMode", "SelectionMode", "IsTodayHighlighted", "FirstDayOfWeek",
                 "HeaderBackground", "IsWeekNumberVisible", "WeekNumberRule",
                 "AllowTapRangeSelection", "DisplayModeChanged", "DisplayDateChanged",
+                "SelectedDates", "BlackoutDates",
             ],
             ["Avalonia.Controls.CalendarDatePicker"] =
             [
@@ -494,7 +495,7 @@ public static class AvaloniaProjectionProfiles
                 "FirstDayOfWeek", "UseFloatingPlaceholder", "PlaceholderForeground",
                 "DateValidationError",
                 "HorizontalContentAlignment", "VerticalContentAlignment", "WeekNumberRule",
-                "CalendarOpened", "CalendarClosed", "Clear",
+                "CalendarOpened", "CalendarClosed", "Clear", "BlackoutDates",
             ],
             ["Avalonia.Controls.Carousel"] =
                 ["IsSwipeEnabled", "ViewportFraction", "IsSwiping", "Next", "Previous"],
@@ -730,6 +731,30 @@ public static class AvaloniaProjectionProfiles
                 Kind = MarshallingKind.StringUtf16,
                 StringConverterTypeName = "Avalonia.Host.Com.AvnFontFeatures",
                 IsNullable = true,
+            },
+            ["Avalonia.Controls.Calendar.SelectedDates"] = new()
+            {
+                Kind = MarshallingKind.ComCollection,
+                InterfaceName = "Avalonia.Host.Com.IAvnDateTimeList",
+                ElementKind = MarshallingKind.DateTimeI64,
+                HostImplementationTypeName = "Avalonia.Host.Com.AvnDateList",
+                IsNullable = false,
+            },
+            ["Avalonia.Controls.Calendar.BlackoutDates"] = new()
+            {
+                Kind = MarshallingKind.ComCollection,
+                InterfaceName = "Avalonia.Host.Com.IAvnDateTimeList",
+                ElementKind = MarshallingKind.DateTimeI64,
+                HostImplementationTypeName = "Avalonia.Host.Com.AvnDateList",
+                IsNullable = false,
+            },
+            ["Avalonia.Controls.CalendarDatePicker.BlackoutDates"] = new()
+            {
+                Kind = MarshallingKind.ComCollection,
+                InterfaceName = "Avalonia.Host.Com.IAvnDateTimeList",
+                ElementKind = MarshallingKind.DateTimeI64,
+                HostImplementationTypeName = "Avalonia.Host.Com.AvnDateList",
+                IsNullable = false,
             },
             ["Avalonia.Controls.TrayIcon.Icon"] = new()
             {
@@ -1468,6 +1493,7 @@ public static class AvaloniaProjectionProfiles
         },
     };
 }
+
 
 
 

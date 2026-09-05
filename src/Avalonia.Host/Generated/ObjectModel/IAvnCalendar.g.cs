@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("3B735E53-DF0B-5D44-8FCD-C571725C1BAE")]
+[Guid("E75BAB94-5A50-539D-99E3-237C7385E05C")]
 public partial interface IAvnCalendar : IAvnTemplatedControl
 {
     [PreserveSig]
@@ -64,6 +64,9 @@ public partial interface IAvnCalendar : IAvnTemplatedControl
     int SetSelectedDate(string? value);
 
     [PreserveSig]
+    int GetSelectedDates(out IAvnDateTimeList value);
+
+    [PreserveSig]
     int GetDisplayDate(out string value);
 
     [PreserveSig]
@@ -74,6 +77,9 @@ public partial interface IAvnCalendar : IAvnTemplatedControl
 
     [PreserveSig]
     int SetDisplayDateStart(string? value);
+
+    [PreserveSig]
+    int GetBlackoutDates(out IAvnDateTimeList value);
 
     [PreserveSig]
     int GetDisplayDateEnd(out string? value);
@@ -1978,6 +1984,22 @@ public sealed partial class AvnCalendar : IAvnCalendar
         }
     }
 
+    public int GetSelectedDates(out IAvnDateTimeList value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnDateTimeListMarshal.FromManaged(_value.SelectedDates);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetDisplayDate(out string value)
     {
         value = default!;
@@ -2032,6 +2054,22 @@ public sealed partial class AvnCalendar : IAvnCalendar
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.DisplayDateStart = global::Avalonia.Host.Com.AvnCalendarDate.FromAbi(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetBlackoutDates(out IAvnDateTimeList value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnDateTimeListMarshal.FromManaged(_value.BlackoutDates);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

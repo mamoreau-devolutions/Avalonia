@@ -22,17 +22,16 @@ public sealed unsafe partial class AvnObjectList : IAvnVariantList, IAvnSelected
 
     private AvnObjectList(IEnumerable? source) => _source = source;
 
-    public static IAvnVariantList? FromManaged(IEnumerable? value) =>
-        value is null ? null : new AvnObjectList(value);
+    // The generated marshal signatures pass object? because several members share
+    // this adapter with different CLR collection types.
+    public static AvnObjectList? FromManaged(object? value) =>
+        value is null ? null : new AvnObjectList(value as IEnumerable);
 
-    public static IAvnSelectedVariantList? FromManaged(System.Collections.IList? value) =>
-        value is null ? null : new AvnObjectList(value);
-
-    public static IEnumerable? ToManaged(IAvnVariantList? value) =>
+    public static object? ToManaged(IAvnVariantList? value) =>
         value is AvnObjectList local ? local.Materialized() : null;
 
-    public static System.Collections.IList? ToManaged(IAvnSelectedVariantList? value) =>
-        value is AvnObjectList local ? local.Materialized() as System.Collections.IList : null;
+    public static object? ToManaged(IAvnSelectedVariantList? value) =>
+        value is AvnObjectList local ? local.Materialized() : null;
 
     private IEnumerable Materialized()
     {

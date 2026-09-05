@@ -2640,6 +2640,38 @@ impl VariantList {
 }
 
 #[derive(Clone, Debug)]
+pub struct DateTimeList {
+    pub(crate) raw: sys::ComPtr<sys::IAvnDateTimeList>,
+}
+
+impl DateTimeList {
+    pub fn len(&self) -> Result<usize> { Ok(self.raw.len()?) }
+    pub fn is_empty(&self) -> Result<bool> { Ok(self.len()? == 0) }
+    pub fn get(&self, index: usize) -> Result<std::time::SystemTime> {
+        let ticks = self.raw.get(index)?;
+        let unix_ticks = ticks - sys::DOTNET_EPOCH_OFFSET_TICKS;
+        let nanos = (unix_ticks.clamp(0, i64::MAX) as u128) * 100;
+        Ok(std::time::UNIX_EPOCH + std::time::Duration::from_nanos(nanos as u64))
+    }
+    pub fn add(&self, value: std::time::SystemTime) -> Result<()> {
+        let ticks = value
+            .duration_since(std::time::UNIX_EPOCH)
+            .map(|delta| delta.as_nanos() / 100)
+            .unwrap_or(0) as i64;
+        Ok(self.raw.add(ticks + sys::DOTNET_EPOCH_OFFSET_TICKS)?)
+    }
+    pub fn contains(&self, value: std::time::SystemTime) -> Result<bool> {
+        let ticks = value
+            .duration_since(std::time::UNIX_EPOCH)
+            .map(|delta| delta.as_nanos() / 100)
+            .unwrap_or(0) as i64;
+        Ok(self.raw.index_of(ticks + sys::DOTNET_EPOCH_OFFSET_TICKS)?.is_some())
+    }
+    pub fn remove(&self, index: usize) -> Result<()> { Ok(self.raw.remove(index)?) }
+    pub fn clear(&self) -> Result<()> { Ok(self.raw.clear()?) }
+}
+
+#[derive(Clone, Debug)]
 pub struct ItemList {
     pub(crate) raw: sys::ComPtr<sys::IAvnItemList>,
 }
@@ -5501,6 +5533,9 @@ impl Calendar {
         self.set_selected_date(value)?;
         Ok(self)
     }
+    pub fn selected_dates(&self) -> Result<DateTimeList> {
+        Ok(DateTimeList { raw: self.raw.get_selected_dates()? })
+    }
     pub fn get_display_date(&self) -> Result<String> {
         unsafe { sys::take_utf16(self.raw.get_display_date()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
     }
@@ -5522,6 +5557,9 @@ impl Calendar {
     pub fn display_date_start(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_display_date_start(value)?;
         Ok(self)
+    }
+    pub fn blackout_dates(&self) -> Result<DateTimeList> {
+        Ok(DateTimeList { raw: self.raw.get_blackout_dates()? })
     }
     pub fn get_display_date_end(&self) -> Result<Option<String>> {
         unsafe { Ok(sys::take_utf16(self.raw.get_display_date_end()?)) }
@@ -6016,6 +6054,9 @@ impl CalendarDatePicker {
     pub fn padding(self, value: Thickness) -> Result<Self> {
         self.set_padding(value)?;
         Ok(self)
+    }
+    pub fn blackout_dates(&self) -> Result<DateTimeList> {
+        Ok(DateTimeList { raw: self.raw.get_blackout_dates()? })
     }
     pub fn get_display_date(&self) -> Result<String> {
         unsafe { sys::take_utf16(self.raw.get_display_date()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }

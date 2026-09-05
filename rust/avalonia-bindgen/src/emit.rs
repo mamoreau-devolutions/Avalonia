@@ -236,6 +236,25 @@ fn emit_collection(collection: &ProjectedProperty) -> String {
              \x20       }\n\
              \x20   }\n",
         ),
+        "DateTimeI64" => out.push_str(
+            "    pub fn get(&self, index: usize) -> Result<i64> {\n\
+             \x20       unsafe {\n\
+             \x20           let mut value = 0i64;\n\
+             \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_at)(self.as_raw(), index as i32, &mut value);\n\
+             \x20           hresult::check(hr).map(|_| value)\n\
+             \x20       }\n\
+             \x20   }\n\
+             \x20   pub fn add(&self, value: i64) -> Result<()> {\n\
+             \x20       unsafe { hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().add)(self.as_raw(), value)) }\n\
+             \x20   }\n\
+             \x20   pub fn index_of(&self, value: i64) -> Result<Option<usize>> {\n\
+             \x20       unsafe {\n\
+             \x20           let mut index = -1;\n\
+             \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().index_of)(self.as_raw(), value, &mut index);\n\
+             \x20           hresult::check(hr).map(|_| (index >= 0).then_some(index as usize))\n\
+             \x20       }\n\
+             \x20   }\n",
+        ),
         _ => panic!("unsupported collection element kind {element_kind}"),
     }
     out.push_str(

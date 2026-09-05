@@ -30,9 +30,9 @@ public partial interface IAvnVariantList
 
 public static class AvnVariantListMarshal
 {
-    public static IAvnVariantList? FromManaged(global::System.Collections.IEnumerable? value) =>
+    public static IAvnVariantList? FromManaged(object? value) =>
         value is null ? null : Avalonia.Host.Com.AvnObjectList.FromManaged(value);
 
-    public static global::System.Collections.IEnumerable? ToManaged(IAvnVariantList? value) =>
+    public static object? ToManaged(IAvnVariantList? value) =>
         Avalonia.Host.Com.AvnObjectList.ToManaged(value);
 }

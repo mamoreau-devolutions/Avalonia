@@ -1339,8 +1339,8 @@ public class ClrTypeExtractorTests
                 Assert.Equal("Avalonia.Host.Com.IAvnTemplatedControl", type.BaseFullName);
             });
         // U17 grew Calendar alone (DisplayDateChanged); the picker did not move.
-        Assert.Equal(9, Type(ir, "IAvnCalendar").AbiVersion);
-        Assert.Equal(8, Type(ir, "IAvnCalendarDatePicker").AbiVersion);
+        Assert.Equal(10, Type(ir, "IAvnCalendar").AbiVersion);
+        Assert.Equal(9, Type(ir, "IAvnCalendarDatePicker").AbiVersion);
 
         var selected = Type(ir, "IAvnCalendar").Properties.Single(p => p.Name == "SelectedDate");
         Assert.Equal(MarshallingKind.StringUtf16, selected.Kind);
@@ -1353,9 +1353,13 @@ public class ClrTypeExtractorTests
 
         Assert.Contains(ir.Enums, e => e.Name == nameof(CalendarMode));
         Assert.Contains(ir.Enums, e => e.Name == nameof(CalendarSelectionMode));
-        Assert.DoesNotContain(
-            Type(ir, "IAvnCalendar").Properties,
-            p => p.Name == "SelectedDates");
+        // U23: SelectedDates and BlackoutDates cross as the host-implemented
+        // IAvnDateTimeList over the calendar's own collections.
+        var selectedDates = Type(ir, "IAvnCalendar").Properties.Single(p => p.Name == "SelectedDates");
+        Assert.Equal(MarshallingKind.ComCollection, selectedDates.Kind);
+        Assert.Equal(MarshallingKind.DateTimeI64, selectedDates.ElementKind);
+        Assert.Equal("Avalonia.Host.Com.AvnDateList", selectedDates.HostImplementationTypeName);
+        Assert.False(selectedDates.CanWrite);
 
         Assert.Equal(13, ir.FactoryAbiVersion);
     }
@@ -1645,9 +1649,9 @@ public class ClrTypeExtractorTests
         var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
         Assert.Equal(11, Type(ir, "IAvnAutoCompleteBox").AbiVersion);
         Assert.Contains(Type(ir, "IAvnAutoCompleteBox").Properties, p => p.Name == "SearchText");
-        Assert.Equal(9, Type(ir, "IAvnCalendar").AbiVersion);
+        Assert.Equal(10, Type(ir, "IAvnCalendar").AbiVersion);
         Assert.Contains(Type(ir, "IAvnCalendar").Properties, p => p.Name == "IsWeekNumberVisible");
-        Assert.Equal(8, Type(ir, "IAvnCalendarDatePicker").AbiVersion);
+        Assert.Equal(9, Type(ir, "IAvnCalendarDatePicker").AbiVersion);
         Assert.Contains(Type(ir, "IAvnCalendarDatePicker").Methods, m => m.Name == "Clear");
         Assert.Equal(8, Type(ir, "IAvnNumericUpDown").AbiVersion);
         Assert.Contains(Type(ir, "IAvnNumericUpDown").Properties, p => p.Name == "TextAlignment");

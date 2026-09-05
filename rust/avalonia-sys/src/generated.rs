@@ -4297,6 +4297,66 @@ impl ComPtr<IAvnVariantList> {
     }
 }
 
+pub const I_AVN_DATE_TIME_LIST_IID: Guid = Guid { data1: 0xB658E870, data2: 0x3FAB, data3: 0x5BA7, data4: [0xAB, 0x02, 0x2F, 0xC7, 0xB7, 0x64, 0xC8, 0x89] };
+
+#[repr(C)]
+struct IAvnDateTimeListVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_count: unsafe extern "system" fn(*mut IAvnDateTimeList, *mut i32) -> i32,
+    get_at: unsafe extern "system" fn(*mut IAvnDateTimeList, i32, *mut i64) -> i32,
+    add: unsafe extern "system" fn(*mut IAvnDateTimeList, i64) -> i32,
+    index_of: unsafe extern "system" fn(*mut IAvnDateTimeList, i64, *mut i32) -> i32,
+    remove_at: unsafe extern "system" fn(*mut IAvnDateTimeList, i32) -> i32,
+    clear: unsafe extern "system" fn(*mut IAvnDateTimeList) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnDateTimeList {
+    vtbl: *const IAvnDateTimeListVtbl,
+}
+
+unsafe impl ComInterface for IAvnDateTimeList {
+    const IID: Guid = I_AVN_DATE_TIME_LIST_IID;
+}
+
+impl ComPtr<IAvnDateTimeList> {
+    pub fn len(&self) -> Result<usize> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_count)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize)
+        }
+    }
+    pub fn is_empty(&self) -> Result<bool> {
+        Ok(self.len()? == 0)
+    }
+    pub fn get(&self, index: usize) -> Result<i64> {
+        unsafe {
+            let mut value = 0i64;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_at)(self.as_raw(), index as i32, &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn add(&self, value: i64) -> Result<()> {
+        unsafe { hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().add)(self.as_raw(), value)) }
+    }
+    pub fn index_of(&self, value: i64) -> Result<Option<usize>> {
+        unsafe {
+            let mut index = -1;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().index_of)(self.as_raw(), value, &mut index);
+            hresult::check(hr).map(|_| (index >= 0).then_some(index as usize))
+        }
+    }
+    pub fn remove(&self, index: usize) -> Result<()> {
+        unsafe { hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().remove_at)(self.as_raw(), index as i32)) }
+    }
+    pub fn clear(&self) -> Result<()> {
+        unsafe { hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().clear)(self.as_raw())) }
+    }
+}
+
 pub const I_AVN_ITEM_LIST_IID: Guid = Guid { data1: 0x59A429A7, data2: 0xCF8A, data3: 0x5EB0, data4: [0xB6, 0x15, 0x91, 0x2A, 0x3D, 0xEF, 0x07, 0x04] };
 
 #[repr(C)]
@@ -8067,7 +8127,7 @@ impl ComPtr<IAvnButtonSpinner> {
     }
 }
 
-pub const I_AVN_CALENDAR_IID: Guid = Guid { data1: 0x3B735E53, data2: 0xDF0B, data3: 0x5D44, data4: [0x8F, 0xCD, 0xC5, 0x71, 0x72, 0x5C, 0x1B, 0xAE] };
+pub const I_AVN_CALENDAR_IID: Guid = Guid { data1: 0xE75BAB94, data2: 0x5A50, data3: 0x539D, data4: [0x99, 0xE3, 0x23, 0x7C, 0x73, 0x85, 0xE0, 0x5C] };
 
 #[repr(C)]
 struct IAvnCalendarVtbl {
@@ -8181,10 +8241,12 @@ struct IAvnCalendarVtbl {
     set_allow_tap_range_selection: unsafe extern "system" fn(*mut IAvnCalendar, i32) -> i32,
     get_selected_date: unsafe extern "system" fn(*mut IAvnCalendar, *mut *mut u16) -> i32,
     set_selected_date: unsafe extern "system" fn(*mut IAvnCalendar, *mut u16) -> i32,
+    get_selected_dates: unsafe extern "system" fn(*mut IAvnCalendar, *mut *mut IAvnDateTimeList) -> i32,
     get_display_date: unsafe extern "system" fn(*mut IAvnCalendar, *mut *mut u16) -> i32,
     set_display_date: unsafe extern "system" fn(*mut IAvnCalendar, *mut u16) -> i32,
     get_display_date_start: unsafe extern "system" fn(*mut IAvnCalendar, *mut *mut u16) -> i32,
     set_display_date_start: unsafe extern "system" fn(*mut IAvnCalendar, *mut u16) -> i32,
+    get_blackout_dates: unsafe extern "system" fn(*mut IAvnCalendar, *mut *mut IAvnDateTimeList) -> i32,
     get_display_date_end: unsafe extern "system" fn(*mut IAvnCalendar, *mut *mut u16) -> i32,
     set_display_date_end: unsafe extern "system" fn(*mut IAvnCalendar, *mut u16) -> i32,
     advise_display_date_changed: unsafe extern "system" fn(*mut IAvnCalendar, *mut IAvnCalendarDisplayDateChangedHandler, *mut i64) -> i32,
@@ -8945,6 +9007,14 @@ impl ComPtr<IAvnCalendar> {
             hresult::check(hr)
         }
     }
+    pub fn get_selected_dates(&self) -> Result<ComPtr<IAvnDateTimeList>> {
+        unsafe {
+            let mut value: *mut IAvnDateTimeList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_dates)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
+        }
+    }
     pub fn get_display_date(&self) -> Result<*mut u16> {
         unsafe {
             let mut value: *mut u16 = ptr::null_mut();
@@ -8971,6 +9041,14 @@ impl ComPtr<IAvnCalendar> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_display_date_start)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
             hresult::check(hr)
+        }
+    }
+    pub fn get_blackout_dates(&self) -> Result<ComPtr<IAvnDateTimeList>> {
+        unsafe {
+            let mut value: *mut IAvnDateTimeList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_blackout_dates)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
     pub fn get_display_date_end(&self) -> Result<*mut u16> {
@@ -9015,7 +9093,7 @@ impl ComPtr<IAvnCalendar> {
     }
 }
 
-pub const I_AVN_CALENDAR_DATE_PICKER_IID: Guid = Guid { data1: 0xA48CB466, data2: 0xA936, data3: 0x5D7A, data4: [0xA3, 0x4B, 0xFF, 0xD9, 0xD6, 0xBE, 0xA1, 0x53] };
+pub const I_AVN_CALENDAR_DATE_PICKER_IID: Guid = Guid { data1: 0x6A20C08A, data2: 0x54D2, data3: 0x5871, data4: [0x84, 0xEB, 0xC9, 0xF2, 0x54, 0xEB, 0x17, 0x9F] };
 
 #[repr(C)]
 struct IAvnCalendarDatePickerVtbl {
@@ -9111,6 +9189,7 @@ struct IAvnCalendarDatePickerVtbl {
     set_letter_spacing: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, f64) -> i32,
     get_padding: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut AvnThickness) -> i32,
     set_padding: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, AvnThickness) -> i32,
+    get_blackout_dates: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut *mut IAvnDateTimeList) -> i32,
     get_display_date: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut *mut u16) -> i32,
     set_display_date: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut u16) -> i32,
     get_display_date_start: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut *mut u16) -> i32,
@@ -9778,6 +9857,14 @@ impl ComPtr<IAvnCalendarDatePicker> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_padding)(self.as_raw(), value);
             hresult::check(hr)
+        }
+    }
+    pub fn get_blackout_dates(&self) -> Result<ComPtr<IAvnDateTimeList>> {
+        unsafe {
+            let mut value: *mut IAvnDateTimeList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_blackout_dates)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
     pub fn get_display_date(&self) -> Result<*mut u16> {
