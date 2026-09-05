@@ -48,6 +48,31 @@ pub fn emit_sys_module(ir: &ProjectionIr) -> String {
          }\n\n\
          /// Ticks between 0001-01-01 and 1970-01-01 in 100ns units.\n\
          pub const DOTNET_EPOCH_OFFSET_TICKS: i64 = 621_355_968_000_000_000;\n\n\
+         /// Blittable ABI mirror of a nullable TimeSpan tick count.\n\
+         #[repr(C)]\n\
+         #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]\n\
+         pub struct AvnOptionalTimeSpan {\n\
+         \x20   pub has_value: i32,\n\
+         \x20   pub ticks: i64,\n\
+         }\n\n\
+         impl AvnOptionalTimeSpan {\n\
+         \x20   pub fn from_duration(value: Option<core::time::Duration>) -> Self {\n\
+         \x20       match value {\n\
+         \x20           Some(duration) => Self {\n\
+         \x20               has_value: 1,\n\
+         \x20               ticks: duration.as_nanos() as i64 / 100,\n\
+         \x20           },\n\
+         \x20           None => Self::default(),\n\
+         \x20       }\n\
+         \x20   }\n\
+         \x20   pub fn to_duration(self) -> Option<core::time::Duration> {\n\
+         \x20       if self.has_value == 0 {\n\
+         \x20           return None;\n\
+         \x20       }\n\
+         \x20       let nanos = (self.ticks.max(0) as u128) * 100;\n\
+         \x20       Some(core::time::Duration::from_nanos(nanos as u64))\n\
+         \x20   }\n\
+         }\n\n\
          /// Blittable ABI mirror of Avalonia.PixelPoint.\n\
          #[repr(C)]\n\
          #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]\n\
@@ -1007,6 +1032,7 @@ fn event_argument_type(parameter: &ProjectedParameter) -> String {
     match parameter.kind.as_str() {
         "I32" => "i32".into(),
         "I64" => "i64".into(),
+        "TimeSpanI64" if parameter.is_nullable => "AvnOptionalTimeSpan".into(),
         "TimeSpanI64" => "i64".into(),
         "DateTimeI64" if parameter.is_nullable => "AvnOptionalDateTime".into(),
         "DateTimeI64" => "i64".into(),
@@ -1421,7 +1447,9 @@ fn rust_abi_type(kind: &str, interface_name: Option<&str>, is_nullable: bool) ->
     match kind {
         "CharUtf16" => "u16".into(),
         "I32" | "Bool" | "NullableBool" => "i32".into(),
-        "I64" | "TimeSpanI64" => "i64".into(),
+        "I64" => "i64".into(),
+        "TimeSpanI64" if is_nullable => "AvnOptionalTimeSpan".into(),
+        "TimeSpanI64" => "i64".into(),
         "DateTimeI64" if is_nullable => "AvnOptionalDateTime".into(),
         "DateTimeI64" => "i64".into(),
         "F32" => "f32".into(),
@@ -1465,7 +1493,9 @@ fn rust_property_type(property: &ProjectedProperty) -> String {
         "CharUtf16" => "u16".into(),
         "I32" => "i32".into(),
         "I64" => "i64".into(),
+        "TimeSpanI64" if property.is_nullable => "AvnOptionalTimeSpan".into(),
         "TimeSpanI64" => "i64".into(),
+        "DateTimeI64" if property.is_nullable => "AvnOptionalDateTime".into(),
         "DateTimeI64" => "i64".into(),
         "PixelPointI32" => "AvnPixelPoint".into(),
         "F32" => "f32".into(),

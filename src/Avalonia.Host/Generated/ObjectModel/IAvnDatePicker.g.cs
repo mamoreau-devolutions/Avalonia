@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("5FB7F36A-84C5-5F05-90BC-866445676522")]
+[Guid("46C8450E-3A2E-5F47-905F-0726F2DD40B6")]
 public partial interface IAvnDatePicker : IAvnTemplatedControl
 {
     [PreserveSig]
@@ -72,6 +72,12 @@ public partial interface IAvnDatePicker : IAvnTemplatedControl
     [PreserveSig]
     int Clear();
 
+    [PreserveSig]
+    int AdviseSelectedDateChanged(IAvnDatePickerSelectedDateChangedHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadviseSelectedDateChanged(long subscriptionId);
+
 }
 
 [GeneratedComClass]
@@ -103,6 +109,8 @@ public sealed partial class AvnDatePicker : IAvnDatePicker
     private long _nextPointerEnteredSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnControlPointerExitedHandler Handler, global::System.Action Unsubscribe)> _pointerExitedSubscriptions = new();
     private long _nextPointerExitedSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnDatePickerSelectedDateChangedHandler Handler, global::System.Action Unsubscribe)> _selectedDateChangedSubscriptions = new();
+    private long _nextSelectedDateChangedSubscriptionId;
 
     internal AvnDatePicker(global::Avalonia.Controls.DatePicker value)
     {
@@ -2046,6 +2054,52 @@ public sealed partial class AvnDatePicker : IAvnDatePicker
         }
     }
 
+    public int AdviseSelectedDateChanged(IAvnDatePickerSelectedDateChangedHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<Avalonia.Controls.DatePickerSelectedValueChangedEventArgs>((_, eventArgs) =>
+            {
+                var hr = handler.Invoke(eventArgs.OldDate.HasValue ? AvnOptionalDateTime.FromDateTime(eventArgs.OldDate.Value.UtcDateTime) : default, eventArgs.NewDate.HasValue ? AvnOptionalDateTime.FromDateTime(eventArgs.NewDate.Value.UtcDateTime) : default);
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.SelectedDateChanged += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextSelectedDateChangedSubscriptionId);
+            _selectedDateChangedSubscriptions.Add(subscriptionId, (handler, () => eventSource.SelectedDateChanged -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseSelectedDateChanged(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_selectedDateChangedSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     private void ReleaseSubscriptions()
     {
         foreach (var subscription in _attachedToLogicalTreeSubscriptions.Values)
@@ -2120,5 +2174,11 @@ public sealed partial class AvnDatePicker : IAvnDatePicker
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
         }
         _pointerExitedSubscriptions.Clear();
+        foreach (var subscription in _selectedDateChangedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _selectedDateChangedSubscriptions.Clear();
     }
 }

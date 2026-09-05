@@ -533,6 +533,8 @@ public static class ClrTypeExtractor
             kind = MarshallingKind.TimeSpanI64;
         else if (type == typeof(DateTime))
             kind = MarshallingKind.DateTimeI64;
+        else if (type == typeof(DateTimeOffset))
+            kind = MarshallingKind.DateTimeI64;
         else if (type.FullName == "Avalonia.PixelPoint")
             kind = MarshallingKind.PixelPointI32;
         else if (GeometryMarshalling.TryGetByManagedTypeName(type.FullName, out var geometry))

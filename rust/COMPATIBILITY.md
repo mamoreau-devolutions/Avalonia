@@ -525,6 +525,20 @@ grows a slot, so it and all 97 descendants republish under fresh IIDs.
 The gap report drops from 190 to 182 entries, every one by-design. Factory
 stays 13.
 
+Wave U28 crosses the scalar event payloads. The Fields payload grows two
+nullable wrappers: `AvnOptionalTimeSpan` (has_value + ticks, converting
+through `core::time::Duration`) joins `AvnOptionalDateTime`, and
+DateTimeOffset event fields convert through `.UtcDateTime` so the wire form
+stays UTC ticks. DatePicker.SelectedDateChanged crosses with the
+old/new date pair, TimePicker.SelectedTimeChanged with the old/new time
+pair, and TextBox.TextChanging crosses as a plain notification because
+TextChangingEventArgs carries no payload members. TextBox (17) and its
+MaskedTextBox descendant (14) republish, and the pickers move to 10.
+CalendarDatePicker.SelectedDateChanged stays by-design: it carries
+SelectionChangedEventArgs, whose added/removed collection payload needs the
+variant-list event shape. The gap report drops to 179 entries. Factory
+stays 13.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A

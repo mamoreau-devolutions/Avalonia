@@ -530,9 +530,9 @@ public class ClrTypeExtractorTests
             name =>
             {
                 var type = Type(ir, name);
-                Assert.Equal(9, type.AbiVersion);
+                Assert.Equal(10, type.AbiVersion);
                 Assert.Equal(
-                    ClrTypeExtractor.CreateDeterministicIid(type.FullName, 9),
+                    ClrTypeExtractor.CreateDeterministicIid(type.FullName, 10),
                     type.Iid);
             });
         Assert.All(
@@ -772,12 +772,15 @@ public class ClrTypeExtractorTests
             });
         Assert.Contains(datePicker.Methods, method => method.Name == nameof(DatePicker.Clear));
 
-        // The change events carry DateTimeOffset? fields and an event payload has no converter
-        // hook, so they are gaps rather than a silently lossy payload.
-        Assert.Empty(datePicker.Events);
-        Assert.Contains(ir.Skipped, skipped =>
-            skipped.Owner == typeof(DatePicker).FullName &&
-            skipped.Member == nameof(DatePicker.SelectedDateChanged));
+        // U28: SelectedDateChanged crosses with the old/new pair as nullable DateTime fields.
+        var dateChanged = Assert.Single(datePicker.Events);
+        Assert.Equal(nameof(DatePicker.SelectedDateChanged), dateChanged.Name);
+        Assert.Equal(EventPayloadKind.Fields, dateChanged.PayloadKind);
+        Assert.Equal(
+            new[] { "OldDate", "NewDate" },
+            dateChanged.Parameters.Select(p => p.Name));
+        Assert.All(dateChanged.Parameters, p => Assert.Equal(MarshallingKind.DateTimeI64, p.Kind));
+        Assert.All(dateChanged.Parameters, p => Assert.True(p.IsNullable));
 
         var timePicker = Type(ir, "IAvnTimePicker");
         var selectedTime = timePicker.Properties
@@ -788,7 +791,15 @@ public class ClrTypeExtractorTests
         Assert.Equal(
             MarshallingKind.I32,
             timePicker.Properties.Single(p => p.Name == nameof(TimePicker.MinuteIncrement)).Kind);
-        Assert.Empty(timePicker.Events);
+        // U28: SelectedTimeChanged crosses with the old/new pair as nullable TimeSpan fields.
+        var timeChanged = Assert.Single(timePicker.Events);
+        Assert.Equal(nameof(TimePicker.SelectedTimeChanged), timeChanged.Name);
+        Assert.Equal(EventPayloadKind.Fields, timeChanged.PayloadKind);
+        Assert.Equal(
+            new[] { "OldTime", "NewTime" },
+            timeChanged.Parameters.Select(p => p.Name));
+        Assert.All(timeChanged.Parameters, p => Assert.Equal(MarshallingKind.TimeSpanI64, p.Kind));
+        Assert.All(timeChanged.Parameters, p => Assert.True(p.IsNullable));
     }
 
     [Fact]
@@ -1314,7 +1325,7 @@ public class ClrTypeExtractorTests
         Assert.True(Type(ir, "IAvnSelectableTextBlock").IsConstructible);
         Assert.Equal(9, Type(ir, "IAvnNumericUpDown").AbiVersion);
         Assert.Equal(13, Type(ir, "IAvnAutoCompleteBox").AbiVersion);
-        Assert.Equal(13, Type(ir, "IAvnMaskedTextBox").AbiVersion);
+        Assert.Equal(14, Type(ir, "IAvnMaskedTextBox").AbiVersion);
 
         Assert.Equal("Avalonia.Host.Com.IAvnSpinner", Type(ir, "IAvnButtonSpinner").BaseFullName);
         Assert.Equal("Avalonia.Host.Com.IAvnTemplatedControl", Type(ir, "IAvnNumericUpDown").BaseFullName);
@@ -1591,7 +1602,7 @@ public class ClrTypeExtractorTests
     {
         var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
         var textBox = Type(ir, "IAvnTextBox");
-        Assert.Equal(16, textBox.AbiVersion);
+        Assert.Equal(17, textBox.AbiVersion);
         Assert.All(
             new[] { "SelectedText", "TextAlignment", "SelectionBrush", "InnerLeftContent",
                 "UseFloatingPlaceholder", "PlaceholderForeground" },
@@ -1605,7 +1616,7 @@ public class ClrTypeExtractorTests
             MarshallingKind.TimeSpanI64,
             textBox.Properties.Single(p => p.Name == "CaretBlinkInterval").Kind);
         Assert.DoesNotContain(textBox.Properties, p => p.Name == "Watermark");
-        Assert.Equal(13, Type(ir, "IAvnMaskedTextBox").AbiVersion);
+        Assert.Equal(14, Type(ir, "IAvnMaskedTextBox").AbiVersion);
         Assert.Contains(Type(ir, "IAvnMaskedTextBox").Properties, p => p.Name == "MaskCompleted");
         Assert.Equal(11, Type(ir, "IAvnTemplatedControl").AbiVersion);
         Assert.Equal(13, ir.FactoryAbiVersion);
@@ -1708,12 +1719,12 @@ public class ClrTypeExtractorTests
         Assert.Contains(selectable.Events, e => e.Name == "CopyingToClipboard");
 
         var textBox = Type(ir, "IAvnTextBox");
-        Assert.Equal(16, textBox.AbiVersion);
+        Assert.Equal(17, textBox.AbiVersion);
         Assert.Contains(textBox.Methods, m => m.ManagedName == "ScrollToLine");
         var lineCount = textBox.Methods.Single(m => m.ManagedName == "GetLineCount");
         Assert.Contains(lineCount.Parameters, p => p.Name == "value" && p.Direction == ParameterDirection.Out);
         Assert.Equal(MarshallingKind.CharUtf16, textBox.Properties.Single(p => p.Name == "PasswordChar").Kind);
-        Assert.Equal(13, Type(ir, "IAvnMaskedTextBox").AbiVersion);
+        Assert.Equal(14, Type(ir, "IAvnMaskedTextBox").AbiVersion);
         Assert.Equal(13, ir.FactoryAbiVersion);
     }
 
@@ -1727,7 +1738,7 @@ public class ClrTypeExtractorTests
         Assert.Equal(12, Type(ir, "IAvnCarousel").AbiVersion);
         Assert.Contains(Type(ir, "IAvnCarousel").Methods, m => m.Name == "Next");
         Assert.Equal(16, Type(ir, "IAvnComboBox").AbiVersion);
-        Assert.Equal(9, Type(ir, "IAvnDatePicker").AbiVersion);
+        Assert.Equal(10, Type(ir, "IAvnDatePicker").AbiVersion);
         Assert.Contains(Type(ir, "IAvnDatePicker").Properties, p => p.Name == "VerticalContentAlignment");
         Assert.Equal(13, Type(ir, "IAvnContextMenu").AbiVersion);
         Assert.Equal(12, Type(ir, "IAvnProgressBar").AbiVersion);

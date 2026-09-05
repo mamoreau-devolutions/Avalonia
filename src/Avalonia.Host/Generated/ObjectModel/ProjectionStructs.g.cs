@@ -280,6 +280,22 @@ public struct AvnOptionalDateTime
         HasValue != 0 ? new global::System.DateTime(Ticks, global::System.DateTimeKind.Utc) : null;
 }
 
+/// <summary>Nullable ABI wrapper of a TimeSpan tick count.</summary>
+[StructLayout(LayoutKind.Sequential)]
+public struct AvnOptionalTimeSpan
+{
+    public int HasValue;
+    public long Ticks;
+
+    public static AvnOptionalTimeSpan FromTimeSpan(global::System.TimeSpan? value) =>
+        value is { } inner
+            ? new AvnOptionalTimeSpan { HasValue = 1, Ticks = inner.Ticks }
+            : default;
+
+    public readonly global::System.TimeSpan? ToTimeSpan() =>
+        HasValue != 0 ? global::System.TimeSpan.FromTicks(Ticks) : null;
+}
+
 /// <summary>Tagged scalar carrying object? command parameters.</summary>
 /// <remarks>
 /// Tag selects the payload slot: 0 none, 1 utf16, 2 i32, 3 f64, 4 bool.

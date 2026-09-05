@@ -97,6 +97,12 @@ public static class NativeHeaderEmitter
         sb.AppendLine("    int64_t ticks;");
         sb.AppendLine("} AvnOptionalDateTime;");
         sb.AppendLine();
+        sb.AppendLine("/* Nullable ABI wrapper of a TimeSpan tick count. has_value is 0 or 1. */");
+        sb.AppendLine("typedef struct AvnOptionalTimeSpan {");
+        sb.AppendLine("    int32_t has_value;");
+        sb.AppendLine("    int64_t ticks;");
+        sb.AppendLine("} AvnOptionalTimeSpan;");
+        sb.AppendLine();
 
         sb.AppendLine("/* Tagged scalar carrying object? command parameters. */");
         sb.AppendLine("/* tag: 0 none, 1 utf16, 2 i32, 3 f64, 4 bool. */");
@@ -463,7 +469,7 @@ public static class NativeHeaderEmitter
             MarshallingKind.CharUtf16 => "uint16_t",
             MarshallingKind.I32 or MarshallingKind.Bool or MarshallingKind.NullableBool => "int32_t",
             MarshallingKind.I64 => "int64_t",
-            MarshallingKind.TimeSpanI64 => "int64_t",
+            MarshallingKind.TimeSpanI64 => isNullable ? "AvnOptionalTimeSpan" : "int64_t",
             MarshallingKind.DateTimeI64 => isNullable ? "AvnOptionalDateTime" : "int64_t",
             MarshallingKind.PixelPointI32 => "AvnPixelPoint",
             MarshallingKind.F32 => "float",

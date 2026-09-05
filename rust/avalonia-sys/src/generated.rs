@@ -158,6 +158,33 @@ impl AvnOptionalDateTime {
 /// Ticks between 0001-01-01 and 1970-01-01 in 100ns units.
 pub const DOTNET_EPOCH_OFFSET_TICKS: i64 = 621_355_968_000_000_000;
 
+/// Blittable ABI mirror of a nullable TimeSpan tick count.
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct AvnOptionalTimeSpan {
+    pub has_value: i32,
+    pub ticks: i64,
+}
+
+impl AvnOptionalTimeSpan {
+    pub fn from_duration(value: Option<core::time::Duration>) -> Self {
+        match value {
+            Some(duration) => Self {
+                has_value: 1,
+                ticks: duration.as_nanos() as i64 / 100,
+            },
+            None => Self::default(),
+        }
+    }
+    pub fn to_duration(self) -> Option<core::time::Duration> {
+        if self.has_value == 0 {
+            return None;
+        }
+        let nanos = (self.ticks.max(0) as u128) * 100;
+        Some(core::time::Duration::from_nanos(nanos as u64))
+    }
+}
+
 /// Blittable ABI mirror of Avalonia.PixelPoint.
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -1978,6 +2005,61 @@ unsafe extern "system" fn i_avn_control_pointer_exited_handler_release(this: *mu
 
 unsafe extern "system" fn i_avn_control_pointer_exited_handler_invoke(this: *mut IAvnControlPointerExitedHandler) -> i32 {
     crate::event_callback::invoke::<IAvnControlPointerExitedHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_DATE_PICKER_SELECTED_DATE_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x74C9BE6F, data2: 0xE5CD, data3: 0x5936, data4: [0xB4, 0xBF, 0x59, 0xCC, 0x08, 0x43, 0x09, 0x6F] };
+
+#[derive(Debug)]
+pub struct DatePickerSelectedDateChangedEventArgs {
+    pub old_date: AvnOptionalDateTime,
+    pub new_date: AvnOptionalDateTime,
+}
+
+#[repr(C)]
+struct IAvnDatePickerSelectedDateChangedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnDatePickerSelectedDateChangedHandler, old_date: AvnOptionalDateTime, new_date: AvnOptionalDateTime) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnDatePickerSelectedDateChangedHandler { vtbl: *const IAvnDatePickerSelectedDateChangedHandlerVtbl }
+
+unsafe impl ComInterface for IAvnDatePickerSelectedDateChangedHandler { const IID: Guid = I_AVN_DATE_PICKER_SELECTED_DATE_CHANGED_HANDLER_IID; }
+
+static I_AVN_DATE_PICKER_SELECTED_DATE_CHANGED_HANDLER_VTBL: IAvnDatePickerSelectedDateChangedHandlerVtbl = IAvnDatePickerSelectedDateChangedHandlerVtbl {
+    query_interface: i_avn_date_picker_selected_date_changed_handler_query_interface,
+    add_ref: i_avn_date_picker_selected_date_changed_handler_add_ref,
+    release: i_avn_date_picker_selected_date_changed_handler_release,
+    invoke: i_avn_date_picker_selected_date_changed_handler_invoke,
+};
+
+pub fn date_picker_selected_date_changed_handler(callback: impl FnMut(&mut DatePickerSelectedDateChangedEventArgs) -> Result<()> + Send + 'static) -> ComPtr<IAvnDatePickerSelectedDateChangedHandler> {
+    crate::event_callback::create(IAvnDatePickerSelectedDateChangedHandler { vtbl: &I_AVN_DATE_PICKER_SELECTED_DATE_CHANGED_HANDLER_VTBL }, callback)
+}
+
+unsafe extern "system" fn i_avn_date_picker_selected_date_changed_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnDatePickerSelectedDateChangedHandler, DatePickerSelectedDateChangedEventArgs>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_date_picker_selected_date_changed_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnDatePickerSelectedDateChangedHandler, DatePickerSelectedDateChangedEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_date_picker_selected_date_changed_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnDatePickerSelectedDateChangedHandler, DatePickerSelectedDateChangedEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_date_picker_selected_date_changed_handler_invoke(this: *mut IAvnDatePickerSelectedDateChangedHandler, old_date: AvnOptionalDateTime, new_date: AvnOptionalDateTime) -> i32 {
+    let mut arguments = DatePickerSelectedDateChangedEventArgs {
+        old_date,
+        new_date,
+    };
+    let hr = crate::event_callback::invoke::<IAvnDatePickerSelectedDateChangedHandler, DatePickerSelectedDateChangedEventArgs>(this, &mut arguments);
+    if hr >= 0 {
+    }
+    hr
 }
 
 pub const I_AVN_EXPANDER_COLLAPSED_HANDLER_IID: Guid = Guid { data1: 0x09BF1232, data2: 0x4B8A, data3: 0x5657, data4: [0xA7, 0x74, 0xA2, 0x79, 0x95, 0x50, 0x1A, 0x13] };
@@ -4007,6 +4089,116 @@ unsafe extern "system" fn i_avn_text_box_text_changed_handler_release(this: *mut
 
 unsafe extern "system" fn i_avn_text_box_text_changed_handler_invoke(this: *mut IAvnTextBoxTextChangedHandler) -> i32 {
     crate::event_callback::invoke::<IAvnTextBoxTextChangedHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_TEXT_BOX_TEXT_CHANGING_HANDLER_IID: Guid = Guid { data1: 0x367C8D48, data2: 0x6703, data3: 0x5571, data4: [0x8E, 0x11, 0x64, 0x27, 0xAB, 0xB6, 0xEF, 0x40] };
+
+#[repr(C)]
+struct IAvnTextBoxTextChangingHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnTextBoxTextChangingHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnTextBoxTextChangingHandler {
+    vtbl: *const IAvnTextBoxTextChangingHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnTextBoxTextChangingHandler {
+    const IID: Guid = I_AVN_TEXT_BOX_TEXT_CHANGING_HANDLER_IID;
+}
+
+impl ComPtr<IAvnTextBoxTextChangingHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_TEXT_BOX_TEXT_CHANGING_HANDLER_VTBL: IAvnTextBoxTextChangingHandlerVtbl = IAvnTextBoxTextChangingHandlerVtbl {
+    query_interface: i_avn_text_box_text_changing_handler_query_interface,
+    add_ref: i_avn_text_box_text_changing_handler_add_ref,
+    release: i_avn_text_box_text_changing_handler_release,
+    invoke: i_avn_text_box_text_changing_handler_invoke,
+};
+
+pub fn text_box_text_changing_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnTextBoxTextChangingHandler> {
+    crate::event_callback::create::<IAvnTextBoxTextChangingHandler, ()>(IAvnTextBoxTextChangingHandler { vtbl: &I_AVN_TEXT_BOX_TEXT_CHANGING_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_text_box_text_changing_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnTextBoxTextChangingHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_text_box_text_changing_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnTextBoxTextChangingHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_text_box_text_changing_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnTextBoxTextChangingHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_text_box_text_changing_handler_invoke(this: *mut IAvnTextBoxTextChangingHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnTextBoxTextChangingHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_TIME_PICKER_SELECTED_TIME_CHANGED_HANDLER_IID: Guid = Guid { data1: 0xB5F445B5, data2: 0x72E0, data3: 0x5C6D, data4: [0xA2, 0xA6, 0x0B, 0xFC, 0xAC, 0x23, 0xA1, 0xF9] };
+
+#[derive(Debug)]
+pub struct TimePickerSelectedTimeChangedEventArgs {
+    pub old_time: AvnOptionalTimeSpan,
+    pub new_time: AvnOptionalTimeSpan,
+}
+
+#[repr(C)]
+struct IAvnTimePickerSelectedTimeChangedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnTimePickerSelectedTimeChangedHandler, old_time: AvnOptionalTimeSpan, new_time: AvnOptionalTimeSpan) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnTimePickerSelectedTimeChangedHandler { vtbl: *const IAvnTimePickerSelectedTimeChangedHandlerVtbl }
+
+unsafe impl ComInterface for IAvnTimePickerSelectedTimeChangedHandler { const IID: Guid = I_AVN_TIME_PICKER_SELECTED_TIME_CHANGED_HANDLER_IID; }
+
+static I_AVN_TIME_PICKER_SELECTED_TIME_CHANGED_HANDLER_VTBL: IAvnTimePickerSelectedTimeChangedHandlerVtbl = IAvnTimePickerSelectedTimeChangedHandlerVtbl {
+    query_interface: i_avn_time_picker_selected_time_changed_handler_query_interface,
+    add_ref: i_avn_time_picker_selected_time_changed_handler_add_ref,
+    release: i_avn_time_picker_selected_time_changed_handler_release,
+    invoke: i_avn_time_picker_selected_time_changed_handler_invoke,
+};
+
+pub fn time_picker_selected_time_changed_handler(callback: impl FnMut(&mut TimePickerSelectedTimeChangedEventArgs) -> Result<()> + Send + 'static) -> ComPtr<IAvnTimePickerSelectedTimeChangedHandler> {
+    crate::event_callback::create(IAvnTimePickerSelectedTimeChangedHandler { vtbl: &I_AVN_TIME_PICKER_SELECTED_TIME_CHANGED_HANDLER_VTBL }, callback)
+}
+
+unsafe extern "system" fn i_avn_time_picker_selected_time_changed_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnTimePickerSelectedTimeChangedHandler, TimePickerSelectedTimeChangedEventArgs>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_time_picker_selected_time_changed_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnTimePickerSelectedTimeChangedHandler, TimePickerSelectedTimeChangedEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_time_picker_selected_time_changed_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnTimePickerSelectedTimeChangedHandler, TimePickerSelectedTimeChangedEventArgs>(this)
+}
+
+unsafe extern "system" fn i_avn_time_picker_selected_time_changed_handler_invoke(this: *mut IAvnTimePickerSelectedTimeChangedHandler, old_time: AvnOptionalTimeSpan, new_time: AvnOptionalTimeSpan) -> i32 {
+    let mut arguments = TimePickerSelectedTimeChangedEventArgs {
+        old_time,
+        new_time,
+    };
+    let hr = crate::event_callback::invoke::<IAvnTimePickerSelectedTimeChangedHandler, TimePickerSelectedTimeChangedEventArgs>(this, &mut arguments);
+    if hr >= 0 {
+    }
+    hr
 }
 
 pub const I_AVN_TOGGLE_SPLIT_BUTTON_IS_CHECKED_CHANGED_HANDLER_IID: Guid = Guid { data1: 0x0034F5FE, data2: 0xA55D, data3: 0x5A7E, data4: [0xB5, 0xB0, 0x66, 0x7C, 0x82, 0x85, 0x4A, 0x8A] };
@@ -21758,7 +21950,7 @@ impl ComPtr<IAvnControl> {
     }
 }
 
-pub const I_AVN_DATE_PICKER_IID: Guid = Guid { data1: 0x5FB7F36A, data2: 0x84C5, data3: 0x5F05, data4: [0x90, 0xBC, 0x86, 0x64, 0x45, 0x67, 0x65, 0x22] };
+pub const I_AVN_DATE_PICKER_IID: Guid = Guid { data1: 0x46C8450E, data2: 0x3A2E, data3: 0x5F47, data4: [0x90, 0x5F, 0x07, 0x26, 0xF2, 0xDD, 0x40, 0xB6] };
 
 #[repr(C)]
 struct IAvnDatePickerVtbl {
@@ -21878,6 +22070,8 @@ struct IAvnDatePickerVtbl {
     get_selected_date: unsafe extern "system" fn(*mut IAvnDatePicker, *mut *mut u16) -> i32,
     set_selected_date: unsafe extern "system" fn(*mut IAvnDatePicker, *mut u16) -> i32,
     clear: unsafe extern "system" fn(*mut IAvnDatePicker) -> i32,
+    advise_selected_date_changed: unsafe extern "system" fn(*mut IAvnDatePicker, *mut IAvnDatePickerSelectedDateChangedHandler, *mut i64) -> i32,
+    unadvise_selected_date_changed: unsafe extern "system" fn(*mut IAvnDatePicker, i64) -> i32,
 }
 
 #[repr(C)]
@@ -22671,6 +22865,19 @@ impl ComPtr<IAvnDatePicker> {
     pub fn clear(&self) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().clear)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_selected_date_changed(&self, handler: &ComPtr<IAvnDatePickerSelectedDateChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_selected_date_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_selected_date_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_selected_date_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -35446,7 +35653,7 @@ impl ComPtr<IAvnListBoxItem> {
     }
 }
 
-pub const I_AVN_MASKED_TEXT_BOX_IID: Guid = Guid { data1: 0x0C1AB301, data2: 0xA74A, data3: 0x53B5, data4: [0xBE, 0x95, 0xDF, 0xD8, 0x37, 0x22, 0xB3, 0x4D] };
+pub const I_AVN_MASKED_TEXT_BOX_IID: Guid = Guid { data1: 0x39C9831D, data2: 0x042A, data3: 0x5F2E, data4: [0x9E, 0x47, 0xDB, 0x69, 0xD1, 0x61, 0xD7, 0x22] };
 
 #[repr(C)]
 struct IAvnMaskedTextBoxVtbl {
@@ -35632,6 +35839,8 @@ struct IAvnMaskedTextBoxVtbl {
     unadvise_pasting_from_clipboard: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i64) -> i32,
     advise_text_changed: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnTextBoxTextChangedHandler, *mut i64) -> i32,
     unadvise_text_changed: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i64) -> i32,
+    advise_text_changing: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut IAvnTextBoxTextChangingHandler, *mut i64) -> i32,
+    unadvise_text_changing: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i64) -> i32,
     get_ascii_only: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
     set_ascii_only: unsafe extern "system" fn(*mut IAvnMaskedTextBox, i32) -> i32,
     get_hide_prompt_on_leave: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
@@ -36894,6 +37103,19 @@ impl ComPtr<IAvnMaskedTextBox> {
     pub fn unadvise_text_changed(&self, subscription_id: i64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_text_changed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_text_changing(&self, handler: &ComPtr<IAvnTextBoxTextChangingHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_text_changing)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_text_changing(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_text_changing)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }
@@ -77991,7 +78213,7 @@ impl ComPtr<IAvnTextBlock> {
     }
 }
 
-pub const I_AVN_TEXT_BOX_IID: Guid = Guid { data1: 0x477DB397, data2: 0xE368, data3: 0x5FCD, data4: [0xB1, 0xC5, 0xF7, 0x85, 0xF3, 0xD6, 0xAC, 0x58] };
+pub const I_AVN_TEXT_BOX_IID: Guid = Guid { data1: 0x8F882501, data2: 0xC637, data3: 0x5AB3, data4: [0x9E, 0x1C, 0xBA, 0xC2, 0x43, 0xFE, 0x09, 0x00] };
 
 #[repr(C)]
 struct IAvnTextBoxVtbl {
@@ -78177,6 +78399,8 @@ struct IAvnTextBoxVtbl {
     unadvise_pasting_from_clipboard: unsafe extern "system" fn(*mut IAvnTextBox, i64) -> i32,
     advise_text_changed: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnTextBoxTextChangedHandler, *mut i64) -> i32,
     unadvise_text_changed: unsafe extern "system" fn(*mut IAvnTextBox, i64) -> i32,
+    advise_text_changing: unsafe extern "system" fn(*mut IAvnTextBox, *mut IAvnTextBoxTextChangingHandler, *mut i64) -> i32,
+    unadvise_text_changing: unsafe extern "system" fn(*mut IAvnTextBox, i64) -> i32,
 }
 
 #[repr(C)]
@@ -79428,6 +79652,19 @@ impl ComPtr<IAvnTextBox> {
             hresult::check(hr)
         }
     }
+    pub fn advise_text_changing(&self, handler: &ComPtr<IAvnTextBoxTextChangingHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_text_changing)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_text_changing(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_text_changing)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
 }
 
 pub const I_AVN_THEME_VARIANT_SCOPE_IID: Guid = Guid { data1: 0xD911D81B, data2: 0x28B5, data3: 0x5A8B, data4: [0xBF, 0xCE, 0x69, 0x47, 0xA9, 0x9C, 0x89, 0x8D] };
@@ -80005,7 +80242,7 @@ impl ComPtr<IAvnThemeVariantScope> {
     }
 }
 
-pub const I_AVN_TIME_PICKER_IID: Guid = Guid { data1: 0xF8ABF027, data2: 0x98FB, data3: 0x50B3, data4: [0xB8, 0x36, 0x34, 0xAD, 0xCB, 0x26, 0x02, 0x3D] };
+pub const I_AVN_TIME_PICKER_IID: Guid = Guid { data1: 0x3CDC3401, data2: 0xB70D, data3: 0x5997, data4: [0x84, 0x96, 0xB3, 0x24, 0xD5, 0x41, 0x8B, 0xFD] };
 
 #[repr(C)]
 struct IAvnTimePickerVtbl {
@@ -80117,6 +80354,8 @@ struct IAvnTimePickerVtbl {
     get_selected_time: unsafe extern "system" fn(*mut IAvnTimePicker, *mut *mut u16) -> i32,
     set_selected_time: unsafe extern "system" fn(*mut IAvnTimePicker, *mut u16) -> i32,
     clear: unsafe extern "system" fn(*mut IAvnTimePicker) -> i32,
+    advise_selected_time_changed: unsafe extern "system" fn(*mut IAvnTimePicker, *mut IAvnTimePickerSelectedTimeChangedHandler, *mut i64) -> i32,
+    unadvise_selected_time_changed: unsafe extern "system" fn(*mut IAvnTimePicker, i64) -> i32,
 }
 
 #[repr(C)]
@@ -80854,6 +81093,19 @@ impl ComPtr<IAvnTimePicker> {
     pub fn clear(&self) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().clear)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_selected_time_changed(&self, handler: &ComPtr<IAvnTimePickerSelectedTimeChangedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_selected_time_changed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_selected_time_changed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_selected_time_changed)(self.as_raw(), subscription_id);
             hresult::check(hr)
         }
     }

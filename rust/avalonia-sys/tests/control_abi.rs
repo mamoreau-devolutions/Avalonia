@@ -107,7 +107,7 @@ fn widened_interfaces_publish_abi_version_five() {
         "#define I_AVN_WINDOW_ABI_VERSION 17",
         "#define I_AVN_TEMPLATED_CONTROL_ABI_VERSION 11",
         "#define I_AVN_TEXT_BLOCK_ABI_VERSION 13",
-        "#define I_AVN_TEXT_BOX_ABI_VERSION 16",
+        "#define I_AVN_TEXT_BOX_ABI_VERSION 17",
         "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 14",
         "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 14",
         "#define I_AVN_BORDER_ABI_VERSION 11",

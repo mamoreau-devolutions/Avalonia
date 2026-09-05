@@ -2614,6 +2614,7 @@ pub use sys::ContextMenuOpeningEventArgs;
 pub use sys::ContextMenuClosingEventArgs;
 pub use sys::ControlSizeChangedEventArgs;
 pub use sys::ControlKeyDownEventArgs;
+pub use sys::DatePickerSelectedDateChangedEventArgs;
 pub use sys::ExpanderCollapsingEventArgs;
 pub use sys::ExpanderExpandingEventArgs;
 pub use sys::NumericUpDownSpinnedEventArgs;
@@ -2624,6 +2625,7 @@ pub use sys::ThumbDragCompletedEventArgs;
 pub use sys::SpinnerSpinEventArgs;
 pub use sys::SplitViewPaneClosingEventArgs;
 pub use sys::SplitViewPaneOpeningEventArgs;
+pub use sys::TimePickerSelectedTimeChangedEventArgs;
 pub use sys::WindowClosingEventArgs;
 
 #[derive(Clone, Debug)]
@@ -13823,6 +13825,17 @@ impl DatePicker {
         Ok(self)
     }
     pub fn clear(&self) -> Result<()> { Ok(self.raw.clear()?) }
+    pub fn subscribe_selected_date_changed(&self, callback: impl FnMut(&mut DatePickerSelectedDateChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::date_picker_selected_date_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_selected_date_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_selected_date_changed(subscription_id)))
+    }
+    pub fn on_selected_date_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut DatePickerSelectedDateChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_selected_date_changed(callback)?);
+        Ok(self)
+    }
 }
 
 impl AsControl for DatePicker {
@@ -22714,6 +22727,19 @@ impl MaskedTextBox {
     }
     pub fn on_text_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_text_changed(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_text_changing(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::text_box_text_changing_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_text_changing(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_text_changing(subscription_id)))
+    }
+    pub fn on_text_changing(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_text_changing(callback)?);
         Ok(self)
     }
     pub fn get_ascii_only(&self) -> Result<bool> { Ok(self.raw.get_ascii_only()?) }
@@ -49058,6 +49084,19 @@ impl TextBox {
         scope.retain_subscription(self.subscribe_text_changed(callback)?);
         Ok(self)
     }
+    pub fn subscribe_text_changing(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::text_box_text_changing_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_text_changing(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_text_changing(subscription_id)))
+    }
+    pub fn on_text_changing(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_text_changing(callback)?);
+        Ok(self)
+    }
 }
 
 impl AsControl for TextBox {
@@ -49953,6 +49992,17 @@ impl TimePicker {
         Ok(self)
     }
     pub fn clear(&self) -> Result<()> { Ok(self.raw.clear()?) }
+    pub fn subscribe_selected_time_changed(&self, callback: impl FnMut(&mut TimePickerSelectedTimeChangedEventArgs) + Send + 'static) -> Result<EventSubscription> {
+        let mut callback = callback;
+        let handler = sys::time_picker_selected_time_changed_handler(move |event| { callback(event); Ok(()) });
+        let subscription_id = self.raw.advise_selected_time_changed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_selected_time_changed(subscription_id)))
+    }
+    pub fn on_selected_time_changed(self, scope: &crate::AppScope, callback: impl FnMut(&mut TimePickerSelectedTimeChangedEventArgs) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_selected_time_changed(callback)?);
+        Ok(self)
+    }
 }
 
 impl AsControl for TimePicker {

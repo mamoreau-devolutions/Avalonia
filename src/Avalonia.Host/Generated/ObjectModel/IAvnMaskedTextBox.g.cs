@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("0C1AB301-A74A-53B5-BE95-DFD83722B34D")]
+[Guid("39C9831D-042A-5F2E-9E47-DB69D161D722")]
 public partial interface IAvnMaskedTextBox : IAvnTextBox
 {
     [PreserveSig]
@@ -90,6 +90,8 @@ public sealed partial class AvnMaskedTextBox : IAvnMaskedTextBox
     private long _nextPastingFromClipboardSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnTextBoxTextChangedHandler Handler, global::System.Action Unsubscribe)> _textChangedSubscriptions = new();
     private long _nextTextChangedSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnTextBoxTextChangingHandler Handler, global::System.Action Unsubscribe)> _textChangingSubscriptions = new();
+    private long _nextTextChangingSubscriptionId;
 
     internal AvnMaskedTextBox(global::Avalonia.Controls.MaskedTextBox value)
     {
@@ -3115,6 +3117,52 @@ public sealed partial class AvnMaskedTextBox : IAvnMaskedTextBox
         }
     }
 
+    public int AdviseTextChanging(IAvnTextBoxTextChangingHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<Avalonia.Controls.TextChangingEventArgs>((_, eventArgs) =>
+            {
+                var hr = handler.Invoke();
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.TextChanging += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextTextChangingSubscriptionId);
+            _textChangingSubscriptions.Add(subscriptionId, (handler, () => eventSource.TextChanging -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseTextChanging(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_textChangingSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetAsciiOnly(out int value)
     {
         value = default!;
@@ -3431,5 +3479,11 @@ public sealed partial class AvnMaskedTextBox : IAvnMaskedTextBox
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
         }
         _textChangedSubscriptions.Clear();
+        foreach (var subscription in _textChangingSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _textChangingSubscriptions.Clear();
     }
 }

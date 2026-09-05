@@ -1102,6 +1102,22 @@ public static class ComSourceEmitter
         sb.AppendLine("        HasValue != 0 ? new global::System.DateTime(Ticks, global::System.DateTimeKind.Utc) : null;");
         sb.AppendLine("}");
         sb.AppendLine();
+        sb.AppendLine("/// <summary>Nullable ABI wrapper of a TimeSpan tick count.</summary>");
+        sb.AppendLine("[StructLayout(LayoutKind.Sequential)]");
+        sb.AppendLine("public struct AvnOptionalTimeSpan");
+        sb.AppendLine("{");
+        sb.AppendLine("    public int HasValue;");
+        sb.AppendLine("    public long Ticks;");
+        sb.AppendLine();
+        sb.AppendLine("    public static AvnOptionalTimeSpan FromTimeSpan(global::System.TimeSpan? value) =>");
+        sb.AppendLine("        value is { } inner");
+        sb.AppendLine("            ? new AvnOptionalTimeSpan { HasValue = 1, Ticks = inner.Ticks }");
+        sb.AppendLine("            : default;");
+        sb.AppendLine();
+        sb.AppendLine("    public readonly global::System.TimeSpan? ToTimeSpan() =>");
+        sb.AppendLine("        HasValue != 0 ? global::System.TimeSpan.FromTicks(Ticks) : null;");
+        sb.AppendLine("}");
+        sb.AppendLine();
         sb.AppendLine("/// <summary>Tagged scalar carrying object? command parameters.</summary>");
         sb.AppendLine("/// <remarks>");
         sb.AppendLine("/// Tag selects the payload slot: 0 none, 1 utf16, 2 i32, 3 f64, 4 bool.");
@@ -1633,9 +1649,17 @@ public static class ComSourceEmitter
                 $"!eventArgs.{parameter.Name}.HasValue ? -1 : eventArgs.{parameter.Name}.Value ? 1 : 0",
             _ when GeometryMarshalling.TryGet(parameter.Kind, out var geometry) =>
                 $"{geometry.AbiName}.FromAvalonia(eventArgs.{parameter.Name})",
+            MarshallingKind.DateTimeI64 when parameter.IsNullable &&
+                parameter.ManagedTypeName?.Contains("System.DateTimeOffset") == true =>
+                $"eventArgs.{parameter.Name}.HasValue ? AvnOptionalDateTime.FromDateTime(eventArgs.{parameter.Name}.Value.UtcDateTime) : default",
             MarshallingKind.DateTimeI64 when parameter.IsNullable =>
                 $"AvnOptionalDateTime.FromDateTime(eventArgs.{parameter.Name})",
+            MarshallingKind.DateTimeI64 when parameter.ManagedTypeName?.Contains("System.DateTimeOffset") == true =>
+                $"eventArgs.{parameter.Name}.UtcDateTime.Ticks",
             MarshallingKind.DateTimeI64 => $"eventArgs.{parameter.Name}.Ticks",
+            MarshallingKind.TimeSpanI64 when parameter.IsNullable =>
+                $"AvnOptionalTimeSpan.FromTimeSpan(eventArgs.{parameter.Name})",
+            MarshallingKind.TimeSpanI64 => $"eventArgs.{parameter.Name}.Ticks",
             _ => $"eventArgs.{parameter.Name}",
         };
 
@@ -1649,6 +1673,7 @@ public static class ComSourceEmitter
                 $"{value} switch {{ -1 => null, 0 => false, 1 => true, _ => throw new global::System.ArgumentOutOfRangeException(nameof({value})) }}",
             _ when GeometryMarshalling.IsGeometry(parameter.Kind) => $"{value}.ToAvalonia()",
             MarshallingKind.DateTimeI64 when parameter.IsNullable => $"{value}.ToDateTime()",
+            MarshallingKind.TimeSpanI64 when parameter.IsNullable => $"{value}.ToTimeSpan()",
             _ => value,
         };
 
@@ -1777,7 +1802,7 @@ public static class ComSourceEmitter
             MarshallingKind.NullableBool => "int",
             MarshallingKind.StringUtf16 => nullable ? "string?" : "string",
             MarshallingKind.Variant => "AvnVariant",
-            MarshallingKind.TimeSpanI64 => "long",
+            MarshallingKind.TimeSpanI64 => nullable ? "AvnOptionalTimeSpan" : "long",
             MarshallingKind.DateTimeI64 => nullable ? "AvnOptionalDateTime" : "long",
             MarshallingKind.PixelPointI32 => "AvnPixelPoint",
             MarshallingKind.ComInterface => (interfaceName is null ? "object" : SimpleName(interfaceName)) + (nullable ? "?" : ""),

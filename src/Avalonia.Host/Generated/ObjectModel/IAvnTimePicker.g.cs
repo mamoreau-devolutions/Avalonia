@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("F8ABF027-98FB-50B3-B836-34ADCB26023D")]
+[Guid("3CDC3401-B70D-5997-8496-B324D5418BFD")]
 public partial interface IAvnTimePicker : IAvnTemplatedControl
 {
     [PreserveSig]
@@ -48,6 +48,12 @@ public partial interface IAvnTimePicker : IAvnTemplatedControl
     [PreserveSig]
     int Clear();
 
+    [PreserveSig]
+    int AdviseSelectedTimeChanged(IAvnTimePickerSelectedTimeChangedHandler? handler, out long subscriptionId);
+
+    [PreserveSig]
+    int UnadviseSelectedTimeChanged(long subscriptionId);
+
 }
 
 [GeneratedComClass]
@@ -79,6 +85,8 @@ public sealed partial class AvnTimePicker : IAvnTimePicker
     private long _nextPointerEnteredSubscriptionId;
     private readonly global::System.Collections.Generic.Dictionary<long, (IAvnControlPointerExitedHandler Handler, global::System.Action Unsubscribe)> _pointerExitedSubscriptions = new();
     private long _nextPointerExitedSubscriptionId;
+    private readonly global::System.Collections.Generic.Dictionary<long, (IAvnTimePickerSelectedTimeChangedHandler Handler, global::System.Action Unsubscribe)> _selectedTimeChangedSubscriptions = new();
+    private long _nextSelectedTimeChangedSubscriptionId;
 
     internal AvnTimePicker(global::Avalonia.Controls.TimePicker value)
     {
@@ -1898,6 +1906,52 @@ public sealed partial class AvnTimePicker : IAvnTimePicker
         }
     }
 
+    public int AdviseSelectedTimeChanged(IAvnTimePickerSelectedTimeChangedHandler? handler, out long subscriptionId)
+    {
+        subscriptionId = 0;
+        if (handler is null)
+            return global::Avalonia.Host.HResults.E_POINTER;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            var eventSource = _value;
+            var callback = new global::System.EventHandler<Avalonia.Controls.TimePickerSelectedValueChangedEventArgs>((_, eventArgs) =>
+            {
+                var hr = handler.Invoke(AvnOptionalTimeSpan.FromTimeSpan(eventArgs.OldTime), AvnOptionalTimeSpan.FromTimeSpan(eventArgs.NewTime));
+                if (hr < 0)
+                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
+            });
+            eventSource.SelectedTimeChanged += callback;
+            subscriptionId = global::System.Threading.Interlocked.Increment(ref _nextSelectedTimeChangedSubscriptionId);
+            _selectedTimeChangedSubscriptions.Add(subscriptionId, (handler, () => eventSource.SelectedTimeChanged -= callback));
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionAdded();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnadviseSelectedTimeChanged(long subscriptionId)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            if (!_selectedTimeChangedSubscriptions.Remove(subscriptionId, out var subscription))
+                return global::Avalonia.Host.HResults.E_INVALIDARG;
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     private void ReleaseSubscriptions()
     {
         foreach (var subscription in _attachedToLogicalTreeSubscriptions.Values)
@@ -1972,5 +2026,11 @@ public sealed partial class AvnTimePicker : IAvnTimePicker
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
         }
         _pointerExitedSubscriptions.Clear();
+        foreach (var subscription in _selectedTimeChangedSubscriptions.Values)
+        {
+            subscription.Unsubscribe();
+            global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+        }
+        _selectedTimeChangedSubscriptions.Clear();
     }
 }

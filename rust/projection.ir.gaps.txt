@@ -61,7 +61,6 @@ Avalonia.Controls.ContextMenu.Close(): By design: the INotification content need
 Avalonia.Controls.Control.FocusAdorner: By design: adorner plumbing is owned by the host
 Avalonia.Controls.Control.DataTemplates: By design: the default-template list is owned by the host
 Avalonia.Controls.Control.Tag: By design: an untyped user payload with no ABI shape
-Avalonia.Controls.DatePicker.SelectedDateChanged: By design: the added/removed collection payload has no event shape yet
 Avalonia.Controls.Expander.ContentTransition: By design: transitions are animation internals owned by the host
 Avalonia.Controls.Flyout.FlyoutPresenterClasses: By design: styling is owned by the host
 Avalonia.Controls.Flyout.FlyoutPresenterTheme: By design: styling is owned by the host
@@ -152,8 +151,6 @@ Avalonia.Controls.TextBlock.Render(DrawingContext): By design: custom drawing is
 Avalonia.Controls.TextBox.Watermark: By design: obsolete alias of PlaceholderText
 Avalonia.Controls.TextBox.UseFloatingWatermark: By design: obsolete alias of UseFloatingPlaceholder
 Avalonia.Controls.TextBox.WatermarkForeground: By design: obsolete alias of PlaceholderForeground
-Avalonia.Controls.TextBox.TextChanging: By design: the undo-args payload has no event shape yet
-Avalonia.Controls.TimePicker.SelectedTimeChanged: By design: the nullable TimeSpan payload has no event shape yet
 Avalonia.Controls.ToggleSwitch.OffContentPresenter: By design: template-part presenters are internal layout plumbing
 Avalonia.Controls.ToggleSwitch.OnContentPresenter: By design: template-part presenters are internal layout plumbing
 Avalonia.Controls.ToggleSwitch.KnobTransitions: By design: animation internals owned by the host

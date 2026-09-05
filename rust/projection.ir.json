@@ -1984,8 +1984,8 @@
       "name": "IAvnDatePicker",
       "fullName": "Avalonia.Host.Com.IAvnDatePicker",
       "kind": "Class",
-      "iid": "5FB7F36A-84C5-5F05-90BC-866445676522",
-      "abiVersion": 9,
+      "iid": "46C8450E-3A2E-5F47-905F-0726F2DD40B6",
+      "abiVersion": 10,
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.DatePicker",
       "isConstructible": true,
@@ -2093,7 +2093,32 @@
           "stringConverterTypeName": "Avalonia.Host.Com.AvnDateTimeOffset"
         }
       ],
-      "events": []
+      "events": [
+        {
+          "name": "SelectedDateChanged",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnDatePickerSelectedDateChangedHandler",
+          "handlerInterfaceIid": "74C9BE6F-E5CD-5936-B4BF-59CC0843096F",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "Fields",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Controls.DatePickerSelectedValueChangedEventArgs\u003E",
+          "parameters": [
+            {
+              "name": "OldDate",
+              "kind": "DateTimeI64",
+              "direction": "In",
+              "managedTypeName": "System.Nullable\u00601[[System.DateTimeOffset, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+              "isNullable": true
+            },
+            {
+              "name": "NewDate",
+              "kind": "DateTimeI64",
+              "direction": "In",
+              "managedTypeName": "System.Nullable\u00601[[System.DateTimeOffset, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+              "isNullable": true
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "IAvnDecorator",
@@ -2900,8 +2925,8 @@
       "name": "IAvnMaskedTextBox",
       "fullName": "Avalonia.Host.Com.IAvnMaskedTextBox",
       "kind": "Class",
-      "iid": "0C1AB301-A74A-53B5-BE95-DFD83722B34D",
-      "abiVersion": 13,
+      "iid": "39C9831D-042A-5F2E-9E47-DB69D161D722",
+      "abiVersion": 14,
       "baseFullName": "Avalonia.Host.Com.IAvnTextBox",
       "managedFullName": "Avalonia.Controls.MaskedTextBox",
       "isConstructible": true,
@@ -6558,8 +6583,8 @@
       "name": "IAvnTextBox",
       "fullName": "Avalonia.Host.Com.IAvnTextBox",
       "kind": "Class",
-      "iid": "477DB397-E368-5FCD-B1C5-F785F3D6AC58",
-      "abiVersion": 16,
+      "iid": "8F882501-C637-5AB3-9E1C-BAC243FE0900",
+      "abiVersion": 17,
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.TextBox",
       "isConstructible": true,
@@ -7032,6 +7057,15 @@
           "payloadKind": "None",
           "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Controls.TextChangedEventArgs\u003E",
           "parameters": []
+        },
+        {
+          "name": "TextChanging",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnTextBoxTextChangingHandler",
+          "handlerInterfaceIid": "367C8D48-6703-5571-8E11-6427ABB6EF40",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Controls.TextChangingEventArgs\u003E",
+          "parameters": []
         }
       ]
     },
@@ -7063,8 +7097,8 @@
       "name": "IAvnTimePicker",
       "fullName": "Avalonia.Host.Com.IAvnTimePicker",
       "kind": "Class",
-      "iid": "F8ABF027-98FB-50B3-B836-34ADCB26023D",
-      "abiVersion": 9,
+      "iid": "3CDC3401-B70D-5997-8496-B324D5418BFD",
+      "abiVersion": 10,
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.TimePicker",
       "isConstructible": true,
@@ -7134,7 +7168,32 @@
           "stringConverterTypeName": "Avalonia.Host.Com.AvnTimeSpan"
         }
       ],
-      "events": []
+      "events": [
+        {
+          "name": "SelectedTimeChanged",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnTimePickerSelectedTimeChangedHandler",
+          "handlerInterfaceIid": "B5F445B5-72E0-5C6D-A2A6-0BFCAC23A1F9",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "Fields",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Controls.TimePickerSelectedValueChangedEventArgs\u003E",
+          "parameters": [
+            {
+              "name": "OldTime",
+              "kind": "TimeSpanI64",
+              "direction": "In",
+              "managedTypeName": "System.Nullable\u00601[[System.TimeSpan, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+              "isNullable": true
+            },
+            {
+              "name": "NewTime",
+              "kind": "TimeSpanI64",
+              "direction": "In",
+              "managedTypeName": "System.Nullable\u00601[[System.TimeSpan, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+              "isNullable": true
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "IAvnToggleSplitButton",
@@ -11891,11 +11950,6 @@
       "reason": "By design: an untyped user payload with no ABI shape"
     },
     {
-      "owner": "Avalonia.Controls.DatePicker",
-      "member": "SelectedDateChanged",
-      "reason": "By design: the added/removed collection payload has no event shape yet"
-    },
-    {
       "owner": "Avalonia.Controls.Expander",
       "member": "ContentTransition",
       "reason": "By design: transitions are animation internals owned by the host"
@@ -12344,16 +12398,6 @@
       "owner": "Avalonia.Controls.TextBox",
       "member": "WatermarkForeground",
       "reason": "By design: obsolete alias of PlaceholderForeground"
-    },
-    {
-      "owner": "Avalonia.Controls.TextBox",
-      "member": "TextChanging",
-      "reason": "By design: the undo-args payload has no event shape yet"
-    },
-    {
-      "owner": "Avalonia.Controls.TimePicker",
-      "member": "SelectedTimeChanged",
-      "reason": "By design: the nullable TimeSpan payload has no event shape yet"
     },
     {
       "owner": "Avalonia.Controls.ToggleSwitch",

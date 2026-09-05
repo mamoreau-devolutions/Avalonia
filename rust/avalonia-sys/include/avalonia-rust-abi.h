@@ -119,6 +119,12 @@ typedef struct AvnOptionalDateTime {
     int64_t ticks;
 } AvnOptionalDateTime;
 
+/* Nullable ABI wrapper of a TimeSpan tick count. has_value is 0 or 1. */
+typedef struct AvnOptionalTimeSpan {
+    int32_t has_value;
+    int64_t ticks;
+} AvnOptionalTimeSpan;
+
 /* Tagged scalar carrying object? command parameters. */
 /* tag: 0 none, 1 utf16, 2 i32, 3 f64, 4 bool. */
 typedef struct AvnVariant {
@@ -234,6 +240,8 @@ typedef struct IAvnControlUnloadedHandler IAvnControlUnloadedHandler;
 typedef struct IAvnControlUnloadedHandlerVtbl IAvnControlUnloadedHandlerVtbl;
 typedef struct IAvnDatePicker IAvnDatePicker;
 typedef struct IAvnDatePickerVtbl IAvnDatePickerVtbl;
+typedef struct IAvnDatePickerSelectedDateChangedHandler IAvnDatePickerSelectedDateChangedHandler;
+typedef struct IAvnDatePickerSelectedDateChangedHandlerVtbl IAvnDatePickerSelectedDateChangedHandlerVtbl;
 typedef struct IAvnDateTimeList IAvnDateTimeList;
 typedef struct IAvnDateTimeListVtbl IAvnDateTimeListVtbl;
 typedef struct IAvnDecorator IAvnDecorator;
@@ -458,6 +466,8 @@ typedef struct IAvnTextBoxPastingFromClipboardHandler IAvnTextBoxPastingFromClip
 typedef struct IAvnTextBoxPastingFromClipboardHandlerVtbl IAvnTextBoxPastingFromClipboardHandlerVtbl;
 typedef struct IAvnTextBoxTextChangedHandler IAvnTextBoxTextChangedHandler;
 typedef struct IAvnTextBoxTextChangedHandlerVtbl IAvnTextBoxTextChangedHandlerVtbl;
+typedef struct IAvnTextBoxTextChangingHandler IAvnTextBoxTextChangingHandler;
+typedef struct IAvnTextBoxTextChangingHandlerVtbl IAvnTextBoxTextChangingHandlerVtbl;
 typedef struct IAvnThemeVariantScope IAvnThemeVariantScope;
 typedef struct IAvnThemeVariantScopeVtbl IAvnThemeVariantScopeVtbl;
 typedef struct IAvnThumb IAvnThumb;
@@ -470,6 +480,8 @@ typedef struct IAvnThumbDragStartedHandler IAvnThumbDragStartedHandler;
 typedef struct IAvnThumbDragStartedHandlerVtbl IAvnThumbDragStartedHandlerVtbl;
 typedef struct IAvnTimePicker IAvnTimePicker;
 typedef struct IAvnTimePickerVtbl IAvnTimePickerVtbl;
+typedef struct IAvnTimePickerSelectedTimeChangedHandler IAvnTimePickerSelectedTimeChangedHandler;
+typedef struct IAvnTimePickerSelectedTimeChangedHandlerVtbl IAvnTimePickerSelectedTimeChangedHandlerVtbl;
 typedef struct IAvnToggleButton IAvnToggleButton;
 typedef struct IAvnToggleButtonVtbl IAvnToggleButtonVtbl;
 typedef struct IAvnToggleButtonIsCheckedChangedHandler IAvnToggleButtonIsCheckedChangedHandler;
@@ -932,6 +944,22 @@ struct IAvnControlUnloadedHandlerVtbl {
 };
 struct IAvnControlUnloadedHandler { const IAvnControlUnloadedHandlerVtbl* vtbl; };
 #define I_AVN_CONTROL_UNLOADED_HANDLER_VTABLE_SLOTS 4
+
+static const AvnGuid I_AVN_DATE_PICKER_SELECTED_DATE_CHANGED_HANDLER_IID = {
+    0x74C9BE6F,
+    0xE5CD,
+    0x5936,
+    { 0xB4, 0xBF, 0x59, 0xCC, 0x08, 0x43, 0x09, 0x6F }
+};
+#define I_AVN_DATE_PICKER_SELECTED_DATE_CHANGED_HANDLER_ABI_VERSION 1
+struct IAvnDatePickerSelectedDateChangedHandlerVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnDatePickerSelectedDateChangedHandler* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnDatePickerSelectedDateChangedHandler* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnDatePickerSelectedDateChangedHandler* self); /* slot 2 */
+    AvnHResult (AVN_CALL *invoke)(IAvnDatePickerSelectedDateChangedHandler* self, AvnOptionalDateTime old_date, AvnOptionalDateTime new_date); /* slot 3 */
+};
+struct IAvnDatePickerSelectedDateChangedHandler { const IAvnDatePickerSelectedDateChangedHandlerVtbl* vtbl; };
+#define I_AVN_DATE_PICKER_SELECTED_DATE_CHANGED_HANDLER_VTABLE_SLOTS 4
 
 static const AvnGuid I_AVN_EXPANDER_COLLAPSED_HANDLER_IID = {
     0x09BF1232,
@@ -1557,6 +1585,22 @@ struct IAvnTextBoxTextChangedHandlerVtbl {
 struct IAvnTextBoxTextChangedHandler { const IAvnTextBoxTextChangedHandlerVtbl* vtbl; };
 #define I_AVN_TEXT_BOX_TEXT_CHANGED_HANDLER_VTABLE_SLOTS 4
 
+static const AvnGuid I_AVN_TEXT_BOX_TEXT_CHANGING_HANDLER_IID = {
+    0x367C8D48,
+    0x6703,
+    0x5571,
+    { 0x8E, 0x11, 0x64, 0x27, 0xAB, 0xB6, 0xEF, 0x40 }
+};
+#define I_AVN_TEXT_BOX_TEXT_CHANGING_HANDLER_ABI_VERSION 1
+struct IAvnTextBoxTextChangingHandlerVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnTextBoxTextChangingHandler* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnTextBoxTextChangingHandler* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnTextBoxTextChangingHandler* self); /* slot 2 */
+    AvnHResult (AVN_CALL *invoke)(IAvnTextBoxTextChangingHandler* self); /* slot 3 */
+};
+struct IAvnTextBoxTextChangingHandler { const IAvnTextBoxTextChangingHandlerVtbl* vtbl; };
+#define I_AVN_TEXT_BOX_TEXT_CHANGING_HANDLER_VTABLE_SLOTS 4
+
 static const AvnGuid I_AVN_THUMB_DRAG_COMPLETED_HANDLER_IID = {
     0x913B0E1C,
     0xAF04,
@@ -1604,6 +1648,22 @@ struct IAvnThumbDragStartedHandlerVtbl {
 };
 struct IAvnThumbDragStartedHandler { const IAvnThumbDragStartedHandlerVtbl* vtbl; };
 #define I_AVN_THUMB_DRAG_STARTED_HANDLER_VTABLE_SLOTS 4
+
+static const AvnGuid I_AVN_TIME_PICKER_SELECTED_TIME_CHANGED_HANDLER_IID = {
+    0xB5F445B5,
+    0x72E0,
+    0x5C6D,
+    { 0xA2, 0xA6, 0x0B, 0xFC, 0xAC, 0x23, 0xA1, 0xF9 }
+};
+#define I_AVN_TIME_PICKER_SELECTED_TIME_CHANGED_HANDLER_ABI_VERSION 1
+struct IAvnTimePickerSelectedTimeChangedHandlerVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnTimePickerSelectedTimeChangedHandler* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnTimePickerSelectedTimeChangedHandler* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnTimePickerSelectedTimeChangedHandler* self); /* slot 2 */
+    AvnHResult (AVN_CALL *invoke)(IAvnTimePickerSelectedTimeChangedHandler* self, AvnOptionalTimeSpan old_time, AvnOptionalTimeSpan new_time); /* slot 3 */
+};
+struct IAvnTimePickerSelectedTimeChangedHandler { const IAvnTimePickerSelectedTimeChangedHandlerVtbl* vtbl; };
+#define I_AVN_TIME_PICKER_SELECTED_TIME_CHANGED_HANDLER_VTABLE_SLOTS 4
 
 static const AvnGuid I_AVN_TOGGLE_BUTTON_IS_CHECKED_CHANGED_HANDLER_IID = {
     0xFF444C66,
@@ -4425,12 +4485,12 @@ struct IAvnControl { const IAvnControlVtbl* vtbl; };
 #define I_AVN_CONTROL_VTABLE_SLOTS 67
 
 static const AvnGuid I_AVN_DATE_PICKER_IID = {
-    0x5FB7F36A,
-    0x84C5,
-    0x5F05,
-    { 0x90, 0xBC, 0x86, 0x64, 0x45, 0x67, 0x65, 0x22 }
+    0x46C8450E,
+    0x3A2E,
+    0x5F47,
+    { 0x90, 0x5F, 0x07, 0x26, 0xF2, 0xDD, 0x40, 0xB6 }
 };
-#define I_AVN_DATE_PICKER_ABI_VERSION 9
+#define I_AVN_DATE_PICKER_ABI_VERSION 10
 struct IAvnDatePickerVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnDatePicker* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnDatePicker* self); /* slot 1 */
@@ -4548,9 +4608,11 @@ struct IAvnDatePickerVtbl {
     AvnHResult (AVN_CALL *get_selected_date)(IAvnDatePicker* self, uint16_t** value); /* slot 113 */
     AvnHResult (AVN_CALL *set_selected_date)(IAvnDatePicker* self, const uint16_t* value); /* slot 114 */
     AvnHResult (AVN_CALL *clear)(IAvnDatePicker* self); /* slot 115 */
+    AvnHResult (AVN_CALL *advise_selected_date_changed)(IAvnDatePicker* self, IAvnDatePickerSelectedDateChangedHandler* handler, int64_t* subscription_id); /* slot 116 */
+    AvnHResult (AVN_CALL *unadvise_selected_date_changed)(IAvnDatePicker* self, int64_t subscription_id); /* slot 117 */
 };
 struct IAvnDatePicker { const IAvnDatePickerVtbl* vtbl; };
-#define I_AVN_DATE_PICKER_VTABLE_SLOTS 116
+#define I_AVN_DATE_PICKER_VTABLE_SLOTS 118
 
 static const AvnGuid I_AVN_DECORATOR_IID = {
     0x72C35F15,
@@ -6976,12 +7038,12 @@ struct IAvnListBoxItem { const IAvnListBoxItemVtbl* vtbl; };
 #define I_AVN_LIST_BOX_ITEM_VTABLE_SLOTS 105
 
 static const AvnGuid I_AVN_MASKED_TEXT_BOX_IID = {
-    0x0C1AB301,
-    0xA74A,
-    0x53B5,
-    { 0xBE, 0x95, 0xDF, 0xD8, 0x37, 0x22, 0xB3, 0x4D }
+    0x39C9831D,
+    0x042A,
+    0x5F2E,
+    { 0x9E, 0x47, 0xDB, 0x69, 0xD1, 0x61, 0xD7, 0x22 }
 };
-#define I_AVN_MASKED_TEXT_BOX_ABI_VERSION 13
+#define I_AVN_MASKED_TEXT_BOX_ABI_VERSION 14
 struct IAvnMaskedTextBoxVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnMaskedTextBox* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnMaskedTextBox* self); /* slot 1 */
@@ -7165,23 +7227,25 @@ struct IAvnMaskedTextBoxVtbl {
     AvnHResult (AVN_CALL *unadvise_pasting_from_clipboard)(IAvnMaskedTextBox* self, int64_t subscription_id); /* slot 179 */
     AvnHResult (AVN_CALL *advise_text_changed)(IAvnMaskedTextBox* self, IAvnTextBoxTextChangedHandler* handler, int64_t* subscription_id); /* slot 180 */
     AvnHResult (AVN_CALL *unadvise_text_changed)(IAvnMaskedTextBox* self, int64_t subscription_id); /* slot 181 */
-    AvnHResult (AVN_CALL *get_ascii_only)(IAvnMaskedTextBox* self, int32_t* value); /* slot 182 */
-    AvnHResult (AVN_CALL *set_ascii_only)(IAvnMaskedTextBox* self, int32_t value); /* slot 183 */
-    AvnHResult (AVN_CALL *get_hide_prompt_on_leave)(IAvnMaskedTextBox* self, int32_t* value); /* slot 184 */
-    AvnHResult (AVN_CALL *set_hide_prompt_on_leave)(IAvnMaskedTextBox* self, int32_t value); /* slot 185 */
-    AvnHResult (AVN_CALL *get_mask)(IAvnMaskedTextBox* self, uint16_t** value); /* slot 186 */
-    AvnHResult (AVN_CALL *set_mask)(IAvnMaskedTextBox* self, const uint16_t* value); /* slot 187 */
-    AvnHResult (AVN_CALL *get_mask_completed)(IAvnMaskedTextBox* self, int32_t* value); /* slot 188 */
-    AvnHResult (AVN_CALL *get_mask_full)(IAvnMaskedTextBox* self, int32_t* value); /* slot 189 */
-    AvnHResult (AVN_CALL *get_prompt_char)(IAvnMaskedTextBox* self, uint16_t* value); /* slot 190 */
-    AvnHResult (AVN_CALL *set_prompt_char)(IAvnMaskedTextBox* self, uint16_t value); /* slot 191 */
-    AvnHResult (AVN_CALL *get_reset_on_prompt)(IAvnMaskedTextBox* self, int32_t* value); /* slot 192 */
-    AvnHResult (AVN_CALL *set_reset_on_prompt)(IAvnMaskedTextBox* self, int32_t value); /* slot 193 */
-    AvnHResult (AVN_CALL *get_reset_on_space)(IAvnMaskedTextBox* self, int32_t* value); /* slot 194 */
-    AvnHResult (AVN_CALL *set_reset_on_space)(IAvnMaskedTextBox* self, int32_t value); /* slot 195 */
+    AvnHResult (AVN_CALL *advise_text_changing)(IAvnMaskedTextBox* self, IAvnTextBoxTextChangingHandler* handler, int64_t* subscription_id); /* slot 182 */
+    AvnHResult (AVN_CALL *unadvise_text_changing)(IAvnMaskedTextBox* self, int64_t subscription_id); /* slot 183 */
+    AvnHResult (AVN_CALL *get_ascii_only)(IAvnMaskedTextBox* self, int32_t* value); /* slot 184 */
+    AvnHResult (AVN_CALL *set_ascii_only)(IAvnMaskedTextBox* self, int32_t value); /* slot 185 */
+    AvnHResult (AVN_CALL *get_hide_prompt_on_leave)(IAvnMaskedTextBox* self, int32_t* value); /* slot 186 */
+    AvnHResult (AVN_CALL *set_hide_prompt_on_leave)(IAvnMaskedTextBox* self, int32_t value); /* slot 187 */
+    AvnHResult (AVN_CALL *get_mask)(IAvnMaskedTextBox* self, uint16_t** value); /* slot 188 */
+    AvnHResult (AVN_CALL *set_mask)(IAvnMaskedTextBox* self, const uint16_t* value); /* slot 189 */
+    AvnHResult (AVN_CALL *get_mask_completed)(IAvnMaskedTextBox* self, int32_t* value); /* slot 190 */
+    AvnHResult (AVN_CALL *get_mask_full)(IAvnMaskedTextBox* self, int32_t* value); /* slot 191 */
+    AvnHResult (AVN_CALL *get_prompt_char)(IAvnMaskedTextBox* self, uint16_t* value); /* slot 192 */
+    AvnHResult (AVN_CALL *set_prompt_char)(IAvnMaskedTextBox* self, uint16_t value); /* slot 193 */
+    AvnHResult (AVN_CALL *get_reset_on_prompt)(IAvnMaskedTextBox* self, int32_t* value); /* slot 194 */
+    AvnHResult (AVN_CALL *set_reset_on_prompt)(IAvnMaskedTextBox* self, int32_t value); /* slot 195 */
+    AvnHResult (AVN_CALL *get_reset_on_space)(IAvnMaskedTextBox* self, int32_t* value); /* slot 196 */
+    AvnHResult (AVN_CALL *set_reset_on_space)(IAvnMaskedTextBox* self, int32_t value); /* slot 197 */
 };
 struct IAvnMaskedTextBox { const IAvnMaskedTextBoxVtbl* vtbl; };
-#define I_AVN_MASKED_TEXT_BOX_VTABLE_SLOTS 196
+#define I_AVN_MASKED_TEXT_BOX_VTABLE_SLOTS 198
 
 static const AvnGuid I_AVN_MENU_IID = {
     0x1ACA5A30,
@@ -11856,12 +11920,12 @@ struct IAvnTextBlock { const IAvnTextBlockVtbl* vtbl; };
 #define I_AVN_TEXT_BLOCK_VTABLE_SLOTS 103
 
 static const AvnGuid I_AVN_TEXT_BOX_IID = {
-    0x477DB397,
-    0xE368,
-    0x5FCD,
-    { 0xB1, 0xC5, 0xF7, 0x85, 0xF3, 0xD6, 0xAC, 0x58 }
+    0x8F882501,
+    0xC637,
+    0x5AB3,
+    { 0x9E, 0x1C, 0xBA, 0xC2, 0x43, 0xFE, 0x09, 0x00 }
 };
-#define I_AVN_TEXT_BOX_ABI_VERSION 16
+#define I_AVN_TEXT_BOX_ABI_VERSION 17
 struct IAvnTextBoxVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnTextBox* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnTextBox* self); /* slot 1 */
@@ -12045,9 +12109,11 @@ struct IAvnTextBoxVtbl {
     AvnHResult (AVN_CALL *unadvise_pasting_from_clipboard)(IAvnTextBox* self, int64_t subscription_id); /* slot 179 */
     AvnHResult (AVN_CALL *advise_text_changed)(IAvnTextBox* self, IAvnTextBoxTextChangedHandler* handler, int64_t* subscription_id); /* slot 180 */
     AvnHResult (AVN_CALL *unadvise_text_changed)(IAvnTextBox* self, int64_t subscription_id); /* slot 181 */
+    AvnHResult (AVN_CALL *advise_text_changing)(IAvnTextBox* self, IAvnTextBoxTextChangingHandler* handler, int64_t* subscription_id); /* slot 182 */
+    AvnHResult (AVN_CALL *unadvise_text_changing)(IAvnTextBox* self, int64_t subscription_id); /* slot 183 */
 };
 struct IAvnTextBox { const IAvnTextBoxVtbl* vtbl; };
-#define I_AVN_TEXT_BOX_VTABLE_SLOTS 182
+#define I_AVN_TEXT_BOX_VTABLE_SLOTS 184
 
 static const AvnGuid I_AVN_THEME_VARIANT_SCOPE_IID = {
     0xD911D81B,
@@ -12248,12 +12314,12 @@ struct IAvnThumb { const IAvnThumbVtbl* vtbl; };
 #define I_AVN_THUMB_VTABLE_SLOTS 101
 
 static const AvnGuid I_AVN_TIME_PICKER_IID = {
-    0xF8ABF027,
-    0x98FB,
-    0x50B3,
-    { 0xB8, 0x36, 0x34, 0xAD, 0xCB, 0x26, 0x02, 0x3D }
+    0x3CDC3401,
+    0xB70D,
+    0x5997,
+    { 0x84, 0x96, 0xB3, 0x24, 0xD5, 0x41, 0x8B, 0xFD }
 };
-#define I_AVN_TIME_PICKER_ABI_VERSION 9
+#define I_AVN_TIME_PICKER_ABI_VERSION 10
 struct IAvnTimePickerVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnTimePicker* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnTimePicker* self); /* slot 1 */
@@ -12363,9 +12429,11 @@ struct IAvnTimePickerVtbl {
     AvnHResult (AVN_CALL *get_selected_time)(IAvnTimePicker* self, uint16_t** value); /* slot 105 */
     AvnHResult (AVN_CALL *set_selected_time)(IAvnTimePicker* self, const uint16_t* value); /* slot 106 */
     AvnHResult (AVN_CALL *clear)(IAvnTimePicker* self); /* slot 107 */
+    AvnHResult (AVN_CALL *advise_selected_time_changed)(IAvnTimePicker* self, IAvnTimePickerSelectedTimeChangedHandler* handler, int64_t* subscription_id); /* slot 108 */
+    AvnHResult (AVN_CALL *unadvise_selected_time_changed)(IAvnTimePicker* self, int64_t subscription_id); /* slot 109 */
 };
 struct IAvnTimePicker { const IAvnTimePickerVtbl* vtbl; };
-#define I_AVN_TIME_PICKER_VTABLE_SLOTS 108
+#define I_AVN_TIME_PICKER_VTABLE_SLOTS 110
 
 static const AvnGuid I_AVN_TOGGLE_BUTTON_IID = {
     0x1BCBB498,

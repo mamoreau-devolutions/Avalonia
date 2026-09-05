@@ -37,7 +37,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnTemplatedControl"] = 11,
             ["Avalonia.Host.Com.IAvnItemsControl"] = 14,
             ["Avalonia.Host.Com.IAvnSelectingItemsControl"] = 14,
-            ["Avalonia.Host.Com.IAvnTextBox"] = 16,
+            ["Avalonia.Host.Com.IAvnTextBox"] = 17,
             ["Avalonia.Host.Com.IAvnRangeBase"] = 11,
             ["Avalonia.Host.Com.IAvnSlider"] = 11,
             ["Avalonia.Host.Com.IAvnProgressBar"] = 12,
@@ -73,7 +73,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnPopupFlyoutBase"] = 3,
             ["Avalonia.Host.Com.IAvnFlyout"] = 4,
             ["Avalonia.Host.Com.IAvnMenuFlyout"] = 5,
-            ["Avalonia.Host.Com.IAvnDatePicker"] = 9,
+            ["Avalonia.Host.Com.IAvnDatePicker"] = 10,
             ["Avalonia.Host.Com.IAvnDropDownButton"] = 10,
             ["Avalonia.Host.Com.IAvnGridSplitter"] = 9,
             ["Avalonia.Host.Com.IAvnGroupBox"] = 8,
@@ -82,7 +82,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnHyperlinkButton"] = 10,
             ["Avalonia.Host.Com.IAvnIconElement"] = 8,
             ["Avalonia.Host.Com.IAvnLabel"] = 9,
-            ["Avalonia.Host.Com.IAvnMaskedTextBox"] = 13,
+            ["Avalonia.Host.Com.IAvnMaskedTextBox"] = 14,
             ["Avalonia.Host.Com.IAvnMenu"] = 11,
             ["Avalonia.Host.Com.IAvnMenuBase"] = 11,
             ["Avalonia.Host.Com.IAvnMenuItem"] = 14,
@@ -102,7 +102,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnTableViewCell"] = 10,
             ["Avalonia.Host.Com.IAvnTableViewRow"] = 8,
             ["Avalonia.Host.Com.IAvnThumb"] = 9,
-            ["Avalonia.Host.Com.IAvnTimePicker"] = 9,
+            ["Avalonia.Host.Com.IAvnTimePicker"] = 10,
             ["Avalonia.Host.Com.IAvnToggleSplitButton"] = 11,
             ["Avalonia.Host.Com.IAvnToolTip"] = 8,
             ["Avalonia.Host.Com.IAvnTransitioningContentControl"] = 8,
@@ -403,18 +403,20 @@ public static class AvaloniaProjectionProfiles
                 "CompactPaneLength", "Pane", "PaneBackground", "UseLightDismissOverlayMode",
                 "PaneOpened", "PaneClosed", "PaneOpening", "PaneClosing", "PaneTemplate",
             ],
-            // SelectedDateChanged carries DateTimeOffset? fields and event payloads have no
-            // converter hook, so it is a gap; the date properties themselves do cross.
+            // U28 crosses SelectedDateChanged: the old/new DateTimeOffset? pair rides the
+            // optional DateTime ABI wrapper as event fields.
             ["Avalonia.Controls.DatePicker"] =
             [
                 "SelectedDate", "MinYear", "MaxYear", "DayVisible", "MonthVisible",
                 "YearVisible", "DayFormat", "MonthFormat", "YearFormat", "Clear",
-                "VerticalContentAlignment",
+                "VerticalContentAlignment", "SelectedDateChanged",
             ],
+            // U28 crosses SelectedTimeChanged: the old/new TimeSpan? pair rides the
+            // optional TimeSpan ABI wrapper as event fields.
             ["Avalonia.Controls.TimePicker"] =
             [
                 "SelectedTime", "MinuteIncrement", "SecondIncrement", "ClockIdentifier",
-                "UseSeconds", "Clear", "VerticalContentAlignment",
+                "UseSeconds", "Clear", "VerticalContentAlignment", "SelectedTimeChanged",
             ],
             ["Avalonia.Controls.WrapPanel"] =
             [
@@ -587,7 +589,7 @@ public static class AvaloniaProjectionProfiles
                 "IsInactiveSelectionHighlightEnabled", "ClearSelectionOnLostFocus",
                 "UseFloatingPlaceholder", "PlaceholderForeground", "InnerLeftContent",
                 "InnerRightContent", "SelectAll", "ClearSelection", "ScrollToLine", "GetLineCount",
-                "PasswordChar", "CaretBlinkInterval",
+                "PasswordChar", "CaretBlinkInterval", "TextChanging",
                 "CopyingToClipboard", "CuttingToClipboard", "PastingFromClipboard",
             ],
             ["Avalonia.Controls.ScrollViewer"] =
@@ -1298,7 +1300,6 @@ public static class AvaloniaProjectionProfiles
                         ["VerticalSnapPointsChanged"] = "snap points are layout plumbing owned by the host",
                         ["GetIrregularSnapPoints"] = "snap points are layout plumbing owned by the host",
                         ["GetRegularSnapPoints"] = "snap points are layout plumbing owned by the host",
-                        ["TextChanging"] = "the undo-args payload has no event shape yet",
                         ["ApplyStyling"] = "styling is owned by the host",
                         ["TryGetResource"] = "the resource dictionary is not part of the projected model",
                         ["OnContentPresenter"] = "template-part presenters are internal layout plumbing",
@@ -1309,7 +1310,6 @@ public static class AvaloniaProjectionProfiles
                         ["Dispose"] = "lifetime is owned by the host",
                         ["BeginMoveDrag"] = "drag needs the pointer-event payload shape",
                         ["BeginResizeDrag"] = "drag needs the pointer-event payload shape",
-                        ["SelectedTimeChanged"] = "the nullable TimeSpan payload has no event shape yet",
                         ["SelectedItems"] = "the new-hidden member duplicates the projected base",
                         ["ShowAt"] = "the flyout base's virtual ShowAt pair needs pointer-event state",
                         ["Hide"] = "the flyout base's virtual Hide needs pointer-event state",
@@ -1534,6 +1534,24 @@ public static class AvaloniaProjectionProfiles
             {
                 PayloadKind = EventPayloadKind.Fields,
                 Parameters = [new() { Name = "Direction" }, new() { Name = "UsingMouseWheel" }],
+            },
+            // U28: the picker value-change events carry the old/new pair; the nullable
+            // TimeSpan and DateTimeOffset cross through the optional ABI wrappers.
+            ["Avalonia.Controls.TimePicker.SelectedTimeChanged"] = new()
+            {
+                PayloadKind = EventPayloadKind.Fields,
+                Parameters = [new() { Name = "OldTime" }, new() { Name = "NewTime" }],
+            },
+            ["Avalonia.Controls.DatePicker.SelectedDateChanged"] = new()
+            {
+                PayloadKind = EventPayloadKind.Fields,
+                Parameters = [new() { Name = "OldDate" }, new() { Name = "NewDate" }],
+            },
+            // TextChangingEventArgs has no payload members, so the event crosses as a
+            // plain notification.
+            ["Avalonia.Controls.TextBox.TextChanging"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
             },
             ["Avalonia.Controls.CalendarDatePicker.DateValidationError"] = new()
             {
