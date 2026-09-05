@@ -3812,6 +3812,66 @@ unsafe extern "system" fn i_avn_styled_element_data_context_changed_handler_invo
     crate::event_callback::invoke::<IAvnStyledElementDataContextChangedHandler, ()>(this, &mut ())
 }
 
+pub const I_AVN_VARIANT_LIST_IID: Guid = Guid { data1: 0x79D4229E, data2: 0xDE83, data3: 0x5C54, data4: [0x91, 0xA9, 0x20, 0x64, 0x25, 0x0F, 0x6B, 0xC0] };
+
+#[repr(C)]
+struct IAvnVariantListVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_count: unsafe extern "system" fn(*mut IAvnVariantList, *mut i32) -> i32,
+    get_at: unsafe extern "system" fn(*mut IAvnVariantList, i32, *mut AvnVariant) -> i32,
+    add: unsafe extern "system" fn(*mut IAvnVariantList, AvnVariant) -> i32,
+    index_of: unsafe extern "system" fn(*mut IAvnVariantList, AvnVariant, *mut i32) -> i32,
+    remove_at: unsafe extern "system" fn(*mut IAvnVariantList, i32) -> i32,
+    clear: unsafe extern "system" fn(*mut IAvnVariantList) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnVariantList {
+    vtbl: *const IAvnVariantListVtbl,
+}
+
+unsafe impl ComInterface for IAvnVariantList {
+    const IID: Guid = I_AVN_VARIANT_LIST_IID;
+}
+
+impl ComPtr<IAvnVariantList> {
+    pub fn len(&self) -> Result<usize> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_count)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize)
+        }
+    }
+    pub fn is_empty(&self) -> Result<bool> {
+        Ok(self.len()? == 0)
+    }
+    pub fn get(&self, index: usize) -> Result<AvnVariant> {
+        unsafe {
+            let mut value = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_at)(self.as_raw(), index as i32, &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn add(&self, value: AvnVariant) -> Result<()> {
+        unsafe { hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().add)(self.as_raw(), value)) }
+    }
+    pub fn index_of(&self, value: AvnVariant) -> Result<Option<usize>> {
+        unsafe {
+            let mut index = -1;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().index_of)(self.as_raw(), value, &mut index);
+            hresult::check(hr).map(|_| (index >= 0).then_some(index as usize))
+        }
+    }
+    pub fn remove(&self, index: usize) -> Result<()> {
+        unsafe { hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().remove_at)(self.as_raw(), index as i32)) }
+    }
+    pub fn clear(&self) -> Result<()> {
+        unsafe { hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().clear)(self.as_raw())) }
+    }
+}
+
 pub const I_AVN_ITEM_LIST_IID: Guid = Guid { data1: 0x59A429A7, data2: 0xCF8A, data3: 0x5EB0, data4: [0xB6, 0x15, 0x91, 0x2A, 0x3D, 0xEF, 0x07, 0x04] };
 
 #[repr(C)]
@@ -3934,6 +3994,66 @@ impl ComPtr<IAvnControlList> {
     }
 }
 
+pub const I_AVN_SELECTED_VARIANT_LIST_IID: Guid = Guid { data1: 0x7A8B059A, data2: 0x439F, data3: 0x5158, data4: [0x8B, 0x37, 0x87, 0xCA, 0x87, 0xE1, 0x0C, 0xD3] };
+
+#[repr(C)]
+struct IAvnSelectedVariantListVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    get_count: unsafe extern "system" fn(*mut IAvnSelectedVariantList, *mut i32) -> i32,
+    get_at: unsafe extern "system" fn(*mut IAvnSelectedVariantList, i32, *mut AvnVariant) -> i32,
+    add: unsafe extern "system" fn(*mut IAvnSelectedVariantList, AvnVariant) -> i32,
+    index_of: unsafe extern "system" fn(*mut IAvnSelectedVariantList, AvnVariant, *mut i32) -> i32,
+    remove_at: unsafe extern "system" fn(*mut IAvnSelectedVariantList, i32) -> i32,
+    clear: unsafe extern "system" fn(*mut IAvnSelectedVariantList) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnSelectedVariantList {
+    vtbl: *const IAvnSelectedVariantListVtbl,
+}
+
+unsafe impl ComInterface for IAvnSelectedVariantList {
+    const IID: Guid = I_AVN_SELECTED_VARIANT_LIST_IID;
+}
+
+impl ComPtr<IAvnSelectedVariantList> {
+    pub fn len(&self) -> Result<usize> {
+        unsafe {
+            let mut value = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_count)(self.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value as usize)
+        }
+    }
+    pub fn is_empty(&self) -> Result<bool> {
+        Ok(self.len()? == 0)
+    }
+    pub fn get(&self, index: usize) -> Result<AvnVariant> {
+        unsafe {
+            let mut value = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_at)(self.as_raw(), index as i32, &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
+    pub fn add(&self, value: AvnVariant) -> Result<()> {
+        unsafe { hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().add)(self.as_raw(), value)) }
+    }
+    pub fn index_of(&self, value: AvnVariant) -> Result<Option<usize>> {
+        unsafe {
+            let mut index = -1;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().index_of)(self.as_raw(), value, &mut index);
+            hresult::check(hr).map(|_| (index >= 0).then_some(index as usize))
+        }
+    }
+    pub fn remove(&self, index: usize) -> Result<()> {
+        unsafe { hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().remove_at)(self.as_raw(), index as i32)) }
+    }
+    pub fn clear(&self) -> Result<()> {
+        unsafe { hresult::check(((*self.as_raw()).vtbl.as_ref().unwrap().clear)(self.as_raw())) }
+    }
+}
+
 pub const I_AVN_STRING_LIST_IID: Guid = Guid { data1: 0xDD13073B, data2: 0x22E0, data3: 0x5372, data4: [0x86, 0xF8, 0x3B, 0x10, 0xD4, 0x8B, 0xC6, 0x01] };
 
 #[repr(C)]
@@ -4031,7 +4151,7 @@ impl ComPtr<IAvnAvaloniaObject> {
     }
 }
 
-pub const I_AVN_AUTO_COMPLETE_BOX_IID: Guid = Guid { data1: 0x8B2BA119, data2: 0x5204, data3: 0x54A5, data4: [0xB3, 0x5D, 0x0D, 0x52, 0x0F, 0x38, 0xA1, 0xD9] };
+pub const I_AVN_AUTO_COMPLETE_BOX_IID: Guid = Guid { data1: 0x1E9876E3, data2: 0xA843, data3: 0x51E7, data4: [0x90, 0xC2, 0x42, 0x17, 0x1D, 0xFD, 0x1A, 0xC2] };
 
 #[repr(C)]
 struct IAvnAutoCompleteBoxVtbl {
@@ -4124,6 +4244,8 @@ struct IAvnAutoCompleteBoxVtbl {
     set_is_drop_down_open: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i32) -> i32,
     get_clear_selection_on_lost_focus: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut i32) -> i32,
     set_clear_selection_on_lost_focus: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i32) -> i32,
+    get_selected_item: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut AvnVariant) -> i32,
+    set_selected_item: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, AvnVariant) -> i32,
     get_text: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut u16) -> i32,
     set_text: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut u16) -> i32,
     get_search_text: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut u16) -> i32,
@@ -4133,6 +4255,8 @@ struct IAvnAutoCompleteBoxVtbl {
     set_placeholder_text: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut u16) -> i32,
     get_placeholder_foreground: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut IAvnBrush) -> i32,
     set_placeholder_foreground: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnBrush) -> i32,
+    get_items_source: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut IAvnVariantList) -> i32,
+    set_items_source: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut IAvnVariantList) -> i32,
     get_max_length: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut i32) -> i32,
     set_max_length: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, i32) -> i32,
     get_inner_left_content: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut IAvnControl) -> i32,
@@ -4761,6 +4885,20 @@ impl ComPtr<IAvnAutoCompleteBox> {
             hresult::check(hr)
         }
     }
+    pub fn get_selected_item(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_item(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_item)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
     pub fn get_text(&self) -> Result<*mut u16> {
         unsafe {
             let mut value: *mut u16 = ptr::null_mut();
@@ -4822,6 +4960,20 @@ impl ComPtr<IAvnAutoCompleteBox> {
     pub fn set_placeholder_foreground(&self, value: Option<&ComPtr<IAvnBrush>>) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placeholder_foreground)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_items_source(&self) -> Result<Option<ComPtr<IAvnVariantList>>> {
+        unsafe {
+            let mut value: *mut IAvnVariantList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items_source)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_items_source(&self, value: Option<&ComPtr<IAvnVariantList>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_items_source)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }
@@ -9062,7 +9214,7 @@ impl ComPtr<IAvnCanvas> {
     }
 }
 
-pub const I_AVN_CAROUSEL_IID: Guid = Guid { data1: 0x6C8F8231, data2: 0xF81F, data3: 0x5AA0, data4: [0xBD, 0x23, 0x18, 0x5C, 0x48, 0xA9, 0x20, 0xD1] };
+pub const I_AVN_CAROUSEL_IID: Guid = Guid { data1: 0x734F23E1, data2: 0x95D6, data3: 0x5414, data4: [0x93, 0x6B, 0xF2, 0xF3, 0x17, 0xEF, 0x42, 0xF6] };
 
 #[repr(C)]
 struct IAvnCarouselVtbl {
@@ -9143,13 +9295,22 @@ struct IAvnCarouselVtbl {
     set_padding: unsafe extern "system" fn(*mut IAvnCarousel, AvnThickness) -> i32,
     get_items: unsafe extern "system" fn(*mut IAvnCarousel, *mut *mut IAvnItemList) -> i32,
     get_item_count: unsafe extern "system" fn(*mut IAvnCarousel, *mut i32) -> i32,
+    get_items_source: unsafe extern "system" fn(*mut IAvnCarousel, *mut *mut IAvnVariantList) -> i32,
+    set_items_source: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnVariantList) -> i32,
     container_from_index_with_int32: unsafe extern "system" fn(*mut IAvnCarousel, i32, *mut *mut IAvnControl) -> i32,
+    container_from_item_with_object: unsafe extern "system" fn(*mut IAvnCarousel, AvnVariant, *mut *mut IAvnControl) -> i32,
     index_from_container_with_control: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnControl, *mut i32) -> i32,
+    item_from_container_with_control: unsafe extern "system" fn(*mut IAvnCarousel, *mut IAvnControl, *mut AvnVariant) -> i32,
     scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnCarousel, i32) -> i32,
+    scroll_into_view_with_object: unsafe extern "system" fn(*mut IAvnCarousel, AvnVariant) -> i32,
     get_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnCarousel, *mut i32) -> i32,
     set_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnCarousel, i32) -> i32,
     get_selected_index: unsafe extern "system" fn(*mut IAvnCarousel, *mut i32) -> i32,
     set_selected_index: unsafe extern "system" fn(*mut IAvnCarousel, i32) -> i32,
+    get_selected_item: unsafe extern "system" fn(*mut IAvnCarousel, *mut AvnVariant) -> i32,
+    set_selected_item: unsafe extern "system" fn(*mut IAvnCarousel, AvnVariant) -> i32,
+    get_selected_value: unsafe extern "system" fn(*mut IAvnCarousel, *mut AvnVariant) -> i32,
+    set_selected_value: unsafe extern "system" fn(*mut IAvnCarousel, AvnVariant) -> i32,
     get_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnCarousel, *mut i32) -> i32,
     set_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnCarousel, i32) -> i32,
     get_wrap_selection: unsafe extern "system" fn(*mut IAvnCarousel, *mut i32) -> i32,
@@ -9690,10 +9851,31 @@ impl ComPtr<IAvnCarousel> {
             Ok(value)
         }
     }
+    pub fn get_items_source(&self) -> Result<Option<ComPtr<IAvnVariantList>>> {
+        unsafe {
+            let mut value: *mut IAvnVariantList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items_source)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_items_source(&self, value: Option<&ComPtr<IAvnVariantList>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_items_source)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<ComPtr<IAvnControl>>> {
         unsafe {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_index_with_int32)(self.as_raw(), index, &mut value);
+            hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
+        }
+    }
+    pub fn container_from_item_with_object(&self, item: AvnVariant) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_item_with_object)(self.as_raw(), item, &mut value);
             hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
         }
     }
@@ -9704,9 +9886,22 @@ impl ComPtr<IAvnCarousel> {
             hresult::check(hr).map(|_| value)
         }
     }
+    pub fn item_from_container_with_control(&self, container: &ComPtr<IAvnControl>) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().item_from_container_with_control)(self.as_raw(), container.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
+            hresult::check(hr)
+        }
+    }
+    pub fn scroll_into_view_with_object(&self, item: AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_object)(self.as_raw(), item);
             hresult::check(hr)
         }
     }
@@ -9735,6 +9930,34 @@ impl ComPtr<IAvnCarousel> {
     pub fn set_selected_index(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_index)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selected_item(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_item(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_item)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selected_value(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_value)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_value(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_value)(self.as_raw(), *value);
             hresult::check(hr)
         }
     }
@@ -10636,7 +10859,7 @@ impl ComPtr<IAvnCheckBox> {
     }
 }
 
-pub const I_AVN_COMBO_BOX_IID: Guid = Guid { data1: 0xB364B155, data2: 0x4DC9, data3: 0x571E, data4: [0xB3, 0x61, 0xBC, 0x86, 0xAC, 0xD9, 0x6F, 0x8C] };
+pub const I_AVN_COMBO_BOX_IID: Guid = Guid { data1: 0xC235FCFF, data2: 0xB918, data3: 0x57C3, data4: [0x82, 0x1B, 0x19, 0x9E, 0xB3, 0x33, 0x8A, 0xBA] };
 
 #[repr(C)]
 struct IAvnComboBoxVtbl {
@@ -10717,13 +10940,22 @@ struct IAvnComboBoxVtbl {
     set_padding: unsafe extern "system" fn(*mut IAvnComboBox, AvnThickness) -> i32,
     get_items: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut IAvnItemList) -> i32,
     get_item_count: unsafe extern "system" fn(*mut IAvnComboBox, *mut i32) -> i32,
+    get_items_source: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut IAvnVariantList) -> i32,
+    set_items_source: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnVariantList) -> i32,
     container_from_index_with_int32: unsafe extern "system" fn(*mut IAvnComboBox, i32, *mut *mut IAvnControl) -> i32,
+    container_from_item_with_object: unsafe extern "system" fn(*mut IAvnComboBox, AvnVariant, *mut *mut IAvnControl) -> i32,
     index_from_container_with_control: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnControl, *mut i32) -> i32,
+    item_from_container_with_control: unsafe extern "system" fn(*mut IAvnComboBox, *mut IAvnControl, *mut AvnVariant) -> i32,
     scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnComboBox, i32) -> i32,
+    scroll_into_view_with_object: unsafe extern "system" fn(*mut IAvnComboBox, AvnVariant) -> i32,
     get_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnComboBox, *mut i32) -> i32,
     set_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnComboBox, i32) -> i32,
     get_selected_index: unsafe extern "system" fn(*mut IAvnComboBox, *mut i32) -> i32,
     set_selected_index: unsafe extern "system" fn(*mut IAvnComboBox, i32) -> i32,
+    get_selected_item: unsafe extern "system" fn(*mut IAvnComboBox, *mut AvnVariant) -> i32,
+    set_selected_item: unsafe extern "system" fn(*mut IAvnComboBox, AvnVariant) -> i32,
+    get_selected_value: unsafe extern "system" fn(*mut IAvnComboBox, *mut AvnVariant) -> i32,
+    set_selected_value: unsafe extern "system" fn(*mut IAvnComboBox, AvnVariant) -> i32,
     get_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnComboBox, *mut i32) -> i32,
     set_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnComboBox, i32) -> i32,
     get_wrap_selection: unsafe extern "system" fn(*mut IAvnComboBox, *mut i32) -> i32,
@@ -11274,10 +11506,31 @@ impl ComPtr<IAvnComboBox> {
             Ok(value)
         }
     }
+    pub fn get_items_source(&self) -> Result<Option<ComPtr<IAvnVariantList>>> {
+        unsafe {
+            let mut value: *mut IAvnVariantList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items_source)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_items_source(&self, value: Option<&ComPtr<IAvnVariantList>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_items_source)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<ComPtr<IAvnControl>>> {
         unsafe {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_index_with_int32)(self.as_raw(), index, &mut value);
+            hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
+        }
+    }
+    pub fn container_from_item_with_object(&self, item: AvnVariant) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_item_with_object)(self.as_raw(), item, &mut value);
             hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
         }
     }
@@ -11288,9 +11541,22 @@ impl ComPtr<IAvnComboBox> {
             hresult::check(hr).map(|_| value)
         }
     }
+    pub fn item_from_container_with_control(&self, container: &ComPtr<IAvnControl>) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().item_from_container_with_control)(self.as_raw(), container.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
+            hresult::check(hr)
+        }
+    }
+    pub fn scroll_into_view_with_object(&self, item: AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_object)(self.as_raw(), item);
             hresult::check(hr)
         }
     }
@@ -11319,6 +11585,34 @@ impl ComPtr<IAvnComboBox> {
     pub fn set_selected_index(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_index)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selected_item(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_item(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_item)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selected_value(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_value)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_value(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_value)(self.as_raw(), *value);
             hresult::check(hr)
         }
     }
@@ -11481,7 +11775,7 @@ impl ComPtr<IAvnComboBox> {
     }
 }
 
-pub const I_AVN_COMBO_BOX_ITEM_IID: Guid = Guid { data1: 0xC7938E76, data2: 0x7525, data3: 0x57BC, data4: [0xAE, 0x41, 0xDB, 0xF7, 0x4A, 0xC9, 0x40, 0x79] };
+pub const I_AVN_COMBO_BOX_ITEM_IID: Guid = Guid { data1: 0x295E563B, data2: 0x736D, data3: 0x5C19, data4: [0x90, 0x75, 0xE9, 0x95, 0xF9, 0x3D, 0xF8, 0xD1] };
 
 #[repr(C)]
 struct IAvnComboBoxItemVtbl {
@@ -16023,13 +16317,22 @@ struct IAvnContextMenuVtbl {
     set_padding: unsafe extern "system" fn(*mut IAvnContextMenu, AvnThickness) -> i32,
     get_items: unsafe extern "system" fn(*mut IAvnContextMenu, *mut *mut IAvnItemList) -> i32,
     get_item_count: unsafe extern "system" fn(*mut IAvnContextMenu, *mut i32) -> i32,
+    get_items_source: unsafe extern "system" fn(*mut IAvnContextMenu, *mut *mut IAvnVariantList) -> i32,
+    set_items_source: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnVariantList) -> i32,
     container_from_index_with_int32: unsafe extern "system" fn(*mut IAvnContextMenu, i32, *mut *mut IAvnControl) -> i32,
+    container_from_item_with_object: unsafe extern "system" fn(*mut IAvnContextMenu, AvnVariant, *mut *mut IAvnControl) -> i32,
     index_from_container_with_control: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnControl, *mut i32) -> i32,
+    item_from_container_with_control: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnControl, *mut AvnVariant) -> i32,
     scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnContextMenu, i32) -> i32,
+    scroll_into_view_with_object: unsafe extern "system" fn(*mut IAvnContextMenu, AvnVariant) -> i32,
     get_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnContextMenu, *mut i32) -> i32,
     set_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnContextMenu, i32) -> i32,
     get_selected_index: unsafe extern "system" fn(*mut IAvnContextMenu, *mut i32) -> i32,
     set_selected_index: unsafe extern "system" fn(*mut IAvnContextMenu, i32) -> i32,
+    get_selected_item: unsafe extern "system" fn(*mut IAvnContextMenu, *mut AvnVariant) -> i32,
+    set_selected_item: unsafe extern "system" fn(*mut IAvnContextMenu, AvnVariant) -> i32,
+    get_selected_value: unsafe extern "system" fn(*mut IAvnContextMenu, *mut AvnVariant) -> i32,
+    set_selected_value: unsafe extern "system" fn(*mut IAvnContextMenu, AvnVariant) -> i32,
     get_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnContextMenu, *mut i32) -> i32,
     set_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnContextMenu, i32) -> i32,
     get_wrap_selection: unsafe extern "system" fn(*mut IAvnContextMenu, *mut i32) -> i32,
@@ -16593,10 +16896,31 @@ impl ComPtr<IAvnContextMenu> {
             Ok(value)
         }
     }
+    pub fn get_items_source(&self) -> Result<Option<ComPtr<IAvnVariantList>>> {
+        unsafe {
+            let mut value: *mut IAvnVariantList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items_source)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_items_source(&self, value: Option<&ComPtr<IAvnVariantList>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_items_source)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<ComPtr<IAvnControl>>> {
         unsafe {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_index_with_int32)(self.as_raw(), index, &mut value);
+            hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
+        }
+    }
+    pub fn container_from_item_with_object(&self, item: AvnVariant) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_item_with_object)(self.as_raw(), item, &mut value);
             hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
         }
     }
@@ -16607,9 +16931,22 @@ impl ComPtr<IAvnContextMenu> {
             hresult::check(hr).map(|_| value)
         }
     }
+    pub fn item_from_container_with_control(&self, container: &ComPtr<IAvnControl>) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().item_from_container_with_control)(self.as_raw(), container.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
+            hresult::check(hr)
+        }
+    }
+    pub fn scroll_into_view_with_object(&self, item: AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_object)(self.as_raw(), item);
             hresult::check(hr)
         }
     }
@@ -16638,6 +16975,34 @@ impl ComPtr<IAvnContextMenu> {
     pub fn set_selected_index(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_index)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selected_item(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_item(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_item)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selected_value(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_value)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_value(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_value)(self.as_raw(), *value);
             hresult::check(hr)
         }
     }
@@ -24982,7 +25347,7 @@ impl ComPtr<IAvnImage> {
     }
 }
 
-pub const I_AVN_ITEMS_CONTROL_IID: Guid = Guid { data1: 0xDF72ABBD, data2: 0xAF15, data3: 0x5597, data4: [0xBE, 0xF3, 0xA4, 0x1C, 0x1D, 0x36, 0x58, 0xDE] };
+pub const I_AVN_ITEMS_CONTROL_IID: Guid = Guid { data1: 0xB5DEFEF4, data2: 0xDE43, data3: 0x5DA3, data4: [0x8D, 0x1E, 0x6A, 0x3C, 0xFB, 0xBC, 0x9C, 0x47] };
 
 #[repr(C)]
 struct IAvnItemsControlVtbl {
@@ -25063,9 +25428,14 @@ struct IAvnItemsControlVtbl {
     set_padding: unsafe extern "system" fn(*mut IAvnItemsControl, AvnThickness) -> i32,
     get_items: unsafe extern "system" fn(*mut IAvnItemsControl, *mut *mut IAvnItemList) -> i32,
     get_item_count: unsafe extern "system" fn(*mut IAvnItemsControl, *mut i32) -> i32,
+    get_items_source: unsafe extern "system" fn(*mut IAvnItemsControl, *mut *mut IAvnVariantList) -> i32,
+    set_items_source: unsafe extern "system" fn(*mut IAvnItemsControl, *mut IAvnVariantList) -> i32,
     container_from_index_with_int32: unsafe extern "system" fn(*mut IAvnItemsControl, i32, *mut *mut IAvnControl) -> i32,
+    container_from_item_with_object: unsafe extern "system" fn(*mut IAvnItemsControl, AvnVariant, *mut *mut IAvnControl) -> i32,
     index_from_container_with_control: unsafe extern "system" fn(*mut IAvnItemsControl, *mut IAvnControl, *mut i32) -> i32,
+    item_from_container_with_control: unsafe extern "system" fn(*mut IAvnItemsControl, *mut IAvnControl, *mut AvnVariant) -> i32,
     scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnItemsControl, i32) -> i32,
+    scroll_into_view_with_object: unsafe extern "system" fn(*mut IAvnItemsControl, AvnVariant) -> i32,
 }
 
 #[repr(C)]
@@ -25593,10 +25963,31 @@ impl ComPtr<IAvnItemsControl> {
             Ok(value)
         }
     }
+    pub fn get_items_source(&self) -> Result<Option<ComPtr<IAvnVariantList>>> {
+        unsafe {
+            let mut value: *mut IAvnVariantList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items_source)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_items_source(&self, value: Option<&ComPtr<IAvnVariantList>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_items_source)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<ComPtr<IAvnControl>>> {
         unsafe {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_index_with_int32)(self.as_raw(), index, &mut value);
+            hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
+        }
+    }
+    pub fn container_from_item_with_object(&self, item: AvnVariant) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_item_with_object)(self.as_raw(), item, &mut value);
             hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
         }
     }
@@ -25607,9 +25998,22 @@ impl ComPtr<IAvnItemsControl> {
             hresult::check(hr).map(|_| value)
         }
     }
+    pub fn item_from_container_with_control(&self, container: &ComPtr<IAvnControl>) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().item_from_container_with_control)(self.as_raw(), container.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
+            hresult::check(hr)
+        }
+    }
+    pub fn scroll_into_view_with_object(&self, item: AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_object)(self.as_raw(), item);
             hresult::check(hr)
         }
     }
@@ -26719,7 +27123,7 @@ impl ComPtr<IAvnLayoutTransformControl> {
     }
 }
 
-pub const I_AVN_LIST_BOX_IID: Guid = Guid { data1: 0xBD3D61E3, data2: 0xBF1D, data3: 0x5696, data4: [0x8D, 0x16, 0x02, 0x40, 0xAD, 0xBF, 0x54, 0x9F] };
+pub const I_AVN_LIST_BOX_IID: Guid = Guid { data1: 0x57559473, data2: 0xF6C9, data3: 0x5626, data4: [0xB3, 0xE1, 0xCF, 0x58, 0x2D, 0xB6, 0xCD, 0xCD] };
 
 #[repr(C)]
 struct IAvnListBoxVtbl {
@@ -26800,13 +27204,22 @@ struct IAvnListBoxVtbl {
     set_padding: unsafe extern "system" fn(*mut IAvnListBox, AvnThickness) -> i32,
     get_items: unsafe extern "system" fn(*mut IAvnListBox, *mut *mut IAvnItemList) -> i32,
     get_item_count: unsafe extern "system" fn(*mut IAvnListBox, *mut i32) -> i32,
+    get_items_source: unsafe extern "system" fn(*mut IAvnListBox, *mut *mut IAvnVariantList) -> i32,
+    set_items_source: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnVariantList) -> i32,
     container_from_index_with_int32: unsafe extern "system" fn(*mut IAvnListBox, i32, *mut *mut IAvnControl) -> i32,
+    container_from_item_with_object: unsafe extern "system" fn(*mut IAvnListBox, AvnVariant, *mut *mut IAvnControl) -> i32,
     index_from_container_with_control: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnControl, *mut i32) -> i32,
+    item_from_container_with_control: unsafe extern "system" fn(*mut IAvnListBox, *mut IAvnControl, *mut AvnVariant) -> i32,
     scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnListBox, i32) -> i32,
+    scroll_into_view_with_object: unsafe extern "system" fn(*mut IAvnListBox, AvnVariant) -> i32,
     get_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnListBox, *mut i32) -> i32,
     set_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnListBox, i32) -> i32,
     get_selected_index: unsafe extern "system" fn(*mut IAvnListBox, *mut i32) -> i32,
     set_selected_index: unsafe extern "system" fn(*mut IAvnListBox, i32) -> i32,
+    get_selected_item: unsafe extern "system" fn(*mut IAvnListBox, *mut AvnVariant) -> i32,
+    set_selected_item: unsafe extern "system" fn(*mut IAvnListBox, AvnVariant) -> i32,
+    get_selected_value: unsafe extern "system" fn(*mut IAvnListBox, *mut AvnVariant) -> i32,
+    set_selected_value: unsafe extern "system" fn(*mut IAvnListBox, AvnVariant) -> i32,
     get_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnListBox, *mut i32) -> i32,
     set_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnListBox, i32) -> i32,
     get_wrap_selection: unsafe extern "system" fn(*mut IAvnListBox, *mut i32) -> i32,
@@ -27344,10 +27757,31 @@ impl ComPtr<IAvnListBox> {
             Ok(value)
         }
     }
+    pub fn get_items_source(&self) -> Result<Option<ComPtr<IAvnVariantList>>> {
+        unsafe {
+            let mut value: *mut IAvnVariantList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items_source)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_items_source(&self, value: Option<&ComPtr<IAvnVariantList>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_items_source)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<ComPtr<IAvnControl>>> {
         unsafe {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_index_with_int32)(self.as_raw(), index, &mut value);
+            hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
+        }
+    }
+    pub fn container_from_item_with_object(&self, item: AvnVariant) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_item_with_object)(self.as_raw(), item, &mut value);
             hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
         }
     }
@@ -27358,9 +27792,22 @@ impl ComPtr<IAvnListBox> {
             hresult::check(hr).map(|_| value)
         }
     }
+    pub fn item_from_container_with_control(&self, container: &ComPtr<IAvnControl>) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().item_from_container_with_control)(self.as_raw(), container.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
+            hresult::check(hr)
+        }
+    }
+    pub fn scroll_into_view_with_object(&self, item: AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_object)(self.as_raw(), item);
             hresult::check(hr)
         }
     }
@@ -27389,6 +27836,34 @@ impl ComPtr<IAvnListBox> {
     pub fn set_selected_index(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_index)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selected_item(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_item(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_item)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selected_value(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_value)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_value(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_value)(self.as_raw(), *value);
             hresult::check(hr)
         }
     }
@@ -27461,7 +27936,7 @@ impl ComPtr<IAvnListBox> {
     }
 }
 
-pub const I_AVN_LIST_BOX_ITEM_IID: Guid = Guid { data1: 0xA9272DCA, data2: 0x0972, data3: 0x50B5, data4: [0xB8, 0x0C, 0x54, 0x86, 0x11, 0x99, 0xC4, 0x39] };
+pub const I_AVN_LIST_BOX_ITEM_IID: Guid = Guid { data1: 0x336C480D, data2: 0xD0C0, data3: 0x5945, data4: [0x9A, 0xFD, 0x45, 0xCD, 0xE3, 0xDB, 0x1A, 0x83] };
 
 #[repr(C)]
 struct IAvnListBoxItemVtbl {
@@ -29511,7 +29986,7 @@ impl ComPtr<IAvnMaskedTextBox> {
     }
 }
 
-pub const I_AVN_MENU_IID: Guid = Guid { data1: 0x7D802FB4, data2: 0x4822, data3: 0x5A7C, data4: [0xB5, 0x08, 0xBF, 0x05, 0xE7, 0xB5, 0x26, 0x2B] };
+pub const I_AVN_MENU_IID: Guid = Guid { data1: 0x70DD452C, data2: 0x0F9A, data3: 0x5F5C, data4: [0xAD, 0xE7, 0x9F, 0x47, 0x89, 0xF3, 0x74, 0xB3] };
 
 #[repr(C)]
 struct IAvnMenuVtbl {
@@ -29592,13 +30067,22 @@ struct IAvnMenuVtbl {
     set_padding: unsafe extern "system" fn(*mut IAvnMenu, AvnThickness) -> i32,
     get_items: unsafe extern "system" fn(*mut IAvnMenu, *mut *mut IAvnItemList) -> i32,
     get_item_count: unsafe extern "system" fn(*mut IAvnMenu, *mut i32) -> i32,
+    get_items_source: unsafe extern "system" fn(*mut IAvnMenu, *mut *mut IAvnVariantList) -> i32,
+    set_items_source: unsafe extern "system" fn(*mut IAvnMenu, *mut IAvnVariantList) -> i32,
     container_from_index_with_int32: unsafe extern "system" fn(*mut IAvnMenu, i32, *mut *mut IAvnControl) -> i32,
+    container_from_item_with_object: unsafe extern "system" fn(*mut IAvnMenu, AvnVariant, *mut *mut IAvnControl) -> i32,
     index_from_container_with_control: unsafe extern "system" fn(*mut IAvnMenu, *mut IAvnControl, *mut i32) -> i32,
+    item_from_container_with_control: unsafe extern "system" fn(*mut IAvnMenu, *mut IAvnControl, *mut AvnVariant) -> i32,
     scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnMenu, i32) -> i32,
+    scroll_into_view_with_object: unsafe extern "system" fn(*mut IAvnMenu, AvnVariant) -> i32,
     get_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnMenu, *mut i32) -> i32,
     set_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnMenu, i32) -> i32,
     get_selected_index: unsafe extern "system" fn(*mut IAvnMenu, *mut i32) -> i32,
     set_selected_index: unsafe extern "system" fn(*mut IAvnMenu, i32) -> i32,
+    get_selected_item: unsafe extern "system" fn(*mut IAvnMenu, *mut AvnVariant) -> i32,
+    set_selected_item: unsafe extern "system" fn(*mut IAvnMenu, AvnVariant) -> i32,
+    get_selected_value: unsafe extern "system" fn(*mut IAvnMenu, *mut AvnVariant) -> i32,
+    set_selected_value: unsafe extern "system" fn(*mut IAvnMenu, AvnVariant) -> i32,
     get_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnMenu, *mut i32) -> i32,
     set_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnMenu, i32) -> i32,
     get_wrap_selection: unsafe extern "system" fn(*mut IAvnMenu, *mut i32) -> i32,
@@ -30139,10 +30623,31 @@ impl ComPtr<IAvnMenu> {
             Ok(value)
         }
     }
+    pub fn get_items_source(&self) -> Result<Option<ComPtr<IAvnVariantList>>> {
+        unsafe {
+            let mut value: *mut IAvnVariantList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items_source)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_items_source(&self, value: Option<&ComPtr<IAvnVariantList>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_items_source)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<ComPtr<IAvnControl>>> {
         unsafe {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_index_with_int32)(self.as_raw(), index, &mut value);
+            hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
+        }
+    }
+    pub fn container_from_item_with_object(&self, item: AvnVariant) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_item_with_object)(self.as_raw(), item, &mut value);
             hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
         }
     }
@@ -30153,9 +30658,22 @@ impl ComPtr<IAvnMenu> {
             hresult::check(hr).map(|_| value)
         }
     }
+    pub fn item_from_container_with_control(&self, container: &ComPtr<IAvnControl>) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().item_from_container_with_control)(self.as_raw(), container.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
+            hresult::check(hr)
+        }
+    }
+    pub fn scroll_into_view_with_object(&self, item: AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_object)(self.as_raw(), item);
             hresult::check(hr)
         }
     }
@@ -30184,6 +30702,34 @@ impl ComPtr<IAvnMenu> {
     pub fn set_selected_index(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_index)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selected_item(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_item(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_item)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selected_value(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_value)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_value(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_value)(self.as_raw(), *value);
             hresult::check(hr)
         }
     }
@@ -30276,7 +30822,7 @@ impl ComPtr<IAvnMenu> {
     }
 }
 
-pub const I_AVN_MENU_BASE_IID: Guid = Guid { data1: 0x26D950EB, data2: 0x9F10, data3: 0x573F, data4: [0x8E, 0x8A, 0xF5, 0x89, 0x60, 0xE9, 0x37, 0x78] };
+pub const I_AVN_MENU_BASE_IID: Guid = Guid { data1: 0xCF8AFED9, data2: 0x1D50, data3: 0x5657, data4: [0xBD, 0x5F, 0x99, 0x05, 0xFA, 0x4E, 0x01, 0x1E] };
 
 #[repr(C)]
 struct IAvnMenuBaseVtbl {
@@ -30357,13 +30903,22 @@ struct IAvnMenuBaseVtbl {
     set_padding: unsafe extern "system" fn(*mut IAvnMenuBase, AvnThickness) -> i32,
     get_items: unsafe extern "system" fn(*mut IAvnMenuBase, *mut *mut IAvnItemList) -> i32,
     get_item_count: unsafe extern "system" fn(*mut IAvnMenuBase, *mut i32) -> i32,
+    get_items_source: unsafe extern "system" fn(*mut IAvnMenuBase, *mut *mut IAvnVariantList) -> i32,
+    set_items_source: unsafe extern "system" fn(*mut IAvnMenuBase, *mut IAvnVariantList) -> i32,
     container_from_index_with_int32: unsafe extern "system" fn(*mut IAvnMenuBase, i32, *mut *mut IAvnControl) -> i32,
+    container_from_item_with_object: unsafe extern "system" fn(*mut IAvnMenuBase, AvnVariant, *mut *mut IAvnControl) -> i32,
     index_from_container_with_control: unsafe extern "system" fn(*mut IAvnMenuBase, *mut IAvnControl, *mut i32) -> i32,
+    item_from_container_with_control: unsafe extern "system" fn(*mut IAvnMenuBase, *mut IAvnControl, *mut AvnVariant) -> i32,
     scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnMenuBase, i32) -> i32,
+    scroll_into_view_with_object: unsafe extern "system" fn(*mut IAvnMenuBase, AvnVariant) -> i32,
     get_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnMenuBase, *mut i32) -> i32,
     set_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnMenuBase, i32) -> i32,
     get_selected_index: unsafe extern "system" fn(*mut IAvnMenuBase, *mut i32) -> i32,
     set_selected_index: unsafe extern "system" fn(*mut IAvnMenuBase, i32) -> i32,
+    get_selected_item: unsafe extern "system" fn(*mut IAvnMenuBase, *mut AvnVariant) -> i32,
+    set_selected_item: unsafe extern "system" fn(*mut IAvnMenuBase, AvnVariant) -> i32,
+    get_selected_value: unsafe extern "system" fn(*mut IAvnMenuBase, *mut AvnVariant) -> i32,
+    set_selected_value: unsafe extern "system" fn(*mut IAvnMenuBase, AvnVariant) -> i32,
     get_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnMenuBase, *mut i32) -> i32,
     set_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnMenuBase, i32) -> i32,
     get_wrap_selection: unsafe extern "system" fn(*mut IAvnMenuBase, *mut i32) -> i32,
@@ -30904,10 +31459,31 @@ impl ComPtr<IAvnMenuBase> {
             Ok(value)
         }
     }
+    pub fn get_items_source(&self) -> Result<Option<ComPtr<IAvnVariantList>>> {
+        unsafe {
+            let mut value: *mut IAvnVariantList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items_source)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_items_source(&self, value: Option<&ComPtr<IAvnVariantList>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_items_source)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<ComPtr<IAvnControl>>> {
         unsafe {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_index_with_int32)(self.as_raw(), index, &mut value);
+            hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
+        }
+    }
+    pub fn container_from_item_with_object(&self, item: AvnVariant) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_item_with_object)(self.as_raw(), item, &mut value);
             hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
         }
     }
@@ -30918,9 +31494,22 @@ impl ComPtr<IAvnMenuBase> {
             hresult::check(hr).map(|_| value)
         }
     }
+    pub fn item_from_container_with_control(&self, container: &ComPtr<IAvnControl>) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().item_from_container_with_control)(self.as_raw(), container.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
+            hresult::check(hr)
+        }
+    }
+    pub fn scroll_into_view_with_object(&self, item: AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_object)(self.as_raw(), item);
             hresult::check(hr)
         }
     }
@@ -30949,6 +31538,34 @@ impl ComPtr<IAvnMenuBase> {
     pub fn set_selected_index(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_index)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selected_item(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_item(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_item)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selected_value(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_value)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_value(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_value)(self.as_raw(), *value);
             hresult::check(hr)
         }
     }
@@ -31041,7 +31658,7 @@ impl ComPtr<IAvnMenuBase> {
     }
 }
 
-pub const I_AVN_MENU_FLYOUT_IID: Guid = Guid { data1: 0x56421EC0, data2: 0x482F, data3: 0x51EF, data4: [0xB5, 0x02, 0x58, 0xEF, 0x0D, 0xF9, 0x17, 0x26] };
+pub const I_AVN_MENU_FLYOUT_IID: Guid = Guid { data1: 0x47C3BDA3, data2: 0x5EC3, data3: 0x55D1, data4: [0xBA, 0xCE, 0xE7, 0x72, 0xE3, 0x26, 0x8B, 0xD5] };
 
 #[repr(C)]
 struct IAvnMenuFlyoutVtbl {
@@ -31081,6 +31698,8 @@ struct IAvnMenuFlyoutVtbl {
     advise_opening: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut IAvnPopupFlyoutBaseOpeningHandler, *mut i64) -> i32,
     unadvise_opening: unsafe extern "system" fn(*mut IAvnMenuFlyout, i64) -> i32,
     get_items: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut *mut IAvnItemList) -> i32,
+    get_items_source: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut *mut IAvnVariantList) -> i32,
+    set_items_source: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut IAvnVariantList) -> i32,
 }
 
 #[repr(C)]
@@ -31321,9 +31940,23 @@ impl ComPtr<IAvnMenuFlyout> {
             ComPtr::from_raw(value).ok_or(Error(hresult::E_POINTER))
         }
     }
+    pub fn get_items_source(&self) -> Result<Option<ComPtr<IAvnVariantList>>> {
+        unsafe {
+            let mut value: *mut IAvnVariantList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items_source)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_items_source(&self, value: Option<&ComPtr<IAvnVariantList>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_items_source)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
 }
 
-pub const I_AVN_MENU_ITEM_IID: Guid = Guid { data1: 0x46128350, data2: 0xC5EB, data3: 0x5479, data4: [0xB0, 0xA6, 0x58, 0xDA, 0x6D, 0xD1, 0xF7, 0xB8] };
+pub const I_AVN_MENU_ITEM_IID: Guid = Guid { data1: 0x1E682311, data2: 0xF9E1, data3: 0x5D0E, data4: [0x91, 0x31, 0x37, 0x17, 0xF5, 0xA4, 0xD9, 0xD7] };
 
 #[repr(C)]
 struct IAvnMenuItemVtbl {
@@ -31404,13 +32037,22 @@ struct IAvnMenuItemVtbl {
     set_padding: unsafe extern "system" fn(*mut IAvnMenuItem, AvnThickness) -> i32,
     get_items: unsafe extern "system" fn(*mut IAvnMenuItem, *mut *mut IAvnItemList) -> i32,
     get_item_count: unsafe extern "system" fn(*mut IAvnMenuItem, *mut i32) -> i32,
+    get_items_source: unsafe extern "system" fn(*mut IAvnMenuItem, *mut *mut IAvnVariantList) -> i32,
+    set_items_source: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnVariantList) -> i32,
     container_from_index_with_int32: unsafe extern "system" fn(*mut IAvnMenuItem, i32, *mut *mut IAvnControl) -> i32,
+    container_from_item_with_object: unsafe extern "system" fn(*mut IAvnMenuItem, AvnVariant, *mut *mut IAvnControl) -> i32,
     index_from_container_with_control: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnControl, *mut i32) -> i32,
+    item_from_container_with_control: unsafe extern "system" fn(*mut IAvnMenuItem, *mut IAvnControl, *mut AvnVariant) -> i32,
     scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnMenuItem, i32) -> i32,
+    scroll_into_view_with_object: unsafe extern "system" fn(*mut IAvnMenuItem, AvnVariant) -> i32,
     get_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnMenuItem, *mut i32) -> i32,
     set_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnMenuItem, i32) -> i32,
     get_selected_index: unsafe extern "system" fn(*mut IAvnMenuItem, *mut i32) -> i32,
     set_selected_index: unsafe extern "system" fn(*mut IAvnMenuItem, i32) -> i32,
+    get_selected_item: unsafe extern "system" fn(*mut IAvnMenuItem, *mut AvnVariant) -> i32,
+    set_selected_item: unsafe extern "system" fn(*mut IAvnMenuItem, AvnVariant) -> i32,
+    get_selected_value: unsafe extern "system" fn(*mut IAvnMenuItem, *mut AvnVariant) -> i32,
+    set_selected_value: unsafe extern "system" fn(*mut IAvnMenuItem, AvnVariant) -> i32,
     get_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnMenuItem, *mut i32) -> i32,
     set_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnMenuItem, i32) -> i32,
     get_wrap_selection: unsafe extern "system" fn(*mut IAvnMenuItem, *mut i32) -> i32,
@@ -31972,10 +32614,31 @@ impl ComPtr<IAvnMenuItem> {
             Ok(value)
         }
     }
+    pub fn get_items_source(&self) -> Result<Option<ComPtr<IAvnVariantList>>> {
+        unsafe {
+            let mut value: *mut IAvnVariantList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items_source)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_items_source(&self, value: Option<&ComPtr<IAvnVariantList>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_items_source)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<ComPtr<IAvnControl>>> {
         unsafe {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_index_with_int32)(self.as_raw(), index, &mut value);
+            hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
+        }
+    }
+    pub fn container_from_item_with_object(&self, item: AvnVariant) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_item_with_object)(self.as_raw(), item, &mut value);
             hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
         }
     }
@@ -31986,9 +32649,22 @@ impl ComPtr<IAvnMenuItem> {
             hresult::check(hr).map(|_| value)
         }
     }
+    pub fn item_from_container_with_control(&self, container: &ComPtr<IAvnControl>) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().item_from_container_with_control)(self.as_raw(), container.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
+            hresult::check(hr)
+        }
+    }
+    pub fn scroll_into_view_with_object(&self, item: AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_object)(self.as_raw(), item);
             hresult::check(hr)
         }
     }
@@ -32017,6 +32693,34 @@ impl ComPtr<IAvnMenuItem> {
     pub fn set_selected_index(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_index)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selected_item(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_item(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_item)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selected_value(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_value)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_value(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_value)(self.as_raw(), *value);
             hresult::check(hr)
         }
     }
@@ -32960,7 +33664,7 @@ impl ComPtr<IAvnNotificationCard> {
     }
 }
 
-pub const I_AVN_WINDOW_NOTIFICATION_MANAGER_IID: Guid = Guid { data1: 0xCE088644, data2: 0x6F44, data3: 0x56B9, data4: [0xB1, 0xB1, 0xC6, 0x18, 0xD5, 0xA6, 0xE6, 0xC4] };
+pub const I_AVN_WINDOW_NOTIFICATION_MANAGER_IID: Guid = Guid { data1: 0x64A9852B, data2: 0xCFF7, data3: 0x581B, data4: [0x9B, 0x2A, 0x92, 0x11, 0xE2, 0xBC, 0x6A, 0xD3] };
 
 #[repr(C)]
 struct IAvnWindowNotificationManagerVtbl {
@@ -33043,6 +33747,9 @@ struct IAvnWindowNotificationManagerVtbl {
     set_position: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, i32) -> i32,
     get_max_items: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut i32) -> i32,
     set_max_items: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, i32) -> i32,
+    show_with_object: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, AvnVariant) -> i32,
+    close_with_object: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, AvnVariant) -> i32,
+    close_all: unsafe extern "system" fn(*mut IAvnWindowNotificationManager) -> i32,
 }
 
 #[repr(C)]
@@ -33579,6 +34286,24 @@ impl ComPtr<IAvnWindowNotificationManager> {
     pub fn set_max_items(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_max_items)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn show_with_object(&self, content: AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().show_with_object)(self.as_raw(), content);
+            hresult::check(hr)
+        }
+    }
+    pub fn close_with_object(&self, content: AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().close_with_object)(self.as_raw(), content);
+            hresult::check(hr)
+        }
+    }
+    pub fn close_all(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().close_all)(self.as_raw());
             hresult::check(hr)
         }
     }
@@ -36977,7 +37702,7 @@ impl ComPtr<IAvnHeaderedContentControl> {
     }
 }
 
-pub const I_AVN_HEADERED_ITEMS_CONTROL_IID: Guid = Guid { data1: 0xD2F96FA6, data2: 0xAA23, data3: 0x590C, data4: [0x95, 0x77, 0x89, 0x1A, 0x18, 0xB4, 0x06, 0x49] };
+pub const I_AVN_HEADERED_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x862FAFF5, data2: 0x108B, data3: 0x55F1, data4: [0x9D, 0x23, 0x34, 0xFD, 0x23, 0x00, 0x95, 0x02] };
 
 #[repr(C)]
 struct IAvnHeaderedItemsControlVtbl {
@@ -37058,9 +37783,14 @@ struct IAvnHeaderedItemsControlVtbl {
     set_padding: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, AvnThickness) -> i32,
     get_items: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut *mut IAvnItemList) -> i32,
     get_item_count: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut i32) -> i32,
+    get_items_source: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut *mut IAvnVariantList) -> i32,
+    set_items_source: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut IAvnVariantList) -> i32,
     container_from_index_with_int32: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, i32, *mut *mut IAvnControl) -> i32,
+    container_from_item_with_object: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, AvnVariant, *mut *mut IAvnControl) -> i32,
     index_from_container_with_control: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut IAvnControl, *mut i32) -> i32,
+    item_from_container_with_control: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut IAvnControl, *mut AvnVariant) -> i32,
     scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, i32) -> i32,
+    scroll_into_view_with_object: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, AvnVariant) -> i32,
     get_header: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut *mut IAvnControl) -> i32,
     set_header: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut IAvnControl) -> i32,
 }
@@ -37590,10 +38320,31 @@ impl ComPtr<IAvnHeaderedItemsControl> {
             Ok(value)
         }
     }
+    pub fn get_items_source(&self) -> Result<Option<ComPtr<IAvnVariantList>>> {
+        unsafe {
+            let mut value: *mut IAvnVariantList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items_source)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_items_source(&self, value: Option<&ComPtr<IAvnVariantList>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_items_source)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<ComPtr<IAvnControl>>> {
         unsafe {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_index_with_int32)(self.as_raw(), index, &mut value);
+            hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
+        }
+    }
+    pub fn container_from_item_with_object(&self, item: AvnVariant) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_item_with_object)(self.as_raw(), item, &mut value);
             hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
         }
     }
@@ -37604,9 +38355,22 @@ impl ComPtr<IAvnHeaderedItemsControl> {
             hresult::check(hr).map(|_| value)
         }
     }
+    pub fn item_from_container_with_control(&self, container: &ComPtr<IAvnControl>) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().item_from_container_with_control)(self.as_raw(), container.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
+            hresult::check(hr)
+        }
+    }
+    pub fn scroll_into_view_with_object(&self, item: AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_object)(self.as_raw(), item);
             hresult::check(hr)
         }
     }
@@ -37626,7 +38390,7 @@ impl ComPtr<IAvnHeaderedItemsControl> {
     }
 }
 
-pub const I_AVN_HEADERED_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0xB57F5E3A, data2: 0xC458, data3: 0x596B, data4: [0x85, 0xDE, 0xAA, 0x9E, 0xC0, 0xDA, 0x15, 0x1F] };
+pub const I_AVN_HEADERED_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x25DC9AA1, data2: 0xDFC9, data3: 0x5A5C, data4: [0xA1, 0x1F, 0xF2, 0xEF, 0x9A, 0xFA, 0x0B, 0x73] };
 
 #[repr(C)]
 struct IAvnHeaderedSelectingItemsControlVtbl {
@@ -37707,13 +38471,22 @@ struct IAvnHeaderedSelectingItemsControlVtbl {
     set_padding: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, AvnThickness) -> i32,
     get_items: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut *mut IAvnItemList) -> i32,
     get_item_count: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut i32) -> i32,
+    get_items_source: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut *mut IAvnVariantList) -> i32,
+    set_items_source: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut IAvnVariantList) -> i32,
     container_from_index_with_int32: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i32, *mut *mut IAvnControl) -> i32,
+    container_from_item_with_object: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, AvnVariant, *mut *mut IAvnControl) -> i32,
     index_from_container_with_control: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut IAvnControl, *mut i32) -> i32,
+    item_from_container_with_control: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut IAvnControl, *mut AvnVariant) -> i32,
     scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i32) -> i32,
+    scroll_into_view_with_object: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, AvnVariant) -> i32,
     get_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut i32) -> i32,
     set_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i32) -> i32,
     get_selected_index: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut i32) -> i32,
     set_selected_index: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i32) -> i32,
+    get_selected_item: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut AvnVariant) -> i32,
+    set_selected_item: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, AvnVariant) -> i32,
+    get_selected_value: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut AvnVariant) -> i32,
+    set_selected_value: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, AvnVariant) -> i32,
     get_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut i32) -> i32,
     set_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, i32) -> i32,
     get_wrap_selection: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut i32) -> i32,
@@ -38249,10 +39022,31 @@ impl ComPtr<IAvnHeaderedSelectingItemsControl> {
             Ok(value)
         }
     }
+    pub fn get_items_source(&self) -> Result<Option<ComPtr<IAvnVariantList>>> {
+        unsafe {
+            let mut value: *mut IAvnVariantList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items_source)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_items_source(&self, value: Option<&ComPtr<IAvnVariantList>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_items_source)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<ComPtr<IAvnControl>>> {
         unsafe {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_index_with_int32)(self.as_raw(), index, &mut value);
+            hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
+        }
+    }
+    pub fn container_from_item_with_object(&self, item: AvnVariant) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_item_with_object)(self.as_raw(), item, &mut value);
             hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
         }
     }
@@ -38263,9 +39057,22 @@ impl ComPtr<IAvnHeaderedSelectingItemsControl> {
             hresult::check(hr).map(|_| value)
         }
     }
+    pub fn item_from_container_with_control(&self, container: &ComPtr<IAvnControl>) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().item_from_container_with_control)(self.as_raw(), container.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
+            hresult::check(hr)
+        }
+    }
+    pub fn scroll_into_view_with_object(&self, item: AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_object)(self.as_raw(), item);
             hresult::check(hr)
         }
     }
@@ -38294,6 +39101,34 @@ impl ComPtr<IAvnHeaderedSelectingItemsControl> {
     pub fn set_selected_index(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_index)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selected_item(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_item(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_item)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selected_value(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_value)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_value(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_value)(self.as_raw(), *value);
             hresult::check(hr)
         }
     }
@@ -40048,7 +40883,7 @@ impl ComPtr<IAvnRangeBase> {
     }
 }
 
-pub const I_AVN_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0xA9E3792E, data2: 0xC8FB, data3: 0x5AB2, data4: [0xAC, 0xE4, 0xFE, 0x1F, 0xAE, 0x68, 0x4F, 0xBD] };
+pub const I_AVN_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0xFCDB73AA, data2: 0xFE8F, data3: 0x571A, data4: [0xB3, 0x10, 0x0E, 0xF1, 0x29, 0x57, 0x00, 0xCC] };
 
 #[repr(C)]
 struct IAvnSelectingItemsControlVtbl {
@@ -40129,13 +40964,22 @@ struct IAvnSelectingItemsControlVtbl {
     set_padding: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, AvnThickness) -> i32,
     get_items: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut *mut IAvnItemList) -> i32,
     get_item_count: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut i32) -> i32,
+    get_items_source: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut *mut IAvnVariantList) -> i32,
+    set_items_source: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnVariantList) -> i32,
     container_from_index_with_int32: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i32, *mut *mut IAvnControl) -> i32,
+    container_from_item_with_object: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, AvnVariant, *mut *mut IAvnControl) -> i32,
     index_from_container_with_control: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnControl, *mut i32) -> i32,
+    item_from_container_with_control: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut IAvnControl, *mut AvnVariant) -> i32,
     scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i32) -> i32,
+    scroll_into_view_with_object: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, AvnVariant) -> i32,
     get_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut i32) -> i32,
     set_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i32) -> i32,
     get_selected_index: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut i32) -> i32,
     set_selected_index: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i32) -> i32,
+    get_selected_item: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut AvnVariant) -> i32,
+    set_selected_item: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, AvnVariant) -> i32,
+    get_selected_value: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut AvnVariant) -> i32,
+    set_selected_value: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, AvnVariant) -> i32,
     get_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut i32) -> i32,
     set_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, i32) -> i32,
     get_wrap_selection: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut i32) -> i32,
@@ -40669,10 +41513,31 @@ impl ComPtr<IAvnSelectingItemsControl> {
             Ok(value)
         }
     }
+    pub fn get_items_source(&self) -> Result<Option<ComPtr<IAvnVariantList>>> {
+        unsafe {
+            let mut value: *mut IAvnVariantList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items_source)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_items_source(&self, value: Option<&ComPtr<IAvnVariantList>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_items_source)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<ComPtr<IAvnControl>>> {
         unsafe {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_index_with_int32)(self.as_raw(), index, &mut value);
+            hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
+        }
+    }
+    pub fn container_from_item_with_object(&self, item: AvnVariant) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_item_with_object)(self.as_raw(), item, &mut value);
             hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
         }
     }
@@ -40683,9 +41548,22 @@ impl ComPtr<IAvnSelectingItemsControl> {
             hresult::check(hr).map(|_| value)
         }
     }
+    pub fn item_from_container_with_control(&self, container: &ComPtr<IAvnControl>) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().item_from_container_with_control)(self.as_raw(), container.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
+            hresult::check(hr)
+        }
+    }
+    pub fn scroll_into_view_with_object(&self, item: AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_object)(self.as_raw(), item);
             hresult::check(hr)
         }
     }
@@ -40714,6 +41592,34 @@ impl ComPtr<IAvnSelectingItemsControl> {
     pub fn set_selected_index(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_index)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selected_item(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_item(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_item)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selected_value(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_value)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_value(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_value)(self.as_raw(), *value);
             hresult::check(hr)
         }
     }
@@ -57511,7 +58417,7 @@ impl ComPtr<IAvnStackPanel> {
     }
 }
 
-pub const I_AVN_TAB_CONTROL_IID: Guid = Guid { data1: 0x0621490C, data2: 0xAAC5, data3: 0x50DF, data4: [0x88, 0x98, 0x03, 0x33, 0x7F, 0x3A, 0xB7, 0x02] };
+pub const I_AVN_TAB_CONTROL_IID: Guid = Guid { data1: 0x3D1E51F7, data2: 0x6C54, data3: 0x544D, data4: [0x9E, 0x8C, 0xF9, 0xEF, 0x29, 0xB2, 0x0A, 0x8B] };
 
 #[repr(C)]
 struct IAvnTabControlVtbl {
@@ -57592,13 +58498,22 @@ struct IAvnTabControlVtbl {
     set_padding: unsafe extern "system" fn(*mut IAvnTabControl, AvnThickness) -> i32,
     get_items: unsafe extern "system" fn(*mut IAvnTabControl, *mut *mut IAvnItemList) -> i32,
     get_item_count: unsafe extern "system" fn(*mut IAvnTabControl, *mut i32) -> i32,
+    get_items_source: unsafe extern "system" fn(*mut IAvnTabControl, *mut *mut IAvnVariantList) -> i32,
+    set_items_source: unsafe extern "system" fn(*mut IAvnTabControl, *mut IAvnVariantList) -> i32,
     container_from_index_with_int32: unsafe extern "system" fn(*mut IAvnTabControl, i32, *mut *mut IAvnControl) -> i32,
+    container_from_item_with_object: unsafe extern "system" fn(*mut IAvnTabControl, AvnVariant, *mut *mut IAvnControl) -> i32,
     index_from_container_with_control: unsafe extern "system" fn(*mut IAvnTabControl, *mut IAvnControl, *mut i32) -> i32,
+    item_from_container_with_control: unsafe extern "system" fn(*mut IAvnTabControl, *mut IAvnControl, *mut AvnVariant) -> i32,
     scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnTabControl, i32) -> i32,
+    scroll_into_view_with_object: unsafe extern "system" fn(*mut IAvnTabControl, AvnVariant) -> i32,
     get_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnTabControl, *mut i32) -> i32,
     set_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnTabControl, i32) -> i32,
     get_selected_index: unsafe extern "system" fn(*mut IAvnTabControl, *mut i32) -> i32,
     set_selected_index: unsafe extern "system" fn(*mut IAvnTabControl, i32) -> i32,
+    get_selected_item: unsafe extern "system" fn(*mut IAvnTabControl, *mut AvnVariant) -> i32,
+    set_selected_item: unsafe extern "system" fn(*mut IAvnTabControl, AvnVariant) -> i32,
+    get_selected_value: unsafe extern "system" fn(*mut IAvnTabControl, *mut AvnVariant) -> i32,
+    set_selected_value: unsafe extern "system" fn(*mut IAvnTabControl, AvnVariant) -> i32,
     get_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnTabControl, *mut i32) -> i32,
     set_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnTabControl, i32) -> i32,
     get_wrap_selection: unsafe extern "system" fn(*mut IAvnTabControl, *mut i32) -> i32,
@@ -57611,6 +58526,7 @@ struct IAvnTabControlVtbl {
     set_vertical_content_alignment: unsafe extern "system" fn(*mut IAvnTabControl, i32) -> i32,
     get_tab_strip_placement: unsafe extern "system" fn(*mut IAvnTabControl, *mut i32) -> i32,
     set_tab_strip_placement: unsafe extern "system" fn(*mut IAvnTabControl, i32) -> i32,
+    get_selected_content: unsafe extern "system" fn(*mut IAvnTabControl, *mut AvnVariant) -> i32,
 }
 
 #[repr(C)]
@@ -58138,10 +59054,31 @@ impl ComPtr<IAvnTabControl> {
             Ok(value)
         }
     }
+    pub fn get_items_source(&self) -> Result<Option<ComPtr<IAvnVariantList>>> {
+        unsafe {
+            let mut value: *mut IAvnVariantList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items_source)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_items_source(&self, value: Option<&ComPtr<IAvnVariantList>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_items_source)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<ComPtr<IAvnControl>>> {
         unsafe {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_index_with_int32)(self.as_raw(), index, &mut value);
+            hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
+        }
+    }
+    pub fn container_from_item_with_object(&self, item: AvnVariant) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_item_with_object)(self.as_raw(), item, &mut value);
             hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
         }
     }
@@ -58152,9 +59089,22 @@ impl ComPtr<IAvnTabControl> {
             hresult::check(hr).map(|_| value)
         }
     }
+    pub fn item_from_container_with_control(&self, container: &ComPtr<IAvnControl>) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().item_from_container_with_control)(self.as_raw(), container.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
+            hresult::check(hr)
+        }
+    }
+    pub fn scroll_into_view_with_object(&self, item: AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_object)(self.as_raw(), item);
             hresult::check(hr)
         }
     }
@@ -58183,6 +59133,34 @@ impl ComPtr<IAvnTabControl> {
     pub fn set_selected_index(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_index)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selected_item(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_item(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_item)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selected_value(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_value)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_value(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_value)(self.as_raw(), *value);
             hresult::check(hr)
         }
     }
@@ -58269,9 +59247,17 @@ impl ComPtr<IAvnTabControl> {
             hresult::check(hr)
         }
     }
+    pub fn get_selected_content(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_content)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
 }
 
-pub const I_AVN_TAB_ITEM_IID: Guid = Guid { data1: 0x3DCF6A5A, data2: 0x1321, data3: 0x5CF0, data4: [0x81, 0x2F, 0x65, 0x5C, 0xF4, 0xBE, 0xAC, 0xA0] };
+pub const I_AVN_TAB_ITEM_IID: Guid = Guid { data1: 0x267A59E9, data2: 0xC722, data3: 0x5DDF, data4: [0xB4, 0x2E, 0x1D, 0x6A, 0xD8, 0x91, 0x70, 0xC8] };
 
 #[repr(C)]
 struct IAvnTabItemVtbl {
@@ -58943,7 +59929,7 @@ impl ComPtr<IAvnTabItem> {
     }
 }
 
-pub const I_AVN_TABLE_VIEW_IID: Guid = Guid { data1: 0xA6498799, data2: 0xD0C9, data3: 0x51E0, data4: [0xAF, 0x42, 0xBC, 0x6C, 0xB6, 0xAA, 0x92, 0xBF] };
+pub const I_AVN_TABLE_VIEW_IID: Guid = Guid { data1: 0xF91C6C33, data2: 0xAB8E, data3: 0x5DC2, data4: [0xAD, 0xFD, 0xA3, 0xB4, 0x6C, 0x26, 0x0B, 0x19] };
 
 #[repr(C)]
 struct IAvnTableViewVtbl {
@@ -59024,13 +60010,22 @@ struct IAvnTableViewVtbl {
     set_padding: unsafe extern "system" fn(*mut IAvnTableView, AvnThickness) -> i32,
     get_items: unsafe extern "system" fn(*mut IAvnTableView, *mut *mut IAvnItemList) -> i32,
     get_item_count: unsafe extern "system" fn(*mut IAvnTableView, *mut i32) -> i32,
+    get_items_source: unsafe extern "system" fn(*mut IAvnTableView, *mut *mut IAvnVariantList) -> i32,
+    set_items_source: unsafe extern "system" fn(*mut IAvnTableView, *mut IAvnVariantList) -> i32,
     container_from_index_with_int32: unsafe extern "system" fn(*mut IAvnTableView, i32, *mut *mut IAvnControl) -> i32,
+    container_from_item_with_object: unsafe extern "system" fn(*mut IAvnTableView, AvnVariant, *mut *mut IAvnControl) -> i32,
     index_from_container_with_control: unsafe extern "system" fn(*mut IAvnTableView, *mut IAvnControl, *mut i32) -> i32,
+    item_from_container_with_control: unsafe extern "system" fn(*mut IAvnTableView, *mut IAvnControl, *mut AvnVariant) -> i32,
     scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnTableView, i32) -> i32,
+    scroll_into_view_with_object: unsafe extern "system" fn(*mut IAvnTableView, AvnVariant) -> i32,
     get_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnTableView, *mut i32) -> i32,
     set_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnTableView, i32) -> i32,
     get_selected_index: unsafe extern "system" fn(*mut IAvnTableView, *mut i32) -> i32,
     set_selected_index: unsafe extern "system" fn(*mut IAvnTableView, i32) -> i32,
+    get_selected_item: unsafe extern "system" fn(*mut IAvnTableView, *mut AvnVariant) -> i32,
+    set_selected_item: unsafe extern "system" fn(*mut IAvnTableView, AvnVariant) -> i32,
+    get_selected_value: unsafe extern "system" fn(*mut IAvnTableView, *mut AvnVariant) -> i32,
+    set_selected_value: unsafe extern "system" fn(*mut IAvnTableView, AvnVariant) -> i32,
     get_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnTableView, *mut i32) -> i32,
     set_is_text_search_enabled: unsafe extern "system" fn(*mut IAvnTableView, i32) -> i32,
     get_wrap_selection: unsafe extern "system" fn(*mut IAvnTableView, *mut i32) -> i32,
@@ -59570,10 +60565,31 @@ impl ComPtr<IAvnTableView> {
             Ok(value)
         }
     }
+    pub fn get_items_source(&self) -> Result<Option<ComPtr<IAvnVariantList>>> {
+        unsafe {
+            let mut value: *mut IAvnVariantList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items_source)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_items_source(&self, value: Option<&ComPtr<IAvnVariantList>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_items_source)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<ComPtr<IAvnControl>>> {
         unsafe {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_index_with_int32)(self.as_raw(), index, &mut value);
+            hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
+        }
+    }
+    pub fn container_from_item_with_object(&self, item: AvnVariant) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_item_with_object)(self.as_raw(), item, &mut value);
             hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
         }
     }
@@ -59584,9 +60600,22 @@ impl ComPtr<IAvnTableView> {
             hresult::check(hr).map(|_| value)
         }
     }
+    pub fn item_from_container_with_control(&self, container: &ComPtr<IAvnControl>) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().item_from_container_with_control)(self.as_raw(), container.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
+            hresult::check(hr)
+        }
+    }
+    pub fn scroll_into_view_with_object(&self, item: AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_object)(self.as_raw(), item);
             hresult::check(hr)
         }
     }
@@ -59615,6 +60644,34 @@ impl ComPtr<IAvnTableView> {
     pub fn set_selected_index(&self, value: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_index)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selected_item(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_item(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_item)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selected_value(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_value)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_value(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_value)(self.as_raw(), *value);
             hresult::check(hr)
         }
     }
@@ -59701,7 +60758,7 @@ impl ComPtr<IAvnTableView> {
     }
 }
 
-pub const I_AVN_TABLE_VIEW_CELL_IID: Guid = Guid { data1: 0x997B00D2, data2: 0x6C14, data3: 0x5604, data4: [0xAF, 0x63, 0xC5, 0xEA, 0xAB, 0xFD, 0xA7, 0xD5] };
+pub const I_AVN_TABLE_VIEW_CELL_IID: Guid = Guid { data1: 0xBA491C16, data2: 0x73E4, data3: 0x5CAC, data4: [0xA5, 0x50, 0xA5, 0xF4, 0xC4, 0xF1, 0x6A, 0x55] };
 
 #[repr(C)]
 struct IAvnTableViewCellVtbl {
@@ -67253,7 +68310,7 @@ impl ComPtr<IAvnTrayIcon> {
     }
 }
 
-pub const I_AVN_TREE_VIEW_IID: Guid = Guid { data1: 0x42D62BD5, data2: 0xE337, data3: 0x5582, data4: [0xB1, 0xAE, 0xF8, 0xB9, 0xE9, 0x04, 0xC1, 0xEF] };
+pub const I_AVN_TREE_VIEW_IID: Guid = Guid { data1: 0xADAB58B4, data2: 0x994F, data3: 0x5717, data4: [0xAC, 0x0A, 0x26, 0x18, 0x20, 0x54, 0xF5, 0x92] };
 
 #[repr(C)]
 struct IAvnTreeViewVtbl {
@@ -67334,17 +68391,28 @@ struct IAvnTreeViewVtbl {
     set_padding: unsafe extern "system" fn(*mut IAvnTreeView, AvnThickness) -> i32,
     get_items: unsafe extern "system" fn(*mut IAvnTreeView, *mut *mut IAvnItemList) -> i32,
     get_item_count: unsafe extern "system" fn(*mut IAvnTreeView, *mut i32) -> i32,
+    get_items_source: unsafe extern "system" fn(*mut IAvnTreeView, *mut *mut IAvnVariantList) -> i32,
+    set_items_source: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnVariantList) -> i32,
     container_from_index_with_int32: unsafe extern "system" fn(*mut IAvnTreeView, i32, *mut *mut IAvnControl) -> i32,
+    container_from_item_with_object: unsafe extern "system" fn(*mut IAvnTreeView, AvnVariant, *mut *mut IAvnControl) -> i32,
     index_from_container_with_control: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnControl, *mut i32) -> i32,
+    item_from_container_with_control: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnControl, *mut AvnVariant) -> i32,
     scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnTreeView, i32) -> i32,
+    scroll_into_view_with_object: unsafe extern "system" fn(*mut IAvnTreeView, AvnVariant) -> i32,
     get_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnTreeView, *mut i32) -> i32,
     set_auto_scroll_to_selected_item: unsafe extern "system" fn(*mut IAvnTreeView, i32) -> i32,
     get_selection_mode: unsafe extern "system" fn(*mut IAvnTreeView, *mut i32) -> i32,
     set_selection_mode: unsafe extern "system" fn(*mut IAvnTreeView, i32) -> i32,
+    get_selected_item: unsafe extern "system" fn(*mut IAvnTreeView, *mut AvnVariant) -> i32,
+    set_selected_item: unsafe extern "system" fn(*mut IAvnTreeView, AvnVariant) -> i32,
+    get_selected_items: unsafe extern "system" fn(*mut IAvnTreeView, *mut *mut IAvnSelectedVariantList) -> i32,
+    set_selected_items: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnSelectedVariantList) -> i32,
     expand_sub_tree_with_tree_view_item: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnTreeViewItem) -> i32,
     collapse_sub_tree_with_tree_view_item: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnTreeViewItem) -> i32,
     select_all: unsafe extern "system" fn(*mut IAvnTreeView) -> i32,
     unselect_all: unsafe extern "system" fn(*mut IAvnTreeView) -> i32,
+    tree_container_from_item_with_object: unsafe extern "system" fn(*mut IAvnTreeView, AvnVariant, *mut *mut IAvnControl) -> i32,
+    tree_item_from_container_with_control: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnControl, *mut AvnVariant) -> i32,
     advise_selection_changed: unsafe extern "system" fn(*mut IAvnTreeView, *mut IAvnTreeViewSelectionChangedHandler, *mut i64) -> i32,
     unadvise_selection_changed: unsafe extern "system" fn(*mut IAvnTreeView, i64) -> i32,
 }
@@ -67874,10 +68942,31 @@ impl ComPtr<IAvnTreeView> {
             Ok(value)
         }
     }
+    pub fn get_items_source(&self) -> Result<Option<ComPtr<IAvnVariantList>>> {
+        unsafe {
+            let mut value: *mut IAvnVariantList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items_source)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_items_source(&self, value: Option<&ComPtr<IAvnVariantList>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_items_source)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<ComPtr<IAvnControl>>> {
         unsafe {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_index_with_int32)(self.as_raw(), index, &mut value);
+            hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
+        }
+    }
+    pub fn container_from_item_with_object(&self, item: AvnVariant) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_item_with_object)(self.as_raw(), item, &mut value);
             hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
         }
     }
@@ -67888,9 +68977,22 @@ impl ComPtr<IAvnTreeView> {
             hresult::check(hr).map(|_| value)
         }
     }
+    pub fn item_from_container_with_control(&self, container: &ComPtr<IAvnControl>) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().item_from_container_with_control)(self.as_raw(), container.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
+            hresult::check(hr)
+        }
+    }
+    pub fn scroll_into_view_with_object(&self, item: AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_object)(self.as_raw(), item);
             hresult::check(hr)
         }
     }
@@ -67922,6 +69024,34 @@ impl ComPtr<IAvnTreeView> {
             hresult::check(hr)
         }
     }
+    pub fn get_selected_item(&self) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_item)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_selected_item(&self, value: &AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_item)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_selected_items(&self) -> Result<Option<ComPtr<IAvnSelectedVariantList>>> {
+        unsafe {
+            let mut value: *mut IAvnSelectedVariantList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_selected_items)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_selected_items(&self, value: Option<&ComPtr<IAvnSelectedVariantList>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_selected_items)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
     pub fn expand_sub_tree_with_tree_view_item(&self, item: &ComPtr<IAvnTreeViewItem>) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().expand_sub_tree_with_tree_view_item)(self.as_raw(), item.as_raw());
@@ -67946,6 +69076,20 @@ impl ComPtr<IAvnTreeView> {
             hresult::check(hr)
         }
     }
+    pub fn tree_container_from_item_with_object(&self, item: AvnVariant) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().tree_container_from_item_with_object)(self.as_raw(), item, &mut value);
+            hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
+        }
+    }
+    pub fn tree_item_from_container_with_control(&self, container: &ComPtr<IAvnControl>) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().tree_item_from_container_with_control)(self.as_raw(), container.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
     pub fn advise_selection_changed(&self, handler: &ComPtr<IAvnTreeViewSelectionChangedHandler>) -> Result<i64> {
         unsafe {
             let mut subscription_id = 0;
@@ -67961,7 +69105,7 @@ impl ComPtr<IAvnTreeView> {
     }
 }
 
-pub const I_AVN_TREE_VIEW_ITEM_IID: Guid = Guid { data1: 0xCDB07DE9, data2: 0xC31D, data3: 0x51FC, data4: [0x81, 0xCF, 0xE4, 0x28, 0xF6, 0x1F, 0x6E, 0x85] };
+pub const I_AVN_TREE_VIEW_ITEM_IID: Guid = Guid { data1: 0x26321820, data2: 0xF178, data3: 0x531D, data4: [0xA2, 0xE7, 0x24, 0xAA, 0xD9, 0x47, 0xFC, 0x3E] };
 
 #[repr(C)]
 struct IAvnTreeViewItemVtbl {
@@ -68042,9 +69186,14 @@ struct IAvnTreeViewItemVtbl {
     set_padding: unsafe extern "system" fn(*mut IAvnTreeViewItem, AvnThickness) -> i32,
     get_items: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut *mut IAvnItemList) -> i32,
     get_item_count: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut i32) -> i32,
+    get_items_source: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut *mut IAvnVariantList) -> i32,
+    set_items_source: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut IAvnVariantList) -> i32,
     container_from_index_with_int32: unsafe extern "system" fn(*mut IAvnTreeViewItem, i32, *mut *mut IAvnControl) -> i32,
+    container_from_item_with_object: unsafe extern "system" fn(*mut IAvnTreeViewItem, AvnVariant, *mut *mut IAvnControl) -> i32,
     index_from_container_with_control: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut IAvnControl, *mut i32) -> i32,
+    item_from_container_with_control: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut IAvnControl, *mut AvnVariant) -> i32,
     scroll_into_view_with_int32: unsafe extern "system" fn(*mut IAvnTreeViewItem, i32) -> i32,
+    scroll_into_view_with_object: unsafe extern "system" fn(*mut IAvnTreeViewItem, AvnVariant) -> i32,
     get_header: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut *mut IAvnControl) -> i32,
     set_header: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut IAvnControl) -> i32,
     get_is_expanded: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut i32) -> i32,
@@ -68583,10 +69732,31 @@ impl ComPtr<IAvnTreeViewItem> {
             Ok(value)
         }
     }
+    pub fn get_items_source(&self) -> Result<Option<ComPtr<IAvnVariantList>>> {
+        unsafe {
+            let mut value: *mut IAvnVariantList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_items_source)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_items_source(&self, value: Option<&ComPtr<IAvnVariantList>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_items_source)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<ComPtr<IAvnControl>>> {
         unsafe {
             let mut value: *mut IAvnControl = ptr::null_mut();
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_index_with_int32)(self.as_raw(), index, &mut value);
+            hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
+        }
+    }
+    pub fn container_from_item_with_object(&self, item: AvnVariant) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().container_from_item_with_object)(self.as_raw(), item, &mut value);
             hresult::check(hr).and_then(|_| if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) })
         }
     }
@@ -68597,9 +69767,22 @@ impl ComPtr<IAvnTreeViewItem> {
             hresult::check(hr).map(|_| value)
         }
     }
+    pub fn item_from_container_with_control(&self, container: &ComPtr<IAvnControl>) -> Result<AvnVariant> {
+        unsafe {
+            let mut value: AvnVariant = AvnVariant::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().item_from_container_with_control)(self.as_raw(), container.as_raw(), &mut value);
+            hresult::check(hr).map(|_| value)
+        }
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_int32)(self.as_raw(), index);
+            hresult::check(hr)
+        }
+    }
+    pub fn scroll_into_view_with_object(&self, item: AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_into_view_with_object)(self.as_raw(), item);
             hresult::check(hr)
         }
     }
@@ -69769,7 +70952,7 @@ impl ComPtr<IAvnViewbox> {
     }
 }
 
-pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0xA519486C, data2: 0x94FF, data3: 0x5C16, data4: [0xB3, 0xD0, 0x1E, 0x9C, 0x25, 0xCE, 0x4A, 0x30] };
+pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0x34A1C1AF, data2: 0x8B1C, data3: 0x53A0, data4: [0x92, 0xDE, 0xD4, 0xDC, 0xC1, 0x30, 0xC8, 0x90] };
 
 #[repr(C)]
 struct IAvnWindowVtbl {
@@ -69887,6 +71070,7 @@ struct IAvnWindowVtbl {
     set_position: unsafe extern "system" fn(*mut IAvnWindow, AvnPixelPoint) -> i32,
     get_is_dialog: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
     close: unsafe extern "system" fn(*mut IAvnWindow) -> i32,
+    close_with_object: unsafe extern "system" fn(*mut IAvnWindow, AvnVariant) -> i32,
     hide: unsafe extern "system" fn(*mut IAvnWindow) -> i32,
     show: unsafe extern "system" fn(*mut IAvnWindow) -> i32,
     show_with_window: unsafe extern "system" fn(*mut IAvnWindow, *mut IAvnWindow) -> i32,
@@ -70676,6 +71860,12 @@ impl ComPtr<IAvnWindow> {
     pub fn close(&self) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().close)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn close_with_object(&self, dialog_result: AvnVariant) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().close_with_object)(self.as_raw(), dialog_result);
             hresult::check(hr)
         }
     }

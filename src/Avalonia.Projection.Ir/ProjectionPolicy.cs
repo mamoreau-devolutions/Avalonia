@@ -102,4 +102,13 @@ public sealed class MarshallingOverride
     /// Only meaningful when <see cref="Kind"/> is <see cref="MarshallingKind.StringUtf16"/>.
     /// </summary>
     public string? StringConverterTypeName { get; init; }
+
+    /// <summary>
+    /// The host-side class implementing the generated collection interface when the managed
+    /// collection needs adaptation the generated wrapper cannot assume. It must expose
+    /// <c>public static IAvnX? FromManaged(T? value)</c> and
+    /// <c>public static T? ToManaged(IAvnX? value)</c>. Only meaningful when
+    /// <see cref="Kind"/> is <see cref="MarshallingKind.ComCollection"/>.
+    /// </summary>
+    public string? HostImplementationTypeName { get; init; }
 }

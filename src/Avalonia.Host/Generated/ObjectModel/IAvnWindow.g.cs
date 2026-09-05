@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("A519486C-94FF-5C16-B3D0-1E9C25CE4A30")]
+[Guid("34A1C1AF-8B1C-53A0-92DE-D4DCC130C890")]
 public partial interface IAvnWindow : IAvnContentControl
 {
     [PreserveSig]
@@ -107,6 +107,9 @@ public partial interface IAvnWindow : IAvnContentControl
 
     [PreserveSig]
     int Close();
+
+    [PreserveSig]
+    int CloseWithObject(AvnVariant dialogResult);
 
     [PreserveSig]
     int Hide();
@@ -222,7 +225,7 @@ public sealed partial class AvnWindow : IAvnWindow
         {
             using var call = _state.EnterCall();
             _value.VerifyAccess();
-            value = new AvnStringList(_value.Classes);
+            value = AvnStringList.FromManaged(_value.Classes);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -1975,6 +1978,21 @@ public sealed partial class AvnWindow : IAvnWindow
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Close();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int CloseWithObject(AvnVariant dialogResult)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Close(dialogResult.ToObject());
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

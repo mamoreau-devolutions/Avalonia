@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("8B2BA119-5204-54A5-B35D-0D520F38A1D9")]
+[Guid("1E9876E3-A843-51E7-90C2-42171DFD1AC2")]
 public partial interface IAvnAutoCompleteBox : IAvnTemplatedControl
 {
     [PreserveSig]
@@ -52,6 +52,12 @@ public partial interface IAvnAutoCompleteBox : IAvnTemplatedControl
     int SetClearSelectionOnLostFocus(int value);
 
     [PreserveSig]
+    int GetSelectedItem(out AvnVariant value);
+
+    [PreserveSig]
+    int SetSelectedItem(AvnVariant value);
+
+    [PreserveSig]
     int GetText(out string? value);
 
     [PreserveSig]
@@ -77,6 +83,12 @@ public partial interface IAvnAutoCompleteBox : IAvnTemplatedControl
 
     [PreserveSig]
     int SetPlaceholderForeground(IAvnBrush? value);
+
+    [PreserveSig]
+    int GetItemsSource(out IAvnVariantList value);
+
+    [PreserveSig]
+    int SetItemsSource(IAvnVariantList value);
 
     [PreserveSig]
     int GetMaxLength(out int value);
@@ -244,7 +256,7 @@ public sealed partial class AvnAutoCompleteBox : IAvnAutoCompleteBox
         {
             using var call = _state.EnterCall();
             _value.VerifyAccess();
-            value = new AvnStringList(_value.Classes);
+            value = AvnStringList.FromManaged(_value.Classes);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -1616,6 +1628,37 @@ public sealed partial class AvnAutoCompleteBox : IAvnAutoCompleteBox
         }
     }
 
+    public int GetSelectedItem(out AvnVariant value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnVariant.FromObject(_value.SelectedItem);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetSelectedItem(AvnVariant value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.SelectedItem = value.ToObject();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetText(out string? value)
     {
         value = default!;
@@ -1748,6 +1791,37 @@ public sealed partial class AvnAutoCompleteBox : IAvnAutoCompleteBox
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.PlaceholderForeground = AvnBrush.ToBrush(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetItemsSource(out IAvnVariantList value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnVariantListMarshal.FromManaged(_value.ItemsSource);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetItemsSource(IAvnVariantList value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ItemsSource = AvnVariantListMarshal.ToManaged(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

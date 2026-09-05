@@ -27,13 +27,18 @@ public partial interface IAvnItemList
     [PreserveSig]
     int Clear();
 }
-
 [GeneratedComClass]
 public sealed partial class AvnItemList : IAvnItemList
 {
     private readonly global::Avalonia.Controls.ItemCollection _value;
 
     internal AvnItemList(global::Avalonia.Controls.ItemCollection value) => _value = value;
+
+    public static IAvnItemList? FromManaged(global::Avalonia.Controls.ItemCollection? value) =>
+        value is null ? null : new AvnItemList(value);
+
+    public static global::Avalonia.Controls.ItemCollection? ToManaged(IAvnItemList? value) =>
+        value is AvnItemList local ? local._value : null;
 
     public int GetCount(out int value)
     {

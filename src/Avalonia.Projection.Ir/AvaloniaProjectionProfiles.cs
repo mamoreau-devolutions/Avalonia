@@ -34,8 +34,8 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnTextBlock"] = 9,
             ["Avalonia.Host.Com.IAvnSelectableTextBlock"] = 6,
             ["Avalonia.Host.Com.IAvnTemplatedControl"] = 7,
-            ["Avalonia.Host.Com.IAvnItemsControl"] = 9,
-            ["Avalonia.Host.Com.IAvnSelectingItemsControl"] = 9,
+            ["Avalonia.Host.Com.IAvnItemsControl"] = 10,
+            ["Avalonia.Host.Com.IAvnSelectingItemsControl"] = 10,
             ["Avalonia.Host.Com.IAvnTextBox"] = 12,
             ["Avalonia.Host.Com.IAvnRangeBase"] = 7,
             ["Avalonia.Host.Com.IAvnSlider"] = 7,
@@ -48,19 +48,19 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnCheckBox"] = 11,
             ["Avalonia.Host.Com.IAvnRadioButton"] = 11,
             ["Avalonia.Host.Com.IAvnToggleSwitch"] = 11,
-            ["Avalonia.Host.Com.IAvnListBox"] = 10,
-            ["Avalonia.Host.Com.IAvnComboBox"] = 11,
-            ["Avalonia.Host.Com.IAvnListBoxItem"] = 9,
-            ["Avalonia.Host.Com.IAvnComboBoxItem"] = 9,
+            ["Avalonia.Host.Com.IAvnListBox"] = 11,
+            ["Avalonia.Host.Com.IAvnComboBox"] = 12,
+            ["Avalonia.Host.Com.IAvnListBoxItem"] = 10,
+            ["Avalonia.Host.Com.IAvnComboBoxItem"] = 10,
             ["Avalonia.Host.Com.IAvnScrollViewer"] = 10,
-            ["Avalonia.Host.Com.IAvnWindow"] = 12,
+            ["Avalonia.Host.Com.IAvnWindow"] = 13,
             ["Avalonia.Host.Com.IAvnGrid"] = 7,
             // Previously version-1 templated types inherit the TemplatedControl bump.
-            ["Avalonia.Host.Com.IAvnAutoCompleteBox"] = 7,
+            ["Avalonia.Host.Com.IAvnAutoCompleteBox"] = 8,
             ["Avalonia.Host.Com.IAvnButtonSpinner"] = 4,
             ["Avalonia.Host.Com.IAvnCalendar"] = 6,
             ["Avalonia.Host.Com.IAvnCalendarDatePicker"] = 5,
-            ["Avalonia.Host.Com.IAvnCarousel"] = 7,
+            ["Avalonia.Host.Com.IAvnCarousel"] = 8,
             ["Avalonia.Host.Com.IAvnCommandBar"] = 6,
             ["Avalonia.Host.Com.IAvnCommand"] = 2,
             ["Avalonia.Host.Com.IAvnCommandBarButton"] = 6,
@@ -71,20 +71,20 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnTrayIcon"] = 3,
             ["Avalonia.Host.Com.IAvnPopupFlyoutBase"] = 3,
             ["Avalonia.Host.Com.IAvnFlyout"] = 3,
-            ["Avalonia.Host.Com.IAvnMenuFlyout"] = 3,
+            ["Avalonia.Host.Com.IAvnMenuFlyout"] = 4,
             ["Avalonia.Host.Com.IAvnDatePicker"] = 5,
             ["Avalonia.Host.Com.IAvnDropDownButton"] = 6,
             ["Avalonia.Host.Com.IAvnGridSplitter"] = 5,
             ["Avalonia.Host.Com.IAvnGroupBox"] = 4,
-            ["Avalonia.Host.Com.IAvnHeaderedItemsControl"] = 6,
-            ["Avalonia.Host.Com.IAvnHeaderedSelectingItemsControl"] = 6,
+            ["Avalonia.Host.Com.IAvnHeaderedItemsControl"] = 7,
+            ["Avalonia.Host.Com.IAvnHeaderedSelectingItemsControl"] = 7,
             ["Avalonia.Host.Com.IAvnHyperlinkButton"] = 6,
             ["Avalonia.Host.Com.IAvnIconElement"] = 4,
             ["Avalonia.Host.Com.IAvnLabel"] = 5,
             ["Avalonia.Host.Com.IAvnMaskedTextBox"] = 9,
-            ["Avalonia.Host.Com.IAvnMenu"] = 6,
-            ["Avalonia.Host.Com.IAvnMenuBase"] = 6,
-            ["Avalonia.Host.Com.IAvnMenuItem"] = 9,
+            ["Avalonia.Host.Com.IAvnMenu"] = 7,
+            ["Avalonia.Host.Com.IAvnMenuBase"] = 7,
+            ["Avalonia.Host.Com.IAvnMenuItem"] = 10,
             ["Avalonia.Host.Com.IAvnNotificationCard"] = 5,
             ["Avalonia.Host.Com.IAvnNumericUpDown"] = 5,
             ["Avalonia.Host.Com.IAvnPathIcon"] = 4,
@@ -95,20 +95,20 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnSpinner"] = 4,
             ["Avalonia.Host.Com.IAvnSplitButton"] = 7,
             ["Avalonia.Host.Com.IAvnSplitView"] = 4,
-            ["Avalonia.Host.Com.IAvnTabControl"] = 6,
-            ["Avalonia.Host.Com.IAvnTabItem"] = 5,
-            ["Avalonia.Host.Com.IAvnTableView"] = 6,
-            ["Avalonia.Host.Com.IAvnTableViewCell"] = 5,
+            ["Avalonia.Host.Com.IAvnTabControl"] = 7,
+            ["Avalonia.Host.Com.IAvnTabItem"] = 6,
+            ["Avalonia.Host.Com.IAvnTableView"] = 7,
+            ["Avalonia.Host.Com.IAvnTableViewCell"] = 6,
             ["Avalonia.Host.Com.IAvnTableViewRow"] = 4,
             ["Avalonia.Host.Com.IAvnThumb"] = 5,
             ["Avalonia.Host.Com.IAvnTimePicker"] = 5,
             ["Avalonia.Host.Com.IAvnToggleSplitButton"] = 7,
             ["Avalonia.Host.Com.IAvnToolTip"] = 4,
             ["Avalonia.Host.Com.IAvnTransitioningContentControl"] = 4,
-            ["Avalonia.Host.Com.IAvnTreeView"] = 6,
-            ["Avalonia.Host.Com.IAvnTreeViewItem"] = 6,
+            ["Avalonia.Host.Com.IAvnTreeView"] = 7,
+            ["Avalonia.Host.Com.IAvnTreeViewItem"] = 7,
             ["Avalonia.Host.Com.IAvnUserControl"] = 4,
-            ["Avalonia.Host.Com.IAvnWindowNotificationManager"] = 4,
+            ["Avalonia.Host.Com.IAvnWindowNotificationManager"] = 5,
             // Wave A's seven new interfaces publish at the default version 1 and nothing they
             // sit under moved, so they need no entry here. Waves B, C and D do the same.
             // The factory is the only interface these waves move: wave A gave it a creator per
@@ -283,12 +283,12 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.ContentControl"] =
                 ["Content", "HorizontalContentAlignment", "VerticalContentAlignment"],
             ["Avalonia.Controls.Primitives.HeaderedContentControl"] = ["Header"],
-            ["Avalonia.Controls.ItemsControl"] = ["Items", "ItemCount", "ScrollIntoView", "ContainerFromIndex", "IndexFromContainer"],
+            ["Avalonia.Controls.ItemsControl"] = ["Items", "ItemCount", "ScrollIntoView", "ContainerFromIndex", "IndexFromContainer", "ItemsSource", "ContainerFromItem", "ItemFromContainer"],
             ["Avalonia.Controls.Primitives.HeaderedItemsControl"] = ["Header"],
             ["Avalonia.Controls.Primitives.SelectingItemsControl"] =
             [
-                "SelectedIndex", "SelectionChanged",
-                "AutoScrollToSelectedItem", "IsTextSearchEnabled", "WrapSelection",
+                "SelectedIndex", "SelectionChanged", "SelectedItem", "SelectedValue",
+                "AutoScrollToSelectedItem", "IsTextSearchEnabled", "WrapSelection", "SelectedItems",
             ],
             ["Avalonia.Controls.Primitives.HeaderedSelectingItemsControl"] = ["Header"],
             ["Avalonia.Controls.Decorator"] = ["Child", "Padding"],
@@ -340,7 +340,7 @@ public static class AvaloniaProjectionProfiles
             // TabControl inherits Items and SelectedIndex from SelectingItemsControl, so it only
             // publishes what it declares itself.
             ["Avalonia.Controls.TabControl"] =
-                ["TabStripPlacement", "HorizontalContentAlignment", "VerticalContentAlignment"],
+                ["TabStripPlacement", "HorizontalContentAlignment", "VerticalContentAlignment", "SelectedContent"],
             // TabItem.TabStripPlacement is a Dock? that the TabControl writes; a nullable enum
             // has no ABI shape of its own, so only IsSelected crosses.
             ["Avalonia.Controls.TabItem"] = ["IsSelected"],
@@ -350,7 +350,8 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.TreeView"] =
             [
                 "AutoScrollToSelectedItem", "SelectionMode", "SelectAll", "UnselectAll",
-                "ExpandSubTree", "CollapseSubTree", "SelectionChanged",
+                "ExpandSubTree", "CollapseSubTree", "SelectionChanged", "SelectedItem",
+                "TreeContainerFromItem", "TreeItemFromContainer", "SelectedItems",
             ],
             ["Avalonia.Controls.TreeViewItem"] =
                 ["IsExpanded", "IsSelected", "Level", "Expanded", "Collapsed"],
@@ -439,7 +440,7 @@ public static class AvaloniaProjectionProfiles
                 "PlacementRect",
                 "Open", "Opening", "Closing",
             ],
-            ["Avalonia.Controls.MenuFlyout"] = ["Items"],
+            ["Avalonia.Controls.MenuFlyout"] = ["Items", "ItemsSource"],
             ["Avalonia.Controls.Spinner"] = [],
             ["Avalonia.Controls.ButtonSpinner"] =
                 ["AllowSpin", "ShowButtonSpinner", "ButtonSpinnerLocation"],
@@ -458,8 +459,8 @@ public static class AvaloniaProjectionProfiles
                 "CaretIndex", "ClearSelectionOnLostFocus", "SearchText", "MaxLength",
                 "PlaceholderForeground", "InnerLeftContent", "InnerRightContent",
                 "PopulateComplete", "DropDownOpened", "DropDownClosed",
-                "MinimumPopulateDelay", "TextChanged",
-                "Populating", "DropDownOpening", "DropDownClosing",
+                "MinimumPopulateDelay", "TextChanged", "ItemsSource",
+                "Populating", "DropDownOpening", "DropDownClosing", "SelectedItem",
             ],
             ["Avalonia.Controls.MaskedTextBox"] =
                 ["Mask", "AsciiOnly", "HidePromptOnLeave", "ResetOnPrompt", "ResetOnSpace",
@@ -519,7 +520,7 @@ public static class AvaloniaProjectionProfiles
                 "PlacementRect",
             ],
             ["Avalonia.Controls.TrayIcon"] = ["ToolTipText", "IsVisible", "Command", "CommandParameter"],
-            ["Avalonia.Controls.Notifications.WindowNotificationManager"] = ["Position", "MaxItems"],
+            ["Avalonia.Controls.Notifications.WindowNotificationManager"] = ["Position", "MaxItems", "Show", "Close", "CloseAll"],
             ["Avalonia.Controls.Notifications.NotificationCard"] =
                 ["IsClosed", "NotificationType", "IsClosing", "Close", "NotificationClosed"],
             ["Avalonia.Controls.RefreshContainer"] =
@@ -646,6 +647,70 @@ public static class AvaloniaProjectionProfiles
                 ElementInterfaceName = "Avalonia.Host.Com.IAvnControl",
                 ElementKind = MarshallingKind.ComInterface,
                 IsNullable = false,
+            },
+            // ItemsSource is IEnumerable?: the adapter materializes on first
+            // mutation, and assigning the list back persists it into the control.
+            ["Avalonia.Controls.ItemsControl.ItemsSource"] = new()
+            {
+                Kind = MarshallingKind.ComCollection,
+                InterfaceName = "Avalonia.Host.Com.IAvnVariantList",
+                ElementKind = MarshallingKind.Variant,
+                HostImplementationTypeName = "Avalonia.Host.Com.AvnObjectList",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.MenuFlyout.ItemsSource"] = new()
+            {
+                Kind = MarshallingKind.ComCollection,
+                InterfaceName = "Avalonia.Host.Com.IAvnVariantList",
+                ElementKind = MarshallingKind.Variant,
+                HostImplementationTypeName = "Avalonia.Host.Com.AvnObjectList",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.AutoCompleteBox.ItemsSource"] = new()
+            {
+                Kind = MarshallingKind.ComCollection,
+                InterfaceName = "Avalonia.Host.Com.IAvnVariantList",
+                ElementKind = MarshallingKind.Variant,
+                HostImplementationTypeName = "Avalonia.Host.Com.AvnObjectList",
+                IsNullable = true,
+            },
+            // SelectedItem/SelectedValue are object?: the tagged scalar carries
+            // the values an item can hold without a typed item ABI.
+            ["Avalonia.Controls.Primitives.SelectingItemsControl.SelectedItem"] = new()
+            {
+                Kind = MarshallingKind.Variant,
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.Primitives.SelectingItemsControl.SelectedValue"] = new()
+            {
+                Kind = MarshallingKind.Variant,
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.AutoCompleteBox.SelectedItem"] = new()
+            {
+                Kind = MarshallingKind.Variant,
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.TreeView.SelectedItem"] = new()
+            {
+                Kind = MarshallingKind.Variant,
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.Primitives.SelectingItemsControl.SelectedItems"] = new()
+            {
+                Kind = MarshallingKind.ComCollection,
+                InterfaceName = "Avalonia.Host.Com.IAvnSelectedVariantList",
+                ElementKind = MarshallingKind.Variant,
+                HostImplementationTypeName = "Avalonia.Host.Com.AvnObjectList",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.TreeView.SelectedItems"] = new()
+            {
+                Kind = MarshallingKind.ComCollection,
+                InterfaceName = "Avalonia.Host.Com.IAvnSelectedVariantList",
+                ElementKind = MarshallingKind.Variant,
+                HostImplementationTypeName = "Avalonia.Host.Com.AvnObjectList",
+                IsNullable = true,
             },
             ["Avalonia.StyledElement.Classes"] = new()
             {
@@ -1318,4 +1383,6 @@ public static class AvaloniaProjectionProfiles
         },
     };
 }
+
+
 

@@ -130,6 +130,9 @@ public static class ClrTypeExtractor
                 StringConverterTypeName = policy.TryGetOverride(type, property, out memberOverride)
                     ? memberOverride.StringConverterTypeName
                     : null,
+                HostImplementationTypeName = policy.TryGetOverride(type, property, out memberOverride)
+                    ? memberOverride.HostImplementationTypeName
+                    : null,
                 ManagedTypeName = property.PropertyType.FullName,
                 IsNullable = isNullable,
                 CanRead = property.GetMethod?.IsPublic == true,
@@ -422,6 +425,13 @@ public static class ClrTypeExtractor
                 reason = "COM collection override requires InterfaceName, ElementKind, and an interface for COM elements";
                 return false;
             }
+            if (kind == MarshallingKind.ComCollection &&
+                string.IsNullOrWhiteSpace(value.HostImplementationTypeName) &&
+                value.ElementKind is not (MarshallingKind.StringUtf16 or MarshallingKind.ComInterface))
+            {
+                reason = "COM collection override with a non-host-implemented element kind supports string and COM elements";
+                return false;
+            }
             if (kind == MarshallingKind.StringUtf16 &&
                 type != typeof(string) &&
                 value.StringConverterTypeName is null &&
@@ -470,6 +480,8 @@ public static class ClrTypeExtractor
             kind = MarshallingKind.CharUtf16;
         else if (type == typeof(string))
             kind = MarshallingKind.StringUtf16;
+        else if (type == typeof(object))
+            kind = MarshallingKind.Variant;
         else if (type == typeof(TimeSpan))
             kind = MarshallingKind.TimeSpanI64;
         else if (type == typeof(DateTime))

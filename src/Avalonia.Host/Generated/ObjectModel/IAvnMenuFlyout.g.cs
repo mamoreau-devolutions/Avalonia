@@ -6,11 +6,17 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("56421EC0-482F-51EF-B502-58EF0DF91726")]
+[Guid("47C3BDA3-5EC3-55D1-BACE-E772E3268BD5")]
 public partial interface IAvnMenuFlyout : IAvnPopupFlyoutBase
 {
     [PreserveSig]
     int GetItems(out IAvnItemList value);
+
+    [PreserveSig]
+    int GetItemsSource(out IAvnVariantList value);
+
+    [PreserveSig]
+    int SetItemsSource(IAvnVariantList value);
 
 }
 
@@ -599,7 +605,38 @@ public sealed partial class AvnMenuFlyout : IAvnMenuFlyout
         {
             using var call = _state.EnterCall();
             _value.VerifyAccess();
-            value = new AvnItemList(_value.Items);
+            value = AvnItemList.FromManaged(_value.Items);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetItemsSource(out IAvnVariantList value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnVariantListMarshal.FromManaged(_value.ItemsSource);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetItemsSource(IAvnVariantList value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ItemsSource = AvnVariantListMarshal.ToManaged(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

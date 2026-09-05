@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("C7938E76-7525-57BC-AE41-DBF74AC94079")]
+[Guid("295E563B-736D-5C19-9075-E995F93DF8D1")]
 public partial interface IAvnComboBoxItem : IAvnListBoxItem
 {
 }
@@ -106,7 +106,7 @@ public sealed partial class AvnComboBoxItem : IAvnComboBoxItem
         {
             using var call = _state.EnterCall();
             _value.VerifyAccess();
-            value = new AvnStringList(_value.Classes);
+            value = AvnStringList.FromManaged(_value.Classes);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

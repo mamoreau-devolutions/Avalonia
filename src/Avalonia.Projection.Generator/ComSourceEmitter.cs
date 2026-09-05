@@ -423,11 +423,13 @@ public static class ComSourceEmitter
         foreach (var collection in ir.Types
                      .SelectMany(t => t.Properties)
                      .Where(p => p.Kind == MarshallingKind.ComCollection)
-                     .Select(p => SimpleName(p.InterfaceName!)[1..])
-                     .Distinct(StringComparer.Ordinal)
-                     .OrderBy(n => n, StringComparer.Ordinal))
+                    .GroupBy(p => p.InterfaceName, StringComparer.Ordinal)
+                    .Select(g => g.First()))
         {
-            sb.AppendLine($"    [global::System.Diagnostics.CodeAnalysis.DynamicDependency(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All, typeof({collection}))]");
+            var collectionName = collection.HostImplementationTypeName is { } hostType
+                ? SimpleName(hostType)
+                : SimpleName(collection.InterfaceName!)[1..];
+            sb.AppendLine($"    [global::System.Diagnostics.CodeAnalysis.DynamicDependency(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All, typeof({collectionName}))]");
         }
         foreach (var type in classes)
             sb.AppendLine($"    [global::System.Diagnostics.CodeAnalysis.DynamicDependency(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All, typeof({type.Name[1..]}))]");
@@ -896,14 +898,35 @@ public static class ComSourceEmitter
         sb.AppendLine("    [PreserveSig]");
         sb.AppendLine("    int Clear();");
         sb.AppendLine("}");
-        sb.AppendLine();
+        var managedCollectionName = CSharpManagedTypeName(collection.ManagedTypeName);
+        if (collection.HostImplementationTypeName is { } hostType)
+        {
+            // A host-implemented collection: the interface is generated here; the
+            // class lives in the host assembly and owns the adaptation semantics.
+            sb.AppendLine();
+            sb.AppendLine($"public static class {interfaceName[1..]}Marshal");
+            sb.AppendLine("{");
+            sb.AppendLine($"    public static {interfaceName}? FromManaged(global::{managedCollectionName}? value) =>");
+            sb.AppendLine($"        value is null ? null : {hostType}.FromManaged(value);");
+            sb.AppendLine();
+            sb.AppendLine($"    public static global::{managedCollectionName}? ToManaged({interfaceName}? value) =>");
+            sb.AppendLine($"        {hostType}.ToManaged(value);");
+            sb.AppendLine("}");
+            sb.AppendLine();
+            return sb.ToString().TrimEnd() + Environment.NewLine;
+        }
         sb.AppendLine("[GeneratedComClass]");
         sb.AppendLine($"public sealed partial class {className} : {interfaceName}");
         sb.AppendLine("{");
-        var managedCollectionName = CSharpManagedTypeName(collection.ManagedTypeName);
         sb.AppendLine($"    private readonly global::{managedCollectionName} _value;");
         sb.AppendLine();
         sb.AppendLine($"    internal {className}(global::{managedCollectionName} value) => _value = value;");
+        sb.AppendLine();
+        sb.AppendLine($"    public static {interfaceName}? FromManaged(global::{managedCollectionName}? value) =>");
+        sb.AppendLine($"        value is null ? null : new {className}(value);");
+        sb.AppendLine();
+        sb.AppendLine($"    public static global::{managedCollectionName}? ToManaged({interfaceName}? value) =>");
+        sb.AppendLine($"        value is {className} local ? local._value : null;");
         EmitCollectionMethod(
             sb,
             "GetCount",
@@ -1262,7 +1285,9 @@ public static class ComSourceEmitter
                 $"{SimpleName(property.InterfaceName!)[1..]}.FromCommand(_value.{property.Name})",
             MarshallingKind.Variant => $"AvnVariant.FromObject(_value.{property.Name})",
             MarshallingKind.ComCollection =>
-                $"new {SimpleName(property.InterfaceName!)[1..]}(_value.{property.Name})",
+                property.HostImplementationTypeName is { }
+                    ? $"{SimpleName(property.InterfaceName!)[1..]}Marshal.FromManaged(_value.{property.Name})"
+                    : $"{SimpleName(property.InterfaceName!)[1..]}.FromManaged(_value.{property.Name})",
             _ when GeometryMarshalling.TryGet(property.Kind, out var geometry) =>
                 $"{(property.IsNullable ? geometry.OptionalAbiName : geometry.AbiName)}.FromAvalonia(_value.{property.Name})",
             _ => $"_value.{property.Name}",
@@ -1318,6 +1343,9 @@ public static class ComSourceEmitter
             MarshallingKind.Brush => $"{SimpleName(property.InterfaceName!)[1..]}.ToBrush(value)",
             MarshallingKind.Command => $"{SimpleName(property.InterfaceName!)[1..]}.ToCommand(value)",
             MarshallingKind.Variant => "value.ToObject()",
+            MarshallingKind.ComCollection => property.HostImplementationTypeName is { }
+                ? $"{SimpleName(property.InterfaceName!)[1..]}Marshal.ToManaged(value)"
+                : $"{SimpleName(property.InterfaceName!)[1..]}.ToManaged(value)",
             _ when GeometryMarshalling.IsGeometry(property.Kind) => "value.ToAvalonia()",
             _ => "value",
         };
@@ -1329,6 +1357,7 @@ public static class ComSourceEmitter
             MarshallingKind.Bool => $"{call} ? 1 : 0",
             MarshallingKind.ComInterface =>
                 $"({SimpleName(output.InterfaceName!)})ProjectionRuntime.Wrap({call} as global::Avalonia.AvaloniaObject)",
+            MarshallingKind.Variant => $"AvnVariant.FromObject({call})",
             MarshallingKind.Brush =>
                 $"{SimpleName(output.InterfaceName!)[1..]}.FromBrush({call})",
             MarshallingKind.Command =>
@@ -1348,6 +1377,7 @@ public static class ComSourceEmitter
                 $"{parameter.Name} switch {{ -1 => null, 0 => false, 1 => true, _ => throw new global::System.ArgumentOutOfRangeException(nameof({parameter.Name})) }}",
             MarshallingKind.ComInterface =>
                 $"(global::{parameter.ManagedTypeName})ProjectionRuntime.Unwrap({parameter.Name})!",
+            MarshallingKind.Variant => $"{parameter.Name}.ToObject()",
             _ when GeometryMarshalling.IsGeometry(parameter.Kind) => $"{parameter.Name}.ToAvalonia()",
             _ => parameter.Name,
         };

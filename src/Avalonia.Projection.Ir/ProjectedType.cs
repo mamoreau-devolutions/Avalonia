@@ -37,4 +37,12 @@ public sealed class ProjectedProperty
     /// neither the native header nor the Rust bindings look at it.
     /// </summary>
     public string? StringConverterTypeName { get; init; }
+
+    /// <summary>
+    /// The host-side class implementing this collection interface, set only when the
+    /// managed collection needs adaptation semantics the generated wrapper cannot assume
+    /// (an enumerable source with copy-on-write mutation, say). The interface is still
+    /// generated; the class lives in the host assembly.
+    /// </summary>
+    public string? HostImplementationTypeName { get; init; }
 }

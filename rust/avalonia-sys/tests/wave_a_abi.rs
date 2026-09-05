@@ -64,18 +64,18 @@ fn tool_tip_tip_is_a_string_attached_property_beside_the_scalar_ones() {
 fn wave_a_interfaces_publish_abi_version_one_and_nothing_else_moved() {
     for expected in [
         "#define I_AVN_IMAGE_ABI_VERSION 3",
-        "#define I_AVN_HEADERED_ITEMS_CONTROL_ABI_VERSION 6",
-        "#define I_AVN_TAB_CONTROL_ABI_VERSION 6",
-        "#define I_AVN_TAB_ITEM_ABI_VERSION 5",
-        "#define I_AVN_TREE_VIEW_ABI_VERSION 6",
-        "#define I_AVN_TREE_VIEW_ITEM_ABI_VERSION 6",
+        "#define I_AVN_HEADERED_ITEMS_CONTROL_ABI_VERSION 7",
+        "#define I_AVN_TAB_CONTROL_ABI_VERSION 7",
+        "#define I_AVN_TAB_ITEM_ABI_VERSION 6",
+        "#define I_AVN_TREE_VIEW_ABI_VERSION 7",
+        "#define I_AVN_TREE_VIEW_ITEM_ABI_VERSION 7",
         "#define I_AVN_TOOL_TIP_ABI_VERSION 4",
         // Every base the new interfaces sit on kept the version whose flattened vtable it
         // still matches, so no shipped consumer has to requery anything but the factory.
         "#define I_AVN_AVALONIA_OBJECT_ABI_VERSION 2",
         "#define I_AVN_CONTROL_ABI_VERSION 5",
-        "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 9",
-        "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 9",
+        "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 10",
+        "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 10",
         "#define I_AVN_CONTENT_CONTROL_ABI_VERSION 8",
         "#define I_AVN_HEADERED_CONTENT_CONTROL_ABI_VERSION 8",
         // Only the factory grew slots. Wave B moved it again, from 3 to 4, for its own
@@ -103,12 +103,12 @@ fn wave_a_iids_are_fresh_and_distinct_from_every_shipped_one() {
         ),
         (
             "IAvnItemsControl",
-            "DF72ABBD-AF15-5597-BEF3-A41C1D3658DE",
+            "B5DEFEF4-DE43-5DA3-8D1E-6A3CFBBC9C47",
             I_AVN_ITEMS_CONTROL_IID,
         ),
         (
             "IAvnSelectingItemsControl",
-            "A9E3792E-C8FB-5AB2-ACE4-FE1FAE684FBD",
+            "FCDB73AA-FE8F-571A-B310-0EF1295700CC",
             I_AVN_SELECTING_ITEMS_CONTROL_IID,
         ),
         (

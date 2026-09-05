@@ -223,6 +223,19 @@ fn emit_collection(property: &ProjectedProperty) -> String {
              \x20       }\n\
              \x20   }\n",
         ),
+        Some("Variant") => out.push_str(
+            "    pub fn get(&self, index: usize) -> Result<Variant> {\n\
+             \x20       Ok(Variant::from_abi(self.raw.get(index)?))\n\
+             \x20   }\n\
+             \x20   pub fn add(&self, value: impl Into<Variant>) -> Result<()> {\n\
+             \x20       let value = value.into().to_abi()?;\n\
+             \x20       Ok(self.raw.add(*value)?)\n\
+             \x20   }\n\
+             \x20   pub fn contains(&self, value: impl Into<Variant>) -> Result<bool> {\n\
+             \x20       let value = value.into().to_abi()?;\n\
+             \x20       Ok(self.raw.index_of(*value)?.is_some())\n\
+             \x20   }\n",
+        ),
         kind => panic!("unsupported safe collection element kind {kind:?}"),
     }
     out.push_str(
@@ -458,11 +471,19 @@ fn emit_property(
                 let safe_type = interface_suffix(simple_name(
                     property.interface_name.as_deref().expect("interfaceName"),
                 ));
-                out.push_str(&format!(
-                    "    pub fn {getter}(&self) -> Result<{safe_type}> {{\n\
-                     \x20       Ok({safe_type} {{ raw: self.raw.get_{snake}()? }})\n\
-                     \x20   }}\n"
-                ));
+                if property.is_nullable {
+                    out.push_str(&format!(
+                        "    pub fn {getter}(&self) -> Result<Option<{safe_type}>> {{\n\
+                         \x20       Ok(self.raw.get_{snake}()?.map(|raw| {safe_type} {{ raw }}))\n\
+                         \x20   }}\n"
+                    ));
+                } else {
+                    out.push_str(&format!(
+                        "    pub fn {getter}(&self) -> Result<{safe_type}> {{\n\
+                         \x20       Ok({safe_type} {{ raw: self.raw.get_{snake}()? }})\n\
+                         \x20   }}\n"
+                    ));
+                }
             }
             "Brush" => out.push_str(&format!(
                 "    pub fn {getter}(&self) -> Result<Option<Brush>> {{\n\
@@ -646,6 +667,8 @@ fn emit_method(ty: &ProjectedType, method: &crate::ir::ProjectedMethod) -> Strin
                 } else {
                     format!("{parameter_name}: &{safe}")
                 }
+            } else if parameter.kind == "Variant" {
+                format!("{parameter_name}: impl Into<Variant>")
             } else if let Some(geometry) = geometry::find(&parameter.kind) {
                 format!("{parameter_name}: {}", geometry.safe_name)
             } else {
@@ -684,6 +707,8 @@ fn emit_method(ty: &ProjectedType, method: &crate::ir::ProjectedMethod) -> Strin
                 } else {
                     format!("&{parameter_name}.raw")
                 }
+            } else if parameter.kind == "Variant" {
+                format!("*{parameter_name}.into().to_abi()?")
             } else if geometry::is_geometry(&parameter.kind) {
                 format!("{parameter_name}.into()")
             } else {
@@ -705,6 +730,10 @@ fn emit_method(ty: &ProjectedType, method: &crate::ir::ProjectedMethod) -> Strin
         [output] if output.kind == "StringUtf16" => (
             "String".into(),
             format!("unsafe {{ sys::take_utf16(self.raw.{name}({call_arguments})?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }}"),
+        ),
+        [output] if output.kind == "Variant" => (
+            "Variant".into(),
+            format!("Ok(Variant::from_abi(self.raw.{name}({call_arguments})?))"),
         ),
         [output] if output.kind == "ComInterface" => {
             let safe = interface_suffix(simple_name(
@@ -794,6 +823,24 @@ fn safe_property_input(
                     } else {
                         "&value.raw".into()
                     },
+                )
+            }
+        }
+        "ComCollection" => {
+            let safe = interface_suffix(simple_name(
+                property.interface_name.as_deref().expect("interfaceName"),
+            ));
+            if property.is_nullable {
+                (
+                    format!("Option<&{safe}>"),
+                    String::new(),
+                    "value.map(|value| &value.raw)".into(),
+                )
+            } else {
+                (
+                    format!("&{safe}"),
+                    String::new(),
+                    "&value.raw".into(),
                 )
             }
         }

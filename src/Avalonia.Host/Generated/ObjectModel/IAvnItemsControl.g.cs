@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("DF72ABBD-AF15-5597-BEF3-A41C1D3658DE")]
+[Guid("B5DEFEF4-DE43-5DA3-8D1E-6A3CFBBC9C47")]
 public partial interface IAvnItemsControl : IAvnTemplatedControl
 {
     [PreserveSig]
@@ -16,13 +16,28 @@ public partial interface IAvnItemsControl : IAvnTemplatedControl
     int GetItemCount(out int value);
 
     [PreserveSig]
+    int GetItemsSource(out IAvnVariantList value);
+
+    [PreserveSig]
+    int SetItemsSource(IAvnVariantList value);
+
+    [PreserveSig]
     int ContainerFromIndexWithInt32(int index, out IAvnControl? value);
+
+    [PreserveSig]
+    int ContainerFromItemWithObject(AvnVariant item, out IAvnControl? value);
 
     [PreserveSig]
     int IndexFromContainerWithControl(IAvnControl container, out int value);
 
     [PreserveSig]
+    int ItemFromContainerWithControl(IAvnControl container, out AvnVariant value);
+
+    [PreserveSig]
     int ScrollIntoViewWithInt32(int index);
+
+    [PreserveSig]
+    int ScrollIntoViewWithObject(AvnVariant item);
 
 }
 
@@ -121,7 +136,7 @@ public sealed partial class AvnItemsControl : IAvnItemsControl
         {
             using var call = _state.EnterCall();
             _value.VerifyAccess();
-            value = new AvnStringList(_value.Classes);
+            value = AvnStringList.FromManaged(_value.Classes);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -1283,7 +1298,7 @@ public sealed partial class AvnItemsControl : IAvnItemsControl
         {
             using var call = _state.EnterCall();
             _value.VerifyAccess();
-            value = new AvnItemList(_value.Items);
+            value = AvnItemList.FromManaged(_value.Items);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -1308,6 +1323,37 @@ public sealed partial class AvnItemsControl : IAvnItemsControl
         }
     }
 
+    public int GetItemsSource(out IAvnVariantList value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnVariantListMarshal.FromManaged(_value.ItemsSource);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetItemsSource(IAvnVariantList value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ItemsSource = AvnVariantListMarshal.ToManaged(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int ContainerFromIndexWithInt32(int index, out IAvnControl? value)
     {
         value = default!;
@@ -1316,6 +1362,22 @@ public sealed partial class AvnItemsControl : IAvnItemsControl
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             value = (IAvnControl)ProjectionRuntime.Wrap(_value.ContainerFromIndex(index) as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int ContainerFromItemWithObject(AvnVariant item, out IAvnControl? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (IAvnControl)ProjectionRuntime.Wrap(_value.ContainerFromItem(item.ToObject()) as global::Avalonia.AvaloniaObject);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)
@@ -1340,6 +1402,22 @@ public sealed partial class AvnItemsControl : IAvnItemsControl
         }
     }
 
+    public int ItemFromContainerWithControl(IAvnControl container, out AvnVariant value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnVariant.FromObject(_value.ItemFromContainer((global::Avalonia.Controls.Control)ProjectionRuntime.Unwrap(container)!));
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int ScrollIntoViewWithInt32(int index)
     {
         try
@@ -1347,6 +1425,21 @@ public sealed partial class AvnItemsControl : IAvnItemsControl
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.ScrollIntoView(index);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int ScrollIntoViewWithObject(AvnVariant item)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ScrollIntoView(item.ToObject());
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

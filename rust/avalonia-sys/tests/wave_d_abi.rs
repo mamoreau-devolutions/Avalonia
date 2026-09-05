@@ -48,7 +48,7 @@ fn menu_flyout_items_use_the_existing_item_list() {
         "*get_items)(IAvnMenuFlyout* self, IAvnItemList** value)",
         "*set_placement)(IAvnContextMenu* self, int32_t value)",
         "*set_horizontal_offset)(IAvnContextMenu* self, double value)",
-        "#define I_AVN_MENU_FLYOUT_ABI_VERSION 3",
+        "#define I_AVN_MENU_FLYOUT_ABI_VERSION 4",
         "#define I_AVN_CONTEXT_MENU_ABI_VERSION 9",
         "#define I_AVN_BUTTON_ABI_VERSION 11",
     ] {

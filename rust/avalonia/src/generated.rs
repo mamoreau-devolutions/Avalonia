@@ -2584,6 +2584,29 @@ pub use sys::SplitViewPaneOpeningEventArgs;
 pub use sys::WindowClosingEventArgs;
 
 #[derive(Clone, Debug)]
+pub struct VariantList {
+    pub(crate) raw: sys::ComPtr<sys::IAvnVariantList>,
+}
+
+impl VariantList {
+    pub fn len(&self) -> Result<usize> { Ok(self.raw.len()?) }
+    pub fn is_empty(&self) -> Result<bool> { Ok(self.len()? == 0) }
+    pub fn get(&self, index: usize) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get(index)?))
+    }
+    pub fn add(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.add(*value)?)
+    }
+    pub fn contains(&self, value: impl Into<Variant>) -> Result<bool> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.index_of(*value)?.is_some())
+    }
+    pub fn remove(&self, index: usize) -> Result<()> { Ok(self.raw.remove(index)?) }
+    pub fn clear(&self) -> Result<()> { Ok(self.raw.clear()?) }
+}
+
+#[derive(Clone, Debug)]
 pub struct ItemList {
     pub(crate) raw: sys::ComPtr<sys::IAvnItemList>,
 }
@@ -2616,6 +2639,29 @@ impl ControlList {
     pub fn add(&self, value: impl AsControl) -> Result<()> {
         let value = value.as_control()?;
         Ok(self.raw.add(&value)?)
+    }
+    pub fn remove(&self, index: usize) -> Result<()> { Ok(self.raw.remove(index)?) }
+    pub fn clear(&self) -> Result<()> { Ok(self.raw.clear()?) }
+}
+
+#[derive(Clone, Debug)]
+pub struct SelectedVariantList {
+    pub(crate) raw: sys::ComPtr<sys::IAvnSelectedVariantList>,
+}
+
+impl SelectedVariantList {
+    pub fn len(&self) -> Result<usize> { Ok(self.raw.len()?) }
+    pub fn is_empty(&self) -> Result<bool> { Ok(self.len()? == 0) }
+    pub fn get(&self, index: usize) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get(index)?))
+    }
+    pub fn add(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.add(*value)?)
+    }
+    pub fn contains(&self, value: impl Into<Variant>) -> Result<bool> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.index_of(*value)?.is_some())
     }
     pub fn remove(&self, index: usize) -> Result<()> { Ok(self.raw.remove(index)?) }
     pub fn clear(&self) -> Result<()> { Ok(self.raw.clear()?) }
@@ -3085,6 +3131,17 @@ impl AutoCompleteBox {
         self.set_clear_selection_on_lost_focus(value)?;
         Ok(self)
     }
+    pub fn get_selected_item(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_selected_item()?))
+    }
+    pub fn set_selected_item(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_selected_item(&value)?)
+    }
+    pub fn selected_item(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_selected_item(value)?;
+        Ok(self)
+    }
     pub fn get_text(&self) -> Result<Option<String>> {
         unsafe { Ok(sys::take_utf16(self.raw.get_text()?)) }
     }
@@ -3130,6 +3187,16 @@ impl AutoCompleteBox {
     }
     pub fn placeholder_foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_placeholder_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_items_source(&self) -> Result<Option<VariantList>> {
+        Ok(self.raw.get_items_source()?.map(|raw| VariantList { raw }))
+    }
+    pub fn set_items_source(&self, value: Option<&VariantList>) -> Result<()> {
+        Ok(self.raw.set_items_source(value.map(|value| &value.raw))?)
+    }
+    pub fn items_source(self, value: Option<&VariantList>) -> Result<Self> {
+        self.set_items_source(value)?;
         Ok(self)
     }
     pub fn get_max_length(&self) -> Result<i32> { Ok(self.raw.get_max_length()?) }
@@ -6209,12 +6276,28 @@ impl Carousel {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn get_items_source(&self) -> Result<Option<VariantList>> {
+        Ok(self.raw.get_items_source()?.map(|raw| VariantList { raw }))
+    }
+    pub fn set_items_source(&self, value: Option<&VariantList>) -> Result<()> {
+        Ok(self.raw.set_items_source(value.map(|value| &value.raw))?)
+    }
+    pub fn items_source(self, value: Option<&VariantList>) -> Result<Self> {
+        self.set_items_source(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
         let container = container.as_control()?;
         Ok(self.raw.index_from_container_with_control(&container)?)
     }
+    pub fn item_from_container_with_control(&self, container: &impl AsControl) -> Result<Variant> {
+        let container = container.as_control()?;
+        Ok(Variant::from_abi(self.raw.item_from_container_with_control(&container)?))
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
+    pub fn scroll_into_view_with_object(&self, item: impl Into<Variant>) -> Result<()> { Ok(self.raw.scroll_into_view_with_object(*item.into().to_abi()?)?) }
     pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
     pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_auto_scroll_to_selected_item(value)?)
@@ -6229,6 +6312,28 @@ impl Carousel {
     }
     pub fn selected_index(self, value: i32) -> Result<Self> {
         self.set_selected_index(value)?;
+        Ok(self)
+    }
+    pub fn get_selected_item(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_selected_item()?))
+    }
+    pub fn set_selected_item(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_selected_item(&value)?)
+    }
+    pub fn selected_item(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_selected_item(value)?;
+        Ok(self)
+    }
+    pub fn get_selected_value(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_selected_value()?))
+    }
+    pub fn set_selected_value(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_selected_value(&value)?)
+    }
+    pub fn selected_value(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_selected_value(value)?;
         Ok(self)
     }
     pub fn get_is_text_search_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_text_search_enabled()?) }
@@ -7155,12 +7260,28 @@ impl ComboBox {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn get_items_source(&self) -> Result<Option<VariantList>> {
+        Ok(self.raw.get_items_source()?.map(|raw| VariantList { raw }))
+    }
+    pub fn set_items_source(&self, value: Option<&VariantList>) -> Result<()> {
+        Ok(self.raw.set_items_source(value.map(|value| &value.raw))?)
+    }
+    pub fn items_source(self, value: Option<&VariantList>) -> Result<Self> {
+        self.set_items_source(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
         let container = container.as_control()?;
         Ok(self.raw.index_from_container_with_control(&container)?)
     }
+    pub fn item_from_container_with_control(&self, container: &impl AsControl) -> Result<Variant> {
+        let container = container.as_control()?;
+        Ok(Variant::from_abi(self.raw.item_from_container_with_control(&container)?))
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
+    pub fn scroll_into_view_with_object(&self, item: impl Into<Variant>) -> Result<()> { Ok(self.raw.scroll_into_view_with_object(*item.into().to_abi()?)?) }
     pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
     pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_auto_scroll_to_selected_item(value)?)
@@ -7175,6 +7296,28 @@ impl ComboBox {
     }
     pub fn selected_index(self, value: i32) -> Result<Self> {
         self.set_selected_index(value)?;
+        Ok(self)
+    }
+    pub fn get_selected_item(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_selected_item()?))
+    }
+    pub fn set_selected_item(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_selected_item(&value)?)
+    }
+    pub fn selected_item(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_selected_item(value)?;
+        Ok(self)
+    }
+    pub fn get_selected_value(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_selected_value()?))
+    }
+    pub fn set_selected_value(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_selected_value(&value)?)
+    }
+    pub fn selected_value(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_selected_value(value)?;
         Ok(self)
     }
     pub fn get_is_text_search_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_text_search_enabled()?) }
@@ -10423,12 +10566,28 @@ impl ContextMenu {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn get_items_source(&self) -> Result<Option<VariantList>> {
+        Ok(self.raw.get_items_source()?.map(|raw| VariantList { raw }))
+    }
+    pub fn set_items_source(&self, value: Option<&VariantList>) -> Result<()> {
+        Ok(self.raw.set_items_source(value.map(|value| &value.raw))?)
+    }
+    pub fn items_source(self, value: Option<&VariantList>) -> Result<Self> {
+        self.set_items_source(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
         let container = container.as_control()?;
         Ok(self.raw.index_from_container_with_control(&container)?)
     }
+    pub fn item_from_container_with_control(&self, container: &impl AsControl) -> Result<Variant> {
+        let container = container.as_control()?;
+        Ok(Variant::from_abi(self.raw.item_from_container_with_control(&container)?))
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
+    pub fn scroll_into_view_with_object(&self, item: impl Into<Variant>) -> Result<()> { Ok(self.raw.scroll_into_view_with_object(*item.into().to_abi()?)?) }
     pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
     pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_auto_scroll_to_selected_item(value)?)
@@ -10443,6 +10602,28 @@ impl ContextMenu {
     }
     pub fn selected_index(self, value: i32) -> Result<Self> {
         self.set_selected_index(value)?;
+        Ok(self)
+    }
+    pub fn get_selected_item(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_selected_item()?))
+    }
+    pub fn set_selected_item(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_selected_item(&value)?)
+    }
+    pub fn selected_item(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_selected_item(value)?;
+        Ok(self)
+    }
+    pub fn get_selected_value(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_selected_value()?))
+    }
+    pub fn set_selected_value(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_selected_value(&value)?)
+    }
+    pub fn selected_value(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_selected_value(value)?;
         Ok(self)
     }
     pub fn get_is_text_search_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_text_search_enabled()?) }
@@ -16033,12 +16214,28 @@ impl ItemsControl {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn get_items_source(&self) -> Result<Option<VariantList>> {
+        Ok(self.raw.get_items_source()?.map(|raw| VariantList { raw }))
+    }
+    pub fn set_items_source(&self, value: Option<&VariantList>) -> Result<()> {
+        Ok(self.raw.set_items_source(value.map(|value| &value.raw))?)
+    }
+    pub fn items_source(self, value: Option<&VariantList>) -> Result<Self> {
+        self.set_items_source(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
         let container = container.as_control()?;
         Ok(self.raw.index_from_container_with_control(&container)?)
     }
+    pub fn item_from_container_with_control(&self, container: &impl AsControl) -> Result<Variant> {
+        let container = container.as_control()?;
+        Ok(Variant::from_abi(self.raw.item_from_container_with_control(&container)?))
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
+    pub fn scroll_into_view_with_object(&self, item: impl Into<Variant>) -> Result<()> { Ok(self.raw.scroll_into_view_with_object(*item.into().to_abi()?)?) }
 }
 
 impl AsControl for ItemsControl {
@@ -17098,12 +17295,28 @@ impl ListBox {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn get_items_source(&self) -> Result<Option<VariantList>> {
+        Ok(self.raw.get_items_source()?.map(|raw| VariantList { raw }))
+    }
+    pub fn set_items_source(&self, value: Option<&VariantList>) -> Result<()> {
+        Ok(self.raw.set_items_source(value.map(|value| &value.raw))?)
+    }
+    pub fn items_source(self, value: Option<&VariantList>) -> Result<Self> {
+        self.set_items_source(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
         let container = container.as_control()?;
         Ok(self.raw.index_from_container_with_control(&container)?)
     }
+    pub fn item_from_container_with_control(&self, container: &impl AsControl) -> Result<Variant> {
+        let container = container.as_control()?;
+        Ok(Variant::from_abi(self.raw.item_from_container_with_control(&container)?))
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
+    pub fn scroll_into_view_with_object(&self, item: impl Into<Variant>) -> Result<()> { Ok(self.raw.scroll_into_view_with_object(*item.into().to_abi()?)?) }
     pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
     pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_auto_scroll_to_selected_item(value)?)
@@ -17118,6 +17331,28 @@ impl ListBox {
     }
     pub fn selected_index(self, value: i32) -> Result<Self> {
         self.set_selected_index(value)?;
+        Ok(self)
+    }
+    pub fn get_selected_item(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_selected_item()?))
+    }
+    pub fn set_selected_item(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_selected_item(&value)?)
+    }
+    pub fn selected_item(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_selected_item(value)?;
+        Ok(self)
+    }
+    pub fn get_selected_value(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_selected_value()?))
+    }
+    pub fn set_selected_value(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_selected_value(&value)?)
+    }
+    pub fn selected_value(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_selected_value(value)?;
         Ok(self)
     }
     pub fn get_is_text_search_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_text_search_enabled()?) }
@@ -18731,12 +18966,28 @@ impl Menu {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn get_items_source(&self) -> Result<Option<VariantList>> {
+        Ok(self.raw.get_items_source()?.map(|raw| VariantList { raw }))
+    }
+    pub fn set_items_source(&self, value: Option<&VariantList>) -> Result<()> {
+        Ok(self.raw.set_items_source(value.map(|value| &value.raw))?)
+    }
+    pub fn items_source(self, value: Option<&VariantList>) -> Result<Self> {
+        self.set_items_source(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
         let container = container.as_control()?;
         Ok(self.raw.index_from_container_with_control(&container)?)
     }
+    pub fn item_from_container_with_control(&self, container: &impl AsControl) -> Result<Variant> {
+        let container = container.as_control()?;
+        Ok(Variant::from_abi(self.raw.item_from_container_with_control(&container)?))
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
+    pub fn scroll_into_view_with_object(&self, item: impl Into<Variant>) -> Result<()> { Ok(self.raw.scroll_into_view_with_object(*item.into().to_abi()?)?) }
     pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
     pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_auto_scroll_to_selected_item(value)?)
@@ -18751,6 +19002,28 @@ impl Menu {
     }
     pub fn selected_index(self, value: i32) -> Result<Self> {
         self.set_selected_index(value)?;
+        Ok(self)
+    }
+    pub fn get_selected_item(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_selected_item()?))
+    }
+    pub fn set_selected_item(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_selected_item(&value)?)
+    }
+    pub fn selected_item(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_selected_item(value)?;
+        Ok(self)
+    }
+    pub fn get_selected_value(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_selected_value()?))
+    }
+    pub fn set_selected_value(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_selected_value(&value)?)
+    }
+    pub fn selected_value(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_selected_value(value)?;
         Ok(self)
     }
     pub fn get_is_text_search_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_text_search_enabled()?) }
@@ -19182,12 +19455,28 @@ impl MenuBase {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn get_items_source(&self) -> Result<Option<VariantList>> {
+        Ok(self.raw.get_items_source()?.map(|raw| VariantList { raw }))
+    }
+    pub fn set_items_source(&self, value: Option<&VariantList>) -> Result<()> {
+        Ok(self.raw.set_items_source(value.map(|value| &value.raw))?)
+    }
+    pub fn items_source(self, value: Option<&VariantList>) -> Result<Self> {
+        self.set_items_source(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
         let container = container.as_control()?;
         Ok(self.raw.index_from_container_with_control(&container)?)
     }
+    pub fn item_from_container_with_control(&self, container: &impl AsControl) -> Result<Variant> {
+        let container = container.as_control()?;
+        Ok(Variant::from_abi(self.raw.item_from_container_with_control(&container)?))
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
+    pub fn scroll_into_view_with_object(&self, item: impl Into<Variant>) -> Result<()> { Ok(self.raw.scroll_into_view_with_object(*item.into().to_abi()?)?) }
     pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
     pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_auto_scroll_to_selected_item(value)?)
@@ -19202,6 +19491,28 @@ impl MenuBase {
     }
     pub fn selected_index(self, value: i32) -> Result<Self> {
         self.set_selected_index(value)?;
+        Ok(self)
+    }
+    pub fn get_selected_item(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_selected_item()?))
+    }
+    pub fn set_selected_item(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_selected_item(&value)?)
+    }
+    pub fn selected_item(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_selected_item(value)?;
+        Ok(self)
+    }
+    pub fn get_selected_value(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_selected_value()?))
+    }
+    pub fn set_selected_value(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_selected_value(&value)?)
+    }
+    pub fn selected_value(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_selected_value(value)?;
         Ok(self)
     }
     pub fn get_is_text_search_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_text_search_enabled()?) }
@@ -19424,6 +19735,16 @@ impl MenuFlyout {
     }
     pub fn item(self, value: impl AsControl) -> Result<Self> {
         self.items()?.add(value)?;
+        Ok(self)
+    }
+    pub fn get_items_source(&self) -> Result<Option<VariantList>> {
+        Ok(self.raw.get_items_source()?.map(|raw| VariantList { raw }))
+    }
+    pub fn set_items_source(&self, value: Option<&VariantList>) -> Result<()> {
+        Ok(self.raw.set_items_source(value.map(|value| &value.raw))?)
+    }
+    pub fn items_source(self, value: Option<&VariantList>) -> Result<Self> {
+        self.set_items_source(value)?;
         Ok(self)
     }
 }
@@ -19796,12 +20117,28 @@ impl MenuItem {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn get_items_source(&self) -> Result<Option<VariantList>> {
+        Ok(self.raw.get_items_source()?.map(|raw| VariantList { raw }))
+    }
+    pub fn set_items_source(&self, value: Option<&VariantList>) -> Result<()> {
+        Ok(self.raw.set_items_source(value.map(|value| &value.raw))?)
+    }
+    pub fn items_source(self, value: Option<&VariantList>) -> Result<Self> {
+        self.set_items_source(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
         let container = container.as_control()?;
         Ok(self.raw.index_from_container_with_control(&container)?)
     }
+    pub fn item_from_container_with_control(&self, container: &impl AsControl) -> Result<Variant> {
+        let container = container.as_control()?;
+        Ok(Variant::from_abi(self.raw.item_from_container_with_control(&container)?))
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
+    pub fn scroll_into_view_with_object(&self, item: impl Into<Variant>) -> Result<()> { Ok(self.raw.scroll_into_view_with_object(*item.into().to_abi()?)?) }
     pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
     pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_auto_scroll_to_selected_item(value)?)
@@ -19816,6 +20153,28 @@ impl MenuItem {
     }
     pub fn selected_index(self, value: i32) -> Result<Self> {
         self.set_selected_index(value)?;
+        Ok(self)
+    }
+    pub fn get_selected_item(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_selected_item()?))
+    }
+    pub fn set_selected_item(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_selected_item(&value)?)
+    }
+    pub fn selected_item(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_selected_item(value)?;
+        Ok(self)
+    }
+    pub fn get_selected_value(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_selected_value()?))
+    }
+    pub fn set_selected_value(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_selected_value(&value)?)
+    }
+    pub fn selected_value(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_selected_value(value)?;
         Ok(self)
     }
     pub fn get_is_text_search_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_text_search_enabled()?) }
@@ -20794,6 +21153,9 @@ impl WindowNotificationManager {
         self.set_max_items(value)?;
         Ok(self)
     }
+    pub fn show_with_object(&self, content: impl Into<Variant>) -> Result<()> { Ok(self.raw.show_with_object(*content.into().to_abi()?)?) }
+    pub fn close_with_object(&self, content: impl Into<Variant>) -> Result<()> { Ok(self.raw.close_with_object(*content.into().to_abi()?)?) }
+    pub fn close_all(&self) -> Result<()> { Ok(self.raw.close_all()?) }
 }
 
 impl AsControl for WindowNotificationManager {
@@ -23268,12 +23630,28 @@ impl HeaderedItemsControl {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn get_items_source(&self) -> Result<Option<VariantList>> {
+        Ok(self.raw.get_items_source()?.map(|raw| VariantList { raw }))
+    }
+    pub fn set_items_source(&self, value: Option<&VariantList>) -> Result<()> {
+        Ok(self.raw.set_items_source(value.map(|value| &value.raw))?)
+    }
+    pub fn items_source(self, value: Option<&VariantList>) -> Result<Self> {
+        self.set_items_source(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
         let container = container.as_control()?;
         Ok(self.raw.index_from_container_with_control(&container)?)
     }
+    pub fn item_from_container_with_control(&self, container: &impl AsControl) -> Result<Variant> {
+        let container = container.as_control()?;
+        Ok(Variant::from_abi(self.raw.item_from_container_with_control(&container)?))
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
+    pub fn scroll_into_view_with_object(&self, item: impl Into<Variant>) -> Result<()> { Ok(self.raw.scroll_into_view_with_object(*item.into().to_abi()?)?) }
     pub fn get_header(&self) -> Result<Option<Control>> {
         Ok(self.raw.get_header()?.map(|raw| Control { raw }))
     }
@@ -23660,12 +24038,28 @@ impl HeaderedSelectingItemsControl {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn get_items_source(&self) -> Result<Option<VariantList>> {
+        Ok(self.raw.get_items_source()?.map(|raw| VariantList { raw }))
+    }
+    pub fn set_items_source(&self, value: Option<&VariantList>) -> Result<()> {
+        Ok(self.raw.set_items_source(value.map(|value| &value.raw))?)
+    }
+    pub fn items_source(self, value: Option<&VariantList>) -> Result<Self> {
+        self.set_items_source(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
         let container = container.as_control()?;
         Ok(self.raw.index_from_container_with_control(&container)?)
     }
+    pub fn item_from_container_with_control(&self, container: &impl AsControl) -> Result<Variant> {
+        let container = container.as_control()?;
+        Ok(Variant::from_abi(self.raw.item_from_container_with_control(&container)?))
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
+    pub fn scroll_into_view_with_object(&self, item: impl Into<Variant>) -> Result<()> { Ok(self.raw.scroll_into_view_with_object(*item.into().to_abi()?)?) }
     pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
     pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_auto_scroll_to_selected_item(value)?)
@@ -23680,6 +24074,28 @@ impl HeaderedSelectingItemsControl {
     }
     pub fn selected_index(self, value: i32) -> Result<Self> {
         self.set_selected_index(value)?;
+        Ok(self)
+    }
+    pub fn get_selected_item(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_selected_item()?))
+    }
+    pub fn set_selected_item(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_selected_item(&value)?)
+    }
+    pub fn selected_item(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_selected_item(value)?;
+        Ok(self)
+    }
+    pub fn get_selected_value(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_selected_value()?))
+    }
+    pub fn set_selected_value(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_selected_value(&value)?)
+    }
+    pub fn selected_value(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_selected_value(value)?;
         Ok(self)
     }
     pub fn get_is_text_search_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_text_search_enabled()?) }
@@ -25082,12 +25498,28 @@ impl SelectingItemsControl {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn get_items_source(&self) -> Result<Option<VariantList>> {
+        Ok(self.raw.get_items_source()?.map(|raw| VariantList { raw }))
+    }
+    pub fn set_items_source(&self, value: Option<&VariantList>) -> Result<()> {
+        Ok(self.raw.set_items_source(value.map(|value| &value.raw))?)
+    }
+    pub fn items_source(self, value: Option<&VariantList>) -> Result<Self> {
+        self.set_items_source(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
         let container = container.as_control()?;
         Ok(self.raw.index_from_container_with_control(&container)?)
     }
+    pub fn item_from_container_with_control(&self, container: &impl AsControl) -> Result<Variant> {
+        let container = container.as_control()?;
+        Ok(Variant::from_abi(self.raw.item_from_container_with_control(&container)?))
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
+    pub fn scroll_into_view_with_object(&self, item: impl Into<Variant>) -> Result<()> { Ok(self.raw.scroll_into_view_with_object(*item.into().to_abi()?)?) }
     pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
     pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_auto_scroll_to_selected_item(value)?)
@@ -25102,6 +25534,28 @@ impl SelectingItemsControl {
     }
     pub fn selected_index(self, value: i32) -> Result<Self> {
         self.set_selected_index(value)?;
+        Ok(self)
+    }
+    pub fn get_selected_item(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_selected_item()?))
+    }
+    pub fn set_selected_item(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_selected_item(&value)?)
+    }
+    pub fn selected_item(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_selected_item(value)?;
+        Ok(self)
+    }
+    pub fn get_selected_value(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_selected_value()?))
+    }
+    pub fn set_selected_value(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_selected_value(&value)?)
+    }
+    pub fn selected_value(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_selected_value(value)?;
         Ok(self)
     }
     pub fn get_is_text_search_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_text_search_enabled()?) }
@@ -35807,12 +36261,28 @@ impl TabControl {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn get_items_source(&self) -> Result<Option<VariantList>> {
+        Ok(self.raw.get_items_source()?.map(|raw| VariantList { raw }))
+    }
+    pub fn set_items_source(&self, value: Option<&VariantList>) -> Result<()> {
+        Ok(self.raw.set_items_source(value.map(|value| &value.raw))?)
+    }
+    pub fn items_source(self, value: Option<&VariantList>) -> Result<Self> {
+        self.set_items_source(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
         let container = container.as_control()?;
         Ok(self.raw.index_from_container_with_control(&container)?)
     }
+    pub fn item_from_container_with_control(&self, container: &impl AsControl) -> Result<Variant> {
+        let container = container.as_control()?;
+        Ok(Variant::from_abi(self.raw.item_from_container_with_control(&container)?))
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
+    pub fn scroll_into_view_with_object(&self, item: impl Into<Variant>) -> Result<()> { Ok(self.raw.scroll_into_view_with_object(*item.into().to_abi()?)?) }
     pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
     pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_auto_scroll_to_selected_item(value)?)
@@ -35827,6 +36297,28 @@ impl TabControl {
     }
     pub fn selected_index(self, value: i32) -> Result<Self> {
         self.set_selected_index(value)?;
+        Ok(self)
+    }
+    pub fn get_selected_item(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_selected_item()?))
+    }
+    pub fn set_selected_item(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_selected_item(&value)?)
+    }
+    pub fn selected_item(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_selected_item(value)?;
+        Ok(self)
+    }
+    pub fn get_selected_value(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_selected_value()?))
+    }
+    pub fn set_selected_value(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_selected_value(&value)?)
+    }
+    pub fn selected_value(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_selected_value(value)?;
         Ok(self)
     }
     pub fn get_is_text_search_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_text_search_enabled()?) }
@@ -35890,6 +36382,9 @@ impl TabControl {
     pub fn tab_strip_placement(self, value: Dock) -> Result<Self> {
         self.set_tab_strip_placement(value)?;
         Ok(self)
+    }
+    pub fn selected_content(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_selected_content()?))
     }
 }
 
@@ -36685,12 +37180,28 @@ impl TableView {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn get_items_source(&self) -> Result<Option<VariantList>> {
+        Ok(self.raw.get_items_source()?.map(|raw| VariantList { raw }))
+    }
+    pub fn set_items_source(&self, value: Option<&VariantList>) -> Result<()> {
+        Ok(self.raw.set_items_source(value.map(|value| &value.raw))?)
+    }
+    pub fn items_source(self, value: Option<&VariantList>) -> Result<Self> {
+        self.set_items_source(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
         let container = container.as_control()?;
         Ok(self.raw.index_from_container_with_control(&container)?)
     }
+    pub fn item_from_container_with_control(&self, container: &impl AsControl) -> Result<Variant> {
+        let container = container.as_control()?;
+        Ok(Variant::from_abi(self.raw.item_from_container_with_control(&container)?))
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
+    pub fn scroll_into_view_with_object(&self, item: impl Into<Variant>) -> Result<()> { Ok(self.raw.scroll_into_view_with_object(*item.into().to_abi()?)?) }
     pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
     pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_auto_scroll_to_selected_item(value)?)
@@ -36705,6 +37216,28 @@ impl TableView {
     }
     pub fn selected_index(self, value: i32) -> Result<Self> {
         self.set_selected_index(value)?;
+        Ok(self)
+    }
+    pub fn get_selected_item(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_selected_item()?))
+    }
+    pub fn set_selected_item(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_selected_item(&value)?)
+    }
+    pub fn selected_item(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_selected_item(value)?;
+        Ok(self)
+    }
+    pub fn get_selected_value(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_selected_value()?))
+    }
+    pub fn set_selected_value(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_selected_value(&value)?)
+    }
+    pub fn selected_value(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_selected_value(value)?;
         Ok(self)
     }
     pub fn get_is_text_search_enabled(&self) -> Result<bool> { Ok(self.raw.get_is_text_search_enabled()?) }
@@ -41813,12 +42346,28 @@ impl TreeView {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn get_items_source(&self) -> Result<Option<VariantList>> {
+        Ok(self.raw.get_items_source()?.map(|raw| VariantList { raw }))
+    }
+    pub fn set_items_source(&self, value: Option<&VariantList>) -> Result<()> {
+        Ok(self.raw.set_items_source(value.map(|value| &value.raw))?)
+    }
+    pub fn items_source(self, value: Option<&VariantList>) -> Result<Self> {
+        self.set_items_source(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
         let container = container.as_control()?;
         Ok(self.raw.index_from_container_with_control(&container)?)
     }
+    pub fn item_from_container_with_control(&self, container: &impl AsControl) -> Result<Variant> {
+        let container = container.as_control()?;
+        Ok(Variant::from_abi(self.raw.item_from_container_with_control(&container)?))
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
+    pub fn scroll_into_view_with_object(&self, item: impl Into<Variant>) -> Result<()> { Ok(self.raw.scroll_into_view_with_object(*item.into().to_abi()?)?) }
     pub fn get_auto_scroll_to_selected_item(&self) -> Result<bool> { Ok(self.raw.get_auto_scroll_to_selected_item()?) }
     pub fn set_auto_scroll_to_selected_item(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_auto_scroll_to_selected_item(value)?)
@@ -41835,10 +42384,36 @@ impl TreeView {
         self.set_selection_mode(value)?;
         Ok(self)
     }
+    pub fn get_selected_item(&self) -> Result<Variant> {
+        Ok(Variant::from_abi(self.raw.get_selected_item()?))
+    }
+    pub fn set_selected_item(&self, value: impl Into<Variant>) -> Result<()> {
+        let value = value.into().to_abi()?;
+        Ok(self.raw.set_selected_item(&value)?)
+    }
+    pub fn selected_item(self, value: impl Into<Variant>) -> Result<Self> {
+        self.set_selected_item(value)?;
+        Ok(self)
+    }
+    pub fn get_selected_items(&self) -> Result<Option<SelectedVariantList>> {
+        Ok(self.raw.get_selected_items()?.map(|raw| SelectedVariantList { raw }))
+    }
+    pub fn set_selected_items(&self, value: Option<&SelectedVariantList>) -> Result<()> {
+        Ok(self.raw.set_selected_items(value.map(|value| &value.raw))?)
+    }
+    pub fn selected_items(self, value: Option<&SelectedVariantList>) -> Result<Self> {
+        self.set_selected_items(value)?;
+        Ok(self)
+    }
     pub fn expand_sub_tree_with_tree_view_item(&self, item: &TreeViewItem) -> Result<()> { Ok(self.raw.expand_sub_tree_with_tree_view_item(&item.raw)?) }
     pub fn collapse_sub_tree_with_tree_view_item(&self, item: &TreeViewItem) -> Result<()> { Ok(self.raw.collapse_sub_tree_with_tree_view_item(&item.raw)?) }
     pub fn select_all(&self) -> Result<()> { Ok(self.raw.select_all()?) }
     pub fn unselect_all(&self) -> Result<()> { Ok(self.raw.unselect_all()?) }
+    pub fn tree_container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.tree_container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
+    pub fn tree_item_from_container_with_control(&self, container: &impl AsControl) -> Result<Variant> {
+        let container = container.as_control()?;
+        Ok(Variant::from_abi(self.raw.tree_item_from_container_with_control(&container)?))
+    }
     pub fn subscribe_selection_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::tree_view_selection_changed_handler(move || {
             callback(());
@@ -42227,12 +42802,28 @@ impl TreeViewItem {
         Ok(self)
     }
     pub fn item_count(&self) -> Result<i32> { Ok(self.raw.get_item_count()?) }
+    pub fn get_items_source(&self) -> Result<Option<VariantList>> {
+        Ok(self.raw.get_items_source()?.map(|raw| VariantList { raw }))
+    }
+    pub fn set_items_source(&self, value: Option<&VariantList>) -> Result<()> {
+        Ok(self.raw.set_items_source(value.map(|value| &value.raw))?)
+    }
+    pub fn items_source(self, value: Option<&VariantList>) -> Result<Self> {
+        self.set_items_source(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
+    pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
         let container = container.as_control()?;
         Ok(self.raw.index_from_container_with_control(&container)?)
     }
+    pub fn item_from_container_with_control(&self, container: &impl AsControl) -> Result<Variant> {
+        let container = container.as_control()?;
+        Ok(Variant::from_abi(self.raw.item_from_container_with_control(&container)?))
+    }
     pub fn scroll_into_view_with_int32(&self, index: i32) -> Result<()> { Ok(self.raw.scroll_into_view_with_int32(index)?) }
+    pub fn scroll_into_view_with_object(&self, item: impl Into<Variant>) -> Result<()> { Ok(self.raw.scroll_into_view_with_object(*item.into().to_abi()?)?) }
     pub fn get_header(&self) -> Result<Option<Control>> {
         Ok(self.raw.get_header()?.map(|raw| Control { raw }))
     }
@@ -43503,6 +44094,7 @@ impl Window {
     }
     pub fn is_dialog(&self) -> Result<bool> { Ok(self.raw.get_is_dialog()?) }
     pub fn close(&self) -> Result<()> { Ok(self.raw.close()?) }
+    pub fn close_with_object(&self, dialog_result: impl Into<Variant>) -> Result<()> { Ok(self.raw.close_with_object(*dialog_result.into().to_abi()?)?) }
     pub fn hide(&self) -> Result<()> { Ok(self.raw.hide()?) }
     pub fn show_with_window(&self, owner: &Window) -> Result<()> { Ok(self.raw.show_with_window(&owner.raw)?) }
     pub fn subscribe_closing(&self, callback: impl FnMut(&mut WindowClosingEventArgs) + Send + 'static) -> Result<EventSubscription> {

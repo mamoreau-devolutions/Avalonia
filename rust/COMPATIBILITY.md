@@ -385,6 +385,27 @@ Methods may now return a COM interface: ItemsControl gains
 object-keyed lookups stay gaps with the rest of the untyped-collection
 family. Factory stays 13.
 
+Wave U18 projects the object surface through the Variant kind. `object`
+and `object?` members map to Variant everywhere, so SelectedItem and
+SelectedValue (SelectingItemsControl, TreeView, AutoCompleteBox),
+TabControl.SelectedContent, ItemsControl's `ContainerFromItemWithObject`
+and `ItemFromContainerWithControl`, `ScrollIntoViewWithObject`, TreeView's
+`TreeContainerFromItemWithObject`/`TreeItemFromContainerWithControl` and
+Window's `CloseWithObject` all cross. ItemsSource (ItemsControl, MenuFlyout,
+AutoCompleteBox) crosses as the new `IAvnVariantList` collection whose
+element is a Variant: the interface is generated, and the host-side
+`AvnObjectList` adapter owns the semantics — reads enumerate the live
+source, the first mutation materializes a shadow list, and assigning the
+list back through the setter persists it. `SelectedItems` uses a second
+collection interface, `IAvnSelectedVariantList`, over an `IList` rather
+than `IEnumerable` (SelectingItemsControl and TreeView). WindowNotification-
+Manager gains CloseAll plus the object-based Show/Close overloads.
+Versions: the whole items lineage moves once more (ItemsControl 9 to 10
+with every descendant), AutoCompleteBox 7 to 8, MenuFlyout 3 to 4,
+TabControl 6 to 7, TreeView 6 to 7, Window 12 to 13, WindowNotification-
+Manager 4 to 5, and the wave A items interfaces republish under fresh IIDs
+recorded as retired in wave_a. Factory stays 13.
+
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and
 `IAvnNumericUpDown` each move from 2 to 3. Templates, filters, ItemsSource,
