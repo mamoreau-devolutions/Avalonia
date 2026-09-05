@@ -47,6 +47,14 @@ public static class ClrTypeExtractor
         var usesNotification = types.Any(type =>
             type.Properties.Any(property => property.Kind == MarshallingKind.Notification) ||
             type.Methods.Any(method => method.Parameters.Any(p => p.Kind == MarshallingKind.Notification)));
+        var itemSelectorInterfaceName = SelectorMarshalling.QualifiedItemSelectorInterfaceName(policy.ProjectionNamespace);
+        var textSelectorInterfaceName = SelectorMarshalling.QualifiedTextSelectorInterfaceName(policy.ProjectionNamespace);
+        var usesItemSelector = types.Any(type =>
+            type.Properties.Any(property => property.Kind == MarshallingKind.ItemSelector) ||
+            type.Methods.Any(method => method.Parameters.Any(p => p.Kind == MarshallingKind.ItemSelector)));
+        var usesTextSelector = types.Any(type =>
+            type.Properties.Any(property => property.Kind == MarshallingKind.TextSelector) ||
+            type.Methods.Any(method => method.Parameters.Any(p => p.Kind == MarshallingKind.TextSelector)));
 
         return new ProjectionIr
         {
@@ -89,6 +97,14 @@ public static class ClrTypeExtractor
                 : null,
             NotificationHandlerInterfaceIid = usesNotification
                 ? CreateDeterministicIid($"{policy.ProjectionNamespace}.IAvnNotificationActionHandler", 1)
+                : null,
+            ItemSelectorInterfaceName = usesItemSelector ? itemSelectorInterfaceName : null,
+            ItemSelectorInterfaceIid = usesItemSelector
+                ? CreateDeterministicIid(itemSelectorInterfaceName, 1)
+                : null,
+            TextSelectorInterfaceName = usesTextSelector ? textSelectorInterfaceName : null,
+            TextSelectorInterfaceIid = usesTextSelector
+                ? CreateDeterministicIid(textSelectorInterfaceName, 1)
                 : null,
             Types = types,
             Enums = ExtractEnums(selected, policy),
@@ -563,6 +579,16 @@ public static class ClrTypeExtractor
         {
             kind = MarshallingKind.TextFilter;
             interfaceName = FilterMarshalling.QualifiedTextFilterInterfaceName(policy.ProjectionNamespace);
+        }
+        else if (SelectorMarshalling.IsItemSelector(type))
+        {
+            kind = MarshallingKind.ItemSelector;
+            interfaceName = SelectorMarshalling.QualifiedItemSelectorInterfaceName(policy.ProjectionNamespace);
+        }
+        else if (SelectorMarshalling.IsTextSelector(type))
+        {
+            kind = MarshallingKind.TextSelector;
+            interfaceName = SelectorMarshalling.QualifiedTextSelectorInterfaceName(policy.ProjectionNamespace);
         }
         else if (NotificationMarshalling.IsNotification(type.FullName))
         {

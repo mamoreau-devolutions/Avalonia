@@ -104,6 +104,10 @@ pub fn emit_sys_module(ir: &ProjectionIr) -> String {
         out.push_str(&emit_filters(ir));
         out.push('\n');
     }
+    if ir.item_selector_interface_name.is_some() || ir.text_selector_interface_name.is_some() {
+        out.push_str(&emit_selectors(ir));
+        out.push('\n');
+    }
     if ir.notification_interface_name.is_some() {
         out.push_str(&emit_notification(ir));
         out.push('\n');
@@ -594,6 +598,81 @@ fn emit_filters(ir: &ProjectionIr) -> String {
              \x20           let mut result = 0;\n\
              \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw(), search, item, &mut result);\n\
              \x20           hresult::check(hr).map(|_| result != 0)\n\
+             \x20       }}\n\
+             \x20   }}\n\
+             }}\n",
+            iid = guid_literal(iid),
+        ));
+    }
+    out
+}
+
+fn emit_selectors(ir: &ProjectionIr) -> String {
+    let mut out = String::new();
+    if let (Some(name_full), Some(iid)) = (
+        ir.item_selector_interface_name.as_deref(),
+        ir.item_selector_interface_iid.as_deref(),
+    ) {
+        let name = simple_name(name_full);
+        let iid_const = format!("{}_IID", to_shouty(name));
+        out.push_str(&format!(
+            "pub const {iid_const}: Guid = {iid};\n\n\
+             #[repr(C)]\n\
+             struct {name}Vtbl {{\n\
+             \x20   query_interface: unsafe extern \"system\" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,\n\
+             \x20   add_ref: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+             \x20   release: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+             \x20   invoke: unsafe extern \"system\" fn(*mut {name}, *const u16, AvnVariant, *mut *mut u16) -> i32,\n\
+             }}\n\n\
+             #[repr(C)]\n\
+             pub struct {name} {{\n\
+             \x20   vtbl: *const {name}Vtbl,\n\
+             }}\n\n\
+             unsafe impl ComInterface for {name} {{\n\
+             \x20   const IID: Guid = {iid_const};\n\
+             }}\n\n\
+             impl ComPtr<{name}> {{\n\
+             \x20   pub fn invoke(&self, search: *const u16, item: AvnVariant) -> Result<*mut u16> {{\n\
+             \x20       unsafe {{\n\
+             \x20           let mut text: *mut u16 = ptr::null_mut();\n\
+             \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw(), search, item, &mut text);\n\
+             \x20           hresult::check(hr)?;\n\
+             \x20           Ok(text)\n\
+             \x20       }}\n\
+             \x20   }}\n\
+             }}\n",
+            iid = guid_literal(iid),
+        ));
+    }
+    if let (Some(name_full), Some(iid)) = (
+        ir.text_selector_interface_name.as_deref(),
+        ir.text_selector_interface_iid.as_deref(),
+    ) {
+        let name = simple_name(name_full);
+        let iid_const = format!("{}_IID", to_shouty(name));
+        out.push_str(&format!(
+            "pub const {iid_const}: Guid = {iid};\n\n\
+             #[repr(C)]\n\
+             struct {name}Vtbl {{\n\
+             \x20   query_interface: unsafe extern \"system\" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,\n\
+             \x20   add_ref: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+             \x20   release: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+             \x20   invoke: unsafe extern \"system\" fn(*mut {name}, *const u16, *const u16, *mut *mut u16) -> i32,\n\
+             }}\n\n\
+             #[repr(C)]\n\
+             pub struct {name} {{\n\
+             \x20   vtbl: *const {name}Vtbl,\n\
+             }}\n\n\
+             unsafe impl ComInterface for {name} {{\n\
+             \x20   const IID: Guid = {iid_const};\n\
+             }}\n\n\
+             impl ComPtr<{name}> {{\n\
+             \x20   pub fn invoke(&self, search: *const u16, item: *const u16) -> Result<*mut u16> {{\n\
+             \x20       unsafe {{\n\
+             \x20           let mut text: *mut u16 = ptr::null_mut();\n\
+             \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw(), search, item, &mut text);\n\
+             \x20           hresult::check(hr)?;\n\
+             \x20           Ok(text)\n\
              \x20       }}\n\
              \x20   }}\n\
              }}\n",
@@ -1456,7 +1535,7 @@ fn rust_abi_type(kind: &str, interface_name: Option<&str>, is_nullable: bool) ->
         "F64" => "f64".into(),
         "StringUtf16" => "*mut u16".into(),
         "ComInterface" | "ComCollection" | "Brush" | "Command" | "DataTemplate" | "ItemFilter"
-            | "TextFilter" | "Notification" => {
+            | "TextFilter" | "ItemSelector" | "TextSelector" | "Notification" => {
             format!(
                 "*mut {}",
                 simple_name(interface_name.expect("interfaceName"))
@@ -1512,7 +1591,8 @@ fn rust_property_type(property: &ProjectedProperty) -> String {
             }
         }
         // A brush is always optional: a control with no brush reports a null pointer.
-        "Brush" | "Command" | "DataTemplate" | "ItemFilter" | "TextFilter" | "Notification" => format!(
+        "Brush" | "Command" | "DataTemplate" | "ItemFilter" | "TextFilter" | "ItemSelector"
+        | "TextSelector" | "Notification" => format!(
             "Option<ComPtr<{}>>",
             simple_name(property.interface_name.as_deref().expect("interfaceName"))
         ),
@@ -1534,7 +1614,8 @@ fn rust_property_result(property: &ProjectedProperty) -> String {
         "ComCollection" if property.is_nullable => {
             "Ok(ComPtr::from_raw(value))".into()
         }
-        "Brush" | "Command" | "DataTemplate" | "ItemFilter" | "TextFilter" | "Notification" => "Ok(ComPtr::from_raw(value))".into(),
+        "Brush" | "Command" | "DataTemplate" | "ItemFilter" | "TextFilter" | "ItemSelector"
+        | "TextSelector" | "Notification" => "Ok(ComPtr::from_raw(value))".into(),
         "ComInterface" => {
             "ComPtr::from_projected_raw(value)".into()
         }
@@ -1563,7 +1644,8 @@ fn rust_property_input(property: &ProjectedProperty) -> (String, String) {
                 "value.map_or(ptr::null_mut(), ComPtr::as_raw)".into(),
             )
         }
-        "Brush" | "Command" | "DataTemplate" | "ItemFilter" | "TextFilter" | "Notification" => {
+        "Brush" | "Command" | "DataTemplate" | "ItemFilter" | "TextFilter" | "ItemSelector"
+        | "TextSelector" | "Notification" => {
             let ty = simple_name(property.interface_name.as_deref().expect("interfaceName"));
             (
                 format!("Option<&ComPtr<{ty}>>"),

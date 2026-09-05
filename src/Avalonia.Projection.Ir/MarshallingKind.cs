@@ -99,6 +99,20 @@ public enum MarshallingKind
     /// <c>Avalonia.Controls.Notifications.INotification</c>.
     /// </summary>
     Notification,
+
+    /// <summary>
+    /// Appended after Notification so every previously published ordinal stays put.
+    /// A nano-COM <c>IAvnItemSelector</c> wrapping AutoCompleteBox's
+    /// <c>AutoCompleteSelector&lt;object&gt;</c>.
+    /// </summary>
+    ItemSelector,
+
+    /// <summary>
+    /// Appended after ItemSelector so every previously published ordinal stays put.
+    /// A nano-COM <c>IAvnTextSelector</c> wrapping AutoCompleteBox's
+    /// <c>AutoCompleteSelector&lt;string?&gt;</c>.
+    /// </summary>
+    TextSelector,
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]

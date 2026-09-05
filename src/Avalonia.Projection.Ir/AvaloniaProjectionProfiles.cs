@@ -57,7 +57,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnWindow"] = 17,
             ["Avalonia.Host.Com.IAvnGrid"] = 11,
             // Previously version-1 templated types inherit the TemplatedControl bump.
-            ["Avalonia.Host.Com.IAvnAutoCompleteBox"] = 13,
+            ["Avalonia.Host.Com.IAvnAutoCompleteBox"] = 14,
             ["Avalonia.Host.Com.IAvnButtonSpinner"] = 8,
             ["Avalonia.Host.Com.IAvnCalendar"] = 11,
             ["Avalonia.Host.Com.IAvnCalendarDatePicker"] = 10,
@@ -474,7 +474,7 @@ public static class AvaloniaProjectionProfiles
                 "PopulateComplete", "DropDownOpened", "DropDownClosed",
                 "MinimumPopulateDelay", "TextChanged", "ItemsSource",
                 "Populating", "DropDownOpening", "DropDownClosing", "SelectedItem", "ItemTemplate",
-                "ItemFilter", "TextFilter",
+                "ItemFilter", "TextFilter", "ItemSelector", "TextSelector",
             ],
             ["Avalonia.Controls.MaskedTextBox"] =
                 ["Mask", "AsciiOnly", "HidePromptOnLeave", "ResetOnPrompt", "ResetOnSpace",
@@ -1240,8 +1240,6 @@ public static class AvaloniaProjectionProfiles
                         ["DependencyResolver"] = "the resolver is not ABI surface",
                         ["ShowDialog"] = "modal dialogs need the async-completion transport",
                         ["AsyncPopulator"] = "async population needs the async-completion transport",
-                        ["ItemSelector"] = "the selector delegate needs another callback shape",
-                        ["TextSelector"] = "the selector delegate needs another callback shape",
                         ["Show"] = "the INotification content needs a typed notification ABI",
                         ["Close"] = "the INotification content needs a typed notification ABI",
                         ["Spun"] = "obsolete alias of Spinned",

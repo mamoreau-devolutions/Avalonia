@@ -33,6 +33,14 @@ pub struct ProjectionIr {
     #[serde(default)]
     pub notification_handler_interface_iid: Option<String>,
     #[serde(default)]
+    pub item_selector_interface_name: Option<String>,
+    #[serde(default)]
+    pub item_selector_interface_iid: Option<String>,
+    #[serde(default)]
+    pub text_selector_interface_name: Option<String>,
+    #[serde(default)]
+    pub text_selector_interface_iid: Option<String>,
+    #[serde(default)]
     pub types: Vec<ProjectedType>,
     #[serde(default)]
     pub enums: Vec<ProjectedEnum>,

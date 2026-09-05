@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("72A6C818-EDA1-5ABA-BEDE-1C46314BD098")]
+[Guid("0920FB96-7DF3-553E-8AB0-3A3949BB85A1")]
 public partial interface IAvnAutoCompleteBox : IAvnTemplatedControl
 {
     [PreserveSig]
@@ -101,6 +101,18 @@ public partial interface IAvnAutoCompleteBox : IAvnTemplatedControl
 
     [PreserveSig]
     int SetTextFilter(IAvnTextFilter? value);
+
+    [PreserveSig]
+    int GetItemSelector(out IAvnItemSelector? value);
+
+    [PreserveSig]
+    int SetItemSelector(IAvnItemSelector? value);
+
+    [PreserveSig]
+    int GetTextSelector(out IAvnTextSelector? value);
+
+    [PreserveSig]
+    int SetTextSelector(IAvnTextSelector? value);
 
     [PreserveSig]
     int GetItemsSource(out IAvnVariantList value);
@@ -2299,6 +2311,68 @@ public sealed partial class AvnAutoCompleteBox : IAvnAutoCompleteBox
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.TextFilter = AvnTextFilter.ToPredicate(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetItemSelector(out IAvnItemSelector? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnItemSelector.FromSelector(_value.ItemSelector);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetItemSelector(IAvnItemSelector? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ItemSelector = AvnItemSelector.ToSelector(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetTextSelector(out IAvnTextSelector? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnTextSelector.FromSelector(_value.TextSelector);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetTextSelector(IAvnTextSelector? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.TextSelector = AvnTextSelector.ToSelector(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

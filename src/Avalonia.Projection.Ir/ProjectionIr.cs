@@ -60,6 +60,16 @@ public sealed class ProjectionIr
     public string? NotificationInterfaceIid { get; init; }
     public string? NotificationHandlerInterfaceIid { get; init; }
 
+    /// <summary>
+    /// The projected AutoCompleteBox selector interfaces, present only when a member
+    /// marshals as <see cref="MarshallingKind.ItemSelector"/> or
+    /// <see cref="MarshallingKind.TextSelector"/>.
+    /// </summary>
+    public string? ItemSelectorInterfaceName { get; init; }
+    public string? ItemSelectorInterfaceIid { get; init; }
+    public string? TextSelectorInterfaceName { get; init; }
+    public string? TextSelectorInterfaceIid { get; init; }
+
     public IReadOnlyList<ProjectedType> Types { get; init; } = [];
     public IReadOnlyList<ProjectedEnum> Enums { get; init; } = [];
     public IReadOnlyList<ProjectedAttachedProperty> AttachedProperties { get; init; } = [];

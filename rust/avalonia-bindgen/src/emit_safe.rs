@@ -541,7 +541,7 @@ fn emit_property(
                  \x20       Ok(self.raw.get_{snake}()?.map(|raw| DataTemplate {{ raw }}))\n\
                  \x20   }}\n"
             )),
-            "ItemFilter" | "TextFilter" => {
+            "ItemFilter" | "TextFilter" | "ItemSelector" | "TextSelector" => {
                 let full = simple_name(
                     property.interface_name.as_deref().expect("interfaceName"),
                 );
@@ -926,7 +926,7 @@ fn safe_property_input(
             String::new(),
             "value.map(|value| &value.raw)".into(),
         ),
-        "ItemFilter" | "TextFilter" => {
+        "ItemFilter" | "TextFilter" | "ItemSelector" | "TextSelector" => {
             let full = simple_name(
                 property.interface_name.as_deref().expect("interfaceName"),
             );

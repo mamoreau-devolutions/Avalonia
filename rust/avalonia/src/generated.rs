@@ -3404,6 +3404,26 @@ impl AutoCompleteBox {
         self.set_text_filter(value)?;
         Ok(self)
     }
+    pub fn get_item_selector(&self) -> Result<Option<sys::ComPtr<sys::IAvnItemSelector>>> {
+        Ok(self.raw.get_item_selector()?)
+    }
+    pub fn set_item_selector(&self, value: Option<&sys::ComPtr<sys::IAvnItemSelector>>) -> Result<()> {
+        Ok(self.raw.set_item_selector(value)?)
+    }
+    pub fn item_selector(self, value: Option<&sys::ComPtr<sys::IAvnItemSelector>>) -> Result<Self> {
+        self.set_item_selector(value)?;
+        Ok(self)
+    }
+    pub fn get_text_selector(&self) -> Result<Option<sys::ComPtr<sys::IAvnTextSelector>>> {
+        Ok(self.raw.get_text_selector()?)
+    }
+    pub fn set_text_selector(&self, value: Option<&sys::ComPtr<sys::IAvnTextSelector>>) -> Result<()> {
+        Ok(self.raw.set_text_selector(value)?)
+    }
+    pub fn text_selector(self, value: Option<&sys::ComPtr<sys::IAvnTextSelector>>) -> Result<Self> {
+        self.set_text_selector(value)?;
+        Ok(self)
+    }
     pub fn get_items_source(&self) -> Result<Option<VariantList>> {
         Ok(self.raw.get_items_source()?.map(|raw| VariantList { raw }))
     }

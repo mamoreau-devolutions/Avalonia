@@ -192,6 +192,24 @@ public static class NativeHeaderEmitter
             EndInterface(sb, name, 4);
         }
 
+        if (ir.ItemSelectorInterfaceName is { } itemSelectorInterfaceName)
+        {
+            var name = SimpleName(itemSelectorInterfaceName);
+            EmitIid(sb, name, ir.ItemSelectorInterfaceIid!, 1);
+            BeginInterface(sb, name);
+            EmitSlot(sb, 3, "invoke", name, ["const uint16_t* search", "AvnVariant item", "uint16_t** text"]);
+            EndInterface(sb, name, 4);
+        }
+
+        if (ir.TextSelectorInterfaceName is { } textSelectorInterfaceName)
+        {
+            var name = SimpleName(textSelectorInterfaceName);
+            EmitIid(sb, name, ir.TextSelectorInterfaceIid!, 1);
+            BeginInterface(sb, name);
+            EmitSlot(sb, 3, "invoke", name, ["const uint16_t* search", "const uint16_t* item", "uint16_t** text"]);
+            EndInterface(sb, name, 4);
+        }
+
         if (ir.NotificationInterfaceName is { } notificationInterfaceName)
         {
             var name = SimpleName(notificationInterfaceName);
@@ -440,6 +458,8 @@ public static class NativeHeaderEmitter
             MarshallingKind.DataTemplate => $"{SimpleName(interfaceName!)}**",
             MarshallingKind.ItemFilter => $"{SimpleName(interfaceName!)}**",
             MarshallingKind.TextFilter => $"{SimpleName(interfaceName!)}**",
+            MarshallingKind.ItemSelector => $"{SimpleName(interfaceName!)}**",
+            MarshallingKind.TextSelector => $"{SimpleName(interfaceName!)}**",
             MarshallingKind.Notification => $"{SimpleName(interfaceName!)}**",
             _ => $"{AbiType(kind, interfaceName, pointerForInterface: false, isNullable)}*",
         };
@@ -455,6 +475,8 @@ public static class NativeHeaderEmitter
             MarshallingKind.DataTemplate => $"{SimpleName(interfaceName!)}*",
             MarshallingKind.ItemFilter => $"{SimpleName(interfaceName!)}*",
             MarshallingKind.TextFilter => $"{SimpleName(interfaceName!)}*",
+            MarshallingKind.ItemSelector => $"{SimpleName(interfaceName!)}*",
+            MarshallingKind.TextSelector => $"{SimpleName(interfaceName!)}*",
             MarshallingKind.Notification => $"{SimpleName(interfaceName!)}*",
             _ => AbiType(kind, interfaceName, pointerForInterface: false, isNullable),
         };
@@ -482,6 +504,8 @@ public static class NativeHeaderEmitter
             MarshallingKind.DataTemplate => SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
             MarshallingKind.ItemFilter => SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
             MarshallingKind.TextFilter => SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
+            MarshallingKind.ItemSelector => SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
+            MarshallingKind.TextSelector => SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
             MarshallingKind.Notification => SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
             MarshallingKind.Variant => "AvnVariant",
             _ when GeometryMarshalling.TryGet(kind, out var geometry) =>

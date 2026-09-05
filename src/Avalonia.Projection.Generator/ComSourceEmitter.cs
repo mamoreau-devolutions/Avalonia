@@ -44,6 +44,9 @@ public static class ComSourceEmitter
             if (ir.ItemFilterInterfaceName is not null ||
                 ir.TextFilterInterfaceName is not null)
                 files["AvnFilters.g.cs"] = EmitFilters(ir);
+            if (ir.ItemSelectorInterfaceName is not null ||
+                ir.TextSelectorInterfaceName is not null)
+                files["AvnSelectors.g.cs"] = EmitSelectors(ir);
             if (ir.NotificationInterfaceName is not null)
                 files[SimpleName(ir.NotificationInterfaceName) + ".g.cs"] = EmitNotification(ir);
             files["IAvnControlFactory.g.cs"] = EmitFactory(ir);
@@ -438,6 +441,14 @@ public static class ComSourceEmitter
         if (ir.TextFilterInterfaceName is { })
         {
             sb.AppendLine("    [global::System.Diagnostics.CodeAnalysis.DynamicDependency(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All, typeof(AvnTextFilter))]");
+        }
+        if (ir.ItemSelectorInterfaceName is { })
+        {
+            sb.AppendLine("    [global::System.Diagnostics.CodeAnalysis.DynamicDependency(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All, typeof(AvnItemSelector))]");
+        }
+        if (ir.TextSelectorInterfaceName is { })
+        {
+            sb.AppendLine("    [global::System.Diagnostics.CodeAnalysis.DynamicDependency(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All, typeof(AvnTextSelector))]");
         }
         foreach (var collection in ir.Types
                      .SelectMany(t => t.Properties)
@@ -883,6 +894,99 @@ public static class ComSourceEmitter
             sb.AppendLine("    public int Invoke(string? search, string? item, out int result)");
             sb.AppendLine("    {");
             sb.AppendLine("        result = _value(search, item) ? 1 : 0;");
+            sb.AppendLine("        return global::Avalonia.Host.HResults.S_OK;");
+            sb.AppendLine("    }");
+            sb.AppendLine("}");
+            sb.AppendLine();
+        }
+        return sb.ToString().TrimEnd() + Environment.NewLine;
+    }
+
+    public static string EmitSelectors(ProjectionIr ir)
+    {
+        var root = ir.Types.First(t => t.Kind == ProjectedTypeKind.Class && t.BaseFullName is null);
+        var sb = Header(root);
+        if (ir.ItemSelectorInterfaceName is { } itemInterfaceName)
+        {
+            var name = SimpleName(itemInterfaceName);
+            sb.AppendLine("[GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]");
+            sb.AppendLine($"[Guid(\"{ir.ItemSelectorInterfaceIid}\")]");
+            sb.AppendLine($"public partial interface {name}");
+            sb.AppendLine("{");
+            sb.AppendLine("    [PreserveSig]");
+            sb.AppendLine("    int Invoke(string? search, AvnVariant item, out string? text);");
+            sb.AppendLine("}");
+            sb.AppendLine();
+            sb.AppendLine("[GeneratedComClass]");
+            sb.AppendLine("public sealed partial class AvnItemSelector : " + name);
+            sb.AppendLine("{");
+            sb.AppendLine("    private readonly global::Avalonia.Controls.AutoCompleteSelector<object> _value;");
+            sb.AppendLine();
+            sb.AppendLine("    public AvnItemSelector(global::Avalonia.Controls.AutoCompleteSelector<object> value) => _value = value;");
+            sb.AppendLine();
+            sb.AppendLine($"    public static {name}? FromSelector(global::Avalonia.Controls.AutoCompleteSelector<object>? value) =>");
+            sb.AppendLine("        value is null ? null : new AvnItemSelector(value);");
+            sb.AppendLine();
+            sb.AppendLine($"    public static global::Avalonia.Controls.AutoCompleteSelector<object>? ToSelector({name}? value) =>");
+            sb.AppendLine("        value switch");
+            sb.AppendLine("        {");
+            sb.AppendLine("            null => null,");
+            sb.AppendLine("            AvnItemSelector local => local._value,");
+            sb.AppendLine("            _ => (search, item) =>");
+            sb.AppendLine("            {");
+            sb.AppendLine("                var hr = value.Invoke(search, AvnVariant.FromObject(item), out var text);");
+            sb.AppendLine("                if (hr < 0)");
+            sb.AppendLine("                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);");
+            sb.AppendLine("                return text!;");
+            sb.AppendLine("            },");
+            sb.AppendLine("        };");
+            sb.AppendLine();
+            sb.AppendLine("    public int Invoke(string? search, AvnVariant item, out string? text)");
+            sb.AppendLine("    {");
+            sb.AppendLine("        text = _value(search, item.ToObject());");
+            sb.AppendLine("        return global::Avalonia.Host.HResults.S_OK;");
+            sb.AppendLine("    }");
+            sb.AppendLine("}");
+            sb.AppendLine();
+        }
+        if (ir.TextSelectorInterfaceName is { } textInterfaceName)
+        {
+            var name = SimpleName(textInterfaceName);
+            sb.AppendLine("[GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]");
+            sb.AppendLine($"[Guid(\"{ir.TextSelectorInterfaceIid}\")]");
+            sb.AppendLine($"public partial interface {name}");
+            sb.AppendLine("{");
+            sb.AppendLine("    [PreserveSig]");
+            sb.AppendLine("    int Invoke(string? search, string? item, out string? text);");
+            sb.AppendLine("}");
+            sb.AppendLine();
+            sb.AppendLine("[GeneratedComClass]");
+            sb.AppendLine("public sealed partial class AvnTextSelector : " + name);
+            sb.AppendLine("{");
+            sb.AppendLine("    private readonly global::Avalonia.Controls.AutoCompleteSelector<string?> _value;");
+            sb.AppendLine();
+            sb.AppendLine("    public AvnTextSelector(global::Avalonia.Controls.AutoCompleteSelector<string?> value) => _value = value;");
+            sb.AppendLine();
+            sb.AppendLine($"    public static {name}? FromSelector(global::Avalonia.Controls.AutoCompleteSelector<string?>? value) =>");
+            sb.AppendLine("        value is null ? null : new AvnTextSelector(value);");
+            sb.AppendLine();
+            sb.AppendLine($"    public static global::Avalonia.Controls.AutoCompleteSelector<string?>? ToSelector({name}? value) =>");
+            sb.AppendLine("        value switch");
+            sb.AppendLine("        {");
+            sb.AppendLine("            null => null,");
+            sb.AppendLine("            AvnTextSelector local => local._value,");
+            sb.AppendLine("            _ => (search, item) =>");
+            sb.AppendLine("            {");
+            sb.AppendLine("                var hr = value.Invoke(search, item, out var text);");
+            sb.AppendLine("                if (hr < 0)");
+            sb.AppendLine("                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);");
+            sb.AppendLine("                return text!;");
+            sb.AppendLine("            },");
+            sb.AppendLine("        };");
+            sb.AppendLine();
+            sb.AppendLine("    public int Invoke(string? search, string? item, out string? text)");
+            sb.AppendLine("    {");
+            sb.AppendLine("        text = _value(search, item);");
             sb.AppendLine("        return global::Avalonia.Host.HResults.S_OK;");
             sb.AppendLine("    }");
             sb.AppendLine("}");
@@ -1629,6 +1733,10 @@ public static class ComSourceEmitter
                 $"{SimpleName(property.InterfaceName!)[1..]}.FromPredicate(_value.{property.Name})",
             MarshallingKind.TextFilter =>
                 $"{SimpleName(property.InterfaceName!)[1..]}.FromPredicate(_value.{property.Name})",
+            MarshallingKind.ItemSelector =>
+                $"{SimpleName(property.InterfaceName!)[1..]}.FromSelector(_value.{property.Name})",
+            MarshallingKind.TextSelector =>
+                $"{SimpleName(property.InterfaceName!)[1..]}.FromSelector(_value.{property.Name})",
             MarshallingKind.Variant => $"AvnVariant.FromObject(_value.{property.Name})",
             MarshallingKind.ComCollection =>
                 property.HostImplementationTypeName is { }
@@ -1702,6 +1810,8 @@ public static class ComSourceEmitter
             MarshallingKind.DataTemplate => $"{SimpleName(property.InterfaceName!)[1..]}.ToTemplate(value)",
             MarshallingKind.ItemFilter => $"{SimpleName(property.InterfaceName!)[1..]}.ToPredicate(value)",
             MarshallingKind.TextFilter => $"{SimpleName(property.InterfaceName!)[1..]}.ToPredicate(value)",
+            MarshallingKind.ItemSelector => $"{SimpleName(property.InterfaceName!)[1..]}.ToSelector(value)",
+            MarshallingKind.TextSelector => $"{SimpleName(property.InterfaceName!)[1..]}.ToSelector(value)",
             MarshallingKind.Variant => "value.ToObject()",
             MarshallingKind.ComCollection => property.HostImplementationTypeName is { }
                 ? $"(global::{property.ManagedTypeName}?)({SimpleName(property.InterfaceName!)[1..]}Marshal.ToManaged(value))!"
@@ -1811,6 +1921,8 @@ public static class ComSourceEmitter
             MarshallingKind.DataTemplate => SimpleName(interfaceName!) + (nullable ? "?" : ""),
             MarshallingKind.ItemFilter => SimpleName(interfaceName!) + (nullable ? "?" : ""),
             MarshallingKind.TextFilter => SimpleName(interfaceName!) + (nullable ? "?" : ""),
+            MarshallingKind.ItemSelector => SimpleName(interfaceName!) + (nullable ? "?" : ""),
+            MarshallingKind.TextSelector => SimpleName(interfaceName!) + (nullable ? "?" : ""),
             MarshallingKind.Notification => SimpleName(interfaceName!) + (nullable ? "?" : ""),
             MarshallingKind.ComCollection => SimpleName(interfaceName!),
             _ when GeometryMarshalling.TryGet(kind, out var geometry) =>

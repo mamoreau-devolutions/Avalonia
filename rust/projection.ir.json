@@ -20,6 +20,10 @@
   "notificationInterfaceName": "Avalonia.Host.Com.IAvnNotification",
   "notificationInterfaceIid": "DE4D1CD2-6CDF-5FED-91B6-1D0A95A562D2",
   "notificationHandlerInterfaceIid": "D5D37A2F-A0AC-51AB-8C16-B8F37308AA11",
+  "itemSelectorInterfaceName": "Avalonia.Host.Com.IAvnItemSelector",
+  "itemSelectorInterfaceIid": "436B04CB-B57A-51C1-8C6A-5C58B65ADFE9",
+  "textSelectorInterfaceName": "Avalonia.Host.Com.IAvnTextSelector",
+  "textSelectorInterfaceIid": "9264A9E9-6E9C-5504-8A56-D6FBAAAE48DE",
   "types": [
     {
       "name": "IAvnAvaloniaObject",
@@ -37,8 +41,8 @@
       "name": "IAvnAutoCompleteBox",
       "fullName": "Avalonia.Host.Com.IAvnAutoCompleteBox",
       "kind": "Class",
-      "iid": "72A6C818-EDA1-5ABA-BEDE-1C46314BD098",
-      "abiVersion": 13,
+      "iid": "0920FB96-7DF3-553E-8AB0-3A3949BB85A1",
+      "abiVersion": 14,
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.AutoCompleteBox",
       "isConstructible": true,
@@ -199,6 +203,26 @@
           "interfaceName": "Avalonia.Host.Com.IAvnTextFilter",
           "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Controls.AutoCompleteFilterPredicate\u00601[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "isNullable": true
+        },
+        {
+          "name": "ItemSelector",
+          "kind": "ItemSelector",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnItemSelector",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.AutoCompleteSelector\u00601[[System.Object, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "isNullable": true
+        },
+        {
+          "name": "TextSelector",
+          "kind": "TextSelector",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnTextSelector",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.AutoCompleteSelector\u00601[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
           "isNullable": true
         },
         {
@@ -11808,16 +11832,6 @@
       "owner": "Avalonia.Controls.AutoCompleteBox",
       "member": "WatermarkForeground",
       "reason": "By design: obsolete alias of PlaceholderForeground"
-    },
-    {
-      "owner": "Avalonia.Controls.AutoCompleteBox",
-      "member": "ItemSelector",
-      "reason": "By design: the selector delegate needs another callback shape"
-    },
-    {
-      "owner": "Avalonia.Controls.AutoCompleteBox",
-      "member": "TextSelector",
-      "reason": "By design: the selector delegate needs another callback shape"
     },
     {
       "owner": "Avalonia.Controls.AutoCompleteBox",

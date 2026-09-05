@@ -539,6 +539,19 @@ SelectionChangedEventArgs, whose added/removed collection payload needs the
 variant-list event shape. The gap report drops to 179 entries. Factory
 stays 13.
 
+Wave U29 projects AutoCompleteBox's selector delegates. Two kinds:
+`ItemSelector` (ordinal 29) wraps the object selector as `IAvnItemSelector`
+whose invoke takes the search text and the item variant and returns the
+display text as a host-allocated UTF-16 buffer; `TextSelector` (ordinal 30)
+wraps the string selector as `IAvnTextSelector` over two borrowed buffers.
+The host's `AvnItemSelector`/`AvnTextSelector` wrap managed delegates; a
+foreign interface converts back into the delegate, so the Rust CCWs —
+`avalonia_sys::item_selector`/`text_selector` — really format items
+(AutoCompleteBox 13 to 14). The CCWs allocate their returned string through
+the host's UTF-16 provider and report E_NOTIMPL without a host, exactly as
+the notification CCW's string getters do. The gap report drops to 177
+entries. Factory stays 13.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A

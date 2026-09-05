@@ -33,8 +33,6 @@ Avalonia.AvaloniaObject.CoerceValue(AvaloniaProperty): By design: AvaloniaProper
 Avalonia.Controls.AutoCompleteBox.ValueMemberBinding: By design: bindings are not projected; use the imperative surface
 Avalonia.Controls.AutoCompleteBox.Watermark: By design: obsolete alias of PlaceholderText
 Avalonia.Controls.AutoCompleteBox.WatermarkForeground: By design: obsolete alias of PlaceholderForeground
-Avalonia.Controls.AutoCompleteBox.ItemSelector: By design: the selector delegate needs another callback shape
-Avalonia.Controls.AutoCompleteBox.TextSelector: By design: the selector delegate needs another callback shape
 Avalonia.Controls.AutoCompleteBox.AsyncPopulator: By design: async population needs the async-completion transport
 Avalonia.Controls.AutoCompleteBox.Populated: By design: the populated collection payload has no event shape yet
 Avalonia.Controls.AutoCompleteBox.SelectionChanged: By design: the added/removed collection payload has no event shape yet
