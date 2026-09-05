@@ -7741,6 +7741,58 @@ impl CommandBar {
     }
     pub fn has_secondary_commands(&self) -> Result<bool> { Ok(self.raw.get_has_secondary_commands()?) }
     pub fn is_overflow_button_visible(&self) -> Result<bool> { Ok(self.raw.get_is_overflow_button_visible()?) }
+    pub fn subscribe_opening(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::command_bar_opening_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_opening(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_opening(subscription_id)))
+    }
+    pub fn on_opening(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_opening(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_opened(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::command_bar_opened_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_opened(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_opened(subscription_id)))
+    }
+    pub fn on_opened(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_opened(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_closing(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::command_bar_closing_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_closing(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_closing(subscription_id)))
+    }
+    pub fn on_closing(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_closing(callback)?);
+        Ok(self)
+    }
+    pub fn subscribe_closed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
+        let handler = sys::command_bar_closed_handler(move || {
+            callback(());
+            Ok(())
+        });
+        let subscription_id = self.raw.advise_closed(&handler)?;
+        let source = self.raw.clone();
+        Ok(EventSubscription::new(move || source.unadvise_closed(subscription_id)))
+    }
+    pub fn on_closed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
+        scope.retain_subscription(self.subscribe_closed(callback)?);
+        Ok(self)
+    }
 }
 
 impl AsControl for CommandBar {
@@ -27619,6 +27671,12 @@ impl ScrollViewer {
         self.set_vertical_scroll_bar_visibility(value)?;
         Ok(self)
     }
+    pub fn current_anchor(&self) -> Result<Option<Control>> {
+        Ok(self.raw.get_current_anchor()?.map(|raw| Control { raw }))
+    }
+    pub fn scroll_bar_maximum(&self) -> Result<Vector> {
+        Ok(self.raw.get_scroll_bar_maximum()?.into())
+    }
     pub fn is_expanded(&self) -> Result<bool> { Ok(self.raw.get_is_expanded()?) }
     pub fn get_horizontal_snap_points_type(&self) -> Result<SnapPointsType> {
         let value = self.raw.get_horizontal_snap_points_type()?;
@@ -27706,6 +27764,14 @@ impl ScrollViewer {
     pub fn page_right(&self) -> Result<()> { Ok(self.raw.page_right()?) }
     pub fn scroll_to_home(&self) -> Result<()> { Ok(self.raw.scroll_to_home()?) }
     pub fn scroll_to_end(&self) -> Result<()> { Ok(self.raw.scroll_to_end()?) }
+    pub fn register_anchor_candidate_with_control(&self, element: &impl AsControl) -> Result<()> {
+        let element = element.as_control()?;
+        Ok(self.raw.register_anchor_candidate_with_control(&element)?)
+    }
+    pub fn unregister_anchor_candidate_with_control(&self, element: &impl AsControl) -> Result<()> {
+        let element = element.as_control()?;
+        Ok(self.raw.unregister_anchor_candidate_with_control(&element)?)
+    }
     pub fn subscribe_scroll_changed(&self, mut callback: impl FnMut(()) + Send + 'static) -> Result<EventSubscription> {
         let handler = sys::scroll_viewer_scroll_changed_handler(move || {
             callback(());

@@ -166,6 +166,14 @@ typedef struct IAvnCommandBar IAvnCommandBar;
 typedef struct IAvnCommandBarVtbl IAvnCommandBarVtbl;
 typedef struct IAvnCommandBarButton IAvnCommandBarButton;
 typedef struct IAvnCommandBarButtonVtbl IAvnCommandBarButtonVtbl;
+typedef struct IAvnCommandBarClosedHandler IAvnCommandBarClosedHandler;
+typedef struct IAvnCommandBarClosedHandlerVtbl IAvnCommandBarClosedHandlerVtbl;
+typedef struct IAvnCommandBarClosingHandler IAvnCommandBarClosingHandler;
+typedef struct IAvnCommandBarClosingHandlerVtbl IAvnCommandBarClosingHandlerVtbl;
+typedef struct IAvnCommandBarOpenedHandler IAvnCommandBarOpenedHandler;
+typedef struct IAvnCommandBarOpenedHandlerVtbl IAvnCommandBarOpenedHandlerVtbl;
+typedef struct IAvnCommandBarOpeningHandler IAvnCommandBarOpeningHandler;
+typedef struct IAvnCommandBarOpeningHandlerVtbl IAvnCommandBarOpeningHandlerVtbl;
 typedef struct IAvnCommandBarSeparator IAvnCommandBarSeparator;
 typedef struct IAvnCommandBarSeparatorVtbl IAvnCommandBarSeparatorVtbl;
 typedef struct IAvnCommandBarToggleButton IAvnCommandBarToggleButton;
@@ -552,6 +560,70 @@ struct IAvnComboBoxDropDownOpenedHandlerVtbl {
 };
 struct IAvnComboBoxDropDownOpenedHandler { const IAvnComboBoxDropDownOpenedHandlerVtbl* vtbl; };
 #define I_AVN_COMBO_BOX_DROP_DOWN_OPENED_HANDLER_VTABLE_SLOTS 4
+
+static const AvnGuid I_AVN_COMMAND_BAR_CLOSED_HANDLER_IID = {
+    0x5B61D897,
+    0x6279,
+    0x57A9,
+    { 0x8D, 0x0D, 0x1A, 0x89, 0x52, 0x52, 0xD6, 0xD5 }
+};
+#define I_AVN_COMMAND_BAR_CLOSED_HANDLER_ABI_VERSION 1
+struct IAvnCommandBarClosedHandlerVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnCommandBarClosedHandler* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnCommandBarClosedHandler* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnCommandBarClosedHandler* self); /* slot 2 */
+    AvnHResult (AVN_CALL *invoke)(IAvnCommandBarClosedHandler* self); /* slot 3 */
+};
+struct IAvnCommandBarClosedHandler { const IAvnCommandBarClosedHandlerVtbl* vtbl; };
+#define I_AVN_COMMAND_BAR_CLOSED_HANDLER_VTABLE_SLOTS 4
+
+static const AvnGuid I_AVN_COMMAND_BAR_CLOSING_HANDLER_IID = {
+    0x5FAD5A98,
+    0x49C8,
+    0x54B8,
+    { 0xA6, 0x48, 0x39, 0xBB, 0xCA, 0x49, 0x78, 0x37 }
+};
+#define I_AVN_COMMAND_BAR_CLOSING_HANDLER_ABI_VERSION 1
+struct IAvnCommandBarClosingHandlerVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnCommandBarClosingHandler* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnCommandBarClosingHandler* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnCommandBarClosingHandler* self); /* slot 2 */
+    AvnHResult (AVN_CALL *invoke)(IAvnCommandBarClosingHandler* self); /* slot 3 */
+};
+struct IAvnCommandBarClosingHandler { const IAvnCommandBarClosingHandlerVtbl* vtbl; };
+#define I_AVN_COMMAND_BAR_CLOSING_HANDLER_VTABLE_SLOTS 4
+
+static const AvnGuid I_AVN_COMMAND_BAR_OPENED_HANDLER_IID = {
+    0xECAA8ED5,
+    0xC87D,
+    0x51B4,
+    { 0x95, 0x8F, 0x01, 0x01, 0xEB, 0xCD, 0x02, 0x63 }
+};
+#define I_AVN_COMMAND_BAR_OPENED_HANDLER_ABI_VERSION 1
+struct IAvnCommandBarOpenedHandlerVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnCommandBarOpenedHandler* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnCommandBarOpenedHandler* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnCommandBarOpenedHandler* self); /* slot 2 */
+    AvnHResult (AVN_CALL *invoke)(IAvnCommandBarOpenedHandler* self); /* slot 3 */
+};
+struct IAvnCommandBarOpenedHandler { const IAvnCommandBarOpenedHandlerVtbl* vtbl; };
+#define I_AVN_COMMAND_BAR_OPENED_HANDLER_VTABLE_SLOTS 4
+
+static const AvnGuid I_AVN_COMMAND_BAR_OPENING_HANDLER_IID = {
+    0x8116CB28,
+    0xBE6F,
+    0x5D21,
+    { 0x9A, 0xBC, 0x0A, 0xAC, 0xC6, 0xB9, 0xCD, 0x0A }
+};
+#define I_AVN_COMMAND_BAR_OPENING_HANDLER_ABI_VERSION 1
+struct IAvnCommandBarOpeningHandlerVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnCommandBarOpeningHandler* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnCommandBarOpeningHandler* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnCommandBarOpeningHandler* self); /* slot 2 */
+    AvnHResult (AVN_CALL *invoke)(IAvnCommandBarOpeningHandler* self); /* slot 3 */
+};
+struct IAvnCommandBarOpeningHandler { const IAvnCommandBarOpeningHandlerVtbl* vtbl; };
+#define I_AVN_COMMAND_BAR_OPENING_HANDLER_VTABLE_SLOTS 4
 
 static const AvnGuid I_AVN_CONTROL_KEY_DOWN_HANDLER_IID = {
     0x9232F26F,
@@ -2485,12 +2557,12 @@ struct IAvnComboBoxItem { const IAvnComboBoxItemVtbl* vtbl; };
 #define I_AVN_COMBO_BOX_ITEM_VTABLE_SLOTS 79
 
 static const AvnGuid I_AVN_COMMAND_BAR_IID = {
-    0xB8A756C6,
-    0xE090,
-    0x5DB2,
-    { 0x95, 0xE4, 0x2F, 0xD1, 0x88, 0xDB, 0x6B, 0x42 }
+    0x8853C1F6,
+    0x3E2B,
+    0x5B5C,
+    { 0x9C, 0xE5, 0x30, 0x5A, 0x55, 0x80, 0x74, 0x1A }
 };
-#define I_AVN_COMMAND_BAR_ABI_VERSION 4
+#define I_AVN_COMMAND_BAR_ABI_VERSION 5
 struct IAvnCommandBarVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnCommandBar* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnCommandBar* self); /* slot 1 */
@@ -2583,9 +2655,17 @@ struct IAvnCommandBarVtbl {
     AvnHResult (AVN_CALL *set_item_width_collapsed)(IAvnCommandBar* self, double value); /* slot 88 */
     AvnHResult (AVN_CALL *get_has_secondary_commands)(IAvnCommandBar* self, int32_t* value); /* slot 89 */
     AvnHResult (AVN_CALL *get_is_overflow_button_visible)(IAvnCommandBar* self, int32_t* value); /* slot 90 */
+    AvnHResult (AVN_CALL *advise_opening)(IAvnCommandBar* self, IAvnCommandBarOpeningHandler* handler, int64_t* subscription_id); /* slot 91 */
+    AvnHResult (AVN_CALL *unadvise_opening)(IAvnCommandBar* self, int64_t subscription_id); /* slot 92 */
+    AvnHResult (AVN_CALL *advise_opened)(IAvnCommandBar* self, IAvnCommandBarOpenedHandler* handler, int64_t* subscription_id); /* slot 93 */
+    AvnHResult (AVN_CALL *unadvise_opened)(IAvnCommandBar* self, int64_t subscription_id); /* slot 94 */
+    AvnHResult (AVN_CALL *advise_closing)(IAvnCommandBar* self, IAvnCommandBarClosingHandler* handler, int64_t* subscription_id); /* slot 95 */
+    AvnHResult (AVN_CALL *unadvise_closing)(IAvnCommandBar* self, int64_t subscription_id); /* slot 96 */
+    AvnHResult (AVN_CALL *advise_closed)(IAvnCommandBar* self, IAvnCommandBarClosedHandler* handler, int64_t* subscription_id); /* slot 97 */
+    AvnHResult (AVN_CALL *unadvise_closed)(IAvnCommandBar* self, int64_t subscription_id); /* slot 98 */
 };
 struct IAvnCommandBar { const IAvnCommandBarVtbl* vtbl; };
-#define I_AVN_COMMAND_BAR_VTABLE_SLOTS 91
+#define I_AVN_COMMAND_BAR_VTABLE_SLOTS 99
 
 static const AvnGuid I_AVN_COMMAND_BAR_BUTTON_IID = {
     0x79ECE92B,
@@ -7204,12 +7284,12 @@ struct IAvnRepeatButton { const IAvnRepeatButtonVtbl* vtbl; };
 #define I_AVN_REPEAT_BUTTON_VTABLE_SLOTS 96
 
 static const AvnGuid I_AVN_SCROLL_VIEWER_IID = {
-    0x3DF3C63E,
-    0x7BB1,
-    0x556A,
-    { 0xAB, 0x02, 0x6B, 0xB7, 0x5D, 0xB1, 0x2F, 0xC9 }
+    0x8CB86977,
+    0xE9B3,
+    0x519F,
+    { 0x91, 0xB7, 0x99, 0x80, 0x42, 0xC9, 0x98, 0x94 }
 };
-#define I_AVN_SCROLL_VIEWER_ABI_VERSION 8
+#define I_AVN_SCROLL_VIEWER_ABI_VERSION 9
 struct IAvnScrollViewerVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnScrollViewer* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnScrollViewer* self); /* slot 1 */
@@ -7300,38 +7380,42 @@ struct IAvnScrollViewerVtbl {
     AvnHResult (AVN_CALL *set_horizontal_scroll_bar_visibility)(IAvnScrollViewer* self, int32_t value); /* slot 86 */
     AvnHResult (AVN_CALL *get_vertical_scroll_bar_visibility)(IAvnScrollViewer* self, int32_t* value); /* slot 87 */
     AvnHResult (AVN_CALL *set_vertical_scroll_bar_visibility)(IAvnScrollViewer* self, int32_t value); /* slot 88 */
-    AvnHResult (AVN_CALL *get_is_expanded)(IAvnScrollViewer* self, int32_t* value); /* slot 89 */
-    AvnHResult (AVN_CALL *get_horizontal_snap_points_type)(IAvnScrollViewer* self, int32_t* value); /* slot 90 */
-    AvnHResult (AVN_CALL *set_horizontal_snap_points_type)(IAvnScrollViewer* self, int32_t value); /* slot 91 */
-    AvnHResult (AVN_CALL *get_vertical_snap_points_type)(IAvnScrollViewer* self, int32_t* value); /* slot 92 */
-    AvnHResult (AVN_CALL *set_vertical_snap_points_type)(IAvnScrollViewer* self, int32_t value); /* slot 93 */
-    AvnHResult (AVN_CALL *get_horizontal_snap_points_alignment)(IAvnScrollViewer* self, int32_t* value); /* slot 94 */
-    AvnHResult (AVN_CALL *set_horizontal_snap_points_alignment)(IAvnScrollViewer* self, int32_t value); /* slot 95 */
-    AvnHResult (AVN_CALL *get_vertical_snap_points_alignment)(IAvnScrollViewer* self, int32_t* value); /* slot 96 */
-    AvnHResult (AVN_CALL *set_vertical_snap_points_alignment)(IAvnScrollViewer* self, int32_t value); /* slot 97 */
-    AvnHResult (AVN_CALL *get_allow_auto_hide)(IAvnScrollViewer* self, int32_t* value); /* slot 98 */
-    AvnHResult (AVN_CALL *set_allow_auto_hide)(IAvnScrollViewer* self, int32_t value); /* slot 99 */
-    AvnHResult (AVN_CALL *get_is_scroll_chaining_enabled)(IAvnScrollViewer* self, int32_t* value); /* slot 100 */
-    AvnHResult (AVN_CALL *set_is_scroll_chaining_enabled)(IAvnScrollViewer* self, int32_t value); /* slot 101 */
-    AvnHResult (AVN_CALL *get_is_scroll_inertia_enabled)(IAvnScrollViewer* self, int32_t* value); /* slot 102 */
-    AvnHResult (AVN_CALL *set_is_scroll_inertia_enabled)(IAvnScrollViewer* self, int32_t value); /* slot 103 */
-    AvnHResult (AVN_CALL *get_is_deferred_scrolling_enabled)(IAvnScrollViewer* self, int32_t* value); /* slot 104 */
-    AvnHResult (AVN_CALL *set_is_deferred_scrolling_enabled)(IAvnScrollViewer* self, int32_t value); /* slot 105 */
-    AvnHResult (AVN_CALL *line_up)(IAvnScrollViewer* self); /* slot 106 */
-    AvnHResult (AVN_CALL *line_down)(IAvnScrollViewer* self); /* slot 107 */
-    AvnHResult (AVN_CALL *line_left)(IAvnScrollViewer* self); /* slot 108 */
-    AvnHResult (AVN_CALL *line_right)(IAvnScrollViewer* self); /* slot 109 */
-    AvnHResult (AVN_CALL *page_up)(IAvnScrollViewer* self); /* slot 110 */
-    AvnHResult (AVN_CALL *page_down)(IAvnScrollViewer* self); /* slot 111 */
-    AvnHResult (AVN_CALL *page_left)(IAvnScrollViewer* self); /* slot 112 */
-    AvnHResult (AVN_CALL *page_right)(IAvnScrollViewer* self); /* slot 113 */
-    AvnHResult (AVN_CALL *scroll_to_home)(IAvnScrollViewer* self); /* slot 114 */
-    AvnHResult (AVN_CALL *scroll_to_end)(IAvnScrollViewer* self); /* slot 115 */
-    AvnHResult (AVN_CALL *advise_scroll_changed)(IAvnScrollViewer* self, IAvnScrollViewerScrollChangedHandler* handler, int64_t* subscription_id); /* slot 116 */
-    AvnHResult (AVN_CALL *unadvise_scroll_changed)(IAvnScrollViewer* self, int64_t subscription_id); /* slot 117 */
+    AvnHResult (AVN_CALL *get_current_anchor)(IAvnScrollViewer* self, IAvnControl** value); /* slot 89 */
+    AvnHResult (AVN_CALL *get_scroll_bar_maximum)(IAvnScrollViewer* self, AvnVector* value); /* slot 90 */
+    AvnHResult (AVN_CALL *get_is_expanded)(IAvnScrollViewer* self, int32_t* value); /* slot 91 */
+    AvnHResult (AVN_CALL *get_horizontal_snap_points_type)(IAvnScrollViewer* self, int32_t* value); /* slot 92 */
+    AvnHResult (AVN_CALL *set_horizontal_snap_points_type)(IAvnScrollViewer* self, int32_t value); /* slot 93 */
+    AvnHResult (AVN_CALL *get_vertical_snap_points_type)(IAvnScrollViewer* self, int32_t* value); /* slot 94 */
+    AvnHResult (AVN_CALL *set_vertical_snap_points_type)(IAvnScrollViewer* self, int32_t value); /* slot 95 */
+    AvnHResult (AVN_CALL *get_horizontal_snap_points_alignment)(IAvnScrollViewer* self, int32_t* value); /* slot 96 */
+    AvnHResult (AVN_CALL *set_horizontal_snap_points_alignment)(IAvnScrollViewer* self, int32_t value); /* slot 97 */
+    AvnHResult (AVN_CALL *get_vertical_snap_points_alignment)(IAvnScrollViewer* self, int32_t* value); /* slot 98 */
+    AvnHResult (AVN_CALL *set_vertical_snap_points_alignment)(IAvnScrollViewer* self, int32_t value); /* slot 99 */
+    AvnHResult (AVN_CALL *get_allow_auto_hide)(IAvnScrollViewer* self, int32_t* value); /* slot 100 */
+    AvnHResult (AVN_CALL *set_allow_auto_hide)(IAvnScrollViewer* self, int32_t value); /* slot 101 */
+    AvnHResult (AVN_CALL *get_is_scroll_chaining_enabled)(IAvnScrollViewer* self, int32_t* value); /* slot 102 */
+    AvnHResult (AVN_CALL *set_is_scroll_chaining_enabled)(IAvnScrollViewer* self, int32_t value); /* slot 103 */
+    AvnHResult (AVN_CALL *get_is_scroll_inertia_enabled)(IAvnScrollViewer* self, int32_t* value); /* slot 104 */
+    AvnHResult (AVN_CALL *set_is_scroll_inertia_enabled)(IAvnScrollViewer* self, int32_t value); /* slot 105 */
+    AvnHResult (AVN_CALL *get_is_deferred_scrolling_enabled)(IAvnScrollViewer* self, int32_t* value); /* slot 106 */
+    AvnHResult (AVN_CALL *set_is_deferred_scrolling_enabled)(IAvnScrollViewer* self, int32_t value); /* slot 107 */
+    AvnHResult (AVN_CALL *line_up)(IAvnScrollViewer* self); /* slot 108 */
+    AvnHResult (AVN_CALL *line_down)(IAvnScrollViewer* self); /* slot 109 */
+    AvnHResult (AVN_CALL *line_left)(IAvnScrollViewer* self); /* slot 110 */
+    AvnHResult (AVN_CALL *line_right)(IAvnScrollViewer* self); /* slot 111 */
+    AvnHResult (AVN_CALL *page_up)(IAvnScrollViewer* self); /* slot 112 */
+    AvnHResult (AVN_CALL *page_down)(IAvnScrollViewer* self); /* slot 113 */
+    AvnHResult (AVN_CALL *page_left)(IAvnScrollViewer* self); /* slot 114 */
+    AvnHResult (AVN_CALL *page_right)(IAvnScrollViewer* self); /* slot 115 */
+    AvnHResult (AVN_CALL *scroll_to_home)(IAvnScrollViewer* self); /* slot 116 */
+    AvnHResult (AVN_CALL *scroll_to_end)(IAvnScrollViewer* self); /* slot 117 */
+    AvnHResult (AVN_CALL *register_anchor_candidate_with_control)(IAvnScrollViewer* self, IAvnControl* element); /* slot 118 */
+    AvnHResult (AVN_CALL *unregister_anchor_candidate_with_control)(IAvnScrollViewer* self, IAvnControl* element); /* slot 119 */
+    AvnHResult (AVN_CALL *advise_scroll_changed)(IAvnScrollViewer* self, IAvnScrollViewerScrollChangedHandler* handler, int64_t* subscription_id); /* slot 120 */
+    AvnHResult (AVN_CALL *unadvise_scroll_changed)(IAvnScrollViewer* self, int64_t subscription_id); /* slot 121 */
 };
 struct IAvnScrollViewer { const IAvnScrollViewerVtbl* vtbl; };
-#define I_AVN_SCROLL_VIEWER_VTABLE_SLOTS 118
+#define I_AVN_SCROLL_VIEWER_VTABLE_SLOTS 122
 
 static const AvnGuid I_AVN_SECTOR_IID = {
     0xD0F311C0,

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("3DF3C63E-7BB1-556A-AB02-6BB75DB12FC9")]
+[Guid("8CB86977-E9B3-519F-91B7-998042C99894")]
 public partial interface IAvnScrollViewer : IAvnContentControl
 {
     [PreserveSig]
@@ -44,6 +44,12 @@ public partial interface IAvnScrollViewer : IAvnContentControl
 
     [PreserveSig]
     int SetVerticalScrollBarVisibility(int value);
+
+    [PreserveSig]
+    int GetCurrentAnchor(out IAvnControl? value);
+
+    [PreserveSig]
+    int GetScrollBarMaximum(out AvnVector value);
 
     [PreserveSig]
     int GetIsExpanded(out int value);
@@ -125,6 +131,12 @@ public partial interface IAvnScrollViewer : IAvnContentControl
 
     [PreserveSig]
     int ScrollToEnd();
+
+    [PreserveSig]
+    int RegisterAnchorCandidateWithControl(IAvnControl element);
+
+    [PreserveSig]
+    int UnregisterAnchorCandidateWithControl(IAvnControl element);
 
     [PreserveSig]
     int AdviseScrollChanged(IAvnScrollViewerScrollChangedHandler? handler, out long subscriptionId);
@@ -1571,6 +1583,38 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
         }
     }
 
+    public int GetCurrentAnchor(out IAvnControl? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = (IAvnControl?)ProjectionRuntime.Wrap(_value.CurrentAnchor as global::Avalonia.AvaloniaObject);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetScrollBarMaximum(out AvnVector value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnVector.FromAvalonia(_value.ScrollBarMaximum);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetIsExpanded(out int value)
     {
         value = default!;
@@ -1977,6 +2021,36 @@ public sealed partial class AvnScrollViewer : IAvnScrollViewer
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.ScrollToEnd();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int RegisterAnchorCandidateWithControl(IAvnControl element)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.RegisterAnchorCandidate((global::Avalonia.Controls.Control)ProjectionRuntime.Unwrap(element)!);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int UnregisterAnchorCandidateWithControl(IAvnControl element)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.UnregisterAnchorCandidate((global::Avalonia.Controls.Control)ProjectionRuntime.Unwrap(element)!);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

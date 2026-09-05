@@ -103,7 +103,7 @@ fn widened_interfaces_publish_abi_version_five() {
         "#define I_AVN_LIST_BOX_ITEM_ABI_VERSION 7",
         "#define I_AVN_COMBO_BOX_ABI_VERSION 9",
         "#define I_AVN_COMBO_BOX_ITEM_ABI_VERSION 7",
-        "#define I_AVN_SCROLL_VIEWER_ABI_VERSION 8",
+        "#define I_AVN_SCROLL_VIEWER_ABI_VERSION 9",
         "#define I_AVN_WINDOW_ABI_VERSION 10",
         "#define I_AVN_TEMPLATED_CONTROL_ABI_VERSION 6",
         "#define I_AVN_TEXT_BLOCK_ABI_VERSION 8",

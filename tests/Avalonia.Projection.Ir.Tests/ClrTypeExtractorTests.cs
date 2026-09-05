@@ -1566,10 +1566,11 @@ public class ClrTypeExtractorTests
         Assert.Contains(combo.Events, e => e.Name == "DropDownOpened");
 
         var scroll = Type(ir, "IAvnScrollViewer");
-        Assert.Equal(8, scroll.AbiVersion);
+        Assert.Equal(9, scroll.AbiVersion);
         Assert.Equal(MarshallingKind.Size, scroll.Properties.Single(p => p.Name == "Extent").Kind);
         Assert.Equal(MarshallingKind.Vector, scroll.Properties.Single(p => p.Name == "Offset").Kind);
         Assert.Equal(MarshallingKind.Size, scroll.Properties.Single(p => p.Name == "Viewport").Kind);
+        Assert.Equal(MarshallingKind.Vector, scroll.Properties.Single(p => p.Name == "ScrollBarMaximum").Kind);
         Assert.False(scroll.Properties.Single(p => p.Name == "Extent").CanWrite);
         Assert.True(scroll.Properties.Single(p => p.Name == "Offset").CanWrite);
         Assert.Equal(7, Type(ir, "IAvnContentControl").AbiVersion);
@@ -1664,8 +1665,9 @@ public class ClrTypeExtractorTests
     public void Leaf_leftovers_project_marshallable_scalars_and_commands()
     {
         var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
-        Assert.Equal(4, Type(ir, "IAvnCommandBar").AbiVersion);
+        Assert.Equal(5, Type(ir, "IAvnCommandBar").AbiVersion);
         Assert.Contains(Type(ir, "IAvnCommandBar").Properties, p => p.Name == "HasSecondaryCommands");
+        Assert.Contains(Type(ir, "IAvnCommandBar").Events, e => e.Name == "Opened");
         Assert.Equal(5, Type(ir, "IAvnCarousel").AbiVersion);
         Assert.Contains(Type(ir, "IAvnCarousel").Methods, m => m.Name == "Next");
         Assert.Equal(9, Type(ir, "IAvnComboBox").AbiVersion);

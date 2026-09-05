@@ -74,10 +74,6 @@ Avalonia.Controls.CommandBar.VisiblePrimaryCommands: Not included by projection 
 Avalonia.Controls.CommandBar.OverflowItems: Not included by projection policy
 Avalonia.Controls.CommandBar.PrimaryCommands: Not included by projection policy
 Avalonia.Controls.CommandBar.SecondaryCommands: Not included by projection policy
-Avalonia.Controls.CommandBar.Opening: Not included by projection policy
-Avalonia.Controls.CommandBar.Opened: Not included by projection policy
-Avalonia.Controls.CommandBar.Closing: Not included by projection policy
-Avalonia.Controls.CommandBar.Closed: Not included by projection policy
 Avalonia.Controls.CommandBarButton.Icon: Not included by projection policy
 Avalonia.Controls.CommandBarToggleButton.Icon: Not included by projection policy
 Avalonia.Controls.ContentControl.ContentTemplate: Not included by projection policy
@@ -186,10 +182,6 @@ Avalonia.Controls.Primitives.TemplatedControl.ApplyTemplate(): Not included by p
 Avalonia.Controls.ProgressBar.TemplateSettings: Not included by projection policy
 Avalonia.Controls.RefreshContainer.Visualizer: Not included by projection policy
 Avalonia.Controls.RefreshContainer.RefreshRequested: Not included by projection policy
-Avalonia.Controls.ScrollViewer.CurrentAnchor: Not included by projection policy
-Avalonia.Controls.ScrollViewer.ScrollBarMaximum: Not included by projection policy
-Avalonia.Controls.ScrollViewer.RegisterAnchorCandidate(Control): Not included by projection policy
-Avalonia.Controls.ScrollViewer.UnregisterAnchorCandidate(Control): Not included by projection policy
 Avalonia.Controls.Shapes.Polygon.Points: Not included by projection policy
 Avalonia.Controls.Shapes.Polyline.Points: Not included by projection policy
 Avalonia.Controls.Shapes.Shape.DefiningGeometry: Not included by projection policy

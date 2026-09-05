@@ -921,8 +921,8 @@
       "name": "IAvnCommandBar",
       "fullName": "Avalonia.Host.Com.IAvnCommandBar",
       "kind": "Class",
-      "iid": "B8A756C6-E090-5DB2-95E4-2FD188DB6B42",
-      "abiVersion": 4,
+      "iid": "8853C1F6-3E2B-5B5C-9CE5-305A5580741A",
+      "abiVersion": 5,
       "baseFullName": "Avalonia.Host.Com.IAvnTemplatedControl",
       "managedFullName": "Avalonia.Controls.CommandBar",
       "isConstructible": true,
@@ -1029,7 +1029,44 @@
           "isNullable": false
         }
       ],
-      "events": []
+      "events": [
+        {
+          "name": "Opening",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnCommandBarOpeningHandler",
+          "handlerInterfaceIid": "8116CB28-BE6F-5D21-9ABC-0AACC6B9CD0A",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E",
+          "parameters": []
+        },
+        {
+          "name": "Opened",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnCommandBarOpenedHandler",
+          "handlerInterfaceIid": "ECAA8ED5-C87D-51B4-958F-0101EBCD0263",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E",
+          "parameters": []
+        },
+        {
+          "name": "Closing",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnCommandBarClosingHandler",
+          "handlerInterfaceIid": "5FAD5A98-49C8-54B8-A648-39BBCA497837",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E",
+          "parameters": []
+        },
+        {
+          "name": "Closed",
+          "handlerInterfaceName": "Avalonia.Host.Com.IAvnCommandBarClosedHandler",
+          "handlerInterfaceIid": "5B61D897-6279-57A9-8D0D-1A895252D6D5",
+          "handlerInterfaceAbiVersion": 1,
+          "payloadKind": "None",
+          "managedHandlerTypeName": "System.EventHandler\u003CAvalonia.Interactivity.RoutedEventArgs\u003E",
+          "parameters": []
+        }
+      ]
     },
     {
       "name": "IAvnCommandBarButton",
@@ -4127,8 +4164,8 @@
       "name": "IAvnScrollViewer",
       "fullName": "Avalonia.Host.Com.IAvnScrollViewer",
       "kind": "Class",
-      "iid": "3DF3C63E-7BB1-556A-AB02-6BB75DB12FC9",
-      "abiVersion": 8,
+      "iid": "8CB86977-E9B3-519F-91B7-998042C99894",
+      "abiVersion": 9,
       "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
       "managedFullName": "Avalonia.Controls.ScrollViewer",
       "isConstructible": true,
@@ -4202,6 +4239,38 @@
           "returnKind": "I32",
           "preserveSig": true,
           "parameters": []
+        },
+        {
+          "name": "RegisterAnchorCandidateWithControl",
+          "managedName": "RegisterAnchorCandidate",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": [
+            {
+              "name": "element",
+              "kind": "ComInterface",
+              "direction": "In",
+              "interfaceName": "Avalonia.Host.Com.IAvnControl",
+              "managedTypeName": "Avalonia.Controls.Control",
+              "isNullable": false
+            }
+          ]
+        },
+        {
+          "name": "UnregisterAnchorCandidateWithControl",
+          "managedName": "UnregisterAnchorCandidate",
+          "returnKind": "I32",
+          "preserveSig": true,
+          "parameters": [
+            {
+              "name": "element",
+              "kind": "ComInterface",
+              "direction": "In",
+              "interfaceName": "Avalonia.Host.Com.IAvnControl",
+              "managedTypeName": "Avalonia.Controls.Control",
+              "isNullable": false
+            }
+          ]
         }
       ],
       "properties": [
@@ -4275,6 +4344,25 @@
           "canWrite": true,
           "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Controls.Primitives.ScrollBarVisibility",
+          "isNullable": false
+        },
+        {
+          "name": "CurrentAnchor",
+          "kind": "ComInterface",
+          "canRead": true,
+          "canWrite": false,
+          "interfaceName": "Avalonia.Host.Com.IAvnControl",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Control",
+          "isNullable": true
+        },
+        {
+          "name": "ScrollBarMaximum",
+          "kind": "Vector",
+          "canRead": true,
+          "canWrite": false,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Vector",
           "isNullable": false
         },
         {
@@ -10556,26 +10644,6 @@
       "reason": "Not included by projection policy"
     },
     {
-      "owner": "Avalonia.Controls.CommandBar",
-      "member": "Opening",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.CommandBar",
-      "member": "Opened",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.CommandBar",
-      "member": "Closing",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.CommandBar",
-      "member": "Closed",
-      "reason": "Not included by projection policy"
-    },
-    {
       "owner": "Avalonia.Controls.CommandBarButton",
       "member": "Icon",
       "reason": "Not included by projection policy"
@@ -11113,26 +11181,6 @@
     {
       "owner": "Avalonia.Controls.RefreshContainer",
       "member": "RefreshRequested",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ScrollViewer",
-      "member": "CurrentAnchor",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ScrollViewer",
-      "member": "ScrollBarMaximum",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ScrollViewer",
-      "member": "RegisterAnchorCandidate(Control)",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.ScrollViewer",
-      "member": "UnregisterAnchorCandidate(Control)",
       "reason": "Not included by projection policy"
     },
     {

@@ -52,7 +52,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnComboBox"] = 9,
             ["Avalonia.Host.Com.IAvnListBoxItem"] = 7,
             ["Avalonia.Host.Com.IAvnComboBoxItem"] = 7,
-            ["Avalonia.Host.Com.IAvnScrollViewer"] = 8,
+            ["Avalonia.Host.Com.IAvnScrollViewer"] = 9,
             ["Avalonia.Host.Com.IAvnWindow"] = 10,
             ["Avalonia.Host.Com.IAvnGrid"] = 6,
             // Previously version-1 templated types inherit the TemplatedControl bump.
@@ -61,7 +61,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnCalendar"] = 4,
             ["Avalonia.Host.Com.IAvnCalendarDatePicker"] = 4,
             ["Avalonia.Host.Com.IAvnCarousel"] = 5,
-            ["Avalonia.Host.Com.IAvnCommandBar"] = 4,
+            ["Avalonia.Host.Com.IAvnCommandBar"] = 5,
             ["Avalonia.Host.Com.IAvnCommand"] = 2,
             ["Avalonia.Host.Com.IAvnCommandBarButton"] = 5,
             ["Avalonia.Host.Com.IAvnCommandBarSeparator"] = 3,
@@ -526,6 +526,7 @@ public static class AvaloniaProjectionProfiles
                 "OverflowButtonVisibility", "IsOpen", "IsSticky",
                 "ItemWidthBottom", "ItemWidthRight", "ItemWidthCollapsed",
                 "HasSecondaryCommands", "IsOverflowButtonVisible",
+                "Opening", "Opened", "Closing", "Closed",
             ],
             ["Avalonia.Controls.CommandBarButton"] =
                 ["Label", "IsCompact", "DynamicOverflowOrder", "LabelPosition", "IsInOverflow"],
@@ -580,6 +581,8 @@ public static class AvaloniaProjectionProfiles
                 "Extent", "Offset", "Viewport", "LargeChange", "SmallChange",
                 "HorizontalSnapPointsType", "VerticalSnapPointsType",
                 "HorizontalSnapPointsAlignment", "VerticalSnapPointsAlignment",
+                "ScrollBarMaximum", "CurrentAnchor",
+                "RegisterAnchorCandidate", "UnregisterAnchorCandidate",
             ],
             ["Avalonia.Controls.Primitives.RangeBase"] =
                 ["Minimum", "Maximum", "Value", "SmallChange", "LargeChange", "ValueChanged"],
@@ -1062,6 +1065,22 @@ public static class AvaloniaProjectionProfiles
                 PayloadKind = EventPayloadKind.None,
             },
             ["Avalonia.Controls.Expander.Collapsed"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.CommandBar.Opening"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.CommandBar.Opened"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.CommandBar.Closing"] = new()
+            {
+                PayloadKind = EventPayloadKind.None,
+            },
+            ["Avalonia.Controls.CommandBar.Closed"] = new()
             {
                 PayloadKind = EventPayloadKind.None,
             },

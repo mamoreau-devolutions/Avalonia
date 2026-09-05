@@ -682,6 +682,226 @@ unsafe extern "system" fn i_avn_combo_box_drop_down_opened_handler_invoke(this: 
     crate::event_callback::invoke::<IAvnComboBoxDropDownOpenedHandler, ()>(this, &mut ())
 }
 
+pub const I_AVN_COMMAND_BAR_OPENING_HANDLER_IID: Guid = Guid { data1: 0x8116CB28, data2: 0xBE6F, data3: 0x5D21, data4: [0x9A, 0xBC, 0x0A, 0xAC, 0xC6, 0xB9, 0xCD, 0x0A] };
+
+#[repr(C)]
+struct IAvnCommandBarOpeningHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnCommandBarOpeningHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnCommandBarOpeningHandler {
+    vtbl: *const IAvnCommandBarOpeningHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnCommandBarOpeningHandler {
+    const IID: Guid = I_AVN_COMMAND_BAR_OPENING_HANDLER_IID;
+}
+
+impl ComPtr<IAvnCommandBarOpeningHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_COMMAND_BAR_OPENING_HANDLER_VTBL: IAvnCommandBarOpeningHandlerVtbl = IAvnCommandBarOpeningHandlerVtbl {
+    query_interface: i_avn_command_bar_opening_handler_query_interface,
+    add_ref: i_avn_command_bar_opening_handler_add_ref,
+    release: i_avn_command_bar_opening_handler_release,
+    invoke: i_avn_command_bar_opening_handler_invoke,
+};
+
+pub fn command_bar_opening_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnCommandBarOpeningHandler> {
+    crate::event_callback::create::<IAvnCommandBarOpeningHandler, ()>(IAvnCommandBarOpeningHandler { vtbl: &I_AVN_COMMAND_BAR_OPENING_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_command_bar_opening_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnCommandBarOpeningHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_command_bar_opening_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnCommandBarOpeningHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_command_bar_opening_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnCommandBarOpeningHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_command_bar_opening_handler_invoke(this: *mut IAvnCommandBarOpeningHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnCommandBarOpeningHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_COMMAND_BAR_OPENED_HANDLER_IID: Guid = Guid { data1: 0xECAA8ED5, data2: 0xC87D, data3: 0x51B4, data4: [0x95, 0x8F, 0x01, 0x01, 0xEB, 0xCD, 0x02, 0x63] };
+
+#[repr(C)]
+struct IAvnCommandBarOpenedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnCommandBarOpenedHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnCommandBarOpenedHandler {
+    vtbl: *const IAvnCommandBarOpenedHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnCommandBarOpenedHandler {
+    const IID: Guid = I_AVN_COMMAND_BAR_OPENED_HANDLER_IID;
+}
+
+impl ComPtr<IAvnCommandBarOpenedHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_COMMAND_BAR_OPENED_HANDLER_VTBL: IAvnCommandBarOpenedHandlerVtbl = IAvnCommandBarOpenedHandlerVtbl {
+    query_interface: i_avn_command_bar_opened_handler_query_interface,
+    add_ref: i_avn_command_bar_opened_handler_add_ref,
+    release: i_avn_command_bar_opened_handler_release,
+    invoke: i_avn_command_bar_opened_handler_invoke,
+};
+
+pub fn command_bar_opened_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnCommandBarOpenedHandler> {
+    crate::event_callback::create::<IAvnCommandBarOpenedHandler, ()>(IAvnCommandBarOpenedHandler { vtbl: &I_AVN_COMMAND_BAR_OPENED_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_command_bar_opened_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnCommandBarOpenedHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_command_bar_opened_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnCommandBarOpenedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_command_bar_opened_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnCommandBarOpenedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_command_bar_opened_handler_invoke(this: *mut IAvnCommandBarOpenedHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnCommandBarOpenedHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_COMMAND_BAR_CLOSING_HANDLER_IID: Guid = Guid { data1: 0x5FAD5A98, data2: 0x49C8, data3: 0x54B8, data4: [0xA6, 0x48, 0x39, 0xBB, 0xCA, 0x49, 0x78, 0x37] };
+
+#[repr(C)]
+struct IAvnCommandBarClosingHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnCommandBarClosingHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnCommandBarClosingHandler {
+    vtbl: *const IAvnCommandBarClosingHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnCommandBarClosingHandler {
+    const IID: Guid = I_AVN_COMMAND_BAR_CLOSING_HANDLER_IID;
+}
+
+impl ComPtr<IAvnCommandBarClosingHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_COMMAND_BAR_CLOSING_HANDLER_VTBL: IAvnCommandBarClosingHandlerVtbl = IAvnCommandBarClosingHandlerVtbl {
+    query_interface: i_avn_command_bar_closing_handler_query_interface,
+    add_ref: i_avn_command_bar_closing_handler_add_ref,
+    release: i_avn_command_bar_closing_handler_release,
+    invoke: i_avn_command_bar_closing_handler_invoke,
+};
+
+pub fn command_bar_closing_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnCommandBarClosingHandler> {
+    crate::event_callback::create::<IAvnCommandBarClosingHandler, ()>(IAvnCommandBarClosingHandler { vtbl: &I_AVN_COMMAND_BAR_CLOSING_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_command_bar_closing_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnCommandBarClosingHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_command_bar_closing_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnCommandBarClosingHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_command_bar_closing_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnCommandBarClosingHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_command_bar_closing_handler_invoke(this: *mut IAvnCommandBarClosingHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnCommandBarClosingHandler, ()>(this, &mut ())
+}
+
+pub const I_AVN_COMMAND_BAR_CLOSED_HANDLER_IID: Guid = Guid { data1: 0x5B61D897, data2: 0x6279, data3: 0x57A9, data4: [0x8D, 0x0D, 0x1A, 0x89, 0x52, 0x52, 0xD6, 0xD5] };
+
+#[repr(C)]
+struct IAvnCommandBarClosedHandlerVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnCommandBarClosedHandler) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnCommandBarClosedHandler {
+    vtbl: *const IAvnCommandBarClosedHandlerVtbl,
+}
+
+unsafe impl ComInterface for IAvnCommandBarClosedHandler {
+    const IID: Guid = I_AVN_COMMAND_BAR_CLOSED_HANDLER_IID;
+}
+
+impl ComPtr<IAvnCommandBarClosedHandler> {
+    pub fn invoke(&self) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+}
+
+static I_AVN_COMMAND_BAR_CLOSED_HANDLER_VTBL: IAvnCommandBarClosedHandlerVtbl = IAvnCommandBarClosedHandlerVtbl {
+    query_interface: i_avn_command_bar_closed_handler_query_interface,
+    add_ref: i_avn_command_bar_closed_handler_add_ref,
+    release: i_avn_command_bar_closed_handler_release,
+    invoke: i_avn_command_bar_closed_handler_invoke,
+};
+
+pub fn command_bar_closed_handler(mut callback: impl FnMut() -> Result<()> + Send + 'static) -> ComPtr<IAvnCommandBarClosedHandler> {
+    crate::event_callback::create::<IAvnCommandBarClosedHandler, ()>(IAvnCommandBarClosedHandler { vtbl: &I_AVN_COMMAND_BAR_CLOSED_HANDLER_VTBL }, move |_| callback())
+}
+
+unsafe extern "system" fn i_avn_command_bar_closed_handler_query_interface(this: *mut IUnknown, iid: *const Guid, result: *mut *mut c_void) -> i32 {
+    crate::event_callback::query_interface::<IAvnCommandBarClosedHandler, ()>(this, iid, result)
+}
+
+unsafe extern "system" fn i_avn_command_bar_closed_handler_add_ref(this: *mut IUnknown) -> u32 {
+    crate::event_callback::add_ref::<IAvnCommandBarClosedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_command_bar_closed_handler_release(this: *mut IUnknown) -> u32 {
+    crate::event_callback::release::<IAvnCommandBarClosedHandler, ()>(this)
+}
+
+unsafe extern "system" fn i_avn_command_bar_closed_handler_invoke(this: *mut IAvnCommandBarClosedHandler) -> i32 {
+    crate::event_callback::invoke::<IAvnCommandBarClosedHandler, ()>(this, &mut ())
+}
+
 pub const I_AVN_CONTROL_LOADED_HANDLER_IID: Guid = Guid { data1: 0x02529698, data2: 0xA53B, data3: 0x5691, data4: [0x93, 0xB1, 0x92, 0x0B, 0x19, 0x36, 0x4C, 0x5E] };
 
 #[repr(C)]
@@ -10690,7 +10910,7 @@ impl ComPtr<IAvnComboBoxItem> {
     }
 }
 
-pub const I_AVN_COMMAND_BAR_IID: Guid = Guid { data1: 0xB8A756C6, data2: 0xE090, data3: 0x5DB2, data4: [0x95, 0xE4, 0x2F, 0xD1, 0x88, 0xDB, 0x6B, 0x42] };
+pub const I_AVN_COMMAND_BAR_IID: Guid = Guid { data1: 0x8853C1F6, data2: 0x3E2B, data3: 0x5B5C, data4: [0x9C, 0xE5, 0x30, 0x5A, 0x55, 0x80, 0x74, 0x1A] };
 
 #[repr(C)]
 struct IAvnCommandBarVtbl {
@@ -10785,6 +11005,14 @@ struct IAvnCommandBarVtbl {
     set_item_width_collapsed: unsafe extern "system" fn(*mut IAvnCommandBar, f64) -> i32,
     get_has_secondary_commands: unsafe extern "system" fn(*mut IAvnCommandBar, *mut i32) -> i32,
     get_is_overflow_button_visible: unsafe extern "system" fn(*mut IAvnCommandBar, *mut i32) -> i32,
+    advise_opening: unsafe extern "system" fn(*mut IAvnCommandBar, *mut IAvnCommandBarOpeningHandler, *mut i64) -> i32,
+    unadvise_opening: unsafe extern "system" fn(*mut IAvnCommandBar, i64) -> i32,
+    advise_opened: unsafe extern "system" fn(*mut IAvnCommandBar, *mut IAvnCommandBarOpenedHandler, *mut i64) -> i32,
+    unadvise_opened: unsafe extern "system" fn(*mut IAvnCommandBar, i64) -> i32,
+    advise_closing: unsafe extern "system" fn(*mut IAvnCommandBar, *mut IAvnCommandBarClosingHandler, *mut i64) -> i32,
+    unadvise_closing: unsafe extern "system" fn(*mut IAvnCommandBar, i64) -> i32,
+    advise_closed: unsafe extern "system" fn(*mut IAvnCommandBar, *mut IAvnCommandBarClosedHandler, *mut i64) -> i32,
+    unadvise_closed: unsafe extern "system" fn(*mut IAvnCommandBar, i64) -> i32,
 }
 
 #[repr(C)]
@@ -11410,6 +11638,58 @@ impl ComPtr<IAvnCommandBar> {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_is_overflow_button_visible)(self.as_raw(), &mut value);
             hresult::check(hr)?;
             Ok(value != 0)
+        }
+    }
+    pub fn advise_opening(&self, handler: &ComPtr<IAvnCommandBarOpeningHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_opening)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_opening(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_opening)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_opened(&self, handler: &ComPtr<IAvnCommandBarOpenedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_opened)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_opened(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_opened)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_closing(&self, handler: &ComPtr<IAvnCommandBarClosingHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_closing)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_closing(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_closing)(self.as_raw(), subscription_id);
+            hresult::check(hr)
+        }
+    }
+    pub fn advise_closed(&self, handler: &ComPtr<IAvnCommandBarClosedHandler>) -> Result<i64> {
+        unsafe {
+            let mut subscription_id = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().advise_closed)(self.as_raw(), handler.as_raw(), &mut subscription_id);
+            hresult::check(hr).map(|_| subscription_id)
+        }
+    }
+    pub fn unadvise_closed(&self, subscription_id: i64) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unadvise_closed)(self.as_raw(), subscription_id);
+            hresult::check(hr)
         }
     }
 }
@@ -43591,7 +43871,7 @@ impl ComPtr<IAvnRepeatButton> {
     }
 }
 
-pub const I_AVN_SCROLL_VIEWER_IID: Guid = Guid { data1: 0x3DF3C63E, data2: 0x7BB1, data3: 0x556A, data4: [0xAB, 0x02, 0x6B, 0xB7, 0x5D, 0xB1, 0x2F, 0xC9] };
+pub const I_AVN_SCROLL_VIEWER_IID: Guid = Guid { data1: 0x8CB86977, data2: 0xE9B3, data3: 0x519F, data4: [0x91, 0xB7, 0x99, 0x80, 0x42, 0xC9, 0x98, 0x94] };
 
 #[repr(C)]
 struct IAvnScrollViewerVtbl {
@@ -43684,6 +43964,8 @@ struct IAvnScrollViewerVtbl {
     set_horizontal_scroll_bar_visibility: unsafe extern "system" fn(*mut IAvnScrollViewer, i32) -> i32,
     get_vertical_scroll_bar_visibility: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i32) -> i32,
     set_vertical_scroll_bar_visibility: unsafe extern "system" fn(*mut IAvnScrollViewer, i32) -> i32,
+    get_current_anchor: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut *mut IAvnControl) -> i32,
+    get_scroll_bar_maximum: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut AvnVector) -> i32,
     get_is_expanded: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i32) -> i32,
     get_horizontal_snap_points_type: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i32) -> i32,
     set_horizontal_snap_points_type: unsafe extern "system" fn(*mut IAvnScrollViewer, i32) -> i32,
@@ -43711,6 +43993,8 @@ struct IAvnScrollViewerVtbl {
     page_right: unsafe extern "system" fn(*mut IAvnScrollViewer) -> i32,
     scroll_to_home: unsafe extern "system" fn(*mut IAvnScrollViewer) -> i32,
     scroll_to_end: unsafe extern "system" fn(*mut IAvnScrollViewer) -> i32,
+    register_anchor_candidate_with_control: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnControl) -> i32,
+    unregister_anchor_candidate_with_control: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnControl) -> i32,
     advise_scroll_changed: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut IAvnScrollViewerScrollChangedHandler, *mut i64) -> i32,
     unadvise_scroll_changed: unsafe extern "system" fn(*mut IAvnScrollViewer, i64) -> i32,
 }
@@ -44328,6 +44612,22 @@ impl ComPtr<IAvnScrollViewer> {
             hresult::check(hr)
         }
     }
+    pub fn get_current_anchor(&self) -> Result<Option<ComPtr<IAvnControl>>> {
+        unsafe {
+            let mut value: *mut IAvnControl = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_current_anchor)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            if value.is_null() { Ok(None) } else { Ok(Some(ComPtr::from_projected_raw(value)?)) }
+        }
+    }
+    pub fn get_scroll_bar_maximum(&self) -> Result<AvnVector> {
+        unsafe {
+            let mut value: AvnVector = Default::default();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_scroll_bar_maximum)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
     pub fn get_is_expanded(&self) -> Result<bool> {
         unsafe {
             let mut value: i32 = 0;
@@ -44505,6 +44805,18 @@ impl ComPtr<IAvnScrollViewer> {
     pub fn scroll_to_end(&self) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().scroll_to_end)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn register_anchor_candidate_with_control(&self, element: &ComPtr<IAvnControl>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().register_anchor_candidate_with_control)(self.as_raw(), element.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn unregister_anchor_candidate_with_control(&self, element: &ComPtr<IAvnControl>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unregister_anchor_candidate_with_control)(self.as_raw(), element.as_raw());
             hresult::check(hr)
         }
     }

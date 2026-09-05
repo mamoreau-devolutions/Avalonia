@@ -328,6 +328,15 @@ closures now take the raw `AvnVariant`, and `CommandParameter` set on the
 control flows end to end: `Button.CommandParameter` → managed
 `ICommand.Execute(parameter)` → Rust closure argument.
 
+Wave U13 closes CommandBar lifecycle and ScrollViewer anchoring.
+CommandBar Opening/Opened/Closing/Closed cross as no-payload events
+(CommandBar 4 to 5). ScrollViewer gains `ScrollBarMaximum` (a Vector,
+read-only direct property), `CurrentAnchor` (a nullable `IAvnControl`),
+and `RegisterAnchorCandidateWithControl`/`UnregisterAnchorCandidateWithControl`
+taking an `IAvnControl` (ScrollViewer 8 to 9). TabItem.TabStripPlacement
+stays a gap: `Dock?` is a nullable enum and the ABI has no nullable-int
+shape yet; a future `NullableI32` kind would unblock it.
+
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and
 `IAvnNumericUpDown` each move from 2 to 3. Templates, filters, ItemsSource,
