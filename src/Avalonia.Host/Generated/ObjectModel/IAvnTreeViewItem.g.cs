@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("26321820-F178-531D-A2E7-24AAD947FC3E")]
+[Guid("9CF36593-E830-53A5-A851-8D2D9ED58F4D")]
 public partial interface IAvnTreeViewItem : IAvnHeaderedItemsControl
 {
     [PreserveSig]
@@ -1355,6 +1355,37 @@ public sealed partial class AvnTreeViewItem : IAvnTreeViewItem
         }
     }
 
+    public int GetItemTemplate(out IAvnDataTemplate? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnDataTemplate.FromTemplate(_value.ItemTemplate);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetItemTemplate(IAvnDataTemplate? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ItemTemplate = AvnDataTemplate.ToTemplate(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int ContainerFromIndexWithInt32(int index, out IAvnControl? value)
     {
         value = default!;
@@ -1472,6 +1503,37 @@ public sealed partial class AvnTreeViewItem : IAvnTreeViewItem
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Header = (global::System.Object)ProjectionRuntime.Unwrap(value)!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetHeaderTemplate(out IAvnDataTemplate? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnDataTemplate.FromTemplate(_value.HeaderTemplate);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetHeaderTemplate(IAvnDataTemplate? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.HeaderTemplate = AvnDataTemplate.ToTemplate(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("7E7B545A-1409-5F84-980A-5E9F3D5D24E6")]
+[Guid("62C739B8-1B3A-5DE1-8CCA-00D1BE01F746")]
 public partial interface IAvnRadioButton : IAvnToggleButton
 {
     [PreserveSig]
@@ -1294,6 +1294,37 @@ public sealed partial class AvnRadioButton : IAvnRadioButton
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Content = (global::System.Object)ProjectionRuntime.Unwrap(value)!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetContentTemplate(out IAvnDataTemplate? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnDataTemplate.FromTemplate(_value.ContentTemplate);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetContentTemplate(IAvnDataTemplate? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ContentTemplate = AvnDataTemplate.ToTemplate(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

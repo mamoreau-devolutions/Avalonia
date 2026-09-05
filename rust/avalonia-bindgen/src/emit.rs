@@ -71,6 +71,10 @@ pub fn emit_sys_module(ir: &ProjectionIr) -> String {
         out.push_str(&emit_command(ir));
         out.push('\n');
     }
+    if ir.template_interface_name.is_some() {
+        out.push_str(&emit_data_template(ir));
+        out.push('\n');
+    }
     for event in unique_events(ir) {
         out.push_str(&emit_event_handler(event));
         out.push('\n');
@@ -422,6 +426,55 @@ fn emit_command(ir: &ProjectionIr) -> String {
          }};\n",
         iid_literal = guid_literal(iid),
         handler_iid_literal = guid_literal(handler_iid),
+    )
+}
+
+fn emit_data_template(ir: &ProjectionIr) -> String {
+    let name = simple_name(
+        ir.template_interface_name
+            .as_deref()
+            .expect("templateInterfaceName"),
+    );
+    let iid = ir
+        .template_interface_iid
+        .as_deref()
+        .expect("templateInterfaceIid for a projected data template");
+    let iid_const = format!("{}_IID", to_shouty(name));
+    format!(
+        "pub const {iid_const}: Guid = {iid_literal};\n\n\
+         #[repr(C)]\n\
+         struct {name}Vtbl {{\n\
+         \x20   query_interface: unsafe extern \"system\" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,\n\
+         \x20   add_ref: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+         \x20   release: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+         \x20   match_: unsafe extern \"system\" fn(*mut {name}, AvnVariant, *mut i32) -> i32,\n\
+         \x20   build: unsafe extern \"system\" fn(*mut {name}, *mut *mut IAvnControl) -> i32,\n\
+         }}\n\n\
+         #[repr(C)]\n\
+         pub struct {name} {{\n\
+         \x20   vtbl: *const {name}Vtbl,\n\
+         }}\n\n\
+         unsafe impl ComInterface for {name} {{\n\
+         \x20   const IID: Guid = {iid_const};\n\
+         }}\n\n\
+         impl ComPtr<{name}> {{\n\
+         \x20   pub fn matches(&self, data: AvnVariant) -> Result<bool> {{\n\
+         \x20       unsafe {{\n\
+         \x20           let mut value = 0;\n\
+         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().match_)(self.as_raw(), data, &mut value);\n\
+         \x20           hresult::check(hr).map(|_| value != 0)\n\
+         \x20       }}\n\
+         \x20   }}\n\
+         \x20   pub fn build(&self) -> Result<ComPtr<IAvnControl>> {{\n\
+         \x20       unsafe {{\n\
+         \x20           let mut value = ptr::null_mut();\n\
+         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().build)(self.as_raw(), &mut value);\n\
+         \x20           hresult::check(hr)?;\n\
+         \x20           ComPtr::from_projected_raw(value)\n\
+         \x20       }}\n\
+         \x20   }}\n\
+         }}\n",
+        iid_literal = guid_literal(iid),
     )
 }
 
@@ -1140,7 +1193,7 @@ fn rust_abi_type(kind: &str, interface_name: Option<&str>, is_nullable: bool) ->
         "F32" => "f32".into(),
         "F64" => "f64".into(),
         "StringUtf16" => "*mut u16".into(),
-        "ComInterface" | "ComCollection" | "Brush" | "Command" => {
+        "ComInterface" | "ComCollection" | "Brush" | "Command" | "DataTemplate" => {
             format!(
                 "*mut {}",
                 simple_name(interface_name.expect("interfaceName"))
@@ -1194,7 +1247,7 @@ fn rust_property_type(property: &ProjectedProperty) -> String {
             }
         }
         // A brush is always optional: a control with no brush reports a null pointer.
-        "Brush" | "Command" => format!(
+        "Brush" | "Command" | "DataTemplate" => format!(
             "Option<ComPtr<{}>>",
             simple_name(property.interface_name.as_deref().expect("interfaceName"))
         ),
@@ -1216,7 +1269,7 @@ fn rust_property_result(property: &ProjectedProperty) -> String {
         "ComCollection" if property.is_nullable => {
             "Ok(ComPtr::from_raw(value))".into()
         }
-        "Brush" | "Command" => "Ok(ComPtr::from_raw(value))".into(),
+        "Brush" | "Command" | "DataTemplate" => "Ok(ComPtr::from_raw(value))".into(),
         "ComInterface" => {
             "ComPtr::from_projected_raw(value)".into()
         }
@@ -1245,7 +1298,7 @@ fn rust_property_input(property: &ProjectedProperty) -> (String, String) {
                 "value.map_or(ptr::null_mut(), ComPtr::as_raw)".into(),
             )
         }
-        "Brush" | "Command" => {
+        "Brush" | "Command" | "DataTemplate" => {
             let ty = simple_name(property.interface_name.as_deref().expect("interfaceName"));
             (
                 format!("Option<&ComPtr<{ty}>>"),
@@ -1376,3 +1429,4 @@ fn to_snake(name: &str) -> String {
 fn to_shouty(name: &str) -> String {
     to_snake(name).to_uppercase()
 }
+

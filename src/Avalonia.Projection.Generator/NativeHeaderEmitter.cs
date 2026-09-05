@@ -158,6 +158,16 @@ public static class NativeHeaderEmitter
             EndInterface(sb, commandName, 7);
         }
 
+        if (ir.TemplateInterfaceName is { } templateInterfaceName)
+        {
+            var templateName = SimpleName(templateInterfaceName);
+            EmitIid(sb, templateName, ir.TemplateInterfaceIid!, 1);
+            BeginInterface(sb, templateName);
+            EmitSlot(sb, 3, "match", templateName, ["AvnVariant data", "int32_t* value"]);
+            EmitSlot(sb, 4, "build", templateName, ["IAvnControl** value"]);
+            EndInterface(sb, templateName, 5);
+        }
+
         foreach (var collection in collections)
         {
             var name = SimpleName(collection.InterfaceName!);
@@ -382,6 +392,7 @@ public static class NativeHeaderEmitter
                 $"{SimpleName(interfaceName!)}**",
             MarshallingKind.Brush => $"{SimpleName(interfaceName!)}**",
             MarshallingKind.Command => $"{SimpleName(interfaceName!)}**",
+            MarshallingKind.DataTemplate => $"{SimpleName(interfaceName!)}**",
             _ => $"{AbiType(kind, interfaceName, pointerForInterface: false, isNullable)}*",
         };
 
@@ -393,6 +404,7 @@ public static class NativeHeaderEmitter
                 $"{SimpleName(interfaceName!)}*",
             MarshallingKind.Brush => $"{SimpleName(interfaceName!)}*",
             MarshallingKind.Command => $"{SimpleName(interfaceName!)}*",
+            MarshallingKind.DataTemplate => $"{SimpleName(interfaceName!)}*",
             _ => AbiType(kind, interfaceName, pointerForInterface: false, isNullable),
         };
 
@@ -416,6 +428,7 @@ public static class NativeHeaderEmitter
                 SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
             MarshallingKind.Brush => SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
             MarshallingKind.Command => SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
+            MarshallingKind.DataTemplate => SimpleName(interfaceName!) + (pointerForInterface ? "*" : ""),
             MarshallingKind.Variant => "AvnVariant",
             _ when GeometryMarshalling.TryGet(kind, out var geometry) =>
                 isNullable ? geometry.OptionalAbiName : geometry.AbiName,

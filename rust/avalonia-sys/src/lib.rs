@@ -9,6 +9,7 @@ mod async_completion;
 mod clipboard;
 mod com;
 mod command;
+mod data_template;
 mod dispatcher;
 mod echo;
 mod event_callback;
@@ -27,6 +28,7 @@ pub use async_completion::{async_completion, AsyncCompletionArgs, IAvnAsyncCompl
 pub use clipboard::{IAvnApplication4, IAvnClipboardData, IAVN_APPLICATION4_METHOD_COUNT};
 pub use com::{ComInterface, ComPtr, IUnknown};
 pub use command::{command, Command};
+pub use data_template::{data_template, DataTemplate};
 pub use dispatcher::{action, IAvnAction, IAvnDispatcher};
 pub use echo::IAvnEcho;
 pub use factory::IAvnActivationFactory;

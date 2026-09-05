@@ -5,7 +5,7 @@ namespace Avalonia.Projection.Ir;
 
 public sealed class ProjectionIr
 {
-    public const int CurrentVersion = 15;
+    public const int CurrentVersion = 16;
 
     public int Version { get; init; } = CurrentVersion;
     public string? SourceAssembly { get; init; }
@@ -34,6 +34,13 @@ public sealed class ProjectionIr
     /// </summary>
     public string? CommandHandlerInterfaceName { get; init; }
     public string? CommandHandlerInterfaceIid { get; init; }
+
+    /// <summary>
+    /// The projected data-template interface, present only when a member marshals as
+    /// <see cref="MarshallingKind.DataTemplate"/>.
+    /// </summary>
+    public string? TemplateInterfaceName { get; init; }
+    public string? TemplateInterfaceIid { get; init; }
 
     public IReadOnlyList<ProjectedType> Types { get; init; } = [];
     public IReadOnlyList<ProjectedEnum> Enums { get; init; } = [];

@@ -6,9 +6,15 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("13A07ADB-66D4-5286-9C43-59931C3E5BB1")]
+[Guid("103DBB66-FECF-50A5-B279-69BFCE92C7BD")]
 public partial interface IAvnTableViewColumn : IAvnStyledElement
 {
+    [PreserveSig]
+    int GetHeaderTemplate(out IAvnDataTemplate? value);
+
+    [PreserveSig]
+    int SetHeaderTemplate(IAvnDataTemplate? value);
+
     [PreserveSig]
     int GetHeader(out IAvnControl? value);
 
@@ -189,6 +195,37 @@ public sealed partial class AvnTableViewColumn : IAvnTableViewColumn
                 return global::Avalonia.Host.HResults.E_INVALIDARG;
             subscription.Unsubscribe();
             global::Avalonia.Host.ProjectionDiagnostics.SubscriptionRemoved();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetHeaderTemplate(out IAvnDataTemplate? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnDataTemplate.FromTemplate(_value.HeaderTemplate);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetHeaderTemplate(IAvnDataTemplate? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.HeaderTemplate = AvnDataTemplate.ToTemplate(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

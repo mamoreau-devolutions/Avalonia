@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("1E9876E3-A843-51E7-90C2-42171DFD1AC2")]
+[Guid("4E0F6FA2-72EA-5A48-A0E3-D8D48A37AC2D")]
 public partial interface IAvnAutoCompleteBox : IAvnTemplatedControl
 {
     [PreserveSig]
@@ -26,6 +26,12 @@ public partial interface IAvnAutoCompleteBox : IAvnTemplatedControl
 
     [PreserveSig]
     int SetIsTextCompletionEnabled(int value);
+
+    [PreserveSig]
+    int GetItemTemplate(out IAvnDataTemplate value);
+
+    [PreserveSig]
+    int SetItemTemplate(IAvnDataTemplate value);
 
     [PreserveSig]
     int GetMinimumPopulateDelay(out long value);
@@ -1496,6 +1502,37 @@ public sealed partial class AvnAutoCompleteBox : IAvnAutoCompleteBox
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.IsTextCompletionEnabled = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetItemTemplate(out IAvnDataTemplate value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnDataTemplate.FromTemplate(_value.ItemTemplate);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetItemTemplate(IAvnDataTemplate value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ItemTemplate = AvnDataTemplate.ToTemplate(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

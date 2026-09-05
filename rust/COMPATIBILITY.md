@@ -403,8 +403,27 @@ Manager gains CloseAll plus the object-based Show/Close overloads.
 Versions: the whole items lineage moves once more (ItemsControl 9 to 10
 with every descendant), AutoCompleteBox 7 to 8, MenuFlyout 3 to 4,
 TabControl 6 to 7, TreeView 6 to 7, Window 12 to 13, WindowNotification-
-Manager 4 to 5, and the wave A items interfaces republish under fresh IIDs
-recorded as retired in wave_a. Factory stays 13.
+Manager 4 to 5. Factory stays 13.
+
+Wave U19 projects data templates, closing the templating family.
+`MarshallingKind.DataTemplate` (ordinal 25) wraps
+`Avalonia.Controls.Templates.IDataTemplate` as `IAvnDataTemplate`:
+`match(AvnVariant data)` reports whether the template builds for an item
+and `build` hands back the control. The host's `AvnDataTemplate` wraps a
+managed template; a foreign `IAvnDataTemplate` converts back through the
+`DataTemplateAdapter`, so a Rust CCW — `avalonia_sys::data_template(
+matches, build)` or the safe `avalonia::data_template` — really renders
+items. ItemTemplate crosses on ItemsControl, MenuFlyout, AutoCompleteBox
+and ComboBox (SelectionBoxItemTemplate); HeaderTemplate on
+HeaderedContentControl, HeaderedItemsControl, HeaderedSelectingItemsControl
+and TableViewColumn; ContentTemplate on ContentControl, TabControl and
+Flyout; ToggleSwitch gains On/OffContentTemplate. IR schema moves 15 to 16
+for the paired `templateInterfaceName`/`templateInterfaceIid`. The control
+tree republishes once more (ContentControl 8 to 9 cascades everywhere; the
+items lineage reaches 11), Flyout 3 to 4, MenuFlyout 4 to 5, Window 13 to
+14. Control.DataTemplates (the default-template list),
+TemplatedControl.Template (the control template, not a data template) and
+the TemplateSettings getters stay gaps by design. Factory stays 13.
 
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and

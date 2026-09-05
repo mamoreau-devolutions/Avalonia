@@ -71,6 +71,13 @@ public enum MarshallingKind
     /// A <see cref="Avalonia.PixelPoint"/> carried as two int32 components.
     /// </summary>
     PixelPointI32,
+
+    /// <summary>
+    /// Appended after PixelPointI32 so every previously published ordinal stays put.
+    /// A nano-COM <c>IAvnDataTemplate</c> wrapping
+    /// <c>Avalonia.Controls.Templates.IDataTemplate</c>.
+    /// </summary>
+    DataTemplate,
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]

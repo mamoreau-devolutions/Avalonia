@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("EFDEA4BD-3982-5AF4-BEF2-30B4C34C66D0")]
+[Guid("53868482-ADE4-5B1F-9C20-084095D7AB79")]
 public partial interface IAvnPipsPager : IAvnTemplatedControl
 {
     [PreserveSig]

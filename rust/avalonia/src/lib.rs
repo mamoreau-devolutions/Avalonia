@@ -28,6 +28,27 @@ pub use storage::{
 };
 pub use value_converter::{ConversionDirection, ScalarKind, ScalarValue};
 
+/// Builds a data template from Rust closures, wrapping the sys-level CCW in
+/// the safe `DataTemplate` type the template setters accept.
+pub fn data_template(
+    matches: impl FnMut(Variant) -> bool + Send + 'static,
+    build: impl FnMut() -> Result<Control> + Send + 'static,
+) -> Result<DataTemplate> {
+    let mut matches = matches;
+    let mut build = build;
+    let sys_template = avalonia_sys::data_template(
+        move |data: avalonia_sys::AvnVariant| Ok(matches(Variant::from_abi(data))),
+        move || {
+            let control = build().map_err(|error| match error {
+                crate::Error::Abi(error) => error,
+                _ => avalonia_sys::Error(avalonia_sys::E_FAIL),
+            })?;
+            Ok(control.raw.clone())
+        },
+    );
+    Ok(DataTemplate::from_raw(sys_template.as_com_ptr().clone()))
+}
+
 #[derive(Debug)]
 pub enum Error {
     Abi(avalonia_sys::Error),

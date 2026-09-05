@@ -32,6 +32,9 @@ public static class ClrTypeExtractor
         var commandHandlerInterfaceName = CommandMarshalling.QualifiedHandlerInterfaceName(policy.ProjectionNamespace);
         var usesCommand = types.Any(type =>
             type.Properties.Any(property => property.Kind == MarshallingKind.Command));
+        var templateInterfaceName = TemplateMarshalling.QualifiedInterfaceName(policy.ProjectionNamespace);
+        var usesTemplate = types.Any(type =>
+            type.Properties.Any(property => property.Kind == MarshallingKind.DataTemplate));
 
         return new ProjectionIr
         {
@@ -55,6 +58,10 @@ public static class ClrTypeExtractor
             CommandHandlerInterfaceName = usesCommand ? commandHandlerInterfaceName : null,
             CommandHandlerInterfaceIid = usesCommand
                 ? CreateDeterministicIid(commandHandlerInterfaceName, 1)
+                : null,
+            TemplateInterfaceName = usesTemplate ? templateInterfaceName : null,
+            TemplateInterfaceIid = usesTemplate
+                ? CreateDeterministicIid(templateInterfaceName, policy.GetAbiVersion(templateInterfaceName))
                 : null,
             Types = types,
             Enums = ExtractEnums(selected, policy),
@@ -499,6 +506,11 @@ public static class ClrTypeExtractor
         {
             kind = MarshallingKind.Command;
             interfaceName = CommandMarshalling.QualifiedInterfaceName(policy.ProjectionNamespace);
+        }
+        else if (TemplateMarshalling.IsDataTemplate(type.FullName))
+        {
+            kind = MarshallingKind.DataTemplate;
+            interfaceName = TemplateMarshalling.QualifiedInterfaceName(policy.ProjectionNamespace);
         }
         else if (projectedNames.TryGetValue(type, out interfaceName))
             kind = MarshallingKind.ComInterface;

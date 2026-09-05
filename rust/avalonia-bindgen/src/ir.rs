@@ -15,6 +15,10 @@ pub struct ProjectionIr {
     #[serde(default)]
     pub command_handler_interface_iid: Option<String>,
     #[serde(default)]
+    pub template_interface_name: Option<String>,
+    #[serde(default)]
+    pub template_interface_iid: Option<String>,
+    #[serde(default)]
     pub types: Vec<ProjectedType>,
     #[serde(default)]
     pub enums: Vec<ProjectedEnum>,

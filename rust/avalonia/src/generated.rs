@@ -355,6 +355,19 @@ impl From<Vector> for sys::AvnVector {
     }
 }
 
+/// A data template handed to an item-content property: Rust owns Match and
+/// Build through the `avalonia_sys::data_template` CCW.
+#[derive(Clone, Debug)]
+pub struct DataTemplate {
+    pub(crate) raw: sys::ComPtr<sys::IAvnDataTemplate>,
+}
+
+impl DataTemplate {
+    pub(crate) fn from_raw(raw: sys::ComPtr<sys::IAvnDataTemplate>) -> Self {
+        Self { raw }
+    }
+}
+
 /// Safe mirror of `Avalonia.PixelPoint`, marshalled as `sys::AvnPixelPoint`.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct PixelPoint {
@@ -3095,6 +3108,16 @@ impl AutoCompleteBox {
         self.set_text_completion_enabled(value)?;
         Ok(self)
     }
+    pub fn get_item_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_item_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_item_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_item_template(value.map(|value| &value.raw))?)
+    }
+    pub fn item_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_item_template(value)?;
+        Ok(self)
+    }
     pub fn get_minimum_populate_delay(&self) -> Result<std::time::Duration> {
         let ticks = self.raw.get_minimum_populate_delay()?;
         Ok(std::time::Duration::from_nanos(ticks.clamp(0, i64::MAX / 100) as u64 * 100))
@@ -4001,6 +4024,16 @@ impl Button {
         self.set_content(value)?;
         Ok(self)
     }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
+        Ok(self)
+    }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
         let value = self.raw.get_horizontal_content_alignment()?;
         HorizontalAlignment::try_from(value)
@@ -4471,6 +4504,16 @@ impl ButtonSpinner {
     }
     pub fn content(self, value: impl AsControl) -> Result<Self> {
         self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
         Ok(self)
     }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
@@ -6286,6 +6329,16 @@ impl Carousel {
         self.set_items_source(value)?;
         Ok(self)
     }
+    pub fn get_item_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_item_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_item_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_item_template(value.map(|value| &value.raw))?)
+    }
+    pub fn item_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_item_template(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
     pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
@@ -6760,6 +6813,16 @@ impl CheckBox {
     }
     pub fn content(self, value: impl AsControl) -> Result<Self> {
         self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
         Ok(self)
     }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
@@ -7270,6 +7333,16 @@ impl ComboBox {
         self.set_items_source(value)?;
         Ok(self)
     }
+    pub fn get_item_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_item_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_item_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_item_template(value.map(|value| &value.raw))?)
+    }
+    pub fn item_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_item_template(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
     pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
@@ -7393,6 +7466,16 @@ impl ComboBox {
     }
     pub fn placeholder_foreground(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_placeholder_foreground(value)?;
+        Ok(self)
+    }
+    pub fn get_selection_box_item_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_selection_box_item_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_selection_box_item_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_selection_box_item_template(value.map(|value| &value.raw))?)
+    }
+    pub fn selection_box_item_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_selection_box_item_template(value)?;
         Ok(self)
     }
     pub fn get_text(&self) -> Result<Option<String>> {
@@ -7809,6 +7892,16 @@ impl ComboBoxItem {
     }
     pub fn content(self, value: impl AsControl) -> Result<Self> {
         self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
         Ok(self)
     }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
@@ -8721,6 +8814,16 @@ impl CommandBarButton {
         self.set_content(value)?;
         Ok(self)
     }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
+        Ok(self)
+    }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
         let value = self.raw.get_horizontal_content_alignment()?;
         HorizontalAlignment::try_from(value)
@@ -9622,6 +9725,16 @@ impl CommandBarToggleButton {
         self.set_content(value)?;
         Ok(self)
     }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
+        Ok(self)
+    }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
         let value = self.raw.get_horizontal_content_alignment()?;
         HorizontalAlignment::try_from(value)
@@ -10169,6 +10282,16 @@ impl ContentControl {
         self.set_content(value)?;
         Ok(self)
     }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
+        Ok(self)
+    }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
         let value = self.raw.get_horizontal_content_alignment()?;
         HorizontalAlignment::try_from(value)
@@ -10574,6 +10697,16 @@ impl ContextMenu {
     }
     pub fn items_source(self, value: Option<&VariantList>) -> Result<Self> {
         self.set_items_source(value)?;
+        Ok(self)
+    }
+    pub fn get_item_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_item_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_item_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_item_template(value.map(|value| &value.raw))?)
+    }
+    pub fn item_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_item_template(value)?;
         Ok(self)
     }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
@@ -12441,6 +12574,16 @@ impl DropDownButton {
         self.set_content(value)?;
         Ok(self)
     }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
+        Ok(self)
+    }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
         let value = self.raw.get_horizontal_content_alignment()?;
         HorizontalAlignment::try_from(value)
@@ -12913,6 +13056,16 @@ impl Expander {
         self.set_content(value)?;
         Ok(self)
     }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
+        Ok(self)
+    }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
         let value = self.raw.get_horizontal_content_alignment()?;
         HorizontalAlignment::try_from(value)
@@ -12944,6 +13097,16 @@ impl Expander {
     }
     pub fn header(self, value: impl AsControl) -> Result<Self> {
         self.set_header(value)?;
+        Ok(self)
+    }
+    pub fn get_header_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_header_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_header_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_header_template(value.map(|value| &value.raw))?)
+    }
+    pub fn header_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_header_template(value)?;
         Ok(self)
     }
     pub fn get_expand_direction(&self) -> Result<ExpandDirection> {
@@ -13490,6 +13653,16 @@ impl Flyout {
     }
     pub fn content(self, value: impl AsControl) -> Result<Self> {
         self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
         Ok(self)
     }
 }
@@ -14664,6 +14837,16 @@ impl GroupBox {
         self.set_content(value)?;
         Ok(self)
     }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
+        Ok(self)
+    }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
         let value = self.raw.get_horizontal_content_alignment()?;
         HorizontalAlignment::try_from(value)
@@ -14695,6 +14878,16 @@ impl GroupBox {
     }
     pub fn header(self, value: impl AsControl) -> Result<Self> {
         self.set_header(value)?;
+        Ok(self)
+    }
+    pub fn get_header_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_header_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_header_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_header_template(value.map(|value| &value.raw))?)
+    }
+    pub fn header_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_header_template(value)?;
         Ok(self)
     }
 }
@@ -15073,6 +15266,16 @@ impl HyperlinkButton {
     }
     pub fn content(self, value: impl AsControl) -> Result<Self> {
         self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
         Ok(self)
     }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
@@ -16224,6 +16427,16 @@ impl ItemsControl {
         self.set_items_source(value)?;
         Ok(self)
     }
+    pub fn get_item_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_item_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_item_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_item_template(value.map(|value| &value.raw))?)
+    }
+    pub fn item_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_item_template(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
     pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
@@ -16612,6 +16825,16 @@ impl Label {
     }
     pub fn content(self, value: impl AsControl) -> Result<Self> {
         self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
         Ok(self)
     }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
@@ -17305,6 +17528,16 @@ impl ListBox {
         self.set_items_source(value)?;
         Ok(self)
     }
+    pub fn get_item_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_item_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_item_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_item_template(value.map(|value| &value.raw))?)
+    }
+    pub fn item_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_item_template(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
     pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
@@ -17770,6 +18003,16 @@ impl ListBoxItem {
     }
     pub fn content(self, value: impl AsControl) -> Result<Self> {
         self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
         Ok(self)
     }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
@@ -18976,6 +19219,16 @@ impl Menu {
         self.set_items_source(value)?;
         Ok(self)
     }
+    pub fn get_item_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_item_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_item_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_item_template(value.map(|value| &value.raw))?)
+    }
+    pub fn item_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_item_template(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
     pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
@@ -19465,6 +19718,16 @@ impl MenuBase {
         self.set_items_source(value)?;
         Ok(self)
     }
+    pub fn get_item_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_item_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_item_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_item_template(value.map(|value| &value.raw))?)
+    }
+    pub fn item_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_item_template(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
     pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
@@ -19745,6 +20008,16 @@ impl MenuFlyout {
     }
     pub fn items_source(self, value: Option<&VariantList>) -> Result<Self> {
         self.set_items_source(value)?;
+        Ok(self)
+    }
+    pub fn get_item_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_item_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_item_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_item_template(value.map(|value| &value.raw))?)
+    }
+    pub fn item_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_item_template(value)?;
         Ok(self)
     }
 }
@@ -20127,6 +20400,16 @@ impl MenuItem {
         self.set_items_source(value)?;
         Ok(self)
     }
+    pub fn get_item_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_item_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_item_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_item_template(value.map(|value| &value.raw))?)
+    }
+    pub fn item_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_item_template(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
     pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
@@ -20215,6 +20498,16 @@ impl MenuItem {
     }
     pub fn header(self, value: impl AsControl) -> Result<Self> {
         self.set_header(value)?;
+        Ok(self)
+    }
+    pub fn get_header_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_header_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_header_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_header_template(value.map(|value| &value.raw))?)
+    }
+    pub fn header_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_header_template(value)?;
         Ok(self)
     }
     pub fn get_command(&self) -> Result<Option<sys::ComPtr<sys::IAvnCommand>>> {
@@ -20709,6 +21002,16 @@ impl NotificationCard {
     }
     pub fn content(self, value: impl AsControl) -> Result<Self> {
         self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
         Ok(self)
     }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
@@ -23222,6 +23525,16 @@ impl HeaderedContentControl {
         self.set_content(value)?;
         Ok(self)
     }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
+        Ok(self)
+    }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
         let value = self.raw.get_horizontal_content_alignment()?;
         HorizontalAlignment::try_from(value)
@@ -23253,6 +23566,16 @@ impl HeaderedContentControl {
     }
     pub fn header(self, value: impl AsControl) -> Result<Self> {
         self.set_header(value)?;
+        Ok(self)
+    }
+    pub fn get_header_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_header_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_header_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_header_template(value.map(|value| &value.raw))?)
+    }
+    pub fn header_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_header_template(value)?;
         Ok(self)
     }
 }
@@ -23640,6 +23963,16 @@ impl HeaderedItemsControl {
         self.set_items_source(value)?;
         Ok(self)
     }
+    pub fn get_item_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_item_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_item_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_item_template(value.map(|value| &value.raw))?)
+    }
+    pub fn item_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_item_template(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
     pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
@@ -23661,6 +23994,16 @@ impl HeaderedItemsControl {
     }
     pub fn header(self, value: impl AsControl) -> Result<Self> {
         self.set_header(value)?;
+        Ok(self)
+    }
+    pub fn get_header_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_header_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_header_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_header_template(value.map(|value| &value.raw))?)
+    }
+    pub fn header_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_header_template(value)?;
         Ok(self)
     }
 }
@@ -24048,6 +24391,16 @@ impl HeaderedSelectingItemsControl {
         self.set_items_source(value)?;
         Ok(self)
     }
+    pub fn get_item_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_item_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_item_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_item_template(value.map(|value| &value.raw))?)
+    }
+    pub fn item_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_item_template(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
     pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
@@ -24136,6 +24489,16 @@ impl HeaderedSelectingItemsControl {
     }
     pub fn header(self, value: impl AsControl) -> Result<Self> {
         self.set_header(value)?;
+        Ok(self)
+    }
+    pub fn get_header_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_header_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_header_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_header_template(value.map(|value| &value.raw))?)
+    }
+    pub fn header_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_header_template(value)?;
         Ok(self)
     }
 }
@@ -25508,6 +25871,16 @@ impl SelectingItemsControl {
         self.set_items_source(value)?;
         Ok(self)
     }
+    pub fn get_item_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_item_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_item_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_item_template(value.map(|value| &value.raw))?)
+    }
+    pub fn item_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_item_template(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
     pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
@@ -26730,6 +27103,16 @@ impl ToggleButton {
     }
     pub fn content(self, value: impl AsControl) -> Result<Self> {
         self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
         Ok(self)
     }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
@@ -27994,6 +28377,16 @@ impl RadioButton {
         self.set_content(value)?;
         Ok(self)
     }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
+        Ok(self)
+    }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
         let value = self.raw.get_horizontal_content_alignment()?;
         HorizontalAlignment::try_from(value)
@@ -28504,6 +28897,16 @@ impl RefreshContainer {
     }
     pub fn content(self, value: impl AsControl) -> Result<Self> {
         self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
         Ok(self)
     }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
@@ -29242,6 +29645,16 @@ impl RepeatButton {
         self.set_content(value)?;
         Ok(self)
     }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
+        Ok(self)
+    }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
         let value = self.raw.get_horizontal_content_alignment()?;
         HorizontalAlignment::try_from(value)
@@ -29728,6 +30141,16 @@ impl ScrollViewer {
     }
     pub fn content(self, value: impl AsControl) -> Result<Self> {
         self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
         Ok(self)
     }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
@@ -34599,6 +35022,16 @@ impl Spinner {
         self.set_content(value)?;
         Ok(self)
     }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
+        Ok(self)
+    }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
         let value = self.raw.get_horizontal_content_alignment()?;
         HorizontalAlignment::try_from(value)
@@ -34997,6 +35430,16 @@ impl SplitButton {
     }
     pub fn content(self, value: impl AsControl) -> Result<Self> {
         self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
         Ok(self)
     }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
@@ -35441,6 +35884,16 @@ impl SplitView {
     }
     pub fn content(self, value: impl AsControl) -> Result<Self> {
         self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
         Ok(self)
     }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
@@ -36271,6 +36724,16 @@ impl TabControl {
         self.set_items_source(value)?;
         Ok(self)
     }
+    pub fn get_item_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_item_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_item_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_item_template(value.map(|value| &value.raw))?)
+    }
+    pub fn item_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_item_template(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
     pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
@@ -36381,6 +36844,16 @@ impl TabControl {
     }
     pub fn tab_strip_placement(self, value: Dock) -> Result<Self> {
         self.set_tab_strip_placement(value)?;
+        Ok(self)
+    }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
         Ok(self)
     }
     pub fn selected_content(&self) -> Result<Variant> {
@@ -36764,6 +37237,16 @@ impl TabItem {
         self.set_content(value)?;
         Ok(self)
     }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
+        Ok(self)
+    }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
         let value = self.raw.get_horizontal_content_alignment()?;
         HorizontalAlignment::try_from(value)
@@ -36795,6 +37278,16 @@ impl TabItem {
     }
     pub fn header(self, value: impl AsControl) -> Result<Self> {
         self.set_header(value)?;
+        Ok(self)
+    }
+    pub fn get_header_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_header_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_header_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_header_template(value.map(|value| &value.raw))?)
+    }
+    pub fn header_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_header_template(value)?;
         Ok(self)
     }
     pub fn get_is_selected(&self) -> Result<bool> { Ok(self.raw.get_is_selected()?) }
@@ -37188,6 +37681,16 @@ impl TableView {
     }
     pub fn items_source(self, value: Option<&VariantList>) -> Result<Self> {
         self.set_items_source(value)?;
+        Ok(self)
+    }
+    pub fn get_item_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_item_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_item_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_item_template(value.map(|value| &value.raw))?)
+    }
+    pub fn item_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_item_template(value)?;
         Ok(self)
     }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
@@ -37665,6 +38168,16 @@ impl TableViewCell {
         self.set_content(value)?;
         Ok(self)
     }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
+        Ok(self)
+    }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
         let value = self.raw.get_horizontal_content_alignment()?;
         HorizontalAlignment::try_from(value)
@@ -37730,6 +38243,16 @@ impl TableViewColumn {
     }
     pub fn on_data_context_changed(self, scope: &crate::AppScope, callback: impl FnMut(()) + Send + 'static) -> Result<Self> {
         scope.retain_subscription(self.subscribe_data_context_changed(callback)?);
+        Ok(self)
+    }
+    pub fn get_header_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_header_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_header_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_header_template(value.map(|value| &value.raw))?)
+    }
+    pub fn header_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_header_template(value)?;
         Ok(self)
     }
     pub fn get_header(&self) -> Result<Option<Control>> {
@@ -38170,6 +38693,16 @@ impl TableViewRow {
     }
     pub fn content(self, value: impl AsControl) -> Result<Self> {
         self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
         Ok(self)
     }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
@@ -40418,6 +40951,16 @@ impl ToggleSplitButton {
         self.set_content(value)?;
         Ok(self)
     }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
+        Ok(self)
+    }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
         let value = self.raw.get_horizontal_content_alignment()?;
         HorizontalAlignment::try_from(value)
@@ -40883,6 +41426,16 @@ impl ToggleSwitch {
         self.set_content(value)?;
         Ok(self)
     }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
+        Ok(self)
+    }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
         let value = self.raw.get_horizontal_content_alignment()?;
         HorizontalAlignment::try_from(value)
@@ -41026,6 +41579,26 @@ impl ToggleSwitch {
     }
     pub fn off_content(self, value: impl AsControl) -> Result<Self> {
         self.set_off_content(value)?;
+        Ok(self)
+    }
+    pub fn get_off_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_off_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_off_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_off_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn off_content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_off_content_template(value)?;
+        Ok(self)
+    }
+    pub fn get_on_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_on_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_on_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_on_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn on_content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_on_content_template(value)?;
         Ok(self)
     }
 }
@@ -41404,6 +41977,16 @@ impl ToolTip {
     }
     pub fn content(self, value: impl AsControl) -> Result<Self> {
         self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
         Ok(self)
     }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
@@ -41888,6 +42471,16 @@ impl TransitioningContentControl {
         self.set_content(value)?;
         Ok(self)
     }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
+        Ok(self)
+    }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
         let value = self.raw.get_horizontal_content_alignment()?;
         HorizontalAlignment::try_from(value)
@@ -42356,6 +42949,16 @@ impl TreeView {
         self.set_items_source(value)?;
         Ok(self)
     }
+    pub fn get_item_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_item_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_item_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_item_template(value.map(|value| &value.raw))?)
+    }
+    pub fn item_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_item_template(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
     pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
@@ -42812,6 +43415,16 @@ impl TreeViewItem {
         self.set_items_source(value)?;
         Ok(self)
     }
+    pub fn get_item_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_item_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_item_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_item_template(value.map(|value| &value.raw))?)
+    }
+    pub fn item_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_item_template(value)?;
+        Ok(self)
+    }
     pub fn container_from_index_with_int32(&self, index: i32) -> Result<Option<Control>> { Ok(self.raw.container_from_index_with_int32(index)?.map(|raw| Control { raw })) }
     pub fn container_from_item_with_object(&self, item: impl Into<Variant>) -> Result<Option<Control>> { Ok(self.raw.container_from_item_with_object(*item.into().to_abi()?)?.map(|raw| Control { raw })) }
     pub fn index_from_container_with_control(&self, container: &impl AsControl) -> Result<i32> {
@@ -42833,6 +43446,16 @@ impl TreeViewItem {
     }
     pub fn header(self, value: impl AsControl) -> Result<Self> {
         self.set_header(value)?;
+        Ok(self)
+    }
+    pub fn get_header_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_header_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_header_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_header_template(value.map(|value| &value.raw))?)
+    }
+    pub fn header_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_header_template(value)?;
         Ok(self)
     }
     pub fn get_is_expanded(&self) -> Result<bool> { Ok(self.raw.get_is_expanded()?) }
@@ -43254,6 +43877,16 @@ impl UserControl {
     }
     pub fn content(self, value: impl AsControl) -> Result<Self> {
         self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
         Ok(self)
     }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {
@@ -43931,6 +44564,16 @@ impl Window {
     }
     pub fn content(self, value: impl AsControl) -> Result<Self> {
         self.set_content(value)?;
+        Ok(self)
+    }
+    pub fn get_content_template(&self) -> Result<Option<DataTemplate>> {
+        Ok(self.raw.get_content_template()?.map(|raw| DataTemplate { raw }))
+    }
+    pub fn set_content_template(&self, value: Option<&DataTemplate>) -> Result<()> {
+        Ok(self.raw.set_content_template(value.map(|value| &value.raw))?)
+    }
+    pub fn content_template(self, value: Option<&DataTemplate>) -> Result<Self> {
+        self.set_content_template(value)?;
         Ok(self)
     }
     pub fn get_horizontal_content_alignment(&self) -> Result<HorizontalAlignment> {

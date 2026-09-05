@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("16283CAB-DD33-5D3F-B980-0EE04939CF2A")]
+[Guid("CD1035F1-8A9D-57EF-AE78-05E53B1D39F2")]
 public partial interface IAvnFlyout : IAvnPopupFlyoutBase
 {
     [PreserveSig]
@@ -14,6 +14,12 @@ public partial interface IAvnFlyout : IAvnPopupFlyoutBase
 
     [PreserveSig]
     int SetContent(IAvnControl? value);
+
+    [PreserveSig]
+    int GetContentTemplate(out IAvnDataTemplate? value);
+
+    [PreserveSig]
+    int SetContentTemplate(IAvnDataTemplate? value);
 
 }
 
@@ -618,6 +624,37 @@ public sealed partial class AvnFlyout : IAvnFlyout
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Content = (global::System.Object)ProjectionRuntime.Unwrap(value)!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetContentTemplate(out IAvnDataTemplate? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnDataTemplate.FromTemplate(_value.ContentTemplate);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetContentTemplate(IAvnDataTemplate? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.ContentTemplate = AvnDataTemplate.ToTemplate(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

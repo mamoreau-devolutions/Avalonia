@@ -9,6 +9,25 @@ pub fn emit_safe_module(ir: &ProjectionIr) -> String {
          use crate::{runtime::{with_factory, AsControl, EventSubscription}, Result};\n\n",
     );
     out.push_str(&geometry::emit_safe_structs());
+    if ir
+        .types
+        .iter()
+        .any(|t| t.properties.iter().any(|p| p.kind == "DataTemplate"))
+    {
+        out.push_str(
+            "/// A data template handed to an item-content property: Rust owns Match and\n\
+             /// Build through the `avalonia_sys::data_template` CCW.\n\
+             #[derive(Clone, Debug)]\n\
+             pub struct DataTemplate {\n\
+             \x20   pub(crate) raw: sys::ComPtr<sys::IAvnDataTemplate>,\n\
+             }\n\n\
+             impl DataTemplate {\n\
+             \x20   pub(crate) fn from_raw(raw: sys::ComPtr<sys::IAvnDataTemplate>) -> Self {\n\
+             \x20       Self { raw }\n\
+             \x20   }\n\
+             }\n\n",
+        );
+    }
     out.push_str(
         "/// Safe mirror of `Avalonia.PixelPoint`, marshalled as `sys::AvnPixelPoint`.\n\
          #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]\n\
@@ -495,6 +514,11 @@ fn emit_property(
                  \x20       Ok(self.raw.get_{snake}()?)\n\
                  \x20   }}\n"
             )),
+            "DataTemplate" => out.push_str(&format!(
+                "    pub fn {getter}(&self) -> Result<Option<DataTemplate>> {{\n\
+                 \x20       Ok(self.raw.get_{snake}()?.map(|raw| DataTemplate {{ raw }}))\n\
+                 \x20   }}\n"
+            )),
             "Variant" => out.push_str(&format!(
                 "    pub fn {getter}(&self) -> Result<Variant> {{\n\
                  \x20       Ok(Variant::from_abi(self.raw.get_{snake}()?))\n\
@@ -853,6 +877,11 @@ fn safe_property_input(
             "Option<&sys::ComPtr<sys::IAvnCommand>>".into(),
             String::new(),
             "value".into(),
+        ),
+        "DataTemplate" => (
+            "Option<&DataTemplate>".into(),
+            String::new(),
+            "value.map(|value| &value.raw)".into(),
         ),
         "Variant" => (
             "impl Into<Variant>".into(),
