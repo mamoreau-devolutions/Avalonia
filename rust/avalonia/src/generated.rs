@@ -50182,6 +50182,17 @@ impl TrayIcon {
         self.set_command_parameter(value)?;
         Ok(self)
     }
+    pub fn get_icon(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_icon()?)) }
+    }
+    pub fn set_icon(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_icon(Some(&value))?)
+    }
+    pub fn icon(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_icon(value)?;
+        Ok(self)
+    }
     pub fn get_tool_tip_text(&self) -> Result<Option<String>> {
         unsafe { Ok(sys::take_utf16(self.raw.get_tool_tip_text()?)) }
     }
@@ -52758,6 +52769,17 @@ impl Window {
     }
     pub fn can_maximize(self, value: bool) -> Result<Self> {
         self.set_can_maximize(value)?;
+        Ok(self)
+    }
+    pub fn get_icon(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_icon()?)) }
+    }
+    pub fn set_icon(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_icon(Some(&value))?)
+    }
+    pub fn icon(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_icon(value)?;
         Ok(self)
     }
     pub fn get_window_startup_location(&self) -> Result<WindowStartupLocation> {

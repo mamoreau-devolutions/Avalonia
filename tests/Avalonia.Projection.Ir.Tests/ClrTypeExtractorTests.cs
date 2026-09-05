@@ -358,9 +358,9 @@ public class ClrTypeExtractorTests
             });
 
         var window = Type(ir, "IAvnWindow");
-        Assert.Equal(15, window.AbiVersion);
+        Assert.Equal(16, window.AbiVersion);
         Assert.Equal(
-            ClrTypeExtractor.CreateDeterministicIid(window.FullName, 15),
+            ClrTypeExtractor.CreateDeterministicIid(window.FullName, 16),
             window.Iid);
     }
 
@@ -1440,7 +1440,12 @@ public class ClrTypeExtractorTests
 
         var child = Type(ir, "IAvnPopup").Properties.Single(p => p.Name == "Child");
         Assert.Equal(MarshallingKind.ComInterface, child.Kind);
-        Assert.DoesNotContain(Type(ir, "IAvnTrayIcon").Properties, p => p.Name is "Menu" or "Icon");
+        // U21 projects the tray icon's Icon as a write-oriented path string;
+        // Menu (NativeMenu) stays a gap.
+        var trayIconIcon = Type(ir, "IAvnTrayIcon").Properties.Single(p => p.Name == "Icon");
+        Assert.Equal(MarshallingKind.StringUtf16, trayIconIcon.Kind);
+        Assert.Equal("Avalonia.Host.Com.AvnWindowIcon", trayIconIcon.StringConverterTypeName);
+        Assert.DoesNotContain(Type(ir, "IAvnTrayIcon").Properties, p => p.Name == "Menu");
         Assert.Equal(
             MarshallingKind.Command,
             Type(ir, "IAvnTrayIcon").Properties.Single(p => p.Name == "Command").Kind);
@@ -1501,7 +1506,7 @@ public class ClrTypeExtractorTests
     {
         var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
         var window = Type(ir, "IAvnWindow");
-        Assert.Equal(15, window.AbiVersion);
+        Assert.Equal(16, window.AbiVersion);
         Assert.Contains(window.Methods, m => m.Name == "Hide");
         Assert.All(
             new[]
@@ -1513,12 +1518,14 @@ public class ClrTypeExtractorTests
                 "IsDialog",
             },
             name => Assert.Contains(window.Properties, p => p.Name == name));
-        // U17: Position crosses as a blittable AvnPixelPoint; Icon stays a gap
-        // (a WindowIcon has no ABI shape yet).
+        // U17: Position crosses as a blittable AvnPixelPoint; U21 projects Icon
+        // as a write-oriented UTF-16 path through the AvnWindowIcon converter.
         var position = window.Properties.Single(p => p.Name == "Position");
         Assert.Equal(MarshallingKind.PixelPointI32, position.Kind);
         Assert.True(position.CanWrite);
-        Assert.DoesNotContain(window.Properties, p => p.Name == "Icon");
+        var icon = window.Properties.Single(p => p.Name == "Icon");
+        Assert.Equal(MarshallingKind.StringUtf16, icon.Kind);
+        Assert.Equal("Avalonia.Host.Com.AvnWindowIcon", icon.StringConverterTypeName);
         var closing = window.Events.Single(e => e.Name == "Closing");
         Assert.Equal(EventPayloadKind.Fields, closing.PayloadKind);
         Assert.Contains(closing.Parameters, p => p.Name == "Cancel" && p.Direction == ParameterDirection.InOut);
@@ -1658,7 +1665,7 @@ public class ClrTypeExtractorTests
         Assert.Contains(selecting.Events, e => e.Name == "SelectionChanged");
         Assert.Contains(selecting.Properties, p => p.Name == "AutoScrollToSelectedItem");
         Assert.Equal(10, Type(ir, "IAvnContentControl").AbiVersion);
-        Assert.Equal(15, Type(ir, "IAvnWindow").AbiVersion);
+        Assert.Equal(16, Type(ir, "IAvnWindow").AbiVersion);
         Assert.Equal(13, ir.FactoryAbiVersion);
     }
 

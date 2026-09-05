@@ -80409,6 +80409,8 @@ struct IAvnTrayIconVtbl {
     set_command: unsafe extern "system" fn(*mut IAvnTrayIcon, *mut IAvnCommand) -> i32,
     get_command_parameter: unsafe extern "system" fn(*mut IAvnTrayIcon, *mut AvnVariant) -> i32,
     set_command_parameter: unsafe extern "system" fn(*mut IAvnTrayIcon, AvnVariant) -> i32,
+    get_icon: unsafe extern "system" fn(*mut IAvnTrayIcon, *mut *mut u16) -> i32,
+    set_icon: unsafe extern "system" fn(*mut IAvnTrayIcon, *mut u16) -> i32,
     get_tool_tip_text: unsafe extern "system" fn(*mut IAvnTrayIcon, *mut *mut u16) -> i32,
     set_tool_tip_text: unsafe extern "system" fn(*mut IAvnTrayIcon, *mut u16) -> i32,
     get_is_visible: unsafe extern "system" fn(*mut IAvnTrayIcon, *mut i32) -> i32,
@@ -80464,6 +80466,20 @@ impl ComPtr<IAvnTrayIcon> {
     pub fn set_command_parameter(&self, value: &AvnVariant) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_command_parameter)(self.as_raw(), *value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_icon(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_icon)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_icon(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_icon)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
             hresult::check(hr)
         }
     }
@@ -83675,7 +83691,7 @@ impl ComPtr<IAvnViewbox> {
     }
 }
 
-pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0x436B9265, data2: 0x5D23, data3: 0x5630, data4: [0x9C, 0x25, 0x32, 0x94, 0x68, 0x03, 0x7E, 0x9C] };
+pub const I_AVN_WINDOW_IID: Guid = Guid { data1: 0x4788E114, data2: 0x77CC, data3: 0x59F7, data4: [0xA0, 0xB3, 0xDF, 0x3B, 0xC1, 0x93, 0x7C, 0x1B] };
 
 #[repr(C)]
 struct IAvnWindowVtbl {
@@ -83804,6 +83820,8 @@ struct IAvnWindowVtbl {
     set_can_minimize: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
     get_can_maximize: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
     set_can_maximize: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
+    get_icon: unsafe extern "system" fn(*mut IAvnWindow, *mut *mut u16) -> i32,
+    set_icon: unsafe extern "system" fn(*mut IAvnWindow, *mut u16) -> i32,
     get_window_startup_location: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
     set_window_startup_location: unsafe extern "system" fn(*mut IAvnWindow, i32) -> i32,
     get_position: unsafe extern "system" fn(*mut IAvnWindow, *mut AvnPixelPoint) -> i32,
@@ -84675,6 +84693,20 @@ impl ComPtr<IAvnWindow> {
     pub fn set_can_maximize(&self, value: bool) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_can_maximize)(self.as_raw(), i32::from(value));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_icon(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_icon)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_icon(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_icon)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
             hresult::check(hr)
         }
     }

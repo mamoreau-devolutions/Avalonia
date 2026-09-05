@@ -6939,6 +6939,16 @@
           "isNullable": true
         },
         {
+          "name": "Icon",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.WindowIcon",
+          "isNullable": true,
+          "stringConverterTypeName": "Avalonia.Host.Com.AvnWindowIcon"
+        },
+        {
           "name": "ToolTipText",
           "kind": "StringUtf16",
           "canRead": true,
@@ -7235,8 +7245,8 @@
       "name": "IAvnWindow",
       "fullName": "Avalonia.Host.Com.IAvnWindow",
       "kind": "Class",
-      "iid": "436B9265-5D23-5630-9C25-329468037E9C",
-      "abiVersion": 15,
+      "iid": "4788E114-77CC-59F7-A0B3-DF3BC1937C1B",
+      "abiVersion": 16,
       "baseFullName": "Avalonia.Host.Com.IAvnContentControl",
       "managedFullName": "Avalonia.Controls.Window",
       "isConstructible": true,
@@ -7429,6 +7439,16 @@
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.Boolean",
           "isNullable": false
+        },
+        {
+          "name": "Icon",
+          "kind": "StringUtf16",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.WindowIcon",
+          "isNullable": true,
+          "stringConverterTypeName": "Avalonia.Host.Com.AvnWindowIcon"
         },
         {
           "name": "WindowStartupLocation",
@@ -12127,11 +12147,6 @@
     },
     {
       "owner": "Avalonia.Controls.TrayIcon",
-      "member": "Icon",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.TrayIcon",
       "member": "NativeMenuExporter",
       "reason": "Not included by projection policy"
     },
@@ -12173,11 +12188,6 @@
     {
       "owner": "Avalonia.Controls.Window",
       "member": "SystemDecorations",
-      "reason": "Not included by projection policy"
-    },
-    {
-      "owner": "Avalonia.Controls.Window",
-      "member": "Icon",
       "reason": "Not included by projection policy"
     },
     {

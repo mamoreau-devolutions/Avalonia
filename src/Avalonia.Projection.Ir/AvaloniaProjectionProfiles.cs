@@ -53,7 +53,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnListBoxItem"] = 12,
             ["Avalonia.Host.Com.IAvnComboBoxItem"] = 12,
             ["Avalonia.Host.Com.IAvnScrollViewer"] = 12,
-            ["Avalonia.Host.Com.IAvnWindow"] = 15,
+            ["Avalonia.Host.Com.IAvnWindow"] = 16,
             ["Avalonia.Host.Com.IAvnGrid"] = 9,
             // Previously version-1 templated types inherit the TemplatedControl bump.
             ["Avalonia.Host.Com.IAvnAutoCompleteBox"] = 10,
@@ -313,6 +313,7 @@ public static class AvaloniaProjectionProfiles
                 "ClosingBehavior", "ExtendClientAreaToDecorationsHint",
                 "ExtendClientAreaTitleBarHeightHint", "IsExtendedIntoWindowDecorations",
                 "WindowDecorationMargin", "OffScreenMargin", "IsDialog", "Closing", "Position",
+                "Icon",
             ],
             ["Avalonia.Controls.StackPanel"] =
                 ["Orientation", "Spacing", "AreHorizontalSnapPointsRegular", "AreVerticalSnapPointsRegular"],
@@ -527,7 +528,7 @@ public static class AvaloniaProjectionProfiles
                 "PlacementAnchor", "PlacementGravity", "PlacementConstraintAdjustment",
                 "PlacementRect",
             ],
-            ["Avalonia.Controls.TrayIcon"] = ["ToolTipText", "IsVisible", "Command", "CommandParameter"],
+            ["Avalonia.Controls.TrayIcon"] = ["ToolTipText", "IsVisible", "Command", "CommandParameter", "Icon"],
             ["Avalonia.Controls.Notifications.WindowNotificationManager"] = ["Position", "MaxItems", "Show", "Close", "CloseAll"],
             ["Avalonia.Controls.Notifications.NotificationCard"] =
                 ["IsClosed", "NotificationType", "IsClosing", "Close", "NotificationClosed"],
@@ -692,6 +693,18 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.Primitives.SelectingItemsControl.SelectedValue"] = new()
             {
                 Kind = MarshallingKind.Variant,
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.Window.Icon"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                StringConverterTypeName = "Avalonia.Host.Com.AvnWindowIcon",
+                IsNullable = true,
+            },
+            ["Avalonia.Controls.TrayIcon.Icon"] = new()
+            {
+                Kind = MarshallingKind.StringUtf16,
+                StringConverterTypeName = "Avalonia.Host.Com.AvnWindowIcon",
                 IsNullable = true,
             },
             ["Avalonia.Controls.AutoCompleteBox.SelectedItem"] = new()
@@ -1425,6 +1438,7 @@ public static class AvaloniaProjectionProfiles
         },
     };
 }
+
 
 
 

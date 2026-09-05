@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("436B9265-5D23-5630-9C25-329468037E9C")]
+[Guid("4788E114-77CC-59F7-A0B3-DF3BC1937C1B")]
 public partial interface IAvnWindow : IAvnContentControl
 {
     [PreserveSig]
@@ -89,6 +89,12 @@ public partial interface IAvnWindow : IAvnContentControl
 
     [PreserveSig]
     int SetCanMaximize(int value);
+
+    [PreserveSig]
+    int GetIcon(out string? value);
+
+    [PreserveSig]
+    int SetIcon(string? value);
 
     [PreserveSig]
     int GetWindowStartupLocation(out int value);
@@ -2235,6 +2241,37 @@ public sealed partial class AvnWindow : IAvnWindow
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.CanMaximize = value != 0;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetIcon(out string? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = global::Avalonia.Host.Com.AvnWindowIcon.ToAbi(_value.Icon);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetIcon(string? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Icon = global::Avalonia.Host.Com.AvnWindowIcon.FromAbi(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

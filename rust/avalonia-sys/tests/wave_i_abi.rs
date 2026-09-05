@@ -15,6 +15,7 @@ fn overlay_controls_publish_at_version_one() {
         "*set_tool_tip_text)(IAvnTrayIcon* self, const uint16_t* value)",
         "*set_command)(IAvnTrayIcon* self, IAvnCommand* value)",
         "*set_command_parameter)(IAvnTrayIcon* self, AvnVariant value)",
+        "*set_icon)(IAvnTrayIcon* self, const uint16_t* value)",
         "*set_max_items)(IAvnWindowNotificationManager* self, int32_t value)",
         "*set_pull_direction)(IAvnRefreshContainer* self, int32_t value)",
         "*create_popup)(IAvnControlFactory* self, IAvnPopup** value)",
@@ -27,7 +28,6 @@ fn overlay_controls_publish_at_version_one() {
     }
     for forbidden in [
         "*set_menu)(IAvnTrayIcon",
-        "*set_icon)(IAvnTrayIcon",
     ] {
         assert!(
             !HEADER.contains(forbidden),

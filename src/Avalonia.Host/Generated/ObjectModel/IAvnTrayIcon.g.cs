@@ -22,6 +22,12 @@ public partial interface IAvnTrayIcon : IAvnAvaloniaObject
     int SetCommandParameter(AvnVariant value);
 
     [PreserveSig]
+    int GetIcon(out string? value);
+
+    [PreserveSig]
+    int SetIcon(string? value);
+
+    [PreserveSig]
     int GetToolTipText(out string? value);
 
     [PreserveSig]
@@ -131,6 +137,37 @@ public sealed partial class AvnTrayIcon : IAvnTrayIcon
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.CommandParameter = value.ToObject();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetIcon(out string? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = global::Avalonia.Host.Com.AvnWindowIcon.ToAbi(_value.Icon);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetIcon(string? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Icon = global::Avalonia.Host.Com.AvnWindowIcon.FromAbi(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

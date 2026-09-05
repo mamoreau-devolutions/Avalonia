@@ -438,6 +438,12 @@ SelectedContentTemplate; ComboBox gains SelectionBoxItem (Variant).
 Nullable event string fields now read as Option<String> with a
 null-tolerant clone. Factory stays 13.
 
+Wave U21 projects icons as write-oriented path strings. Window.Icon and
+TrayIcon.Icon cross as UTF-16 paths through the host-side `AvnWindowIcon`
+converter, which loads a `WindowIcon` from the path; reading yields null
+because an icon carries no source path to return (Window 15 to 16,
+TrayIcon 4 to 5). Factory stays 13.
+
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and
 `IAvnNumericUpDown` each move from 2 to 3. Templates, filters, ItemsSource,
