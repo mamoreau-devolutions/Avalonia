@@ -47,7 +47,7 @@ Avalonia.Controls.ComboBox.UpdateSelectionFromEvent(Control, RoutedEventArgs): B
 Avalonia.Controls.ContentControl.Presenter: By design: template-part presenters are internal layout plumbing
 Avalonia.Controls.ContextMenu.CustomPopupPlacementCallback: By design: custom placement needs a callback with geometry out-parameters
 Avalonia.Controls.ContextMenu.Open(): By design: overrides the projected base slot
-Avalonia.Controls.ContextMenu.Close(): By design: the INotification content needs a typed notification ABI
+Avalonia.Controls.ContextMenu.Close(): By design: the suppressed override of the base Close slot
 Avalonia.Controls.Control.FocusAdorner: By design: adorner plumbing is owned by the host
 Avalonia.Controls.Control.DataTemplates: By design: the default-template list is owned by the host
 Avalonia.Controls.Expander.ContentTransition: By design: transitions are animation internals owned by the host
@@ -74,7 +74,7 @@ Avalonia.Controls.ListBox.SelectedItems: By design: the new-hidden member duplic
 Avalonia.Controls.ListBox.Selection: By design: the selection model is owned by the host
 Avalonia.Controls.MaskedTextBox.Culture: By design: globalization is owned by the host
 Avalonia.Controls.MaskedTextBox.MaskProvider: By design: mask internals are owned by the host
-Avalonia.Controls.Menu.Close(): By design: the INotification content needs a typed notification ABI
+Avalonia.Controls.Menu.Close(): By design: the suppressed override of the base Close slot
 Avalonia.Controls.Menu.Open(): By design: the suppressed override of the base Open slot
 Avalonia.Controls.MenuFlyout.FlyoutPresenterClasses: By design: styling is owned by the host
 Avalonia.Controls.MenuFlyout.ItemContainerTheme: By design: container themes are styling owned by the host
@@ -124,7 +124,6 @@ Avalonia.Controls.TabControl.PageTransition: By design: transitions are animatio
 Avalonia.Controls.TabControl.UpdateSelectionFromEvent(Control, RoutedEventArgs): By design: initialization and internal plumbing is owned by the host
 Avalonia.Controls.TableView.DisplayMemberBinding: By design: bindings are not projected; use the imperative surface
 Avalonia.Controls.TableView.ItemTemplate: By design: U19 projects the data templates; container themes are styling
-Avalonia.Controls.TableView.Columns: By design: the typed column list needs its own element ABI
 Avalonia.Controls.TableViewCell.Column: By design: the owning column is owned by the host
 Avalonia.Controls.TableViewColumn.HeaderTheme: By design: styling is owned by the host
 Avalonia.Controls.TableViewColumn.CellTheme: By design: styling is owned by the host

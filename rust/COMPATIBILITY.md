@@ -585,6 +585,14 @@ the Rust side (`subscribe_selection_changed` receives a
 Calendar (12) and CalendarDatePicker (11) republish. The gap report drops
 to 165 entries. Factory stays 13.
 
+Wave U33 sweeps the column list and reason hygiene. TableView.Columns
+crosses through the same IAvnControlList live adapter as the command-bar
+lists — AvaloniaList<TableViewColumn> is an IList of projected controls
+(TableView 12 to 13). The stale "INotification content" reasons on
+ContextMenu/Menu's Close overwrites are corrected to name the real cause:
+they suppress the projected base slot. The gap report drops to 164
+entries. Factory stays 13.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A

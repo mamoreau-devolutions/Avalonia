@@ -76352,7 +76352,7 @@ impl ComPtr<IAvnTabItem> {
     }
 }
 
-pub const I_AVN_TABLE_VIEW_IID: Guid = Guid { data1: 0xCE5FCC27, data2: 0x5B86, data3: 0x5655, data4: [0x9F, 0x87, 0xC3, 0x42, 0x18, 0x7E, 0x4D, 0x96] };
+pub const I_AVN_TABLE_VIEW_IID: Guid = Guid { data1: 0xB0C8BD3E, data2: 0xD92C, data3: 0x542C, data4: [0x8E, 0x78, 0x90, 0x20, 0xF9, 0xF5, 0xD0, 0xD8] };
 
 #[repr(C)]
 struct IAvnTableViewVtbl {
@@ -76483,6 +76483,8 @@ struct IAvnTableViewVtbl {
     set_selection_mode: unsafe extern "system" fn(*mut IAvnTableView, i32) -> i32,
     select_all: unsafe extern "system" fn(*mut IAvnTableView) -> i32,
     unselect_all: unsafe extern "system" fn(*mut IAvnTableView) -> i32,
+    get_columns: unsafe extern "system" fn(*mut IAvnTableView, *mut *mut IAvnControlList) -> i32,
+    set_columns: unsafe extern "system" fn(*mut IAvnTableView, *mut IAvnControlList) -> i32,
     get_can_user_resize_columns: unsafe extern "system" fn(*mut IAvnTableView, *mut i32) -> i32,
     set_can_user_resize_columns: unsafe extern "system" fn(*mut IAvnTableView, i32) -> i32,
 }
@@ -77353,6 +77355,20 @@ impl ComPtr<IAvnTableView> {
     pub fn unselect_all(&self) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().unselect_all)(self.as_raw());
+            hresult::check(hr)
+        }
+    }
+    pub fn get_columns(&self) -> Result<Option<ComPtr<IAvnControlList>>> {
+        unsafe {
+            let mut value: *mut IAvnControlList = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_columns)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_columns(&self, value: Option<&ComPtr<IAvnControlList>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_columns)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }

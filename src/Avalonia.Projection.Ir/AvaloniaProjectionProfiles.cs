@@ -98,7 +98,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnSplitView"] = 9,
             ["Avalonia.Host.Com.IAvnTabControl"] = 12,
             ["Avalonia.Host.Com.IAvnTabItem"] = 11,
-            ["Avalonia.Host.Com.IAvnTableView"] = 12,
+            ["Avalonia.Host.Com.IAvnTableView"] = 13,
             ["Avalonia.Host.Com.IAvnTableViewCell"] = 11,
             ["Avalonia.Host.Com.IAvnTableViewRow"] = 9,
             ["Avalonia.Host.Com.IAvnThumb"] = 10,
@@ -565,7 +565,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.ThemeVariantScope"] = ["RequestedThemeVariant"],
             ["Avalonia.Controls.IconElement"] = [],
             ["Avalonia.Controls.PathIcon"] = ["Data"],
-            ["Avalonia.Controls.TableView"] = ["CanUserResizeColumns"],
+            ["Avalonia.Controls.TableView"] = ["CanUserResizeColumns", "Columns"],
             ["Avalonia.Controls.TableViewColumn"] =
             [
                 "Header", "HeaderTemplate", "Width", "MinWidth", "MaxWidth", "IsVisible",
@@ -1001,6 +1001,18 @@ public static class AvaloniaProjectionProfiles
                 HostImplementationTypeName = "Avalonia.Host.Com.AvnControlList",
                 IsNullable = false,
             },
+            // U33: the table-view column list crosses through the same live control-list
+            // adapter as the command-bar lists (AvaloniaList<TableViewColumn> is an IList
+            // of projected controls).
+            ["Avalonia.Controls.TableView.Columns"] = new()
+            {
+                Kind = MarshallingKind.ComCollection,
+                InterfaceName = "Avalonia.Host.Com.IAvnControlList",
+                ElementInterfaceName = "Avalonia.Host.Com.IAvnControl",
+                ElementKind = MarshallingKind.ComInterface,
+                HostImplementationTypeName = "Avalonia.Host.Com.AvnControlList",
+                IsNullable = true,
+            },
             ["Avalonia.Controls.CommandBar.OverflowItems"] = new()
             {
                 Kind = MarshallingKind.ComCollection,
@@ -1304,8 +1316,8 @@ public static class AvaloniaProjectionProfiles
                         ["DependencyResolver"] = "the resolver is not ABI surface",
                         ["ShowDialog"] = "modal dialogs need the async-completion transport",
                         ["AsyncPopulator"] = "async population needs the async-completion transport",
-                        ["Show"] = "the INotification content needs a typed notification ABI",
-                        ["Close"] = "the INotification content needs a typed notification ABI",
+                        ["Show"] = "the suppressed override of the base Open slot",
+                        ["Close"] = "the suppressed override of the base Close slot",
                         ["Spun"] = "obsolete alias of Spinned",
                         ["OpenedPopups"] = "popup enumeration is owned by the host",
                         ["MaskProvider"] = "mask internals are owned by the host",
@@ -1343,7 +1355,6 @@ public static class AvaloniaProjectionProfiles
                         ["Selection"] = "the selection model is owned by the host",
                         ["Scroll"] = "the scrolling contract is owned by the host",
                         ["SelectionChanged"] = "the added/removed collection payload has no event shape yet",
-                        ["Columns"] = "the typed column list needs its own element ABI",
                         ["Column"] = "the owning column is owned by the host",
                         ["HeaderTheme"] = "styling is owned by the host",
                         ["CellTheme"] = "styling is owned by the host",

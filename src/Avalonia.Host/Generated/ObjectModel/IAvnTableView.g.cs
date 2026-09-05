@@ -6,9 +6,15 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("CE5FCC27-5B86-5655-9F87-C342187E4D96")]
+[Guid("B0C8BD3E-D92C-542C-8E78-9020F9F5D0D8")]
 public partial interface IAvnTableView : IAvnListBox
 {
+    [PreserveSig]
+    int GetColumns(out IAvnControlList value);
+
+    [PreserveSig]
+    int SetColumns(IAvnControlList value);
+
     [PreserveSig]
     int GetCanUserResizeColumns(out int value);
 
@@ -2170,6 +2176,37 @@ public sealed partial class AvnTableView : IAvnTableView
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.UnselectAll();
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetColumns(out IAvnControlList value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnControlListMarshal.FromManaged(_value.Columns);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetColumns(IAvnControlList value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Columns = (global::Avalonia.Collections.AvaloniaList<Avalonia.Controls.TableViewColumn>?)(AvnControlListMarshal.ToManaged(value))!;
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

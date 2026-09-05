@@ -6452,13 +6452,27 @@
       "name": "IAvnTableView",
       "fullName": "Avalonia.Host.Com.IAvnTableView",
       "kind": "Class",
-      "iid": "CE5FCC27-5B86-5655-9F87-C342187E4D96",
-      "abiVersion": 12,
+      "iid": "B0C8BD3E-D92C-542C-8E78-9020F9F5D0D8",
+      "abiVersion": 13,
       "baseFullName": "Avalonia.Host.Com.IAvnListBox",
       "managedFullName": "Avalonia.Controls.TableView",
       "isConstructible": true,
       "methods": [],
       "properties": [
+        {
+          "name": "Columns",
+          "kind": "ComCollection",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnControlList",
+          "interfaceIid": "30347281-9A69-5CF9-AEEF-9F706A7DFE07",
+          "interfaceAbiVersion": 1,
+          "elementInterfaceName": "Avalonia.Host.Com.IAvnControl",
+          "elementKind": "ComInterface",
+          "managedTypeName": "Avalonia.Collections.AvaloniaList\u00601[[Avalonia.Controls.TableViewColumn, Avalonia.Controls, Version=12.2.999.0, Culture=neutral, PublicKeyToken=c8d484a7012f9a8b]]",
+          "isNullable": true,
+          "hostImplementationTypeName": "Avalonia.Host.Com.AvnControlList"
+        },
         {
           "name": "CanUserResizeColumns",
           "kind": "Bool",
@@ -12120,7 +12134,7 @@
     {
       "owner": "Avalonia.Controls.ContextMenu",
       "member": "Close()",
-      "reason": "By design: the INotification content needs a typed notification ABI"
+      "reason": "By design: the suppressed override of the base Close slot"
     },
     {
       "owner": "Avalonia.Controls.Control",
@@ -12255,7 +12269,7 @@
     {
       "owner": "Avalonia.Controls.Menu",
       "member": "Close()",
-      "reason": "By design: the INotification content needs a typed notification ABI"
+      "reason": "By design: the suppressed override of the base Close slot"
     },
     {
       "owner": "Avalonia.Controls.Menu",
@@ -12501,11 +12515,6 @@
       "owner": "Avalonia.Controls.TableView",
       "member": "ItemTemplate",
       "reason": "By design: U19 projects the data templates; container themes are styling"
-    },
-    {
-      "owner": "Avalonia.Controls.TableView",
-      "member": "Columns",
-      "reason": "By design: the typed column list needs its own element ABI"
     },
     {
       "owner": "Avalonia.Controls.TableViewCell",

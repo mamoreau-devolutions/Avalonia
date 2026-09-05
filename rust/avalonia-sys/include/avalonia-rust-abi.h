@@ -11649,12 +11649,12 @@ struct IAvnTabItem { const IAvnTabItemVtbl* vtbl; };
 #define I_AVN_TAB_ITEM_VTABLE_SLOTS 118
 
 static const AvnGuid I_AVN_TABLE_VIEW_IID = {
-    0xCE5FCC27,
-    0x5B86,
-    0x5655,
-    { 0x9F, 0x87, 0xC3, 0x42, 0x18, 0x7E, 0x4D, 0x96 }
+    0xB0C8BD3E,
+    0xD92C,
+    0x542C,
+    { 0x8E, 0x78, 0x90, 0x20, 0xF9, 0xF5, 0xD0, 0xD8 }
 };
-#define I_AVN_TABLE_VIEW_ABI_VERSION 12
+#define I_AVN_TABLE_VIEW_ABI_VERSION 13
 struct IAvnTableViewVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnTableView* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnTableView* self); /* slot 1 */
@@ -11783,11 +11783,13 @@ struct IAvnTableViewVtbl {
     AvnHResult (AVN_CALL *set_selection_mode)(IAvnTableView* self, int32_t value); /* slot 124 */
     AvnHResult (AVN_CALL *select_all)(IAvnTableView* self); /* slot 125 */
     AvnHResult (AVN_CALL *unselect_all)(IAvnTableView* self); /* slot 126 */
-    AvnHResult (AVN_CALL *get_can_user_resize_columns)(IAvnTableView* self, int32_t* value); /* slot 127 */
-    AvnHResult (AVN_CALL *set_can_user_resize_columns)(IAvnTableView* self, int32_t value); /* slot 128 */
+    AvnHResult (AVN_CALL *get_columns)(IAvnTableView* self, IAvnControlList** value); /* slot 127 */
+    AvnHResult (AVN_CALL *set_columns)(IAvnTableView* self, IAvnControlList* value); /* slot 128 */
+    AvnHResult (AVN_CALL *get_can_user_resize_columns)(IAvnTableView* self, int32_t* value); /* slot 129 */
+    AvnHResult (AVN_CALL *set_can_user_resize_columns)(IAvnTableView* self, int32_t value); /* slot 130 */
 };
 struct IAvnTableView { const IAvnTableViewVtbl* vtbl; };
-#define I_AVN_TABLE_VIEW_VTABLE_SLOTS 129
+#define I_AVN_TABLE_VIEW_VTABLE_SLOTS 131
 
 static const AvnGuid I_AVN_TABLE_VIEW_CELL_IID = {
     0x5FFBD394,

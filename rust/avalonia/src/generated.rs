@@ -47495,6 +47495,16 @@ impl TableView {
     }
     pub fn select_all(&self) -> Result<()> { Ok(self.raw.select_all()?) }
     pub fn unselect_all(&self) -> Result<()> { Ok(self.raw.unselect_all()?) }
+    pub fn get_columns(&self) -> Result<Option<ControlList>> {
+        Ok(self.raw.get_columns()?.map(|raw| ControlList { raw }))
+    }
+    pub fn set_columns(&self, value: Option<&ControlList>) -> Result<()> {
+        Ok(self.raw.set_columns(value.map(|value| &value.raw))?)
+    }
+    pub fn columns(self, value: Option<&ControlList>) -> Result<Self> {
+        self.set_columns(value)?;
+        Ok(self)
+    }
     pub fn get_can_user_resize_columns(&self) -> Result<bool> { Ok(self.raw.get_can_user_resize_columns()?) }
     pub fn set_can_user_resize_columns(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_can_user_resize_columns(value)?)

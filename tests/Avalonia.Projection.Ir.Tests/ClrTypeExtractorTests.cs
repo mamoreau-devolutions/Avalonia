@@ -1528,7 +1528,10 @@ public class ClrTypeExtractorTests
         Assert.Equal("Avalonia.Host.Com.IAvnListBoxItem", Type(ir, "IAvnTableViewRow").BaseFullName);
         Assert.Equal("Avalonia.Host.Com.IAvnContentControl", Type(ir, "IAvnTableViewCell").BaseFullName);
 
-        Assert.DoesNotContain(Type(ir, "IAvnTableView").Properties, p => p.Name == "Columns");
+        // U33 projects the column list through the live control-list adapter.
+        var columns = Type(ir, "IAvnTableView").Properties.Single(p => p.Name == "Columns");
+        Assert.Equal(MarshallingKind.ComCollection, columns.Kind);
+        Assert.Equal("Avalonia.Host.Com.IAvnControlList", columns.InterfaceName);
 
         var width = Type(ir, "IAvnTableViewColumn").Properties.Single(p => p.Name == "Width");
         Assert.Equal(MarshallingKind.StringUtf16, width.Kind);
